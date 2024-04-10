@@ -11,76 +11,113 @@
     <title>Heidi</title>
   </head>
   <body>
-    <header>
-      <div class="flex items-center justify-between">
+    <header id="header" class="fixed w-full top-0">
+      <div class="flex items-center bg-dark_green w-full px-10 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between">
         <div class="flex items-center justify-start gap-3">
-          <span>
+          <span class="text-xl text-white">
             Heidi
           </span>
           <img src="./asset/header_logo.svg" alt="logo">
         </div>
         <div>
-          <nav>
-
+          <nav class="flex items-center justify-center gap-8">
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Geräte <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Dienstleistungen <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Kunden
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2" >
+              Ressourcen <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Preise
+            </a>
           </nav>
         </div>
-        <div>
-          <a href="#">
+        <div class="flex items-center justify-end gap-base">
+          <a href="#" class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base">
             Angebot
           </a>
-          <a href="#">
+          <a href="#" class="border border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base">
             Anrufen buchen
           </a>
         </div>
+        <button class="burger hidden medium:block z-10">
+          <span class="burger-line top-line"></span>
+          <span class="burger-line mid-line"></span>
+          <span class="burger-line bot-line"></span>
+        </button>
       </div>
     </header>
-    <main class="">
-      <div>
-        <h1>
+    <main id="content">
+      <div class="pt-16 bg-dark_green">
+        <h1 class="mt-28 text-white text-[65px] leading-[78px] text-center mb-2">
           Fernablesung mit Funkgeräten
         </h1>
-        <p>Effiziente Fernablesung für Warmwasser, Kaltwasser und Heizung –
+        <p class="text-2xl leading-[28px] text-white text-center max-w-3xl mx-auto mb-6">Effiziente Fernablesung für Warmwasser, Kaltwasser und Heizung –
           mit fortschrittlicher Funktechnologie</p>
-        <div>
-          <span>
-            <img src="asset/google.svg" alt="google">
-            <img src="./asset/rate_star.svg" alt="rate star">
-            <img src="./asset/rate_star.svg" alt="rate star">
-            <img src="./asset/rate_star.svg" alt="rate star">
-            <img src="./asset/rate_star.svg" alt="rate star">
-            <img src="./asset/rate_star.svg" alt="rate star">
+        <div class="flex items-center justify-center mx-auto w-fit border border-white/20 rounded-[40px] py-2.5 px-4 gap-3 mb-10">
+          <span class="flex items-center justify-start gap-2">
+            <img src="asset/google.png" alt="google">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
           </span>
-          <span>
+          <span class="text-[15px] leading-[18px] text-white text-center">
             4.8 rating
           </span>
-          <span>
+          <span class="text-[15px] leading-[18px] text-white/70 text-center">
             1.850+ Bewertungen
           </span>
         </div>
-        <button>
+        <button type="button" class="block mx-auto w-fit py-5 px-10 text-lg text-dark_text bg-green rounded-1/2base mb-4">
           Jetzt installieren lassen
         </button>
-        <a href="#">Fernablesbare Zähler verpflichtend bis 1. Januar 2027</a>
-        <div>
-          <div>
+        <a href="#" class="text-center mx-auto block text-[15px] leading-[18px] text-white">Fernablesbare Zähler verpflichtend bis 1. Januar 2027</a>
+        <div class="px-[50px] mt-[70px] mb-10 flex items-stretch justify-center gap-2">
+          <div class='bg-card_bg px-9 rounded-base flex items-center justify-center'>
             <img src="./asset/counter.png" alt="counter">
           </div>
-          <div>
+          <div class="w-fit bg-card_bg rounded-base">
             <img src="./asset/reviews.png" alt="reviews">
           </div>
-          <div>
+          <div class="">
             <img src="./asset/handyman.png" alt="handyman">
           </div>
         </div>
-        <div>
-          <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen">
-          <img src="./asset/vonovia.png" alt="vonovia">
-          <img src="./asset/buderus.png" alt="buderus">
-          <img src="./asset/techem.png" alt="techem">
-          <img src="./asset/accentro.png" alt="accentro">
-          <img src="./asset/watts.png" alt="watts">
-          <img src="./asset/viessmann.png" alt="viessmann">
-          <img src="./asset/dehoust.png" alt="dehoust">
+        <div class="ticker-wrap">
+          <div class="ticker">
+            <div class="ticker__item">
+              <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/vonovia.png" alt="vonovia">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/buderus.png" alt="buderus">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/techem.png" alt="techem">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/accentro.png" alt="accentro">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/watts.png" alt="watts">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/viessmann.png" alt="viessmann">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/dehoust.png" alt="dehoust">
+            </div>
+          </div>
         </div>
       </div>
       <div>

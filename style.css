@@ -8,3 +8,129 @@
   box-sizing: border-box;
   font-family: "Exo 2", sans-serif;
 }
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.burger {
+  height: 12px;
+  width: 18px;
+  position: relative;
+}
+.burger-line {
+  display: flex;
+  width: 18px;
+  height: 2px;
+  background-color: #715336;
+  transition: 0.3s all ease;
+}
+.top-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.mid-line {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: rotate(45deg);
+}
+.bot-line {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.burger.active > .top-line {
+  transform: translateY(0px) rotate(45deg);
+  transition: 0.3s all ease;
+}
+.burger.active > .mid-line {
+  opacity: 0;
+  transition: 0.3s all ease;
+}
+.burger.active > .bot-line {
+  transform: translateY(-10px) rotate(-45deg);
+  transition: 0.3s all ease;
+}
+#header {
+  z-index: 999 !important;
+}
+
+.ticker-wrap {
+  width: 100%;
+  box-sizing: content-box;
+  overflow: hidden;
+  height: 24px;
+  padding-bottom: 25px;
+  display: block;
+}
+
+.ticker-wrap .ticker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  padding-right: 100%;
+  box-sizing: content-box;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-name: ticker;
+  animation-name: ticker;
+  -webkit-animation-duration: 90s;
+  animation-duration: 90s;
+}
+
+.ticker-wrap .ticker__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ticker__item img {
+  opacity: 0.2;
+  min-width: 100px;
+  min-height: 22px;
+  filter: invert(100%) sepia(57%) saturate(0%) hue-rotate(249deg) brightness(106%) contrast(101%);
+}
+
+@-webkit-keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  200% {
+    -webkit-transform: translate3d(-200%, 0, 0);
+    transform: translate3d(-200%, 0, 0);
+    visibility: visible;
+  }
+}
+
+@keyframes ticker {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+  }
+  100% {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  200% {
+    -webkit-transform: translate3d(-200%, 0, 0);
+    transform: translate3d(-200%, 0, 0);
+    visibility: visible;
+  }
+}

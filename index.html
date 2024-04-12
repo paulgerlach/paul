@@ -1,116 +1,162 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./asset/header_logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
     <title>Heidi</title>
   </head>
   <body>
-    <header>
-      <div class="flex items-center justify-between">
+    <header id="header" class="fixed w-full top-0">
+      <div class="flex items-center bg-dark_green w-full px-10 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between">
         <div class="flex items-center justify-start gap-3">
-          <span> Heidi </span>
-          <img src="./asset/header_logo.svg" alt="logo" />
+          <span class="text-xl text-white">
+            Heidi
+          </span>
+          <img src="./asset/header_logo.svg" alt="logo">
         </div>
         <div>
-          <ul role="navigation"></ul>
+          <nav class="flex items-center justify-center gap-8">
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Geräte <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Dienstleistungen <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Kunden
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2" >
+              Ressourcen <img src="./asset/right_arrow.png" alt="arrow">
+            </a>
+            <a href="#" class="flex items-center text-sm text-white justify-start gap-2">
+              Preise
+            </a>
+          </nav>
         </div>
-        <div>
-          <a href="#"> Angebot </a>
-          <a href="#"> Anrufen buchen </a>
+        <div class="flex items-center justify-end gap-base">
+          <a href="#" class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base">
+            Angebot
+          </a>
+          <a href="#" class="border border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base">
+            Anrufen buchen
+          </a>
         </div>
+        <button class="burger hidden medium:block z-10">
+          <span class="burger-line top-line"></span>
+          <span class="burger-line mid-line"></span>
+          <span class="burger-line bot-line"></span>
+        </button>
       </div>
     </header>
-    <main class="">
-      <div>
-        <h1>Fernablesung mit Funkgeräten</h1>
-        <p>
-          Effiziente Fernablesung für Warmwasser, Kaltwasser und Heizung – mit
-          fortschrittlicher Funktechnologie
-        </p>
-        <div>
-          <span>
-            <img src="asset/google.svg" alt="google" />
-            <img src="./asset/rate_star.svg" alt="rate star" />
-            <img src="./asset/rate_star.svg" alt="rate star" />
-            <img src="./asset/rate_star.svg" alt="rate star" />
-            <img src="./asset/rate_star.svg" alt="rate star" />
-            <img src="./asset/rate_star.svg" alt="rate star" />
+    <main id="content">
+      <div class="pt-16 bg-dark_green">
+        <h1 class="mt-28 text-white text-[65px] leading-[78px] text-center mb-2">
+          Fernablesung mit Funkgeräten
+        </h1>
+        <p class="text-2xl leading-[28px] text-white text-center max-w-3xl mx-auto mb-6">Effiziente Fernablesung für Warmwasser, Kaltwasser und Heizung –
+          mit fortschrittlicher Funktechnologie</p>
+        <div class="flex items-center justify-center mx-auto w-fit border border-white/20 rounded-[40px] py-2.5 px-4 gap-3 mb-10">
+          <span class="flex items-center justify-start gap-2">
+            <img src="asset/google.png" alt="google">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
+            <img src="./asset/star.png" alt="rate star">
           </span>
-          <span> 4.8 rating </span>
-          <span> 1.850+ Bewertungen </span>
+          <span class="text-[15px] leading-[18px] text-white text-center">
+            4.8 rating
+          </span>
+          <span class="text-[15px] leading-[18px] text-white/70 text-center">
+            1.850+ Bewertungen
+          </span>
         </div>
-        <button>Jetzt installieren lassen</button>
-        <a href="#">Fernablesbare Zähler verpflichtend bis 1. Januar 2027</a>
-        <div>
-          <div>
-            <img src="./asset/counter.png" alt="counter" />
+        <button type="button" class="block mx-auto w-fit py-5 px-10 text-lg text-dark_text bg-green rounded-1/2base mb-4">
+          Jetzt installieren lassen
+        </button>
+        <a href="#" class="text-center mx-auto block text-[15px] leading-[18px] text-white">Fernablesbare Zähler verpflichtend bis 1. Januar 2027</a>
+        <div class="px-[50px] mt-[70px] mb-10 flex items-stretch justify-center gap-2">
+          <div class='bg-card_bg px-9 rounded-base flex items-center justify-center'>
+            <img src="./asset/counter.png" alt="counter">
           </div>
-          <div>
-            <img src="./asset/reviews.png" alt="reviews" />
+          <div class="w-fit bg-card_bg rounded-base">
+            <img src="./asset/reviews.png" alt="reviews">
           </div>
-          <div>
-            <img src="./asset/handyman.png" alt="handyman" />
+          <div class="">
+            <img src="./asset/handyman.png" alt="handyman">
           </div>
         </div>
-        <div>
-          <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen" />
-          <img src="./asset/vonovia.png" alt="vonovia" />
-          <img src="./asset/buderus.png" alt="buderus" />
-          <img src="./asset/techem.png" alt="techem" />
-          <img src="./asset/accentro.png" alt="accentro" />
-          <img src="./asset/watts.png" alt="watts" />
-          <img src="./asset/viessmann.png" alt="viessmann" />
-          <img src="./asset/dehoust.png" alt="dehoust" />
+        <div class="ticker-wrap">
+          <div class="ticker">
+            <div class="ticker__item">
+              <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/vonovia.png" alt="vonovia">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/buderus.png" alt="buderus">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/techem.png" alt="techem">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/accentro.png" alt="accentro">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/watts.png" alt="watts">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/viessmann.png" alt="viessmann">
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/dehoust.png" alt="dehoust">
+            </div>
+          </div>
         </div>
       </div>
       <div>
         <div>
-          <img src="./asset/vonovia.png" alt="vonovia" />
+          <img src="./asset/vonovia.png" alt="vonovia">
           <p>
-            “Mit Heidi konnten wir unsere Heizkosten nicht nur genau tracken,
-            sondern sogar die Kosten für die Erstellung der
-            Betriebskostenabrechnung 40% schneller erstellen als mit bisherigen
-            Lösungen.”
+            “Mit Heidi konnten wir unsere Heizkosten nicht nur genau tracken, sondern sogar die Kosten für die Erstellung der Betriebskostenabrechnung 40% schneller erstellen als mit
+            bisherigen Lösungen.”
           </p>
-          <p>Jan v. Schöbenhauer, VP of Finance, Vonovia</p>
+          <p>
+            Jan v. Schöbenhauer, VP of Finance, Vonovia
+          </p>
         </div>
         <div>
           <div>
-            <img src="./asset/vonovia_person.png" alt="vonovia person" />
-            <img src="./asset/play.svg" alt="play" />
+            <img src="./asset/vonovia_person.png" alt="vonovia person">
+            <img src="./asset/play.svg" alt="play">
           </div>
         </div>
       </div>
       <div>
-        <h2>So funktioniert die Installation</h2>
+        <h2>
+          So funktioniert die Installation
+        </h2>
         <p>
-          Dank Heidi's innovativer Geräte entfallen Vor-Ort-Termine für das
-          Ablesen von Warm- und Kaltwasserzählern vollständig. Erfassen Sie alle
-          relevanten Daten digital und integrieren Sie sie mühelos in Ihre
-          Betriebskostenabrechnung.
+          Dank Heidi's innovativer Geräte entfallen Vor-Ort-Termine für das Ablesen von Warm- und Kaltwasserzählern vollständig. Erfassen Sie alle relevanten Daten digital und integrieren Sie sie mühelos in Ihre Betriebskostenabrechnung.
         </p>
       </div>
       <div>
-        <h2>Zeit ist Geld. Sparen Sie beides.</h2>
+        <h2>
+          Zeit ist Geld. Sparen Sie beides.
+        </h2>
         <div>
           <label for="contact_email">Los gehts</label>
-          <input
-            placeholder="Wie lautet Ihre email?"
-            type="email"
-            name="contact_email"
-            id="contact_email"
-          />
+          <input placeholder="Wie lautet Ihre email?" type="email" name="contact_email" id="contact_email">
         </div>
-        <p>Keine persönlichen Informationen werden gespeichert</p>
+        <p>
+          Keine persönlichen Informationen werden gespeichert
+        </p>
       </div>
     </main>
     <footer class="">

@@ -13,6 +13,8 @@ export default {
         dark_green: '#1E322D',
         green: '#8AD68F',
         card_bg: '#F3F3F3',
+        section_bg: '#F7F7F6',
+        card_dark_bg: '#EFEFEF',
         dark_text: '#1E322D',
         link: '#6083CC',
         card_light: '#E5EBF5',

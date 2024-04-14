@@ -23,3 +23,22 @@ function animateNavbarOnScroll() {
         header.classList.remove("scrolled");
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    new Swiper(".brands-swiper", {
+        // Optional parameters
+        loop: true,
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 75,
+
+        // If we need pagination
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + "</span>";
+            },
+        },
+    });
+});

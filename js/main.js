@@ -1,11 +1,11 @@
 function burgerMenu() {
-    const menu = document.querySelector('#menu')
     const burger = document.querySelector('.burger')
+    const menu = burger.parentNode;
 
     burger.addEventListener('click', () => {
-        burger.classList.toggle('active')
-        menu.classList.toggle('hidden')
-        menu.classList.toggle('flex')
+        burger.classList.toggle('active');
+        menu.classList.toggle('active');
+        document.body.classList.toggle('_lock');
     })
 }
 
@@ -23,3 +23,22 @@ function animateNavbarOnScroll() {
         header.classList.remove("scrolled");
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    new Swiper(".brands-swiper", {
+        // Optional parameters
+        loop: true,
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 75,
+
+        // If we need pagination
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + "</span>";
+            },
+        },
+    });
+});

@@ -22,7 +22,7 @@ html {
   display: flex;
   width: 18px;
   height: 2px;
-  background-color: #715336;
+  background-color: #F3F3F3;
   transition: 0.3s all ease;
 }
 .top-line {
@@ -33,13 +33,15 @@ html {
 .mid-line {
   position: absolute;
   left: 0;
-  top: 50%;
-  transform: rotate(45deg);
+  top: 42%;
 }
 .bot-line {
   position: absolute;
   left: 0;
   bottom: 0;
+}
+.burger.active .burger-line {
+  background-color: #1E322D;
 }
 .burger.active > .top-line {
   transform: translateY(0px) rotate(45deg);
@@ -69,7 +71,7 @@ html {
 .ticker-wrap .ticker {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   gap: 100px;
   white-space: nowrap;
   position: relative;
@@ -96,7 +98,11 @@ html {
   opacity: 0.2;
   min-width: 100px;
   min-height: 22px;
-  filter: invert(100%) sepia(57%) saturate(0%) hue-rotate(249deg) brightness(106%) contrast(101%);
+  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%) contrast(101%);
+}
+
+.whiteImage {
+  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%) contrast(101%);
 }
 
 @-webkit-keyframes ticker {
@@ -132,5 +138,45 @@ html {
     -webkit-transform: translate3d(-200%, 0, 0);
     transform: translate3d(-200%, 0, 0);
     visibility: visible;
+  }
+}
+
+.section-title:before {
+  width: 21px;
+  height: 21px;
+  border-radius: 5px;
+  background-color: #8AD68F;
+  position: absolute;
+  top: -34px;
+  content: '';
+  display: block;
+  left: 48%;
+  right: 48%;
+}
+
+.swiper-pagination-bullet {
+  width: 30px;
+  border-radius: 0;
+  height: 3px;
+  background-color: #ffffff;
+  opacity: 20%;
+  transition: 0.3s all;
+}
+.swiper-pagination-bullet-active {
+  opacity: 100%;
+}
+.arrowLink {
+  filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg) brightness(84%) contrast(87%);
+  transform: rotate(-90deg);
+  margin-bottom: -5px;
+}
+
+._lock {
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .ticker-wrap .ticker {
+    gap: 50px;
   }
 }

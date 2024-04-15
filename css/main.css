@@ -1715,6 +1715,14 @@ html {
 }
 
 @media (max-width: 768px) {
+  .medium\:relative {
+    position: relative;
+  }
+
+  .medium\:right-0 {
+    right: 0px;
+  }
+
   .medium\:col-span-1 {
     grid-column: span 1 / span 1;
   }
@@ -1725,6 +1733,14 @@ html {
 
   .medium\:flex {
     display: flex;
+  }
+
+  .medium\:hidden {
+    display: none;
+  }
+
+  .medium\:w-full {
+    width: 100%;
   }
 
   .medium\:grid-cols-1 {
@@ -1739,12 +1755,24 @@ html {
     flex-direction: column;
   }
 
+  .medium\:flex-col-reverse {
+    flex-direction: column-reverse;
+  }
+
   .medium\:items-start {
     align-items: flex-start;
   }
 
+  .medium\:items-center {
+    align-items: center;
+  }
+
   .medium\:justify-start {
     justify-content: flex-start;
+  }
+
+  .medium\:gap-8 {
+    gap: 2rem;
   }
 
   .medium\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1772,6 +1800,15 @@ html {
     padding-bottom: 2rem;
   }
 
+  .medium\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .medium\:text-center {
+    text-align: center;
+  }
+
   .medium\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -1780,6 +1817,14 @@ html {
   .medium\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
+  }
+
+  .medium\:text-\[19px\] {
+    font-size: 19px;
+  }
+
+  .medium\:leading-\[22px\] {
+    line-height: 22px;
   }
 }
 
@@ -1801,12 +1846,26 @@ html {
     min-width: fit-content;
   }
 
+  .small\:max-w-lg {
+    max-width: 32rem;
+  }
+
   .small\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .small\:flex-col {
     flex-direction: column;
+  }
+
+  .small\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .small\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .small\:text-2xl {

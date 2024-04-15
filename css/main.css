@@ -1792,6 +1792,10 @@ html {
     margin-top: 1.5rem;
   }
 
+  .small\:w-full {
+    width: 100%;
+  }
+
   .small\:min-w-fit {
     min-width: -moz-fit-content;
     min-width: fit-content;

@@ -692,6 +692,10 @@ video {
   margin-right: 0px;
 }
 
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -743,6 +747,11 @@ video {
 .size-12 {
   width: 3rem;
   height: 3rem;
+}
+
+.size-9 {
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .size-\[25px\] {
@@ -1373,8 +1382,6 @@ html {
 }
 
 .burger {
-  height: 12px;
-  width: 18px;
   position: relative;
 }
 
@@ -1382,34 +1389,16 @@ html {
   display: flex;
   width: 18px;
   height: 2px;
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
   transition: 0.3s all ease;
 }
 
-.top-line {
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.mid-line {
-  position: absolute;
-  left: 0;
-  top: 42%;
-}
-
-.bot-line {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-}
-
 .burger.active .burger-line {
-  background-color: #1E322D;
+  background-color: #1e322d;
 }
 
 .burger.active > .top-line {
-  transform: translateY(0px) rotate(45deg);
+  transform: translateY(1px) rotate(45deg);
   transition: 0.3s all ease;
 }
 
@@ -1419,7 +1408,7 @@ html {
 }
 
 .burger.active > .bot-line {
-  transform: translateY(-10px) rotate(-45deg);
+  transform: translateY(-11px) rotate(-45deg);
   transition: 0.3s all ease;
 }
 
@@ -1463,11 +1452,13 @@ html {
   opacity: 0.2;
   min-width: 100px;
   min-height: 22px;
-  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%) contrast(101%);
+  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
+    contrast(101%);
 }
 
 .whiteImage {
-  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%) contrast(101%);
+  filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
+    contrast(101%);
 }
 
 @keyframes ticker {
@@ -1491,10 +1482,10 @@ html {
   width: 21px;
   height: 21px;
   border-radius: 5px;
-  background-color: #8AD68F;
+  background-color: #8ad68f;
   position: absolute;
   top: -34px;
-  content: '';
+  content: "";
   display: block;
   left: 48%;
   right: 48%;
@@ -1514,7 +1505,8 @@ html {
 }
 
 .arrowLink {
-  filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg) brightness(84%) contrast(87%);
+  filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg)
+    brightness(84%) contrast(87%);
   transform: rotate(-90deg);
   margin-bottom: -5px;
 }
@@ -1600,8 +1592,8 @@ html {
     margin-top: 4rem;
   }
 
-  .large\:block {
-    display: block;
+  .large\:mt-12 {
+    margin-top: 3rem;
   }
 
   .large\:flex {
@@ -1771,6 +1763,10 @@ html {
     justify-content: flex-start;
   }
 
+  .medium\:justify-end {
+    justify-content: flex-end;
+  }
+
   .medium\:gap-8 {
     gap: 2rem;
   }
@@ -1790,6 +1786,11 @@ html {
     padding-right: 1rem;
   }
 
+  .medium\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
   .medium\:py-16 {
     padding-top: 4rem;
     padding-bottom: 4rem;
@@ -1800,9 +1801,8 @@ html {
     padding-bottom: 2rem;
   }
 
-  .medium\:px-5 {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+  .medium\:pr-0 {
+    padding-right: 0px;
   }
 
   .medium\:text-center {
@@ -1814,17 +1814,30 @@ html {
     line-height: 2.25rem;
   }
 
+  .medium\:text-\[19px\] {
+    font-size: 19px;
+  }
+
   .medium\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
 
-  .medium\:text-\[19px\] {
-    font-size: 19px;
+  .medium\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
   .medium\:leading-\[22px\] {
     line-height: 22px;
+  }
+
+  .medium\:leading-4 {
+    line-height: 1rem;
+  }
+
+  .medium\:text-white\/60 {
+    color: rgb(255 255 255 / 0.6);
   }
 }
 
@@ -1856,11 +1869,6 @@ html {
 
   .small\:flex-col {
     flex-direction: column;
-  }
-
-  .small\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 
   .small\:px-4 {

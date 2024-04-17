@@ -71,13 +71,13 @@
           <div class="flex items-center justify-end gap-base">
             <a
               href="#"
-              class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green"
+              class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
             >
               Angebot
             </a>
             <a
               href="#"
-              class="border border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
+              class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
             >
               Anrufen buchen
             </a>
@@ -85,12 +85,12 @@
         </div>
         <a
           href="#"
-          class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base"
+          class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
         >
           Angebot
         </a>
         <button
-          class="burger size-9 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
+          class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
         >
           <span class="burger-line top-line"></span>
           <span class="burger-line mid-line"></span>
@@ -683,11 +683,11 @@
                   spezifischen Anforderungen zu besprechen.
                 </p>
                 <a
-                  class="mt-10 text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
+                  class="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
                   href="#"
                   >Erfahren Sie mehr
                   <img
-                    class="arrowLink"
+                    class="arrowLink group-hover:translate-x-1.5 group-hover:-rotate-90 duration-300"
                     src="./asset/right_arrow.png"
                     alt="chevron"
                 /></a>
@@ -720,11 +720,11 @@
                   der Fernablesung ohne die Notwendigkeit von Vor-Ort-Terminen.
                 </p>
                 <a
-                  class="mt-10 text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
+                  class="mt-10 text-link group text-base leading-[19.2px] flex items-center justify-start gap-2"
                   href="#"
                   >Erfahren Sie mehr
                   <img
-                    class="arrowLink"
+                    class="arrowLink group-hover:translate-x-1.5 group-hover:-rotate-90 duration-300"
                     src="./asset/right_arrow.png"
                     alt="chevron"
                 /></a>
@@ -758,11 +758,11 @@
                   übersichtlich im Blick.
                 </p>
                 <a
-                  class="mt-10 text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
+                  class="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
                   href="#"
                   >Erfahren Sie mehr
                   <img
-                    class="arrowLink"
+                    class="arrowLink group-hover:translate-x-1.5 group-hover:-rotate-90 duration-300"
                     src="./asset/right_arrow.png"
                     alt="chevron"
                 /></a>
@@ -855,10 +855,13 @@
           </div>
         </div>
         <a
-          class="mt-10 mx-auto text-link text-base leading-[19.2px] mb-4 flex items-center justify-center gap-2"
+          class="my-10 group mx-auto text-link text-base leading-[19.2px] flex items-center justify-center gap-2"
           href="#"
           >Erfahren Sie mehr
-          <img class="arrowLink" src="./asset/right_arrow.png" alt="chevron"
+          <img
+            class="arrowLink group-hover:translate-x-1.5 group-hover:-rotate-90 duration-300"
+            src="./asset/right_arrow.png"
+            alt="chevron"
         /></a>
       </div>
       <div
@@ -870,53 +873,58 @@
           Wir sind Ihr langfristiger Partner für Klimaschutz-Technologie
         </h2>
         <p
-          class="mb-6 max-w-4xl mx-auto text-center text-dark_text text-base leading-[19.2px]"
+          class="mb-10 max-w-4xl mx-auto text-center text-dark_text text-base leading-[19.2px]"
         >
           Wir installieren Funksender für Warmwasser, Kaltwasser, für den
           Verbrauch von Heizungen und Rauchmelder.
         </p>
-        <div class="grid grid-cols-3 gap-5 medium:grid-cols-1 mb-20">
-          <div class="rounded-base bg-card_dark_bg p-4 pb-10">
-            <img
-              class="block w-full mb-2.5"
-              src="./asset/news1.png"
-              alt="news image"
-            />
-            <p class="text-dark_text text-[30px] leading-9 mb-4">
-              Alles aus einer Hand
-            </p>
-            <p class="text-dark_text text-[17px] leading-5">
-              Beratung, Planung, Installation, Service & Wartung - unkompliziert
-              und reibungslos.
-            </p>
+        <div class="swiper mb-20 news-swiper">
+          <div class="grid medium:flex swiper-wrapper grid-cols-3 gap-5">
+            <div class="rounded-base swiper-slide bg-card_dark_bg p-4 pb-10">
+              <img
+                class="block w-full mb-2.5"
+                src="./asset/news1.png"
+                alt="news image"
+              />
+              <p class="text-dark_text text-[30px] leading-9 mb-4">
+                Alles aus einer Hand
+              </p>
+              <p class="text-dark_text text-[17px] leading-5">
+                Beratung, Planung, Installation, Service & Wartung -
+                unkompliziert und reibungslos.
+              </p>
+            </div>
+            <div class="rounded-base swiper-slide bg-card_dark_bg p-4 pb-10">
+              <img
+                class="block w-full mb-2.5"
+                src="./asset/news2.png"
+                alt="news image"
+              />
+              <p class="text-dark_text text-[30px] leading-9 mb-4">
+                Regionale Meisterbetriebe
+              </p>
+              <p class="text-dark_text text-[17px] leading-5">
+                Wir verbinden traditionelles Handwerk mit der Technologie von
+                morgen.
+              </p>
+            </div>
+            <div class="rounded-base swiper-slide bg-card_dark_bg p-4 pb-10">
+              <img
+                class="block w-full mb-2.5"
+                src="./asset/news3.png"
+                alt="news image"
+              />
+              <p class="text-dark_text text-[30px] leading-9 mb-4">
+                72 Standorte deutschlandweit
+              </p>
+              <p class="text-dark_text text-[17px] leading-5">
+                Die Heidi- Gruppe ist mit Standorten deutschlandweit vertreten
+                und agiert auch in Österreich, Dänemark und der Schweiz
+              </p>
+            </div>
           </div>
-          <div class="rounded-base bg-card_dark_bg p-4 pb-10">
-            <img
-              class="block w-full mb-2.5"
-              src="./asset/news2.png"
-              alt="news image"
-            />
-            <p class="text-dark_text text-[30px] leading-9 mb-4">
-              Regionale Meisterbetriebe
-            </p>
-            <p class="text-dark_text text-[17px] leading-5">
-              Wir verbinden traditionelles Handwerk mit der Technologie von
-              morgen.
-            </p>
-          </div>
-          <div class="rounded-base bg-card_dark_bg p-4 pb-10">
-            <img
-              class="block w-full mb-2.5"
-              src="./asset/news3.png"
-              alt="news image"
-            />
-            <p class="text-dark_text text-[30px] leading-9 mb-4">
-              72 Standorte deutschlandweit
-            </p>
-            <p class="text-dark_text text-[17px] leading-5">
-              Die Heidi- Gruppe ist mit Standorten deutschlandweit vertreten und
-              agiert auch in Österreich, Dänemark und der Schweiz
-            </p>
+          <div class="swiper-controllers">
+            <div class="news-swiper-pagination"></div>
           </div>
         </div>
         <h2
@@ -953,7 +961,7 @@
             id="contact_email"
           />
           <button
-            class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex items-center justify-center top-1.5 right-1.5 text-dark_text"
+            class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
             type="button"
           >
             Los gehts
@@ -970,7 +978,7 @@
       class="px-[72px] megalarge:px-6 medium:px-5 bg-card_dark_bg pt-16 pb-12"
     >
       <div
-        class="flex items-center justify-start gap-5 large:flex-wrap large:gap-3"
+        class="flex items-center justify-between gap-5 large:flex-wrap large:gap-3"
       >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
           >Über uns</a
@@ -1102,7 +1110,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Leipzig
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >nue</span
               ></a
             >
@@ -1126,7 +1134,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Wolfsburg
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >nue</span
               ></a
             >
@@ -1135,7 +1143,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Gera
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >beliebt</span
               ></a
             >
@@ -1159,7 +1167,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Die Neuerung
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >nue</span
               ></a
             >
@@ -1294,7 +1302,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Blog
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >beliebt</span
               ></a
             >
@@ -1313,7 +1321,7 @@
               class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
               >Vororttermin
               <span
-                class="rounded-1/2base bg-green py-1 px-2 text-dark_text text-lg leading-[21px]"
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
                 >neu</span
               ></a
             >
@@ -1356,7 +1364,7 @@
               id="footer_contact_email"
             />
             <button
-              class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex items-center justify-center top-1.5 right-1.5 text-dark_text"
+              class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
               type="button"
             >
               Los gehts

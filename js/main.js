@@ -1,44 +1,79 @@
 function burgerMenu() {
-    const burger = document.querySelector('.burger')
-    const menu = burger.parentNode;
+  const burger = document.querySelector(".burger");
+  const menu = burger.parentNode;
 
-    burger.addEventListener('click', () => {
-        burger.classList.toggle('active');
-        menu.classList.toggle('active');
-        document.body.classList.toggle('_lock');
-    })
+  burger.addEventListener("click", () => {
+    burger.classList.toggle("active");
+    menu.classList.toggle("active");
+    document.body.classList.toggle("_lock");
+  });
 }
 
 burgerMenu();
 
-const header = document.querySelector('#header');
+const header = document.querySelector("#header");
 
-document.addEventListener('scroll', animateNavbarOnScroll);
+document.addEventListener("scroll", animateNavbarOnScroll);
 
 function animateNavbarOnScroll() {
-    let totalHeight = header.clientHeight + 250
-    if (window.scrollY >= totalHeight) {
-        header.classList.add("scrolled");
-    } else {
-        header.classList.remove("scrolled");
-    }
+  let totalHeight = header.clientHeight + 250;
+  if (window.scrollY >= totalHeight) {
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    new Swiper(".brands-swiper", {
-        // Optional parameters
-        loop: true,
-        slidesPerView: 1,
-        centeredSlides: true,
-        spaceBetween: 75,
+  const s1 = new Swiper(".brands-swiper", {
+    // Optional parameters
+    // loop: true,
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    mousewheel: true,
 
-        // If we need pagination
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            renderBullet: function (index, className) {
-                return '<span class="' + className + '">' + "</span>";
-            },
-        },
-    });
+    // If we need pagination
+    pagination: {
+      el: ".brand-swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + "</span>";
+      },
+      dynamicBullets: true,
+    },
+  });
+
+  const s2 = new Swiper(".news-swiper", {
+    // Optional parameters
+    loop: true,
+    slidesPerView: 1,
+    centeredSlides: false,
+    mousewheel: true,
+    spaceBetween: 25,
+
+    // If we need pagination
+    pagination: {
+      el: ".news-swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+        return '<span class="' + className + '">' + "</span>";
+      },
+    },
+  });
+
+  // Function to destroy Swiper instance
+  function destroySwiper() {
+    s2.destroy(true, true); // Destroy Swiper instance with cleanup
+  }
+
+  // Check window width on resize
+  window.addEventListener("resize", function () {
+    if (window.innerWidth >= 768) {
+      destroySwiper(); // Destroy Swiper if window width is >= 768px
+    }
+  });
 });

@@ -1790,6 +1790,11 @@ html {
     padding-right: 1rem;
   }
 
+  .medium\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
   .medium\:py-16 {
     padding-top: 4rem;
     padding-bottom: 4rem;
@@ -1798,11 +1803,6 @@ html {
   .medium\:py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
-  }
-
-  .medium\:px-5 {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
   }
 
   .medium\:text-center {
@@ -1814,13 +1814,13 @@ html {
     line-height: 2.25rem;
   }
 
+  .medium\:text-\[19px\] {
+    font-size: 19px;
+  }
+
   .medium\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .medium\:text-\[19px\] {
-    font-size: 19px;
   }
 
   .medium\:leading-\[22px\] {
@@ -1856,11 +1856,6 @@ html {
 
   .small\:flex-col {
     flex-direction: column;
-  }
-
-  .small\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 
   .small\:px-4 {

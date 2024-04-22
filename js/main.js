@@ -31,12 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
     slidesPerView: 1,
     centeredSlides: true,
     spaceBetween: 75,
+    mousewheel: true,
 
     // If we need pagination
     pagination: {
-      el: ".swiper-pagination",
+      el: ".brand-swiper-pagination",
       clickable: true,
-      renderBullet: function (className) {
+      renderBullet: function (index, className) {
         // Calculate which bullets to show
 
         return '<span class="' + className + '">' + "</span>";
@@ -50,17 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
     loop: true,
     slidesPerView: 1,
     centeredSlides: false,
+    mousewheel: true,
     spaceBetween: 25,
 
     // If we need pagination
     pagination: {
       el: ".news-swiper-pagination",
       clickable: true,
-      renderBullet: function (className) {
+      renderBullet: function (index, className) {
         // Calculate which bullets to show
         return '<span class="' + className + '">' + "</span>";
       },
-      dynamicBullets: true,
     },
   });
 

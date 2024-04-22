@@ -238,3 +238,93 @@ html {
 .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
   transform: scale(1) !important;
 }
+
+.faq-wrapper {
+  margin-bottom: 160px;
+}
+
+.faq-answer-item {
+  border-bottom: 1px solid rgba(30, 50, 45, 0.2);
+  overflow: hidden;
+  transition: 0.3s all;
+}
+.faq-answer-header {
+  color: #1E322D;
+  padding: 16px 0;
+  font-size: 18px;
+  line-height: 21.6px;
+  border-top: 1px solid rgba(30, 50, 45, 0.2);
+  font-weight: 400;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s ease;
+  gap: 12px;
+}
+
+.accordion-content {
+  background-color: #fafafa;
+  overflow: hidden;
+  padding: 0 15px;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.faq-answer-content {
+  display: none;
+}
+.faq-answer-content p {
+  line-height: 24px;
+  color: #1E322D;
+  font-size: 16px;
+  padding: 16px 0;
+}
+.faq-answer-content a {
+  line-height: 24px;
+  color: #ffffff;
+  font-size: 16px;
+  text-decoration: underline;
+}
+.faq-icon {
+  transition: transform 0.3s ease;
+  width: 35px;
+  background-color: #D9D9D9;
+  border: 1px solid rgba(30, 50, 45, 0.2);
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.faq-icon img {
+  width: 10px;
+  height: 10px;
+  transition: 0.3s all ease;
+  filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg) brightness(97%) contrast(89%);
+  opacity: 0.5;
+}
+
+.active .faq-icon img {
+  transform: rotate(270deg);
+}
+
+@media (max-width: 992px) {
+  .faq-wrapper,
+  .feedback-inner {
+    padding: 0 20px;
+    margin-bottom: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-answer-header {
+    padding: 12px 18px;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+}

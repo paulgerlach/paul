@@ -628,9 +628,9 @@ video {
   margin-bottom: 2.5rem;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .-mb-10 {
@@ -677,16 +677,16 @@ video {
   margin-bottom: 1.25rem;
 }
 
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
 .mb-\[18px\] {
   margin-bottom: 18px;
 }
 
 .mb-\[84px\] {
   margin-bottom: 84px;
+}
+
+.mb-auto {
+  margin-bottom: auto;
 }
 
 .ml-auto {
@@ -973,6 +973,10 @@ video {
 
 .whitespace-nowrap {
   white-space: nowrap;
+}
+
+.break-all {
+  word-break: break-all;
 }
 
 .rounded-1\/2base {
@@ -1533,13 +1537,18 @@ html {
   opacity: 100%;
 }
 
-.news-swiper-pagination .swiper-pagination-bullet {
+.news-swiper-pagination .swiper-pagination-bullet, .functions-swiper-pagination .swiper-pagination-bullet {
   background-color: #1E322D;
 }
 
 .news-swiper-pagination {
   bottom: auto !important;
   top: 20px !important;
+}
+
+.functions-swiper-pagination {
+  bottom: auto !important;
+  top: 0 !important;
 }
 
 .arrowLink {
@@ -1618,6 +1627,10 @@ html {
   }
 }
 
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
+  transform: scale(1) !important;
+}
+
 .placeholder\:text-xl::-moz-placeholder {
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1679,6 +1692,11 @@ html {
   .megalarge\:px-16 {
     padding-left: 4rem;
     padding-right: 4rem;
+  }
+
+  .megalarge\:px-20 {
+    padding-left: 5rem;
+    padding-right: 5rem;
   }
 
   .megalarge\:px-6 {
@@ -1784,6 +1802,10 @@ html {
     justify-content: center;
   }
 
+  .large\:justify-between {
+    justify-content: space-between;
+  }
+
   .large\:gap-3 {
     gap: 0.75rem;
   }
@@ -1869,6 +1891,10 @@ html {
 
   .medium\:mt-10 {
     margin-top: 2.5rem;
+  }
+
+  .medium\:mt-24 {
+    margin-top: 6rem;
   }
 
   .medium\:block {
@@ -1965,6 +1991,11 @@ html {
     padding-bottom: 4rem;
   }
 
+  .medium\:py-3 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
   .medium\:py-8 {
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -1995,6 +2026,11 @@ html {
     font-size: 30px;
   }
 
+  .medium\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
   .medium\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -2002,6 +2038,10 @@ html {
 
   .medium\:leading-4 {
     line-height: 1rem;
+  }
+
+  .medium\:leading-6 {
+    line-height: 1.5rem;
   }
 
   .medium\:leading-9 {

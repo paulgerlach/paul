@@ -152,12 +152,16 @@ html {
   opacity: 100%;
 }
 
-.news-swiper-pagination .swiper-pagination-bullet {
+.news-swiper-pagination .swiper-pagination-bullet, .functions-swiper-pagination .swiper-pagination-bullet {
   background-color: #1E322D;
 }
 .news-swiper-pagination {
   bottom: auto !important;
   top: 20px !important;
+}
+.functions-swiper-pagination {
+  bottom: auto !important;
+  top: 0 !important;
 }
 .arrowLink {
   filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg)
@@ -229,4 +233,8 @@ html {
     background-color: rgba(138, 214, 143, 0.1);
 
   }
+}
+
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
+  transform: scale(1) !important;
 }

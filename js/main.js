@@ -45,27 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
       dynamicBullets: true,
     },
   });
-
-  // // Function to destroy Swiper instance
-  // function destroySwiper() {
-  //   s2.destroy(true, true); // Destroy Swiper instance with cleanup
-  // }
-
-  // // Check window width on resize
-  // window.addEventListener("resize", function () {
-  //   if (window.innerWidth >= 768) {
-  //     destroySwiper(); // Destroy Swiper if window width is >= 768px
-  //   }
-  // });
 });
 
-var init = false;
-var swiper;
+let init = false;
+let newsSwiper;
+let functionsSwiper;
 function swiperCard() {
   if (window.innerWidth <= 768) {
     if (!init) {
       init = true;
-      swiper = new Swiper(".brands-swiper", {
+      newsSwiper = new Swiper(".news-swiper", {
         // Optional parameters
         // loop: true,
         slidesPerView: 1,
@@ -75,7 +64,27 @@ function swiperCard() {
 
         // If we need pagination
         pagination: {
-          el: ".brand-swiper-pagination",
+          el: ".news-swiper-pagination",
+          clickable: true,
+          renderBullet: function (index, className) {
+            // Calculate which bullets to show
+
+            return '<span class="' + className + '">' + "</span>";
+          },
+          dynamicBullets: true,
+        },
+      });
+      functionsSwiper = new Swiper(".functions-swiper", {
+        // Optional parameters
+        // loop: true,
+        slidesPerView: 1,
+        centeredSlides: true,
+        spaceBetween: 75,
+        mousewheel: true,
+
+        // If we need pagination
+        pagination: {
+          el: ".functions-swiper-pagination",
           clickable: true,
           renderBullet: function (index, className) {
             // Calculate which bullets to show
@@ -87,7 +96,8 @@ function swiperCard() {
       });
     }
   } else if (init) {
-    swiper.destroy();
+    newsSwiper.destroy();
+    functionsSwiper.destroy();
     init = false;
   }
 }

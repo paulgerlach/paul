@@ -919,8 +919,8 @@ video {
   padding-bottom: 4rem;
 }
 
-.pb-44 {
-  padding-bottom: 11rem;
+.pb-32 {
+  padding-bottom: 8rem;
 }
 
 .pt-16 {
@@ -929,10 +929,6 @@ video {
 
 .pt-8 {
   padding-top: 2rem;
-}
-
-.pb-32 {
-  padding-bottom: 8rem;
 }
 
 .text-center {

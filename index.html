@@ -1,767 +1,1091 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./asset/header_logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-            href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
     />
     <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
     <link rel="stylesheet" href="./css/main.css" />
     <title>Heidi</title>
-</head>
-<body>
-<header id="header" class="fixed w-full top-0">
-    <div
-            class="flex items-center bg-dark_green w-full px-10 medium:px-5 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between"
-    >
+  </head>
+  <body>
+    <header id="header" class="fixed w-full top-0">
+      <div
+        class="flex items-center bg-dark_green w-full px-10 medium:px-5 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between"
+      >
         <div class="flex items-center justify-start gap-3">
-            <span class="text-xl text-white"> Heidi </span>
-            <img src="./asset/header_logo.svg" alt="logo" />
+          <span class="text-xl text-white"> Heidi </span>
+          <img src="./asset/header_logo.svg" alt="logo" />
         </div>
         <div
-                class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
+          class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
         >
-            <div
-                    class="flex-grow flex items-center justify-center large:items-start large:justify-start"
+          <div
+            class="flex-grow flex items-center justify-center large:items-start large:justify-start"
+          >
+            <nav
+              class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
             >
-                <nav
-                        class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
-                >
-                    <a
-                            href="#"
-                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-                    >
-                        Geräte <img src="./asset/right_arrow.png" alt="arrow" />
-                    </a>
-                    <a
-                            href="#"
-                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-                    >
-                        Dienstleistungen
-                        <img src="./asset/right_arrow.png" alt="arrow" />
-                    </a>
-                    <a
-                            href="#"
-                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-                    >
-                        Kunden
-                    </a>
-                    <a
-                            href="#"
-                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-                    >
-                        Ressourcen <img src="./asset/right_arrow.png" alt="arrow" />
-                    </a>
-                    <a
-                            href="#"
-                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-                    >
-                        Preise
-                    </a>
-                </nav>
-            </div>
-            <div class="flex items-center justify-end gap-base">
-                <a
-                        href="#"
-                        class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
-                >
-                    Angebot
-                </a>
-                <a
-                        href="#"
-                        class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
-                >
-                    Anrufen buchen
-                </a>
-            </div>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Geräte <img src="./asset/right_arrow.png" alt="arrow" />
+              </a>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Dienstleistungen
+                <img src="./asset/right_arrow.png" alt="arrow" />
+              </a>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Kunden
+              </a>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Ressourcen <img src="./asset/right_arrow.png" alt="arrow" />
+              </a>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Preise
+              </a>
+            </nav>
+          </div>
+          <div class="flex items-center justify-end gap-base">
+            <a
+              href="#"
+              class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
+            >
+              Angebot
+            </a>
+            <a
+              href="#"
+              class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
+            >
+              Anrufen buchen
+            </a>
+          </div>
         </div>
         <a
-                href="#"
-                class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
+          href="#"
+          class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
         >
-            Angebot
+          Angebot
         </a>
         <button
-                class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
+          class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
         >
-            <span class="burger-line top-line"></span>
-            <span class="burger-line mid-line"></span>
-            <span class="burger-line bot-line"></span>
+          <span class="burger-line top-line"></span>
+          <span class="burger-line mid-line"></span>
+          <span class="burger-line bot-line"></span>
         </button>
-    </div>
-</header>
-<main id="content">
-    <div>
-
-    </div>
-    <div class="bg-section_bg px-[72px] large:px-6 pt-16 pb-32 large:pt-8 large:pb-20">
-        <h3 class="mb-14 text-[45px] leading-[54px] medium:text-2xl text-dark_text">
-            FAQ
-        </h3>
-        <div class="faq-tabs-answers grid-cols-2 grid gap-[88px] large:gap-11 medium:grid-cols-1 medium:gap-6">
-            <div class="faq-answers-container" data-tab="1">
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Muss ich auf Funktechnik umrüsten?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Besteht eine Einbaupflich für Funkmessgeräte?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Welche Daten werden per Funk ausgelesen
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Sind die Daten in Echtzeit verfügbar?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Wer nimmt die Installation der Geräte vor?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Was kostet die Installation der Geräte?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="faq-answers-container" data-tab="1">
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Was ist ein Smart-Meter-Gateway (SMGW)?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Was versteh man unter einem intelligenten Gerät?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Ist die Erstellung der Betriebskostenabrechnung möglich?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Ist der Wartung der Geräte inklusive?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Wie viel Kostet der Service?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-answer-item">
-                    <div class="faq-answer-header">
-                        <p class="faq-question">
-                            Welche Geräte werden angebote?
-                        </p>
-                        <div class="faq-icon">
-                            <img class="rotate-90" src="./asset/chevron.png" alt="chevron" />
-                        </div>
-                    </div>
-                    <div class="faq-answer-content">
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad autem commodi, deserunt dicta eius in inventore laudantium molestiae odit possimus tempore, unde ut vel? Architecto beatae explicabo ipsum quaerat repellendus.
-                        </p>
-                    </div>
-                </div>
-            </div>
+      </div>
+    </header>
+    <main id="content">
+      <div
+        class="bg-[#FAFAF9] flex items-center gap-32 justify-center pt-24 pl-[120px] pb-4 pr-4"
+      >
+        <div>
+          <h1 class="text-[65px] leading-[78px] text-dark_text mb-2">
+            Auf Funkgeräte <br />
+            umrüsten
+          </h1>
+          <p class="text-dark_text text-xl">
+            Auf gesetzlich vorgeschrieben Zähler umstellen <br />
+            und Verbräuche digital ablesen
+          </p>
+          <button
+            type="button"
+            class="medium:w-full w-fit py-5 medium:py-3 px-10 text-lg text-dark_text bg-green rounded-1/2base my-5"
+          >
+            Jetzt installieren lassen
+          </button>
+          <p class="text-dark_text text-xl">
+            Kostenfreie Installation der Funkgeräte
+          </p>
         </div>
-    </div>
-    <div class="p-[72px] large:p-6">
-        <h3 class="mb-14 text-[45px] text-center leading-[54px] medium:text-2xl text-dark_text">
-            Geräteangebot
-        </h3>
-        <div class="swiper counters-swiper">
-
+        <div class="grid-cols-2 grid grid-rows-3 max-w-[686px] gap-5">
+          <img
+            class="col-span-2 rounded-base h-full object-cover row-span-2"
+            src="./asset/hero_counter.png"
+            alt="hero counter image"
+          />
+          <div
+            class="flex items-center justify-center bg-[#E0DEDB] rounded-base"
+          >
+            <img
+              src="./asset/hero_small_counter.png"
+              alt="hero counter image"
+            />
+          </div>
+          <div
+            class="flex items-end p-7 pb-0 justify-center bg-[#E0DEDB] rounded-base"
+          >
+            <img src="./asset/hero_pointer.png" alt="hero counter image" />
+          </div>
         </div>
-    </div>
-    <div class="py-14 small:px-4">
-        <h2
-                class="text-center max-w-4xl mx-auto text-[30px] leading-9 mb-5 text-dark_text relative"
+      </div>
+      <div class="px-[100px] py-8 flex items-center justify-start gap-16">
+        <div
+          class="flex group items-center justify-start max-w-[345px] w-full small:flex-col rounded-[40px] py-2.5 px-4 medium:hidden gap-3"
         >
-            Zeit ist Geld. Sparen Sie beides.
+          <span class="flex items-center w-full justify-start gap-2">
+            <img
+              class="colored-to-black size-5"
+              src="./asset/google.png"
+              alt="google"
+            />
+            <img class="size-4" src="./asset/star.png" alt="rate star" />
+            <img class="size-4" src="./asset/star.png" alt="rate star" />
+            <img class="size-4" src="./asset/star.png" alt="rate star" />
+            <img class="size-4" src="./asset/star.png" alt="rate star" />
+            <img class="size-4" src="./asset/star.png" alt="rate star" />
+          </span>
+          <span
+            class="text-[15px] whitespace-nowrap leading-[18px] text-dark_text text-center"
+          >
+            1.850+ Bewertungen
+          </span>
+          <img
+            class="size-2.5 -rotate-90 transition colored-to-black group-hover:translate-x-1.5"
+            src="./asset/right_arrow.png"
+            alt="chevron"
+          />
+        </div>
+        <div class="ticker-wrap not-filtered medium:hidden">
+          <div class="ticker">
+            <div class="ticker__item">
+              <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/vonovia.png" alt="vonovia" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/buderus.png" alt="buderus" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/techem.png" alt="techem" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/accentro.png" alt="accentro" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/watts.png" alt="watts" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/viessmann.png" alt="viessmann" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/dehoust.png" alt="dehoust" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/vonovia.png" alt="vonovia" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/buderus.png" alt="buderus" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/techem.png" alt="techem" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/accentro.png" alt="accentro" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/watts.png" alt="watts" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/viessmann.png" alt="viessmann" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/dehoust.png" alt="dehoust" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/deutsche_wohnen.png" alt="deutsche_wohmen" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/vonovia.png" alt="vonovia" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/buderus.png" alt="buderus" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/techem.png" alt="techem" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/accentro.png" alt="accentro" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/watts.png" alt="watts" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/viessmann.png" alt="viessmann" />
+            </div>
+            <div class="ticker__item">
+              <img src="./asset/dehoust.png" alt="dehoust" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper numbered-swiper">
+        <div class="swiper-wrapper">
+          <div
+            class="swiper-slide rounded-base bg-[#EFEDEC] flex items-center justify-start gap-9"
+          >
+            <img src="./asset/nunbered_counter.png" alt="numbered counter" />
+            <div></div>
+            <div class="flex flex-col items-center justify-center gap-6">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+      <div class="px-24 mt-28 grid grid-cols-3 large:grid-cols-2 gap-16">
+        <h3
+          class="large:col-span-2 large:text-center large:mb-12 medium:col-end-1"
+        >
+          Eigenschaften
+        </h3>
+        <div></div>
+        <div></div>
+      </div>
+      <div
+        class="bg-section_bg px-[72px] large:px-6 pt-16 pb-32 large:pt-8 large:pb-20"
+      >
+        <h3
+          class="mb-14 text-[45px] leading-[54px] medium:text-2xl text-dark_text"
+        >
+          FAQ
+        </h3>
+        <div
+          class="faq-tabs-answers grid-cols-2 grid gap-[88px] large:gap-11 medium:grid-cols-1 medium:gap-6"
+        >
+          <div class="faq-answers-container" data-tab="1">
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Muss ich auf Funktechnik umrüsten?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Besteht eine Einbaupflich für Funkmessgeräte?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Welche Daten werden per Funk ausgelesen
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Sind die Daten in Echtzeit verfügbar?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Wer nimmt die Installation der Geräte vor?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was kostet die Installation der Geräte?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="faq-answers-container" data-tab="1">
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was ist ein Smart-Meter-Gateway (SMGW)?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was versteh man unter einem intelligenten Gerät?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Ist die Erstellung der Betriebskostenabrechnung möglich?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Ist der Wartung der Geräte inklusive?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Wie viel Kostet der Service?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Welche Geräte werden angebote?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="./asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-[72px] large:p-6">
+        <h3
+          class="mb-14 text-[45px] text-center leading-[54px] medium:text-2xl text-dark_text"
+        >
+          Geräteangebot
+        </h3>
+        <div class="swiper counters-swiper px-20 mx-10 pb-10 relative">
+          <div class="swiper-wrapper pt-[150px]">
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/slider_counter1.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Kaltwasser Zähler
+              </span>
+            </div>
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/swiper_counter2.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Gas Zähler
+              </span>
+            </div>
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/swiper_counter3.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Warmwasser Zähler
+              </span>
+            </div>
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/slider_counter1.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Kaltwasser Zähler
+              </span>
+            </div>
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/swiper_counter2.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Gas Zähler
+              </span>
+            </div>
+            <div class="swiper-slide max-w-[300px] max-h-[190px] relative">
+              <img
+                class="w-full h-[190px] object-contain"
+                src="./asset/swiper_counter3.png"
+                alt="swiper image"
+              />
+              <span class="absolute block -bottom-10 w-full text-center">
+                Warmwasser Zähler
+              </span>
+            </div>
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+      </div>
+      <div class="py-14 small:px-4">
+        <h2
+          class="text-center max-w-4xl mx-auto text-[30px] leading-9 mb-5 text-dark_text relative"
+        >
+          Zeit ist Geld. Sparen Sie beides.
         </h2>
         <div class="relative w-fit mb-4 mx-auto medium:w-full">
-            <label class="sr-only" for="contact_email">Los gehts</label>
-            <input
-                    class="py-5 px-7 min-w-[500px] small:min-w-fit border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl medium:w-full medium:text-center placeholder:leading-6 leading-6"
-                    placeholder="Wie lautet Ihre email?"
-                    type="email"
-                    name="contact_email"
-                    id="contact_email"
-            />
-            <button
-                    class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
-                    type="button"
-            >
-                Los gehts
-            </button>
+          <label class="sr-only" for="contact_email">Los gehts</label>
+          <input
+            class="py-5 px-7 min-w-[500px] small:min-w-fit border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl medium:w-full medium:text-center placeholder:leading-6 leading-6"
+            placeholder="Wie lautet Ihre email?"
+            type="email"
+            name="contact_email"
+            id="contact_email"
+          />
+          <button
+            class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+            type="button"
+          >
+            Los gehts
+          </button>
         </div>
         <p
-                class="text-center mx-auto text-sm leading-4 mb-5 text-dark_text relative"
+          class="text-center mx-auto text-sm leading-4 mb-5 text-dark_text relative"
         >
-            Keine persönlichen Informationen werden gespeichert
+          Keine persönlichen Informationen werden gespeichert
         </p>
-    </div>
-</main>
-<footer
-        class="px-[72px] megalarge:px-6 medium:px-5 bg-card_dark_bg pt-16 pb-12"
->
-    <div
-            class="flex items-center justify-between gap-5 large:flex-wrap large:gap-3"
+      </div>
+    </main>
+    <footer
+      class="px-[72px] megalarge:px-6 medium:px-5 bg-card_dark_bg pt-16 pb-12"
     >
+      <div
+        class="flex items-center justify-between gap-5 large:flex-wrap large:gap-3"
+      >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Über uns</a
+          >Über uns</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Karriere</a
+          >Karriere</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Handwerker</a
+          >Handwerker</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Produkte</a
+          >Produkte</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Städte</a
+          >Städte</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Partner</a
+          >Partner</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Lösungen</a
+          >Lösungen</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Funktionen</a
+          >Funktionen</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Dienstleistungen</a
+          >Dienstleistungen</a
         >
         <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-        >Unternehmen</a
+          >Unternehmen</a
         >
-    </div>
-    <div class="border-b border-dark_green/10 pb-16">
+      </div>
+      <div class="border-b border-dark_green/10 pb-16">
         <div
-                class="mt-6 grid grid-cols-5 gap-10 megalarge:gap-4 large:flex large:items-start large:justify-between large:flex-wrap"
+          class="mt-6 grid grid-cols-5 gap-10 megalarge:gap-4 large:flex large:items-start large:justify-between large:flex-wrap"
         >
-            <div class="space-y-9">
-                <div class="space-y-2.5">
-                    <a
-                            class="text-lg leading-[21px] font-bold text-dark_text"
-                            href="#"
-                    >Geräte</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Kaltwasser</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Warmwasser</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Heizung</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Rauchmelder</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Gas</a
-                    >
-                </div>
-                <div class="space-y-2.5">
-                    <a
-                            class="text-lg leading-[21px] font-bold text-dark_text"
-                            href="#"
-                    >Dienstleistungen</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Betriebskostenab.</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Heizkostenab.</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Verbrauchsinfo</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Energieausweis</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Großprojekte</a
-                    >
-                </div>
+          <div class="space-y-9">
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Geräte</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Kaltwasser</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Warmwasser</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizung</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Rauchmelder</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Gas</a
+              >
             </div>
             <div class="space-y-2.5">
-                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-                >Standorte</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Berlin</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Hamburg</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >München</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Frankfurt</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Leipzig
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >neu</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Stuttgart</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Hannover</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Bielefeld</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Wolfsburg
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >neu</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Gera
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >beliebt</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Köln</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Ihre Stadt</a
-                >
-            </div>
-            <div class="space-y-2.5">
-                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-                >Rechtliches</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Die Neuerung
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >neu</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Heizkostenverordnung</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Rohrwärme (VDI 2077)</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Rauchmelderpflicht</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Mess- und Eichverordnung</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Der CO2- Kostenrechner</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >BAFA Förderantrag</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Kostenaufteilungsrechner</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Heizkostenverordnung</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Funkmesserpflicht</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Eichverordnung</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Dienstleistungen</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Betriebskostenab.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizkostenab.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Verbrauchsinfo</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
                 >Energieausweis</a
-                >
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Großprojekte</a
+              >
             </div>
-            <div class="space-y-9">
-                <div class="space-y-2.5">
-                    <a
-                            class="text-lg leading-[21px] font-bold text-dark_text"
-                            href="#"
-                    >Partner</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Kamstrup.</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Diehl Metering.</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Itron</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Landis+Gyr</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Zenner</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Bonovia</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Schöner Wohnen</a
-                    >
-                </div>
-                <div class="space-y-2.5">
-                    <a
-                            class="text-lg leading-[21px] font-bold text-dark_text"
-                            href="#"
-                    >Datenschutz</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >AGB</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Impressum</a
-                    >
-                    <a
-                            href="#"
-                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                    >Datenschutz</a
-                    >
-                </div>
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >Standorte</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Berlin</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Hamburg</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >München</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Frankfurt</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Leipzig
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Stuttgart</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Hannover</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Bielefeld</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Wolfsburg
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Gera
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >beliebt</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Köln</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Ihre Stadt</a
+            >
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >Rechtliches</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Die Neuerung
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Heizkostenverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Rohrwärme (VDI 2077)</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Rauchmelderpflicht</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Mess- und Eichverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Der CO2- Kostenrechner</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >BAFA Förderantrag</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Kostenaufteilungsrechner</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Heizkostenverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Funkmesserpflicht</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Eichverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Energieausweis</a
+            >
+          </div>
+          <div class="space-y-9">
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Partner</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Kamstrup.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Diehl Metering.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Itron</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Landis+Gyr</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Zenner</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Bonovia</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Schöner Wohnen</a
+              >
             </div>
             <div class="space-y-2.5">
-                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
-                >News & Info</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Blog
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >beliebt</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Newsletter</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Webinare</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Vororttermin
-                    <span
-                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
-                    >neu</span
-                    ></a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >Downloads</a
-                >
-                <a
-                        href="#"
-                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
-                >FAQ</a
-                >
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Datenschutz</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >AGB</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Impressum</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Datenschutz</a
+              >
             </div>
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >News & Info</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Blog
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >beliebt</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Newsletter</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Webinare</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Vororttermin
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Downloads</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >FAQ</a
+            >
+          </div>
         </div>
-    </div>
-    <div
-            class="border-b border-dark_green/10 py-8 flex items-center justify-between megalarge:gap-4 megalarge:flex-wrap megalarge:justify-start"
-    >
+      </div>
+      <div
+        class="border-b border-dark_green/10 py-8 flex items-center justify-between megalarge:gap-4 megalarge:flex-wrap megalarge:justify-start"
+      >
         <div class="medium:hidden">
-            <img class="block mb-2" src="./asset/footer_logo.png" alt="footer logo" />
-            <p class="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
-                Heidi SE Corportation Torstrasse 110115 Berlin
-            </p>
+          <img
+            class="block mb-2"
+            src="./asset/footer_logo.png"
+            alt="footer logo"
+          />
+          <p class="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
+            Heidi SE Corportation Torstrasse 110115 Berlin
+          </p>
         </div>
         <div
-                class="text-dark_text text-[30px] leading-9 max-w-lg medium:text-[19px] medium:leading-[22px] large:max-w-full"
+          class="text-dark_text text-[30px] leading-9 max-w-lg medium:text-[19px] medium:leading-[22px] large:max-w-full"
         >
-            Werde Teil der Revolution: Schon mehr als 15.000+ Geräte erfolgreich
-            installiert.
+          Werde Teil der Revolution: Schon mehr als 15.000+ Geräte erfolgreich
+          installiert.
         </div>
         <div class="medium:w-full">
-            <div class="relative w-fit mb-4 mx-auto medium:w-full">
-                <label class="sr-only" for="footer_contact_email">Los gehts</label>
-                <input
-                        class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
-                        placeholder="Wie lautet Ihre email?"
-                        type="email"
-                        name="contact_email"
-                        id="footer_contact_email"
-                />
-                <button
-                        class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
-                        type="button"
-                >
-                    Los gehts
-                </button>
-            </div>
-            <p class="text-dark_text text-sm mt-4 leading-4">
-                Bleiben Sie bei allen Themen auf dem aktuellsten Stand
-            </p>
+          <div class="relative w-fit mb-4 mx-auto medium:w-full">
+            <label class="sr-only" for="footer_contact_email">Los gehts</label>
+            <input
+              class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
+              placeholder="Wie lautet Ihre email?"
+              type="email"
+              name="contact_email"
+              id="footer_contact_email"
+            />
+            <button
+              class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+              type="button"
+            >
+              Los gehts
+            </button>
+          </div>
+          <p class="text-dark_text text-sm mt-4 leading-4">
+            Bleiben Sie bei allen Themen auf dem aktuellsten Stand
+          </p>
         </div>
-    </div>
-    <div
-            class="pt-8 flex items-start justify-between large:flex-wrap medium:flex-col-reverse medium:items-center large:justify-start large:gap-3 medium:gap-8"
-    >
+      </div>
+      <div
+        class="pt-8 flex items-start justify-between large:flex-wrap medium:flex-col-reverse medium:items-center large:justify-start large:gap-3 medium:gap-8"
+      >
         <p class="text-dark_text text-xs leading-[14px] max-w-4xl">
-            © 2024 „Heidi“ und das Heidi-Logo sind eingetragene Markenzeichen
-            unseres Unternehmens. Die Heidi Commercial und die Heidi Visa
-            Corporate werden von der Sutton Bank bzw. der Celtic Bank (Mitglieder
-            der FDIC) herausgegeben. Wir berechnen die durchschnittlichen
-            Einsparungen als Prozentsatz des Gesamumsatzes eines beispielhaften
-            Kunden, der Heidi-Funktionen zur Reduzierung von Geschäftsausgaben
-            nutzt. Beachten Sie, dass es sich hierbei um eine Schätzung, nicht um
-            eine Garantie handelt. Einsparungen können beispielsweise durch
-            weniger Zeitaufwand für maneulle Spesenabrechnungen, finanzielle
-            Vorteile durch Cashback oder andere Prämien, intelligente
-            Ausgabenüberwachung und das Eliminieren von Kosten alternativer
-            Lösungen entstehen. Unsere Berechnungen basieren auf Plattformdaten,
-            Branchenforschung, Kundenbefragungen und Informationen zu alternativen
-            Optionen. Ihre tatsächlichen Einsparungen können variieren. Für
-            weitere Details besuchen Sie bitte unsere Nutzungsbedingungen. Lesen
-            Sie unsere redaktionellen Richtlinien und Datenschutzbestimmungen.
-            Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
+          © 2024 „Heidi“ und das Heidi-Logo sind eingetragene Markenzeichen
+          unseres Unternehmens. Die Heidi Commercial und die Heidi Visa
+          Corporate werden von der Sutton Bank bzw. der Celtic Bank (Mitglieder
+          der FDIC) herausgegeben. Wir berechnen die durchschnittlichen
+          Einsparungen als Prozentsatz des Gesamumsatzes eines beispielhaften
+          Kunden, der Heidi-Funktionen zur Reduzierung von Geschäftsausgaben
+          nutzt. Beachten Sie, dass es sich hierbei um eine Schätzung, nicht um
+          eine Garantie handelt. Einsparungen können beispielsweise durch
+          weniger Zeitaufwand für maneulle Spesenabrechnungen, finanzielle
+          Vorteile durch Cashback oder andere Prämien, intelligente
+          Ausgabenüberwachung und das Eliminieren von Kosten alternativer
+          Lösungen entstehen. Unsere Berechnungen basieren auf Plattformdaten,
+          Branchenforschung, Kundenbefragungen und Informationen zu alternativen
+          Optionen. Ihre tatsächlichen Einsparungen können variieren. Für
+          weitere Details besuchen Sie bitte unsere Nutzungsbedingungen. Lesen
+          Sie unsere redaktionellen Richtlinien und Datenschutzbestimmungen.
+          Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
         </p>
         <div class="flex items-center justify-end gap-3">
-            <img src="./asset/youtube.png" alt="youtube" />
-            <img src="./asset/x.png" alt="x" />
-            <img src="./asset/linkedin.png" alt="linkedin" />
-            <img src="./asset/insta.png" alt="insta" />
+          <img src="./asset/youtube.png" alt="youtube" />
+          <img src="./asset/x.png" alt="x" />
+          <img src="./asset/linkedin.png" alt="linkedin" />
+          <img src="./asset/insta.png" alt="insta" />
         </div>
-    </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script type="module" src="./js/main.js"></script>
-</body>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
+  </body>
 </html>

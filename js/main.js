@@ -32,7 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
     centeredSlides: true,
     spaceBetween: 75,
     mousewheel: true,
-
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
     // If we need pagination
     pagination: {
       el: ".brand-swiper-pagination",
@@ -43,6 +47,35 @@ document.addEventListener("DOMContentLoaded", () => {
         return '<span class="' + className + '">' + "</span>";
       },
       dynamicBullets: true,
+    },
+  });
+
+  const s2 = new Swiper(".counters-swiper", {
+    // Optional parameters
+    loop: true,
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    mousewheel: true,
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+        spaceBetween: 75,
+      },
+      1024: {
+        slidesPerView: 3,
+        spaceBetween: 120,
+        mousewheel: false,
+      },
+      1920: {
+        slidesPerView: 5,
+        spaceBetween: 120,
+        mousewheel: false,
+      },
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
     },
   });
 });
@@ -202,8 +235,8 @@ const faqTabsAnswers = document.querySelectorAll(".faq-answers-container");
 
 function initFAQ() {
   faqTabsAnswers.forEach((tab) => {
-    addAccordionFunctionality(tab)
-  })
+    addAccordionFunctionality(tab);
+  });
 }
 
 initFAQ();

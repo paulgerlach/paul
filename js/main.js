@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mousewheel: true,
     breakpoints: {
       1024: {
-        mousewheel: false
+        mousewheel: false,
       },
     },
     // If we need pagination
@@ -65,7 +65,60 @@ document.addEventListener("DOMContentLoaded", () => {
       1024: {
         slidesPerView: 3,
         spaceBetween: 120,
-        mousewheel: false
+        mousewheel: false,
+      },
+      1920: {
+        slidesPerView: 5,
+        spaceBetween: 120,
+        mousewheel: false,
+      },
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+
+  const s4 = new Swiper(".reviews-swiper", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 65,
+    centeredSlides: true,
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+      1920: {
+        mousewheel: false,
+      },
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+
+  const s3 = new Swiper(".numbered-swiper", {
+    // Optional parameters
+    // loop: true,
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
       },
     },
     navigation: {
@@ -124,8 +177,12 @@ function swiperCard() {
       });
     }
   } else if (init) {
-    newsSwiper.destroy();
-    functionsSwiper.destroy();
+    if (newsSwiper) {
+      newsSwiper.destroy();
+    }
+    if (functionsSwiper) {
+      functionsSwiper.destroy();
+    }
     init = false;
   }
 }
@@ -230,8 +287,28 @@ const faqTabsAnswers = document.querySelectorAll(".faq-answers-container");
 
 function initFAQ() {
   faqTabsAnswers.forEach((tab) => {
-    addAccordionFunctionality(tab)
-  })
+    addAccordionFunctionality(tab);
+  });
 }
 
 initFAQ();
+
+const installFaq = document.querySelector('#installFaq');
+
+const installFaqItems = installFaq.querySelectorAll('li');
+
+installFaqItems.forEach((item, index) => {
+  const itemText = item.querySelector('p');
+  slideUp(itemText);
+  item.addEventListener('click', (e) => {
+    installFaqItems.forEach((faqItem, faqIndex) => {
+      if (faqIndex !== index) {
+        const faqItemText = faqItem.querySelector('p');
+        faqItem.classList.remove('active');
+        slideUp(faqItemText);
+      }
+    });
+    item.classList.add('active');
+    slideDown(itemText);
+  });
+})

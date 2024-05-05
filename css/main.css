@@ -2028,6 +2028,10 @@ html {
     display: flex;
   }
 
+  .large\:hidden {
+    display: none;
+  }
+
   .large\:h-screen {
     height: 100vh;
   }
@@ -2126,6 +2130,10 @@ html {
     padding-top: 2rem;
   }
 
+  .large\:pl-20 {
+    padding-left: 5rem;
+  }
+
   .large\:text-center {
     text-align: center;
   }
@@ -2152,6 +2160,11 @@ html {
   .medium\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
+  }
+
+  .medium\:my-8 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .medium\:hidden {
@@ -2218,6 +2231,10 @@ html {
     padding-left: 4rem;
   }
 
+  .medium\:pl-10 {
+    padding-left: 2.5rem;
+  }
+
   .medium\:text-center {
     text-align: center;
   }
@@ -2237,6 +2254,10 @@ html {
 }
 
 @media (max-width: 480px) {
+  .small\:mb-4 {
+    margin-bottom: 1rem;
+  }
+
   .small\:min-w-fit {
     min-width: -moz-fit-content;
     min-width: fit-content;
@@ -2267,6 +2288,10 @@ html {
 
   .small\:pl-3 {
     padding-left: 0.75rem;
+  }
+
+  .small\:pl-5 {
+    padding-left: 1.25rem;
   }
 }
 

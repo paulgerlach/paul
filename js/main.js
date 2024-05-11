@@ -79,24 +79,23 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  const s4 = new Swiper(".reviews-swiper", {
+  const s4 = new Swiper('.reviews-swiper', {
     // Optional parameters
-    slidesPerView: 1,
+    slidesPerView: 1.3,
     spaceBetween: 65,
-    centeredSlides: true,
     mousewheel: true,
     breakpoints: {
       1024: {
-        mousewheel: false,
+        mousewheel: false
       },
       1920: {
-        mousewheel: false,
-      },
+        mousewheel: false
+      }
     },
     navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev'
+    }
   });
 
   const s3 = new Swiper(".numbered-swiper", {

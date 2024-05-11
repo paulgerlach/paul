@@ -465,7 +465,7 @@
           damit auf Innovation des 21. Jahrhunderts
         </p>
         <a
-          class="flex items-center justify-center w-fit !mb-12 mx-auto px-5 py-1 rounded-base bg-green text-dark_text text-lg"
+          class="flex items-center justify-center w-fit !mb-12 mx-auto px-10 py-5 duration-300 hover:opacity-80 rounded-1/2base bg-green text-dark_text text-lg"
           href="#"
           >Zugang sichern</a
         >
@@ -574,7 +574,7 @@
                 class="bg-[#D0D7CA] p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2"
               >
                 <span
-                  class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text"
+                  class="rounded-full size-11 !shadow-none flex items-center justify-center !bg-white !text-dark_text"
                   >1</span
                 >
                 Anforderung
@@ -589,7 +589,7 @@
                 class="bg-[#D0D7CA] p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2"
               >
                 <span
-                  class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text"
+                  class="rounded-full size-11 !shadow-none flex items-center justify-center !bg-white !text-dark_text"
                   >2</span
                 >
                 Installation
@@ -604,7 +604,7 @@
                 class="bg-[#D0D7CA] p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2"
               >
                 <span
-                  class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text"
+                  class="rounded-full size-11 !shadow-none flex items-center justify-center !bg-white !text-dark_text"
                   >3</span
                 >
                 Anforderung
@@ -619,7 +619,7 @@
                 class="bg-[#D0D7CA] p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2"
               >
                 <span
-                  class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text"
+                  class="rounded-full size-11 !shadow-none flex items-center justify-center !bg-white !text-dark_text"
                   >4</span
                 >
                 Ablesen
@@ -634,7 +634,7 @@
                 class="bg-[#D0D7CA] p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2"
               >
                 <span
-                  class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text"
+                  class="rounded-full size-11 !shadow-none flex items-center justify-center !bg-white !text-dark_text"
                   >5</span
                 >
                 Auswerten
@@ -665,8 +665,9 @@
         </div>
       </div>
 
+      <!-- reviews swiper -->
       <div
-        class="py-16 pl-36 large:pl-30 medium:pl-16 small:pl-3 medium:flex-col medium:gap-8 flex items-center justify-start gap-[72px]"
+              class="py-16 pl-36 large:pl-30 medium:pl-16 small:pl-5 medium:flex-col medium:gap-8 flex items-center justify-start gap-[72px]"
       >
         <div class="max-w-[436px] space-y-6">
           <h4 class="text-[45px] leading-[54px] medium:text-2xl text-dark_text">
@@ -679,15 +680,15 @@
           </p>
           <img src="./asset/trustpilot.png" alt="trustpilot" />
           <a
-            class="text-lg block w-fit text-dark_text py-2.5 px-5 border border-dark_green/20 rounded-full"
-            href="#"
-            >Anfrage starten</a
+                  class="text-lg block w-fit text-dark_text py-2.5 px-5 border border-dark_green/20 rounded-full"
+                  href="#"
+          >Anfrage starten</a
           >
         </div>
         <div class="swiper max-w-full pt-12 reviews-swiper relative">
           <div class="swiper-wrapper items-center">
             <div
-              class="swiper-slide max-w-[680px] flex items-stretch justify-between gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+                    class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
             >
               <div class="flex flex-col items-start justify-between">
                 <p class="text-[25px] text-white leading-[1]">
@@ -699,14 +700,15 @@
                   <p class="text-xl text-white">von SV1 Real Estate</p>
                 </div>
               </div>
-              <img
-                class="-mt-20 duration-300 w-[200px] h-[336px] rounded-[40px]"
-                src="./asset/video_preview.png"
-                alt="video_preview"
-              />
+              <video
+                      class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                      loop
+              >
+                <source src="./asset/video-placeholder.mp4" type="video/mp4" />
+              </video>
             </div>
             <div
-              class="swiper-slide max-w-[680px] flex items-stretch justify-between gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+                    class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
             >
               <div class="flex flex-col items-start justify-between">
                 <p class="text-[25px] text-white leading-[1]">
@@ -718,14 +720,15 @@
                   <p class="text-xl text-white">von SV1 Real Estate</p>
                 </div>
               </div>
-              <img
-                class="-mt-20 duration-300 w-[200px] h-[336px] rounded-[40px]"
-                src="./asset/video_preview.png"
-                alt="video_preview"
-              />
+              <video
+                      class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                      loop
+              >
+                <source src="./asset/video-placeholder.mp4" type="video/mp4" />
+              </video>
             </div>
             <div
-              class="swiper-slide max-w-[680px] flex items-stretch justify-between gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+                    class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
             >
               <div class="flex flex-col items-start justify-between">
                 <p class="text-[25px] text-white leading-[1]">
@@ -737,14 +740,15 @@
                   <p class="text-xl text-white">von SV1 Real Estate</p>
                 </div>
               </div>
-              <img
-                class="-mt-20 duration-300 w-[200px] h-[336px] rounded-[40px]"
-                src="./asset/video_preview.png"
-                alt="video_preview"
-              />
+              <video
+                      class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                      loop
+              >
+                <source src="./asset/video-placeholder.mp4" type="video/mp4" />
+              </video>
             </div>
             <div
-              class="swiper-slide max-w-[680px] flex items-stretch justify-between gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+                    class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
             >
               <div class="flex flex-col items-start justify-between">
                 <p class="text-[25px] text-white leading-[1]">
@@ -756,17 +760,19 @@
                   <p class="text-xl text-white">von SV1 Real Estate</p>
                 </div>
               </div>
-              <img
-                class="-mt-20 duration-300 w-[200px] h-[336px] rounded-[40px]"
-                src="./asset/video_preview.png"
-                alt="video_preview"
-              />
+              <video
+                      class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                      loop
+              >
+                <source src="./asset/video-placeholder.mp4" type="video/mp4" />
+              </video>
             </div>
           </div>
           <div class="swiper-button-next"></div>
           <div class="swiper-button-prev"></div>
         </div>
       </div>
+      <!-- reviews swiper -->
 
       <!--      FAQ -->
       <div

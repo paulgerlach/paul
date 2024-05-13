@@ -6,7 +6,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Exo 2", sans-serif;
+  font-family: 'Exo 2', sans-serif;
 }
 html {
   overflow-x: hidden;
@@ -81,7 +81,7 @@ html {
   min-width: 100px;
   min-height: 22px;
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-    contrast(101%);
+  contrast(101%);
 }
 
 .not-filtered .ticker__item img {
@@ -93,7 +93,7 @@ html {
 
 .whiteImage {
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-    contrast(101%);
+  contrast(101%);
 }
 
 @-webkit-keyframes ticker {
@@ -139,7 +139,7 @@ html {
   background-color: #8ad68f;
   position: absolute;
   top: -34px;
-  content: "";
+  content: '';
   display: block;
   left: 48%;
   right: 48%;
@@ -158,8 +158,9 @@ html {
   opacity: 100%;
 }
 
-.news-swiper-pagination .swiper-pagination-bullet, .functions-swiper-pagination .swiper-pagination-bullet {
-  background-color: #1E322D;
+.news-swiper-pagination .swiper-pagination-bullet,
+.functions-swiper-pagination .swiper-pagination-bullet {
+  background-color: #1e322d;
 }
 .news-swiper-pagination {
   bottom: auto !important;
@@ -171,7 +172,7 @@ html {
 }
 .arrowLink {
   filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg)
-    brightness(84%) contrast(87%);
+  brightness(84%) contrast(87%);
   transform: rotate(-90deg);
   margin-bottom: -5px;
 }
@@ -200,7 +201,7 @@ html {
   left: 10%;
   width: 80%;
   height: 1px;
-  background-color: #1E322D;
+  background-color: #1e322d;
   opacity: 0.1;
 }
 
@@ -210,10 +211,10 @@ html {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, max-content);
     grid-template-areas:
-            "hero3"
-            "heroTitle"
-            "hero1"
-            "hero2";
+      'hero3'
+      'heroTitle'
+      'hero1'
+      'hero2';
   }
   .hero-1 {
     grid-area: hero1;
@@ -237,11 +238,13 @@ html {
     align-items: center;
     justify-content: center;
     background-color: rgba(138, 214, 143, 0.1);
-
   }
 }
 
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next,
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev,
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next,
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
   transform: scale(1) !important;
 }
 
@@ -254,12 +257,14 @@ html {
   overflow: hidden;
   transition: 0.3s all;
 }
+.faq-answer-item:first-child .faq-answer-header {
+  border-top: 1px solid rgba(30, 50, 45, 0.2);
+}
 .faq-answer-header {
-  color: #1E322D;
+  color: #1e322d;
   padding: 16px 0;
   font-size: 18px;
   line-height: 21.6px;
-  border-top: 1px solid rgba(30, 50, 45, 0.2);
   font-weight: 400;
   width: 100%;
   text-align: left;
@@ -285,7 +290,7 @@ html {
 }
 .faq-answer-content p {
   line-height: 24px;
-  color: #1E322D;
+  color: #1e322d;
   font-size: 16px;
   padding: 16px 0;
 }
@@ -299,7 +304,7 @@ html {
   transition: transform 0.3s ease;
   width: 35px;
   min-width: 35px;
-  background-color: #D9D9D9;
+  background-color: transparent;
   border: 1px solid rgba(30, 50, 45, 0.2);
   height: 37px;
   display: flex;
@@ -312,7 +317,8 @@ html {
   width: 10px;
   height: 10px;
   transition: 0.3s all ease;
-  filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg) brightness(97%) contrast(89%);
+  filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg)
+  brightness(97%) contrast(89%);
   opacity: 0.5;
 }
 
@@ -330,7 +336,6 @@ html {
 
 @media (max-width: 768px) {
   .faq-answer-header {
-    padding: 12px 18px;
     font-size: 18px;
     line-height: 1.2;
   }
@@ -348,7 +353,7 @@ html {
   height: 80px;
   border-radius: 9999px;
   color: #ffffff;
-  background-color: #D9D9D980;
+  background-color: #d9d9d980;
 }
 .swiper-button-next {
   right: 0 !important;
@@ -359,14 +364,16 @@ html {
   height: 80px;
   border-radius: 9999px;
   color: #ffffff;
-  background-color: #D9D9D980;
+  background-color: #d9d9d980;
 }
 @media (max-width: 640px) {
-  .swiper-button-next, .swiper-button-prev {
+  .swiper-button-next,
+  .swiper-button-prev {
     width: 40px;
     height: 40px;
   }
-  .swiper-button-prev:after, .swiper-button-next:after {
+  .swiper-button-prev:after,
+  .swiper-button-next:after {
     font-size: 16px;
     font-weight: 700;
   }
@@ -377,7 +384,8 @@ html {
 .numbered-swiper .swiper-button-next {
   right: 25px !important;
 }
-.swiper-button-prev:after, .swiper-button-next:after {
+.swiper-button-prev:after,
+.swiper-button-next:after {
   font-size: 30px;
   font-weight: 700;
 }
@@ -407,7 +415,12 @@ html {
 }
 
 .colored-to-black {
-  filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg) brightness(87%) contrast(89%);
+  filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
+  brightness(87%) contrast(89%);
+}
+
+.colored-to-blue {
+  filter: invert(56%) sepia(13%) saturate(6730%) hue-rotate(199deg) brightness(90%) contrast(74%);
 }
 
 .numbered-swiper .swiper-pagination {
@@ -442,11 +455,57 @@ html {
 }
 
 #installFaq li.active span {
-  background-color: #1E322D;
+  background-color: #1e322d;
   color: #ffffff;
 }
 
-.reviews-swiper .swiper-slide-active img {
-  width: 250px;
-  height: 416px;
+@media (min-width: 769px) {
+  .reviews-swiper .swiper-slide-active video {
+    width: 250px;
+    height: 416px;
+  }
+}
+.reviews-swiper .swiper-slide {
+  max-width: max-content !important;
+}
+.animation-container svg {
+  position: absolute;
+  height: fit-content !important;
+  z-index: 10;
+}
+
+#animations svg {
+  width: 100%;
+}
+
+.chart-swiper .swiper-pagination {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  left: 50%;
+  transform: translateX(-50%) !important;
+  bottom: 38px !important;
+  background-color: #9a9a98;
+  border-radius: 40px;
+}
+.chart-swiper .swiper-pagination-bullet {
+  padding: 11px 17px;
+  width: fit-content;
+  height: auto;
+  display: block;
+  color: #ffffff;
+  margin: 0 !important;
+  background-color: transparent;
+}
+.chart-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  background-color: #5b5a57;
+  border-radius: 40px;
+  padding: 11px 17px;
+}
+
+.golden-star {
+  filter: invert(85%) sepia(25%) saturate(6899%) hue-rotate(333deg)
+  brightness(93%) contrast(88%);
+  width: 17px;
+  height: 17px;
 }

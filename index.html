@@ -527,7 +527,21 @@
         <div
           class="flex justify-between py-16 border-t border-dark_green/10 items-center large:flex-col gap-8"
         >
-          <img src="./asset/payment.png" alt="payment" />
+          <div class="bg-[#EFEEEC] pt-9 px-[140px] w-1/2 rounded-base">
+            <div class="relative" id="payment">
+              <script>
+                var animation = bodymovin.loadAnimation({
+                  container: document.getElementById("payment"),
+                  path: "./animations/Animation_13.json",
+                  renderer: "svg",
+                  loop: true,
+                  autoplay: true,
+                  name: "Demo Animation",
+                });
+              </script>
+            </div>
+            <img class="mx-auto w-full" src="./asset/payment.png" alt="payment">
+          </div>
           <div class="max-w-xl space-y-6">
             <h4
               class="text-[45px] leading-[54px] medium:text-2xl text-dark_text"

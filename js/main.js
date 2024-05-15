@@ -295,22 +295,31 @@ initFAQ();
 const installFaq = document.querySelector('#installFaq');
 
 const installFaqItems = installFaq.querySelectorAll('li');
+let currentIndex = 0;
 
 installFaqItems.forEach((item, index) => {
   const itemText = item.querySelector('p');
   slideUp(itemText);
-  item.addEventListener('click', (e) => {
-    installFaqItems.forEach((faqItem, faqIndex) => {
-      if (faqIndex !== index) {
-        const faqItemText = faqItem.querySelector('p');
-        faqItem.classList.remove('active');
-        slideUp(faqItemText);
-      }
-    });
-    item.classList.add('active');
-    slideDown(itemText);
-  });
-})
+});
+
+function changeActiveItem() {
+  // Hide the current active item
+  const currentItem = installFaqItems[currentIndex];
+  const currentItemText = currentItem.querySelector('p');
+  currentItem.classList.remove('active');
+  slideUp(currentItemText);
+
+  // Update the index to the next item
+  currentIndex = (currentIndex + 1) % installFaqItems.length;
+
+  // Show the next item
+  const nextItem = installFaqItems[currentIndex];
+  const nextItemText = nextItem.querySelector('p');
+  nextItem.classList.add('active');
+  slideDown(nextItemText);
+}
+
+setInterval(changeActiveItem, 1000);
 
 const reviewsVideos = document.querySelectorAll('.reviews-swiper video');
 

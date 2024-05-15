@@ -509,3 +509,13 @@ html {
   width: 17px;
   height: 17px;
 }
+
+#installFaq li span {
+  transition: 1s all;
+}
+
+#installFaq li span:hover {
+  -webkit-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
+  -moz-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
+  box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
+}

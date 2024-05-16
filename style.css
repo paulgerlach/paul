@@ -457,6 +457,7 @@ html {
 #installFaq li.active span {
   background-color: #1e322d;
   color: #ffffff;
+  box-shadow: none !important;
 }
 
 @media (min-width: 769px) {
@@ -511,10 +512,13 @@ html {
 }
 
 #installFaq li span {
-  transition: 1s all;
+  transition: 2s all ease-in;
+}
+#installFaq li span span {
+  box-shadow: none !important;
 }
 
-#installFaq li span:hover {
+#installFaq li.next span {
   -webkit-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
   -moz-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
   box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);

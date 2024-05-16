@@ -297,9 +297,10 @@ const installFaq = document.querySelector('#installFaq');
 const installFaqItems = installFaq.querySelectorAll('li');
 let currentIndex = 0;
 
-installFaqItems.forEach((item, index) => {
+installFaqItems.forEach(item => {
   const itemText = item.querySelector('p');
   slideUp(itemText);
+  item.classList.remove('active', 'next');
 });
 
 function changeActiveItem() {
@@ -310,16 +311,29 @@ function changeActiveItem() {
   slideUp(currentItemText);
 
   // Update the index to the next item
-  currentIndex = (currentIndex + 1) % installFaqItems.length;
+  const nextIndex = (currentIndex + 1) % installFaqItems.length;
+  const nextItem = installFaqItems[nextIndex];
+  const nextItemText = nextItem.querySelector('p');
+
+  // Update the index to the item after the next one
+  const nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
+  const nextToNextItem = installFaqItems[nextToNextIndex];
+
+  // Remove 'next' class from all items
+  installFaqItems.forEach(item => item.classList.remove('next'));
 
   // Show the next item
-  const nextItem = installFaqItems[currentIndex];
-  const nextItemText = nextItem.querySelector('p');
   nextItem.classList.add('active');
   slideDown(nextItemText);
+
+  // Add 'next' class to the item that will be next
+  nextToNextItem.classList.add('next');
+
+  // Update the current index
+  currentIndex = nextIndex;
 }
 
-setInterval(changeActiveItem, 1000);
+setInterval(changeActiveItem, 2000);
 
 const reviewsVideos = document.querySelectorAll('.reviews-swiper video');
 

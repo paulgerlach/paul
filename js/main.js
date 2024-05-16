@@ -292,48 +292,48 @@ function initFAQ() {
 
 initFAQ();
 
-const installFaq = document.querySelector('#installFaq');
-
-const installFaqItems = installFaq.querySelectorAll('li');
-let currentIndex = 0;
-
-installFaqItems.forEach(item => {
-  const itemText = item.querySelector('p');
-  slideUp(itemText);
-  item.classList.remove('active', 'next');
-});
-
-function changeActiveItem() {
-  // Hide the current active item
-  const currentItem = installFaqItems[currentIndex];
-  const currentItemText = currentItem.querySelector('p');
-  currentItem.classList.remove('active');
-  slideUp(currentItemText);
-
-  // Update the index to the next item
-  const nextIndex = (currentIndex + 1) % installFaqItems.length;
-  const nextItem = installFaqItems[nextIndex];
-  const nextItemText = nextItem.querySelector('p');
-
-  // Update the index to the item after the next one
-  const nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
-  const nextToNextItem = installFaqItems[nextToNextIndex];
-
-  // Remove 'next' class from all items
-  installFaqItems.forEach(item => item.classList.remove('next'));
-
-  // Show the next item
-  nextItem.classList.add('active');
-  slideDown(nextItemText);
-
-  // Add 'next' class to the item that will be next
-  nextToNextItem.classList.add('next');
-
-  // Update the current index
-  currentIndex = nextIndex;
-}
-
-setInterval(changeActiveItem, 2000);
+// const installFaq = document.querySelector('#installFaq');
+//
+// const installFaqItems = installFaq.querySelectorAll('li');
+// let currentIndex = 0;
+//
+// installFaqItems.forEach(item => {
+//   const itemText = item.querySelector('p');
+//   slideUp(itemText);
+//   item.classList.remove('active', 'next');
+// });
+//
+// function changeActiveItem() {
+//   // Hide the current active item
+//   const currentItem = installFaqItems[currentIndex];
+//   const currentItemText = currentItem.querySelector('p');
+//   currentItem.classList.remove('active');
+//   slideUp(currentItemText);
+//
+//   // Update the index to the next item
+//   const nextIndex = (currentIndex + 1) % installFaqItems.length;
+//   const nextItem = installFaqItems[nextIndex];
+//   const nextItemText = nextItem.querySelector('p');
+//
+//   // Update the index to the item after the next one
+//   const nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
+//   const nextToNextItem = installFaqItems[nextToNextIndex];
+//
+//   // Remove 'next' class from all items
+//   installFaqItems.forEach(item => item.classList.remove('next'));
+//
+//   // Show the next item
+//   nextItem.classList.add('active');
+//   slideDown(nextItemText);
+//
+//   // Add 'next' class to the item that will be next
+//   nextToNextItem.classList.add('next');
+//
+//   // Update the current index
+//   currentIndex = nextIndex;
+// }
+//
+// setInterval(changeActiveItem, 2000);
 
 const reviewsVideos = document.querySelectorAll('.reviews-swiper video');
 

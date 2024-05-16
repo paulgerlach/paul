@@ -422,7 +422,9 @@ html {
 .colored-to-blue {
   filter: invert(56%) sepia(13%) saturate(6730%) hue-rotate(199deg) brightness(90%) contrast(74%);
 }
-
+.colored-to-white {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(114deg) brightness(105%) contrast(103%);
+}
 .numbered-swiper .swiper-pagination {
   display: flex;
   flex-direction: column;

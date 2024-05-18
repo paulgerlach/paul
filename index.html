@@ -36,31 +36,130 @@
             <nav
               class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
             >
-              <a
-                href="#"
-                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Geräte <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
-              <a
-                href="#"
-                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Dienstleistungen
-                <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
+              <div class="group relative">
+                <a
+                  href="#"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Geräte <img src="./asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div class="absolute bg-white w-[620px] top-[72px] medium:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 -translate-y-[200%] group-hover:translate-y-0">
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_water.png" alt="modal_icon"> Warmwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_shower.png" alt="modal_icon"> Kaltwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_heater.png" alt="modal_icon"> Heizungszähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_energy.png" alt="modal_icon"> Stromzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_wifi.png" alt="modal_icon"> Rauchmelder
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_cooler.png" alt="modal_icon"> Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="mb-5 text-xl flex items-center justify-between text-dark_text">Produkthighlight <a href="#"><img alt="arrow" src="./asset/arrow.png"></a></p>
+                    <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
+                      <img src="./asset/modal_counter.png" alt="counter mobile">
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">Neue Warmwasserzähler</p>
+                    <p class="text-xs text-dark_text">Neuste Funktechnik erlaubt das Ablesen des Warmwasserverbrauchs in Echtzeit</p>
+                  </div>
+                </div>
+              </div>
+              <div class="group relative">
+                <a href="#" class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text">
+                  Dienstleistungen
+                  <img src="./asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div class="absolute bg-white w-[620px] top-[72px] medium:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 -translate-y-[200%] group-hover:translate-y-0">
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_water.png" alt="modal_icon"> Warmwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_shower.png" alt="modal_icon"> Kaltwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_heater.png" alt="modal_icon"> Heizungszähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_energy.png" alt="modal_icon"> Stromzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_wifi.png" alt="modal_icon"> Rauchmelder
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_cooler.png" alt="modal_icon"> Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="mb-5 text-xl flex items-center justify-between text-dark_text">Produkthighlight <a href="#"><img alt="arrow" src="./asset/arrow.png"></a></p>
+                    <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
+                      <img src="./asset/modal_counter.png" alt="counter mobile">
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">Neue Warmwasserzähler</p>
+                    <p class="text-xs text-dark_text">Neuste Funktechnik erlaubt das Ablesen des Warmwasserverbrauchs in Echtzeit</p>
+                  </div>
+                </div>
+              </div>
               <a
                 href="#"
                 class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
               >
                 Kunden
               </a>
-              <a
-                href="#"
-                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Ressourcen <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
+              <div class="group relative">
+                <a href="#" class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text">
+                  Ressourcen <img src="./asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div class="absolute bg-white w-[620px] top-[72px] medium:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 -translate-y-[200%] group-hover:translate-y-0">
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_water.png" alt="modal_icon"> Warmwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_shower.png" alt="modal_icon"> Kaltwasserzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_heater.png" alt="modal_icon"> Heizungszähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_energy.png" alt="modal_icon"> Stromzähler
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_wifi.png" alt="modal_icon"> Rauchmelder
+                      </li>
+                      <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px]">
+                        <img class="size-7" src="./asset/modal_cooler.png" alt="modal_icon"> Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="mb-5 text-xl flex items-center justify-between text-dark_text">Produkthighlight <a href="#"><img alt="arrow" src="./asset/arrow.png"></a></p>
+                    <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
+                      <img src="./asset/modal_counter.png" alt="counter mobile">
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">Neue Warmwasserzähler</p>
+                    <p class="text-xs text-dark_text">Neuste Funktechnik erlaubt das Ablesen des Warmwasserverbrauchs in Echtzeit</p>
+                  </div>
+                </div>
+              </div>
               <a
                 href="#"
                 class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
@@ -347,7 +446,7 @@
       >
         <div class="grid grid-cols-3 medium:grid-cols-1 gap-6">
           <div class="space-y-6">
-            <div id="animation7" class="relative">
+            <div id="animation7" class="relative max-h-[317px] overflow-hidden rounded-base large:max-h-fit">
               <script>
                 var animation = bodymovin.loadAnimation({
                   container: document.getElementById("animation7"),
@@ -376,7 +475,7 @@
             </div>
           </div>
           <div class="space-y-6">
-            <div id="animation8" class="relative">
+            <div id="animation8" class="relative max-h-[317px] overflow-hidden rounded-base large:max-h-fit">
               <script>
                 var animation = bodymovin.loadAnimation({
                   container: document.getElementById("animation8"),
@@ -405,7 +504,7 @@
             </div>
           </div>
           <div class="space-y-6">
-            <div id="animation9" class="relative">
+            <div id="animation9" class="relative max-h-[317px] overflow-hidden rounded-base large:max-h-fit">
               <script>
                 var animation = bodymovin.loadAnimation({
                   container: document.getElementById("animation9"),
@@ -469,6 +568,23 @@
           href="#"
           >Zugang sichern</a
         >
+        <div id="score_chart" class="relative mx-auto w-fit">
+          <script>
+            var animation = bodymovin.loadAnimation({
+              container: document.getElementById("score_chart"),
+
+              path: "./animations/Animation_2.json",
+
+              renderer: "svg",
+
+              loop: true,
+
+              autoplay: true,
+
+              name: "Demo Animation",
+            });
+          </script>
+        </div>
         <img class="mx-auto" src="./asset/score_chart.png" alt="score_chart" />
       </div>
 

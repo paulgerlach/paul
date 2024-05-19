@@ -387,6 +387,11 @@ function nextStep() {
     document.getElementById('questionare-final').classList.remove('hidden');
     document.querySelector('.steps-progress').classList.add('hidden');
   }
+  if (currentStep.toString() === (totalSteps - 1).toString()) {
+    skipStepButton.classList.add('hidden');
+  } else {
+    skipStepButton.classList.remove('hidden');
+  }
   if (currentStep < totalSteps) {
     // Hide current step
     const currentStepElement = document.querySelector(`[data-step="${currentStep}"]`);

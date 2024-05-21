@@ -610,18 +610,6 @@ video {
   top: 0.375rem;
 }
 
-.top-\[72px\] {
-  top: 72px;
-}
-
-.top-3 {
-  top: 0.75rem;
-}
-
-.top-5 {
-  top: 1.25rem;
-}
-
 .top-\[100\%\] {
   top: 100%;
 }
@@ -886,6 +874,10 @@ video {
   max-width: 36rem;
 }
 
+.max-w-2 {
+  max-width: 0.5rem;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -990,6 +982,10 @@ video {
   gap: 0.625rem;
 }
 
+.gap-20 {
+  gap: 5rem;
+}
+
 .gap-24 {
   gap: 6rem;
 }
@@ -1028,10 +1024,6 @@ video {
 
 .gap-base {
   gap: 10px;
-}
-
-.gap-20 {
-  gap: 5rem;
 }
 
 .gap-y-3 {
@@ -1260,6 +1252,16 @@ video {
   padding-right: 5rem;
 }
 
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-3\.5 {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+}
+
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -1353,16 +1355,6 @@ video {
 .py-9 {
   padding-top: 2.25rem;
   padding-bottom: 2.25rem;
-}
-
-.px-3 {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
-
-.px-3\.5 {
-  padding-left: 0.875rem;
-  padding-right: 0.875rem;
 }
 
 .pb-12 {
@@ -1481,6 +1473,10 @@ video {
   line-height: 1rem;
 }
 
+.\!font-normal {
+  font-weight: 400 !important;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -1570,7 +1566,7 @@ video {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Exo 2', sans-serif;
+  font-family: "Exo 2", sans-serif;
 }
 
 html {
@@ -1649,7 +1645,7 @@ html {
   min-width: 100px;
   min-height: 22px;
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-  contrast(101%);
+    contrast(101%);
 }
 
 .not-filtered .ticker__item img {
@@ -1661,7 +1657,7 @@ html {
 
 .whiteImage {
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-  contrast(101%);
+    contrast(101%);
 }
 
 @keyframes ticker {
@@ -1688,7 +1684,7 @@ html {
   background-color: #8ad68f;
   position: absolute;
   top: -34px;
-  content: '';
+  content: "";
   display: block;
   left: 48%;
   right: 48%;
@@ -1725,7 +1721,7 @@ html {
 
 .arrowLink {
   filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg)
-  brightness(84%) contrast(87%);
+    brightness(84%) contrast(87%);
   transform: rotate(-90deg);
   margin-bottom: -5px;
 }
@@ -1748,7 +1744,7 @@ html {
 }
 
 .numberedTitle:before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20px;
   left: 10%;
@@ -1764,10 +1760,10 @@ html {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, max-content);
     grid-template-areas:
-      'hero3'
-      'heroTitle'
-      'hero1'
-      'hero2';
+      "hero3"
+      "heroTitle"
+      "hero1"
+      "hero2";
   }
 
   .hero-1 {
@@ -1881,7 +1877,7 @@ html {
   height: 10px;
   transition: 0.3s all ease;
   filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg)
-  brightness(97%) contrast(89%);
+    brightness(97%) contrast(89%);
   opacity: 0.5;
 }
 
@@ -1964,7 +1960,7 @@ html {
   position: absolute;
   width: 95%;
   height: calc(100% - 40px);
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -1977,7 +1973,7 @@ html {
   position: absolute;
   width: 100%;
   height: 100%;
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -1987,7 +1983,7 @@ html {
 
 .colored-to-black {
   filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
-  brightness(87%) contrast(89%);
+    brightness(87%) contrast(89%);
 }
 
 .numbered-swiper .swiper-pagination {
@@ -2031,10 +2027,6 @@ html {
 
 #installFaq li span {
   transition: 0.3s all;
-}
-
-#installFaq li span:hover {
-  box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
 }
 
 @media (min-width: 769px) {
@@ -2091,9 +2083,53 @@ html {
 
 .golden-star {
   filter: invert(85%) sepia(25%) saturate(6899%) hue-rotate(333deg)
-  brightness(93%) contrast(88%);
+    brightness(93%) contrast(88%);
   width: 17px;
   height: 17px;
+}
+
+#installFaq li span {
+  transition: 0.3s all ease-in;
+  background-color: white;
+}
+
+#installFaq li.next span {
+  --offset: 3px;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+
+#installFaq li.next span::before {
+  content: "";
+  background: conic-gradient(transparent 270deg, #1e322d, #1e322d);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+  width: 100%;
+  animation: rotate 2s linear infinite;
+}
+
+#installFaq li.next span::after {
+  content: "";
+  background: inherit;
+  border-radius: inherit;
+  position: absolute;
+  inset: var(--offset);
+  height: calc(100% - 2 * var(--offset));
+  width: calc(100% - 2 * var(--offset));
+}
+
+@keyframes rotate {
+  from {
+    transform: translate(-50%, -50%) scale(1.4) rotate(0turn);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.4) rotate(1turn);
+  }
 }
 
 .placeholder\:text-xl::-moz-placeholder {
@@ -2120,6 +2156,16 @@ html {
 
 .placeholder\:text-dark_text\/50::placeholder {
   color: rgb(30 50 45 / 0.5);
+}
+
+.before\:\!hidden::before {
+  content: var(--tw-content);
+  display: none !important;
+}
+
+.after\:\!hidden::after {
+  content: var(--tw-content);
+  display: none !important;
 }
 
 .hover\:bg-dark_green\/20:hover {
@@ -2187,10 +2233,6 @@ html {
     position: fixed;
   }
 
-  .large\:relative {
-    position: relative;
-  }
-
   .large\:left-0 {
     left: 0px;
   }
@@ -2224,26 +2266,12 @@ html {
     width: 100vw;
   }
 
-  .large\:w-full {
-    width: 100%;
-  }
-
   .large\:max-w-full {
     max-width: 100%;
   }
 
   .large\:translate-x-full {
     --tw-translate-x: 100%;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
-  .large\:translate-x-0 {
-    --tw-translate-x: 0px;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  }
-
-  .large\:translate-y-0 {
-    --tw-translate-y: 0px;
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
@@ -2424,11 +2452,6 @@ html {
     padding-bottom: 0.75rem;
   }
 
-  .medium\:py-4 {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-
   .medium\:pl-10 {
     padding-left: 2.5rem;
   }
@@ -2512,13 +2535,6 @@ html {
 
 @media (max-width: 992px) {
   .scrolled .large\:\[\.scrolled_\&\]\:py-3 {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .scrolled .medium\:\[\.scrolled_\&\]\:py-3 {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
   }

@@ -6,7 +6,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Exo 2', sans-serif;
+  font-family: "Exo 2", sans-serif;
 }
 html {
   overflow-x: hidden;
@@ -81,7 +81,7 @@ html {
   min-width: 100px;
   min-height: 22px;
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-  contrast(101%);
+    contrast(101%);
 }
 
 .not-filtered .ticker__item img {
@@ -93,7 +93,7 @@ html {
 
 .whiteImage {
   filter: invert(94%) sepia(76%) saturate(0%) hue-rotate(40deg) brightness(113%)
-  contrast(101%);
+    contrast(101%);
 }
 
 @-webkit-keyframes ticker {
@@ -139,7 +139,7 @@ html {
   background-color: #8ad68f;
   position: absolute;
   top: -34px;
-  content: '';
+  content: "";
   display: block;
   left: 48%;
   right: 48%;
@@ -172,7 +172,7 @@ html {
 }
 .arrowLink {
   filter: invert(56%) sepia(35%) saturate(762%) hue-rotate(183deg)
-  brightness(84%) contrast(87%);
+    brightness(84%) contrast(87%);
   transform: rotate(-90deg);
   margin-bottom: -5px;
 }
@@ -195,7 +195,7 @@ html {
 }
 
 .numberedTitle:before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20px;
   left: 10%;
@@ -211,10 +211,10 @@ html {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, max-content);
     grid-template-areas:
-      'hero3'
-      'heroTitle'
-      'hero1'
-      'hero2';
+      "hero3"
+      "heroTitle"
+      "hero1"
+      "hero2";
   }
   .hero-1 {
     grid-area: hero1;
@@ -318,7 +318,7 @@ html {
   height: 10px;
   transition: 0.3s all ease;
   filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg)
-  brightness(97%) contrast(89%);
+    brightness(97%) contrast(89%);
   opacity: 0.5;
 }
 
@@ -393,7 +393,7 @@ html {
   position: absolute;
   width: 95%;
   height: calc(100% - 40px);
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -406,7 +406,7 @@ html {
   position: absolute;
   width: 100%;
   height: 100%;
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -416,7 +416,7 @@ html {
 
 .colored-to-black {
   filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
-  brightness(87%) contrast(89%);
+    brightness(87%) contrast(89%);
 }
 
 .numbered-swiper .swiper-pagination {
@@ -457,12 +457,6 @@ html {
 
 #installFaq li span {
   transition: 0.3s all;
-}
-
-#installFaq li span:hover {
-  -webkit-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
-  -moz-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
-  box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
 }
 
 @media (min-width: 769px) {
@@ -511,7 +505,51 @@ html {
 
 .golden-star {
   filter: invert(85%) sepia(25%) saturate(6899%) hue-rotate(333deg)
-  brightness(93%) contrast(88%);
+    brightness(93%) contrast(88%);
   width: 17px;
   height: 17px;
+}
+
+#installFaq li span {
+  transition: 0.3s all ease-in;
+  background-color: white;
+}
+
+#installFaq li.next span {
+  --offset: 3px;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+
+#installFaq li.next span::before {
+  content: "";
+  background: conic-gradient(transparent 270deg, #1e322d, #1e322d);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1;
+  width: 100%;
+  animation: rotate 2s linear infinite;
+}
+
+#installFaq li.next span::after {
+  content: "";
+  background: inherit;
+  border-radius: inherit;
+  position: absolute;
+  inset: var(--offset);
+  height: calc(100% - 2 * var(--offset));
+  width: calc(100% - 2 * var(--offset));
+}
+
+@keyframes rotate {
+  from {
+    transform: translate(-50%, -50%) scale(1.4) rotate(0turn);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.4) rotate(1turn);
+  }
 }

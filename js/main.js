@@ -79,23 +79,23 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  const s4 = new Swiper('.reviews-swiper', {
+  const s4 = new Swiper(".reviews-swiper", {
     // Optional parameters
     slidesPerView: 1.3,
     spaceBetween: 65,
     mousewheel: true,
     breakpoints: {
       1024: {
-        mousewheel: false
+        mousewheel: false,
       },
       1920: {
-        mousewheel: false
-      }
+        mousewheel: false,
+      },
     },
     navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev'
-    }
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
   });
 
   const s3 = new Swiper(".numbered-swiper", {
@@ -320,19 +320,59 @@ initFAQ();
 const installFaq = document.querySelector("#installFaq");
 
 const installFaqItems = installFaq.querySelectorAll("li");
+let currentIndex = 0;
 
-installFaqItems.forEach((item, index) => {
+installFaqItems.forEach((item) => {
   const itemText = item.querySelector("p");
   slideUp(itemText);
-  item.addEventListener("click", (e) => {
-    installFaqItems.forEach((faqItem, faqIndex) => {
-      if (faqIndex !== index) {
-        const faqItemText = faqItem.querySelector("p");
-        faqItem.classList.remove("active");
-        slideUp(faqItemText);
-      }
-    });
-    item.classList.add("active");
-    slideDown(itemText);
+  item.classList.remove("active", "next");
+});
+
+function changeActiveItem() {
+  // Hide the current active item
+  const currentItem = installFaqItems[currentIndex];
+  const currentItemText = currentItem.querySelector("p");
+  currentItem.classList.remove("active");
+  slideUp(currentItemText);
+
+  // Update the index to the next item
+  const nextIndex = (currentIndex + 1) % installFaqItems.length;
+  const nextItem = installFaqItems[nextIndex];
+  const nextItemText = nextItem.querySelector("p");
+
+  // Update the index to the item after the next one
+  const nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
+  const nextToNextItem = installFaqItems[nextToNextIndex];
+
+  // Remove 'next' class from all items
+  installFaqItems.forEach((item) => item.classList.remove("next"));
+
+  // Show the next item
+  nextItem.classList.add("active");
+  slideDown(nextItemText);
+
+  // Add 'next' class to the item that will be next
+  nextToNextItem.classList.add("next");
+
+  // Update the current index
+  currentIndex = nextIndex;
+}
+
+setInterval(changeActiveItem, 2000);
+
+const reviewsVideos = document.querySelectorAll(".reviews-swiper video");
+
+reviewsVideos.forEach((video) => {
+  video.addEventListener("click", () => {
+    if (video.paused) {
+      reviewsVideos.forEach((video) => {
+        video.pause();
+      });
+      video.play();
+    } else {
+      reviewsVideos.forEach((video) => {
+        video.pause();
+      });
+    }
   });
 });

@@ -358,7 +358,7 @@ function changeActiveItem() {
   currentIndex = nextIndex;
 }
 
-setInterval(changeActiveItem, 2000);
+setInterval(changeActiveItem, 6000);
 
 const reviewsVideos = document.querySelectorAll(".reviews-swiper video");
 

@@ -522,35 +522,6 @@ html {
   background-color: white;
 }
 
-#installFaq li.next span {
-  --offset: 3px;
-  border-radius: 9999px;
-  position: relative;
-  overflow: hidden;
-}
-
-#installFaq li.next span::before {
-  content: "";
-  background: conic-gradient(transparent 270deg, #1e322d, #1e322d);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  aspect-ratio: 1;
-  width: 100%;
-  animation: rotate 2s linear infinite;
-}
-
-#installFaq li.next span::after {
-  content: "";
-  background: inherit;
-  border-radius: inherit;
-  position: absolute;
-  inset: var(--offset);
-  height: calc(100% - 2 * var(--offset));
-  width: calc(100% - 2 * var(--offset));
-}
-
 @keyframes rotate {
   from {
     transform: translate(-50%, -50%) scale(1.4) rotate(0turn);
@@ -558,5 +529,34 @@ html {
 
   to {
     transform: translate(-50%, -50%) scale(1.4) rotate(1turn);
+  }
+}
+
+.facet-pill-border {
+  border-radius: 9999px;
+  fill: none;
+  height: 58px;
+  left: -1px;
+  pointer-events: none;
+  position: absolute;
+  top: -1px;
+  width: calc(100% + 1px);
+}
+
+.animated-rect {
+  stroke-dasharray: 611.06;
+  stroke-dashoffset: 611.06;
+  stroke: #000000;
+  stroke-width: 4px;
+  visibility: visible;
+  animation: drawBorder 6s linear infinite;
+}
+
+@keyframes drawBorder {
+  from {
+    stroke-dashoffset: 611.06;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }

@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../asset/header_logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" href="../css/main.css" />
+    <title>Heidi</title>
+</head>
+<body>
+<header id="header" class="fixed w-full top-0">
+    <div class="flex items-center bg-dark_green w-full px-10 medium:px-5 duration-300 large:[.scrolled_&]:py-3 large:py-4 ease-in-out justify-between">
+        <div class="flex items-center justify-start gap-3">
+            <span class="text-xl text-white"> Heidi </span>
+            <img src="../asset/header_logo.svg" alt="logo" />
+        </div>
+        <div class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0">
+            <div
+                    class="flex-grow flex items-center justify-center large:items-start large:justify-start"
+            >
+                <nav
+                        class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
+                >
+                    <div class="group relative [.scrolled_&]:py-3 py-4 duration-300">
+                        <a href="./gerate.html" class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text">
+                            Geräte <img src="../asset/right_arrow.png" alt="arrow" />
+                        </a>
+                        <div class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden">
+                            <div>
+                                <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                                <ul class="space-y-4">
+                                    <li class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer">
+                                        <img class="size-7" src="../asset/modal_water.png" alt="modal_icon"/>
+                                        Warmwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_shower.png"
+                                                alt="modal_icon"
+                                        />
+                                        Kaltwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_heater.png"
+                                                alt="modal_icon"
+                                        />
+                                        Heizungszähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_energy.png"
+                                                alt="modal_icon"
+                                        />
+                                        Stromzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_wifi.png"
+                                                alt="modal_icon"
+                                        />
+                                        Rauchmelder
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_cooler.png"
+                                                alt="modal_icon"
+                                        />
+                                        Feuerlöscher
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p
+                                        class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                                >
+                                    Produkthighlight
+                                    <a href="#"
+                                    ><img alt="arrow" src="../asset/arrow.png"
+                                    /></a>
+                                </p>
+                                <div
+                                        class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                                >
+                                    <img
+                                            src="../asset/modal_counter.png"
+                                            alt="counter mobile"
+                                    />
+                                </div>
+                                <p class="text-dark_text text-[15px] font-bold mb-3">
+                                    Neue Warmwasserzähler
+                                </p>
+                                <p class="text-xs text-dark_text">
+                                    Neuste Funktechnik erlaubt das Ablesen des
+                                    Warmwasserverbrauchs in Echtzeit
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group relative [.scrolled_&]:py-3 py-4 duration-300">
+                        <a
+                                href="./functionen.html"
+                                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                        >
+                            Dienstleistungen
+                            <img src="../asset/right_arrow.png" alt="arrow" />
+                        </a>
+                        <div
+                                class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                        >
+                            <div>
+                                <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                                <ul class="space-y-4">
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_water.png"
+                                                alt="modal_icon"
+                                        />
+                                        Warmwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_shower.png"
+                                                alt="modal_icon"
+                                        />
+                                        Kaltwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_heater.png"
+                                                alt="modal_icon"
+                                        />
+                                        Heizungszähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_energy.png"
+                                                alt="modal_icon"
+                                        />
+                                        Stromzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_wifi.png"
+                                                alt="modal_icon"
+                                        />
+                                        Rauchmelder
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_cooler.png"
+                                                alt="modal_icon"
+                                        />
+                                        Feuerlöscher
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p
+                                        class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                                >
+                                    Produkthighlight
+                                    <a href="#"
+                                    ><img alt="arrow" src="../asset/arrow.png"
+                                    /></a>
+                                </p>
+                                <div
+                                        class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                                >
+                                    <img
+                                            src="../asset/modal_counter.png"
+                                            alt="counter mobile"
+                                    />
+                                </div>
+                                <p class="text-dark_text text-[15px] font-bold mb-3">
+                                    Neue Warmwasserzähler
+                                </p>
+                                <p class="text-xs text-dark_text">
+                                    Neuste Funktechnik erlaubt das Ablesen des
+                                    Warmwasserverbrauchs in Echtzeit
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                            href="#"
+                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                    >
+                        Kunden
+                    </a>
+                    <div class="group relative [.scrolled_&]:py-3 py-4 duration-300">
+                        <a
+                                href="#"
+                                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                        >
+                            Ressourcen <img src="../asset/right_arrow.png" alt="arrow" />
+                        </a>
+                        <div
+                                class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                        >
+                            <div>
+                                <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                                <ul class="space-y-4">
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_water.png"
+                                                alt="modal_icon"
+                                        />
+                                        Warmwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_shower.png"
+                                                alt="modal_icon"
+                                        />
+                                        Kaltwasserzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_heater.png"
+                                                alt="modal_icon"
+                                        />
+                                        Heizungszähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_energy.png"
+                                                alt="modal_icon"
+                                        />
+                                        Stromzähler
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_wifi.png"
+                                                alt="modal_icon"
+                                        />
+                                        Rauchmelder
+                                    </li>
+                                    <li
+                                            class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                                    >
+                                        <img
+                                                class="size-7"
+                                                src="../asset/modal_cooler.png"
+                                                alt="modal_icon"
+                                        />
+                                        Feuerlöscher
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p
+                                        class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                                >
+                                    Produkthighlight
+                                    <a href="#"
+                                    ><img alt="arrow" src="../asset/arrow.png"
+                                    /></a>
+                                </p>
+                                <div
+                                        class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                                >
+                                    <img
+                                            src="../asset/modal_counter.png"
+                                            alt="counter mobile"
+                                    />
+                                </div>
+                                <p class="text-dark_text text-[15px] font-bold mb-3">
+                                    Neue Warmwasserzähler
+                                </p>
+                                <p class="text-xs text-dark_text">
+                                    Neuste Funktechnik erlaubt das Ablesen des
+                                    Warmwasserverbrauchs in Echtzeit
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                            href="#"
+                            class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                    >
+                        Preise
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center justify-end gap-base">
+                <a
+                        href="#"
+                        class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
+                >
+                    Angebot
+                </a>
+                <a
+                        href="#"
+                        class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
+                >
+                    Anrufen buchen
+                </a>
+            </div>
+        </div>
+        <a
+                href="#"
+                class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
+        >
+            Angebot
+        </a>
+        <button
+                class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
+        >
+            <span class="burger-line top-line"></span>
+            <span class="burger-line mid-line"></span>
+            <span class="burger-line bot-line"></span>
+        </button>
+    </div>
+</header>
+<main id="content">
+    <div class="pt-24 pl-[120px] large:pl-20 medium:pl-10 small:pl-5 mb-[52px] pb-4 pr-5">
+        <h1 class="text-[50px] megalarge:text-[50px] text-center leading-[1] large:text-4xl mb-5 medium:text-2xl text-dark_text">
+            Unser Angebot im Überblick
+        </h1>
+        <p class="text-dark_text max-w-3xl mx-auto text-center text-base">
+            Profitieren Sie von maßgeschneiderten Preislösungen, die auf Ihre Bedürfnisse zugeschnitten sind,.
+            Konzentrieren Sie sich auf das, was wirklich zählt.
+        </p>
+    </div>
+    <div class="px-8 medium:px-5">
+        <div class="grid grid-cols-3 gap-5 medium:grid-cols-1">
+            <div class="relative border-dark_green/20 border rounded-base px-7 py-12">
+                <span class="absolute -top-4 left-1/2 -translate-x-1/2 py-1 px-9 rounded-[20px] bg-green">5% sparen</span>
+                <p class="text-[25px] text-dark_text mb-2 text-center">Heidi</p>
+                <p class="text-center text-[15px] mb-7 text-dark_text/20">ab <span class="text-dark_text text-[40px]">€69</span> pro Jahr</p>
+                <p class="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
+                    Preis für einen Heizzähler. Empfholen für Eigenheimbesitzer
+                </p>
+                <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Beraten lassen</a>
+                <a href="#" class="text-white bg-dark_green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Jetzt starten</a>
+                <p class="pt-6 border-t border-dark_green/20 font-bold text-lg text-dark_text mb-4">
+                    Heidi features:
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold"> Kostenfreie Installation der Geräte</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Kostenfreie Wartung </li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Verbrauchsdaten in Echtzeit</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Weltweite Kontrolle und Daten </li>
+                </ul>
+            </div>
+            <div class="relative border-dark_green/20 border rounded-base px-7 py-12">
+                <span class="absolute -top-4 left-1/2 -translate-x-1/2 py-1 px-9 rounded-[20px] bg-green">25% sparen</span>
+                <p class="text-[25px] text-dark_text mb-2 text-center">Heidi <span class="py-0.5 ml-1.5 px-2 rounded-base bg-green text-dark_text text-lg">Plus</span></p>
+                <p class="text-center text-[15px] mb-7 text-dark_text/20">ab <span class="text-dark_text text-[40px]">€49</span> pro Jahr</p>
+                <p class="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
+                    Sofern Sie mehr als 4 Wohnung betreuen, lohnt es sich Heidi plus zu buchen.
+                </p>
+                <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Angebot sichern</a>
+                <a href="#" class="text-white bg-green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Kostenvoranschlag erhalten</a>
+                <p class="pt-6 border-t border-dark_green/20 font-bold text-lg text-dark_text mb-4">
+                    Heidi features:
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Kostenfreie Installation der Geräte</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Kostenfreie Wartung</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Verbrauchsdaten in Echtzeit</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Betriebskostenabrechnung</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Weltweite Kontrolle und Daten</li>
+                </ul>
+            </div>
+            <div class="relative border-dark_green/20 border rounded-base px-7 py-12">
+                <span class="absolute -top-4 left-1/2 -translate-x-1/2 py-1 px-9 rounded-[20px] bg-[#EFEEEC]">personalisiert</span>
+                <p class="text-[25px] text-dark_text mb-2 text-center">Heidi <span class="py-0.5 ml-1.5 px-2 rounded-base bg-[#D9D9D9] text-dark_text text-lg">Großkunde</span></p>
+                <p class="text-center text-[15px] mb-7 text-dark_text/20">Kontaktieren sie uns für eine Angbeot</p>
+                <p class="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
+                    Preis für einen Heizzähler. Empfholen für Wohnungsgenossenschafften und
+                </p>
+                <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Angebot sichern</a>
+                <a href="#" class="text-white bg-green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Kostenvoranschlag erhalten</a>
+                <p class="pt-6 border-t border-dark_green/20 font-bold text-lg text-dark_text mb-4">
+                    Heidi features:
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Kostenfreie Installation der Geräte</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Kostenfreie Wartung</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Verbrauchsdaten in Echtzeit</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Betriebskostenabrechnung</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Weltweite Kontrolle und Daten</li>
+                    <li class="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50"><img src="../asset/checkmark_bold.png" alt="checkmark bold">Persönlicher Ansprechpartner</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div
+            class="px-20 space-y-[72px] large:px-16 medium:px-10 small:px-5 my-16 small:my-8"
+    >
+        <img class="block mx-auto" src="../asset/vonovia.png" alt="vonovia" />
+        <h5 class="max-w-6xl mx-auto text-center text-dark_text text-[30px]">
+            “Wir haben wie gesetzlich vorgeschrieben auf Funkzähler von Heidi umgestellt. Was uns überzeugt hat war die kostenfreie Installation der Geräte. Nachdem wir das Angebot erhalten haben, hat es zwei Wochen waren alle Zähler installiert. Nun können wir alle Verbräuche in Echtzeit ablesen.”
+        </h5>
+        <p class="text-center text-lg text-dark_text">
+            <b>Michael Günther</b> Leiter der IT Abteilung, Bonovia
+        </p>
+    </div>
+
+    <div class="px-5 my-16 small:my-8">
+        <h3
+                class="max-w-3xl mx-auto mb-20 text-center text-dark_text text-[50px] leading-[60px] medium:text-[30px] medium:leading-9"
+        >
+            Features Vergleichen
+        </h3>
+        <div class="megalarge:overflow-x-scroll">
+            <table class="w-full">
+                <thead>
+                <tr class="divide-x divide-dark_green/20">
+                    <th class="p-5"></th>
+                    <th class="p-5 min-w-[308px]">
+                        <p class="text-[25px] text-dark_text mb-2 text-center">Heidi</p>
+                        <p class="text-center text-[15px] mb-7 text-dark_text/20">Für 1-3  Wohnungen</p>
+                        <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Beraten lassen</a>
+                        <a href="#" class="text-white bg-dark_green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Jetzt starten</a>
+                    </th>
+                    <th class="p-5 min-w-[308px]">
+                        <p class="text-[25px] text-dark_text mb-2 text-center">Heidi <span class="py-0.5 ml-1.5 px-2 rounded-base bg-green text-dark_text text-lg">Plus</span></p>
+                        <p class="text-center text-[15px] mb-7 text-dark_text/20">Ab 4 Wohnungen</p>
+                        <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Angebot sichern</a>
+                        <a href="#" class="text-white bg-green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Kostenvoranschlag erhalten</a>
+                    </th>
+                    <th class="p-5 min-w-[308px]">
+                        <p class="text-[25px] text-dark_text mb-2 text-center">Heidi <span class="py-0.5 ml-1.5 px-2 rounded-base bg-[#D9D9D9] text-dark_text text-lg">Großkunde</span></p>
+                        <p class="text-center text-[15px] mb-7 text-dark_text/20">+100 Wohnungen</p>
+                        <a href="#" class="text-dark_text flex mb-2 items-center justify-center w-full py-4 border border-dark_green/20 rounded-base text-lg transition hover:border-dark_green/10">Angebot sichern</a>
+                        <a href="#" class="text-white bg-green flex items-center justify-center w-full py-4 border border-transparent mb-9 rounded-base text-lg transition hover:opacity-80">Kostenvoranschlag erhalten</a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="px-7 border-y border-dark_green/20 py-3.5 bg-[#F4F3F2] text-lg font-bold text-dark_text" colspan="4">Kostenfrei Installation</td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr>
+                    <td class="px-7 border-y border-dark_green/20 py-3.5 bg-[#F4F3F2] text-lg font-bold text-dark_text" colspan="4">Kostenfrei Installation</td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr>
+                    <td class="px-7 border-y border-dark_green/20 py-3.5 bg-[#F4F3F2] text-lg font-bold text-dark_text" colspan="4">Kostenfrei Installation</td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr>
+                    <td class="px-7 border-y border-dark_green/20 py-3.5 bg-[#F4F3F2] text-lg font-bold text-dark_text" colspan="4">Kostenfrei Installation</td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                <tr class="divide-x divide-dark_green/20">
+                    <td class="px-7 py-2.5 text-lg text-dark_text">Kostenfrei Installation</td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"></td>
+                    <td class="px-7 py-2.5"><img class="block mx-auto" src="../asset/checkmark_bold.png" alt="checkmark bold"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="px-20 space-y-9 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">
+        <p class="text-dark_text text-center text-xl">Wir haben unseren Kunden bereits über </p>
+        <p class="text-dark_text text-center text-[120px] megalarge:text-[100px] large:text-[80px] medium:text-[60px] small:text-[40px]">+1.000.000.000 Liter</p>
+        <p class="text-dark_text text-center text-xl">geholfen zu messen.</p>
+    </div>
+    <div class="px-20 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">
+        <div class="swiper chart-swiper relative">
+            <div class="swiper-wrapper">
+                <div
+                        data-slide-name="Dashboard"
+                        class="swiper-slide rounded-base bg-[#EFEDEC] pl-[100px] large:pl-16 medium:pl-10 small:pl-5 flex items-center justify-between medium:flex-col pt-10 medium:pt-5"
+                >
+                    <div class="max-w-xl">
+                        <h5
+                                class="text-[45px] leading-[54px] mb-10 medium:text-2xl text-dark_text"
+                        >
+                            Alles in einer Übersicht
+                        </h5>
+                        <p class="text-lg text-dark_text mb-6">
+                            Ein übersichtliches Dashboard fasst alle Verbräuche von
+                            Heizungsverbrauch, Kalt- und Warmwasser zusammen.
+                        </p>
+                        <a
+                                class="group flex items-center justify-start gap-1.5 cursor-pointer"
+                                href="#"
+                        >Mehr erfahren
+                            <img
+                                    class="group-hover:translate-x-1 transition colored-to-black -rotate-90"
+                                    src="../asset/right_arrow.png"
+                                    alt="right_arrow"
+                            /></a>
+                    </div>
+                    <img src="../asset/swiper_chart.png" alt="swiper_chart" />
+                </div>
+                <div
+                        data-slide-name="Betriebskosten"
+                        class="swiper-slide rounded-base bg-[#EFEDEC] pl-[100px] large:pl-16 medium:pl-10 small:pl-5 flex items-center justify-between medium:flex-col pt-10 medium:pt-5"
+                >
+                    <div class="max-w-xl">
+                        <h5
+                                class="text-[45px] leading-[54px] mb-10 medium:text-2xl text-dark_text"
+                        >
+                            Alles in einer Übersicht
+                        </h5>
+                        <p class="text-lg text-dark_text mb-6">
+                            Ein übersichtliches Dashboard fasst alle Verbräuche von
+                            Heizungsverbrauch, Kalt- und Warmwasser zusammen.
+                        </p>
+                        <a
+                                class="group flex items-center justify-start gap-1.5 cursor-pointer"
+                                href="#"
+                        >Mehr erfahren
+                            <img
+                                    class="group-hover:translate-x-1 transition colored-to-black -rotate-90"
+                                    src="../asset/right_arrow.png"
+                                    alt="right_arrow"
+                            /></a>
+                    </div>
+                    <img src="../asset/swiper_chart.png" alt="swiper_chart" />
+                </div>
+                <div
+                        data-slide-name="Rechnungen"
+                        class="swiper-slide rounded-base bg-[#EFEDEC] pl-[100px] large:pl-16 medium:pl-10 small:pl-5 flex items-center justify-between medium:flex-col pt-10 medium:pt-5"
+                >
+                    <div class="max-w-xl">
+                        <h5
+                                class="text-[45px] leading-[54px] mb-10 medium:text-2xl text-dark_text"
+                        >
+                            Alles in einer Übersicht
+                        </h5>
+                        <p class="text-lg text-dark_text mb-6">
+                            Ein übersichtliches Dashboard fasst alle Verbräuche von
+                            Heizungsverbrauch, Kalt- und Warmwasser zusammen.
+                        </p>
+                        <a
+                                class="group flex items-center justify-start gap-1.5 cursor-pointer"
+                                href="#"
+                        >Mehr erfahren
+                            <img
+                                    class="group-hover:translate-x-1 transition colored-to-black -rotate-90"
+                                    src="../asset/right_arrow.png"
+                                    alt="right_arrow"
+                            /></a>
+                    </div>
+                    <img src="../asset/swiper_chart.png" alt="swiper_chart" />
+                </div>
+            </div>
+            <div class="swiper-controllers medium:hidden">
+                <div class="chart-swiper-pagination swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-20 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">
+        <div
+                class="grid mb-32 hero-1 grid-cols-3 gap-12 large:gap-8 items-start medium:grid-cols-1 justify-center"
+        >
+            <div
+                    class="space-y-7 medium:flex medium:flex-col medium:items-center medium:justify-start"
+            >
+            <span class="circleIcon">
+              <img class="size-[25px]" src="../asset/clock.png" alt="clock" />
+            </span>
+                <p class="text-xl text-dark_text font-bold medium:text-center">
+                    Zeit- und Kostenersparnis
+                </p>
+                <p
+                        class="text-[15px] leading-[18px] text-dark_text medium:text-center"
+                >
+                    Zeitersparnis durch die Automatisierung verschiedener Prozesse,
+                    die bei traditionellen Zählern maneull durchgeführt werden müssen.
+                </p>
+                <a
+                        href="#"
+                        class="border hidden medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-1/2base duration-300 hover:opacity-80"
+                >
+                    Kosteneinsparung berechnen
+                </a>
+            </div>
+            <div
+                    class="space-y-7 medium:flex medium:flex-col medium:items-center medium:justify-start"
+            >
+            <span class="circleIcon">
+              <img
+                      class="size-[25px]"
+                      src="../asset/instruments.png"
+                      alt="instruments"
+              />
+            </span>
+                <p class="text-xl text-dark_text font-bold medium:text-center">
+                    Kostenfreie Installation
+                </p>
+                <p
+                        class="text-[15px] leading-[18px] text-dark_text medium:text-center"
+                >
+                    Profitieren Sie von einer kostenfreien Umrüstung auf unsere
+                    fortschrittliche Technologie – ohne zusätzliche Kosten.
+                </p>
+                <a
+                        href="#"
+                        class="border hidden medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
+                >
+                    Jetzt installieren lassen
+                </a>
+            </div>
+            <div
+                    class="space-y-7 medium:hidden medium:flex-col medium:items-center medium:justify-start"
+            >
+            <span class="circleIcon">
+              <img class="size-[25px]" src="../asset/doc.png" alt="doc" />
+            </span>
+                <p class="text-xl text-dark_text font-bold medium:text-center">
+                    Betriebskosten-abrechnung erstellen
+                </p>
+                <p
+                        class="text-[15px] leading-[18px] text-dark_text medium:text-center"
+                >
+                    Die Daten, die von den drahtlosen Messgeräten erfasst werden,
+                    fließen automatisch ein und sind für die Zusammenstellung Ihrer
+                    Nebenkostenabrechnung verfügbar.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!--      FAQ -->
+    <div
+            class="bg-section_bg px-[72px] large:px-6 pt-16 pb-32 large:pt-8 large:pb-20"
+    >
+        <h3
+                class="mb-14 text-[45px] leading-[54px] medium:text-2xl text-dark_text"
+        >
+            FAQ
+        </h3>
+        <div
+                class="faq-tabs-answers grid-cols-2 grid gap-[88px] large:gap-11 medium:grid-cols-1 medium:gap-6"
+        >
+            <div class="faq-answers-container" data-tab="1">
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">Muss ich auf Funktechnik umrüsten?</p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Besteht eine Einbaupflich für Funkmessgeräte?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Welche Daten werden per Funk ausgelesen
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Sind die Daten in Echtzeit verfügbar?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Wer nimmt die Installation der Geräte vor?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Was kostet die Installation der Geräte?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="faq-answers-container" data-tab="1">
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Was ist ein Smart-Meter-Gateway (SMGW)?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Was versteh man unter einem intelligenten Gerät?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Ist die Erstellung der Betriebskostenabrechnung möglich?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">
+                            Ist der Wartung der Geräte inklusive?
+                        </p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">Wie viel Kostet der Service?</p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-answer-item">
+                    <div class="faq-answer-header">
+                        <p class="faq-question">Welche Geräte werden angebote?</p>
+                        <div class="faq-icon">
+                            <img
+                                    class="rotate-90"
+                                    src="../asset/chevron.png"
+                                    alt="chevron"
+                            />
+                        </div>
+                    </div>
+                    <div class="faq-answer-content">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                            autem commodi, deserunt dicta eius in inventore laudantium
+                            molestiae odit possimus tempore, unde ut vel? Architecto
+                            beatae explicabo ipsum quaerat repellendus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--      FAQ -->
+
+    <div class="px-20 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">
+        <h5
+                class="text-[45px] text-center leading-[54px] mb-9 medium:text-2xl text-dark_text"
+        >
+            Kostenfrei Nachrüsten
+        </h5>
+        <a
+                class="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] mx-auto w-fit mb-5 rounded-1/2base bg-green"
+                href="#"
+        >Jetzt installieren lassen</a
+        >
+        <p class="text-center text-dark_text text-[15px]">
+            Kostenfreie Installation der Funkgeräte
+        </p>
+        <div
+                class="flex mb-28 mt-16 items-center justify-center gap-24 large:gap-16 medium:gap-10 small:gap-5 large:grid large:grid-cols-2 medium:grid-cols-1"
+        >
+            <div
+                    class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+            >
+                <img src="../asset/chess_shield.png" alt="chess_shield" />
+                <div>
+                    <p class="text-dark_text text-[15px]">Gesetzeskonform</p>
+                    <p class="text-dark_text/50 text-[15px]">§ 229 Artikel 3</p>
+                </div>
+            </div>
+            <div
+                    class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+            >
+                <img src="../asset/checkmark_shield.png" alt="checkmark_shield" />
+                <div>
+                    <p class="text-dark_text text-[15px]">Datenschutzkonform</p>
+                    <p class="text-dark_text/50 text-[15px]">Nach DSGVO</p>
+                </div>
+            </div>
+            <div
+                    class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+            >
+                <img src="../asset/lock.png" alt="lock" />
+                <div>
+                    <p class="text-dark_text text-[15px]">SSL Verschlüsselung</p>
+                    <p class="text-dark_text/50 text-[15px]">
+                        Zertifiziert und Sicher
+                    </p>
+                </div>
+            </div>
+            <div
+                    class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+            >
+                <img src="../asset/eu_elipse.png" alt="eu_elipse" />
+                <div>
+                    <p class="text-dark_text text-[15px]">Server in Europa</p>
+                    <p class="text-dark_text/50 text-[15px]">EU Datenschutz</p>
+                </div>
+            </div>
+        </div>
+        <div
+                class="flex items-center justify-between px-9 small:px-5 megalarge:flex-col megalarge:space-y-6 py-7 border border-dark_green/10 rounded-base"
+        >
+            <img src="../asset/small_counter.png" alt="small_counter" />
+            <p class="text-[30px] medium:text-center text-dark_text">
+                Jetzt auf digitale Funkzähler umstellen lassen.
+            </p>
+            <a
+                    class="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-4 px-5 w-fit rounded-base bg-green"
+                    href="#"
+            >Angebot anfordern</a
+            >
+        </div>
+    </div>
+</main>
+<footer
+        class="px-[72px] megalarge:px-6 medium:px-5 bg-card_dark_bg pt-16 pb-12"
+>
+    <div
+            class="flex items-center justify-between gap-5 large:flex-wrap large:gap-3"
+    >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Über uns</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Karriere</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Handwerker</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Produkte</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Städte</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Partner</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Lösungen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Funktionen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Dienstleistungen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+        >Unternehmen</a
+        >
+    </div>
+    <div class="border-b border-dark_green/10 pb-16">
+        <div
+                class="mt-6 grid grid-cols-5 gap-10 megalarge:gap-4 large:flex large:items-start large:justify-between large:flex-wrap"
+        >
+            <div class="space-y-9">
+                <div class="space-y-2.5">
+                    <a
+                            class="text-lg leading-[21px] font-bold text-dark_text"
+                            href="#"
+                    >Geräte</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Kaltwasser</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Warmwasser</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Heizung</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Rauchmelder</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Gas</a
+                    >
+                </div>
+                <div class="space-y-2.5">
+                    <a
+                            class="text-lg leading-[21px] font-bold text-dark_text"
+                            href="#"
+                    >Dienstleistungen</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Betriebskostenab.</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Heizkostenab.</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Verbrauchsinfo</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Energieausweis</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Großprojekte</a
+                    >
+                </div>
+            </div>
+            <div class="space-y-2.5">
+                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+                >Standorte</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Berlin</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Hamburg</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >München</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Frankfurt</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Leipzig
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >neu</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Stuttgart</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Hannover</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Bielefeld</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Wolfsburg
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >neu</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Gera
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >beliebt</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Köln</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Ihre Stadt</a
+                >
+            </div>
+            <div class="space-y-2.5">
+                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+                >Rechtliches</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Die Neuerung
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >neu</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizkostenverordnung</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Rohrwärme (VDI 2077)</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Rauchmelderpflicht</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Mess- und Eichverordnung</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Der CO2- Kostenrechner</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >BAFA Förderantrag</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Kostenaufteilungsrechner</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizkostenverordnung</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Funkmesserpflicht</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Eichverordnung</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Energieausweis</a
+                >
+            </div>
+            <div class="space-y-9">
+                <div class="space-y-2.5">
+                    <a
+                            class="text-lg leading-[21px] font-bold text-dark_text"
+                            href="#"
+                    >Partner</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Kamstrup.</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Diehl Metering.</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Itron</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Landis+Gyr</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Zenner</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Bonovia</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Schöner Wohnen</a
+                    >
+                </div>
+                <div class="space-y-2.5">
+                    <a
+                            class="text-lg leading-[21px] font-bold text-dark_text"
+                            href="#"
+                    >Datenschutz</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >AGB</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Impressum</a
+                    >
+                    <a
+                            href="#"
+                            class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                    >Datenschutz</a
+                    >
+                </div>
+            </div>
+            <div class="space-y-2.5">
+                <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+                >News & Info</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Blog
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >beliebt</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Newsletter</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Webinare</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Vororttermin
+                    <span
+                            class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                    >neu</span
+                    ></a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Downloads</a
+                >
+                <a
+                        href="#"
+                        class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >FAQ</a
+                >
+            </div>
+        </div>
+    </div>
+    <div
+            class="border-b border-dark_green/10 py-8 flex items-center justify-between megalarge:gap-4 megalarge:flex-wrap megalarge:justify-start"
+    >
+        <div class="medium:hidden">
+            <img
+                    class="block mb-2"
+                    src="../asset/footer_logo.png"
+                    alt="footer logo"
+            />
+            <p class="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
+                Heidi SE Corportation Torstrasse 110115 Berlin
+            </p>
+        </div>
+        <div
+                class="text-dark_text text-[30px] leading-9 max-w-lg medium:text-[19px] medium:leading-[22px] large:max-w-full"
+        >
+            Werde Teil der Revolution: Schon mehr als 15.000+ Geräte erfolgreich
+            installiert.
+        </div>
+        <div class="medium:w-full">
+            <div class="relative w-fit mb-4 mx-auto medium:w-full">
+                <label class="sr-only" for="footer_contact_email">Los gehts</label>
+                <input
+                        class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
+                        placeholder="Wie lautet Ihre email?"
+                        type="email"
+                        name="contact_email"
+                        id="footer_contact_email"
+                />
+                <button
+                        class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+                        type="button"
+                >
+                    Los gehts
+                </button>
+            </div>
+            <p class="text-dark_text text-sm mt-4 leading-4">
+                Bleiben Sie bei allen Themen auf dem aktuellsten Stand
+            </p>
+        </div>
+    </div>
+    <div
+            class="pt-8 flex items-start justify-between large:flex-wrap medium:flex-col-reverse medium:items-center large:justify-start large:gap-3 medium:gap-8"
+    >
+        <p class="text-dark_text text-xs leading-[14px] max-w-4xl">
+            © 2024 „Heidi“ und das Heidi-Logo sind eingetragene Markenzeichen
+            unseres Unternehmens. Die Heidi Commercial und die Heidi Visa
+            Corporate werden von der Sutton Bank bzw. der Celtic Bank (Mitglieder
+            der FDIC) herausgegeben. Wir berechnen die durchschnittlichen
+            Einsparungen als Prozentsatz des Gesamumsatzes eines beispielhaften
+            Kunden, der Heidi-Funktionen zur Reduzierung von Geschäftsausgaben
+            nutzt. Beachten Sie, dass es sich hierbei um eine Schätzung, nicht um
+            eine Garantie handelt. Einsparungen können beispielsweise durch
+            weniger Zeitaufwand für maneulle Spesenabrechnungen, finanzielle
+            Vorteile durch Cashback oder andere Prämien, intelligente
+            Ausgabenüberwachung und das Eliminieren von Kosten alternativer
+            Lösungen entstehen. Unsere Berechnungen basieren auf Plattformdaten,
+            Branchenforschung, Kundenbefragungen und Informationen zu alternativen
+            Optionen. Ihre tatsächlichen Einsparungen können variieren. Für
+            weitere Details besuchen Sie bitte unsere Nutzungsbedingungen. Lesen
+            Sie unsere redaktionellen Richtlinien und Datenschutzbestimmungen.
+            Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
+        </p>
+        <div class="flex items-center justify-end gap-3">
+            <img src="../asset/youtube.png" alt="youtube" />
+            <img src="../asset/x.png" alt="x" />
+            <img src="../asset/linkedin.png" alt="linkedin" />
+            <img src="../asset/insta.png" alt="insta" />
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script type="module" src="../js/prising.js"></script>
+</body>
+</html>

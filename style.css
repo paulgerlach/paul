@@ -6,7 +6,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Exo 2', sans-serif;
+  font-family: "Exo 2", sans-serif;
 }
 html {
   overflow-x: hidden;
@@ -139,7 +139,7 @@ html {
   background-color: #8ad68f;
   position: absolute;
   top: -34px;
-  content: '';
+  content: "";
   display: block;
   left: 48%;
   right: 48%;
@@ -195,7 +195,7 @@ html {
 }
 
 .numberedTitle:before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20px;
   left: 10%;
@@ -211,10 +211,10 @@ html {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, max-content);
     grid-template-areas:
-      'hero3'
-      'heroTitle'
-      'hero1'
-      'hero2';
+      "hero3"
+      "heroTitle"
+      "hero1"
+      "hero2";
   }
   .hero-1 {
     grid-area: hero1;
@@ -393,7 +393,7 @@ html {
   position: absolute;
   width: 95%;
   height: calc(100% - 40px);
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -406,7 +406,7 @@ html {
   position: absolute;
   width: 100%;
   height: 100%;
-  content: '';
+  content: "";
   background-color: rgba(239, 237, 236, 0.5);
   opacity: 0.5;
   top: 0;
@@ -425,6 +425,7 @@ html {
 .colored-to-white {
   filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(114deg) brightness(105%) contrast(103%);
 }
+
 .numbered-swiper .swiper-pagination {
   display: flex;
   flex-direction: column;
@@ -459,7 +460,10 @@ html {
 #installFaq li.active span {
   background-color: #1e322d;
   color: #ffffff;
-  box-shadow: none !important;
+}
+
+#installFaq li span {
+  transition: 0.3s all;
 }
 
 @media (min-width: 769px) {
@@ -514,14 +518,45 @@ html {
 }
 
 #installFaq li span {
-  transition: 2s all ease-in;
-}
-#installFaq li span span {
-  box-shadow: none !important;
+  transition: 0.3s all ease-in;
+  background-color: white;
 }
 
-#installFaq li.next span {
-  -webkit-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
-  -moz-box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
-  box-shadow: 4px -4px 0 0 rgba(30, 50, 45, 1);
+@keyframes rotate {
+  from {
+    transform: translate(-50%, -50%) scale(1.4) rotate(0turn);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.4) rotate(1turn);
+  }
+}
+
+.facet-pill-border {
+  border-radius: 9999px;
+  fill: none;
+  height: 58px;
+  left: -1px;
+  pointer-events: none;
+  position: absolute;
+  top: -1px;
+  width: calc(100% + 1px);
+}
+
+.animated-rect {
+  stroke-dasharray: 611.06;
+  stroke-dashoffset: 611.06;
+  stroke: #000000;
+  stroke-width: 4px;
+  visibility: visible;
+  animation: drawBorder 6s linear infinite;
+}
+
+@keyframes drawBorder {
+  from {
+    stroke-dashoffset: 611.06;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }

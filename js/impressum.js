@@ -125,68 +125,32 @@ document.addEventListener("DOMContentLoaded", () => {
       prevEl: ".swiper-button-prev",
     },
   });
+
+  const s5 = new Swiper(".chart-swiper", {
+    // Optional parameters
+    // loop: true,
+    slidesPerView: 1,
+    spaceBetween: 0,
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".chart-swiper-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Retrieve the data-slide-name attribute of the slide
+        const slideName = this.slides[index].getAttribute("data-slide-name");
+
+        // Return the bullet with the slide name
+        return '<span class="' + className + '">' + slideName + "</span>";
+      },
+    },
+  });
 });
-
-let init = false;
-let newsSwiper;
-let functionsSwiper;
-function swiperCard() {
-  if (window.innerWidth <= 768) {
-    if (!init) {
-      init = true;
-      newsSwiper = new Swiper(".news-swiper", {
-        // Optional parameters
-        // loop: true,
-        slidesPerView: 1,
-        centeredSlides: true,
-        spaceBetween: 75,
-        mousewheel: true,
-
-        // If we need pagination
-        pagination: {
-          el: ".news-swiper-pagination",
-          clickable: true,
-          renderBullet: function (index, className) {
-            // Calculate which bullets to show
-
-            return '<span class="' + className + '">' + "</span>";
-          },
-          dynamicBullets: true,
-        },
-      });
-      functionsSwiper = new Swiper(".functions-swiper", {
-        // Optional parameters
-        // loop: true,
-        slidesPerView: 1,
-        centeredSlides: true,
-        spaceBetween: 75,
-        mousewheel: true,
-
-        // If we need pagination
-        pagination: {
-          el: ".functions-swiper-pagination",
-          clickable: true,
-          renderBullet: function (index, className) {
-            // Calculate which bullets to show
-
-            return '<span class="' + className + '">' + "</span>";
-          },
-          dynamicBullets: true,
-        },
-      });
-    }
-  } else if (init) {
-    if (newsSwiper) {
-      newsSwiper.destroy();
-    }
-    if (functionsSwiper) {
-      functionsSwiper.destroy();
-    }
-    init = false;
-  }
-}
-swiperCard();
-window.addEventListener("resize", swiperCard);
 
 /* SLIDE UP */
 let slideUp = (target, duration = 300) => {
@@ -297,15 +261,9 @@ const reviewsVideos = document.querySelectorAll(".reviews-swiper video");
 reviewsVideos.forEach((video) => {
   video.addEventListener("click", () => {
     if (video.paused) {
-      reviewsVideos.forEach((video) => {
-        video.pause();
-      });
       video.play();
     } else {
-      reviewsVideos.forEach((video) => {
-        video.pause();
-      });
+      video.pause();
     }
   });
 });
-h

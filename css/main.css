@@ -702,11 +702,6 @@ video {
   margin-bottom: 1.5rem;
 }
 
-.my-9 {
-  margin-top: 2.25rem;
-  margin-bottom: 2.25rem;
-}
-
 .\!mb-12 {
   margin-bottom: 3rem !important;
 }
@@ -871,10 +866,6 @@ video {
   margin-top: auto;
 }
 
-.mt-12 {
-  margin-top: 3rem;
-}
-
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -1016,6 +1007,10 @@ video {
 
 .max-h-\[317px\] {
   max-height: 317px;
+}
+
+.max-h-\[400px\] {
+  max-height: 400px;
 }
 
 .max-h-screen {
@@ -1212,8 +1207,8 @@ video {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.grid-rows-3 {
-  grid-template-rows: repeat(3, minmax(0, 1fr));
+.grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
 }
 
 .flex-col {

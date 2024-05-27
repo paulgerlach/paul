@@ -296,11 +296,35 @@ const installFaq = document.querySelector("#installFaq");
 
 const installFaqItems = installFaq.querySelectorAll("li");
 let currentIndex = 0;
+let nextIndex = 1;
+let nextToNextIndex = 2;
 
 installFaqItems.forEach((item) => {
+  clearInstallFaqItem(item);
+});
+
+function clearInstallFaqItem (item) {
   const itemText = item.querySelector("p");
   slideUp(itemText);
   item.classList.remove("active", "next");
+}
+
+installFaqItems.forEach((item, index) => {
+  item.addEventListener('click', () => {
+    installFaqItems.forEach((item) => {
+      clearInstallFaqItem(item);
+    });
+    if (index === 0) {
+      currentIndex = installFaqItems.length - 1;
+      nextIndex = index + 1;
+      nextToNextIndex = nextIndex + 1;
+    } else {
+      currentIndex = index - 1;
+      nextIndex = currentIndex + 1;
+      nextToNextIndex = nextIndex + 1;
+    }
+    changeActiveItem();
+  })
 });
 
 function changeActiveItem() {
@@ -311,12 +335,12 @@ function changeActiveItem() {
   slideUp(currentItemText);
 
   // Update the index to the next item
-  const nextIndex = (currentIndex + 1) % installFaqItems.length;
+  nextIndex = (currentIndex + 1) % installFaqItems.length;
   const nextItem = installFaqItems[nextIndex];
   const nextItemText = nextItem.querySelector("p");
 
   // Update the index to the item after the next one
-  const nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
+  nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
   const nextToNextItem = installFaqItems[nextToNextIndex];
 
   // Remove 'next' class from all items

@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../asset/header_logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <link rel="stylesheet" href="../css/main.css" />
+    <title>Heidi</title>
+  </head>
+  <body>
+    <header id="header" class="fixed w-full top-0">
+      <div
+        class="flex items-center bg-dark_green w-full px-10 medium:px-5 duration-300 large:[.scrolled_&]:py-3 large:py-4 ease-in-out justify-between"
+      >
+        <a href="../index.html" class="flex items-center justify-start gap-3">
+          <img src="../asset/logo.svg" alt="logo" />
+        </a>
+        <div
+          class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
+        >
+          <div
+            class="flex-grow flex items-center justify-center large:items-start large:justify-start"
+          >
+            <nav
+              class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
+            >
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="./gerate.html"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Geräte <img src="../asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_water.png"
+                          alt="modal_icon"
+                        />
+                        Warmwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_shower.png"
+                          alt="modal_icon"
+                        />
+                        Kaltwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_heater.png"
+                          alt="modal_icon"
+                        />
+                        Heizungszähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_energy.png"
+                          alt="modal_icon"
+                        />
+                        Stromzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_wifi.png"
+                          alt="modal_icon"
+                        />
+                        Rauchmelder
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_cooler.png"
+                          alt="modal_icon"
+                        />
+                        Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <a href="#"
+                        ><img alt="arrow" src="../asset/arrow.png"
+                      /></a>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="./functionen.html"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Dienstleistungen
+                  <img src="../asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_water.png"
+                          alt="modal_icon"
+                        />
+                        Warmwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_shower.png"
+                          alt="modal_icon"
+                        />
+                        Kaltwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_heater.png"
+                          alt="modal_icon"
+                        />
+                        Heizungszähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_energy.png"
+                          alt="modal_icon"
+                        />
+                        Stromzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_wifi.png"
+                          alt="modal_icon"
+                        />
+                        Rauchmelder
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_cooler.png"
+                          alt="modal_icon"
+                        />
+                        Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <a href="#"
+                        ><img alt="arrow" src="../asset/arrow.png"
+                      /></a>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Kunden
+              </a>
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="#"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Ressourcen <img src="../asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_water.png"
+                          alt="modal_icon"
+                        />
+                        Warmwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_shower.png"
+                          alt="modal_icon"
+                        />
+                        Kaltwasserzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_heater.png"
+                          alt="modal_icon"
+                        />
+                        Heizungszähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_energy.png"
+                          alt="modal_icon"
+                        />
+                        Stromzähler
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_wifi.png"
+                          alt="modal_icon"
+                        />
+                        Rauchmelder
+                      </li>
+                      <li
+                        class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-dark_green/20 cursor-pointer"
+                      >
+                        <img
+                          class="size-7"
+                          src="../asset/modal_cooler.png"
+                          alt="modal_icon"
+                        />
+                        Feuerlöscher
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <a href="#"
+                        ><img alt="arrow" src="../asset/arrow.png"
+                      /></a>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <a
+                href="./prising.html"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Preise
+              </a>
+            </nav>
+          </div>
+          <div class="flex items-center justify-end gap-base">
+            <a
+              href="./questionare.html"
+              class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
+            >
+              Angebot
+            </a>
+            <a
+              href="./contact.html"
+              class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
+            >
+              Anrufen buchen
+            </a>
+          </div>
+        </div>
+        <a
+          href="./questionare.html"
+          class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
+        >
+          Angebot
+        </a>
+        <button
+          class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
+        >
+          <span class="burger-line top-line"></span>
+          <span class="burger-line mid-line"></span>
+          <span class="burger-line bot-line"></span>
+        </button>
+      </div>
+    </header>
+    <main id="content">
+      <div class="py-16 px-36 large:px-30 medium:px-16 small:px-5">
+        <h1
+          class="text-[45px] leading-[54px] mb-20 medium:text-2xl text-dark_text"
+        >
+          Impressum
+        </h1>
+        <p class="text-lg text-dark_text">Heidi Systems GmbH</p>
+        <p class="text-lg text-dark_text">Torstrasse 117</p>
+        <p class="text-lg text-dark_text">10115 Berlin</p>
+        <br />
+        <p class="text-lg text-dark_text">Telefon: +49 (0) 61 22 / 52 20</p>
+        <p class="text-lg text-dark_text">
+          E-Mail:
+          <a href="malto:info@heidisystems.com"></a>info@heidisystems.com
+        </p>
+        <br />
+        <p class="text-lg text-dark_text">
+          Vertreten durch den Geschäftsführer: Paul Gerlach
+        </p>
+        <p class="text-lg mb-16 text-dark_text">
+          Handelsregister beim Amtsgericht Berlin: HRB 81123
+        </p>
+        <div class="space-y-16">
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">
+              Plattform zur Klärung von Online-Streitigkeiten
+            </h4>
+            <p class="text-dark_text text-lg">
+              Die europäische Kommission stellt eine Plattform zur
+              Online-Streitbeilegung bereit. Diese Plattform ist eine
+              Anlaufstelle für Verbraucher und Unternehmer, die Streitigkeiten
+              aus Online-Verträgen außergerichtlich und freiwillig beilegen
+              wollen. Sie können diese unter
+              <a href="https://ec.europa.eu/consumers/odr/"
+                >https://ec.europa.eu/consumers/odr/</a
+              >
+              aufrufen.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">
+              Informationen zum Verbraucherschutz
+            </h4>
+            <p class="text-dark_text text-lg">
+              Zur Beilegung von Streitigkeiten im Zusammenhang mit Strom- oder
+              Gaslieferung können Verbraucher ein Schlichtungsverfahren bei der
+              Schlichtungsstelle Energie e.V. beantragen. Voraussetzung dafür
+              ist, dass der Kundenservice des Lieferanten angerufen wurde und
+              keine beidseitige zufriedenstellende Lösung gefunden wurde. Zur
+              Teilnahme am Schlichtungsverfahren ist Heidi Systems in diesem
+              Fall verpflichtet.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">
+              Schlichtungsstelle
+            </h4>
+            <p class="text-dark_text text-lg">
+              Energie e. V.
+              <br />
+              <br />
+              Friedrichstraße 133
+              <br />
+              <br />
+              10117 Berlin
+              <br />
+              <br />
+              Telefon: <a href="tel:03027572400">030 27 57 24 00</a><br />
+              Telefax: <a href="tel:030275724069">030 275 72 40 69</a><br />
+              <br />
+              Internet:
+              <a href="www.schlichtungsstelle-energie.de"
+                >www.schlichtungsstelle-energie.de</a
+              ><br />
+              <br />
+              E-Mail:
+              <a href="mailto:info@schlichtungsstelle-energie.de"
+                >info@schlichtungsstelle-energie.de</a
+              ><br />
+              <br />
+              Im Übrigen wird Heidi Systems nicht an Streitbeilegungsverfahren
+              nach dem Verbraucherstreitbeilegungsgesetz (VSBG) teilnehmen und
+              ist hierzu auch nicht verpflichtet.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">
+              Widerspruch Werbe-Mails
+            </h4>
+            <p class="text-dark_text text-lg">
+              Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten
+              Kontaktdaten zur Übersendung von nicht ausdrücklich angeforderter
+              Werbung und Informationsmaterialien wird hiermit widersprochen.
+              Die Betreiber der Seiten behalten sich ausdrücklich rechtliche
+              Schritte im Falle der unverlangten Zusendung von
+              Werbeinformationen, etwa durch Spam-E-Mails, vor.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">Urheberrecht</h4>
+            <p class="text-dark_text text-lg">
+              Alle Texte, Bilder, Grafiken, Ton-, Video- und Animationsdateien
+              sowie ihre Arrangements unterliegen dem Urheberrecht und anderen
+              Gesetzen zum Schutz geistigen Eigentums. Sie dürfen weder für
+              Handelszwecke oder zur Weitergabe kopiert, noch verändert und auf
+              anderen Websites verwendet werden. Einige Internet-Seiten
+              enthalten auch Bilder, die dem Urheberrecht derjenigen
+              unterliegen, die diese zur Verfügung gestellt haben.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">Gewährleistung</h4>
+            <p class="text-dark_text text-lg">
+              Die Informationen stellt die Heidi Systems GmbH ohne jegliche
+              Zusicherung oder Gewährleistung jedweder Art, sei sie ausdrücklich
+              oder stillschweigend, zur Verfügung. Ausgeschlossen sind auch alle
+              stillschweigenden Gewährleistungen betreffend die
+              Handelsfähigkeit, die Eignung für bestimmte Zwecke oder den
+              Nichtverstoß gegen Gesetze und Patente. Auch wenn wir davon
+              ausgehen, dass die von uns gegebenen Informationen zutreffend
+              sind, können sie dennoch Fehler oder Ungenauigkeiten enthalten.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <h4 class="text-2xl text-dark_text font-bold">Marken</h4>
+            <p class="text-dark_text text-lg">
+              Wo nicht anders angegeben, sind alle auf den Internet-Seiten
+              genannten Marken gesetzlich geschützte Marken der Heidi Systems
+              GmbH oder ihrer Tochterunternehmen.​
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- reviews swiper -->
+      <div
+        class="py-16 medium:py-8 pl-36 large:pl-30 medium:pl-16 small:pl-5 medium:flex-col medium:gap-8 flex items-center justify-start gap-[72px]"
+      >
+        <div class="max-w-[436px] pt-12 space-y-6">
+          <h4 class="text-[45px] leading-[54px] medium:text-2xl text-dark_text">
+            Das schätzen unsere Kund:innen an Heidi
+          </h4>
+          <p class="text-xl text-dark_text">
+            Klingt zu schön, um wahr zu sein? Dann fragen wir doch einfach die
+            Menschen, die das am besten beurteilen können: unsere Abonnenten.
+            Was sie überzeugt hat.
+          </p>
+          <img src="../asset/trustpilot.png" alt="trustpilot" />
+          <a
+            class="text-lg block w-fit text-dark_text py-2.5 px-5 border border-dark_green/20 rounded-full"
+            href="./questionare.html"
+            >Anfrage starten</a
+          >
+        </div>
+        <div class="swiper max-w-full pt-12 reviews-swiper relative">
+          <div class="swiper-wrapper items-center">
+            <div
+              class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+            >
+              <div class="flex flex-col items-start justify-between">
+                <p class="text-[25px] text-white leading-[1]">
+                  “Wir haben 12 Wohnung von Heidi umgerüsten lassen und können
+                  nun alle Verbräuche digital ablesen.”
+                </p>
+                <div class="space-y-1.5">
+                  <p class="text-xl text-white">Julie K, Leiterin Hessen</p>
+                  <p class="text-xl text-white">von SV1 Real Estate</p>
+                </div>
+              </div>
+              <video
+                class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                loop
+              >
+                <source src="../asset/videos/video1.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div
+              class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+            >
+              <div class="flex flex-col items-start justify-between">
+                <p class="text-[25px] text-white leading-[1]">
+                  “Wir haben 12 Wohnung von Heidi umgerüsten lassen und können
+                  nun alle Verbräuche digital ablesen.”
+                </p>
+                <div class="space-y-1.5">
+                  <p class="text-xl text-white">Julie K, Leiterin Hessen</p>
+                  <p class="text-xl text-white">von SV1 Real Estate</p>
+                </div>
+              </div>
+              <video
+                class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                loop
+              >
+                <source src="../asset/videos/video2.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div
+              class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+            >
+              <div class="flex flex-col items-start justify-between">
+                <p class="text-[25px] text-white leading-[1]">
+                  “Wir haben 12 Wohnung von Heidi umgerüsten lassen und können
+                  nun alle Verbräuche digital ablesen.”
+                </p>
+                <div class="space-y-1.5">
+                  <p class="text-xl text-white">Julie K, Leiterin Hessen</p>
+                  <p class="text-xl text-white">von SV1 Real Estate</p>
+                </div>
+              </div>
+              <video
+                class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                loop
+              >
+                <source src="../asset/videos/video3.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div
+              class="swiper-slide max-w-[680px] flex items-stretch justify-between medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+            >
+              <div class="flex flex-col items-start justify-between">
+                <p class="text-[25px] text-white leading-[1]">
+                  “Wir haben 12 Wohnung von Heidi umgerüsten lassen und können
+                  nun alle Verbräuche digital ablesen.”
+                </p>
+                <div class="space-y-1.5">
+                  <p class="text-xl text-white">Julie K, Leiterin Hessen</p>
+                  <p class="text-xl text-white">von SV1 Real Estate</p>
+                </div>
+              </div>
+              <video
+                class="-mt-20 medium:mt-0 medium:w-full medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+                loop
+              >
+                <source src="../asset/videos/video4.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+      </div>
+      <!-- reviews swiper -->
+
+      <!--      FAQ -->
+      <div
+        class="bg-section_bg px-[72px] large:px-6 pt-16 pb-32 large:pt-8 large:pb-20"
+      >
+        <h3
+          class="mb-14 text-[45px] leading-[54px] medium:text-2xl text-dark_text"
+        >
+          FAQ
+        </h3>
+        <div
+          class="faq-tabs-answers grid-cols-2 grid gap-[88px] large:gap-11 medium:grid-cols-1 medium:gap-6"
+        >
+          <div class="faq-answers-container" data-tab="1">
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Muss ich auf Funktechnik umrüsten?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Besteht eine Einbaupflich für Funkmessgeräte?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Welche Daten werden per Funk ausgelesen
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Sind die Daten in Echtzeit verfügbar?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Wer nimmt die Installation der Geräte vor?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was kostet die Installation der Geräte?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="faq-answers-container" data-tab="1">
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was ist ein Smart-Meter-Gateway (SMGW)?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Was versteh man unter einem intelligenten Gerät?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Ist die Erstellung der Betriebskostenabrechnung möglich?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">
+                  Ist der Wartung der Geräte inklusive?
+                </p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Wie viel Kostet der Service?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+            <div class="faq-answer-item">
+              <div class="faq-answer-header">
+                <p class="faq-question">Welche Geräte werden angebote?</p>
+                <div class="faq-icon">
+                  <img
+                    class="rotate-90"
+                    src="../asset/chevron.png"
+                    alt="chevron"
+                  />
+                </div>
+              </div>
+              <div class="faq-answer-content">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
+                  autem commodi, deserunt dicta eius in inventore laudantium
+                  molestiae odit possimus tempore, unde ut vel? Architecto
+                  beatae explicabo ipsum quaerat repellendus.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--      FAQ -->
+
+      <div class="px-20 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">
+        <h5
+          class="text-[45px] text-center leading-[54px] mb-9 medium:text-2xl text-dark_text"
+        >
+          Kostenfrei Nachrüsten
+        </h5>
+        <a
+          class="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] medium:w-full medium:text-center medium:px-0 w-fit rounded-1/2base bg-green"
+          href="./questionare.html"
+          >Jetzt installieren lassen</a
+        >
+        <p class="text-center text-dark_text text-[15px]">
+          Kostenfreie Installation der Funkgeräte
+        </p>
+        <div
+          class="flex mb-28 medium:my-10 mt-16 items-center justify-center gap-24 large:gap-16 medium:gap-10 small:gap-5 large:grid large:grid-cols-2 medium:grid-cols-1"
+        >
+          <div
+            class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+          >
+            <img src="../asset/chess_shield.png" alt="chess_shield" />
+            <div>
+              <p class="text-dark_text text-[15px]">Gesetzeskonform</p>
+              <p class="text-dark_text/50 text-[15px]">§ 229 Artikel 3</p>
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+          >
+            <img src="../asset/checkmark_shield.png" alt="checkmark_shield" />
+            <div>
+              <p class="text-dark_text text-[15px]">Datenschutzkonform</p>
+              <p class="text-dark_text/50 text-[15px]">Nach DSGVO</p>
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+          >
+            <img src="../asset/lock.png" alt="lock" />
+            <div>
+              <p class="text-dark_text text-[15px]">SSL Verschlüsselung</p>
+              <p class="text-dark_text/50 text-[15px]">
+                Zertifiziert und Sicher
+              </p>
+            </div>
+          </div>
+          <div
+            class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
+          >
+            <img src="../asset/eu_elipse.png" alt="eu_elipse" />
+            <div>
+              <p class="text-dark_text text-[15px]">Server in Europa</p>
+              <p class="text-dark_text/50 text-[15px]">EU Datenschutz</p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-between px-9 small:px-5 megalarge:flex-col megalarge:space-y-6 py-7 border border-dark_green/10 rounded-base"
+        >
+          <img src="../asset/small_counter.png" alt="small_counter" />
+          <p class="text-[30px] medium:text-center text-dark_text">
+            Jetzt auf digitale Funkzähler umstellen lassen.
+          </p>
+          <a
+            class="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-4 px-5 w-fit rounded-base bg-green"
+            href="./questionare.html"
+            >Angebot anfordern</a
+          >
+        </div>
+      </div>
+    </main>
+    <footer
+      class="px-[72px] megalarge:px-6 medium:px-5 bg-card_dark_bg pt-16 pb-12"
+    >
+      <div
+        class="flex items-center justify-between gap-5 large:flex-wrap large:gap-3"
+      >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Über uns</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Karriere</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Handwerker</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Produkte</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Städte</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Partner</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Lösungen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Funktionen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Dienstleistungen</a
+        >
+        <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+          >Unternehmen</a
+        >
+      </div>
+      <div class="border-b border-dark_green/10 pb-16">
+        <div
+          class="mt-6 grid grid-cols-5 gap-10 megalarge:gap-4 large:flex large:items-start large:justify-between large:flex-wrap"
+        >
+          <div class="space-y-9">
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Geräte</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Kaltwasser</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Warmwasser</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizung</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Rauchmelder</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Gas</a
+              >
+            </div>
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Dienstleistungen</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Betriebskostenab.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Heizkostenab.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Verbrauchsinfo</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Energieausweis</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Großprojekte</a
+              >
+            </div>
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >Standorte</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Berlin</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Hamburg</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >München</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Frankfurt</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Leipzig
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Stuttgart</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Hannover</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Bielefeld</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Wolfsburg
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Gera
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >beliebt</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Köln</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Ihre Stadt</a
+            >
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >Rechtliches</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Die Neuerung
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Heizkostenverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Rohrwärme (VDI 2077)</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Rauchmelderpflicht</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Mess- und Eichverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Der CO2- Kostenrechner</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >BAFA Förderantrag</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Kostenaufteilungsrechner</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Heizkostenverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Funkmesserpflicht</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Eichverordnung</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Energieausweis</a
+            >
+          </div>
+          <div class="space-y-9">
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="#"
+                >Partner</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Kamstrup.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Diehl Metering.</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Itron</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Landis+Gyr</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Zenner</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Bonovia</a
+              >
+              <a
+                href="#"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Schöner Wohnen</a
+              >
+            </div>
+            <div class="space-y-2.5">
+              <a
+                class="text-lg leading-[21px] font-bold text-dark_text"
+                href="./datenschutzhinweise.html"
+                >Datenschutz</a
+              >
+              <a
+                href="./datenschutzhinweise.html"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >AGB</a
+              >
+              <a
+                href="./impressum.html"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Impressum</a
+              >
+              <a
+              href="./datenschutzhinweise.html"
+                class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+                >Datenschutz</a
+              >
+            </div>
+          </div>
+          <div class="space-y-2.5">
+            <a class="text-lg leading-[21px] font-bold text-dark_text" href="#"
+              >News & Info</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Blog
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >beliebt</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Newsletter</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Webinare</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Vororttermin
+              <span
+                class="rounded-1/2base bg-green py-0.5 px-2 text-dark_text text-lg leading-[18px]"
+                >neu</span
+              ></a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >Downloads</a
+            >
+            <a
+              href="#"
+              class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
+              >FAQ</a
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="border-b border-dark_green/10 py-8 flex items-center justify-between megalarge:gap-4 megalarge:flex-wrap megalarge:justify-start"
+      >
+        <div class="medium:hidden">
+          <img
+            class="block mb-2"
+            src="../asset/footer_logo.png"
+            alt="footer logo"
+          />
+          <p class="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
+            Heidi SE Corportation Torstrasse 110115 Berlin
+          </p>
+        </div>
+        <div
+          class="text-dark_text text-[30px] leading-9 max-w-lg medium:text-[19px] medium:leading-[22px] large:max-w-full"
+        >
+          Werde Teil der Revolution: Schon mehr als 15.000+ Geräte erfolgreich
+          installiert.
+        </div>
+        <div class="medium:w-full">
+          <div class="relative w-fit mb-4 mx-auto medium:w-full">
+            <label class="sr-only" for="footer_contact_email">Los gehts</label>
+            <input
+              class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
+              placeholder="Wie lautet Ihre email?"
+              type="email"
+              name="contact_email"
+              id="footer_contact_email"
+            />
+            <button
+              class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+              type="button"
+            >
+              Los gehts
+            </button>
+          </div>
+          <p class="text-dark_text text-sm mt-4 leading-4">
+            Bleiben Sie bei allen Themen auf dem aktuellsten Stand
+          </p>
+        </div>
+      </div>
+      <div
+        class="pt-8 flex items-start justify-between large:flex-wrap medium:flex-col-reverse medium:items-center large:justify-start large:gap-3 medium:gap-8"
+      >
+        <p class="text-dark_text text-xs leading-[14px] max-w-4xl">
+          © 2024 „Heidi“ und das Heidi-Logo sind eingetragene Markenzeichen
+          unseres Unternehmens. Die Heidi Commercial und die Heidi Visa
+          Corporate werden von der Sutton Bank bzw. der Celtic Bank (Mitglieder
+          der FDIC) herausgegeben. Wir berechnen die durchschnittlichen
+          Einsparungen als Prozentsatz des Gesamumsatzes eines beispielhaften
+          Kunden, der Heidi-Funktionen zur Reduzierung von Geschäftsausgaben
+          nutzt. Beachten Sie, dass es sich hierbei um eine Schätzung, nicht um
+          eine Garantie handelt. Einsparungen können beispielsweise durch
+          weniger Zeitaufwand für maneulle Spesenabrechnungen, finanzielle
+          Vorteile durch Cashback oder andere Prämien, intelligente
+          Ausgabenüberwachung und das Eliminieren von Kosten alternativer
+          Lösungen entstehen. Unsere Berechnungen basieren auf Plattformdaten,
+          Branchenforschung, Kundenbefragungen und Informationen zu alternativen
+          Optionen. Ihre tatsächlichen Einsparungen können variieren. Für
+          weitere Details besuchen Sie bitte unsere Nutzungsbedingungen. Lesen
+          Sie unsere redaktionellen Richtlinien und Datenschutzbestimmungen.
+          Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <img src="../asset/youtube.png" alt="youtube" />
+          <img src="../asset/x.png" alt="x" />
+          <img src="../asset/linkedin.png" alt="linkedin" />
+          <img src="../asset/insta.png" alt="insta" />
+        </div>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="../js/impressum.js"></script>
+  </body>
+</html>

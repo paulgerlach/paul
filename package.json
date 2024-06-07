@@ -13,5 +13,9 @@
   "devDependencies": {
     "tailwindcss": "^3.4.3",
     "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "lottie-web": "^5.12.2",
+    "path": "^0.12.7"
   }
 }

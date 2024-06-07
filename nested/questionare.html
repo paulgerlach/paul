@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
@@ -528,39 +527,29 @@
             </p>
             <div class="grid gap-5 medium:grid-cols-1 grid-cols-2">
               <div id="questionare-final-animation1" class="relative">
-                <script>
+                <script type="module">
+                  import bodymovin from 'lottie-web';
+
                   var animation = bodymovin.loadAnimation({
-                    container: document.getElementById(
-                      "questionare-final-animation1"
-                    ),
-
-                    path: "../animations/Animation_5.json",
-
+                    container: document.getElementById("questionare-final-animation1"),
+                    path: new URL('/animations/Animation_5.json', import.meta.url).href,
                     renderer: "svg",
-
                     loop: true,
-
                     autoplay: true,
-
                     name: "Demo Animation",
                   });
                 </script>
               </div>
               <div id="questionare-final-animation2" class="relative">
-                <script>
+                <script type="module">
+                  import bodymovin from 'lottie-web';
+
                   var animation = bodymovin.loadAnimation({
-                    container: document.getElementById(
-                      "questionare-final-animation2"
-                    ),
-
-                    path: "../animations/Animation_6.json",
-
+                    container: document.getElementById("questionare-final-animation2"),
+                    path: new URL('/animations/Animation_6.json', import.meta.url).href,
                     renderer: "svg",
-
                     loop: true,
-
                     autoplay: true,
-
                     name: "Demo Animation",
                   });
                 </script>

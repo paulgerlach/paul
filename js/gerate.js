@@ -303,14 +303,14 @@ installFaqItems.forEach((item) => {
   clearInstallFaqItem(item);
 });
 
-function clearInstallFaqItem (item) {
+function clearInstallFaqItem(item) {
   const itemText = item.querySelector("p");
   slideUp(itemText);
   item.classList.remove("active", "next");
 }
 
 installFaqItems.forEach((item, index) => {
-  item.addEventListener('click', () => {
+  item.addEventListener("click", () => {
     installFaqItems.forEach((item) => {
       clearInstallFaqItem(item);
     });
@@ -324,7 +324,7 @@ installFaqItems.forEach((item, index) => {
       nextToNextIndex = nextIndex + 1;
     }
     changeActiveItem();
-  })
+  });
 });
 
 function changeActiveItem() {

@@ -23,7 +23,7 @@
         class="flex items-center bg-dark_green w-full px-10 medium:px-5 duration-300 large:[.scrolled_&]:py-3 large:py-4 ease-in-out justify-between"
       >
         <a href="./index.html" class="flex items-center justify-start gap-3">
-          <img src="./asset/logo.svg" alt="logo" />
+          <img class="max-w-16 max-h-5" src="./asset/logo.png" alt="logo" />
         </a>
         <div
           class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
@@ -450,7 +450,7 @@
           >
         </div>
         <div
-          class="px-[50px] mt-[70px] mb-10 medium:flex-col medium:pr-0 medium:justify-end flex items-stretch justify-center gap-2 medium:px-0"
+          class="px-[50px] mt-[70px] mb-10 medium:flex-col medium:pr-0 medium:justify-end grid grid-cols-4 gap-2 medium:px-0"
         >
           <div
             class="bg-card_bg px-9 rounded-base flex items-center justify-center medium:hidden"
@@ -458,18 +458,23 @@
             <img src="./asset/counter.png" alt="counter" />
           </div>
           <div
-            class="w-fit medium:bg-transparent medium:ml-auto medium:mr-0 bg-card_bg rounded-base"
+
+            class="w-fit col-span-2 medium:col-span-4 medium:bg-transparent medium:ml-auto medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
           >
-            <img
-              class="medium:hidden"
-              src="./asset/reviews.png"
-              alt="reviews"
-            />
-            <img
-              class="hidden medium:block"
-              src="./asset/reviews_mobile.png"
-              alt="reviews"
-            />
+            <div id="hero-middle-animation">
+              <script type="module">
+                import bodymovin from 'lottie-web';
+
+                var animation = bodymovin.loadAnimation({
+                  container: document.getElementById("hero-middle-animation"),
+                  path: new URL('/animations/Animation_2.json', import.meta.url).href,
+                  renderer: "svg",
+                  loop: true,
+                  autoplay: true,
+                  name: "Demo Animation",
+                });
+              </script>
+            </div>
           </div>
           <div class="small:w-full medium:hidden">
             <img
@@ -732,18 +737,23 @@
                 Alle wichtigen Verbrauche wie Warmwasser, Kaltwasser und
                 Heizkosten in einer Übersicht
               </p>
-              <script type="module">
-                import bodymovin from 'lottie-web';
+              <div
+                class="overflow-hidden relative mt-[-150px] z-[0]"
+                id="checkmarks1"
+              >
+                <script type="module">
+                  import bodymovin from 'lottie-web';
 
-                var animation = bodymovin.loadAnimation({
-                  container: document.getElementById("checkmarks1"),
-                  path: new URL('/animations/Animation_3.json', import.meta.url).href,
-                  renderer: "svg",
-                  loop: true,
-                  autoplay: true,
-                  name: "Demo Animation",
-                });
-              </script>
+                  var animation = bodymovin.loadAnimation({
+                    container: document.getElementById("checkmarks1"),
+                    path: new URL('/animations/Animation_3.json', import.meta.url).href,
+                    renderer: "svg",
+                    loop: true,
+                    autoplay: true,
+                    name: "Demo Animation",
+                  });
+                </script>
+              </div>
             </div>
             <div
               class="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between"

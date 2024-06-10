@@ -156,6 +156,20 @@ nextStepButton.addEventListener('click', () => nextStep());
 skipStepButton.addEventListener('click', () => nextStep());
 prevStepButton.addEventListener('click', () => prevStep());
 
+const questForm = document.querySelector('#questionare-form');
+const questRadioInputs = questForm.querySelectorAll("input[type='radio']");
+const questSelect = questForm.querySelector("select");
+
+questRadioInputs.forEach((radioInput) => {
+    radioInput.addEventListener('change', () => {
+        nextStep();
+    })
+})
+
+questSelect.addEventListener('change', () => {
+    nextStep();
+})
+
 document.addEventListener("DOMContentLoaded", function() {
     const customSelectWrapper = document.querySelector(".custom-select-wrapper");
     const customSelect = document.querySelector(".custom-select");

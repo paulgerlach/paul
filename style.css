@@ -470,6 +470,7 @@ html {
   .reviews-swiper .swiper-slide-active video {
     width: 250px;
     height: 416px;
+    aspect-ratio: 16 / 9;
   }
 }
 .reviews-swiper .swiper-slide {
@@ -559,4 +560,80 @@ html {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.hidden {
+  display: none;
+}
+
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.custom-select {
+  position: relative;
+  font-family: 'Arial', sans-serif;
+}
+
+.custom-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: white;
+  border: 1px solid rgba(30, 50, 45, 0.2);
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #1e322d;
+}
+
+.custom-select-trigger .arrow {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #1e322d;
+}
+
+.custom-options {
+  position: absolute;
+  display: none;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 99;
+}
+
+.custom-options.open {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.custom-option {
+  padding: 10px;
+  transition: 0.3s all;
+  cursor: pointer;
+  font-size: 16px;
+  color: #1e322d;
+  width: 100%;
+}
+
+.custom-option:hover {
+  background: rgba(30, 50, 45, 0.05);
+}
+
+.custom-option.selected {
+  background: rgba(138, 214, 143, 0.1);
 }

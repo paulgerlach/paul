@@ -84,6 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
     slidesPerView: 1.3,
     spaceBetween: 65,
     mousewheel: true,
+
+    // Responsive breakpoints
     breakpoints: {
       1024: {
         mousewheel: false,
@@ -92,10 +94,41 @@ document.addEventListener("DOMContentLoaded", () => {
         mousewheel: false,
       },
     },
+
+    // Navigation buttons
     navigation: {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev",
     },
+
+    // Event listener for slide change
+    on: {
+      slideChange: function () {
+        // Pause all videos in slides
+        document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach(video => {
+          if (!video.paused) {
+            video.pause();
+          }
+        });
+
+        // Get the active slide
+        const activeSlide = this.slides[this.activeIndex];
+        const video = activeSlide.querySelector('video');
+
+        // Play the video if it exists in the active slide
+        if (video) {
+          video.play();
+        }
+      },
+    },
+  });
+
+  document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach((video, index) => {
+    if (index !== s4.activeIndex) {
+      video.pause();
+    } else {
+      video.play();
+    }
   });
 
   const s3 = new Swiper(".numbered-swiper", {
@@ -151,67 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 });
-
-// let init = false;
-// let newsSwiper;
-// let functionsSwiper;
-// function swiperCard() {
-//   if (window.innerWidth <= 768) {
-//     if (!init) {
-//       init = true;
-//       newsSwiper = new Swiper(".news-swiper", {
-//         // Optional parameters
-//         // loop: true,
-//         slidesPerView: 1,
-//         centeredSlides: true,
-//         spaceBetween: 75,
-//         mousewheel: true,
-//
-//         // If we need pagination
-//         pagination: {
-//           el: ".news-swiper-pagination",
-//           clickable: true,
-//           renderBullet: function (index, className) {
-//             // Calculate which bullets to show
-//
-//             return '<span class="' + className + '">' + "</span>";
-//           },
-//           dynamicBullets: true,
-//         },
-//       });
-//       functionsSwiper = new Swiper(".functions-swiper", {
-//         // Optional parameters
-//         // loop: true,
-//         slidesPerView: 1,
-//         centeredSlides: true,
-//         spaceBetween: 75,
-//         mousewheel: true,
-//
-//         // If we need pagination
-//         pagination: {
-//           el: ".functions-swiper-pagination",
-//           clickable: true,
-//           renderBullet: function (index, className) {
-//             // Calculate which bullets to show
-//
-//             return '<span class="' + className + '">' + "</span>";
-//           },
-//           dynamicBullets: true,
-//         },
-//       });
-//     }
-//   } else if (init) {
-//     if (newsSwiper) {
-//       newsSwiper.destroy();
-//     }
-//     if (functionsSwiper) {
-//       functionsSwiper.destroy();
-//     }
-//     init = false;
-//   }
-// }
-// swiperCard();
-// window.addEventListener("resize", swiperCard);
 
 /* SLIDE UP */
 let slideUp = (target, duration = 300) => {

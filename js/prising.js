@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // If we need pagination
     pagination: {
       el: ".chart-swiper-pagination",
-      clickable: true,
+      clickable: true,g
       renderBullet: function (index, className) {
         // Retrieve the data-slide-name attribute of the slide
         const slideName = this.slides[index].getAttribute("data-slide-name");

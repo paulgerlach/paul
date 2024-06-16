@@ -114,7 +114,7 @@
                       class="mb-5 text-xl flex items-center justify-between text-dark_text"
                     >
                       Produkthighlight
-                      <a href="#"
+                      <a href="./nested/gerate.html"
                         ><img alt="arrow" src="./asset/arrow.png"
                       /></a>
                     </p>
@@ -138,7 +138,7 @@
               </div>
               <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
                 <a
-                  href="nested/functionen.html"
+                  href="./nested/functionen.html"
                   class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
                 >
                   Dienstleistungen
@@ -217,7 +217,7 @@
                       class="mb-5 text-xl flex items-center justify-between text-dark_text"
                     >
                       Produkthighlight
-                      <a href="#"
+                      <a href="./nested/functionen.html"
                         ><img alt="arrow" src="./asset/arrow.png"
                       /></a>
                     </p>
@@ -325,7 +325,7 @@
                       class="mb-5 text-xl flex items-center justify-between text-dark_text"
                     >
                       Produkthighlight
-                      <a href="#"
+                      <a href="./nested/regulatoric.html"
                         ><img alt="arrow" src="./asset/arrow.png"
                       /></a>
                     </p>
@@ -450,7 +450,7 @@
           >
         </div>
         <div
-          class="px-[50px] mt-[70px] mb-10 medium:flex-col medium:pr-0 medium:justify-end grid grid-cols-4 gap-2 medium:px-0"
+          class="px-[50px] mt-[70px] mb-10 medium:flex-col w-fit mx-auto medium:pr-0 medium:justify-end grid grid-cols-4 gap-2 medium:px-0"
         >
           <div
             class="bg-card_bg px-9 rounded-base flex items-center justify-center medium:hidden"
@@ -458,16 +458,16 @@
             <img src="./asset/counter.png" alt="counter" />
           </div>
           <div
-
             class="w-fit col-span-2 medium:col-span-4 medium:bg-transparent medium:ml-auto medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
           >
             <div id="hero-middle-animation">
               <script type="module">
-                import bodymovin from 'lottie-web';
+                import bodymovin from "lottie-web";
 
                 var animation = bodymovin.loadAnimation({
                   container: document.getElementById("hero-middle-animation"),
-                  path: new URL('/animations/Animation_2.json', import.meta.url).href,
+                  path: new URL("/animations/Animation_2.json", import.meta.url)
+                    .href,
                   renderer: "svg",
                   loop: true,
                   autoplay: true,
@@ -476,9 +476,9 @@
               </script>
             </div>
           </div>
-          <div class="small:w-full medium:hidden">
+          <div class="small:w-full w-fit medium:hidden">
             <img
-              class="small:w-full"
+              class="small:w-full object-cover"
               src="./asset/handyman.png"
               alt="handyman"
             />
@@ -562,7 +562,7 @@
         </div>
       </div>
       <div
-        class="mt-28 px-[72px] megalarge:px-16 large:px-6 medium:px-5 hero small:mt-6"
+        class="mt-28 px-[140px] megalarge:px-16 large:px-6 medium:px-5 hero small:mt-6"
       >
         <h2
           class="section-title hero-title hidden large:block small:text-3xl text-[50px] leading-[60px] mb-5 text-center relative text-dark_text"
@@ -570,7 +570,7 @@
           Jetzt Vorteile sichern
         </h2>
         <div
-          class="grid mb-32 hero-1 grid-cols-4 gap-28 large:gap-8 items-start medium:grid-cols-2 justify-center small:grid-cols-1"
+          class="grid mb-32 hero-1 grid-cols-4 gap-20 large:gap-8 items-stretch medium:grid-cols-2 justify-center small:grid-cols-1"
         >
           <div
             class="space-y-7 medium:flex medium:flex-col medium:items-center medium:justify-start"
@@ -690,7 +690,7 @@
               </p>
               <a
                 href="nested/questionare.html"
-                class="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px]"
+                class="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white"
               >
                 Jetzt umrüsten lassen
               </a>
@@ -715,7 +715,7 @@
               </p>
               <a
                 href="nested/datenschutzhinweise.html"
-                class="block mb-10 text-center w-fit mx-auto text-link underline text-base leading-[19.2px]"
+                class="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
               </a>
@@ -742,11 +742,14 @@
                 id="checkmarks1"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("checkmarks1"),
-                    path: new URL('/animations/Animation_3.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_3.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -771,17 +774,20 @@
               </p>
               <a
                 href="nested/datenschutzhinweise.html"
-                class="block mb-10 text-center w-fit mx-auto text-link underline text-base leading-[19.2px]"
+                class="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
               </a>
               <div class="overflow-hidden pl-10 relative" id="checkmarks2">
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("checkmarks2"),
-                    path: new URL('/animations/Animation_2.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_2.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1111,11 +1117,14 @@
                 class="relative max-w-[537px] w-full overflow-hidden large:w-full large:object-fill"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("list1"),
-                    path: new URL('/animations/Animation_1.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_1.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1198,11 +1207,14 @@
                 class="relative max-w-[537px] w-full overflow-hidden large:w-full large:object-fill"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("list3"),
-                    path: new URL('/animations/Animation_2.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_2.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1255,11 +1267,14 @@
                 class="relative max-h-[244px] max-w-[300px] medium:max-h-full medium:max-w-full overflow-hidden large:w-full large:object-fill"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("article-animation2"),
-                    path: new URL('/animations/Animation_5.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_5.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1281,11 +1296,14 @@
                 class="relative max-h-[244px] max-w-[300px] medium:max-h-full medium:max-w-full overflow-hidden large:w-full large:object-fill"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("article-animation3"),
-                    path: new URL('/animations/Animation_6.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_6.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1308,11 +1326,14 @@
                 class="relative max-h-[244px] max-w-[300px] medium:max-h-full medium:max-w-full overflow-hidden large:w-full large:object-fill"
               >
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
                     container: document.getElementById("article-animation4"),
-                    path: new URL('/animations/Animation_4.json', import.meta.url).href,
+                    path: new URL(
+                      "/animations/Animation_4.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -1424,8 +1445,8 @@
           Wir helfen Ihnen
         </p>
         <div class="flex items-center medium:flex-col justify-center gap-4">
-          <img class="small:hidden" src="./asset/eu_lock.png" alt="eu_lock" />
-          <img src="./asset/eu_gdpr.png" alt="eu_gdpr" />
+          <img class="small:hidden w-[313px] h-[269px]" src="./asset/eu_lock.png" alt="eu_lock" />
+          <img src="./asset/eu_gdpr.png" class="w-[313px] h-[269px]" alt="eu_gdpr" />
         </div>
       </div>
       <div class="py-14 small:px-4">

@@ -105,15 +105,17 @@ document.addEventListener("DOMContentLoaded", () => {
     on: {
       slideChange: function () {
         // Pause all videos in slides
-        document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach(video => {
-          if (!video.paused) {
-            video.pause();
-          }
-        });
+        document
+          .querySelectorAll(".reviews-swiper .swiper-slide video")
+          .forEach((video) => {
+            if (!video.paused) {
+              video.pause();
+            }
+          });
 
         // Get the active slide
         const activeSlide = this.slides[this.activeIndex];
-        const video = activeSlide.querySelector('video');
+        const video = activeSlide.querySelector("video");
 
         // Play the video if it exists in the active slide
         if (video) {
@@ -123,13 +125,15 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach((video, index) => {
-    if (index !== s4.activeIndex) {
-      video.pause();
-    } else {
-      video.play();
-    }
-  });
+  document
+    .querySelectorAll(".reviews-swiper .swiper-slide video")
+    .forEach((video, index) => {
+      if (index !== s4.activeIndex) {
+        video.pause();
+      } else {
+        video.play();
+      }
+    });
 
   const s3 = new Swiper(".numbered-swiper", {
     // Optional parameters

@@ -874,6 +874,14 @@ video {
   margin-top: auto;
 }
 
+.mt-14 {
+  margin-top: 3.5rem;
+}
+
+.\!mt-14 {
+  margin-top: 3.5rem !important;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -3277,6 +3285,14 @@ html {
 
   .large\:mt-16 {
     margin-top: 4rem;
+  }
+
+  .large\:\!mt-auto {
+    margin-top: auto !important;
+  }
+
+  .large\:\!mt-7 {
+    margin-top: 1.75rem !important;
   }
 
   .large\:block {

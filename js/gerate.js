@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       video.play();
     }
-  });s
+  });
 
   const s3 = new Swiper(".numbered-swiper", {
     // Optional parameters

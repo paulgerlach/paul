@@ -1053,6 +1053,10 @@ video {
   max-height: 100vh;
 }
 
+.min-h-screen {
+  min-height: 100vh;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -3224,10 +3228,6 @@ html {
 }
 
 @media (max-width: 1200px) {
-  .megalarge\:mt-14 {
-    margin-top: 3.5rem;
-  }
-
   .megalarge\:mt-10 {
     margin-top: 2.5rem;
   }

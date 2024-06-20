@@ -74,26 +74,22 @@ let slideDown = (target, duration = 300) => {
     }, duration);
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    const questionareInfo = document.querySelector(".questionare-info");
-    const questionareInfoHeader = questionareInfo.querySelector(
-        ".questionare-answer-header"
-    );
-    const questionareInfoContent = questionareInfo.querySelector(
-        ".questionare-answer-content"
-    );
+const questionareInfo = document.querySelector(".questionare-info");
+const questionareInfoHeader = questionareInfo.querySelector(
+    ".questionare-answer-header"
+);
+const questionareInfoContent = questionareInfo.querySelector(
+    ".questionare-answer-content"
+);
 
-    slideUp(questionareInfoContent);
-
-    questionareInfoHeader.addEventListener("click", () => {
-        if (questionareInfoHeader.classList.contains("opened")) {
-            questionareInfoHeader.classList.remove("opened");
-            slideDown(questionareInfoContent);
-        } else {
-            questionareInfoHeader.classList.add("opened");
-            slideUp(questionareInfoContent);
-        }
-    });
+questionareInfoHeader.addEventListener("click", () => {
+    if (questionareInfoHeader.classList.contains("opened")) {
+        questionareInfoHeader.classList.remove("opened");
+        slideDown(questionareInfoContent);
+    } else {
+        questionareInfoHeader.classList.add("opened");
+        slideUp(questionareInfoContent);
+    }
 });
 
 let currentStep = '1';
@@ -108,6 +104,7 @@ function nextStep() {
         document.querySelector('.questionare-steps').classList.add('hidden');
         document.getElementById('questionare-final').classList.remove('hidden');
         document.querySelector('.steps-progress').classList.add('hidden');
+        skipStepButton.classList.add('hidden');
     }
     if (currentStep < totalSteps) {
         // Hide current step
@@ -120,11 +117,13 @@ function nextStep() {
         const nextStepElement = document.querySelector(`[data-step="${currentStep}"]`);
         nextStepElement.classList.remove('hidden');
         prevStepButton.classList.remove('hidden');
+        skipStepButton.classList.remove('hidden');
 
         // Update progress bar
         const progressStepElement = document.querySelector(`[data-step-index="${currentStep - 1}"]`);
         progressStepElement.classList.remove('bg-dark_green/10');
         progressStepElement.classList.add('bg-green');
+        slideUp(questionareInfoContent);
 
         // Update progress bar attribute
         document.querySelector('.steps-progress').setAttribute('data-filled-steps', currentStep - 1);
@@ -162,12 +161,16 @@ const questSelect = questForm.querySelector("select");
 
 questRadioInputs.forEach((radioInput) => {
     radioInput.addEventListener('change', () => {
-        nextStep();
+        setTimeout(() => {
+            nextStep();
+        }, 300)
     })
 })
 
 questSelect.addEventListener('change', () => {
-    nextStep();
+    setTimeout(() => {
+        nextStep();
+    }, 300)
 })
 
 document.addEventListener("DOMContentLoaded", function() {

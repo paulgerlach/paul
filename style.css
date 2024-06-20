@@ -637,3 +637,15 @@ html {
 .custom-option.selected {
   background: rgba(138, 214, 143, 0.1);
 }
+
+.nav-link-wrapper img {
+  transition: 0.3s all;
+}
+
+.nav-link-wrapper:hover img {
+  filter: invert(23%) sepia(1%) saturate(252%) hue-rotate(195deg) brightness(114%) contrast(87%);
+}
+
+.nav-link-wrapper:hover a {
+  color: #1e322d;
+}

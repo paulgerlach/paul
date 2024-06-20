@@ -3224,6 +3224,14 @@ html {
 }
 
 @media (max-width: 1200px) {
+  .megalarge\:mt-14 {
+    margin-top: 3.5rem;
+  }
+
+  .megalarge\:mt-10 {
+    margin-top: 2.5rem;
+  }
+
   .megalarge\:flex-col {
     flex-direction: column;
   }

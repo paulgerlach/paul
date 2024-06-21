@@ -8,15 +8,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Google Tag Manager -->
     <script>
-      (function(w,d,s,l,i){
-        w[l]=w[l]||[];
-        w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-        j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-53ZQXR8Z');
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-53ZQXR8Z");
     </script>
     <!-- End Google Tag Manager -->
     <link
@@ -36,7 +37,11 @@
         class="flex items-center bg-white w-full px-10 medium:px-5 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between"
       >
         <a href="index.html" class="flex items-center justify-start gap-3">
-          <img class="colored-to-black max-w-16 max-h-5" src="asset/logo.png" alt="logo" />
+          <img
+            class="colored-to-black max-w-16 max-h-5"
+            src="asset/logo.png"
+            alt="logo"
+          />
         </a>
       </div>
     </header>
@@ -219,11 +224,7 @@
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
                 >
-                  <img
-                    class="size-16"
-                    alt="person"
-                    src="asset/yes_icon.png"
-                  />
+                  <img class="size-16" alt="person" src="asset/yes_icon.png" />
                   Ja
                 </div>
               </label>
@@ -237,11 +238,7 @@
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
                 >
-                  <img
-                    class="size-16"
-                    alt="person"
-                    src="asset/no_icon.png"
-                  />
+                  <img class="size-16" alt="person" src="asset/no_icon.png" />
                   Nein
                 </div>
               </label>
@@ -265,11 +262,7 @@
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
                 >
-                  <img
-                    class="size-16"
-                    alt="person"
-                    src="asset/yes_icon.png"
-                  />
+                  <img class="size-16" alt="person" src="asset/yes_icon.png" />
                   Ja
                 </div>
               </label>
@@ -283,11 +276,7 @@
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
                 >
-                  <img
-                    class="size-16"
-                    alt="person"
-                    src="asset/no_icon.png"
-                  />
+                  <img class="size-16" alt="person" src="asset/no_icon.png" />
                   Nein
                 </div>
               </label>
@@ -541,11 +530,16 @@
             <div class="grid gap-5 medium:grid-cols-1 grid-cols-2">
               <div id="questionare-final-animation1" class="relative">
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
-                    container: document.getElementById("questionare-final-animation1"),
-                    path: new URL('/animations/Animation_5.json', import.meta.url).href,
+                    container: document.getElementById(
+                      "questionare-final-animation1"
+                    ),
+                    path: new URL(
+                      "/animations/Animation_5.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -555,11 +549,16 @@
               </div>
               <div id="questionare-final-animation2" class="relative">
                 <script type="module">
-                  import bodymovin from 'lottie-web';
+                  import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
-                    container: document.getElementById("questionare-final-animation2"),
-                    path: new URL('/animations/Animation_6.json', import.meta.url).href,
+                    container: document.getElementById(
+                      "questionare-final-animation2"
+                    ),
+                    path: new URL(
+                      "/animations/Animation_6.json",
+                      import.meta.url
+                    ).href,
                     renderer: "svg",
                     loop: true,
                     autoplay: true,
@@ -589,8 +588,12 @@
     <script type="module" src="js/questionare.js"></script>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53ZQXR8Z"
-              height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-53ZQXR8Z"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
   </body>

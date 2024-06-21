@@ -2,21 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="asset/header_logo.svg" />
+    <link rel="icon" type="image/svg+xml" href="../asset/header_logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Google Tag Manager -->
     <script>
-      (function(w,d,s,l,i){
-        w[l]=w[l]||[];
-        w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-        j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-53ZQXR8Z');
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-53ZQXR8Z");
     </script>
     <!-- End Google Tag Manager -->
     <link
@@ -27,350 +28,431 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="../css/main.css" />
     <title>Heidi</title>
   </head>
   <body>
     <header id="header" class="fixed w-full top-0">
-    <div
-            class="flex items-center bg-dark_green w-full px-10 medium:px-5 duration-300 large:[.scrolled_&]:py-3 large:py-4 ease-in-out justify-between"
-    >
-      <a href="./index.html" class="flex items-center justify-start gap-3">
-        <img class="max-w-16 max-h-5" src="./asset/logo.png" alt="logo" />
-      </a>
       <div
-              class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
+        class="flex items-center bg-dark_green w-full px-10 medium:px-5 duration-300 large:[.scrolled_&]:py-3 large:py-4 ease-in-out justify-between"
       >
+        <a href="../index.html" class="flex items-center justify-start gap-3">
+          <img class="max-w-16 max-h-5" src="../asset/logo.png" alt="logo" />
+        </a>
         <div
-                class="flex-grow flex items-center justify-center large:items-start large:justify-start"
+          class="flex-grow flex items-center justify-end large:fixed large:flex-col large:w-screen large:h-screen large:bg-card_dark_bg large:top-0 large:left-0 large:p-6 large:items-start large:justify-start large:translate-x-full duration-300 [.active_&]:translate-x-0"
         >
-          <nav
-                  class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
+          <div
+            class="flex-grow flex items-center justify-center large:items-start large:justify-start"
           >
-            <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
-              <a
-                      href="gerate.html"
-                      class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Geräte <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
-              <div
-                      class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
-              >
-                <div>
-                  <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
-                  <ul class="space-y-4">
-                    <li
-                            class="nav-link-wrapper"
-                    >
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_water.png"
-                                alt="modal_icon"
-                        />
-                        Warmwasserzähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img class="size-7" src="./asset/modal_shower.png" alt="modal_icon" />
-                        Kaltwasserzähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_heater.png"
-                                alt="modal_icon"
-                        />
-                        Heizungszähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_heater.png"
-                                alt="modal_icon"
-                        />
-                        Heizungszähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_wifi.png"
-                                alt="modal_icon"
-                        />
-                        Rauchmelder
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_cooler.png"
-                                alt="modal_icon"
-                        />
-                        Feuerlöscher
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <a class="group" href="./gerate.html">
-                  <p class="mb-5 text-xl flex items-center justify-between text-dark_text">
-                    Produkthighlight
-                    <span class="group-hover:translate-x-1 duration-300">
-                        <img alt="arrow" src="./asset/arrow.png" />
-                      </span>
-                  </p>
-                  <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
-                    <img src="./asset/modal_counter.png" alt="counter mobile" />
-                  </div>
-                  <p class="text-dark_text text-[15px] font-bold mb-3">
-                    Neue Warmwasserzähler
-                  </p>
-                  <p class="text-xs text-dark_text">
-                    Neuste Funktechnik erlaubt das Ablesen des
-                    Warmwasserverbrauchs in Echtzeit
-                  </p>
-                </a>
-              </div>
-            </div>
-            <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
-              <a
-                      href="funktionen.html"
-                      class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Dienstleistung
-                <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
-              <div
-                      class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
-              >
-                <div>
-                  <p class="mb-5 text-xl text-dark_text">Funktionen </p>
-                  <ul class="space-y-4">
-                    <li
-                            class="nav-link-wrapper"
-                    >
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_gear.png"
-                                alt="modal_icon"
-                        />
-                        Betriebskosten
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img class="size-7" src="./asset/modal_list.png" alt="modal_icon" />
-                        Heizkostenabrechnung
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_chart.png"
-                                alt="modal_icon"
-                        />
-                        Echtzeit Verbrauch
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_grid.png"
-                                alt="modal_icon"
-                        />
-                        Dashboard Overview
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_building.png"
-                                alt="modal_icon"
-                        />
-                        Immobilienmanagement
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./funktionen.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_bell.png"
-                                alt="modal_icon"
-                        />
-                        Benachrichtigungen
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <a class="group" href="./funktionen.html">
-                  <p class="mb-5 text-xl flex items-center justify-between text-dark_text">
-                    Produkthighlight
-                    <span class="group-hover:translate-x-1 duration-300">
-                        <img alt="arrow" src="./asset/arrow.png" />
-                      </span>
-                  </p>
-                  <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
-                    <img src="./asset/modal_counter.png" alt="counter mobile" />
-                  </div>
-                  <p class="text-dark_text text-[15px] font-bold mb-3">
-                    Neue Warmwasserzähler
-                  </p>
-                  <p class="text-xs text-dark_text">
-                    Neuste Funktechnik erlaubt das Ablesen des
-                    Warmwasserverbrauchs in Echtzeit
-                  </p>
-                </a>
-              </div>
-            </div>
-            <a
-                    href="#"
-                    class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+            <nav
+              class="flex items-center justify-center gap-8 large:flex-col large:items-start large:justify-start"
             >
-              Kunden
-            </a>
-            <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
-              <a
-                      href="regulatorik.html"
-                      class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
-              >
-                Ressourcen <img src="./asset/right_arrow.png" alt="arrow" />
-              </a>
-              <div
-                      class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
-              >
-                <div>
-                  <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
-                  <ul class="space-y-4">
-                    <li
-                            class="nav-link-wrapper"
-                    >
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_water.png"
-                                alt="modal_icon"
-                        />
-                        Warmwasserzähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img class="size-7" src="./asset/modal_shower.png" alt="modal_icon" />
-                        Kaltwasserzähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_heater.png"
-                                alt="modal_icon"
-                        />
-                        Heizungszähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_heater.png"
-                                alt="modal_icon"
-                        />
-                        Heizungszähler
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_wifi.png"
-                                alt="modal_icon"
-                        />
-                        Rauchmelder
-                      </a>
-                    </li>
-                    <li class="nav-link-wrapper">
-                      <a class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer" href="./gerate.html">
-                        <img
-                                class="size-7"
-                                src="./asset/modal_cooler.png"
-                                alt="modal_icon"
-                        />
-                        Feuerlöscher
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <a class="group" href="./gerate.html">
-                  <p class="mb-5 text-xl flex items-center justify-between text-dark_text">
-                    Produkthighlight
-                    <span class="group-hover:translate-x-1 duration-300">
-                        <img alt="arrow" src="./asset/arrow.png" />
-                      </span>
-                  </p>
-                  <div class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
-                    <img src="./asset/modal_counter.png" alt="counter mobile" />
-                  </div>
-                  <p class="text-dark_text text-[15px] font-bold mb-3">
-                    Neue Warmwasserzähler
-                  </p>
-                  <p class="text-xs text-dark_text">
-                    Neuste Funktechnik erlaubt das Ablesen des
-                    Warmwasserverbrauchs in Echtzeit
-                  </p>
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="../gerate.html"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Geräte <img src="../asset/right_arrow.png" alt="arrow" />
                 </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_water.png"
+                            alt="modal_icon"
+                          />
+                          Warmwasserzähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_shower.png"
+                            alt="modal_icon"
+                          />
+                          Kaltwasserzähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_heater.png"
+                            alt="modal_icon"
+                          />
+                          Heizungszähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_heater.png"
+                            alt="modal_icon"
+                          />
+                          Heizungszähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_wifi.png"
+                            alt="modal_icon"
+                          />
+                          Rauchmelder
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_cooler.png"
+                            alt="modal_icon"
+                          />
+                          Feuerlöscher
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <a class="group" href="../gerate.html">
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <span class="group-hover:translate-x-1 duration-300">
+                        <img alt="arrow" src="../asset/arrow.png" />
+                      </span>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </a>
+                </div>
               </div>
-            </div>
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="../funktionen.html"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Dienstleistung
+                  <img src="../asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Funktionen</p>
+                    <ul class="space-y-4">
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_gear.png"
+                            alt="modal_icon"
+                          />
+                          Betriebskosten
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_list.png"
+                            alt="modal_icon"
+                          />
+                          Heizkostenabrechnung
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_chart.png"
+                            alt="modal_icon"
+                          />
+                          Echtzeit Verbrauch
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_grid.png"
+                            alt="modal_icon"
+                          />
+                          Dashboard Overview
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_building.png"
+                            alt="modal_icon"
+                          />
+                          Immobilienmanagement
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../funktionen.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_bell.png"
+                            alt="modal_icon"
+                          />
+                          Benachrichtigungen
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <a class="group" href="../funktionen.html">
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <span class="group-hover:translate-x-1 duration-300">
+                        <img alt="arrow" src="../asset/arrow.png" />
+                      </span>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </a>
+                </div>
+              </div>
+              <a
+                href="#"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Kunden
+              </a>
+              <div class="group relative [.scrolled_&]:py-4 py-6 duration-300">
+                <a
+                  href="../blog/regulatorik.html"
+                  class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+                >
+                  Ressourcen <img src="../asset/right_arrow.png" alt="arrow" />
+                </a>
+                <div
+                  class="absolute bg-white w-[620px] top-[100%] large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 large:hidden"
+                >
+                  <div>
+                    <p class="mb-5 text-xl text-dark_text">Unsere Produkte</p>
+                    <ul class="space-y-4">
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_water.png"
+                            alt="modal_icon"
+                          />
+                          Warmwasserzähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_shower.png"
+                            alt="modal_icon"
+                          />
+                          Kaltwasserzähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_heater.png"
+                            alt="modal_icon"
+                          />
+                          Heizungszähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_heater.png"
+                            alt="modal_icon"
+                          />
+                          Heizungszähler
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_wifi.png"
+                            alt="modal_icon"
+                          />
+                          Rauchmelder
+                        </a>
+                      </li>
+                      <li class="nav-link-wrapper">
+                        <a
+                          class="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                          href="../gerate.html"
+                        >
+                          <img
+                            class="size-7"
+                            src="../asset/modal_cooler.png"
+                            alt="modal_icon"
+                          />
+                          Feuerlöscher
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <a class="group" href="../gerate.html">
+                    <p
+                      class="mb-5 text-xl flex items-center justify-between text-dark_text"
+                    >
+                      Produkthighlight
+                      <span class="group-hover:translate-x-1 duration-300">
+                        <img alt="arrow" src="../asset/arrow.png" />
+                      </span>
+                    </p>
+                    <div
+                      class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
+                    >
+                      <img
+                        src="../asset/modal_counter.png"
+                        alt="counter mobile"
+                      />
+                    </div>
+                    <p class="text-dark_text text-[15px] font-bold mb-3">
+                      Neue Warmwasserzähler
+                    </p>
+                    <p class="text-xs text-dark_text">
+                      Neuste Funktechnik erlaubt das Ablesen des
+                      Warmwasserverbrauchs in Echtzeit
+                    </p>
+                  </a>
+                </div>
+              </div>
+              <a
+                href="../preise.html"
+                class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              >
+                Preise
+              </a>
+            </nav>
+          </div>
+          <div class="flex items-center justify-end gap-base">
             <a
-                    href="preise.html"
-                    class="flex items-center text-sm text-white justify-start gap-2 large:text-dark_text"
+              href="../fragebogen.html"
+              class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
             >
-              Preise
+              Angebot
             </a>
-          </nav>
+            <a
+              href="../kontakt.html"
+              class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
+            >
+              Anrufen buchen
+            </a>
+          </div>
         </div>
-        <div class="flex items-center justify-end gap-base">
-          <a
-                  href="fragebogen.html"
-                  class="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base large:text-dark_text large:border-dark_green duration-300 hover:opacity-80"
-          >
-            Angebot
-          </a>
-          <a
-                  href="kontakt.html"
-                  class="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-1/2base"
-          >
-            Anrufen buchen
-          </a>
-        </div>
+        <a
+          href="#"
+          class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
+        >
+          Angebot
+        </a>
+        <button
+          class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
+        >
+          <span class="burger-line top-line"></span>
+          <span class="burger-line mid-line"></span>
+          <span class="burger-line bot-line"></span>
+        </button>
       </div>
-      <a
-              href="#"
-              class="border ml-auto mr-3 hidden large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-1/2base duration-300 hover:opacity-80"
-      >
-        Angebot
-      </a>
-      <button
-              class="burger size-9 duration-300 hover:opacity-80 rounded-1/2base border border-border_base hidden large:flex items-center justify-center flex-col gap-1 z-10"
-      >
-        <span class="burger-line top-line"></span>
-        <span class="burger-line mid-line"></span>
-        <span class="burger-line bot-line"></span>
-      </button>
-    </div>
-  </header>
+    </header>
     <main id="content relative">
       <div
         class="flex items-start medium:flex-col justify-between relative large:px-20 medium:px-10 small:px-5 after:top-0 after:left-0 after:content-[''] after:bg-[#EFEFEF] after:w-screen after:h-screen after:absolute after:z-[-1] medium:after:hidden"
@@ -390,7 +472,7 @@
             verpflichtend bis 1. Januar 2027
           </p>
           <a
-            href="fragebogen.html"
+            href="../fragebogen.html"
             class="medium:w-full text-center w-fit block py-5 medium:py-3 px-10 text-lg text-dark_text bg-green rounded-1/2base my-5"
           >
             Jetzt installieren lassen
@@ -402,7 +484,7 @@
         <div class="w-1/2 py-10 medium:w-full ml-auto mr-0 space-y-[30px]">
           <img
             class="w-full object-cover max-h-screen h-[calc(100vh-40px)] medium:hidden"
-            src="asset/hero_review.png"
+            src="../asset/hero_review.png"
             alt="hero_review"
           />
           <div class="pl-8">
@@ -430,7 +512,7 @@
             </p>
             <img
               class="rounded-base w-full"
-              src="asset/article_image.png"
+              src="../asset/article_image.png"
               alt="article_image"
             />
             <h4 class="text-2xl text-dark_text font-bold">
@@ -461,7 +543,7 @@
               <div
                 class="flex items-end justify-start gap-5 uppercase text-xl text-dark_text"
               >
-                <img src="../asset//idea.png" alt="idea" />TIPP
+                <img src="../asset/idea.png" alt="idea" />TIPP
               </div>
               <p class="text-dark_text text-lg">
                 Rüsten Sie zeitnah um, wir von Heidi Systems helfen Ihnen sich
@@ -590,7 +672,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -612,7 +694,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -634,7 +716,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -656,7 +738,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -678,7 +760,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -700,7 +782,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -724,7 +806,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -746,7 +828,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -768,7 +850,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -790,7 +872,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -810,7 +892,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -830,7 +912,7 @@
                 <div class="faq-icon">
                   <img
                     class="rotate-90"
-                    src="asset/chevron.png"
+                    src="../asset/chevron.png"
                     alt="chevron"
                   />
                 </div>
@@ -857,7 +939,7 @@
         </h5>
         <a
           class="flex items-center mx-auto justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] medium:w-full medium:text-center medium:px-0 w-fit rounded-1/2base bg-green"
-          href="fragebogen.html"
+          href="../fragebogen.html"
           >Jetzt installieren lassen</a
         >
         <p class="text-center text-dark_text text-[15px]">
@@ -869,7 +951,7 @@
           <div
             class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
           >
-            <img src="asset/chess_shield.png" alt="chess_shield" />
+            <img src="../asset/chess_shield.png" alt="chess_shield" />
             <div>
               <p class="text-dark_text text-[15px]">Gesetzeskonform</p>
               <p class="text-dark_text/50 text-[15px]">§ 229 Artikel 3</p>
@@ -878,7 +960,7 @@
           <div
             class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
           >
-            <img src="asset/checkmark_shield.png" alt="checkmark_shield" />
+            <img src="../asset/checkmark_shield.png" alt="checkmark_shield" />
             <div>
               <p class="text-dark_text text-[15px]">Datenschutzkonform</p>
               <p class="text-dark_text/50 text-[15px]">Nach DSGVO</p>
@@ -887,7 +969,7 @@
           <div
             class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
           >
-            <img src="asset/lock.png" alt="lock" />
+            <img src="../asset/lock.png" alt="lock" />
             <div>
               <p class="text-dark_text text-[15px]">SSL Verschlüsselung</p>
               <p class="text-dark_text/50 text-[15px]">
@@ -898,7 +980,7 @@
           <div
             class="flex items-center justify-start medium:justify-center gap-5 small:justify-start"
           >
-            <img src="asset/eu_elipse.png" alt="eu_elipse" />
+            <img src="../asset/eu_elipse.png" alt="eu_elipse" />
             <div>
               <p class="text-dark_text text-[15px]">Server in Europa</p>
               <p class="text-dark_text/50 text-[15px]">EU Datenschutz</p>
@@ -908,13 +990,13 @@
         <div
           class="flex items-center justify-between px-9 small:px-5 megalarge:flex-col megalarge:space-y-6 py-7 border border-dark_green/10 rounded-base"
         >
-          <img src="asset/small_counter.png" alt="small_counter" />
+          <img src="../asset/small_counter.png" alt="small_counter" />
           <p class="text-[30px] medium:text-center text-dark_text">
             Jetzt auf digitale Funkzähler umstellen lassen.
           </p>
           <a
             class="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-4 px-5 w-fit rounded-base bg-green"
-            href="fragebogen.html"
+            href="../fragebogen.html"
             >Angebot anfordern</a
           >
         </div>
@@ -1219,11 +1301,11 @@
             <div class="space-y-2.5">
               <a
                 class="text-lg leading-[21px] font-bold text-dark_text"
-                href="datenschutzhinweise.html"
+                href="../datenschutzhinweise.html"
                 >Datenschutz</a
               >
               <a
-                href="datenschutzhinweise.html"
+                href="../datenschutzhinweise.html"
                 class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
                 >AGB</a
               >
@@ -1233,7 +1315,7 @@
                 >Impressum</a
               >
               <a
-                href="datenschutzhinweise.html"
+                href="../datenschutzhinweise.html"
                 class="flex items-center justify-start gap-1.5 text-dark_text text-lg leading-[21px]"
                 >Datenschutz</a
               >
@@ -1290,7 +1372,7 @@
         <div class="medium:hidden">
           <img
             class="block mb-2"
-            src="asset/footer_logo.png"
+            src="../asset/footer_logo.png"
             alt="footer logo"
           />
           <p class="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
@@ -1348,19 +1430,23 @@
           Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
         </p>
         <div class="flex items-center justify-end gap-3">
-          <img src="asset/youtube.png" alt="youtube" />
-          <img src="asset/x.png" alt="x" />
-          <img src="asset/linkedin.png" alt="linkedin" />
-          <img src="asset/insta.png" alt="insta" />
+          <img src="../asset/youtube.png" alt="youtube" />
+          <img src="../asset/x.png" alt="x" />
+          <img src="../asset/linkedin.png" alt="linkedin" />
+          <img src="../asset/insta.png" alt="insta" />
         </div>
       </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="module" src="js/regulatoric.js"></script>
+    <script type="module" src="../js/regulatoric.js"></script>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53ZQXR8Z"
-              height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-53ZQXR8Z"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
   </body>

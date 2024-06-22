@@ -24,6 +24,69 @@ function animateNavbarOnScroll() {
   }
 }
 
+/* SLIDE UP */
+let slideUp = (target, duration = 300) => {
+  target.style.transitionProperty = "height, margin, padding";
+  target.style.transitionDuration = duration + "ms";
+  target.style.boxSizing = "border-box";
+  target.style.height = target.offsetHeight + "px";
+  target.offsetHeight;
+  target.style.overflow = "hidden";
+  target.style.height = 0;
+  target.style.paddingTop = 0;
+  target.style.paddingBottom = 0;
+  target.style.marginTop = 0;
+  target.style.marginBottom = 0;
+  target.style.border = "none";
+
+  window.setTimeout(() => {
+    target.style.display = "none";
+    target.style.removeProperty("height");
+    target.style.removeProperty("padding-top");
+    target.style.removeProperty("padding-bottom");
+    target.style.removeProperty("margin-top");
+    target.style.removeProperty("margin-bottom");
+    target.style.removeProperty("overflow");
+    target.style.removeProperty("transition-duration");
+    target.style.removeProperty("transition-property");
+    target.style.removeProperty("border");
+  }, duration);
+};
+/* SLIDE DOWN */
+let slideDown = (target, duration = 300) => {
+  target.style.removeProperty("display");
+  let display = window.getComputedStyle(target).display;
+  if (display === "none") display = "grid";
+  target.style.display = display;
+  let height = target.offsetHeight;
+  target.style.overflow = "hidden";
+  target.style.height = 0;
+  target.style.paddingTop = 0;
+  target.style.paddingBottom = 0;
+  target.style.marginTop = 0;
+  target.style.marginBottom = 0;
+  target.offsetHeight;
+  target.style.boxSizing = "border-box";
+  target.style.transitionProperty = "height, margin, padding";
+  target.style.transitionDuration = duration + "ms";
+  target.style.height = height + "px";
+  target.style.border = "none";
+
+  target.style.removeProperty("padding-top");
+  target.style.removeProperty("padding-bottom");
+  target.style.removeProperty("margin-top");
+  target.style.removeProperty("margin-bottom");
+  target.style.removeProperty("border");
+
+  window.setTimeout(() => {
+    target.style.removeProperty("height");
+    target.style.removeProperty("overflow");
+    target.style.removeProperty("transition-duration");
+    target.style.removeProperty("transition-property");
+    target.style.removeProperty("border");
+  }, duration);
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const s1 = new Swiper(".brands-swiper", {
     // Optional parameters
@@ -133,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const s3 = new Swiper(".numbered-swiper", {
     // Optional parameters
-    // loop: true,
     slidesPerView: 1,
     centeredSlides: true,
     spaceBetween: 75,
@@ -158,131 +220,90 @@ document.addEventListener("DOMContentLoaded", () => {
       prevEl: ".swiper-button-prev",
     },
   });
+
+  const s6 = new Swiper(".install-faq-swiper", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 50,
+    direction: "horizontal",
+    centeredSlides: true,
+    autoplay: {
+      delay: 6000,
+      disableOnInteraction: false,
+    },
+    mousewheel: true,
+    breakpoints: {
+      992: {
+        slidesPerView: 1,
+        direction: "vertical",
+        spaceBetween: 0,
+      },
+      1024: {
+        mousewheel: false,
+      }
+    },
+    // If we need pagination
+    pagination: {
+      el: ".install-faq-pagination",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Retrieve the data-slide-name attribute of the slide
+        const slideName = this.slides[index].getAttribute("data-slide-name");
+        const slideText = this.slides[index].getAttribute("data-slide-text");
+
+        // Return the bullet with the slide name
+        return (`<div class="${className} install-faq-bullet space-y-2">
+                    <div class="bg-[#D0D7CA] bullet-inner duration-300 p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2 relative">
+                        <span class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text">${index + 1}</span>   
+                        ${slideName}
+                        <svg
+                          class="facet-pill-border hidden [.next_&]:block"
+                          height="58"
+                          width="100%"
+                          role="presentation"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            height="58"
+                            width="100%"
+                            ry="30"
+                            class="animated-rect"
+                            ></rect>
+                        </svg>
+                    </div>
+                    <p class="install-faq-text text-left text-[15px] leading-[18px] text-dark_text">${slideText}</p>
+                </div>`)
+      },
+    },
+  });
+
+  function updateNextClass(swiper) {
+    const bullets = document.querySelectorAll('.install-faq-bullet');
+    const activeIndex = swiper.activeIndex;
+
+    bullets.forEach((bullet, index) => {
+      bullet.classList.remove('next');
+      const bulletText = bullet.querySelector('p');
+      if (index === activeIndex) {
+        slideDown(bulletText);
+      } else {
+        slideUp(bulletText);
+      }
+    });
+
+    const nextIndex = (activeIndex + 1) % swiper.slides.length;
+
+    bullets[nextIndex].classList.add('next');
+  }
+
+  // Attach event listener for slide change
+  s6.on('slideChange', function() {
+    updateNextClass(s6);
+  });
+
+  // Initial call to set the 'next' class on page load
+  updateNextClass(s6);
 });
-
-// let init = false;
-// let newsSwiper;
-// let functionsSwiper;
-// function swiperCard() {
-//   if (window.innerWidth <= 768) {
-//     if (!init) {
-//       init = true;
-//       newsSwiper = new Swiper(".news-swiper", {
-//         // Optional parameters
-//         // loop: true,
-//         slidesPerView: 1,
-//         centeredSlides: true,
-//         spaceBetween: 75,
-//         mousewheel: true,
-//
-//         // If we need pagination
-//         pagination: {
-//           el: ".news-swiper-pagination",
-//           clickable: true,
-//           renderBullet: function (index, className) {
-//             // Calculate which bullets to show
-//
-//             return '<span class="' + className + '">' + "</span>";
-//           },
-//           dynamicBullets: true,
-//         },
-//       });
-//       functionsSwiper = new Swiper(".functions-swiper", {
-//         // Optional parameters
-//         // loop: true,
-//         slidesPerView: 1,
-//         centeredSlides: true,
-//         spaceBetween: 75,
-//         mousewheel: true,
-//
-//         // If we need pagination
-//         pagination: {
-//           el: ".functions-swiper-pagination",
-//           clickable: true,
-//           renderBullet: function (index, className) {
-//             // Calculate which bullets to show
-//
-//             return '<span class="' + className + '">' + "</span>";
-//           },
-//           dynamicBullets: true,
-//         },
-//       });
-//     }
-//   } else if (init) {
-//     if (newsSwiper) {
-//       newsSwiper.destroy();
-//     }
-//     if (functionsSwiper) {
-//       functionsSwiper.destroy();
-//     }
-//     init = false;
-//   }
-// }
-// swiperCard();
-// window.addEventListener("resize", swiperCard);
-
-/* SLIDE UP */
-let slideUp = (target, duration = 300) => {
-  target.style.transitionProperty = "height, margin, padding";
-  target.style.transitionDuration = duration + "ms";
-  target.style.boxSizing = "border-box";
-  target.style.height = target.offsetHeight + "px";
-  target.offsetHeight;
-  target.style.overflow = "hidden";
-  target.style.height = 0;
-  target.style.paddingTop = 0;
-  target.style.paddingBottom = 0;
-  target.style.marginTop = 0;
-  target.style.marginBottom = 0;
-  target.style.border = "none";
-
-  window.setTimeout(() => {
-    target.style.display = "none";
-    target.style.removeProperty("height");
-    target.style.removeProperty("padding-top");
-    target.style.removeProperty("padding-bottom");
-    target.style.removeProperty("margin-top");
-    target.style.removeProperty("margin-bottom");
-    target.style.removeProperty("overflow");
-    target.style.removeProperty("transition-duration");
-    target.style.removeProperty("transition-property");
-    target.style.removeProperty("border");
-  }, duration);
-};
-/* SLIDE DOWN */
-let slideDown = (target, duration = 300) => {
-  target.style.removeProperty("display");
-  let display = window.getComputedStyle(target).display;
-  if (display === "none") display = "grid";
-  target.style.display = display;
-  let height = target.offsetHeight;
-  target.style.overflow = "hidden";
-  target.style.height = 0;
-  target.style.paddingTop = 0;
-  target.style.paddingBottom = 0;
-  target.style.marginTop = 0;
-  target.style.marginBottom = 0;
-  target.offsetHeight;
-  target.style.boxSizing = "border-box";
-  target.style.transitionProperty = "height, margin, padding";
-  target.style.transitionDuration = duration + "ms";
-  target.style.height = height + "px";
-  target.style.border = "none";
-
-  target.style.removeProperty("padding-top");
-  target.style.removeProperty("padding-bottom");
-  target.style.removeProperty("margin-top");
-  target.style.removeProperty("margin-bottom");
-  target.style.removeProperty("border");
-
-  window.setTimeout(() => {
-    target.style.removeProperty("height");
-    target.style.removeProperty("overflow");
-    target.style.removeProperty("transition-duration");
-    target.style.removeProperty("transition-property");
-    target.style.removeProperty("border");
-  }, duration);
-};
 
 function addAccordionFunctionality(container) {
   const items = container.querySelectorAll(".faq-answer-item");
@@ -324,73 +345,6 @@ function initFAQ() {
 }
 
 initFAQ();
-
-const installFaq = document.querySelector("#installFaq");
-
-const installFaqItems = installFaq.querySelectorAll("li");
-let currentIndex = 0;
-let nextIndex = 1;
-let nextToNextIndex = 2;
-
-installFaqItems.forEach((item) => {
-  clearInstallFaqItem(item);
-});
-
-function clearInstallFaqItem(item) {
-  const itemText = item.querySelector("p");
-  slideUp(itemText);
-  item.classList.remove("active", "next");
-}
-
-installFaqItems.forEach((item, index) => {
-  item.addEventListener("click", () => {
-    installFaqItems.forEach((item) => {
-      clearInstallFaqItem(item);
-    });
-    if (index === 0) {
-      currentIndex = installFaqItems.length - 1;
-      nextIndex = index + 1;
-      nextToNextIndex = nextIndex + 1;
-    } else {
-      currentIndex = index - 1;
-      nextIndex = currentIndex + 1;
-      nextToNextIndex = nextIndex + 1;
-    }
-    changeActiveItem();
-  });
-});
-
-function changeActiveItem() {
-  // Hide the current active item
-  const currentItem = installFaqItems[currentIndex];
-  const currentItemText = currentItem.querySelector("p");
-  currentItem.classList.remove("active");
-  slideUp(currentItemText);
-
-  // Update the index to the next item
-  nextIndex = (currentIndex + 1) % installFaqItems.length;
-  const nextItem = installFaqItems[nextIndex];
-  const nextItemText = nextItem.querySelector("p");
-
-  // Update the index to the item after the next one
-  nextToNextIndex = (nextIndex + 1) % installFaqItems.length;
-  const nextToNextItem = installFaqItems[nextToNextIndex];
-
-  // Remove 'next' class from all items
-  installFaqItems.forEach((item) => item.classList.remove("next"));
-
-  // Show the next item
-  nextItem.classList.add("active");
-  slideDown(nextItemText);
-
-  // Add 'next' class to the item that will be next
-  nextToNextItem.classList.add("next");
-
-  // Update the current index
-  currentIndex = nextIndex;
-}
-
-setInterval(changeActiveItem, 6000);
 
 const reviewsVideos = document.querySelectorAll(".reviews-swiper video");
 

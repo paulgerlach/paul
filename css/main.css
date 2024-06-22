@@ -830,6 +830,10 @@ video {
   margin-right: 0.75rem;
 }
 
+.mr-\[100px\] {
+  margin-right: 100px;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -870,16 +874,16 @@ video {
   margin-top: -150px;
 }
 
+.mt-\[30px\] {
+  margin-top: 30px;
+}
+
 .mt-\[70px\] {
   margin-top: 70px;
 }
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mt-\[30px\] {
-  margin-top: 30px;
 }
 
 .line-clamp-3 {
@@ -1002,6 +1006,10 @@ video {
 
 .h-\[336px\] {
   height: 336px;
+}
+
+.h-\[440px\] {
+  height: 440px;
 }
 
 .h-\[calc\(100vh-40px\)\] {
@@ -1142,6 +1150,10 @@ video {
   max-width: 385px;
 }
 
+.max-w-\[386px\] {
+  max-width: 386px;
+}
+
 .max-w-\[40\%\] {
   max-width: 40%;
 }
@@ -1166,8 +1178,16 @@ video {
   max-width: 537px;
 }
 
+.max-w-\[594px\] {
+  max-width: 594px;
+}
+
 .max-w-\[655px\] {
   max-width: 655px;
+}
+
+.max-w-\[670px\] {
+  max-width: 670px;
 }
 
 .max-w-\[680px\] {
@@ -1196,10 +1216,6 @@ video {
 
 .max-w-xs {
   max-width: 20rem;
-}
-
-.max-w-\[594px\] {
-  max-width: 594px;
 }
 
 .flex-grow {
@@ -2060,10 +2076,6 @@ video {
   padding-left: 1.5rem;
 }
 
-.pl-8 {
-  padding-left: 2rem;
-}
-
 .pl-\[100px\] {
   padding-left: 100px;
 }
@@ -2094,6 +2106,10 @@ video {
 
 .pr-8 {
   padding-right: 2rem;
+}
+
+.pr-\[156px\] {
+  padding-right: 156px;
 }
 
 .pr-\[60px\] {
@@ -2146,6 +2162,10 @@ video {
 
 .pt-\[92px\] {
   padding-top: 92px;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-center {
@@ -2871,15 +2891,6 @@ html {
   color: #ffffff;
 }
 
-#installFaq li.active span {
-  background-color: #1e322d;
-  color: #ffffff;
-}
-
-#installFaq li span {
-  transition: 0.3s all;
-}
-
 @media (min-width: 769px) {
   .reviews-swiper .swiper-slide-active video {
     width: 250px;
@@ -2938,11 +2949,6 @@ html {
   brightness(93%) contrast(88%);
   width: 17px;
   height: 17px;
-}
-
-#installFaq li span {
-  transition: 0.3s all ease-in;
-  background-color: white;
 }
 
 @keyframes rotate {
@@ -3071,6 +3077,33 @@ html {
 
 .nav-link-wrapper:hover a {
   color: #1e322d;
+}
+
+.install-faq-swiper {
+  width: 100%;
+}
+
+.install-faq-swiper .swiper-pagination {
+  position: relative;
+}
+
+.swiper-pagination-bullet.install-faq-bullet {
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  background: transparent;
+  opacity: 1;
+}
+
+.install-faq-bullet.swiper-pagination-bullet-active .bullet-inner {
+  background-color: #1e322d;
+  color: #ffffff;
+}
+
+.install-faq-pagination.swiper-pagination-vertical.swiper-pagination-bullets, .install-faq-swiper.swiper-vertical>.swiper-pagination-bullets {
+  right: 0;
+  transform: none;
 }
 
 .placeholder\:text-xl::-moz-placeholder {
@@ -3362,6 +3395,11 @@ html {
     height: fit-content;
   }
 
+  .large\:h-fit {
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+
   .large\:h-screen {
     height: 100vh;
   }
@@ -3518,6 +3556,10 @@ html {
 
   .large\:pt-16 {
     padding-top: 4rem;
+  }
+
+  .large\:pt-5 {
+    padding-top: 1.25rem;
   }
 
   .large\:pt-8 {

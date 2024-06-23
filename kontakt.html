@@ -543,7 +543,7 @@
             Unser Service Team bearbeitet Anfragen überlich innerhalb von 24
             Stunden per Email.
           </p>
-          <form class="space-y-4">
+          <form id="contactForm" class="space-y-4">
             <label class="block" for="name">
               <input
                 class="w-full border border-dark_green/20 rounded-1/2base py-5 px-7 duration-300 outline-none focus:ring-4 focus:ring-green/40"
@@ -585,12 +585,38 @@
                 <a href="">Datenschutzbestimmungen</a> gelesen und akzeptiert
               </label>
             </div>
-            <input
+            <button
               class="py-4 px-9 text-[15px] cursor-pointer duration-300 hover:opacity-80 font-bold text-white rounded-1/2base bg-green"
-              value="Bestätigen"
               type="submit"
-            />
+            >
+              Bestätigen
+            </button>
           </form>
+          <script>
+            document.getElementById('contactForm').addEventListener('submit', function(event) {
+              event.preventDefault();
+
+              const email = document.getElementById('email').value;
+              const name = document.getElementById('name').value;
+              const message = document.getElementById('message').value;
+              const url = 'https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo';
+
+              fetch(url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ first_name: name, last_name: '', email: email, message: message })
+              })
+                      .then(response => response)
+                      .then(data => {
+                        console.log('Success:', data);
+                      })
+                      .catch((error) => {
+                        console.error('Error:', error);
+                      });
+            });
+          </script>
         </div>
       </div>
       <div class="px-20 large:px-16 medium:px-10 small:px-5 my-16 small:my-8">

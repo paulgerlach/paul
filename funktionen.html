@@ -1848,22 +1848,45 @@
           installiert.
         </div>
         <div class="medium:w-full">
-          <div class="relative w-fit mb-4 mx-auto medium:w-full">
+          <form id="footerEmailForm" class="relative w-fit mb-4 mx-auto medium:w-full">
             <label class="sr-only" for="footer_contact_email">Los gehts</label>
             <input
-              class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
-              placeholder="Wie lautet Ihre email?"
-              type="email"
-              name="contact_email"
-              id="footer_contact_email"
+                    class="py-5 px-7 min-w-[500px] small:min-w-fit medium:w-full border border-border_base rounded-1/2base placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl placeholder:leading-6 leading-6"
+                    placeholder="Wie lautet Ihre email?"
+                    type="email"
+                    name="contact_email"
+                    id="footer_contact_email"
             />
             <button
-              class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
-              type="button"
+                    class="absolute medium:relative medium:right-0 medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-1/2base flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+                    type="submit"
             >
               Los gehts
             </button>
-          </div>
+          </form>
+          <script>
+            document.getElementById('footerEmailForm').addEventListener('submit', function(event) {
+              event.preventDefault();
+
+              const email = document.getElementById('footer_contact_email').value;
+              const url = 'https://hook.eu2.make.com/ru0qxqaoubwpbo4jx7b5xillvyjr65ew';
+
+              fetch(url, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+              })
+                      .then(response => response.json())
+                      .then(data => {
+                        console.log('Success:', data);
+                      })
+                      .catch((error) => {
+                        console.error('Error:', error);
+                      });
+            });
+          </script>
           <p class="text-dark_text text-sm mt-4 leading-4">
             Bleiben Sie bei allen Themen auf dem aktuellsten Stand
           </p>

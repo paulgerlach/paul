@@ -79,7 +79,7 @@
       <div
         class="questionare-steps max-w-6xl mx-auto flex items-start large:flex-col large:gap-10 justify-between"
       >
-        <form id="questionare-form" class="steps-wrapper">
+        <div id="questionare-form" class="steps-wrapper">
           <button
             class="text-[15px] group text-dark_text/20 hidden font-bold flex items-center justify-start gap-3"
             id="prev-step"
@@ -394,7 +394,7 @@
               </select>
             </div>
           </div>
-          <div data-step="7" class="questionare-step mb-10 hidden">
+          <form id="questionareForm" data-step="7" class="questionare-step mb-10 hidden">
             <p class="mb-6 text-[40px] small:text-2xl text-dark_text">
               Ihre Kontaktdaten
             </p>
@@ -452,7 +452,8 @@
                 gelesen und akzeptiert
               </span>
             </label>
-          </div>
+            <button type="submit" class="sr-only">Submit</button>
+          </form>
           <div class="flex items-center justify-start gap-5">
             <button
               id="next-step"
@@ -469,7 +470,7 @@
               Überspringen
             </button>
           </div>
-        </form>
+        </div>
         <div
           class="questionare-info max-w-[40%] large:max-w-full w-full medium:mr-0 mt-2 -mr-10"
         >

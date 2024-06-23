@@ -99,8 +99,36 @@ const nextStepButton = document.querySelector("#next-step");
 const prevStepButton = document.querySelector("#prev-step");
 const skipStepButton = document.querySelector("#skip-step");
 
+function handleSubmit(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const first_name = document.getElementById('first_name').value;
+  const last_name = document.getElementById('last_name').value;
+  const url = 'https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo';
+
+  try {
+    const data = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({first_name: first_name, last_name: last_name, email: email, message: 'Fragebogen'})
+    });
+    console.log('Success:', data);
+    // Handle success (e.g., show a success message or redirect)
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle error (e.g., show an error message)
+  }
+}
+const form = document.getElementById('questionareForm');
+form.addEventListener('submit', handleSubmit);
+
 function nextStep() {
   if (Number(currentStep) === Number(totalSteps)) {
+    const formButton = form.querySelector('button[type="submit"]');
+    formButton.click();
     document.querySelector(".questionare-steps").classList.add("hidden");
     document.getElementById("questionare-final").classList.remove("hidden");
     document.querySelector(".steps-progress").classList.add("hidden");
@@ -198,7 +226,6 @@ questSelect.addEventListener("change", () => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const customSelectWrapper = document.querySelector(".custom-select-wrapper");
   const customSelect = document.querySelector(".custom-select");
   const customSelectTrigger = document.querySelector(".custom-select-trigger");
   const customOptions = document.querySelector(".custom-options");

@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/kontakt", "destination": "/kontakt.html" },
+    { "source": "/gerate", "destination": "/gerate.html" },
+    {
+      "source": "/datenschutzhinweise",
+      "destination": "/datenschutzhinweise.html"
+    },
+    { "source": "/funktionen", "destination": "/funktionen.html" },
+    { "source": "/impressum", "destination": "/impressum.html" },
+    { "source": "/preise", "destination": "/preise.html" },
+    { "source": "/fragebogen", "destination": "/fragebogen.html" },
+    { "source": "/blog/regulatorik", "destination": "/blog/regulatorik.html" },
+    { "source": "/", "destination": "/index.html" }
+  ]
+}

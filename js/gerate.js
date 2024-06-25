@@ -168,15 +168,17 @@ document.addEventListener("DOMContentLoaded", () => {
     on: {
       slideChange: function () {
         // Pause all videos in slides
-        document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach(video => {
-          if (!video.paused) {
-            video.pause();
-          }
-        });
+        document
+          .querySelectorAll(".reviews-swiper .swiper-slide video")
+          .forEach((video) => {
+            if (!video.paused) {
+              video.pause();
+            }
+          });
 
         // Get the active slide
         const activeSlide = this.slides[this.activeIndex];
-        const video = activeSlide.querySelector('video');
+        const video = activeSlide.querySelector("video");
 
         // Play the video if it exists in the active slide
         if (video) {
@@ -186,13 +188,15 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   });
 
-  document.querySelectorAll('.reviews-swiper .swiper-slide video').forEach((video, index) => {
-    if (index !== s4.activeIndex) {
-      video.pause();
-    } else {
-      video.play();
-    }
-  });
+  document
+    .querySelectorAll(".reviews-swiper .swiper-slide video")
+    .forEach((video, index) => {
+      if (index !== s4.activeIndex) {
+        video.pause();
+      } else {
+        video.play();
+      }
+    });
 
   const s3 = new Swiper(".numbered-swiper", {
     // Optional parameters
@@ -237,10 +241,8 @@ document.addEventListener("DOMContentLoaded", () => {
         slidesPerView: 1,
         direction: "vertical",
         spaceBetween: 0,
-      },
-      1024: {
         mousewheel: false,
-      }
+      },
     },
     // If we need pagination
     pagination: {
@@ -252,9 +254,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const slideText = this.slides[index].getAttribute("data-slide-text");
 
         // Return the bullet with the slide name
-        return (`<div class="${className} install-faq-bullet space-y-2">
+        return `<div class="${className} install-faq-bullet space-y-2">
                     <div class="bg-[#D0D7CA] bullet-inner duration-300 p-1.5 pr-7 rounded-full text-dark_text text-[30px] leading-[1] w-fit flex items-center justify-start gap-2 relative">
-                        <span class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text">${index + 1}</span>   
+                        <span class="rounded-full size-11 flex items-center justify-center !bg-white !text-dark_text">${
+                          index + 1
+                        }</span>   
                         ${slideName}
                         <svg
                           class="facet-pill-border hidden [.next_&]:block"
@@ -272,18 +276,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         </svg>
                     </div>
                     <p class="install-faq-text text-left text-[15px] leading-[18px] text-dark_text">${slideText}</p>
-                </div>`)
+                </div>`;
       },
     },
   });
 
   function updateNextClass(swiper) {
-    const bullets = document.querySelectorAll('.install-faq-bullet');
+    const bullets = document.querySelectorAll(".install-faq-bullet");
     const activeIndex = swiper.activeIndex;
 
     bullets.forEach((bullet, index) => {
-      bullet.classList.remove('next');
-      const bulletText = bullet.querySelector('p');
+      bullet.classList.remove("next");
+      const bulletText = bullet.querySelector("p");
       if (index === activeIndex) {
         slideDown(bulletText);
       } else {
@@ -293,11 +297,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const nextIndex = (activeIndex + 1) % swiper.slides.length;
 
-    bullets[nextIndex].classList.add('next');
+    bullets[nextIndex].classList.add("next");
   }
 
   // Attach event listener for slide change
-  s6.on('slideChange', function() {
+  s6.on("slideChange", function () {
     updateNextClass(s6);
   });
 

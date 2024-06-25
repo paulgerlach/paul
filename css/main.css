@@ -2120,6 +2120,10 @@ video {
   padding-top: 7rem;
 }
 
+.pt-5 {
+  padding-top: 1.25rem;
+}
+
 .pt-6 {
   padding-top: 1.5rem;
 }

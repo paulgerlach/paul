@@ -1,7 +1,7 @@
 {
   "rewrites": [
     { "source": "/kontakt", "destination": "/kontakt.html" },
-    { "source": "/gerate", "destination": "/gerate.html" },
+    { "source": "/geraete", "destination": "/geraete.html" },
     {
       "source": "/datenschutzhinweise",
       "destination": "/datenschutzhinweise.html"

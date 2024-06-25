@@ -7,7 +7,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        gerate: resolve(__dirname, "gerate.html"),
+        geraete: resolve(__dirname, "geraete.html"),
         kontakt: resolve(__dirname, "kontakt.html"),
         datenschutzhinweise: resolve(__dirname, "datenschutzhinweise.html"),
         funktionen: resolve(__dirname, "funktionen.html"),

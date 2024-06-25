@@ -80,7 +80,7 @@
       <div
         class="questionare-steps max-w-6xl mx-auto flex items-start large:flex-col large:gap-10 justify-between"
       >
-        <div id="questionare-form" class="steps-wrapper">
+        <form id="questionare-form" class="steps-wrapper">
           <button
             class="text-[15px] group text-dark_text/20 hidden font-bold flex items-center justify-start gap-3"
             id="prev-step"
@@ -115,10 +115,10 @@
                   class="border border-dark_green/20 rounded-base max-w-[200px] w-full duration-300 outline-none focus:ring-4 focus:ring-green/40 text-center text-lg text-dark_text py-6"
                   type="number"
                   value="2"
-                  name="number"
-                  id="number"
+                  name="appartment_number"
+                  id="appartment_number"
                 />
-                <label class="text-lg text-dark_text" for="number">
+                <label class="text-lg text-dark_text" for="appartment_number">
                   Wohnungen
                 </label>
               </div>
@@ -154,9 +154,10 @@
               <label for="bill_1" class="block">
                 <input
                   class="hidden peer"
-                  name="billing_method"
+                  name="heating_costs"
                   id="bill_1"
                   type="radio"
+                  value="Durch mich persönlich"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -173,9 +174,10 @@
               <label for="bill_2" class="block">
                 <input
                   class="hidden peer"
-                  name="billing_method"
+                  name="heating_costs"
                   id="bill_2"
                   type="radio"
+                  value="Durch einen anderen Messdienstleister"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -192,9 +194,10 @@
               <label for="bill_3" class="block">
                 <input
                   class="hidden peer"
-                  name="billing_method"
+                  name="heating_costs"
                   id="bill_3"
                   type="radio"
+                  value="Bisher noch gar nicht"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -219,12 +222,13 @@
               ausgestattet?
             </p>
             <div class="space-y-3">
-              <label for="yes" class="block">
+              <label for="heating_available_yes" class="block">
                 <input
                   class="hidden peer"
-                  name="question1"
-                  id="yes"
+                  name="heating_available"
+                  id="heating_available_yes"
                   type="radio"
+                  value="Ja"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -238,12 +242,13 @@
                   Ja
                 </div>
               </label>
-              <label for="no" class="block">
+              <label for="heating_available_no" class="block">
                 <input
                   class="hidden peer"
-                  name="question1"
-                  id="no"
+                  name="heating_available"
+                  id="heating_available_no"
                   type="radio"
+                  value="Nein"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -267,12 +272,13 @@
               Erfolgt die Warmwasserversorgung zentral?
             </p>
             <div class="space-y-3">
-              <label for="yes2" class="block">
+              <label for="central_water_supply_yes" class="block">
                 <input
                   class="hidden peer"
-                  name="question2"
-                  id="yes2"
+                  name="central_water_supply"
+                  id="central_water_supply_yes"
                   type="radio"
+                  value="Ja"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -286,12 +292,13 @@
                   Ja
                 </div>
               </label>
-              <label for="no2" class="block">
+              <label for="central_water_supply_no" class="block">
                 <input
                   class="hidden peer"
-                  name="question2"
-                  id="no2"
+                  name="central_water_supply"
+                  id="central_water_supply_no"
                   type="radio"
+                  value="Nien"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -318,9 +325,10 @@
               <label for="heater1" class="block">
                 <input
                   class="hidden peer"
-                  name="heater"
+                  name="central_heating_system"
                   id="heater1"
                   type="radio"
+                  value="Nur Heizkörper"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -337,9 +345,10 @@
               <label for="heater2" class="block">
                 <input
                   class="hidden peer"
-                  name="heater"
+                  name="central_heating_system"
                   id="heater2"
                   type="radio"
+                  value="Nur Fußbodenheizung"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -356,9 +365,10 @@
               <label for="heater3" class="block">
                 <input
                   class="hidden peer"
-                  name="heater"
+                  name="central_heating_system"
                   id="heater3"
                   type="radio"
+                  value="Heizkörper und Fußbodenheizung"
                 />
                 <div
                   class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
@@ -408,7 +418,7 @@
                   >
                 </div>
               </div>
-              <select name="form_select" id="form_select" class="hidden">
+              <select name="energy_sources" id="energy_sources" class="hidden">
                 <option value="Fernwärme" selected>Fernwärme</option>
                 <option value="Gas">Gas</option>
                 <option value="Heizöl">Heizöl</option>
@@ -418,11 +428,11 @@
                 <option value="Hybride Energiequelle">
                   Hybride Energiequelle
                 </option>
-                <option value="sonstiges">sonstiges</option>
+                <option value="Sonstiges">sonstiges</option>
               </select>
             </div>
           </div>
-          <form
+          <div
             id="questionareForm"
             data-step="7"
             class="questionare-step mb-10 hidden"
@@ -484,8 +494,7 @@
                 gelesen und akzeptiert
               </span>
             </label>
-            <button type="submit" class="sr-only">Submit</button>
-          </form>
+          </div>
           <div class="flex items-center justify-start gap-5">
             <button
               id="next-step"
@@ -502,7 +511,7 @@
               Überspringen
             </button>
           </div>
-        </div>
+        </form>
         <div
           class="questionare-info max-w-[40%] large:max-w-full w-full medium:mr-0 mt-2 -mr-10"
         >

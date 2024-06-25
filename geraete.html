@@ -162,13 +162,11 @@
                       class="mb-5 text-xl flex items-center justify-between text-dark_text"
                     >
                       Produkthighlight
-                      <span class="group-hover:translate-x-1 duration-300">
                         <img
                           loading="lazy"
                           alt="arrow"
                           src="./asset/arrow.png"
                         />
-                      </span>
                     </p>
                     <div
                       class="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12"
@@ -418,16 +416,16 @@
           </p>
         </div>
         <div
-          class="grid-cols-2 large:hidden grid grid-rows-3 max-w-[686px] max-h-[642px] gap-5"
+          class="grid-cols-2 large:hidden grid max-w-[686px] gap-5"
         >
           <img
             loading="lazy"
-            class="col-span-2 row-span-2 rounded-base max-h-[400px] h-full object-cover"
+            class="col-span-2 rounded-base aspect-video h-full object-cover"
             src="asset/hero_counter.png"
             alt="hero counter image"
           />
           <div
-            class="flex items-center max-h-[242px] justify-center bg-[#E0DEDB] rounded-base"
+            class="flex items-center h-full justify-center bg-[#E0DEDB] rounded-base"
           >
             <img
               loading="lazy"
@@ -435,7 +433,7 @@
               alt="hero counter image"
             />
           </div>
-          <div id="hero-pointer" class="relative max-h-[242px]">
+          <div id="hero-pointer" class="relative">
             <script type="module">
               import bodymovin from "lottie-web";
 
@@ -1069,11 +1067,21 @@
                 id="anforderungen"
                 class="swiper-slide relative ml-auto mr-[100px] max-w-[386px] w-full"
               >
-                <img
-                  loading="lazy"
-                  src="./asset/install_faq1.png"
-                  alt="anforderungen"
-                />
+              <script type="module">
+                import bodymovin from "lottie-web";
+
+                var animation = bodymovin.loadAnimation({
+                  container: document.getElementById("anforderungen"),
+                  path: new URL(
+                    "./animations/Animation_1.json",
+                    import.meta.url
+                  ).href,
+                  renderer: "svg",
+                  loop: true,
+                  autoplay: true,
+                  name: "Demo Animation",
+                });
+              </script>
               </div>
               <div
                 data-slide-name="Installation"

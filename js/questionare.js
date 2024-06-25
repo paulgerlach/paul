@@ -105,7 +105,13 @@ function handleSubmit(event) {
   const email = document.getElementById('email').value;
   const first_name = document.getElementById('first_name').value;
   const last_name = document.getElementById('last_name').value;
-  const url = 'https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo';
+  const appartmentNumber = document.getElementById('appartment_number').value;
+  const heatingCosts = document.querySelector('input[name="heating_costs"]:checked').value;
+  const heatingAvailable = document.querySelector('input[name="heating_available"]:checked').value;
+  const centralWaterSupply = document.querySelector('input[name="central_water_supply"]:checked').value;
+  const centralHeatingSystem = document.querySelector('input[name="central_heating_system"]:checked').value;
+  const energySources = document.getElementById('energy_sources').value;
+  const url = 'https://hook.eu2.make.com/jd0ux1knh1rvreg6jcto9egpfk5gw1s9';
 
   try {
     const data = fetch(url, {
@@ -113,7 +119,17 @@ function handleSubmit(event) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({first_name: first_name, last_name: last_name, email: email, message: 'Fragebogen'})
+      body: JSON.stringify({
+        first_name: first_name, 
+        last_name: last_name, 
+        email: email,
+        heating_costs: heatingCosts,
+        heating_available: heatingAvailable,
+        central_water_supply: centralWaterSupply,
+        central_heating_system: centralHeatingSystem,
+        energy_sources: energySources,
+        appartment_number: appartmentNumber
+      })
     });
     console.log('Success:', data);
     // Handle success (e.g., show a success message or redirect)
@@ -122,11 +138,12 @@ function handleSubmit(event) {
     // Handle error (e.g., show an error message)
   }
 }
-const form = document.getElementById('questionareForm');
+const form = document.getElementById('questionare-form');
 form.addEventListener('submit', handleSubmit);
 
 function nextStep() {
   if (Number(currentStep) === Number(totalSteps)) {
+    nextStepButton.type = 'submit';
     const formButton = form.querySelector('button[type="submit"]');
     formButton.click();
     document.querySelector(".questionare-steps").classList.add("hidden");
@@ -230,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const customSelectTrigger = document.querySelector(".custom-select-trigger");
   const customOptions = document.querySelector(".custom-options");
   const customOptionsItems = document.querySelectorAll(".custom-option");
-  const selectElement = document.querySelector("#form_select");
+  const selectElement = document.querySelector("#energy_sources");
 
   customSelectTrigger.addEventListener("click", function () {
     customOptions.classList.toggle("open");

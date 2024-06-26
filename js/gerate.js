@@ -210,19 +210,43 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     },
     // If we need pagination
+    // pagination: {
+    //   el: ".numbered-swiper-pagination",
+    //   clickable: true,
+    //   renderBullet: function (index, className) {
+    //     // Calculate which bullets to show
+
+    //     return '<span class="' + className + '">' + (index + 1) + "</span>";
+    //   },
+    // },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+
+  const s3_1 = new Swiper(".numbered-item-swiper--first", {
+    // Optional parameters
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
     pagination: {
-      el: ".numbered-swiper-pagination",
+      el: ".numbered-item-swiper-pagination--first",
       clickable: true,
       renderBullet: function (index, className) {
         // Calculate which bullets to show
 
         return '<span class="' + className + '">' + (index + 1) + "</span>";
       },
-    },
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
+    }
   });
 
   const s6 = new Swiper(".install-faq-swiper", {

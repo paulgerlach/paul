@@ -3093,6 +3093,10 @@ html {
   transform: none;
 }
 
+.numbered-item-swiper--first {
+  height: 300px;
+}
+
 .placeholder\:text-xl::-moz-placeholder {
   font-size: 1.25rem;
   line-height: 1.75rem;

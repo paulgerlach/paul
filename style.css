@@ -664,3 +664,7 @@ html {
   right: 0;
   transform: none;
 }
+
+.numbered-item-swiper--first {
+  height: 300px;
+}

@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     // If we need pagination
     pagination: {
-      el: ".numbered-item-swiper-pagination--first",
+      el: ".numbered-item-swiper-pagination-first-first",
       clickable: true,
       renderBullet: function (index, className) {
         // Calculate which bullets to show
@@ -248,6 +248,32 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     }
   });
+
+  const s3_1_1 = new Swiper(".numbered-item-swiper--first", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-first-second",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    }
+  });
+
+  s3_1.controller.control = s3_1_1;
+  s3_1_1.controller.control = s3_1;
 
   const s6 = new Swiper(".install-faq-swiper", {
     // Optional parameters

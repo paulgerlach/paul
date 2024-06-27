@@ -666,5 +666,28 @@ html {
 }
 
 .numbered-item-swiper--first {
-  height: 320px;
+  height: 550px;
+}
+
+@media (max-width: 992px) {
+  .numbered-item-swiper--first {
+    height: 320px;
+  }
+}
+
+.numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second {
+  right: auto;
+  left: 100px;
+}
+.numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second .swiper-pagination-bullet:nth-child(1) {
+  transform: translateX(50%);
+}
+.numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second .swiper-pagination-bullet:nth-child(2) {
+  transform: translateY(150%);
+}
+.numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second .swiper-pagination-bullet:nth-child(3) {
+  transform: translate(200%, 50%);
+}
+.numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second .swiper-pagination-bullet:nth-child(4) {
+  transform: translateX(-50%);
 }

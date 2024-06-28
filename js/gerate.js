@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return '<span class="' + className + '">' + (index + 1) + "</span>";
       },
-    }
+    },
   });
 
   const s3_1_1 = new Swiper(".numbered-item-swiper--first", {
@@ -269,11 +269,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return '<span class="' + className + '">' + (index + 1) + "</span>";
       },
-    }
+    },
   });
 
   s3_1.controller.control = s3_1_1;
   s3_1_1.controller.control = s3_1;
+
+  const s3_2 = new Swiper(".numbered-item-swiper--second", {
+    // Optional parameters
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-second-first",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  const s3_2_1 = new Swiper(".numbered-item-swiper--second", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-second-second",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  s3_2.controller.control = s3_2_1;
+  s3_2_1.controller.control = s3_2;
+
+  const s3_3 = new Swiper(".numbered-item-swiper--third", {
+    // Optional parameters
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-third-first",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  const s3_3_1 = new Swiper(".numbered-item-swiper--third", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-third-second",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  s3_3.controller.control = s3_3_1;
+  s3_3_1.controller.control = s3_3;
+
+  const s3_4 = new Swiper(".numbered-item-swiper--fourth", {
+    // Optional parameters
+    slidesPerView: 1,
+    centeredSlides: true,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-fourth-first",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  const s3_4_1 = new Swiper(".numbered-item-swiper--fourth", {
+    // Optional parameters
+    slidesPerView: 1,
+    spaceBetween: 75,
+    direction: "vertical",
+    mousewheel: true,
+    breakpoints: {
+      1024: {
+        mousewheel: false,
+      },
+    },
+    // If we need pagination
+    pagination: {
+      el: ".numbered-item-swiper-pagination-fourth-second",
+      clickable: true,
+      renderBullet: function (index, className) {
+        // Calculate which bullets to show
+
+        return '<span class="' + className + '">' + (index + 1) + "</span>";
+      },
+    },
+  });
+
+  s3_4.controller.control = s3_4_1;
+  s3_4_1.controller.control = s3_4;
 
   const s6 = new Swiper(".install-faq-swiper", {
     // Optional parameters

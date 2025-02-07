@@ -1033,6 +1033,10 @@ video {
   height: 100vh;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
 .max-h-5 {
   max-height: 1.25rem;
 }

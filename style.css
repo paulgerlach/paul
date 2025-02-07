@@ -785,3 +785,8 @@ html {
   .swiper-pagination-bullet:nth-child(4) {
   transform: translate(-50%, -100%);
 }
+
+.filter-to-green {
+  filter: invert(84%) sepia(12%) saturate(1224%) hue-rotate(71deg)
+    brightness(93%) contrast(87%);
+}

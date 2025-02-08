@@ -996,6 +996,14 @@ video {
   height: 60px;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
 .h-\[190px\] {
   height: 190px;
 }
@@ -1033,8 +1041,20 @@ video {
   height: 100vh;
 }
 
-.h-10 {
-  height: 2.5rem;
+.h-12 {
+  height: 3rem;
+}
+
+.h-1 {
+  height: 0.25rem;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
+.h-7 {
+  height: 1.75rem;
 }
 
 .max-h-5 {

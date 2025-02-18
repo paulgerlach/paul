@@ -745,9 +745,6 @@
           Prozesse effizienter und zuverlässiger.“
         </h5>
         <p class="text-center text-lg text-dark_text">
-          <b>Markus T., Geschäftsführer</b>, Meyer & Partner Hausverwaltung
-        </p>
-        <p class="text-center text-lg text-dark_text">
           <b>Fabian Höhne</b>, Vitolus
         </p>
         <img
@@ -772,12 +769,12 @@
           href="/fragebogen"
           >Zugang sichern</a
         >
-        <div id="score_chart" class="relative mx-auto max-w-3xl w-fit">
+        <div id="score_chart_main" class="relative mx-auto max-w-3xl w-fit">
           <script type="module">
             import bodymovin from "lottie-web";
 
             var animation = bodymovin.loadAnimation({
-              container: document.getElementById("score_chart"),
+              container: document.getElementById("score_chart_main"),
               path: new URL("/animations/Animation_10.json", import.meta.url)
                 .href,
               renderer: "svg",
@@ -907,6 +904,7 @@
             </div>
             <div class="swiper-wrapper max-w-[670px] mr-0 ml-auto">
               <div
+                id="bedarfsanalyse"
                 data-slide-name="Bedarfsanalyse"
                 data-slide-text="Wir prüfen Ihren aktuellen Bestand und ermitteln, welche Geräte optimal zu Ihren Anforderungen passen, um Zeit und Kosten zu sparen."
                 class="swiper-slide relative ml-auto mr-[100px] max-w-[386px] w-full">
@@ -945,7 +943,7 @@
                   alt="Ablesen" />
               </div>
               <div
-                id="score_chart"
+                id="score_chart_submain"
                 data-slide-name="Verbrauchsanalyse"
                 data-slide-text="Übersichtliche und detaillierte Analysen ermöglichen eine präzise Verbrauchsauswertung, auch über mehrere Immobilien hinweg."
                 class="swiper-slide relative ml-auto mr-0 max-w-xl w-full">
@@ -953,7 +951,7 @@
                   import bodymovin from "lottie-web";
 
                   var animation = bodymovin.loadAnimation({
-                    container: document.getElementById("score_chart"),
+                    container: document.getElementById("score_chart_submain"),
                     path: new URL(
                       "./animations/Animation_10.json",
                       import.meta.url

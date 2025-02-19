@@ -461,10 +461,13 @@
             class="text-[45px] leading-[54px] mb-6 medium:text-2xl text-dark_text">
             Kontaktieren Sie uns
           </h1>
-          <p class="text-lg text-dark_text mb-9">
+          <p class="text-lg text-dark_text mb-5">
             Unser Service Team bearbeitet Anfragen überlich innerhalb von 24
             Stunden per Email.
           </p>
+          <p
+            id="formMessage"
+            class="hidden text-green font-semibold mb-4 text-sm"></p>
           <form id="contactForm" class="space-y-4">
             <label class="block" for="name">
               <input
@@ -488,7 +491,7 @@
               <textarea
                 class="w-full border border-dark_green/20 rounded-1/2base py-5 px-7 duration-300 outline-none focus:ring-4 focus:ring-green/40"
                 required
-                placeholder="Betreff*"
+                placeholder="Nachricht*"
                 id="message"
                 name="message"></textarea>
             </label>
@@ -498,8 +501,8 @@
                 type="checkbox"
                 name="info"
                 id="info" />
-              <label for="info"
-                >Hiermit habe ich die
+              <label for="info">
+                Hiermit habe ich die
                 <a href="">Datenschutzbestimmungen</a> gelesen und akzeptiert
               </label>
             </div>
@@ -509,35 +512,58 @@
               Bestätigen
             </button>
           </form>
+
           <script>
             document
               .getElementById("contactForm")
               .addEventListener("submit", function (event) {
                 event.preventDefault();
 
-                const email = document.getElementById("email").value;
-                const name = document.getElementById("name").value;
-                const message = document.getElementById("message").value;
-                const url =
-                  "https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo";
+                const email = document.getElementById("email").value.trim();
+                const name = document.getElementById("name").value.trim();
+                const message = document.getElementById("message").value.trim();
+                const infoChecked = document.getElementById("info").checked;
+                const formMessage = document.getElementById("formMessage");
 
-                fetch(url, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    first_name: name,
-                    last_name: "",
-                    email: email,
-                    message: message,
-                  }),
-                })
-                  .then((response) => response)
+                if (!infoChecked) {
+                  formMessage.textContent =
+                    "Bitte akzeptieren Sie die Datenschutzbestimmungen.";
+                  formMessage.classList.remove("hidden", "text-green-500");
+                  formMessage.classList.add("text-red-500");
+                  return;
+                }
+
+                fetch(
+                  "https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      full_name: name,
+                      email: email,
+                      message: message,
+                    }),
+                  }
+                )
+                  .then((response) => response.text()) // Changed from .json() to .text()
                   .then((data) => {
-                    console.log("Success:", data);
+                    if (data.trim() === "Accepted") {
+                      formMessage.textContent =
+                        "Ihre Nachricht wurde erfolgreich gesendet!";
+                      formMessage.classList.remove("hidden", "text-red-500");
+                      formMessage.classList.add("text-green-500");
+                      document.getElementById("contactForm").reset();
+                    } else {
+                      throw new Error("Unerwartete Antwort vom Server");
+                    }
                   })
                   .catch((error) => {
+                    formMessage.textContent =
+                      "Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.";
+                    formMessage.classList.remove("hidden", "text-green-500");
+                    formMessage.classList.add("text-red-500");
                     console.error("Error:", error);
                   });
               });

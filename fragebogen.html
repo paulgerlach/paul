@@ -1,8 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="asset/header_logo.svg" />
+    <meta
+      name="description"
+      content="Optimieren Sie die Verbrauchserfassung mit unserer innovativen Fernablesungstechnologie! Präzise Messung von Warmwasser, Kaltwasser und Heizung - effizient, automatisiert und zuverlässig dank modernster Funktechnologie. Jetzt installieren lassen und Energiekosten langfristig senken!" />
+    <link rel="icon" href="./asset/header_logo.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,76 +25,62 @@
     <!-- End Google Tag Manager -->
     <link
       href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    />
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/main.css" />
-    <title>Heidi</title>
+    <title>Heidi Systems</title>
   </head>
   <body>
     <header id="header" class="fixed w-full top-0">
       <div
-        class="flex items-center bg-white w-full px-10 medium:px-5 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between"
-      >
+        class="flex items-center bg-white w-full px-10 medium:px-5 [.scrolled_&]:py-3 py-4 duration-300 ease-in-out justify-between">
         <a href="/" class="flex items-center justify-start gap-3">
           <img
             loading="lazy"
             class="colored-to-black max-w-16 max-h-5"
             src="asset/logo.png"
-            alt="logo"
-          />
+            alt="logo" />
         </a>
       </div>
     </header>
     <main id="content" class="py-24 px-5">
       <div
         data-filled-steps="0"
-        class="steps-progress max-w-6xl mx-auto flex mb-10 items-center justify-start gap-1.5"
-      >
+        class="steps-progress max-w-6xl mx-auto flex mb-10 items-center justify-start gap-1.5">
         <span
           data-step-index="1"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span
           data-step-index="2"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span
           data-step-index="3"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span
           data-step-index="4"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span
           data-step-index="5"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span
           data-step-index="6"
-          class="w-[50px] h-[1px] bg-dark_green/10"
-        ></span>
+          class="w-[50px] h-[1px] bg-dark_green/10"></span>
         <span class="text-xs text-dark_text/20"> noch 3 min </span>
       </div>
       <div
-        class="questionare-steps max-w-6xl mx-auto flex items-start large:flex-col large:gap-10 justify-between"
-      >
+        class="questionare-steps max-w-6xl mx-auto flex items-start large:flex-col large:gap-10 justify-between">
         <form id="questionare-form" class="steps-wrapper">
           <button
             class="text-[15px] group text-dark_text/20 hidden font-bold flex items-center justify-start gap-3"
             id="prev-step"
-            type="button"
-          >
+            type="button">
             <img
               loading="lazy"
               alt="chevron"
               src="asset/chevron.png"
-              class="rotate-180 group-hover:-translate-x-1/2 duration-300 size-2.5 colored-to-black opacity-50"
-            />
+              class="rotate-180 group-hover:-translate-x-1/2 duration-300 size-2.5 colored-to-black opacity-50" />
             zurück
           </button>
           <div data-step="1" class="questionare-step mb-10">
@@ -106,8 +95,7 @@
               <button
                 class="text-lg text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center -mt-10"
                 type="button"
-                onclick="decrement()"
-              >
+                onclick="decrement()">
                 -
               </button>
               <div class="flex flex-col gap-1.5 items-center justify-center">
@@ -116,8 +104,7 @@
                   type="number"
                   value="2"
                   name="appartment_number"
-                  id="appartment_number"
-                />
+                  id="appartment_number" />
                 <label class="text-lg text-dark_text" for="appartment_number">
                   Wohnungen
                 </label>
@@ -125,8 +112,7 @@
               <button
                 class="text-lg text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center -mt-10"
                 type="button"
-                onclick="increment()"
-              >
+                onclick="increment()">
                 +
               </button>
             </div>
@@ -157,17 +143,14 @@
                   name="heating_costs"
                   id="bill_1"
                   type="radio"
-                  value="Durch mich persönlich"
-                />
+                  value="Durch mich persönlich" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/person_icon.png"
-                  />
+                    src="asset/person_icon.png" />
                   Durch mich persönlich
                 </div>
               </label>
@@ -177,17 +160,14 @@
                   name="heating_costs"
                   id="bill_2"
                   type="radio"
-                  value="Durch einen anderen Messdienstleister"
-                />
+                  value="Durch einen anderen Messdienstleister" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/settings_icon.png"
-                  />
+                    src="asset/settings_icon.png" />
                   Durch einen anderen Messdienstleister
                 </div>
               </label>
@@ -197,17 +177,14 @@
                   name="heating_costs"
                   id="bill_3"
                   type="radio"
-                  value="Bisher noch gar nicht"
-                />
+                  value="Bisher noch gar nicht" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/big_x_icon.png"
-                  />
+                    src="asset/big_x_icon.png" />
                   Bisher noch gar nicht
                 </div>
               </label>
@@ -228,17 +205,14 @@
                   name="heating_available"
                   id="heating_available_yes"
                   type="radio"
-                  value="Ja"
-                />
+                  value="Ja" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/yes_icon.png"
-                  />
+                    src="asset/yes_icon.png" />
                   Ja
                 </div>
               </label>
@@ -248,17 +222,14 @@
                   name="heating_available"
                   id="heating_available_no"
                   type="radio"
-                  value="Nein"
-                />
+                  value="Nein" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/no_icon.png"
-                  />
+                    src="asset/no_icon.png" />
                   Nein
                 </div>
               </label>
@@ -278,17 +249,14 @@
                   name="central_water_supply"
                   id="central_water_supply_yes"
                   type="radio"
-                  value="Ja"
-                />
+                  value="Ja" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/yes_icon.png"
-                  />
+                    src="asset/yes_icon.png" />
                   Ja
                 </div>
               </label>
@@ -298,17 +266,14 @@
                   name="central_water_supply"
                   id="central_water_supply_no"
                   type="radio"
-                  value="Nien"
-                />
+                  value="Nien" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/no_icon.png"
-                  />
+                    src="asset/no_icon.png" />
                   Nein
                 </div>
               </label>
@@ -328,17 +293,14 @@
                   name="central_heating_system"
                   id="heater1"
                   type="radio"
-                  value="Nur Heizkörper"
-                />
+                  value="Nur Heizkörper" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/heater_form1.png"
-                  />
+                    src="asset/heater_form1.png" />
                   Nur Heizkörper
                 </div>
               </label>
@@ -348,17 +310,14 @@
                   name="central_heating_system"
                   id="heater2"
                   type="radio"
-                  value="Nur Fußbodenheizung"
-                />
+                  value="Nur Fußbodenheizung" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/heater_form2.png"
-                  />
+                    src="asset/heater_form2.png" />
                   Nur Fußbodenheizung
                 </div>
               </label>
@@ -368,17 +327,14 @@
                   name="central_heating_system"
                   id="heater3"
                   type="radio"
-                  value="Heizkörper und Fußbodenheizung"
-                />
+                  value="Heizkörper und Fußbodenheizung" />
                 <div
-                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text"
-                >
+                  class="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-base border border-dark_green/20 py-1.5 px-2.5 flex items-center justify-start gap-5 text-lg text-dark_text">
                   <img
                     loading="lazy"
                     class="size-16"
                     alt="person"
-                    src="asset/heater_form3.png"
-                  />
+                    src="asset/heater_form3.png" />
                   Heizkörper und Fußbodenheizung
                 </div>
               </label>
@@ -435,8 +391,7 @@
           <div
             id="questionareForm"
             data-step="7"
-            class="questionare-step mb-10 hidden"
-          >
+            class="questionare-step mb-10 hidden">
             <p class="mb-6 text-[40px] small:text-2xl text-dark_text">
               Ihre Kontaktdaten
             </p>
@@ -452,8 +407,7 @@
                   placeholder="Vorname*"
                   type="text"
                   name="first_name"
-                  id="first_name"
-                />
+                  id="first_name" />
               </label>
               <label for="last_name">
                 <input
@@ -462,8 +416,7 @@
                   placeholder="Nachname*"
                   type="text"
                   name="last_name"
-                  id="last_name"
-                />
+                  id="last_name" />
               </label>
             </div>
             <label class="block w-full mb-6" for="email">
@@ -473,19 +426,16 @@
                 placeholder="Email Adresse*s"
                 type="text"
                 name="email"
-                id="email"
-              />
+                id="email" />
             </label>
             <label
               for="form_confirm"
-              class="w-full flex items-center justify-start gap-6"
-            >
+              class="w-full flex items-center justify-start gap-6">
               <input
                 name="form_confirm"
                 id="form_confirm"
                 class="accent-green size-4"
-                type="checkbox"
-              />
+                type="checkbox" />
               <span>
                 Hiermit habe ich die
                 <a class="text-[#6083CC] underline" href="#"
@@ -499,29 +449,24 @@
             <button
               id="next-step"
               class="rounded-base bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-7 border border-transparent"
-              type="button"
-            >
+              type="button">
               Bestätigen
             </button>
             <button
               id="skip-step"
               class="rounded-base bg-white flex items-center justify-center duration-300 hover:opacity-80 hover:border-green disabled:opacity-50 text-green font-bold text-[15px] py-4 px-7 border border-transparent"
-              type="button"
-            >
+              type="button">
               Überspringen
             </button>
           </div>
         </form>
         <div
-          class="questionare-info max-w-[40%] large:max-w-full w-full medium:mr-0 mt-2 -mr-10"
-        >
+          class="questionare-info max-w-[40%] large:max-w-full w-full medium:mr-0 mt-2 -mr-10">
           <div class="questionare-answer-item bg-dark_green/5 rounded-base">
             <div
-              class="questionare-answer-header p-4 cursor-pointer flex items-center justify-between"
-            >
+              class="questionare-answer-header p-4 cursor-pointer flex items-center justify-between">
               <p
-                class="questionare-question text-dark_text/30 flex items-center justify-between gap-3"
-              >
+                class="questionare-question text-dark_text/30 flex items-center justify-between gap-3">
                 <img loading="lazy" src="asset/info.png" alt="info" /> Erklärung
               </p>
               <div class="questionare-icon">
@@ -529,8 +474,7 @@
                   loading="lazy"
                   class="rotate-90 colored-to-black opacity-50 size-4"
                   src="asset/chevron.png"
-                  alt="chevron"
-                />
+                  alt="chevron" />
               </div>
             </div>
             <div class="questionare-answer-content px-4 pb-4">
@@ -546,14 +490,12 @@
       </div>
       <div
         id="questionare-final"
-        class="max-w-6xl hidden px-10 small:px-5 flex flex-col items-start justify-end mx-auto"
-      >
+        class="max-w-6xl hidden px-10 small:px-5 flex flex-col items-start justify-end mx-auto">
         <img
           loading="lazy"
           class="size-[50px] block mb-6"
           src="asset/checkmark_icon_big.png"
-          alt="checkmark"
-        />
+          alt="checkmark" />
         <h1 class="text-[40px] small:text-2xl mb-4 text-dark_text">
           Anfrage erfolgreich versendet
         </h1>
@@ -564,8 +506,7 @@
         <div class="grid gap-8 medium:grid-cols-1 grid-cols-10">
           <div class="col-span-6 medium:col-span-1 space-y-5">
             <p
-              class="bg-dark_green/5 rounded-base text-dark_text text-base py-8 px-6"
-            >
+              class="bg-dark_green/5 rounded-base text-dark_text text-base py-8 px-6">
               Um eine reibungslose und effiziente Bearbeitung Ihrer Anfrage zu
               gewährleisten, benötigen wir Ihre persönlichen Daten. Diese
               ermöglichen es uns, bei eventuellen Rückfragen direkt mit Ihnen in
@@ -613,11 +554,9 @@
             </div>
           </div>
           <div
-            class="col-span-4 medium:col-span-1 bg-dark_green/5 rounded-t-base px-10 pt-9"
-          >
+            class="col-span-4 medium:col-span-1 bg-dark_green/5 rounded-t-base px-10 pt-9">
             <p
-              class="flex items-center text-dark_text justify-start gap-4 text-2xl font-bold mb-14"
-            >
+              class="flex items-center text-dark_text justify-start gap-4 text-2xl font-bold mb-14">
               <button>
                 <img loading="lazy" src="asset/info.png" alt="info" />
               </button>
@@ -627,8 +566,7 @@
               loading="lazy"
               class="mx-auto"
               src="asset/counter.png"
-              alt="counter"
-            />
+              alt="counter" />
           </div>
         </div>
       </div>
@@ -641,8 +579,7 @@
         src="https://www.googletagmanager.com/ns.html?id=GTM-53ZQXR8Z"
         height="0"
         width="0"
-        style="display: none; visibility: hidden"
-      ></iframe>
+        style="display: none; visibility: hidden"></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
   </body>

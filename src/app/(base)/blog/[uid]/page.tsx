@@ -5,7 +5,25 @@ import { article_image, hero_review, idea } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function RegulatorikPage() {
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { asImageSrc } from "@prismicio/client";
+import { SliceZone } from "@prismicio/react";
+
+import { createClient } from "@/prismicio";
+import { components } from "@/slices";
+
+type Params = { uid: string };
+
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
+  const { uid } = await params;
+  const client = createClient();
+  const page = await client.getByUID("blogpost", uid).catch(() => notFound());
+
   return (
     <main id="content relative">
       <div className="flex items-start max-medium:flex-col justify-between relative max-large:px-20 max-medium:px-10 max-small:px-5 after:top-0 after:left-0 after:content-[''] after:bg-[#EFEFEF] after:w-screen after:h-screen after:absolute after:z-[-1] max-medium:after:hidden">
@@ -30,7 +48,8 @@ export default function RegulatorikPage() {
           </p>
         </div>
         <div className="w-1/2 max-medium:w-full ml-auto mr-0">
-          <Image
+          <SliceZone slices={page.data.slices} components={components} />;
+          {/* <Image
             width={0}
             height={0}
             sizes="100vw"
@@ -38,7 +57,7 @@ export default function RegulatorikPage() {
             className="w-full object-cover max-h-screen h-dvh max-medium:hidden"
             src={hero_review}
             alt="hero_review"
-          />
+          /> */}
           <div className="px-8 space-y-[30px]">
             <h4 className="text-2xl mt-[30px] pr-14 max-medium:mr-0 text-dark_text font-bold">
               Pflicht für neu installierte Geräte
@@ -218,4 +237,29 @@ export default function RegulatorikPage() {
       <Kostenfrei />
     </main>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { uid } = await params;
+  const client = createClient();
+  const page = await client.getByUID("blogpost", uid).catch(() => notFound());
+
+  return {
+    title: page.data.meta_title,
+    description: page.data.meta_description,
+    openGraph: {
+      images: [{ url: asImageSrc(page.data.meta_image) ?? "" }],
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  const client = createClient();
+  const pages = await client.getAllByType("blogpost");
+
+  return pages.map((page) => ({ uid: page.uid }));
 }

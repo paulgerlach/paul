@@ -1,11 +1,17 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
     minimumCacheTTL: 60,
-    dangerouslyAllowSVG: true
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.prismic.io",
+      },
+    ],
   },
-  output: "standalone"
+  output: "standalone",
 };
 
 export default nextConfig;

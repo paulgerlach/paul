@@ -15,12 +15,8 @@ import { components } from "@/slices";
 
 type Params = { uid: string };
 
-export default async function BlogPage({
-  params,
-}: {
-  params: Promise<Params>;
-}) {
-  const { uid } = await params;
+export default async function BlogPage({ params }: { params: Params }) {
+  const uid = (await params).uid;
   const client = createClient();
   const page = await client.getByUID("blogpost", uid).catch(() => notFound());
 
@@ -247,7 +243,6 @@ export async function generateMetadata({
   const { uid } = await params;
   const client = createClient();
 
-  // Fetch metadata on each request
   const page = await client.getByUID("blogpost", uid).catch(() => notFound());
 
   return {

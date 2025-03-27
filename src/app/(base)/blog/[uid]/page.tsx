@@ -1,7 +1,7 @@
 import FAQSection from "@/components/Basic/FAQ/FAQSection";
 import Kostenfrei from "@/components/Basic/Kostenfrei/Kostenfrei";
 import { ROUTE_FRAGEBOGEN } from "@/routes/routes";
-import { article_image, hero_review, idea } from "@/static/icons";
+import { article_image, idea } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -242,7 +242,7 @@ export default async function BlogPage({
 export async function generateMetadata({
   params,
 }: {
-  params: Params;
+  params: Promise<Params>;
 }): Promise<Metadata> {
   const { uid } = await params;
   const client = createClient();

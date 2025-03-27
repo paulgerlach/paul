@@ -29,7 +29,7 @@ export default async function BlogPage({
       <div className="flex items-start max-medium:flex-col justify-between relative max-large:px-20 max-medium:px-10 max-small:px-5 after:top-0 after:left-0 after:content-[''] after:bg-[#EFEFEF] after:w-screen after:h-screen after:absolute after:z-[-1] max-medium:after:hidden">
         <div
           id="heroText"
-          className="max-medium:!relative w-1/2 bg-[#EFEFEF] sticky h-screen pl-[120px] max-large:pl-20 max-medium:pl-10 max-small:pl-5 top-0 py-[150px] max-medium:py-8 flex flex-col justify-center items-start">
+          className="max-medium:!relative w-1/2 max-medium:w-full bg-[#EFEFEF] sticky h-screen pl-[120px] max-large:pl-20 max-medium:pl-10 max-small:pl-5 top-0 py-[150px] max-medium:py-8 flex flex-col justify-center items-start">
           <h1 className="text-[65px] max-megalarge:text-[50px] max-megalarge:leading-[1] max-large:text-4xl max-medium:text-2xl leading-[78px] text-dark_text mb-2">
             Fernablesung wird <br />
             Pflicht nach Art. 27

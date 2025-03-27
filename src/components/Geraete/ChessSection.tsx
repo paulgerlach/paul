@@ -85,7 +85,7 @@ export default function ChessSection() {
             Ort, schnell und ohne zusätzliche Kosten für Sie.
           </p>
           <Link
-            className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] w-fit rounded-1/2base bg-[#6083CC]"
+            className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] w-fit rounded-hafbase bg-[#6083CC]"
             href={ROUTE_FRAGEBOGEN}>
             Anfrage stellen
           </Link>

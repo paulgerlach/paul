@@ -12,7 +12,6 @@ export type BlogImageProps = SliceComponentProps<Content.BlogImageSlice>;
  * Component for "BlogImage" Slices.
  */
 const BlogImage: FC<BlogImageProps> = ({ slice }) => {
-  console.log(slice);
   return (
     <section
       data-slice-type={slice.slice_type}

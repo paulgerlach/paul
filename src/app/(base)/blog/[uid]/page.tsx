@@ -48,7 +48,7 @@ export default async function BlogPage({
           </p>
         </div>
         <div className="w-1/2 max-medium:w-full ml-auto mr-0">
-          <SliceZone slices={page.data.slices} components={components} />;
+          <SliceZone slices={page.data.slices} components={components} />
           {/* <Image
             width={0}
             height={0}
@@ -242,10 +242,12 @@ export default async function BlogPage({
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Params>;
+  params: Params;
 }): Promise<Metadata> {
   const { uid } = await params;
   const client = createClient();
+
+  // Fetch metadata on each request
   const page = await client.getByUID("blogpost", uid).catch(() => notFound());
 
   return {
@@ -255,11 +257,4 @@ export async function generateMetadata({
       images: [{ url: asImageSrc(page.data.meta_image) ?? "" }],
     },
   };
-}
-
-export async function generateStaticParams() {
-  const client = createClient();
-  const pages = await client.getAllByType("blogpost");
-
-  return pages.map((page) => ({ uid: page.uid }));
 }

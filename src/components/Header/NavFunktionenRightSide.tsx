@@ -18,6 +18,7 @@ export default function NavFunktionenRightSide() {
             height={0}
             sizes="100vw"
             loading="lazy"
+            className="size-2.5 max-w-2.5 max-h-2.5"
             style={{ width: "100%", height: "auto" }}
             alt="arrow"
             src={arrow}

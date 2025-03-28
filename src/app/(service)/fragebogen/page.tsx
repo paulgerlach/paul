@@ -4,14 +4,14 @@ import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import { checkmark_icon_big, chevron, counter, info } from "@/static/icons";
 import { animation5, animation6 } from "@/static/lottieAnimations";
 import Image from "next/image";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { slideDown, slideUp } from "@/utils";
 import StepWrapper from "@/components/Fragebogen/StepWrapper";
 import { useQuestionareStore } from "@/store/useQuestionareStore";
+import StepInfo from "@/components/Fragebogen/StepInfo";
 
 const formSchema = z.object({
   email: z.string().email("Ungültige E-Mail-Adresse").nullable(),
@@ -69,9 +69,8 @@ export default function FragebogenPage() {
     handlePrevStep,
     totalStepsNumber,
   } = useQuestionareStore();
-  const infoRef = useRef<HTMLDivElement>(null);
+
   const [isSubmited, setIsSubmited] = useState<boolean>(false);
-  const [isInfoOpened, setIsInfoOpened] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -127,16 +126,6 @@ export default function FragebogenPage() {
       reset();
     },
   });
-
-  const handleInfoSlide = () => {
-    if (isInfoOpened) {
-      setIsInfoOpened(false);
-      slideDown(infoRef.current);
-    } else {
-      setIsInfoOpened(true);
-      slideUp(infoRef.current);
-    }
-  };
 
   return (
     <main id="content" className="pt-8 pb-24 px-5">
@@ -272,46 +261,7 @@ export default function FragebogenPage() {
                 )}
               </div>
             </form>
-            <div className="questionare-info max-w-[40%] max-large:max-w-full w-full max-medium:mr-0 mt-2 -mr-10">
-              <div className="questionare-answer-item bg-dark_green/5 rounded-base">
-                <div
-                  onClick={() => handleInfoSlide()}
-                  className={`questionare-answer-header p-4 cursor-pointer flex items-center justify-between ${isInfoOpened ? "opened" : ""}`}>
-                  <p className="questionare-question text-dark_text/30 flex items-center justify-between gap-3">
-                    <Image
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      loading="lazy"
-                      src={info}
-                      alt="info"
-                    />{" "}
-                    Erklärung
-                  </p>
-                  <div className="questionare-icon">
-                    <Image
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      loading="lazy"
-                      className="rotate-90 colored-to-black opacity-50 size-4"
-                      src={chevron}
-                      alt="chevron"
-                    />
-                  </div>
-                </div>
-                <div
-                  ref={infoRef}
-                  className="questionare-answer-content px-4 pb-4">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad
-                    autem commodi, deserunt dicta eius in inventore laudantium
-                    molestiae odit possimus tempore, unde ut vel? Architecto
-                    beatae explicabo ipsum quaerat repellendus.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <StepInfo activeStep={activeStep} />
           </div>
         </Fragment>
       )}

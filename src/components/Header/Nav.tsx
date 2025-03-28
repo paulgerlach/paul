@@ -67,7 +67,7 @@ export default function Nav() {
               width={0}
               height={0}
               sizes="100vw"
-              className="max-w-2.5 max-h-2.5"
+              className="size-2.5 max-w-2.5 max-h-2.5"
               loading="lazy"
               style={{ width: "100%", height: "auto" }}
               alt="arrow"

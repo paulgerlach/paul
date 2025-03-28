@@ -92,7 +92,7 @@ import list1 from "@/asset/list1.png";
 import list2 from "@/asset/list2.png";
 import list3 from "@/asset/list3.png";
 import lock from "@/asset/lock.png";
-import logo from "@/asset/logo.png";
+import logo from "@/asset/logo_new.png";
 import logosvg from "@/asset/logo.svg";
 import modal_bell from "@/asset/modal_bell.png";
 import modal_building from "@/asset/modal_building.png";

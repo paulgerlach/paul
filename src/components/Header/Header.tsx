@@ -33,14 +33,14 @@ export default function Header() {
       <div className="flex items-center bg-dark_green w-full px-10 max-medium:px-5 duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
         <Link
           href={ROUTE_HOME}
-          className="flex items-center justify-start gap-3">
+          className="flex items-center max-w-16 w-full h-5 justify-start gap-3">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
             style={{ width: "100%", height: "auto" }}
-            className="max-w-16 max-h-5"
+            className="max-w-16 w-full h-5"
             src={logo}
             alt="logo"
           />

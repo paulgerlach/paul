@@ -13,7 +13,7 @@ export default function PriceCards() {
           </span>
           <p className="text-[25px] text-dark_text mb-2 text-center">Heidi</p>
           <p className="text-center text-[15px] mb-7 text-dark_text/20">
-            ab <span className="text-dark_text text-[40px]">€69</span> pro Jahr
+            ab <span className="text-dark_text text-[40px]">€200</span> pro Jahr
           </p>
           <p className="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
             Preis für einen Heizzähler. Empfholen für Eigenheimbesitzer
@@ -89,7 +89,7 @@ export default function PriceCards() {
             </span>
           </p>
           <p className="text-center text-[15px] mb-7 text-dark_text/20">
-            ab <span className="text-dark_text text-[40px]">€49</span> pro Jahr
+            ab <span className="text-dark_text text-[40px]">€150</span> pro Jahr
           </p>
           <p className="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
             Sofern Sie mehr als 4 Wohnung betreuen, lohnt es sich Heidi plus zu

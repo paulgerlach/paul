@@ -33,13 +33,12 @@ export default function FragebogenStepTwo({
   };
 
   return (
-    <div data-step="2" className="questionare-step mb-10">
+    <div data-step="2" className="questionare-step mb-10 max-w-md">
       <p className="mb-6 text-[40px] max-small:text-2xl text-dark_text">
         Abrechnung der Heizkosten
       </p>
       <p className="mb-12 text-xl max-small:text-base text-dark_text">
-        Wie werden die Heizkosten für diese Wohngebäude <br />
-        aktuell abgerechnet?
+        Wie werden die Heizkosten für dieses Wohngebäude aktuell abgerechnet?
       </p>
       <div className="space-y-3">
         {options.map((option: StepOptionType<"heating_costs">) => (

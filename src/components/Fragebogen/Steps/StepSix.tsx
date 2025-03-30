@@ -23,9 +23,7 @@ export default function FragebogenStepSix({
         Mit welchen Energiequellen wird geheizt?
       </p>
       <div className="custom-select-wrapper">
-        <div
-          className={`custom-select`}
-          onClick={() => setIsOpen(!isOpen)}>
+        <div className={`custom-select`} onClick={() => setIsOpen(!isOpen)}>
           <div className="custom-select-trigger">
             <span>{selectedValue}</span>
             <div className="arrow"></div>

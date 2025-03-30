@@ -14,32 +14,32 @@ export default function StepInfo({ activeStep }: { activeStep: number }) {
       case 0:
         return {
           title: "Erklärung",
-          text: "Die Menge der vorhandenen Wohnungen bestimmt, wie viele Funkmelder wir zu Ihrer Verfügung einrichten, damit sämtliche Verbrauchsdaten digital erfasst werden.",
+          text: "Bitte geben Sie an, wie viele Wohnungen aktuell von Ihnen betreut werden und für die eine Umrüstung auf Funkzähler geplant ist. Diese Angabe ist wichtig für die Angebotserstellung und zur Einhaltung gesetzlicher Vorgaben.",
         };
       case 1:
         return {
           title: "Erklärung",
-          text: "Die Daten, die von den drahtlosen Messgeräten erfasst werden, fließen automatisch ein und sind für die Zusammenstellung Ihrer Nebenkostenabrechnung verfügbar.",
+          text: "Bitte wählen Sie aus, wie die Heizkosten derzeit abgerechnet werden (z. B. über Ablesedienste oder durch Sie selbst). Diese Information hilft uns, den aktuellen Stand zu verstehen und den Aufwand für die Umstellung auf Funkzähler besser einzuschätzen.",
         };
       case 2:
         return {
           title: "Erklärung",
-          text: "Eine Zentralheizung oder Sammelheizung versorgt ein ganzes Gebäude mit Wärme und steht oft im Keller eines Hauses.",
+          text: "Bitte geben Sie an, ob eine zentrale Heizungsanlage vorhanden ist, die alle Wohneinheiten versorgt. Diese Information ist wichtig für die Auswahl der passenden Messtechnik und die Planung der Verbrauchserfassung.",
         };
       case 3:
         return {
           title: "Erklärung",
-          text: "Hierbei wird Trinkwasser an einem zentralen Ort durch die Heizungsanlage erwärmt und gelangt dann über Leitungen in die einzelnen Wohnung.",
+          text: "Bitte geben Sie an, ob das Warmwasser zentral über eine Heizungsanlage erzeugt wird. Diese Angabe ist relevant, da bei zentraler Versorgung auch der Warmwasserverbrauch individuell erfasst und abgerechnet werden muss.",
         };
       case 4:
         return {
           title: "Erklärung",
-          text: "Hierbei wird Trinkwasser an einem zentralen Ort durch die Heizungsanlage erwärmt und gelangt dann über Leitungen in die einzelnen Wohnungen.",
+          text: "Bitte wählen Sie aus, ob die Wohnungen über eine zentrale Heizungsanlage oder dezentrale Systeme (z. B. Etagenheizung, oder Wärmepumpe) beheizt werden. Diese Information ist wichtig, um den passenden Mess- und Abrechnungslösungen für Ihre Immobilie zu ermitteln.",
         };
       case 5:
         return {
           title: "Erklärung",
-          text: "Die Daten, die von den drahtlosen Messgeräten erfasst werden, fließen automatisch ein und sind für die Zusammenstellung Ihrer Nebenkostenabrechnung verfügbar.",
+          text: "Bitte geben Sie an, welche Energiequelle für die Beheizung der Gebäude genutzt werden (z. B. Gas, Fernwärme, Öl, Wärmepumpe). Diese Information hilft uns, die technische Umsetzung und mögliche Fördermöglichkeiten besser einzuschätzen.",
         };
       case 6:
         return {

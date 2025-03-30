@@ -10,13 +10,13 @@ export default function FragebogenStepOne({
   const stepValue = watch("appartment_number");
 
   return (
-    <div data-step="1" className="questionare-step mb-10">
+    <div data-step="1" className="questionare-step mb-10 max-w-xl">
       <p className="mb-6 text-[40px] max-small:text-2xl text-dark_text">
         Anzahl der Wohnungen
       </p>
       <p className="mb-12 text-xl max-small:text-base text-dark_text">
-        Wählen Sie aus, wie viele Wohnungen Sie aktuell <br />
-        betreuen und bei denen die Umrüstung auf Int. Systeme
+        Wählen Sie aus, wie viele Wohnungen <br /> Sie aktuell betreuen und bei
+        denen die Umrüstung auf Funkzähler erfolgen soll?
       </p>
       <div className="flex items-center justify-start gap-4">
         <button

@@ -36,7 +36,9 @@ export default function FragebogenStepThree({
       <div className="space-y-3">
         {options.map((option: StepOptionType<"heating_available">) => (
           <label
-            onClick={() => onChangeForward("heating_available", option.value as string)}
+            onClick={() =>
+              onChangeForward("heating_available", option.value as string)
+            }
             key={option.id}
             htmlFor={option.id}
             className="block">

@@ -26,7 +26,7 @@ export default async function BlogPage({
 
   return (
     <main id="content relative">
-      <div className="flex items-start max-medium:flex-col justify-between relative max-large:px-20 max-medium:px-10 max-small:px-5 after:top-0 after:left-0 after:content-[''] after:bg-[#EFEFEF] after:w-screen after:h-screen after:absolute after:z-[-1] max-medium:after:hidden">
+      <div className="px-20 max-medium:px-10 max-small:px-5">
         <div
           id="heroText"
           className="max-medium:!relative w-1/2 max-medium:w-full bg-[#EFEFEF] sticky h-screen pl-[120px] max-large:pl-20 max-medium:pl-10 max-small:pl-5 top-0 py-[150px] max-medium:py-8 flex flex-col justify-center items-start">
@@ -47,17 +47,8 @@ export default async function BlogPage({
             Kostenfreie Installation der Funkgeräte
           </p>
         </div>
-        <div className="w-1/2 max-medium:w-full ml-auto mr-0">
+        <div className="max-w-7xl mx-auto pt-24 max-large:pt-16 max-medium:pt-10 max-small:pt-5 mb-[52px] pb-4 px-5">
           <SliceZone slices={page.data.slices} components={components} />
-          {/* <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            className="w-full object-cover max-h-screen h-dvh max-medium:hidden"
-            src={hero_review}
-            alt="hero_review"
-          /> */}
           <div className="px-8 space-y-[30px]">
             <h4 className="text-2xl mt-[30px] pr-14 max-medium:mr-0 text-dark_text font-bold">
               Pflicht für neu installierte Geräte

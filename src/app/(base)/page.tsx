@@ -353,7 +353,7 @@ export default function Home() {
         </p>
         <div>
           <div className="flex items-stretch justify-center gap-16 py-16 max-medium:py-8 max-large:border-transparent border-b border-dark_green/10 max-large:flex-col max-large:gap-4">
-            <div className="flex-col flex items-start justify-between max-w-lg max-small:max-w-lg">
+            <div className="flex-col flex items-start justify-between max-w-lg max-megalarge:max-w-1/2 max-small:max-w-lg">
               <h3 className="text-dark_text text-[40px] max-large:relative numberedTitle leading-[48px] max-medium:text-[30px] max-medium:leading-9 max-medium:mb-9">
                 1 Bedarfsanalyse
               </h3>
@@ -390,7 +390,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-stretch justify-center gap-16 py-16 max-medium:py-8 max-large:border-transparent border-b border-dark_green/10 max-large:flex-col max-large:gap-4">
-            <div className="flex-col flex items-start justify-between max-w-lg">
+            <div className="flex-col flex items-start justify-between max-w-lg max-megalarge:max-w-1/2">
               <h3 className="text-dark_text text-[40px] numberedTitle max-large:relative leading-[48px] max-medium:text-[30px] max-medium:leading-9 max-medium:mb-9">
                 2 Installation der Funktechnologie
               </h3>
@@ -417,7 +417,7 @@ export default function Home() {
                 </a>
               </div>
             </div>
-            <div className="large:flex max-large:items-center max-large:justify-center">
+            <div className="max-large:flex max-large:items-center max-large:justify-center w-full">
               <Image
                 width={0}
                 height={0}
@@ -430,7 +430,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-stretch justify-center gap-16 py-16 max-medium:py-8 max-large:border-transparent border-b border-dark_green/10 max-large:flex-col max-large:gap-4">
-            <div className="flex-col flex items-start justify-between max-w-lg">
+            <div className="flex-col flex items-start justify-between max-w-lg max-megalarge:max-w-1/2">
               <h3 className="text-dark_text text-[40px] numberedTitle max-large:relative leading-[48px] max-medium:text-[30px] max-medium:leading-9 max-medium:mb-9">
                 3 Intelligente Verbrauchsanalyse
               </h3>

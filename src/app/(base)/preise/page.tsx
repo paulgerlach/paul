@@ -4,14 +4,14 @@ import PriceCards from "@/components/Preise/PriceCards";
 import PriceTable from "@/components/Preise/PriceTable";
 import ChartSwiper from "@/components/Swipers/ChartSwiper";
 import { ROUTE_FRAGEBOGEN } from "@/routes/routes";
-import { clock, doc, instruments, vonovia } from "@/static/icons";
+import { clock, doc, instruments, vitolos } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function PreisePage() {
   return (
     <main id="content">
-      <div className="pt-24 pl-[120px] max-large:pl-20 max-medium:pl-10 max-small:pl-5 mb-[52px] pb-4 pr-5">
+      <div className="pt-24 max-large:pl-20 max-medium:pl-10 max-small:pl-5 mb-[52px] pb-4 px-5">
         <h1 className="text-[50px] max-megalarge:text-[50px] text-center leading-[1] max-large:text-4xl mb-5 max-medium:text-2xl text-dark_text">
           Unser Angebot im Überblick
         </h1>
@@ -29,18 +29,17 @@ export default function PreisePage() {
           sizes="100vw"
           loading="lazy"
           className="block mx-auto"
-          src={vonovia}
-          alt="vonovia"
+          src={vitolos}
+          alt="vitolos"
         />
         <h5 className="max-w-6xl mx-auto text-center text-dark_text text-[30px]">
-          “Wir haben wie gesetzlich vorgeschrieben auf Funkzähler von Heidi
-          umgestellt. Was uns überzeugt hat war die kostenfreie Installation der
-          Geräte. Nachdem wir das Angebot erhalten haben, hat es zwei Wochen
-          waren alle Zähler installiert. Nun können wir alle Verbräuche in
-          Echtzeit ablesen.”
+          “Dank Heidi erfüllen wir alle gesetzlichen Vorgaben zur
+          Verbrauchserfassung und sparen gleichzeitig wertvolle Zeit. Die
+          automatische Datenerfassung und digitale Abrechnung machen unsere
+          Prozesse effizienter und zuverlässiger.”
         </h5>
         <p className="text-center text-lg text-dark_text">
-          <b>Michael Günther</b> Leiter der IT Abteilung, Bonovia
+          <b>Fabian Höhne</b> Vitolus
         </p>
       </div>
       <PriceTable />

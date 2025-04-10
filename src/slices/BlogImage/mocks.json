@@ -4,7 +4,6 @@
 		"variation": "default",
 		"primary": {
 			"blogMainImage": {
-				"__TYPE__": "ImageContent",
 				"origin": {
 					"id": "main",
 					"url": "https://images.unsplash.com/photo-1587840171670-8b850147754e",
@@ -23,7 +22,14 @@
 					"background": "transparent"
 				},
 				"alt": "fierce",
+				"credits": null,
+				"__TYPE__": "ImageContent",
 				"thumbnails": {}
+			},
+			"creationdate": {
+				"__TYPE__": "FieldContent",
+				"type": "Date",
+				"value": "2013-01-16"
 			}
 		},
 		"items": []

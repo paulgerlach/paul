@@ -21,6 +21,13 @@
             },
             "thumbnails": []
           }
+        },
+        "creationdate": {
+          "type": "Date",
+          "config": {
+            "label": "CreationDate",
+            "placeholder": "CreationDate"
+          }
         }
       },
       "items": {}

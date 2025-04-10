@@ -1,0 +1,28 @@
+{
+  "id": "rich_text_block",
+  "type": "SharedSlice",
+  "name": "RichTextBlock",
+  "description": "RichTextBlock",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "rishtextblock": {
+          "type": "StructuredText",
+          "config": {
+            "label": "RishTextBlock",
+            "placeholder": "RishTextBlock",
+            "allowTargetBlank": true,
+            "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

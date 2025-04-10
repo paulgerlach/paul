@@ -169,6 +169,7 @@ import xIconsvg from "@/asset/x.svg";
 import yes_icon from "@/asset/yes_icon.png";
 import youtube from "@/asset/youtube.png";
 import youtubesvg from "@/asset/youtube.svg";
+import link from "@/asset/link.svg";
 
 export {
   accentro_colored,
@@ -342,4 +343,5 @@ export {
   yes_icon,
   youtube,
   youtubesvg,
+  link,
 };

@@ -4,7 +4,12 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
-type BlogpostDocumentDataSlicesSlice = BlogImageSlice;
+type BlogpostDocumentDataSlicesSlice =
+  | SubtitleSlice
+  | RichTextBlockSlice
+  | BussinessTextSlice
+  | MainTitleSlice
+  | BlogImageSlice;
 
 /**
  * Content for BlogPost documents
@@ -84,6 +89,16 @@ export interface BlogImageSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#image
    */
   blogMainImage: prismic.ImageField<never>;
+
+  /**
+   * CreationDate field in *BlogImage → Default → Primary*
+   *
+   * - **Field Type**: Date
+   * - **Placeholder**: CreationDate
+   * - **API ID Path**: blog_image.default.primary.creationdate
+   * - **Documentation**: https://prismic.io/docs/field#date
+   */
+  creationdate: prismic.DateField;
 }
 
 /**
@@ -116,6 +131,203 @@ export type BlogImageSlice = prismic.SharedSlice<
   BlogImageSliceVariation
 >;
 
+/**
+ * Item in *BussinessText → Default → Primary → BussinessTextItem*
+ */
+export interface BussinessTextSliceDefaultPrimaryBussinesstextitemItem {
+  /**
+   * BussinessTextItem field in *BussinessText → Default → Primary → BussinessTextItem*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: BussinessTextItem
+   * - **API ID Path**: bussiness_text.default.primary.bussinesstextitem[].bussinesstextitem
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  bussinesstextitem: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *BussinessText → Default → Primary*
+ */
+export interface BussinessTextSliceDefaultPrimary {
+  /**
+   * BussinessTextItem field in *BussinessText → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: bussiness_text.default.primary.bussinesstextitem[]
+   * - **Documentation**: https://prismic.io/docs/field#group
+   */
+  bussinesstextitem: prismic.GroupField<
+    Simplify<BussinessTextSliceDefaultPrimaryBussinesstextitemItem>
+  >;
+}
+
+/**
+ * Default variation for BussinessText Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type BussinessTextSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<BussinessTextSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *BussinessText*
+ */
+type BussinessTextSliceVariation = BussinessTextSliceDefault;
+
+/**
+ * BussinessText Shared Slice
+ *
+ * - **API ID**: `bussiness_text`
+ * - **Description**: BussinessText
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type BussinessTextSlice = prismic.SharedSlice<
+  "bussiness_text",
+  BussinessTextSliceVariation
+>;
+
+/**
+ * Primary content in *MainTitle → Default → Primary*
+ */
+export interface MainTitleSliceDefaultPrimary {
+  /**
+   * MainTitle field in *MainTitle → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: mainTitle
+   * - **API ID Path**: main_title.default.primary.maintitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  maintitle: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for MainTitle Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MainTitleSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<MainTitleSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *MainTitle*
+ */
+type MainTitleSliceVariation = MainTitleSliceDefault;
+
+/**
+ * MainTitle Shared Slice
+ *
+ * - **API ID**: `main_title`
+ * - **Description**: MainTitle
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MainTitleSlice = prismic.SharedSlice<
+  "main_title",
+  MainTitleSliceVariation
+>;
+
+/**
+ * Primary content in *RichTextBlock → Default → Primary*
+ */
+export interface RichTextBlockSliceDefaultPrimary {
+  /**
+   * RishTextBlock field in *RichTextBlock → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: RishTextBlock
+   * - **API ID Path**: rich_text_block.default.primary.rishtextblock
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  rishtextblock: prismic.RichTextField;
+}
+
+/**
+ * Default variation for RichTextBlock Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type RichTextBlockSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<RichTextBlockSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *RichTextBlock*
+ */
+type RichTextBlockSliceVariation = RichTextBlockSliceDefault;
+
+/**
+ * RichTextBlock Shared Slice
+ *
+ * - **API ID**: `rich_text_block`
+ * - **Description**: RichTextBlock
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type RichTextBlockSlice = prismic.SharedSlice<
+  "rich_text_block",
+  RichTextBlockSliceVariation
+>;
+
+/**
+ * Primary content in *Subtitle → Default → Primary*
+ */
+export interface SubtitleSliceDefaultPrimary {
+  /**
+   * Subtitle field in *Subtitle → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Subtitle
+   * - **API ID Path**: subtitle.default.primary.subtitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  subtitle: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Subtitle Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubtitleSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<SubtitleSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Subtitle*
+ */
+type SubtitleSliceVariation = SubtitleSliceDefault;
+
+/**
+ * Subtitle Shared Slice
+ *
+ * - **API ID**: `subtitle`
+ * - **Description**: Subtitle
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type SubtitleSlice = prismic.SharedSlice<
+  "subtitle",
+  SubtitleSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -145,6 +357,23 @@ declare module "@prismicio/client" {
       BlogImageSliceDefaultPrimary,
       BlogImageSliceVariation,
       BlogImageSliceDefault,
+      BussinessTextSlice,
+      BussinessTextSliceDefaultPrimaryBussinesstextitemItem,
+      BussinessTextSliceDefaultPrimary,
+      BussinessTextSliceVariation,
+      BussinessTextSliceDefault,
+      MainTitleSlice,
+      MainTitleSliceDefaultPrimary,
+      MainTitleSliceVariation,
+      MainTitleSliceDefault,
+      RichTextBlockSlice,
+      RichTextBlockSliceDefaultPrimary,
+      RichTextBlockSliceVariation,
+      RichTextBlockSliceDefault,
+      SubtitleSlice,
+      SubtitleSliceDefaultPrimary,
+      SubtitleSliceVariation,
+      SubtitleSliceDefault,
     };
   }
 }

@@ -44,7 +44,7 @@ export async function generateMetadata({
   const page = await client.getByUID("blogpost", uid).catch(() => notFound());
 
   return {
-    title: page.data.meta_title,
+    title: "Heidi Systems",
     description: page.data.meta_description,
     openGraph: {
       images: [{ url: asImageSrc(page.data.meta_image) ?? "" }],

@@ -24,7 +24,11 @@ export default async function BlogPage({
     <main id="content relative">
       <div className="px-20 max-medium:px-10 max-small:px-5">
         <div className="max-w-6xl mx-auto pt-4 space-y-7 max-large:pt-16 max-medium:pt-10 max-small:pt-5 mb-[52px] pb-4">
-          <SliceZone slices={page.data.slices} components={components} />
+          <SliceZone
+            context={page}
+            slices={page.data.slices}
+            components={components}
+          />
         </div>
       </div>
       <FAQSection />

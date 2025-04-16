@@ -29,9 +29,18 @@ export default function BlogPost({ post }: { post: AllDocumentTypes }) {
       <h3 className="group-hover:underlide text-2xl max-large:text-lg max-medium:text-base font-medium">
         {postTitle}
       </h3>
-      <span className="text-sm text-gray-500">
-        {formatDate(String(postImageDate))}
-      </span>
+      <div className="flex items-center justify-start gap-2">
+        <span className="text-sm text-gray-500">
+          {formatDate(String(postImageDate))}
+        </span>
+        {post.tags?.map((tag) => (
+          <span
+            key={tag}
+            className="text-xs font-medium bg-green/30 rounded-full px-2 py-1">
+            {tag}
+          </span>
+        ))}
+      </div>
       <Link
         className="hidden group-hover:block absolute inset-0 z-10"
         href={`/blog/${post.uid}`}

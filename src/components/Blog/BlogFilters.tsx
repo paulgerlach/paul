@@ -29,7 +29,7 @@ export default function BlogFilters() {
 
   return (
     <div className="flex flex-col gap-8 max-w-7xl mx-auto px-4 min-h-dvh py-16">
-      <div className="flex items-center justify-start gap-8 mb-4 flex-wrap">
+      <div className="flex items-center justify-start gap-4 mb-4 flex-wrap">
         {cachedTags?.map((tag) => (
           <button
             key={tag}

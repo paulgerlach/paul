@@ -6,7 +6,7 @@ export default function BlogHero() {
           Offizielle Neuigkeiten und Insights
         </p>
         <h1 className="text-center font-semibold max-w-xl mx-auto leading-[1.1] text-7xl max-megalarge:text-6xl max-large:text-5xl max-medium:text-4xl max-small:text-3xl">
-          Pinterest Blog für Unternehmen
+          Heidi Systems für Unternehmen
         </h1>
       </div>
     </div>

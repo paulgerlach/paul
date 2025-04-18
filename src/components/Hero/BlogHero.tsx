@@ -1,6 +1,6 @@
 export default function BlogHero() {
   return (
-    <div className="bg-[#FAFAF9] flex items-center gap-32 justify-center py-24 pl-5 px-4">
+    <div className="bg-[#FAFAF9] flex items-center gap-32 justify-center py-24 max-medium:py-8 pl-5 px-4">
       <div className="flex flex-col items-center justify-center gap-4">
         <p className="text-lg max-large:text-base text-center font-semibold">
           Offizielle Neuigkeiten und Insights

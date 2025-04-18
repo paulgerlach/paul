@@ -1,11 +1,13 @@
 import Subscription from "@/components/Basic/Subscription/Subscription";
 import BlogFilters from "@/components/Blog/BlogFilters";
+import NewestBlogs from "@/components/Blog/NewestBlogs";
 import BlogHero from "@/components/Hero/BlogHero";
 
 export default async function BlogPage() {
   return (
     <main id="content">
       <BlogHero />
+      <NewestBlogs />
       <BlogFilters />
       <div className="bg-[#FAFAF9] flex items-center gap-32 justify-center py-8 pl-5 px-4">
         <div className="flex flex-col items-center justify-center gap-4">

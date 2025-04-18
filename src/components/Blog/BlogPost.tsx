@@ -16,7 +16,10 @@ export default function BlogPost({ post }: { post: AllDocumentTypes }) {
   const postTitle = postTitleSlice?.primary.maintitle;
 
   return (
-    <article key={post.id} className="flex group relative flex-col gap-4">
+    <Link
+      href={`/blog/${post.uid}`}
+      key={post.id}
+      className="flex group relative flex-col gap-4">
       <Image
         width={0}
         height={0}
@@ -26,11 +29,11 @@ export default function BlogPost({ post }: { post: AllDocumentTypes }) {
         src={postImageData?.url || ""}
         alt={postImageData?.alt || "blog_image"}
       />
-      <h3 className="group-hover:underlide text-2xl max-large:text-lg max-medium:text-base font-medium">
+      <h3 className="group-hover:underline text-2xl max-large:text-lg max-medium:text-base font-medium">
         {postTitle}
       </h3>
-      <div className="flex items-center justify-start gap-2">
-        <span className="text-sm text-gray-500">
+      <div className="flex items-center justify-start max-medium:justify-between gap-2">
+        <span className="text-sm max-medium:text-xs text-gray-500">
           {formatDate(String(postImageDate))}
         </span>
         {post.tags?.map((tag) => (
@@ -41,10 +44,6 @@ export default function BlogPost({ post }: { post: AllDocumentTypes }) {
           </span>
         ))}
       </div>
-      <Link
-        className="hidden group-hover:block absolute inset-0 z-10"
-        href={`/blog/${post.uid}`}
-      />
-    </article>
+    </Link>
   );
 }

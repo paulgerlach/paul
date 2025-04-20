@@ -15,7 +15,7 @@ export default async function NewestBlogs() {
       </div>
       <div className="-mx-4">
         <div className="overflow-x-scroll flex gap-8 max-small:gap-4 snap-x snap-mandatory scrollbar-hide">
-          {posts.slice(0, 3).map((post, index) => {
+          {posts.slice(0, 3).map((post) => {
             const postImageSlice = post.data.slices.find(
               (slice) => slice.slice_type === "blog_image"
             ) as Content.BlogImageSlice;
@@ -36,7 +36,7 @@ export default async function NewestBlogs() {
                   height={0}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-full h-full max-large:h-fit max-h-[60%] object-cover -my-1 block rounded-r-2xl max-large:rounded-r-none max-large:rounded-t-2xl max-large:rouned-b-none"
+                  className="w-full h-full max-large:h-fit max-large:max-h-[60%] object-cover -my-1 block rounded-r-2xl max-large:rounded-r-none max-large:rounded-t-2xl max-large:rouned-b-none"
                   src={postImageData?.url || ""}
                   alt={postImageData?.alt || "blog_image"}
                 />

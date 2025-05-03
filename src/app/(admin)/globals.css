@@ -22,9 +22,6 @@
   --color-card_light: #e5ebf5;
   --color-border_base: #efedeb;
   --color-base-bg: #f7f7f7;
-  --color-darkest-text: #292929;
-  --color-light-text: #545454;
-  --color-lighter-text: #4f4f4f;
 
   --breakpoint-*: initial;
   /* --breakpoint-max-*: initial; */
@@ -920,4 +917,7 @@ html {
       margin-right: 1rem;
     }
   }
+}
+.heating-costs .recharts-tooltip-cursor {
+  fill: transparent;
 }

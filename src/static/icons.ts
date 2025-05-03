@@ -170,9 +170,40 @@ import yes_icon from "@/asset/yes_icon.png";
 import youtube from "@/asset/youtube.png";
 import youtubesvg from "@/asset/youtube.svg";
 import link from "@/asset/link.svg";
+import domus from "@/asset/domus.png";
+import immoware24 from "@/asset/immoware24.png";
+import matera from "@/asset/matera.png";
+import dashboard from "@/asset/dashboard.svg";
+import objekte from "@/asset/objekte.svg";
+import dokumente from "@/asset/dokumente.svg";
+import abrechnung from "@/asset/abrechnung.svg";
+import main_account from "@/asset/main_account.png";
+import chevron_admin from "@/asset/chevron_admin.png";
+import main_portfolio from "@/asset/main_portfolio.png";
+import clock_dark from "@/asset/clock_dark.png";
+import cold_water from "@/asset/cold_water.png";
+import hot_water from "@/asset/hot_water.png";
+import cross_arrows from "@/asset/cross_arrows.png";
+import notification from "@/asset/notification.png";
+import earth from "@/asset/earth.png";
+import blue_info from "@/asset/blue_info.png";
+import alert_triangle from "@/asset/alert_triangle.png";
+import green_check from "@/asset/green_check.png";
+import keys from "@/asset/keys.png";
+import pipe_water from "@/asset/pipe_water.png";
 
 export {
   accentro_colored,
+  cold_water,
+  blue_info,
+  keys,
+  pipe_water,
+  alert_triangle,
+  green_check,
+  hot_water,
+  earth,
+  notification,
+  cross_arrows,
   accentro,
   accentrosvg,
   arrow,
@@ -344,4 +375,15 @@ export {
   youtube,
   youtubesvg,
   link,
+  domus,
+  immoware24,
+  matera,
+  dashboard,
+  objekte,
+  dokumente,
+  abrechnung,
+  main_account,
+  chevron_admin,
+  main_portfolio,
+  clock_dark,
 };

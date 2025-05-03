@@ -1,3 +1,4 @@
+import LoginDialog from "@/components/Basic/LoginDialog/LoginDialog";
 import MobileDifference from "@/components/Basic/MobileDifference/MobileDifference";
 import Subscription from "@/components/Basic/Subscription/Subscription";
 import HomeHero from "@/components/Hero/HomeHero";
@@ -117,11 +118,11 @@ export default function Home() {
               Steigen Sie ohne Mehrkosten auf unsere innovative Technologie um.
               Die Umrüstung erfolgt für Sie völlig kostenlos und ohne Aufwand.
             </p>
-            <a
+            <Link
               href="/fragebogen"
               className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
               Jetzt installieren lassen
-            </a>
+            </Link>
           </div>
           <div className="space-y-7 max-medium:hidden max-medium:flex-col max-medium:items-center max-medium:justify-start">
             <span className="circleIcon">
@@ -538,6 +539,7 @@ export default function Home() {
         </div>
       </div>
       <Subscription />
+      <LoginDialog />
     </main>
   );
 }

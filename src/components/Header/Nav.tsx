@@ -129,18 +129,32 @@ export default function Nav() {
     },
   ];
 
+  const handleBurgerMenu = () => {
+    const burger = document.querySelector(".burger");
+    if (!burger) return;
+
+    const menu = burger.parentNode as HTMLDivElement | null;
+    if (menu) {
+      burger.classList.remove("active");
+      menu.classList.remove("active");
+      document.documentElement.classList.remove("_lock");
+    }
+  };
+
   return (
-    <nav className="flex items-center justify-center gap-8 max-large:flex-col max-large:items-start max-large:justify-start">
+    <nav className="flex items-center justify-center gap-8 max-medium:gap-4 max-large:flex-col max-large:items-start max-large:justify-start">
       {navGroups.map((group) => (
         <NavGroup key={group.title} group={group} />
       ))}
       <Link
+        onClick={() => handleBurgerMenu()}
         href={ROUTE_HOME}
         className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
         Kunden
       </Link>
-      <div className="group relative [.scrolled_&]:py-4 py-6 duration-300">
+      <div className="group relative [.scrolled_&]:py-4 py-6 max-medium:py-1 duration-300">
         <Link
+          onClick={() => handleBurgerMenu()}
           href={ROUTE_BLOG}
           className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
           Ressourcen
@@ -155,6 +169,7 @@ export default function Nav() {
         </Link>
       </div>
       <Link
+        onClick={() => handleBurgerMenu()}
         href={ROUTE_PREISE}
         className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
         Preise

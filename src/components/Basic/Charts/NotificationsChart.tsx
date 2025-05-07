@@ -11,6 +11,42 @@ import {
 } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
+import NotificationItem from "./NotificationItem";
+
+const notifications = [
+  {
+    leftIcon: keys,
+    rightIcon: green_check,
+    leftBg: "#E7E8EA",
+    rightBg: "#E7F2E8",
+    title: "Mieter eingezogen",
+    subtitle: "WE PL12VH3OGr",
+  },
+  {
+    leftIcon: hot_water,
+    rightIcon: blue_info,
+    leftBg: "#E7E8EA",
+    rightBg: "#E5EBF5",
+    title: "Mieter eingezogen",
+    subtitle: "WE PL12VH3OGr",
+  },
+  {
+    leftIcon: heater,
+    rightIcon: blue_info,
+    leftBg: "#E7E8EA",
+    rightBg: "#E5EBF5",
+    title: "Mieter eingezogen",
+    subtitle: "WE PL12VH3OGr",
+  },
+  {
+    leftIcon: pipe_water,
+    rightIcon: alert_triangle,
+    leftBg: "#E7E8EA",
+    rightBg: "#F7E7D5",
+    title: "Mieter eingezogen",
+    subtitle: "WE PL12VH3OGr",
+  },
+];
 
 export default function NotificationsChart() {
   return (
@@ -30,122 +66,13 @@ export default function NotificationsChart() {
         />
       </div>
       <div className="space-y-1.5">
-        <div className="flex items-center justify-start gap-1.5">
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E7E8EA]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-7 max-h-6"
-              src={keys}
-              alt="keys"
-            />
-          </span>
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E7F2E8]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-6 max-h-6"
-              src={green_check}
-              alt="green_check"
-            />
-          </span>
-          <div>
-            <p className="text-xl text-black/50">Mieter eingezogen</p>
-            <p className="text-xs text-black/50">WE PL12VH3OGr</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-start gap-1.5">
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E7E8EA]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-7 max-h-6"
-              src={hot_water}
-              alt="hot_water"
-            />
-          </span>
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E5EBF5]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-6 max-h-6"
-              src={blue_info}
-              alt="blue_info"
-            />
-          </span>
-          <div>
-            <p className="text-xl text-black/50">Mieter eingezogen</p>
-            <p className="text-xs text-black/50">WE PL12VH3OGr</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-start gap-1.5">
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E7E8EA]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-7 max-h-6"
-              src={heater}
-              alt="heater"
-            />
-          </span>
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E5EBF5]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-6 max-h-6"
-              src={blue_info}
-              alt="blue_info"
-            />
-          </span>
-          <div>
-            <p className="text-xl text-black/50">Mieter eingezogen</p>
-            <p className="text-xs text-black/50">WE PL12VH3OGr</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-start gap-1.5">
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#E7E8EA]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-7 max-h-6"
-              src={pipe_water}
-              alt="pipe_water"
-            />
-          </span>
-          <span className="flex items-center justify-center w-16 h-16 rounded-sm bg-[#F7E7D5]">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-6 max-h-6"
-              src={alert_triangle}
-              alt="alert_triangle"
-            />
-          </span>
-          <div>
-            <p className="text-xl text-black/50">Mieter eingezogen</p>
-            <p className="text-xs text-black/50">WE PL12VH3OGr</p>
-          </div>
-        </div>
+        {notifications.map((n, idx) => (
+          <NotificationItem key={idx} {...n} />
+        ))}
       </div>
       <div>
         <Link
-          className="text-[10px] text-link text-center underline w-full inline-block mt-10"
+          className="text-[10px] text-link text-center underline w-full inline-block mt-[1.5vw]"
           href={ROUTE_HOME}>
           Weitere Benachrichtigungen anzeigen
         </Link>

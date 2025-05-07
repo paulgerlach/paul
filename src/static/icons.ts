@@ -190,12 +190,18 @@ import blue_info from "@/asset/blue_info.png";
 import alert_triangle from "@/asset/alert_triangle.png";
 import green_check from "@/asset/green_check.png";
 import keys from "@/asset/keys.png";
+import commersial_local from "@/asset/commersial_local.png";
 import pipe_water from "@/asset/pipe_water.png";
+import green_check_single from "@/asset/green_check_single.png";
+import breadcrum_arrow from "@/asset/breadcrum_arrow.png";
 
 export {
   accentro_colored,
   cold_water,
+  green_check_single,
   blue_info,
+  breadcrum_arrow,
+  commersial_local,
   keys,
   pipe_water,
   alert_triangle,

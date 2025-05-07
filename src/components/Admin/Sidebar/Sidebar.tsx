@@ -14,6 +14,8 @@ import { abrechnung, dashboard, dokumente, objekte } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SidebarButton from "./SidebarButton";
+import { useState } from "react";
 
 export type SidebarLinkType = {
   title: string;
@@ -25,6 +27,11 @@ export type SidebarLinkType = {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [openLink, setOpenLink] = useState<string | null>(null);
+
+  const handleClick = (link: string) => {
+    setOpenLink((prev) => (prev === link ? null : link));
+  };
 
   const dashboardLinks: SidebarLinkType[] = [
     {
@@ -64,7 +71,15 @@ export default function Sidebar() {
     <div className="bg-white max-w-80 border-r border-[#EAEAEA] shadow-2xs min-w-80 h-[calc(100dvh-81px)] max-h-[calc(100dvh-81px)] px-4 py-9 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
       <div className="flex flex-col gap-0.5">
         {dashboardLinks.map((link: SidebarLinkType) =>
-          link.type === "button" ? null : (
+          link.type === "button" ? (
+            <SidebarButton
+            pathname={pathname}
+              isOpen={openLink === link.title}
+              onClick={handleClick}
+              key={link.title}
+              button={link}
+            />
+          ) : (
             <Link
               key={link.title}
               href={link.route}

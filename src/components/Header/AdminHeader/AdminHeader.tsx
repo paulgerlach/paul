@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { logo } from "@/static/icons";
@@ -11,7 +9,7 @@ import AdminDatetimeDropdown from "./AdminDatetimeDropdown";
 export default function AdminHeader() {
   return (
     <header id="header" className={`w-full`}>
-      <div className="grid grid-cols-5 border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full px-5 max-medium:px-5 py-4 duration-300 ease-in-out">
+      <div className="grid grid-cols-5 border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full px-5 max-medium:px-5 duration-300 ease-in-out">
         <Link
           href={ROUTE_HOME}
           className="flex items-center justify-start gap-3">

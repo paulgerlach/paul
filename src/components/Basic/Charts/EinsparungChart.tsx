@@ -16,7 +16,7 @@ export default function EinsparungChart() {
           alt="earth"
         />
       </div>
-      <p className="text-6xl text-black/50">11,3t CO2</p>
+      <p className="text-[2.5vw] text-black/50">11,3t CO2</p>
     </div>
   );
 }

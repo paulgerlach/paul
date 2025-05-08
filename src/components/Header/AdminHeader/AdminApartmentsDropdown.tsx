@@ -41,7 +41,7 @@ export default function AdminApartmentsDropdown() {
         aria-expanded={isOpen}
         aria-controls="admin-apartments-dropdown"
         className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-3">
-        <div className="flex items-center justify-start whitespace-nowrap gap-2">
+        <div className="flex items-center justify-start whitespace-nowrap gap-5">
           <Image
             width={0}
             height={0}
@@ -52,7 +52,10 @@ export default function AdminApartmentsDropdown() {
             alt="main_portfolio"
             src={main_portfolio}
           />
-          Mein Portfolio
+          <div className="flex flex-col items-start justify-center">
+            <span className="font-bold text-sm">Mein Portfolio</span>
+            <span className="text-xs text-black/50">21 Wohnung ausgewählt</span>
+          </div>
         </div>
         <Image
           width={0}

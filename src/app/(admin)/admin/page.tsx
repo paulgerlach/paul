@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default async function AdminPage() {
   return (
-    <div className="py-3 px-5 h-[calc(100dvh-81px)] max-h-[calc(100dvh-81px)]">
+    <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Link
         className="flex items-center text-black/50 text-sm justify-start gap-2"
         href={ROUTE_OBJEKTE}>

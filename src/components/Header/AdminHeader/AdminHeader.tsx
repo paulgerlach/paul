@@ -4,7 +4,8 @@ import { logo } from "@/static/icons";
 import { ROUTE_HOME } from "@/routes/routes";
 import AdminAccoundDropdown from "./AdminAccoundDropdown";
 import AdminApartmentsDropdown from "./AdminApartmentsDropdown";
-import AdminDatetimeDropdown from "./AdminDatetimeDropdown";
+import AdminDatetimeDropdown from "@/components/Basic/Dropdown/AdminDatetimeDropdown";
+import { Switch } from "@/components/Basic/ui/Switch";
 
 export default function AdminHeader() {
   return (
@@ -25,6 +26,12 @@ export default function AdminHeader() {
         </Link>
         <AdminApartmentsDropdown />
         <AdminDatetimeDropdown />
+
+        <div className="flex w-full items-center gap-4 justify-start bg-transparent border-none px-6 py-3">
+          <Switch />
+          Datenansicht
+        </div>
+
         <AdminAccoundDropdown />
       </div>
     </header>

@@ -68,12 +68,12 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="bg-white max-w-80 border-r border-[#EAEAEA] shadow-2xs min-w-80 h-[calc(100dvh-81px)] max-h-[calc(100dvh-81px)] px-4 py-9 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
+    <div className="bg-white max-w-80 border-r border-[#EAEAEA] shadow-2xs min-w-80 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)] px-4 py-9 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
       <div className="flex flex-col gap-0.5">
         {dashboardLinks.map((link: SidebarLinkType) =>
           link.type === "button" ? (
             <SidebarButton
-            pathname={pathname}
+              pathname={pathname}
               isOpen={openLink === link.title}
               onClick={handleClick}
               key={link.title}

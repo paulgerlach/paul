@@ -199,10 +199,16 @@ import objekte2 from "@/asset/objekte2.png";
 import objekte3 from "@/asset/objekte3.png";
 import objekte4 from "@/asset/objekte4.png";
 import dots_button from "@/asset/dots_button.png";
+import trend_up from "@/asset/trend_up.png";
+import trend_down from "@/asset/trend_down.png";
+import trend_check from "@/asset/trend_check.png";
 
 export {
   accentro_colored,
   cold_water,
+  trend_up,
+  trend_down,
+  trend_check,
   green_check_single,
   blue_info,
   objekte4,

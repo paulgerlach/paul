@@ -10,6 +10,7 @@ export const ROUTE_BLOG_REGULATORIK = "/blog/regulatorik";
 export const ROUTE_BLOG = "/blog";
 export const ROUTE_DASHBOARD = "/dashboard";
 export const ROUTE_OBJEKTE = "/objekte";
+export const ROUTE_OBJEKTE_CREATE = "/objekte/create";
 export const ROUTE_DOKUMENTE = "/dokumente";
 export const ROUTE_ABRECHNUNG = "/abrechnung";
 export const ROUTE_HEIZKOSTENABRECHNUNG = "/heizkostenabrechnung";

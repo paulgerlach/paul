@@ -1,8 +1,9 @@
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteItem from "@/components/Admin/ObjekteItem/ObjekteItem";
-import { ROUTE_DASHBOARD } from "@/routes/routes";
+import { ROUTE_DASHBOARD, ROUTE_OBJEKTE_CREATE } from "@/routes/routes";
 import {
   breadcrum_arrow,
+  objekte,
   objekte1,
   objekte2,
   objekte3,
@@ -53,7 +54,7 @@ export default async function ObjektePage() {
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Link
-        className="flex items-center text-black/50 text-sm justify-start gap-2"
+        className="flex items-center w-fit text-black/50 text-sm justify-start gap-2"
         href={ROUTE_DASHBOARD}>
         <Image
           width={0}
@@ -73,7 +74,20 @@ export default async function ObjektePage() {
             <ObjekteItem key={objekt.street} item={objekt} />
           ))}
         </div>
-        <div></div>
+        <Link
+          href={ROUTE_OBJEKTE_CREATE}
+          className="border-dashed w-full flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-7 opacity-50 max-h-7"
+            src={objekte}
+            alt="objekte"
+          />
+          Weiteres Objekt hinzufügen
+        </Link>
       </ContentWrapper>
     </div>
   );

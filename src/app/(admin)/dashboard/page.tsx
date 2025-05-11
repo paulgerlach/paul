@@ -1,3 +1,5 @@
+// import { fetchCsvData } from "@/api";
+import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EinsparungChart from "@/components/Basic/Charts/EinsparungChart";
 import GaugeChart from "@/components/Basic/Charts/GaugeChart";
 import HeatingCosts from "@/components/Basic/Charts/HeatingCosts";
@@ -9,6 +11,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default async function AdminPage() {
+  // const data = await fetchCsvData();
+
+  // console.log(data);
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Link
@@ -26,14 +31,14 @@ export default async function AdminPage() {
         Objekte
       </Link>
       <h1 className="mb-4 text-lg">Dashboard</h1>
-      <div className="max-w-7xl max-h-[90%] mx-auto rounded-2xl px-3.5 py-4 bg-[#EFEEEC] grid grid-cols-3 gap-2 grid-rows-10">
+      <ContentWrapper className="max-h-[90%] grid grid-cols-3 gap-2 grid-rows-10">
         <WaterChart color="#6083CC" title="Kaltwasser" chartType="cold" />
         <GaugeChart />
         <NotificationsChart />
         <HeatingCosts />
         <WaterChart color="#E74B3C" title="Warmwasser" chartType="hot" />
         <EinsparungChart />
-      </div>
+      </ContentWrapper>
     </div>
   );
 }

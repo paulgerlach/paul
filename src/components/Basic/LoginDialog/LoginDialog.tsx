@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { ROUTE_ADMIN } from "@/routes/routes";
+import { ROUTE_DASHBOARD } from "@/routes/routes";
 
 const LoginSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
@@ -28,7 +28,7 @@ export default function LoginDialog() {
   const onSubmit = (data: LoginFormData) => {
     console.log("Login Data:", data);
     // Handle login logic here
-    router.push(ROUTE_ADMIN);
+    router.push(ROUTE_DASHBOARD);
   };
   return (
     <dialog

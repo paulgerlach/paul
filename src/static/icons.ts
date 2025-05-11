@@ -194,12 +194,22 @@ import commersial_local from "@/asset/commersial_local.png";
 import pipe_water from "@/asset/pipe_water.png";
 import green_check_single from "@/asset/green_check_single.png";
 import breadcrum_arrow from "@/asset/breadcrum_arrow.png";
+import objekte1 from "@/asset/objekte1.png";
+import objekte2 from "@/asset/objekte2.png";
+import objekte3 from "@/asset/objekte3.png";
+import objekte4 from "@/asset/objekte4.png";
+import dots_button from "@/asset/dots_button.png";
 
 export {
   accentro_colored,
   cold_water,
   green_check_single,
   blue_info,
+  objekte4,
+  dots_button,
+  objekte3,
+  objekte2,
+  objekte1,
   breadcrum_arrow,
   commersial_local,
   keys,

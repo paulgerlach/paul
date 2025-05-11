@@ -3,7 +3,7 @@
 import {
   ROUTE_OBJEKTE,
   ROUTE_ABRECHNUNG,
-  ROUTE_ADMIN,
+  ROUTE_DASHBOARD,
   ROUTE_DOKUMENTE,
   ROUTE_IMPRESSUM,
   ROUTE_DATENSCHUTZHINWEISE,
@@ -37,7 +37,7 @@ export default function Sidebar() {
     {
       title: "Dashboard",
       icon: dashboard,
-      route: ROUTE_ADMIN,
+      route: ROUTE_DASHBOARD,
     },
     {
       title: "Objekte",

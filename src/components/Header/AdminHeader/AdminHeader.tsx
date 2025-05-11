@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { logo } from "@/static/icons";
-import { ROUTE_HOME } from "@/routes/routes";
+import { ROUTE_DASHBOARD } from "@/routes/routes";
 import AdminAccoundDropdown from "./AdminAccoundDropdown";
 import AdminApartmentsDropdown from "./AdminApartmentsDropdown";
 import AdminDatetimeDropdown from "@/components/Basic/Dropdown/AdminDatetimeDropdown";
@@ -12,7 +12,7 @@ export default function AdminHeader() {
     <header id="header" className={`w-full`}>
       <div className="grid grid-cols-5 border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full px-5 max-medium:px-5 duration-300 ease-in-out">
         <Link
-          href={ROUTE_HOME}
+          href={ROUTE_DASHBOARD}
           className="flex items-center justify-start gap-3">
           <Image
             width={0}

@@ -27,7 +27,7 @@ export default function FragebogenLayout({
         <QueryProvider>
           <div className="h-screen grid grid-rows-[auto_1fr] bg-base-bg">
             <AdminHeader />
-            <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] w-full bg-base-bg">
+            <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] overflow-hidden w-full bg-base-bg">
               <Sidebar />
               {children}
             </div>

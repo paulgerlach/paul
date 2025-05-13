@@ -202,12 +202,20 @@ import dots_button from "@/asset/dots_button.png";
 import trend_up from "@/asset/trend_up.png";
 import trend_down from "@/asset/trend_down.png";
 import trend_check from "@/asset/trend_check.png";
+import white_check_green_box from "@/asset/white_check_green_box.png";
+import multi_family from "@/asset/multi_family.png";
+import special_purpose from "@/asset/special_purpose.png";
+import commercial from "@/asset/commercial.png";
 
 export {
   accentro_colored,
   cold_water,
   trend_up,
+  commercial,
+  special_purpose,
+  multi_family,
   trend_down,
+  white_check_green_box,
   trend_check,
   green_check_single,
   blue_info,

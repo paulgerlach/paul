@@ -924,3 +924,7 @@ html {
 .heating-costs .recharts-tooltip-cursor {
   fill: transparent;
 }
+
+html {
+  overflow: hidden;
+}

@@ -1,0 +1,14 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"qoute": {
+				"__TYPE__": "FieldContent",
+				"value": "care",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]

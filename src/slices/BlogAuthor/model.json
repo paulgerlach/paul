@@ -1,0 +1,30 @@
+{
+  "id": "blog_author",
+  "type": "SharedSlice",
+  "name": "BlogAuthor",
+  "description": "BlogAuthor",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "blogauthor": {
+          "type": "Link",
+          "config": {
+            "label": "BlogAuthor",
+            "select": "document",
+            "repeat": false,
+            "customtypes": [
+              "author"
+            ]
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

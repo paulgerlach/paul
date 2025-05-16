@@ -15,7 +15,7 @@ export type RichTextBlockProps =
 const RichTextBlock: FC<RichTextBlockProps> = ({ slice }) => {
   return (
     <section
-      className="max-w-3xl mx-auto space-y-7 px-4 richTextBlock"
+      className="max-w-3xl mx-auto space-y-7 richTextBlock"
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}>
       <PrismicRichText

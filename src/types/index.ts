@@ -74,7 +74,34 @@ export type StepOptionType<K extends keyof QuestionareFormData> = {
   icon: StaticImageData;
 };
 
+export type BuildingType =
+  | "special_purpose"
+  | "commercial"
+  | "multi_family"
+  | "condominium";
+
+export type LocalHistoryType = {
+  id: number | string;
+  start_date: string;
+  end_date: string;
+  last_name: string;
+  first_name: string;
+  price_per_month: number;
+  active: boolean;
+  days: number;
+};
+
+export type LocalType = {
+  id: number | string;
+  type: BuildingType;
+  available: boolean;
+  status: "renting" | "vacancy" | "unavailable";
+  name: string;
+  history: LocalHistoryType[];
+};
+
 export type ObjektType = {
+  id: number | string;
   image: StaticImageData;
   street: string;
   privateLocals?: number;
@@ -82,4 +109,5 @@ export type ObjektType = {
   percent: number;
   message: string;
   status: "full" | "lower" | "higher";
+  locals?: LocalType[];
 };

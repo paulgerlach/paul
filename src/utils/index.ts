@@ -1,4 +1,15 @@
+import {
+  commercial,
+  keys,
+  multi_family,
+  special_purpose,
+  trend_check,
+  trend_down,
+  trend_up,
+} from "@/static/icons";
+import { BuildingType, ObjektType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
+import { type StaticImageData } from "next/image";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -93,3 +104,37 @@ export function formatDate(input?: string): string {
 
   return `${parseInt(day, 10)} ${monthName} ${year}`;
 }
+
+export const handleLocalTypeIcon = (type: BuildingType): StaticImageData => {
+  switch (type) {
+    case "commercial":
+      return commercial;
+    case "condominium":
+      return keys;
+    case "multi_family":
+      return multi_family;
+    case "special_purpose":
+      return special_purpose;
+  }
+};
+
+export const renderTradeIcon = (tradeStatus: ObjektType["status"]) => {
+  switch (tradeStatus) {
+    case "full":
+      return trend_check;
+    case "higher":
+      return trend_up;
+    case "lower":
+      return trend_down;
+  }
+};
+export const renderTradeColor = (tradeStatus: ObjektType["status"]) => {
+  switch (tradeStatus) {
+    case "full":
+      return "#8AD68F";
+    case "higher":
+      return "#8AD68F";
+    case "lower":
+      return "#E08E3A";
+  }
+};

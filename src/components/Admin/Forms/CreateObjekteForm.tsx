@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/Basic/ui/Select";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import {
   commercial,
   keys,
@@ -44,31 +44,28 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/Basic/ui/Command";
+import type { BuildingType } from "@/types";
+import { handleLocalTypeIcon } from "@/utils";
 
 const objektTypeOptions: {
-  type: string;
+  type: BuildingType;
   name: string;
-  image: StaticImageData;
 }[] = [
   {
     type: "condominium",
     name: "Eigentumswohnung",
-    image: keys,
   },
   {
     type: "multi_family",
     name: "Mehrfamilienhaus",
-    image: multi_family,
   },
   {
     type: "commercial",
     name: "Gewerbeimmobilie",
-    image: commercial,
   },
   {
     type: "special_purpose",
     name: "Sonderimmobilie",
-    image: special_purpose,
   },
 ];
 
@@ -199,7 +196,7 @@ export default function CreateObjekteForm() {
                         sizes="100vw"
                         loading="lazy"
                         className="max-w-9 max-h-9"
-                        src={option.image}
+                        src={handleLocalTypeIcon(option.type)}
                         alt="option image"
                       />
                       {option.name}

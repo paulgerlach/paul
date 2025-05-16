@@ -22,8 +22,10 @@ const objekts: ObjektType[] = [
     message: "+1 Vermietung Im Juni",
     percent: 10,
     status: "higher",
+    id: 1,
   },
   {
+    id: 2,
     image: objekte2,
     street: "Plauensche Str. 114, 10999 Berlin",
     privateLocals: 17,
@@ -32,6 +34,7 @@ const objekts: ObjektType[] = [
     status: "lower",
   },
   {
+    id: 3,
     image: objekte3,
     street: "Tucholsky Str. 43, 10627 Berlin",
     commercialLocals: 1,
@@ -41,6 +44,7 @@ const objekts: ObjektType[] = [
     status: "higher",
   },
   {
+    id: 4,
     image: objekte4,
     street: "Immanuelkirch Str. 12, 10627 Berlin",
     privateLocals: 0,

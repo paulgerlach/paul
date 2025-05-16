@@ -1,31 +1,16 @@
-import { dots_button, trend_check, trend_down, trend_up } from "@/static/icons";
+import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { dots_button } from "@/static/icons";
 import { type ObjektType } from "@/types";
+import { renderTradeColor, renderTradeIcon } from "@/utils";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ObjekteItem({ item }: { item: ObjektType }) {
-  const renderTradeIcon = () => {
-    switch (item.status) {
-      case "full":
-        return trend_check;
-      case "higher":
-        return trend_up;
-      case "lower":
-        return trend_down;
-    }
-  };
-  const renderTradeColor = () => {
-    switch (item.status) {
-      case "full":
-        return "#8AD68F";
-      case "higher":
-        return "#8AD68F";
-      case "lower":
-        return "#E08E3A";
-    }
-  };
 
   return (
-    <div className="bg-white p-4 rounded-2xl flex items-center justify-between">
+    <Link
+      href={`${ROUTE_OBJEKTE}/${item.id}`}
+      className="bg-white p-4 rounded-2xl flex items-center justify-between">
       <div className="flex items-center justify-start gap-8">
         <Image
           width={0}
@@ -54,7 +39,7 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
               <p className="text-3xl font-bold">{item.percent}%</p>
               <p
                 className="text-xs whitespace-nowrap"
-                style={{ color: renderTradeColor() }}>
+                style={{ color: renderTradeColor(item.status) }}>
                 {item.message}
               </p>
             </div>
@@ -64,7 +49,7 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
               sizes="100vw"
               loading="lazy"
               className="max-w-7 max-h-5"
-              src={renderTradeIcon()}
+              src={renderTradeIcon(item.status)}
               alt="trade icon"
             />
           </div>
@@ -81,6 +66,6 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
           />
         </button>
       </div>
-    </div>
+    </Link>
   );
 }

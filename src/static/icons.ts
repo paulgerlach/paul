@@ -206,11 +206,23 @@ import white_check_green_box from "@/asset/white_check_green_box.png";
 import multi_family from "@/asset/multi_family.png";
 import special_purpose from "@/asset/special_purpose.png";
 import commercial from "@/asset/commercial.png";
+import blue_x from "@/asset/blue_x.png";
+import green_check_circle from "@/asset/green_check_circle.png";
+import small_calendar from "@/asset/small_calendar.png";
+import pencil from "@/asset/pencil.png";
+import trashcan from "@/asset/trashcan.png";
+import create_local from "@/asset/create_local.png";
 
 export {
   accentro_colored,
   cold_water,
+  small_calendar,
+  pencil,
+  trashcan,
   trend_up,
+  blue_x,
+  create_local,
+  green_check_circle,
   commercial,
   special_purpose,
   multi_family,

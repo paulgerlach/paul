@@ -26,7 +26,7 @@ export default function AdminDatetimeDropdown({
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-fit shadow-none px-6 py-3">
+            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-fit shadow-none px-6 hover:!bg-transparent py-3">
             <div className="flex items-center justify-start whitespace-nowrap gap-5">
               <Image
                 width={0}

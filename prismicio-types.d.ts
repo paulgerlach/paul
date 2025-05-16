@@ -4,7 +4,39 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
+type AuthorDocumentDataSlicesSlice = AuthorImageSlice | FirstNameSlice;
+
+/**
+ * Content for Author documents
+ */
+interface AuthorDocumentData {
+  /**
+   * Slice Zone field in *Author*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: author.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<AuthorDocumentDataSlicesSlice>;
+}
+
+/**
+ * Author document from Prismic
+ *
+ * - **API ID**: `author`
+ * - **Repeatable**: `true`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type AuthorDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithUID<Simplify<AuthorDocumentData>, "author", Lang>;
+
 type BlogpostDocumentDataSlicesSlice =
+  | BlogAuthorSlice
+  | QuoteSlice
   | SubtitleSlice
   | RichTextBlockSlice
   | BussinessTextSlice
@@ -74,7 +106,97 @@ export type BlogpostDocument<Lang extends string = string> =
     Lang
   >;
 
-export type AllDocumentTypes = BlogpostDocument;
+export type AllDocumentTypes = AuthorDocument | BlogpostDocument;
+
+/**
+ * Primary content in *AuthorImage → Default → Primary*
+ */
+export interface AuthorImageSliceDefaultPrimary {
+  /**
+   * AuthorImage field in *AuthorImage → Default → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: author_image.default.primary.authorimage
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  authorimage: prismic.ImageField<never>;
+}
+
+/**
+ * Default variation for AuthorImage Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AuthorImageSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<AuthorImageSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *AuthorImage*
+ */
+type AuthorImageSliceVariation = AuthorImageSliceDefault;
+
+/**
+ * AuthorImage Shared Slice
+ *
+ * - **API ID**: `author_image`
+ * - **Description**: AuthorImage
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type AuthorImageSlice = prismic.SharedSlice<
+  "author_image",
+  AuthorImageSliceVariation
+>;
+
+/**
+ * Primary content in *BlogAuthor → Default → Primary*
+ */
+export interface BlogAuthorSliceDefaultPrimary {
+  /**
+   * BlogAuthor field in *BlogAuthor → Default → Primary*
+   *
+   * - **Field Type**: Content Relationship
+   * - **Placeholder**: *None*
+   * - **API ID Path**: blog_author.default.primary.blogauthor
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  blogauthor: prismic.ContentRelationshipField<"author">;
+}
+
+/**
+ * Default variation for BlogAuthor Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type BlogAuthorSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<BlogAuthorSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *BlogAuthor*
+ */
+type BlogAuthorSliceVariation = BlogAuthorSliceDefault;
+
+/**
+ * BlogAuthor Shared Slice
+ *
+ * - **API ID**: `blog_author`
+ * - **Description**: BlogAuthor
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type BlogAuthorSlice = prismic.SharedSlice<
+  "blog_author",
+  BlogAuthorSliceVariation
+>;
 
 /**
  * Primary content in *BlogImage → Default → Primary*
@@ -194,6 +316,51 @@ export type BussinessTextSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *AuthorName → Default → Primary*
+ */
+export interface FirstNameSliceDefaultPrimary {
+  /**
+   * AuthorName field in *AuthorName → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Paul
+   * - **API ID Path**: first_name.default.primary.authorname
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  authorname: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for AuthorName Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FirstNameSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<FirstNameSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *AuthorName*
+ */
+type FirstNameSliceVariation = FirstNameSliceDefault;
+
+/**
+ * AuthorName Shared Slice
+ *
+ * - **API ID**: `first_name`
+ * - **Description**: FirstName
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FirstNameSlice = prismic.SharedSlice<
+  "first_name",
+  FirstNameSliceVariation
+>;
+
+/**
  * Primary content in *MainTitle → Default → Primary*
  */
 export interface MainTitleSliceDefaultPrimary {
@@ -237,6 +404,48 @@ export type MainTitleSlice = prismic.SharedSlice<
   "main_title",
   MainTitleSliceVariation
 >;
+
+/**
+ * Primary content in *Quote → Default → Primary*
+ */
+export interface QuoteSliceDefaultPrimary {
+  /**
+   * Qoute field in *Quote → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: quote
+   * - **API ID Path**: quote.default.primary.qoute
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  qoute: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Quote Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type QuoteSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<QuoteSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *Quote*
+ */
+type QuoteSliceVariation = QuoteSliceDefault;
+
+/**
+ * Quote Shared Slice
+ *
+ * - **API ID**: `quote`
+ * - **Description**: Quote
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type QuoteSlice = prismic.SharedSlice<"quote", QuoteSliceVariation>;
 
 /**
  * Primary content in *RichTextBlock → Default → Primary*
@@ -349,10 +558,21 @@ declare module "@prismicio/client" {
 
   namespace Content {
     export type {
+      AuthorDocument,
+      AuthorDocumentData,
+      AuthorDocumentDataSlicesSlice,
       BlogpostDocument,
       BlogpostDocumentData,
       BlogpostDocumentDataSlicesSlice,
       AllDocumentTypes,
+      AuthorImageSlice,
+      AuthorImageSliceDefaultPrimary,
+      AuthorImageSliceVariation,
+      AuthorImageSliceDefault,
+      BlogAuthorSlice,
+      BlogAuthorSliceDefaultPrimary,
+      BlogAuthorSliceVariation,
+      BlogAuthorSliceDefault,
       BlogImageSlice,
       BlogImageSliceDefaultPrimary,
       BlogImageSliceVariation,
@@ -362,10 +582,18 @@ declare module "@prismicio/client" {
       BussinessTextSliceDefaultPrimary,
       BussinessTextSliceVariation,
       BussinessTextSliceDefault,
+      FirstNameSlice,
+      FirstNameSliceDefaultPrimary,
+      FirstNameSliceVariation,
+      FirstNameSliceDefault,
       MainTitleSlice,
       MainTitleSliceDefaultPrimary,
       MainTitleSliceVariation,
       MainTitleSliceDefault,
+      QuoteSlice,
+      QuoteSliceDefaultPrimary,
+      QuoteSliceVariation,
+      QuoteSliceDefault,
       RichTextBlockSlice,
       RichTextBlockSliceDefaultPrimary,
       RichTextBlockSliceVariation,

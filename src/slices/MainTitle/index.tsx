@@ -15,7 +15,7 @@ const MainTitle: FC<MainTitleProps> = ({ slice }) => {
     <section
       data-slice-type={slice.slice_type}
       data-slice-variation={slice.variation}>
-      <h1 className="text-7xl max-megalarge:text-5xl mx-auto max-medium:text-3xl max-w-4xl font-medium text-center">
+      <h1 className="text-7xl max-megalarge:text-5xl mx-auto max-medium:text-3xl max-w-4xl text-center">
         {slice.primary.maintitle}
       </h1>
     </section>

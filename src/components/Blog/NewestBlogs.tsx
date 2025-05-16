@@ -30,16 +30,18 @@ export default async function NewestBlogs() {
               <Link
                 href={`/blog/${post.uid}`}
                 key={post.id}
-                className={`flex flex-row-reverse max-large:flex-col bg-[#FAFAF9] min-w-[80%] max-w-7xl min-h-[400px] max-large:max-h-[400px] max-large:min-h-[200px] max-medium:min-h-[150px] overflow-hidden w-fit items-center rounded-4xl group relative scroll-item`}>
+                className={`flex flex-row-reverse max-large:grid max-large:grid-rows-[60%_40%] bg-[#FAFAF9] min-w-[80%] max-w-7xl min-h-[400px] max-large:max-h-[400px] max-large:min-h-[200px] max-medium:min-h-[150px] overflow-hidden w-fit items-center rounded-4xl group relative scroll-item`}>
+                {/* <div> */}
                 <Image
                   width={0}
                   height={0}
                   sizes="100vw"
-                  loading="lazy"
-                  className="w-full h-full max-large:h-fit max-large:max-h-[60%] object-cover -my-1 block rounded-r-2xl max-large:rounded-r-none max-large:rounded-t-2xl max-large:rouned-b-none"
+                  // loading="lazy"
+                  className="w-full h-full object-cover -my-1 block rounded-r-2xl max-large:rounded-r-none max-large:rounded-t-2xl max-large:rouned-b-none"
                   src={postImageData?.url || ""}
                   alt={postImageData?.alt || "blog_image"}
                 />
+                {/* </div> */}
                 <div className="flex flex-col py-10 h-full px-8 max-large:py-5 max-large:px-4 justify-between">
                   <h3 className="group-hover:underline text-3xl max-large:text-lg max-medium:text-base font-medium">
                     {postTitle}

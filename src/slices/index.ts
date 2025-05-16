@@ -3,9 +3,13 @@
 import dynamic from "next/dynamic";
 
 export const components = {
+  author_image: dynamic(() => import("./AuthorImage")),
+  blog_author: dynamic(() => import("./BlogAuthor")),
   blog_image: dynamic(() => import("./BlogImage")),
   bussiness_text: dynamic(() => import("./BussinessText")),
+  first_name: dynamic(() => import("./AuthorName")),
   main_title: dynamic(() => import("./MainTitle")),
+  quote: dynamic(() => import("./Quote")),
   rich_text_block: dynamic(() => import("./RichTextBlock")),
   subtitle: dynamic(() => import("./Subtitle")),
 };

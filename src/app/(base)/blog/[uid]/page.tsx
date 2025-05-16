@@ -8,6 +8,7 @@ import { SliceZone } from "@prismicio/react";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
+import RecomendedBlogs from "@/components/Blog/RecomendedPosts";
 
 type Params = { uid: string };
 
@@ -30,6 +31,7 @@ export default async function BlogPage({
             components={components}
           />
         </div>
+        <RecomendedBlogs current={uid} />
       </div>
       <FAQSection />
       <Kostenfrei />

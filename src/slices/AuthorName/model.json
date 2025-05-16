@@ -1,0 +1,26 @@
+{
+  "id": "first_name",
+  "type": "SharedSlice",
+  "name": "AuthorName",
+  "description": "FirstName",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "authorname": {
+          "type": "Text",
+          "config": {
+            "label": "AuthorName",
+            "placeholder": "Paul"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

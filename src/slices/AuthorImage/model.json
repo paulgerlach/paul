@@ -1,0 +1,27 @@
+{
+  "id": "author_image",
+  "type": "SharedSlice",
+  "name": "AuthorImage",
+  "description": "AuthorImage",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "authorimage": {
+          "type": "Image",
+          "config": {
+            "label": "AuthorImage",
+            "constraint": {},
+            "thumbnails": []
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

@@ -11,8 +11,6 @@ export default function ObjekteLocalItemHistoryItem({
   const startDate = parse(historyItem.start_date, "dd.MM.yyyy", new Date());
   const endDate = parse(historyItem.end_date, "dd.MM.yyyy", new Date());
 
-  console.log(startDate, endDate);
-
   const duration = differenceInMonths(endDate, startDate) + 1;
 
   const pricePerMonth = historyItem.price_per_month || 0;

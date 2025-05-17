@@ -3,18 +3,22 @@ import {
   dots_button,
   blue_x,
   green_check_circle,
+  admin_plus,
 } from "@/static/icons";
 import { type LocalType } from "@/types";
 import { handleLocalTypeIcon, slideDown, slideUp } from "@/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
+import Link from "next/link";
+import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
   isOpen: boolean;
   index: number;
   onClick: (index: number) => void;
+  id: string;
 };
 
 export default function ObjekteLocalItem({
@@ -22,6 +26,7 @@ export default function ObjekteLocalItem({
   isOpen,
   index,
   onClick,
+  id,
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
 
@@ -85,7 +90,8 @@ export default function ObjekteLocalItem({
   };
 
   return (
-    <div className={`bg-white/50 rounded-b-2xl ${isOpen ? "active" : ""}`}>
+    <div
+      className={`bg-white/50 rounded-b-2xl ${isOpen ? `active` : ""} ${item.available && "available"} [.available.active]:pb-7`}>
       <div
         className={`bg-white p-2 rounded-2xl flex items-center justify-between`}>
         <div className="flex items-center justify-start gap-8">
@@ -133,7 +139,25 @@ export default function ObjekteLocalItem({
           </button>
         </div>
       </div>
-      <ObjekteLocalItemHistory history={item.history} ref={contentRef} />
+      {!item.available ? (
+        <ObjekteLocalItemHistory history={item.history} ref={contentRef} />
+      ) : (
+        <Link
+          ref={contentRef}
+          className="flex items-center [.available_&]:mt-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
+          href={`${ROUTE_OBJEKTE}/${id}/add-history`}>
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-4 max-h-4"
+            src={admin_plus}
+            alt="admin_plus"
+          />
+          Mieter hinzufügen
+        </Link>
+      )}
     </div>
   );
 }

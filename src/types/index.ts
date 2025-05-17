@@ -97,7 +97,7 @@ export type LocalType = {
   available: boolean;
   status: "renting" | "vacancy" | "unavailable";
   name: string;
-  history: LocalHistoryType[];
+  history?: LocalHistoryType[];
 };
 
 export type ObjektType = {

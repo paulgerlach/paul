@@ -50,7 +50,6 @@ export default function WarmwasserChart({
 
   useEffect(() => {
     const parsed = parseCsvData(csvText);
-    console.log("parsed", parsed);
 
     const months = [
       "JAN",
@@ -96,8 +95,6 @@ export default function WarmwasserChart({
 
     setChartData(dataForChart);
   }, [csvText]);
-
-  console.log(chartData, "[]");
 
   const gradientId = `gradient-${color.replace("#", "")}`;
 

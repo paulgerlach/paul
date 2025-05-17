@@ -212,10 +212,12 @@ import small_calendar from "@/asset/small_calendar.png";
 import pencil from "@/asset/pencil.png";
 import trashcan from "@/asset/trashcan.png";
 import create_local from "@/asset/create_local.png";
+import admin_plus from "@/asset/admin_plus.png";
 
 export {
   accentro_colored,
   cold_water,
+  admin_plus,
   small_calendar,
   pencil,
   trashcan,

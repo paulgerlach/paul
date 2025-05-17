@@ -13,9 +13,6 @@ import fs from "fs";
 import path from "path";
 
 export default async function AdminPage() {
-  // const data = await fetchCsvData();
-
-  // console.log(data);
   const coldWaterPath = path.resolve(
     process.cwd(),
     "public/data/Cold_Water_Meter_Data.csv"

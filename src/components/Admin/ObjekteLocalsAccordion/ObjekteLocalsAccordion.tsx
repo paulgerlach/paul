@@ -6,7 +6,9 @@ import ObjekteLocalItem from "../ObjekteLocalItem/ObjekteLocalItem";
 
 export default function ObjekteLocalsAccordion({
   locals,
+  id,
 }: {
+  id: string;
   locals?: LocalType[];
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -19,6 +21,7 @@ export default function ObjekteLocalsAccordion({
     <div className="overflow-y-auto space-y-4">
       {locals?.map((local, index) => (
         <ObjekteLocalItem
+          id={id}
           isOpen={openIndex === index}
           onClick={handleClick}
           key={local.id}

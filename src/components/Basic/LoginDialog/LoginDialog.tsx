@@ -7,6 +7,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
+import { supabase } from "@/utils/supabase/client";
+import { setCookie } from "nookies";
 
 const LoginSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
@@ -25,10 +27,40 @@ export default function LoginDialog() {
     resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Login Data:", data);
-    // Handle login logic here
-    router.push(ROUTE_DASHBOARD);
+  const onSubmit = async (data: LoginFormData) => {
+    const { email, password } = data;
+
+    const { data: sessionData, error } = await supabase.auth.signInWithPassword(
+      {
+        email,
+        password,
+      }
+    );
+
+    if (error) {
+      return;
+    }
+
+    const { session } = sessionData;
+
+    if (session?.access_token) {
+      // Save token to cookies
+      setCookie(null, "sb-access-token", session.access_token, {
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      // Optional: Save refresh token
+      setCookie(null, "sb-refresh-token", session.refresh_token ?? "", {
+        maxAge: 30 * 24 * 60 * 60,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      // Redirect to dashboard
+      router.push(ROUTE_DASHBOARD);
+    }
   };
   return (
     <dialog

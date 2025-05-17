@@ -59,28 +59,6 @@ const objekts: ObjektType[] = [
         name: "1. OG Vorderhaus rechts, 76qm",
         status: "vacancy",
         type: "condominium",
-        history: [
-          {
-            id: 1,
-            active: true,
-            days: 365,
-            end_date: "31.12.2023",
-            start_date: "01.01.2023",
-            price_per_month: 100,
-            first_name: "Max",
-            last_name: "Mustermann",
-          },
-          {
-            id: 2,
-            active: false,
-            days: 365,
-            end_date: "31.12.2022",
-            start_date: "01.01.2022",
-            price_per_month: 100,
-            first_name: "Klaus",
-            last_name: "Kleber",
-          },
-        ],
       },
       {
         id: 3,
@@ -186,28 +164,6 @@ const objekts: ObjektType[] = [
         name: "1. OG Vorderhaus rechts, 76qm",
         status: "vacancy",
         type: "condominium",
-        history: [
-          {
-            id: 1,
-            active: true,
-            days: 365,
-            end_date: "31.12.2023",
-            start_date: "01.01.2023",
-            price_per_month: 100,
-            first_name: "Max",
-            last_name: "Mustermann",
-          },
-          {
-            id: 2,
-            active: false,
-            days: 365,
-            end_date: "31.12.2022",
-            start_date: "01.01.2022",
-            price_per_month: 100,
-            first_name: "Klaus",
-            last_name: "Kleber",
-          },
-        ],
       },
       {
         id: 3,
@@ -314,28 +270,6 @@ const objekts: ObjektType[] = [
         name: "1. OG Vorderhaus rechts, 76qm",
         status: "vacancy",
         type: "condominium",
-        history: [
-          {
-            id: 1,
-            active: true,
-            days: 365,
-            end_date: "31.12.2023",
-            start_date: "01.01.2023",
-            price_per_month: 100,
-            first_name: "Max",
-            last_name: "Mustermann",
-          },
-          {
-            id: 2,
-            active: false,
-            days: 365,
-            end_date: "31.12.2022",
-            start_date: "01.01.2022",
-            price_per_month: 100,
-            first_name: "Klaus",
-            last_name: "Kleber",
-          },
-        ],
       },
       {
         id: 3,
@@ -441,28 +375,6 @@ const objekts: ObjektType[] = [
         name: "1. OG Vorderhaus rechts, 76qm",
         status: "vacancy",
         type: "condominium",
-        history: [
-          {
-            id: 1,
-            active: true,
-            days: 365,
-            end_date: "31.12.2023",
-            start_date: "01.01.2023",
-            price_per_month: 100,
-            first_name: "Max",
-            last_name: "Mustermann",
-          },
-          {
-            id: 2,
-            active: false,
-            days: 365,
-            end_date: "31.12.2022",
-            start_date: "01.01.2022",
-            price_per_month: 100,
-            first_name: "Klaus",
-            last_name: "Kleber",
-          },
-        ],
       },
       {
         id: 3,
@@ -553,7 +465,7 @@ export default async function ObjektDeatilsPage({
       </Link>
       <h1 className="mb-4 text-lg">Wohneinheiten | {object?.street}</h1>
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">
-        <ObjekteLocalsAccordion locals={object?.locals} />
+        <ObjekteLocalsAccordion id={id} locals={object?.locals} />
         <Link
           href={`${ROUTE_OBJEKTE}/${id}/create-locale`}
           className="border-dashed w-full flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">

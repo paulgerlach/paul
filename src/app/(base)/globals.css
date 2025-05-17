@@ -850,12 +850,12 @@ html {
   @apply text-xl max-megalarge:text-lg max-large:text-base max-medium:text-sm max-small:text-xs;
 }
 .richTextBlock p {
-  @apply text-xl max-megalarge:text-lg max-large:text-base max-medium:text-sm max-small:text-xs;
+  @apply text-lg max-large:text-base max-medium:text-sm max-small:text-xs;
 }
 
 .richTextBlock ul,
 .richTextBlock ol {
-  @apply list-disc pl-6 text-xl max-megalarge:text-lg max-large:text-base max-medium:text-sm max-small:text-xs;
+  @apply list-disc pl-6 text-lg max-large:text-base max-medium:text-sm max-small:text-xs;
 }
 
 .richTextBlock ol {

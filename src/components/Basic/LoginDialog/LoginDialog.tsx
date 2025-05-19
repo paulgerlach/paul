@@ -38,27 +38,52 @@ export default function LoginDialog() {
     );
 
     if (error) {
+      // Optionally show error to user
+      console.error("Login failed:", error.message);
       return;
     }
 
-    const { session } = sessionData;
+    const { session, user } = sessionData;
+
+    if (user) {
+      // Check if user exists in public.users
+      const { data: existingUser, error: userFetchError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+
+      if (!existingUser && !userFetchError) {
+        // Insert a record into public.users
+        const { error: insertError } = await supabase.from("users").insert({
+          id: user.id,
+          // You can optionally add defaults here, like:
+          // first_name: "", last_name: ""
+        });
+
+        if (insertError) {
+          console.error(
+            "Failed to create public.users record:",
+            insertError.message
+          );
+          return;
+        }
+      }
+    }
 
     if (session?.access_token) {
-      // Save token to cookies
       setCookie(null, "sb-access-token", session.access_token, {
-        maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 30 * 24 * 60 * 60,
         path: "/",
         secure: process.env.NODE_ENV === "production",
       });
 
-      // Optional: Save refresh token
       setCookie(null, "sb-refresh-token", session.refresh_token ?? "", {
         maxAge: 30 * 24 * 60 * 60,
         path: "/",
         secure: process.env.NODE_ENV === "production",
       });
 
-      // Redirect to dashboard
       router.push(ROUTE_DASHBOARD);
     }
   };

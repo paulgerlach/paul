@@ -10,6 +10,7 @@ import Link from "next/link";
 import FooterLink from "./FooterLink";
 import type { FooterLinkGroupType, FooterLinkType } from "@/types";
 import FooterEmailForm from "./FooterEmailForm";
+import { format } from "date-fns";
 
 export const simpleFooterLinks: FooterLinkType[] = [
   {
@@ -446,7 +447,7 @@ export default function Footer() {
             alt="footer logo"
           />
           <p className="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
-            KI Akademie Berlin GmbH Rungestraße 21 10179 Berlin
+            KI Akademie GmbH Rungestrasse 21 10179 Berlin
           </p>
         </div>
         <div className="text-dark_text text-[30px] leading-9 max-w-lg max-medium:text-[19px] max-medium:leading-[22px] max-large:max-w-full">
@@ -457,23 +458,24 @@ export default function Footer() {
       </div>
       <div className="pt-8 flex items-start justify-between max-large:flex-wrap max-medium:flex-col-reverse max-medium:items-center max-large:justify-start max-large:gap-3 max-medium:gap-8">
         <p className="text-dark_text text-xs leading-[14px] max-w-4xl">
-          © 2024 „Heidi“ und das Heidi-Logo sind eingetragene Markenzeichen
-          unseres Unternehmens. Die Heidi Commercial und die Heidi Visa
-          Corporate werden von der Sutton Bank bzw. der Celtic Bank (Mitglieder
-          der FDIC) herausgegeben. Wir berechnen die durchschnittlichen
-          Einsparungen als Prozentsatz des Gesamumsatzes eines beispielhaften
-          Kunden, der Heidi-Funktionen zur Reduzierung von Geschäftsausgaben
-          nutzt. Beachten Sie, dass es sich hierbei um eine Schätzung, nicht um
-          eine Garantie handelt. Einsparungen können beispielsweise durch
-          weniger Zeitaufwand für maneulle Spesenabrechnungen, finanzielle
-          Vorteile durch Cashback oder andere Prämien, intelligente
-          Ausgabenüberwachung und das Eliminieren von Kosten alternativer
-          Lösungen entstehen. Unsere Berechnungen basieren auf Plattformdaten,
-          Branchenforschung, Kundenbefragungen und Informationen zu alternativen
-          Optionen. Ihre tatsächlichen Einsparungen können variieren. Für
-          weitere Details besuchen Sie bitte unsere Nutzungsbedingungen. Lesen
-          Sie unsere redaktionellen Richtlinien und Datenschutzbestimmungen.
-          Heidi Corporation - NMLS 3241435, Heidi Corporation - NMLS 2431378
+          © {format(new Date(), "yyyy")} „Heidi“ und das Heidi-Logo sind
+          eingetragene Markenzeichen unseres Unternehmens. Die Heidi Commercial
+          und die Heidi Visa Corporate werden von der Sutton Bank bzw. der
+          Celtic Bank (Mitglieder der FDIC) herausgegeben. Wir berechnen die
+          durchschnittlichen Einsparungen als Prozentsatz des Gesamumsatzes
+          eines beispielhaften Kunden, der Heidi-Funktionen zur Reduzierung von
+          Geschäftsausgaben nutzt. Beachten Sie, dass es sich hierbei um eine
+          Schätzung, nicht um eine Garantie handelt. Einsparungen können
+          beispielsweise durch weniger Zeitaufwand für maneulle
+          Spesenabrechnungen, finanzielle Vorteile durch Cashback oder andere
+          Prämien, intelligente Ausgabenüberwachung und das Eliminieren von
+          Kosten alternativer Lösungen entstehen. Unsere Berechnungen basieren
+          auf Plattformdaten, Branchenforschung, Kundenbefragungen und
+          Informationen zu alternativen Optionen. Ihre tatsächlichen
+          Einsparungen können variieren. Für weitere Details besuchen Sie bitte
+          unsere Nutzungsbedingungen. Lesen Sie unsere redaktionellen
+          Richtlinien und Datenschutzbestimmungen. Heidi Corporation - NMLS
+          3241435, Heidi Corporation - NMLS 2431378
         </p>
         <div className="flex items-center justify-end gap-3">
           <Link href="https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q">

@@ -436,7 +436,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-b border-dark_green/10 py-8 flex items-center justify-between max-megalarge:gap-4 max-megalarge:flex-wrap max-megalarge:justify-start">
-        <div className="medium:hidden">
+        <div className="max-medium:hidden">
           <Image
             width={0}
             height={0}

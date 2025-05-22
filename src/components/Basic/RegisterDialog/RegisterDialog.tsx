@@ -4,51 +4,62 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { setCookie } from "nookies";
-import { toast } from "react-toastify";
-import { supabase } from "@/utils/supabase/client";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
+import { supabase } from "@/utils/supabase/client";
+import { setCookie } from "nookies";
 import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
+import { toast } from "react-toastify";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
 import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";
 
-const LoginSchema = z.object({
+const RegisterSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
   password: z.string().min(6, "Passwort muss mindestens 6 Zeichen lang sein."),
+  first_name: z.string().min(1, "Vorname ist erforderlich."),
+  last_name: z.string().min(1, "Nachname ist erforderlich."),
 });
 
-type LoginFormData = z.infer<typeof LoginSchema>;
+type RegisterFormData = z.infer<typeof RegisterSchema>;
 
-export default function LoginDialog() {
+export default function RegisterDialog() {
   const router = useRouter();
 
-  const methods = useForm<LoginFormData>({
-    resolver: zodResolver(LoginSchema),
+  const methods = useForm<RegisterFormData>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
+      first_name: "",
+      last_name: "",
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    const { email, password } = data;
+  const onSubmit = async (data: RegisterFormData) => {
+    const { email, password, first_name, last_name } = data;
 
-    const { data: sessionData, error } = await supabase.auth.signInWithPassword(
+    // Step 1: Sign up with Supabase Auth
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
       {
         email,
         password,
+        options: {
+          data: {
+            first_name,
+            last_name,
+          },
+        },
       }
     );
 
-    if (error) {
-      toast.error("Login fehlgeschlagen");
-      console.error("Login failed:", error.message);
+    if (signUpError || !signUpData.user) {
+      console.error("Signup error:", signUpError?.message);
+      toast.error("Registrierung fehlgeschlagen");
       return;
     }
 
-    const { session, user } = sessionData;
+    const session = signUpData.session;
 
     if (session?.access_token) {
       setCookie(null, "sb-access-token", session.access_token, {
@@ -62,15 +73,17 @@ export default function LoginDialog() {
         path: "/",
         secure: process.env.NODE_ENV === "production",
       });
-
-      toast.success("Login erfolgreich");
-      router.push(ROUTE_DASHBOARD);
+    } else {
+      toast.info("Bitte bestätigen Sie Ihre E-Mail-Adresse.");
     }
+
+    toast.success("Registrierung erfolgreich!");
+    router.push(ROUTE_DASHBOARD);
   };
 
   return (
     <dialog
-      id="login-dialog"
+      id="register-dialog"
       className="dialog w-screen h-screen flex items-center justify-center bg-black/20">
       <Form {...methods}>
         <form
@@ -78,25 +91,58 @@ export default function LoginDialog() {
           method="dialog"
           className="max-w-xl w-full bg-white py-14 px-16 rounded space-y-6">
           <h2 className="text-3xl font-bold text-darkest-text">
-            Willkommen zurück
+            Konto erstellen
           </h2>
           <p className="text-lg text-light-text mb-5">
-            Melden Sie sich mit Ihrer E-Mail und Ihrem Passwort an
+            Füllen Sie die folgenden Felder aus, um ein Konto zu erstellen
           </p>
 
-          <FormInputField<LoginFormData>
+          <FormInputField<RegisterFormData>
+            control={methods.control}
+            name="first_name"
+            placeholder="Vorname*"
+            type="text"
+          />
+
+          <FormInputField<RegisterFormData>
+            control={methods.control}
+            name="last_name"
+            placeholder="Nachname*"
+            type="text"
+          />
+
+          <FormInputField<RegisterFormData>
             control={methods.control}
             name="email"
             placeholder="E-Mail-Adresse*"
             type="email"
           />
 
-          <FormInputField<LoginFormData>
+          <FormInputField<RegisterFormData>
             control={methods.control}
             name="password"
             placeholder="Passwort*"
             type="password"
           />
+
+          <Button
+            type="button"
+            className="rounded bg-base-bg flex items-center justify-center py-4 px-7"
+            onClick={async () => {
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: "slack",
+                options: {
+                  redirectTo: `${window.location.origin}/auth/callback`,
+                },
+              });
+
+              if (error) {
+                toast.error("Slack Anmeldung fehlgeschlagen.");
+                console.error("Slack login error:", error);
+              }
+            }}>
+            Slack
+          </Button>
 
           <div className="flex items-center justify-start gap-8 my-9">
             <span className="text-base text-light-text whitespace-nowrap">
@@ -127,7 +173,9 @@ export default function LoginDialog() {
             type="submit"
             className="mt-6 flex w-fit mx-auto px-[104px] py-5 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
             disabled={methods.formState.isSubmitting}>
-            {methods.formState.isSubmitting ? "Einloggen..." : "Log in"}
+            {methods.formState.isSubmitting
+              ? "Registrieren..."
+              : "Registrieren"}
           </Button>
         </form>
       </Form>

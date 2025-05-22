@@ -1,4 +1,3 @@
-import LoginDialog from "@/components/Basic/LoginDialog/LoginDialog";
 import MobileDifference from "@/components/Basic/MobileDifference/MobileDifference";
 import Subscription from "@/components/Basic/Subscription/Subscription";
 import HomeHero from "@/components/Hero/HomeHero";
@@ -539,7 +538,6 @@ export default function Home() {
         </div>
       </div>
       <Subscription />
-      <LoginDialog />
     </main>
   );
 }

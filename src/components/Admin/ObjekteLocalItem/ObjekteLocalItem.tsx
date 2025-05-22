@@ -91,7 +91,7 @@ export default function ObjekteLocalItem({
 
   return (
     <div
-      className={`bg-white/50 rounded-b-2xl ${isOpen ? `active` : ""} ${item.available && "available"} [.available.active]:pb-7`}>
+      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${item.available && "available"} [.available.active]:pb-7`}>
       <div
         className={`bg-white p-2 rounded-2xl flex items-center justify-between`}>
         <div className="flex items-center justify-start gap-8">

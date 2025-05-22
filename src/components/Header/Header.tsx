@@ -32,6 +32,15 @@ export default function Header() {
     }
   };
 
+  const handleRegisterClick = () => {
+    const dialog: HTMLDialogElement | null = document.getElementById(
+      "register-dialog"
+    ) as HTMLDialogElement | null;
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
+
   return (
     <header
       id="header"
@@ -80,6 +89,11 @@ export default function Header() {
           onClick={() => handleLoginClick()}
           className="border ml-auto mr-3 max-large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
           ADMIN
+        </button>
+        <button
+          onClick={() => handleRegisterClick()}
+          className="border ml-auto mr-3 max-large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
+          Register
         </button>
         <HeaderButton />
       </div>

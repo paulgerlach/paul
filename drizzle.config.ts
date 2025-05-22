@@ -6,11 +6,15 @@ dotenv.config({
 });
 
 export default defineConfig({
-  out: ".src/db/drizzle",
-  schema: ".src/db/schema.ts",
+  out: "./src/db/drizzle",
+  schema: "./src/db/drizzle/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    database: "postgres",
+    port: 5432,
+    host: "aws-0-eu-central-1.pooler.supabase.com",
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   },
   schemaFilter: ["public"],
   introspect: {

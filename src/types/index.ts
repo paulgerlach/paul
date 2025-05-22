@@ -80,6 +80,8 @@ export type BuildingType =
   | "multi_family"
   | "condominium";
 
+export type UnitType = "residential" | "commercial" | "parking" | "warehouse";
+
 export type LocalHistoryType = {
   id: number | string;
   start_date: string;
@@ -94,6 +96,7 @@ export type LocalHistoryType = {
 export type LocalType = {
   id: number | string;
   type: BuildingType;
+  unit_type: UnitType;
   available: boolean;
   status: "renting" | "vacancy" | "unavailable";
   name: string;
@@ -102,12 +105,12 @@ export type LocalType = {
 
 export type ObjektType = {
   id: number | string;
-  image: StaticImageData;
+  image?: StaticImageData;
   street: string;
   privateLocals?: number;
   commercialLocals?: number;
-  percent: number;
-  message: string;
-  status: "full" | "lower" | "higher";
+  percent?: number;
+  message?: string;
+  status?: "full" | "lower" | "higher";
   locals?: LocalType[];
 };

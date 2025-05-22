@@ -4,6 +4,7 @@ import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import AdminHeader from "@/components/Header/AdminHeader/AdminHeader";
 import Sidebar from "@/components/Admin/Sidebar/Sidebar";
+import ToastProvider from "./ToastProvider";
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -25,13 +26,15 @@ export default function FragebogenLayout({
     <html lang="en">
       <body className={`${exo_2Sans.variable}`}>
         <QueryProvider>
-          <div className="h-screen grid grid-rows-[auto_1fr] bg-base-bg">
-            <AdminHeader />
-            <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] overflow-hidden w-full bg-base-bg">
-              <Sidebar />
-              {children}
+          <ToastProvider>
+            <div className="h-screen grid grid-rows-[auto_1fr] bg-base-bg">
+              <AdminHeader />
+              <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] overflow-hidden w-full bg-base-bg">
+                <Sidebar />
+                {children}
+              </div>
             </div>
-          </div>
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

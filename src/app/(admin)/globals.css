@@ -928,3 +928,25 @@ html {
 html {
   overflow: hidden;
 }
+
+.form-radio-item:has([data-state="checked"]) {
+  border-color: var(--color-green);
+  background-color: color-mix(
+    in oklab,
+    var(--color-green) /* #8ad68f */ 20%,
+    transparent
+  );
+}
+
+.form-rounded-checkbox:has([data-state="checked"]) {
+  border-color: var(--color-green);
+  background-color: color-mix(
+    in oklab,
+    var(--color-green) /* #8ad68f */ 20%,
+    transparent
+  );
+}
+
+.form-rounded-checkbox [data-state="checked"] {
+  border-color: var(--color-green);
+}

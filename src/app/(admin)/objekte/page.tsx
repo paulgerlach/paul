@@ -1,60 +1,29 @@
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteItem from "@/components/Admin/ObjekteItem/ObjekteItem";
 import { ROUTE_DASHBOARD, ROUTE_OBJEKTE_CREATE } from "@/routes/routes";
-import {
-  breadcrum_arrow,
-  objekte,
-  objekte1,
-  objekte2,
-  objekte3,
-  objekte4,
-} from "@/static/icons";
-import { type ObjektType } from "@/types";
+import { breadcrum_arrow, objekte } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
-
-const objekts: ObjektType[] = [
-  {
-    image: objekte1,
-    street: "Schmelzhütten Str. 39, 10117 Berlin",
-    commercialLocals: 2,
-    privateLocals: 21,
-    message: "+1 Vermietung Im Juni",
-    percent: 10,
-    status: "higher",
-    id: 1,
-  },
-  {
-    id: 2,
-    image: objekte2,
-    street: "Plauensche Str. 114, 10999 Berlin",
-    privateLocals: 17,
-    message: "Auszug Im August",
-    percent: 35,
-    status: "lower",
-  },
-  {
-    id: 3,
-    image: objekte3,
-    street: "Tucholsky Str. 43, 10627 Berlin",
-    commercialLocals: 1,
-    privateLocals: 4,
-    message: "1 freie Wohnung",
-    percent: 25,
-    status: "higher",
-  },
-  {
-    id: 4,
-    image: objekte4,
-    street: "Immanuelkirch Str. 12, 10627 Berlin",
-    privateLocals: 0,
-    message: "Voll vermietet",
-    percent: 0,
-    status: "full",
-  },
-];
+import { eq } from "drizzle-orm";
+import database from "@/db";
+import { objekte as objekteTable } from "@/db/drizzle/schema";
+import { supabaseServer } from "@/utils/supabase/server";
+import type { ObjektType } from "@/types";
 
 export default async function ObjektePage() {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.id) {
+    return <div>Unauthorized</div>;
+  }
+
+  const objekts = await database
+    .select()
+    .from(objekteTable)
+    .where(eq(objekteTable.user_id, user?.id));
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Link

@@ -15,6 +15,13 @@
       "when": 1747666182611,
       "tag": "0001_fluffy_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748037335437,
+      "tag": "0002_absurd_sunfire",
+      "breakpoints": true
     }
   ]
 }

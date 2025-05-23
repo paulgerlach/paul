@@ -29,6 +29,10 @@ import FormRoundedCheckbox from "./FormRoundedCheckbox";
 import FormSelectField from "./FormSelectField";
 import FormInputField from "./FormInputField";
 import FormDocuments from "./FormDocuments";
+import { useRouter } from "next/navigation";
+import { createLocal } from "@/actions/createLocal";
+import { toast } from "react-toastify";
+import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -53,22 +57,22 @@ const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
   floor: z.string().min(1, "Pflichtfeld"),
   living_space: z.coerce.number().min(1, "Pflichtfeld"),
-  house_location: z.string().optional(),
-  outdoor: z.string().optional(),
-  rooms: z.coerce.number().optional(),
-  house_fee: z.coerce.number().optional(),
-  outdoor_area: z.coerce.number().optional(),
-  residential_area: z.string().optional(),
-  apartment_type: z.string().optional(),
-  cellar_available: z.boolean().optional(),
-  tags: z.array(z.string()).optional(),
+  house_location: z.string().nullable(),
+  outdoor: z.string().nullable(),
+  rooms: z.coerce.number().nullable(),
+  house_fee: z.coerce.number().nullable(),
+  outdoor_area: z.coerce.number().nullable(),
+  residential_area: z.string().nullable(),
+  apartment_type: z.string().nullable(),
+  cellar_available: z.boolean().nullable(),
+  tags: z.array(z.string()).nullable(),
   heating_systems: z
     .array(z.string())
     .refine((val) => val.every((item) => heatingSystemOptions.includes(item)), {
       message: "Ungültige Auswahl",
     })
-    .optional(),
-  documents: z.array(z.instanceof(File)).optional(),
+    .nullable(),
+  documents: z.array(z.instanceof(File)).nullable(),
 });
 
 export type CreateObjekteUnitFormValues = z.infer<typeof localSchema>;
@@ -79,9 +83,9 @@ const defaultValues: CreateObjekteUnitFormValues = {
   living_space: 0,
   house_location: "",
   outdoor: "",
-  rooms: undefined,
-  house_fee: undefined,
-  outdoor_area: undefined,
+  rooms: null,
+  house_fee: null,
+  outdoor_area: null,
   residential_area: "",
   apartment_type: "",
   cellar_available: false,
@@ -90,7 +94,8 @@ const defaultValues: CreateObjekteUnitFormValues = {
   documents: [],
 };
 
-export default function CreateObjekteUnitForm() {
+export default function CreateObjekteUnitForm({ id }: { id: string }) {
+  const router = useRouter();
   const methods = useForm({
     resolver: zodResolver(localSchema),
     defaultValues,
@@ -101,7 +106,17 @@ export default function CreateObjekteUnitForm() {
       <form
         id="objekte-form"
         className="w-10/12"
-        onSubmit={methods.handleSubmit((data) => console.log(data))}>
+        onSubmit={methods.handleSubmit(async (data) => {
+          try {
+            await createLocal(data, id);
+            toast.success("Created");
+            router.push(`${ROUTE_OBJEKTE}/`);
+            methods.reset();
+          } catch (err) {
+            toast.error("error");
+            console.error(err);
+          }
+        })}>
         <FormTagsInput<CreateObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
@@ -197,7 +212,7 @@ export default function CreateObjekteUnitForm() {
                 </FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} value={field.value ?? ""} />
                   </FormControl>
                   <span className="absolute text-sm text-dark_green right-7 bottom-3">
                     €

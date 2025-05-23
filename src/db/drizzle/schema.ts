@@ -122,21 +122,21 @@ export const locals = pgTable(
       for: "all",
       to: ["public"],
       using: sql`
-        EXISTS (
-          SELECT 1
-          FROM objekte
-          WHERE objekte.id = locals.objekt_id
-          AND objekte.user_id = auth.uid()
-        )
-      `,
+          EXISTS (
+            SELECT 1
+            FROM objekte
+            WHERE objekte.id = locals.objekt_id
+            AND objekte.user_id = auth.uid()
+          )
+        `,
       withCheck: sql`
-        EXISTS (
-          SELECT 1
-          FROM objekte
-          WHERE objekte.id = locals.objekt_id
-          AND objekte.user_id = auth.uid()
-        )
-      `,
+          EXISTS (
+            SELECT 1
+            FROM objekte
+            WHERE objekte.id = locals.objekt_id
+            AND objekte.user_id = auth.uid()
+          )
+        `,
     }),
   ]
 );
@@ -172,21 +172,94 @@ export const localHistory = pgTable(
       for: "all",
       to: ["public"],
       using: sql`
-        EXISTS (
-          SELECT 1
-          FROM locals
-          JOIN objekte ON objekte.id = locals.objekt_id
-          WHERE locals.id = local_history.local_id
-          AND objekte.user_id = auth.uid()
+          EXISTS (
+            SELECT 1
+            FROM locals
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE locals.id = local_history.local_id
+            AND objekte.user_id = auth.uid()
+          )
+        `,
+      withCheck: sql`
+          EXISTS (
+            SELECT 1
+            FROM locals
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE locals.id = local_history.local_id
+            AND objekte.user_id = auth.uid()
+          )
+        `,
+    }),
+  ]
+);
+
+export const documents = pgTable(
+  "documents",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    document_name: text("document_name").notNull(),
+    document_url: text("document_url").notNull(),
+
+    related_id: uuid("related_id").notNull(),
+    related_type: text("related_type").notNull(), // 'objekt', 'local', or 'local_history'
+
+    created_at: timestamp("created_at", {
+      withTimezone: true,
+      mode: "string",
+    }).defaultNow(),
+  },
+  () => [
+    pgPolicy("Users can access only their own documents", {
+      as: "permissive",
+      for: "all",
+      to: ["public"],
+      using: sql`
+        (
+          (related_type = 'objekt' AND EXISTS (
+            SELECT 1 FROM objekte
+            WHERE objekte.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
+          OR
+          (related_type = 'local' AND EXISTS (
+            SELECT 1 FROM locals
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE locals.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
+          OR
+          (related_type = 'local_history' AND EXISTS (
+            SELECT 1 FROM local_history
+            JOIN locals ON locals.id = local_history.local_id
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE local_history.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
         )
       `,
       withCheck: sql`
-        EXISTS (
-          SELECT 1
-          FROM locals
-          JOIN objekte ON objekte.id = locals.objekt_id
-          WHERE locals.id = local_history.local_id
-          AND objekte.user_id = auth.uid()
+        (
+          (related_type = 'objekt' AND EXISTS (
+            SELECT 1 FROM objekte
+            WHERE objekte.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
+          OR
+          (related_type = 'local' AND EXISTS (
+            SELECT 1 FROM locals
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE locals.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
+          OR
+          (related_type = 'local_history' AND EXISTS (
+            SELECT 1 FROM local_history
+            JOIN locals ON locals.id = local_history.local_id
+            JOIN objekte ON objekte.id = locals.objekt_id
+            WHERE local_history.id = documents.related_id
+            AND objekte.user_id = auth.uid()
+          ))
         )
       `,
     }),

@@ -103,8 +103,8 @@ export default function ObjekteLocalItem({
                 sizes="100vw"
                 loading="lazy"
                 className="max-w-9 max-h-9"
-                src={handleLocalTypeIcon(item.type)}
-                alt={item.type}
+                src={handleLocalTypeIcon(item.type) || ""}
+                alt={item.type || ""}
               />
             </span>
             {handleStatusImage()}

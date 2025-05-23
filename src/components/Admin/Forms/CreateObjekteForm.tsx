@@ -20,6 +20,8 @@ import FormSelectField from "./FormSelectField";
 import FormInputField from "./FormInputField";
 import { createObjekt } from "@/actions/createObjekt";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 const objektTypeOptions: {
   type: BuildingType;
@@ -66,6 +68,7 @@ const objectSchema = z.object({
 export type CreateObjekteFormValues = z.infer<typeof objectSchema>;
 
 export default function CreateObjekteForm() {
+  const router = useRouter();
   const methods = useForm<CreateObjekteFormValues>({
     resolver: zodResolver(objectSchema),
     defaultValues: {
@@ -93,6 +96,7 @@ export default function CreateObjekteForm() {
           try {
             await createObjekt(data);
             toast.success("Created");
+            router.push(ROUTE_OBJEKTE);
             methods.reset();
           } catch (err) {
             toast.error("error");
@@ -127,7 +131,7 @@ export default function CreateObjekteForm() {
                         sizes="100vw"
                         loading="lazy"
                         className="max-w-9 max-h-9"
-                        src={handleLocalTypeIcon(option.type)}
+                        src={handleLocalTypeIcon(option.type) || ""}
                         alt="option image"
                       />
                       {option.name}

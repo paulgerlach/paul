@@ -1,29 +1,49 @@
-// "use server";
+"use server";
 
-// import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/CreateObjekteUnitForm";
-// import database from "@/db";
-// import { locals } from "@/db/drizzle/schema";
-// import { supabaseServer } from "@/utils/supabase/server";
+import { type CreateObjekteUnitFormValues } from "@/components/Admin/Forms/CreateObjekteUnitForm";
+import database from "@/db";
+import { locals } from "@/db/drizzle/schema";
+import { supabaseServer } from "@/utils/supabase/server";
+import { InferInsertModel } from "drizzle-orm";
 
-// export async function createLocal(formData: CreateObjekteUnitFormValues) {
-//   const supabase = await supabaseServer();
+export async function createLocal(
+  formData: CreateObjekteUnitFormValues,
+  objekt_id: string
+) {
+  const supabase = await supabaseServer();
 
-//   const {
-//     data: { user },
-//     error,
-//   } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-//   if (!user || error) {
-//     throw new Error("Nicht authentifiziert");
-//   }
+  if (error) {
+    throw new Error(`Supabase Auth Error: ${error.message}`);
+  }
 
-//   await database.insert(locals).values({
-//     objekt_id: formData.objekt_id,
-//     type: formData.type,
-//     unit_type: formData.unit_type,
-//     available: formData.available ?? true,
-//     status: formData.status,
-//     name: formData.name,
-//     created_at: new Date().toISOString(),
-//   });
-// }
+  if (!user) {
+    throw new Error("Nicht authentifiziert");
+  }
+
+  const insertData: InferInsertModel<typeof locals> = {
+    objekt_id,
+    usage_type: formData.usage_type,
+    floor: formData.floor,
+    living_space: String(formData.living_space),
+    house_location: formData.house_location ?? null,
+    outdoor: formData.outdoor ?? null,
+    rooms: String(formData.rooms ?? null),
+    house_fee: String(formData.house_fee ?? null),
+    outdoor_area: String(formData.outdoor_area ?? null),
+    residential_area: formData.residential_area ?? null,
+    apartment_type: formData.apartment_type ?? null,
+    cellar_available: formData.cellar_available ?? null,
+    tags: formData.tags ?? [],
+    heating_systems: formData.heating_systems ?? [],
+    created_at: new Date().toISOString(),
+  };
+
+  const inserted = await database.insert(locals).values(insertData).returning();
+
+  return inserted[0];
+}

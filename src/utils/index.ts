@@ -105,7 +105,9 @@ export function formatDate(input?: string): string {
   return `${parseInt(day, 10)} ${monthName} ${year}`;
 }
 
-export const handleLocalTypeIcon = (type: BuildingType): StaticImageData => {
+export const handleLocalTypeIcon = (
+  type?: BuildingType
+): StaticImageData | undefined => {
   switch (type) {
     case "commercial":
       return commercial;

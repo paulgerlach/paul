@@ -1,4 +1,5 @@
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
+import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/CreateObjekteUnitForm";
 import { type StaticImageData } from "next/image";
 
 export type NavGroupLink = {
@@ -93,13 +94,14 @@ export type LocalHistoryType = {
   days: number;
 };
 
-export type LocalType = {
+export type LocalType = CreateObjekteUnitFormValues & {
   id: number | string;
-  type: BuildingType;
-  unit_type: UnitType;
-  available: boolean;
-  status: "renting" | "vacancy" | "unavailable";
-  name: string;
+  objekt_id?: string;
+  status?: "renting" | "vacancy" | "unavailable";
+  name?: string;
+  available?: boolean;
+  type?: BuildingType;
+  unit_type?: UnitType;
   history?: LocalHistoryType[];
 };
 

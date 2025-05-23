@@ -1,31 +1,24 @@
+import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import CreateObjekteUnitForm from "@/components/Admin/Forms/CreateObjekteUnitForm";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { breadcrum_arrow } from "@/static/icons";
-import Image from "next/image";
-import Link from "next/link";
 
-export default function CreateLocalePage() {
+export default async function CreateLocalePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
-      <Link
-        className="flex items-center w-fit text-black/50 text-sm justify-start gap-2"
-        href={ROUTE_OBJEKTE}>
-        <Image
-          width={0}
-          height={0}
-          sizes="100vw"
-          loading="lazy"
-          className="max-w-5 max-h-5"
-          src={breadcrum_arrow}
-          alt="breadcrum_arrow"
-        />
-        Wohneinheiten
-      </Link>
-      <h1 className="mb-4 text-lg">Detailansicht Einheit</h1>
+      <Breadcrumb
+        backTitle="Wohneinheiten"
+        link={ROUTE_OBJEKTE}
+        title={`Detailansicht Einheit`}
+      />
       <ContentWrapper className="space-y-4 max-h-[90%]">
         <div className="px-10 py-9 rounded-2xl space-y-5 bg-[#FDFDFC]">
-          <CreateObjekteUnitForm />
+          <CreateObjekteUnitForm id={id} />
         </div>
       </ContentWrapper>
     </div>

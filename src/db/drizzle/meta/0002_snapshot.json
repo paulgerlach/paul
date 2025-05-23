@@ -1,0 +1,540 @@
+{
+  "id": "ed89add2-9e5d-4533-9476-75f18af3e6c3",
+  "prevId": "8ddf536a-5660-40c8-8982-d6daa3134524",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.documents": {
+      "name": "documents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "document_name": {
+          "name": "document_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document_url": {
+          "name": "document_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_id": {
+          "name": "related_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "related_type": {
+          "name": "related_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "Users can access only their own documents": {
+          "name": "Users can access only their own documents",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ],
+          "using": "\n        (\n          (related_type = 'objekt' AND EXISTS (\n            SELECT 1 FROM objekte\n            WHERE objekte.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n          OR\n          (related_type = 'local' AND EXISTS (\n            SELECT 1 FROM locals\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE locals.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n          OR\n          (related_type = 'local_history' AND EXISTS (\n            SELECT 1 FROM local_history\n            JOIN locals ON locals.id = local_history.local_id\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE local_history.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n        )\n      ",
+          "withCheck": "\n        (\n          (related_type = 'objekt' AND EXISTS (\n            SELECT 1 FROM objekte\n            WHERE objekte.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n          OR\n          (related_type = 'local' AND EXISTS (\n            SELECT 1 FROM locals\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE locals.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n          OR\n          (related_type = 'local_history' AND EXISTS (\n            SELECT 1 FROM local_history\n            JOIN locals ON locals.id = local_history.local_id\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE local_history.id = documents.related_id\n            AND objekte.user_id = auth.uid()\n          ))\n        )\n      "
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.local_history": {
+      "name": "local_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "local_id": {
+          "name": "local_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_per_month": {
+          "name": "price_per_month",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "days": {
+          "name": "days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "local_history_local_id_locals_id_fk": {
+          "name": "local_history_local_id_locals_id_fk",
+          "tableFrom": "local_history",
+          "tableTo": "locals",
+          "columnsFrom": [
+            "local_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "Users can access their own local history": {
+          "name": "Users can access their own local history",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ],
+          "using": "\n          EXISTS (\n            SELECT 1\n            FROM locals\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE locals.id = local_history.local_id\n            AND objekte.user_id = auth.uid()\n          )\n        ",
+          "withCheck": "\n          EXISTS (\n            SELECT 1\n            FROM locals\n            JOIN objekte ON objekte.id = locals.objekt_id\n            WHERE locals.id = local_history.local_id\n            AND objekte.user_id = auth.uid()\n          )\n        "
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.locals": {
+      "name": "locals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "objekt_id": {
+          "name": "objekt_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usage_type": {
+          "name": "usage_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "floor": {
+          "name": "floor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "living_space": {
+          "name": "living_space",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "house_location": {
+          "name": "house_location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "outdoor": {
+          "name": "outdoor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rooms": {
+          "name": "rooms",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "house_fee": {
+          "name": "house_fee",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "outdoor_area": {
+          "name": "outdoor_area",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "residential_area": {
+          "name": "residential_area",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "apartment_type": {
+          "name": "apartment_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cellar_available": {
+          "name": "cellar_available",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "heating_systems": {
+          "name": "heating_systems",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "locals_objekt_id_objekte_id_fk": {
+          "name": "locals_objekt_id_objekte_id_fk",
+          "tableFrom": "locals",
+          "tableTo": "objekte",
+          "columnsFrom": [
+            "objekt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "Users can access their own locals": {
+          "name": "Users can access their own locals",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ],
+          "using": "\n          EXISTS (\n            SELECT 1\n            FROM objekte\n            WHERE objekte.id = locals.objekt_id\n            AND objekte.user_id = auth.uid()\n          )\n        ",
+          "withCheck": "\n          EXISTS (\n            SELECT 1\n            FROM objekte\n            WHERE objekte.id = locals.objekt_id\n            AND objekte.user_id = auth.uid()\n          )\n        "
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.objekte": {
+      "name": "objekte",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "objekt_type": {
+          "name": "objekt_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "street": {
+          "name": "street",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "zip": {
+          "name": "zip",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "administration_type": {
+          "name": "administration_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hot_water_preparation": {
+          "name": "hot_water_preparation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "living_area": {
+          "name": "living_area",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usable_area": {
+          "name": "usable_area",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "land_area": {
+          "name": "land_area",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "build_year": {
+          "name": "build_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_elevator": {
+          "name": "has_elevator",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "heating_systems": {
+          "name": "heating_systems",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "Users can access only their own objects": {
+          "name": "Users can access only their own objects",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ],
+          "using": "(auth.uid() = user_id)",
+          "withCheck": "(auth.uid() = user_id)"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_id_fkey": {
+          "name": "users_id_fkey",
+          "tableFrom": "users",
+          "tableTo": "users",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "User can manage own profile": {
+          "name": "User can manage own profile",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "auth.uid() = id",
+          "withCheck": "auth.uid() = id"
+        },
+        "Users can access their own record": {
+          "name": "Users can access their own record",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "authenticated"
+          ],
+          "using": "(auth.uid() = id)"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users_in_auth": {
+      "name": "users_in_auth",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

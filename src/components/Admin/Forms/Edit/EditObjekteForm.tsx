@@ -13,15 +13,16 @@ import {
   heatingSystemOptions,
   administrationTypeOptions,
 } from "@/static/formSelectOptions";
-import FormTechnicalEquipment from "./FormTechnicalEquipment";
-import FormTagsInput from "./FormTagsInput";
-import FormRoundedCheckbox from "./FormRoundedCheckbox";
-import FormSelectField from "./FormSelectField";
-import FormInputField from "./FormInputField";
+import FormTechnicalEquipment from "../FormTechnicalEquipment";
+import FormTagsInput from "../FormTagsInput";
+import FormRoundedCheckbox from "../FormRoundedCheckbox";
+import FormSelectField from "../FormSelectField";
+import FormInputField from "../FormInputField";
 import { createObjekt } from "@/actions/createObjekt";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { editObjekt } from "@/actions/editObjekt";
 
 const objektTypeOptions: {
   type: BuildingType;
@@ -51,27 +52,35 @@ const objectSchema = z.object({
   zip: z.string().min(4, "Pflichtfeld"),
   administration_type: z.string().min(1, "Pflichtfeld"),
   hot_water_preparation: z.string().min(1, "Pflichtfeld"),
-  livingArea: z.coerce.number().optional(),
-  usableArea: z.coerce.number().optional(),
-  landArea: z.coerce.number().optional(),
-  buildYear: z.coerce.number().optional(),
-  hasElevator: z.boolean().optional(),
-  tags: z.array(z.string()).optional(),
+  livingArea: z.coerce.number().nullable(),
+  usableArea: z.coerce.number().nullable(),
+  landArea: z.coerce.number().nullable(),
+  buildYear: z.coerce.number().nullable(),
+  hasElevator: z.boolean().nullable(),
+  tags: z.array(z.string()).nullable(),
   heating_systems: z
     .array(z.string())
     .refine((val) => val.every((item) => heatingSystemOptions.includes(item)), {
       message: "Ungültige Auswahl",
     })
-    .optional(),
+    .nullable(),
 });
 
-export type CreateObjekteFormValues = z.infer<typeof objectSchema>;
+export type EditObjekteFormValues = z.infer<typeof objectSchema>;
 
-export default function CreateObjekteForm() {
+type EditObjekteFormProps = {
+  objekteID: string;
+  initialValues?: EditObjekteFormValues;
+};
+
+export default function EditObjekteForm({
+  objekteID,
+  initialValues,
+}: EditObjekteFormProps) {
   const router = useRouter();
-  const methods = useForm<CreateObjekteFormValues>({
+  const methods = useForm<EditObjekteFormValues>({
     resolver: zodResolver(objectSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       hasElevator: false,
       objekt_type: "condominium",
       tags: [],
@@ -94,8 +103,8 @@ export default function CreateObjekteForm() {
         className="w-10/12"
         onSubmit={methods.handleSubmit(async (data) => {
           try {
-            await createObjekt(data);
-            toast.success("Created");
+            await editObjekt(objekteID, data);
+            toast.success("Updated");
             router.push(ROUTE_OBJEKTE);
             methods.reset();
           } catch (err) {
@@ -103,7 +112,7 @@ export default function CreateObjekteForm() {
             console.error(err);
           }
         })}>
-        <FormTagsInput<CreateObjekteFormValues> control={methods.control} />
+        <FormTagsInput<EditObjekteFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h2 className="text-sm font-bold">Angaben zum Objekt</h2>
           <FormField
@@ -151,7 +160,7 @@ export default function CreateObjekteForm() {
             )}
           />
           <h2 className="text-sm font-bold">Verwaltungsrelevante Merkmale </h2>
-          <FormSelectField<CreateObjekteFormValues>
+          <FormSelectField<EditObjekteFormValues>
             control={methods.control}
             name="administration_type"
             label="Art der Verwaltung*"
@@ -162,21 +171,21 @@ export default function CreateObjekteForm() {
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Objektdaten</h2>
           <div className="grid grid-cols-9 gap-4">
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="street"
               label="Straßenname*"
               placeholder="Straßenname"
               className="col-span-5"
             />
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="zip"
               label="Postleizahl*"
               placeholder="Postleizahl"
               className="col-span-3"
             />
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="livingArea"
               label="Wohnfläche"
@@ -184,7 +193,7 @@ export default function CreateObjekteForm() {
               placeholder="Quadratmeter"
               className="col-span-3"
             />
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="usableArea"
               label="Nutzfläche"
@@ -192,7 +201,7 @@ export default function CreateObjekteForm() {
               placeholder="Quadratmeter"
               className="col-span-3"
             />
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="landArea"
               label="Grundstücksfläche"
@@ -200,7 +209,7 @@ export default function CreateObjekteForm() {
               placeholder="Quadratmeter"
               className="col-span-3"
             />
-            <FormInputField<CreateObjekteFormValues>
+            <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="buildYear"
               label="Baujahr"
@@ -209,13 +218,13 @@ export default function CreateObjekteForm() {
               className="col-span-3"
             />
           </div>
-          <FormRoundedCheckbox<CreateObjekteFormValues>
+          <FormRoundedCheckbox<EditObjekteFormValues>
             control={methods.control}
             name="hasElevator"
             label="Aufzug vorhanden"
           />
         </div>
-        <FormTechnicalEquipment<CreateObjekteFormValues>
+        <FormTechnicalEquipment<EditObjekteFormValues>
           control={methods.control}
         />
         <Button type="submit" className="mt-6 ml-auto mr-0 block">

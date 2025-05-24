@@ -1,6 +1,6 @@
 "use server";
 
-import { type CreateObjekteUnitFormValues } from "@/components/Admin/Forms/CreateObjekteUnitForm";
+import { type CreateObjekteUnitFormValues } from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
 import database from "@/db";
 import { locals } from "@/db/drizzle/schema";
 import { supabaseServer } from "@/utils/supabase/server";

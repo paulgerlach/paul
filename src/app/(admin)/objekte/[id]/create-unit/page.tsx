@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import CreateObjekteUnitForm from "@/components/Admin/Forms/CreateObjekteUnitForm";
+import CreateObjekteUnitForm from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 export default async function CreateLocalePage({

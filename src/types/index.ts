@@ -1,5 +1,5 @@
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
-import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/CreateObjekteUnitForm";
+import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
 import { type StaticImageData } from "next/image";
 
 export type NavGroupLink = {

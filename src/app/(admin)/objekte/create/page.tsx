@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import CreateObjekteForm from "@/components/Admin/Forms/CreateObjekteForm";
+import CreateObjekteForm from "@/components/Admin/Forms/Create/CreateObjekteForm";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 export default function ObjekteCreatePage() {

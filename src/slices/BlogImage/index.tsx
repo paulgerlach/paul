@@ -21,8 +21,8 @@ export type BlogImageProps = SliceComponentProps<
 const BlogImage: FC<BlogImageProps> = ({ slice, context }) => {
   return (
     <Fragment>
-      <div className="flex items-center justify-between max-medium:grid max-medium:grid-cols-2 gap-4">
-        <div className="max-medium:col-span-2">
+      <div className="flex items-center blogImage justify-between max-medium:grid max-medium:grid-cols-2 gap-2">
+        <div className="flex items-center flex-wrap gap-1 blogImageTags">
           {context?.tags?.map((tag: string) => (
             <span
               key={tag}
@@ -31,7 +31,7 @@ const BlogImage: FC<BlogImageProps> = ({ slice, context }) => {
             </span>
           ))}
         </div>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm max-medium:text-base blogImageDate text-gray-500">
           {slice.primary.creationdate
             ? formatDate(slice.primary.creationdate)
             : ""}

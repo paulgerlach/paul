@@ -917,3 +917,21 @@ html {
     }
   }
 }
+
+@media (max-width: 768px) {
+  .blogImage {
+    grid-template-areas:
+      "blog-date blog-date"
+      "blog-tags blog-copy-link";
+  }
+  .blogImage .blogImageTags {
+    grid-area: blog-tags;
+  }
+  .blogImage .blogImageCopyLink {
+    grid-area: blog-copy-link;
+  }
+  .blogImage .blogImageDate {
+    grid-area: blog-date;
+    text-align: center;
+  }
+}

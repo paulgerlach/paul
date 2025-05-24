@@ -18,7 +18,7 @@ export default async function RecomendedBlogs({
             Aktuell
           </h3>
           <Link
-            className="max-medium:w-full min-w-28 cursor-pointer flex items-center justify-start gap-1.5 text-center w-fit text-xs font-medium bg-green/30 rounded-full px-2 py-1 mr-2 text-dark_text my-5 transition-all duration-300 hover:bg-green/80 active:bg-green/90 disabled:bg-green/50 disabled:cursor-not-allowed"
+            className="min-w-28 cursor-pointer flex items-center justify-start gap-1.5 text-center w-fit text-xs font-medium bg-green/30 rounded-full px-2 py-1 mr-2 text-dark_text my-5 transition-all duration-300 hover:bg-green/80 active:bg-green/90 disabled:bg-green/50 disabled:cursor-not-allowed"
             href={ROUTE_BLOG}>
             Alle Beiträge ansehen
           </Link>

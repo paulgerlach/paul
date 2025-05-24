@@ -36,13 +36,15 @@ export default function BlogPost({ post }: { post: AllDocumentTypes }) {
         <span className="text-sm max-medium:text-xs text-gray-500">
           {formatDate(String(postImageDate))}
         </span>
-        {post.tags?.map((tag) => (
-          <span
-            key={tag}
-            className="text-xs font-medium bg-green/30 rounded-full px-2 py-1">
-            {tag}
-          </span>
-        ))}
+        <div className="flex items-center justify-end gap-1">
+          {post.tags?.map((tag) => (
+            <span
+              key={tag}
+              className="text-xs font-medium bg-green/30 rounded-full px-2 py-1">
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
     </Link>
   );

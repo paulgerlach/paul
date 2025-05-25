@@ -15,10 +15,12 @@ import {
 
 export type FormTagsInputProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
+  disabled?: boolean;
 };
 
 export default function FormTagsInput<T extends FieldValues = FieldValues>({
   control,
+  disabled,
 }: FormTagsInputProps<T>) {
   const [tagInput, setTagInput] = useState("");
   const { setValue } = useFormContext<T>();
@@ -50,12 +52,14 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
   return (
     <FormField
       control={control}
+      disabled={disabled}
       name={"tags" as Path<T>}
       render={() => (
         <FormItem className="space-y-4 pb-4 border-b border-dark_green/20">
           <FormControl>
             <input
               type="text"
+              disabled={disabled}
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleTagKeyDown}
@@ -71,8 +75,9 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
                 {tag}
                 <button
                   type="button"
+                  disabled={disabled}
                   onClick={() => handleRemoveTag(index)}
-                  className="text-green-600 cursor-pointer hover:text-red-500 font-bold text-sm">
+                  className={`text-green-600 ${disabled ? "cursor-not-allowed" : "cursor-pointer"} hover:text-red-500 font-bold text-sm`}>
                   &times;
                 </button>
               </span>

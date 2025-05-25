@@ -16,6 +16,7 @@ export type FormInputFieldProps<T extends FieldValues = FieldValues> = {
   placeholder: string;
   type?: React.HTMLInputTypeAttribute;
   className?: string;
+  disabled?: boolean;
 };
 
 export default function FormInputField<T extends FieldValues = FieldValues>({
@@ -25,11 +26,13 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
   placeholder,
   type,
   className,
+  disabled,
 }: FormInputFieldProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
+      disabled={disabled}
       render={({ field }) => (
         <FormItem className={className}>
           {label && (
@@ -38,6 +41,7 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
           <FormControl>
             <Input
               min={0}
+              disabled={disabled}
               type={type}
               placeholder={placeholder}
               {...field}

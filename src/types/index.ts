@@ -84,7 +84,7 @@ export type BuildingType =
 export type UnitType = "residential" | "commercial" | "parking" | "warehouse";
 
 export type LocalHistoryType = {
-  id: number | string;
+  id: string;
   start_date: string;
   end_date: string;
   last_name: string;
@@ -95,7 +95,7 @@ export type LocalHistoryType = {
 };
 
 export type LocalType = CreateObjekteUnitFormValues & {
-  id: number | string;
+  id: string;
   objekt_id?: string;
   status?: "renting" | "vacancy" | "unavailable";
   name?: string;
@@ -106,7 +106,7 @@ export type LocalType = CreateObjekteUnitFormValues & {
 };
 
 export type ObjektType = {
-  id: number | string;
+  id: string;
   image?: StaticImageData;
   street: string;
   privateLocals?: number;

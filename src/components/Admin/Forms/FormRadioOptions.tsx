@@ -22,24 +22,27 @@ export type FormRadioOptionsProps<
   options: FormRadioOption<O>[];
   label: string;
   name: Path<T>;
+  disabled?: boolean;
 };
 
 export default function FormRadioOptions<
   T extends FieldValues = FieldValues,
   O extends string | number = string,
->({ control, options, label, name }: FormRadioOptionsProps<T, O>) {
+>({ control, options, label, name, disabled }: FormRadioOptionsProps<T, O>) {
   return (
     <Fragment>
       {label && <h2 className="text-sm font-bold">{label}</h2>}
       <FormField
         control={control}
         name={name}
+        disabled={disabled}
         render={({ field }) => (
           <FormItem>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
                 value={field.value}
+                disabled={disabled}
                 className="flex items-center gap-2.5 mt-2">
                 {options.map((option) => (
                   <FormItem

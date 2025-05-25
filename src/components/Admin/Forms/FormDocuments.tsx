@@ -11,12 +11,14 @@ type FormDocumentsProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label?: string;
+  disabled?: boolean;
 };
 
 export default function FormDocuments<T extends FieldValues = FieldValues>({
   control,
   name,
   label,
+  disabled = false,
 }: FormDocumentsProps<T>) {
   return (
     <div className="w-full py-5 space-y-3">
@@ -26,7 +28,11 @@ export default function FormDocuments<T extends FieldValues = FieldValues>({
         name={name}
         control={control}
         render={({ field }) => (
-          <DropzoneArea files={field.value || []} onChange={field.onChange} />
+          <DropzoneArea
+            files={field.value || []}
+            onChange={field.onChange}
+            disabled={disabled}
+          />
         )}
       />
     </div>
@@ -36,9 +42,10 @@ export default function FormDocuments<T extends FieldValues = FieldValues>({
 type DropzoneAreaProps = {
   files: FilePreview[];
   onChange: (files: FilePreview[]) => void;
+  disabled?: boolean;
 };
 
-function DropzoneArea({ files, onChange }: DropzoneAreaProps) {
+function DropzoneArea({ files, onChange, disabled }: DropzoneAreaProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const filesWithPreview = acceptedFiles.map((file) =>
@@ -61,6 +68,7 @@ function DropzoneArea({ files, onChange }: DropzoneAreaProps) {
     onDrop,
     accept: { "application/pdf": [".pdf"], "image/*": [] },
     multiple: true,
+    disabled,
   });
 
   return (
@@ -83,7 +91,7 @@ function DropzoneArea({ files, onChange }: DropzoneAreaProps) {
               </span>
               <button
                 type="button"
-                onClick={() => removeFile(idx)}
+                onClick={() => !disabled && removeFile(idx)}
                 className="text-dark_green cursor-pointer hover:text-red-700">
                 <X size={16} />
               </button>
@@ -97,7 +105,7 @@ function DropzoneArea({ files, onChange }: DropzoneAreaProps) {
         className={`border-2 border-dashed rounded-lg p-3.5 text-center cursor-pointer transition ${
           isDragActive ? "border-green bg-green/20" : "border-link"
         }`}>
-        <input {...getInputProps()} />
+        <input disabled={disabled} {...getInputProps()} />
         {isDragActive ? (
           <p className="text-link">Dateien hier ablegen...</p>
         ) : (

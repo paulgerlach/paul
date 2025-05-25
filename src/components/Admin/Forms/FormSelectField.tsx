@@ -21,6 +21,7 @@ export type FormSelectFieldProps<T extends FieldValues = FieldValues> = {
   label: string;
   placeholder: string;
   options: string[];
+  disabled?: boolean;
 };
 
 export default function FormSelectField<T extends FieldValues = FieldValues>({
@@ -29,15 +30,20 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
   label,
   options,
   placeholder,
+  disabled = false,
 }: FormSelectFieldProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
+      disabled={disabled}
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>
-          <Select value={field.value} onValueChange={field.onChange}>
+          <Select
+            disabled={disabled}
+            value={field.value}
+            onValueChange={field.onChange}>
             <FormControl>
               <SelectTrigger className="w-full">
                 <SelectValue

@@ -1,5 +1,5 @@
+import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { dots_button } from "@/static/icons";
 import { type ObjektType } from "@/types";
 import { renderTradeColor, renderTradeIcon } from "@/utils";
 import Image from "next/image";
@@ -7,10 +7,10 @@ import Link from "next/link";
 
 export default function ObjekteItem({ item }: { item: ObjektType }) {
   return (
-    <Link
-      href={`${ROUTE_OBJEKTE}/${item.id}`}
-      className="bg-white p-4 rounded-2xl flex items-center justify-between">
-      <div className="flex items-center justify-start gap-8">
+    <div className="bg-white p-4 rounded-2xl flex items-center justify-between">
+      <Link
+        href={`${ROUTE_OBJEKTE}/${item.id}`}
+        className="flex items-center justify-start gap-8">
         {item.image ? (
           <Image
             width={0}
@@ -33,7 +33,7 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
               : ""}
           </p>
         </div>
-      </div>
+      </Link>
       <div className="flex items-center justify-end gap-7">
         {item.status && (
           <div className="rounded-xl min-h-[100px] min-w-[170px] flex flex-col justify-between bg-white drop-shadow-xl p-3">
@@ -59,18 +59,13 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
             </div>
           </div>
         )}
-        <button className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center">
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            className="max-w-4 max-h-4"
-            src={dots_button}
-            alt="dots button"
-          />
-        </button>
+        <ThreeDotsButton
+          editLink={`${ROUTE_OBJEKTE}/${item.id}/edit`}
+          itemID={item.id}
+          dialogId="objekte-dialog-delete"
+          detailsLink={`${ROUTE_OBJEKTE}/${item.id}/info`}
+        />
       </div>
-    </Link>
+    </div>
   );
 }

@@ -34,17 +34,19 @@ import { Control, FieldValues, Path } from "react-hook-form";
 
 export type FormTechnicalEquipmentProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
+  disabled?: boolean;
 };
 
 export default function FormTechnicalEquipment<
   T extends FieldValues = FieldValues,
->({ control }: FormTechnicalEquipmentProps<T>) {
+>({ control, disabled }: FormTechnicalEquipmentProps<T>) {
   return (
     <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
       <h2 className="text-sm font-bold">Technische Ausstattung</h2>
       <div className="grid grid-cols-2 items-start gap-5">
         <FormField
           control={control}
+          disabled={disabled}
           name={"heating_systems" as Path<T>}
           render={({ field }) => {
             const selectedValues = (field.value || []) as string[];
@@ -63,7 +65,9 @@ export default function FormTechnicalEquipment<
                   Heizungssystem
                 </FormLabel>
                 <Popover>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger
+                    onClick={(e) => disabled && e.preventDefault()}
+                    asChild>
                     <div className="border-black/20 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring aria-invalid:ring-green/20 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex items-center justify-between gap-2 rounded border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-green disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 w-full">
                       {selectedValues.length > 0
                         ? `${selectedValues.length} ausgewählt`
@@ -71,7 +75,7 @@ export default function FormTechnicalEquipment<
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="min-w-xs w-full bg-white border-none shadow-sm p-0">
-                    <Command>
+                    <Command disablePointerSelection={disabled}>
                       <CommandList className="w-full">
                         <CommandEmpty>Keine Option gefunden.</CommandEmpty>
                         {heatingSystemOptions.map((option) => (
@@ -98,8 +102,9 @@ export default function FormTechnicalEquipment<
                         className="flex items-center gap-1">
                         {item}
                         <X
-                          className="h-3 w-3 transition-all duration-300 hover:text-red-500 cursor-pointer"
+                          className={`h-3 w-3 transition-all duration-300 hover:text-red-500 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
                           onClick={() =>
+                            !disabled &&
                             field.onChange(
                               selectedValues.filter((val) => val !== item)
                             )
@@ -117,13 +122,17 @@ export default function FormTechnicalEquipment<
 
         <FormField
           control={control}
+          disabled={disabled}
           name={"hot_water_preparation" as Path<T>}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-[#757575] text-sm">
                 Warmwasserbereitung
               </FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                disabled={disabled}
+                value={field.value}
+                onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue

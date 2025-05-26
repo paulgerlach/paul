@@ -1,0 +1,45 @@
+"use server";
+
+import { type EditObjekteUnitFormValues } from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
+import database from "@/db";
+import { locals } from "@/db/drizzle/schema";
+import { supabaseServer } from "@/utils/supabase/server";
+import { eq } from "drizzle-orm";
+
+export async function editLocal(
+  localId: string,
+  formData: EditObjekteUnitFormValues
+) {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) throw new Error(`Supabase Auth Error: ${error.message}`);
+  if (!user) throw new Error("Nicht authentifiziert");
+
+  const updateData = {
+    usage_type: formData.usage_type,
+    floor: formData.floor,
+    living_space: String(formData.living_space) ?? null,
+    house_location: formData.house_location ?? null,
+    outdoor: formData.outdoor ?? null,
+    rooms: String(formData.rooms) ?? null,
+    house_fee: String(formData.house_fee) ?? null,
+    outdoor_area: String(formData.outdoor_area) ?? null,
+    residential_area: formData.residential_area ?? null,
+    apartment_type: formData.apartment_type ?? null,
+    cellar_available: formData.cellar_available ?? null,
+    tags: formData.tags ?? [],
+    heating_systems: formData.heating_systems ?? [],
+  };
+
+  const [updated] = await database
+    .update(locals)
+    .set(updateData)
+    .where(eq(locals.id, localId))
+    .returning();
+
+  return updated;
+}

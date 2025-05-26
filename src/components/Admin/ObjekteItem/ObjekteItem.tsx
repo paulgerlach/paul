@@ -62,7 +62,7 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
         <ThreeDotsButton
           editLink={`${ROUTE_OBJEKTE}/${item.id}/edit`}
           itemID={item.id}
-          dialogId="objekte-dialog-delete"
+          dialogAction="object_delete"
           detailsLink={`${ROUTE_OBJEKTE}/${item.id}/info`}
         />
       </div>

@@ -1,24 +1,24 @@
 "use client";
 
 import { useDeleteDialogStore } from "@/store/useDeleteDIalogStore";
-import { deleteObjekt } from "@/actions/deleteObjekt";
+import { deleteLocal } from "@/actions/deleteLocal";
 import { useClickOutside } from "@/utils/client";
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ObjekteDeleteDialog() {
+export default function LocalDeleteDialog() {
   const { itemID, openDialogByType, closeDialog } = useDeleteDialogStore();
-  const isOpen = openDialogByType.object_delete;
+  const isOpen = openDialogByType.local_delete;
   const dialogRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  useClickOutside(dialogRef, () => closeDialog("object_delete"));
+  useClickOutside(dialogRef, () => closeDialog("local_delete"));
 
   const handleDelete = async () => {
     if (!!itemID) {
-      const res = await deleteObjekt(itemID);
+      const res = await deleteLocal(itemID);
       if (res.success) {
-        closeDialog("object_delete");
+        closeDialog("local_delete");
         router.refresh();
       }
     }
@@ -39,7 +39,7 @@ export default function ObjekteDeleteDialog() {
             </button>
             <button
               className="px-6 py-4 cursor-pointer rounded-md bg-card_light border-none text-dark_green font-medium shadow-xs transition-all duration-300 hover:opacity-80"
-              onClick={() => closeDialog("object_delete")}>
+              onClick={() => closeDialog("local_delete")}>
               Abbrechen
             </button>
           </div>

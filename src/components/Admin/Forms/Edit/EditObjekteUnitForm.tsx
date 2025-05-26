@@ -30,9 +30,9 @@ import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import FormDocuments from "../FormDocuments";
 import { useRouter } from "next/navigation";
-import { createLocal } from "@/actions/createLocal";
 import { toast } from "react-toastify";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { editLocal } from "@/actions/editLocal";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -75,9 +75,9 @@ const localSchema = z.object({
   documents: z.array(z.instanceof(File)).nullable(),
 });
 
-export type CreateObjekteUnitFormValues = z.infer<typeof localSchema>;
+export type EditObjekteUnitFormValues = z.infer<typeof localSchema>;
 
-const defaultValues: CreateObjekteUnitFormValues = {
+const defaultValues: EditObjekteUnitFormValues = {
   usage_type: "residential",
   floor: "",
   living_space: 0,
@@ -94,15 +94,21 @@ const defaultValues: CreateObjekteUnitFormValues = {
   documents: [],
 };
 
-export default function CreateObjekteUnitForm({
-  id: objekteID,
-}: {
-  id: string;
-}) {
+type EditObjekteUnitFormProps = {
+  localID: string;
+  objektID: string;
+  initialValues?: EditObjekteUnitFormValues;
+};
+
+export default function EditObjekteUnitForm({
+  objektID,
+  localID,
+  initialValues,
+}: EditObjekteUnitFormProps) {
   const router = useRouter();
   const methods = useForm({
     resolver: zodResolver(localSchema),
-    defaultValues,
+    defaultValues: initialValues ?? defaultValues,
   });
 
   return (
@@ -112,21 +118,21 @@ export default function CreateObjekteUnitForm({
         className="w-10/12"
         onSubmit={methods.handleSubmit(async (data) => {
           try {
-            await createLocal(data, objekteID);
+            await editLocal(localID, data);
             toast.success("Created");
-            router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
+            router.push(`${ROUTE_OBJEKTE}/${objektID}`);
             methods.reset();
           } catch (err) {
             toast.error("error");
             console.error(err);
           }
         })}>
-        <FormTagsInput<CreateObjekteUnitFormValues> control={methods.control} />
+        <FormTagsInput<EditObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
             1. OG Vorderhaus rechts, 76qm
           </h1>
-          <FormRadioOptions<CreateObjekteUnitFormValues, UnitType>
+          <FormRadioOptions<EditObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}
             control={methods.control}
             label="Nutzungsart auswählen"
@@ -134,35 +140,35 @@ export default function CreateObjekteUnitForm({
           />
           <h2 className="text-sm font-bold">Wohnungsdetails</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="floor"
               label="Etage*"
               placeholder="Etage*"
               options={floorOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="house_location"
               label="Hauslage"
               placeholder="Hauslage"
               options={houseLocatonOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="residential_area"
               label="Wohnlage"
               placeholder="Wohnlage"
               options={residentialAreaOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="apartment_type"
               label="Wohnungstyp"
               placeholder="Wohnungstyp"
               options={apartmentTypeOptions}
             />
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<EditObjekteUnitFormValues>
               control={methods.control}
               name="living_space"
               label="Wohnfläche*"
@@ -173,33 +179,33 @@ export default function CreateObjekteUnitForm({
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<EditObjekteUnitFormValues>
               control={methods.control}
               label="Zimmeranzahl"
               placeholder="Anzahl der Zimmer"
               name="rooms"
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="outdoor"
               label="Außenbereich"
               placeholder="Außenbereich"
               options={outdoorOptions}
             />
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<EditObjekteUnitFormValues>
               control={methods.control}
               label="Fläche Außenbereich"
               placeholder="Quadratmeter"
               name="outdoor_area"
             />
           </div>
-          <FormRoundedCheckbox<CreateObjekteUnitFormValues>
+          <FormRoundedCheckbox<EditObjekteUnitFormValues>
             control={methods.control}
             name="cellar_available"
             label="Keller vorhanden"
           />
         </div>
-        <FormTechnicalEquipment<CreateObjekteUnitFormValues>
+        <FormTechnicalEquipment<EditObjekteUnitFormValues>
           control={methods.control}
         />
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
@@ -227,7 +233,7 @@ export default function CreateObjekteUnitForm({
             )}
           />
         </div>
-        <FormDocuments<CreateObjekteUnitFormValues>
+        <FormDocuments<EditObjekteUnitFormValues>
           control={methods.control}
           name="documents"
           label="Dokumente"

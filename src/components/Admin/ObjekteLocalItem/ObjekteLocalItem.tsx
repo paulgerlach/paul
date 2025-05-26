@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
@@ -126,17 +127,12 @@ export default function ObjekteLocalItem({
         </div>
         <div className="flex items-center justify-end gap-7">
           {handleStatusBadge()}
-          <button className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-4 max-h-4"
-              src={dots_button}
-              alt="dots button"
-            />
-          </button>
+          <ThreeDotsButton
+            editLink={`${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/edit`}
+            itemID={item.id}
+            dialogAction="local_delete"
+            detailsLink={`${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/info`}
+          />
         </div>
       </div>
       {!item.available ? (

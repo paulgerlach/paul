@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from "@/components/Basic/ui/Form";
 import { Input } from "@/components/Basic/ui/Input";
-import { Button } from "@/components/Basic/ui/Button";
 import type { UnitType } from "@/types";
 import {
   apartmentTypeOptions,
@@ -29,10 +28,8 @@ import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import FormDocuments from "../FormDocuments";
-import { useRouter } from "next/navigation";
-import { createLocal } from "@/actions/createLocal";
-import { toast } from "react-toastify";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import Link from "next/link";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -75,9 +72,9 @@ const localSchema = z.object({
   documents: z.array(z.instanceof(File)).nullable(),
 });
 
-export type CreateObjekteUnitFormValues = z.infer<typeof localSchema>;
+export type InfoObjekteUnitFormValues = z.infer<typeof localSchema>;
 
-const defaultValues: CreateObjekteUnitFormValues = {
+const defaultValues: InfoObjekteUnitFormValues = {
   usage_type: "residential",
   floor: "",
   living_space: 0,
@@ -94,78 +91,77 @@ const defaultValues: CreateObjekteUnitFormValues = {
   documents: [],
 };
 
-export default function CreateObjekteUnitForm({
-  id: objekteID,
-}: {
-  id: string;
-}) {
-  const router = useRouter();
+type InfoObjekteUnitFormProps = {
+  objektID: string;
+  initialValues?: InfoObjekteUnitFormValues;
+};
+
+export default function InfoObjekteUnitForm({
+  objektID,
+  initialValues,
+}: InfoObjekteUnitFormProps) {
   const methods = useForm({
     resolver: zodResolver(localSchema),
-    defaultValues,
+    defaultValues: initialValues ?? defaultValues,
   });
 
   return (
     <Form {...methods}>
-      <form
-        id="objekte-form"
-        className="w-10/12"
-        onSubmit={methods.handleSubmit(async (data) => {
-          try {
-            await createLocal(data, objekteID);
-            toast.success("Created");
-            router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
-            methods.reset();
-          } catch (err) {
-            toast.error("error");
-            console.error(err);
-          }
-        })}>
-        <FormTagsInput<CreateObjekteUnitFormValues> control={methods.control} />
+      <form id="objekte-form" className="w-10/12">
+        <FormTagsInput<InfoObjekteUnitFormValues>
+          disabled
+          control={methods.control}
+        />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
             1. OG Vorderhaus rechts, 76qm
           </h1>
-          <FormRadioOptions<CreateObjekteUnitFormValues, UnitType>
+          <FormRadioOptions<InfoObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}
             control={methods.control}
+            disabled
             label="Nutzungsart auswählen"
             name="usage_type"
           />
           <h2 className="text-sm font-bold">Wohnungsdetails</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="floor"
               label="Etage*"
+              disabled
               placeholder="Etage*"
               options={floorOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="house_location"
               label="Hauslage"
+              disabled
               placeholder="Hauslage"
               options={houseLocatonOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="residential_area"
               label="Wohnlage"
+              disabled
               placeholder="Wohnlage"
               options={residentialAreaOptions}
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="apartment_type"
               label="Wohnungstyp"
+              disabled
               placeholder="Wohnungstyp"
               options={apartmentTypeOptions}
             />
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="living_space"
               label="Wohnfläche*"
+              disabled
               placeholder="Quadratmeter"
             />
           </div>
@@ -173,34 +169,39 @@ export default function CreateObjekteUnitForm({
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<InfoObjekteUnitFormValues>
               control={methods.control}
               label="Zimmeranzahl"
+              disabled
               placeholder="Anzahl der Zimmer"
               name="rooms"
             />
-            <FormSelectField<CreateObjekteUnitFormValues>
+            <FormSelectField<InfoObjekteUnitFormValues>
               control={methods.control}
               name="outdoor"
+              disabled
               label="Außenbereich"
               placeholder="Außenbereich"
               options={outdoorOptions}
             />
-            <FormInputField<CreateObjekteUnitFormValues>
+            <FormInputField<InfoObjekteUnitFormValues>
               control={methods.control}
               label="Fläche Außenbereich"
               placeholder="Quadratmeter"
+              disabled
               name="outdoor_area"
             />
           </div>
-          <FormRoundedCheckbox<CreateObjekteUnitFormValues>
+          <FormRoundedCheckbox<InfoObjekteUnitFormValues>
             control={methods.control}
             name="cellar_available"
             label="Keller vorhanden"
+            disabled
           />
         </div>
-        <FormTechnicalEquipment<CreateObjekteUnitFormValues>
+        <FormTechnicalEquipment<InfoObjekteUnitFormValues>
           control={methods.control}
+          disabled
         />
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">
@@ -209,6 +210,7 @@ export default function CreateObjekteUnitForm({
           <FormField
             control={methods.control}
             name="house_fee"
+            disabled
             render={({ field }) => (
               <FormItem className="relative">
                 <FormLabel className="text-[#757575] text-sm">
@@ -216,7 +218,7 @@ export default function CreateObjekteUnitForm({
                 </FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} />
+                    <Input disabled {...field} value={field.value ?? ""} />
                   </FormControl>
                   <span className="absolute text-sm text-dark_green right-7 bottom-3">
                     €
@@ -227,14 +229,17 @@ export default function CreateObjekteUnitForm({
             )}
           />
         </div>
-        <FormDocuments<CreateObjekteUnitFormValues>
+        <FormDocuments<InfoObjekteUnitFormValues>
           control={methods.control}
           name="documents"
+          disabled
           label="Dokumente"
         />
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
-          Speichern
-        </Button>
+        <Link
+          href={`${ROUTE_OBJEKTE}/${objektID}`}
+          className="mt-6 ml-auto mr-0 flex bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 duration-300 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 shrink-0 outline-none cursor-pointer">
+          Zurück zur Liste
+        </Link>
       </form>
     </Form>
   );

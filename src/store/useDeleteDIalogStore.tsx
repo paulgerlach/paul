@@ -1,43 +1,47 @@
 import { create } from "zustand";
 
+export type DialogActionTYpe = "delete";
+
+export type DocumentType = "object" | "local" | "tenant";
+
+export type DialogDocumentActonType = `${DocumentType}_${DialogActionTYpe}`;
+
 export type DeleteDialogStoreType = {
-  openDialog: () => void;
-  closeDialog: () => void;
-  setDialogID: (id: string) => void;
-  dialogID: string;
-  itemID: string;
-  setItemID: (id: string) => void;
+  openDialogByType: Record<DialogDocumentActonType, boolean>;
+  itemID: string | null;
+  setItemID: (id: string | null) => void;
+  isOpen: boolean;
+  openDialog: (type: DialogDocumentActonType) => void;
+  closeDialog: (type: DialogDocumentActonType) => void;
+  toggleDialog: (type: DialogDocumentActonType) => void;
 };
 
-export const useDeleteDialogStore = create<DeleteDialogStoreType>(
-  (set, get) => ({
-    dialogID: "",
-    itemID: "",
-    setItemID: (id: string) => {
-      set(() => ({
-        itemID: id,
-      }));
-    },
-    openDialog: () => {
-      const dialog: HTMLDialogElement | null = document.getElementById(
-        get().dialogID
-      ) as HTMLDialogElement | null;
-      if (dialog) {
-        dialog.showModal();
-      }
-    },
-    closeDialog: () => {
-      const dialog: HTMLDialogElement | null = document.getElementById(
-        get().dialogID
-      ) as HTMLDialogElement | null;
-      if (dialog) {
-        dialog.close();
-      }
-    },
-    setDialogID(id: string) {
-      set(() => ({
-        dialogID: id,
-      }));
-    },
-  })
-);
+export const useDeleteDialogStore = create<DeleteDialogStoreType>((set) => ({
+  itemID: null,
+  isOpen: false,
+  openDialogByType: {
+    object_delete: false,
+    local_delete: false,
+    tenant_delete: false,
+  },
+
+  setItemID: (id) => set({ itemID: id }),
+
+  openDialog: (type) =>
+    set((s) => ({
+      openDialogByType: { ...s.openDialogByType, [type]: true },
+    })),
+
+  closeDialog: (type) =>
+    set((s) => ({
+      openDialogByType: { ...s.openDialogByType, [type]: false },
+    })),
+
+  toggleDialog: (type) =>
+    set((s) => ({
+      openDialogByType: {
+        ...s.openDialogByType,
+        [type]: !s.openDialogByType[type],
+      },
+    })),
+}));

@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 import database from "@/db";
 import { objekte as objekteTable } from "@/db/drizzle/schema";
 import { supabaseServer } from "@/utils/supabase/server";
-import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 
 export default async function ObjektePage() {
   const supabase = await supabaseServer();
@@ -62,7 +61,6 @@ export default async function ObjektePage() {
           Weiteres Objekt hinzufügen
         </Link>
       </ContentWrapper>
-      {/* <ObjekteDeleteDialog /> */}
     </div>
   );
 }

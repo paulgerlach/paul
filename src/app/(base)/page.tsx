@@ -42,8 +42,8 @@ export default function Home() {
           Jetzt Vorteile sichern
         </h2>
         <div className="grid mb-32 hero-1 grid-cols-4 gap-20 max-large:gap-8 items-stretch max-medium:grid-cols-2 justify-center max-small:grid-cols-1">
-          <div className="space-y-7 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <span className="circleIcon">
+          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block">
               <Image
                 width={0}
                 height={0}
@@ -70,8 +70,8 @@ export default function Home() {
               mehr erfahren
             </a>
           </div>
-          <div className="space-y-7 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <span className="circleIcon">
+          <div className="max-medium:flex space-y-4 max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block">
               <Image
                 width={0}
                 height={0}
@@ -97,8 +97,8 @@ export default function Home() {
               Kosteneinsparung berechnen
             </a>
           </div>
-          <div className="space-y-7 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <span className="circleIcon">
+          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block">
               <Image
                 width={0}
                 height={0}
@@ -123,8 +123,8 @@ export default function Home() {
               Jetzt installieren lassen
             </Link>
           </div>
-          <div className="space-y-7 max-medium:hidden max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <span className="circleIcon">
+          <div className="space-y-4 max-medium:hidden max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block">
               <Image
                 width={0}
                 height={0}

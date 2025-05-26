@@ -63,3 +63,11 @@ export const administrationTypeOptions = [
   "Mietverwaltung",
   "Sondereigentumsverwaltung",
 ];
+
+export const custodyTypeOptions = [
+  "Mietertreuhandkonto",
+  "Verpfändungssparkonto",
+  "Bürgschaft",
+  "Kautionsversicherung",
+  "Sonstige",
+];

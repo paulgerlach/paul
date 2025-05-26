@@ -14,9 +14,9 @@ export type FormInputFieldProps<T extends FieldValues = FieldValues> = {
   name: Path<T>;
   label?: string;
   placeholder: string;
-  type?: React.HTMLInputTypeAttribute;
   className?: string;
   disabled?: boolean;
+  type?: React.HTMLInputTypeAttribute;
 };
 
 export default function FormInputField<T extends FieldValues = FieldValues>({

@@ -214,10 +214,12 @@ import trashcan from "@/asset/trashcan.png";
 import create_local from "@/asset/create_local.png";
 import admin_plus from "@/asset/admin_plus.png";
 import pdf_icon from "@/asset/pdf_icon.png";
+import calendar from "@/asset/calendar.png";
 
 export {
   accentro_colored,
   cold_water,
+  calendar,
   pdf_icon,
   admin_plus,
   small_calendar,

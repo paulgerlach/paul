@@ -131,7 +131,7 @@ export default function Nav() {
     },
     {
       route: ROUTE_BLOG,
-      title: "Ressourcen",
+      title: "Blog",
       groupTitle: "Unsere Blog Artikel",
       rightSide: (
         <Link className="group" href={ROUTE_BLOG}>
@@ -148,12 +148,13 @@ export default function Nav() {
               src={arrow}
             />
           </p>
-          <div className="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
+          <div className="rounded-base mb-2.5 flex items-center justify-center">
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
+              className="min-h-[150px]"
               style={{ width: "100%", height: "auto" }}
               src={blog_dropdown}
               alt="blog_dropdown"

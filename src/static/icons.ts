@@ -215,6 +215,10 @@ import create_local from "@/asset/create_local.png";
 import admin_plus from "@/asset/admin_plus.png";
 import pdf_icon from "@/asset/pdf_icon.png";
 import calendar from "@/asset/calendar.png";
+import blog_group_link from "@/asset/blog_group_link.png";
+import blog_dropdown from "@/asset/blog_dropdown.png";
+import login from "@/asset/login.png";
+import cellphone from "@/asset/cellphone.png";
 
 export {
   accentro_colored,
@@ -253,6 +257,10 @@ export {
   notification,
   cross_arrows,
   accentro,
+  cellphone,
+  login,
+  blog_group_link,
+  blog_dropdown,
   accentrosvg,
   arrow,
   article1,

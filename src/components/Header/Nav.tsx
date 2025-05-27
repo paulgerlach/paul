@@ -7,6 +7,8 @@ import {
 } from "@/routes/routes";
 import {
   arrow,
+  blog_dropdown,
+  blog_group_link,
   modal_bell,
   modal_building,
   modal_chart,
@@ -127,6 +129,72 @@ export default function Nav() {
         },
       ],
     },
+    {
+      route: ROUTE_BLOG,
+      title: "Ressourcen",
+      groupTitle: "Unsere Blog Artikel",
+      rightSide: (
+        <Link className="group" href={ROUTE_BLOG}>
+          <p className="mb-5 text-xl flex items-center justify-between text-dark_text">
+            Blog Artikel Highlights
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="size-2.5 max-w-2.5 max-h-2.5"
+              loading="lazy"
+              style={{ width: "100%", height: "auto" }}
+              alt="arrow"
+              src={arrow}
+            />
+          </p>
+          <div className="rounded-base mb-2.5 bg-[#D9D9D9]/50 flex items-center justify-center py-5 px-12">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              style={{ width: "100%", height: "auto" }}
+              src={blog_dropdown}
+              alt="blog_dropdown"
+            />
+          </div>
+          <p className="text-dark_text text-[15px] font-bold mb-3">
+            Heizkostenverordnung Funkzähler
+          </p>
+          <p className="text-xs text-dark_text">
+            Heizkostenverordnung Funkzähler: Das sind die neuen Pflichten für
+            Eigentümer
+          </p>
+        </Link>
+      ),
+      groupLinks: [
+        {
+          title: "Funkzähler installieren",
+          icon: blog_group_link,
+        },
+        {
+          title: "Funkzähler Pflicht ab wann",
+          icon: blog_group_link,
+        },
+        {
+          title: "Heizkostenverordnung",
+          icon: blog_group_link,
+        },
+        {
+          title: "Funkzähler Pflicht Strom",
+          icon: blog_group_link,
+        },
+        {
+          title: "Rauchmelder Pflicht",
+          icon: blog_group_link,
+        },
+        {
+          title: "Hausverwaltung Pflichten",
+          icon: blog_group_link,
+        },
+      ],
+    },
   ];
 
   const handleBurgerMenu = () => {
@@ -152,22 +220,7 @@ export default function Nav() {
         className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
         Kunden
       </Link>
-      <div className="group relative [.scrolled_&]:py-4 py-6 max-medium:py-1 duration-300">
-        <Link
-          onClick={() => handleBurgerMenu()}
-          href={ROUTE_BLOG}
-          className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
-          Ressourcen
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            src={right_arrow}
-            alt="arrow"
-          />
-        </Link>
-      </div>
+
       <Link
         onClick={() => handleBurgerMenu()}
         href={ROUTE_PREISE}

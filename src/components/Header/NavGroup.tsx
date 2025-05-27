@@ -38,7 +38,7 @@ export default function NavGroup({
             {groupLinks.map((link) => (
               <li key={link.title} className="nav-link-wrapper">
                 <Link
-                  className="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                  className="flex items-center whitespace-nowrap justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
                   href={route}>
                   <Image
                     width={0}

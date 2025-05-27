@@ -34,7 +34,7 @@ export default function NavGroup({
       <div className="absolute bg-white w-[620px] top-[100%] max-large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 max-large:hidden">
         <div>
           <p className="mb-5 text-xl text-dark_text">{groupTitle}</p>
-          <ul className="space-y-4">
+          <ul>
             {groupLinks.map((link) => (
               <li key={link.title} className="nav-link-wrapper">
                 <Link

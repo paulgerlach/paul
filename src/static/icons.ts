@@ -170,10 +170,18 @@ import yes_icon from "@/asset/yes_icon.png";
 import youtube from "@/asset/youtube.png";
 import youtubesvg from "@/asset/youtube.svg";
 import link from "@/asset/link.svg";
+import blog_group_link from "@/asset/blog_group_link.png";
+import blog_dropdown from "@/asset/blog_dropdown.png";
+import login from "@/asset/login.png";
+import cellphone from "@/asset/cellphone.png";
 
 export {
   accentro_colored,
   accentro,
+  cellphone,
+  login,
+  blog_group_link,
+  blog_dropdown,
   accentrosvg,
   arrow,
   article1,

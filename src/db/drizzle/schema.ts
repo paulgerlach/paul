@@ -141,54 +141,45 @@ export const locals = pgTable(
   ]
 );
 
-export const localHistory = pgTable(
-  "local_history",
+export const tenants = pgTable(
+  "tenants",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     local_id: uuid("local_id")
       .notNull()
       .references(() => locals.id, { onDelete: "cascade" }),
-
-    start_date: date("start_date").notNull(),
-    end_date: date("end_date").notNull(),
-
-    last_name: varchar("last_name", { length: 255 }).notNull(),
-    first_name: varchar("first_name", { length: 255 }).notNull(),
-
-    price_per_month: integer("price_per_month").notNull(),
-
-    active: boolean("active").default(false),
-    days: integer("days").notNull(),
-
-    created_at: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).defaultNow(),
+    is_current: boolean("is_current").default(false).notNull(),
+    rental_start_date: date("rental_start_date").notNull(),
+    rental_end_date: date("rental_end_date"),
+    first_name: text("first_name").notNull(),
+    last_name: text("last_name").notNull(),
+    birth_date: date("birth_date").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone").notNull(),
+    cold_rent: numeric("cold_rent", { precision: 10, scale: 2 }).notNull(),
+    additional_costs: numeric("additional_costs", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
+    deposit: numeric("deposit", { precision: 10, scale: 2 }).notNull(),
+    custody_type: text("custody_type"),
+    created_at: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   () => [
-    pgPolicy("Users can access their own local history", {
+    pgPolicy("Users can access their own tenants", {
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`
-          EXISTS (
-            SELECT 1
-            FROM locals
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE locals.id = local_history.local_id
-            AND objekte.user_id = auth.uid()
-          )
-        `,
-      withCheck: sql`
-          EXISTS (
-            SELECT 1
-            FROM locals
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE locals.id = local_history.local_id
-            AND objekte.user_id = auth.uid()
-          )
-        `,
+      using: sql`auth.uid() = user_id`,
+      withCheck: sql`auth.uid() = user_id`,
     }),
   ]
 );
@@ -197,13 +188,13 @@ export const documents = pgTable(
   "documents",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-
+    user_id: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     document_name: text("document_name").notNull(),
     document_url: text("document_url").notNull(),
-
     related_id: uuid("related_id").notNull(),
-    related_type: text("related_type").notNull(), // 'objekt', 'local', or 'local_history'
-
+    related_type: text("related_type").notNull(), // 'objekt', 'local', or 'tenant'
     created_at: timestamp("created_at", {
       withTimezone: true,
       mode: "string",
@@ -214,54 +205,8 @@ export const documents = pgTable(
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`
-        (
-          (related_type = 'objekt' AND EXISTS (
-            SELECT 1 FROM objekte
-            WHERE objekte.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-          OR
-          (related_type = 'local' AND EXISTS (
-            SELECT 1 FROM locals
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE locals.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-          OR
-          (related_type = 'local_history' AND EXISTS (
-            SELECT 1 FROM local_history
-            JOIN locals ON locals.id = local_history.local_id
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE local_history.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-        )
-      `,
-      withCheck: sql`
-        (
-          (related_type = 'objekt' AND EXISTS (
-            SELECT 1 FROM objekte
-            WHERE objekte.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-          OR
-          (related_type = 'local' AND EXISTS (
-            SELECT 1 FROM locals
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE locals.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-          OR
-          (related_type = 'local_history' AND EXISTS (
-            SELECT 1 FROM local_history
-            JOIN locals ON locals.id = local_history.local_id
-            JOIN objekte ON objekte.id = locals.objekt_id
-            WHERE local_history.id = documents.related_id
-            AND objekte.user_id = auth.uid()
-          ))
-        )
-      `,
+      using: sql`auth.uid() = user_id`,
+      withCheck: sql`auth.uid() = user_id`,
     }),
   ]
 );

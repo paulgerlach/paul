@@ -1,5 +1,7 @@
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
 import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
+import { tenants } from "@/db/drizzle/schema";
+import { InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
 
 export type NavGroupLink = {
@@ -115,4 +117,12 @@ export type ObjektType = {
   message?: string;
   status?: "full" | "lower" | "higher";
   locals?: LocalType[];
+};
+
+export type TenantType = InferInsertModel<typeof tenants>;
+
+export type UploadDocumentArgs = {
+  files: File[];
+  relatedId: string;
+  relatedType: "objekt" | "local" | "tenant";
 };

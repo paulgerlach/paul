@@ -219,11 +219,13 @@ import blog_group_link from "@/asset/blog_group_link.png";
 import blog_dropdown from "@/asset/blog_dropdown.png";
 import login from "@/asset/login.png";
 import cellphone from "@/asset/cellphone.png";
+import parking_lot from "@/asset/parking_lot.png";
 
 export {
   accentro_colored,
   cold_water,
   calendar,
+  parking_lot,
   pdf_icon,
   admin_plus,
   small_calendar,

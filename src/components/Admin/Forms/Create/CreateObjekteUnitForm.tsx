@@ -227,11 +227,6 @@ export default function CreateObjekteUnitForm({
             )}
           />
         </div>
-        <FormDocuments<CreateObjekteUnitFormValues>
-          control={methods.control}
-          name="documents"
-          label="Dokumente"
-        />
         <Button type="submit" className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>

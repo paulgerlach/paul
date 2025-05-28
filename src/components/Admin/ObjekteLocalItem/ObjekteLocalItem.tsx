@@ -1,11 +1,10 @@
 import {
   chevron_admin,
-  dots_button,
   blue_x,
   green_check_circle,
   admin_plus,
 } from "@/static/icons";
-import { type LocalType } from "@/types";
+import { UnitType, type LocalType } from "@/types";
 import { handleLocalTypeIcon, slideDown, slideUp } from "@/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
@@ -13,6 +12,7 @@ import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
+import { useTenantsByLocalID } from "@/apiClient";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
@@ -20,6 +20,7 @@ export type ObjekteLocalItemProps = {
   index: number;
   onClick: (index: number) => void;
   id: string;
+  localID: string;
 };
 
 export default function ObjekteLocalItem({
@@ -28,8 +29,11 @@ export default function ObjekteLocalItem({
   index,
   onClick,
   id,
+  localID,
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
+
+  const { data: tenants } = useTenantsByLocalID(localID);
 
   useEffect(() => {
     if (isOpen) {
@@ -39,8 +43,12 @@ export default function ObjekteLocalItem({
     }
   }, [isOpen]);
 
+  const status = tenants?.some((tenant) => tenant.is_current)
+    ? "renting"
+    : "vacancy";
+
   const handleStatusImage = () => {
-    switch (item.status) {
+    switch (status) {
       case "vacancy":
         return (
           <span className="flex items-center size-20 justify-center rounded bg-[#E5EBF5]">
@@ -72,7 +80,7 @@ export default function ObjekteLocalItem({
     }
   };
   const handleStatusBadge = () => {
-    switch (item.status) {
+    switch (status) {
       case "vacancy":
         return (
           <div className="rounded-[20px] min-h-16 min-w-56 flex items-center justify-center gap-4 bg-white text-xl text-[#6083CC] drop-shadow-xl py-3 px-4">
@@ -92,7 +100,7 @@ export default function ObjekteLocalItem({
 
   return (
     <div
-      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${item.available && "available"} [.available.active]:pb-7`}>
+      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${status === "vacancy" && "available"} [.available.active]:pb-7`}>
       <div
         className={`bg-white p-2 rounded-2xl flex items-center justify-between`}>
         <div className="flex items-center justify-start gap-8">
@@ -104,8 +112,8 @@ export default function ObjekteLocalItem({
                 sizes="100vw"
                 loading="lazy"
                 className="max-w-9 max-h-9"
-                src={handleLocalTypeIcon(item.type) || ""}
-                alt={item.type || ""}
+                src={handleLocalTypeIcon(item.usage_type as UnitType) || ""}
+                alt={item.usage_type || ""}
               />
             </span>
             {handleStatusImage()}
@@ -113,7 +121,10 @@ export default function ObjekteLocalItem({
           <div
             className="flex cursor-pointer items-center justify-start gap-5"
             onClick={() => onClick(index)}>
-            <p className="text-2xl text-dark_green">{item.name}</p>
+            <p className="text-2xl text-dark_green">
+              {item.floor}
+              {item.living_space ? `, ${item.living_space}qm` : ""}
+            </p>
             <Image
               width={0}
               height={0}
@@ -131,17 +142,21 @@ export default function ObjekteLocalItem({
             editLink={`${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/edit`}
             itemID={item.id}
             dialogAction="local_delete"
-            detailsLink={`${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/info`}
           />
         </div>
       </div>
-      {!item.available ? (
-        <ObjekteLocalItemHistory history={item.history} ref={contentRef} />
+      {tenants && tenants?.length > 0 ? (
+        <ObjekteLocalItemHistory
+          objektID={id}
+          localID={localID}
+          history={tenants}
+          ref={contentRef}
+        />
       ) : (
         <Link
           ref={contentRef}
           className="flex items-center [.available_&]:mt-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
-          href={`${ROUTE_OBJEKTE}/${id}/add-history`}>
+          href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
           <Image
             width={0}
             height={0}

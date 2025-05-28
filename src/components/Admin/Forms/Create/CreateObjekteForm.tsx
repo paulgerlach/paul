@@ -8,7 +8,7 @@ import { Button } from "@/components/Basic/ui/Button";
 import Image from "next/image";
 import { white_check_green_box } from "@/static/icons";
 import type { BuildingType } from "@/types";
-import { handleLocalTypeIcon } from "@/utils";
+import { handleLocalTypeIcon, handleObjektTypeIcon } from "@/utils";
 import {
   heatingSystemOptions,
   administrationTypeOptions,
@@ -131,7 +131,7 @@ export default function CreateObjekteForm() {
                         sizes="100vw"
                         loading="lazy"
                         className="max-w-9 max-h-9"
-                        src={handleLocalTypeIcon(option.type) || ""}
+                        src={handleObjektTypeIcon(option.type) || ""}
                         alt="option image"
                       />
                       {option.name}

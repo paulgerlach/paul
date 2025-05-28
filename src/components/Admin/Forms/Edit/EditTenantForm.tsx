@@ -13,9 +13,13 @@ import { useRouter } from "next/navigation";
 import FormDateInput from "../FormDateInput";
 import FormMoneyInput from "../FormMoneyInput";
 import { custodyTypeOptions } from "@/static/formSelectOptions";
-import { createTenant } from "@/actions/createTenant";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { toast } from "react-toastify";
+import { editTenant } from "@/actions/editTenant";
+import Link from "next/link";
+import Image from "next/image";
+import { admin_plus } from "@/static/icons";
+// import { useUploadDocuments } from "@/apiClient";
 
 const tenantSchema = z.object({
   is_current: z.boolean(),
@@ -48,9 +52,9 @@ const tenantSchema = z.object({
   documents: z.array(z.instanceof(File)).nullable(),
 });
 
-export type CreateTenantFormValues = z.infer<typeof tenantSchema>;
+export type EditTenantFormValues = z.infer<typeof tenantSchema>;
 
-const defaultValues: CreateTenantFormValues = {
+const defaultValues: EditTenantFormValues = {
   is_current: false,
   rental_start_date: new Date(),
   rental_end_date: new Date(),
@@ -66,17 +70,22 @@ const defaultValues: CreateTenantFormValues = {
   documents: [],
 };
 
-export default function CreateTenantForm({
+export default function EditTenantForm({
   id: objekteID,
   localID,
+  tenantID,
+  initialValues,
 }: {
   id: string;
   localID: string;
+  tenantID: string;
+  initialValues?: EditTenantFormValues;
 }) {
   const router = useRouter();
+  // const uploadDocuments = useUploadDocuments();
   const methods = useForm({
     resolver: zodResolver(tenantSchema),
-    defaultValues,
+    defaultValues: initialValues ?? defaultValues,
   });
 
   return (
@@ -84,9 +93,18 @@ export default function CreateTenantForm({
       <form
         id="tenant-form"
         className="w-10/12"
-        onSubmit={methods.handleSubmit(async (data) => {
+        onSubmit={methods.handleSubmit(async (data: EditTenantFormValues) => {
           try {
-            await createTenant(data, localID);
+            await editTenant(tenantID, data);
+
+            // if (data.documents && data.documents.length > 0) {
+            //   await uploadDocuments.mutateAsync({
+            //     files: data.documents,
+            //     relatedId: tenantID,
+            //     relatedType: "tenant",
+            //   });
+            // }
+
             toast.success("Created");
             router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
             methods.reset();
@@ -97,7 +115,11 @@ export default function CreateTenantForm({
         })}>
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <div className="flex items-center justify-start gap-4">
-            <FormRoundedCheckbox<CreateTenantFormValues>
+            <h1 className="text-2xl mb-5 text-dark_green">
+              Mieter - {methods.watch("first_name")}{" "}
+              {methods.watch("last_name")}
+            </h1>
+            <FormRoundedCheckbox<EditTenantFormValues>
               control={methods.control}
               name="is_current"
               label="Aktueller Mieter"
@@ -106,13 +128,13 @@ export default function CreateTenantForm({
           <div className="space-y-4">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
             <div className="flex items-center justify-start gap-7">
-              <FormDateInput<CreateTenantFormValues>
+              <FormDateInput<EditTenantFormValues>
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
               />
               <span className="mt-8 inline-block">-</span>
-              <FormDateInput<CreateTenantFormValues>
+              <FormDateInput<EditTenantFormValues>
                 control={methods.control}
                 label="Mietende"
                 name="rental_end_date"
@@ -121,31 +143,31 @@ export default function CreateTenantForm({
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormInputField<CreateTenantFormValues>
+            <FormInputField<EditTenantFormValues>
               control={methods.control}
               name="first_name"
               label="Vorname*"
               placeholder="Vorname"
             />
-            <FormInputField<CreateTenantFormValues>
+            <FormInputField<EditTenantFormValues>
               control={methods.control}
               name="last_name"
               label="Famillienname*"
               placeholder="Famillienname"
             />
-            <FormDateInput<CreateTenantFormValues>
+            <FormDateInput<EditTenantFormValues>
               control={methods.control}
               label="Geburtsdatum"
               name="birth_date"
             />
-            <FormInputField<CreateTenantFormValues>
+            <FormInputField<EditTenantFormValues>
               control={methods.control}
               name="email"
               type="email"
               label="Emailadresse"
               placeholder="Emailadresse"
             />
-            <FormInputField<CreateTenantFormValues>
+            <FormInputField<EditTenantFormValues>
               control={methods.control}
               name="phone"
               type="phone"
@@ -153,16 +175,30 @@ export default function CreateTenantForm({
               placeholder="Telefonnummer"
             />
           </div>
+          <Link
+            className="flex items-center w-fit justify-center gap-2 px-6 py-5 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50"
+            href={`${ROUTE_OBJEKTE}/${objekteID}/${localID}/create-tenant`}>
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="max-w-4 max-h-4"
+              src={admin_plus}
+              alt="admin_plus"
+            />
+            Weiteren Mieter hinzufügen
+          </Link>
         </div>
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Monatliche Gesamtmiete</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormMoneyInput<CreateTenantFormValues>
+            <FormMoneyInput<EditTenantFormValues>
               control={methods.control}
               name="cold_rent"
               label="Kaltmiete *"
             />
-            <FormMoneyInput<CreateTenantFormValues>
+            <FormMoneyInput<EditTenantFormValues>
               control={methods.control}
               name="additional_costs"
               label="Nebenkosten-Vorauszahlung *"
@@ -172,12 +208,12 @@ export default function CreateTenantForm({
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Mietkaution</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormMoneyInput<CreateTenantFormValues>
+            <FormMoneyInput<EditTenantFormValues>
               control={methods.control}
               name="deposit"
               label="Kautionshöhe"
             />
-            <FormSelectField<CreateTenantFormValues>
+            <FormSelectField<EditTenantFormValues>
               control={methods.control}
               name="custody_type"
               label="Art der Verwahrung"
@@ -186,6 +222,11 @@ export default function CreateTenantForm({
             />
           </div>
         </div>
+        <FormDocuments<EditTenantFormValues>
+          control={methods.control}
+          name="documents"
+          label="Dokumente"
+        />
         <Button type="submit" className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>

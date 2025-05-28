@@ -63,7 +63,6 @@ export default function ObjekteItem({ item }: { item: ObjektType }) {
           editLink={`${ROUTE_OBJEKTE}/${item.id}/edit`}
           itemID={item.id}
           dialogAction="object_delete"
-          detailsLink={`${ROUTE_OBJEKTE}/${item.id}/info`}
         />
       </div>
     </div>

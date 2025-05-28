@@ -7,6 +7,7 @@ import Sidebar from "@/components/Admin/Sidebar/Sidebar";
 import ToastProvider from "./ToastProvider";
 import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
+import TenantDeleteDialog from "@/components/Basic/Dialog/TenantDeleteDialog";
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -38,6 +39,7 @@ export default function FragebogenLayout({
             </div>
             <ObjekteDeleteDialog />
             <LocalDeleteDialog />
+            <TenantDeleteDialog />
           </ToastProvider>
         </QueryProvider>
       </body>

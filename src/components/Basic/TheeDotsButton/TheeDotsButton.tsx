@@ -11,14 +11,12 @@ import {
 
 export type ThreeDotsButtonProps = {
   editLink: string;
-  detailsLink: string;
   itemID: string;
   dialogAction: DialogDocumentActonType;
 };
 
 export default function ThreeDotsButton({
   editLink,
-  detailsLink,
   dialogAction,
   itemID,
 }: ThreeDotsButtonProps) {
@@ -47,11 +45,6 @@ export default function ThreeDotsButton({
       <PopoverContent
         className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
         onClick={(e) => e.stopPropagation()}>
-        <Link
-          href={detailsLink}
-          className="text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
-          🔍 Details
-        </Link>
         <Link
           href={editLink}
           className="text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">

@@ -2,12 +2,13 @@ import {
   commercial,
   keys,
   multi_family,
+  parking_lot,
   special_purpose,
   trend_check,
   trend_down,
   trend_up,
 } from "@/static/icons";
-import { BuildingType, ObjektType } from "@/types";
+import { BuildingType, ObjektType, UnitType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { type StaticImageData } from "next/image";
 import { twMerge } from "tailwind-merge";
@@ -105,7 +106,7 @@ export function formatDate(input?: string): string {
   return `${parseInt(day, 10)} ${monthName} ${year}`;
 }
 
-export const handleLocalTypeIcon = (
+export const handleObjektTypeIcon = (
   type?: BuildingType
 ): StaticImageData | undefined => {
   switch (type) {
@@ -116,6 +117,21 @@ export const handleLocalTypeIcon = (
     case "multi_family":
       return multi_family;
     case "special_purpose":
+      return special_purpose;
+  }
+};
+
+export const handleLocalTypeIcon = (
+  type?: UnitType
+): StaticImageData | undefined => {
+  switch (type) {
+    case "commercial":
+      return commercial;
+    case "warehouse":
+      return keys;
+    case "parking":
+      return parking_lot;
+    case "residential":
       return special_purpose;
   }
 };

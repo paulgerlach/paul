@@ -1,6 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
+import database from "@/db";
+import { tenants } from "@/db/drizzle/schema";
+import { and, eq } from "drizzle-orm";
+import { supabase } from "@/utils/supabase/client";
 
 export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
   const filePath = path.resolve(
@@ -32,3 +36,21 @@ export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
     throw err;
   }
 };
+
+export async function getTenantsByLocalIDWithAuth(localID: string) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const result = await database
+    .select()
+    .from(tenants)
+    .where(and(eq(tenants.local_id, localID), eq(tenants.user_id, user.id)));
+
+  return result;
+}

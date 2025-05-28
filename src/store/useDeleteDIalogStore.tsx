@@ -35,6 +35,7 @@ export const useDeleteDialogStore = create<DeleteDialogStoreType>((set) => ({
   closeDialog: (type) =>
     set((s) => ({
       openDialogByType: { ...s.openDialogByType, [type]: false },
+      itemID: null,
     })),
 
   toggleDialog: (type) =>

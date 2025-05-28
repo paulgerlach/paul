@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { editLocal } from "@/actions/editLocal";
+// import { useUploadDocuments } from "@/apiClient";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -106,6 +107,7 @@ export default function EditObjekteUnitForm({
   initialValues,
 }: EditObjekteUnitFormProps) {
   const router = useRouter();
+  // const uploadDocuments = useUploadDocuments();
   const methods = useForm({
     resolver: zodResolver(localSchema),
     defaultValues: initialValues ?? defaultValues,
@@ -119,6 +121,15 @@ export default function EditObjekteUnitForm({
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             await editLocal(localID, data);
+
+            // if (data.documents && data.documents.length > 0) {
+            //   await uploadDocuments.mutateAsync({
+            //     files: data.documents,
+            //     relatedId: localID,
+            //     relatedType: "local",
+            //   });
+            // }
+
             toast.success("Created");
             router.push(`${ROUTE_OBJEKTE}/${objektID}`);
             methods.reset();
@@ -130,7 +141,7 @@ export default function EditObjekteUnitForm({
         <FormTagsInput<EditObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
-            1. OG Vorderhaus rechts, 76qm
+            {methods.watch("floor")}, {methods.watch("living_space")}qm
           </h1>
           <FormRadioOptions<EditObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}
@@ -239,6 +250,7 @@ export default function EditObjekteUnitForm({
           label="Dokumente"
         />
         <Button type="submit" className="mt-6 ml-auto mr-0 block">
+          {/* {uploadDocuments.isPending ? "Lädt..." : ""} */}
           Speichern
         </Button>
       </form>

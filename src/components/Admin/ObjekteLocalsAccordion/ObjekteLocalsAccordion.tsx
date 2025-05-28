@@ -22,6 +22,7 @@ export default function ObjekteLocalsAccordion({
       {locals?.map((local, index) => (
         <ObjekteLocalItem
           id={id}
+          localID={local.id}
           isOpen={openIndex === index}
           onClick={handleClick}
           key={local.id}

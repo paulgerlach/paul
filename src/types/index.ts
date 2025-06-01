@@ -124,5 +124,11 @@ export type TenantType = InferInsertModel<typeof tenants>;
 export type UploadDocumentArgs = {
   files: File[];
   relatedId: string;
-  relatedType: "objekt" | "local" | "tenant";
+  relatedType: DocumentType;
 };
+
+export type DialogActionType = "delete" | "create";
+
+export type DocumentType = "object" | "local" | "tenant" | "heating_bill";
+
+export type DialogDocumentActonType = `${DocumentType}_${DialogActionType}`;

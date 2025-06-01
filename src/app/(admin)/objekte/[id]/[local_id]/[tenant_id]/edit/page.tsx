@@ -71,10 +71,10 @@ export default async function EditTenantPage({
                 : new Date(),
               cold_rent: Number(tenant.cold_rent),
               deposit: Number(tenant.deposit),
-              email: tenant.email,
+              email: tenant.email ?? "",
               first_name: tenant.first_name,
               last_name: tenant.last_name,
-              phone: tenant.phone,
+              phone: tenant.phone ?? "",
               rental_end_date: tenant.rental_end_date
                 ? new Date(tenant.rental_end_date)
                 : new Date(),

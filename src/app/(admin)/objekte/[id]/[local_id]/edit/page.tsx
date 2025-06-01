@@ -6,6 +6,7 @@ import { documents, locals } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { supabaseServer } from "@/utils/supabase/server";
 import { and, eq } from "drizzle-orm";
+// import { getObjectDocuments, getSignedUrlsForObject } from "@/api";
 
 export default async function EditLocalPage({
   params,
@@ -14,14 +15,14 @@ export default async function EditLocalPage({
 }) {
   const { id, local_id } = await params;
 
-  // const supabase = await supabaseServer();
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (!user) {
-  //   return <div>Unauthorized</div>;
-  // }
+  if (!user) {
+    return <div>Unauthorized</div>;
+  }
 
   const local = await database
     .select()
@@ -33,13 +34,18 @@ export default async function EditLocalPage({
     return <div>Objekt nicht gefunden</div>;
   }
 
+  // const documentFilesUrls = await getSignedUrlsForObject(local_id);
+  // const documentFiles = await getObjectDocuments(local_id);
+
+  // console.log(documentFilesUrls, documentFiles);
+
   // const userDocuments = await database
   //   .select()
   //   .from(documents)
   //   .where(
   //     and(
   //       eq(documents.user_id, user.id),
-  //       eq(documents.related_type, "local"),
+  //       eq(documents.related_type, "locals"),
   //       eq(documents.related_id, local_id)
   //     )
   //   );

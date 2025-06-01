@@ -4,7 +4,7 @@ import Image from "next/image";
 import { differenceInMonths } from "date-fns";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { useDeleteDialogStore } from "@/store/useDeleteDIalogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 export default function ObjekteLocalItemHistoryItem({
   historyItem,
@@ -15,7 +15,7 @@ export default function ObjekteLocalItemHistoryItem({
   objektID: string;
   localID: string;
 }) {
-  const { openDialog, setItemID } = useDeleteDialogStore();
+  const { openDialog, setItemID } = useDialogStore();
   const duration =
     differenceInMonths(
       historyItem?.rental_end_date || "",

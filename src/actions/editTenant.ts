@@ -34,9 +34,9 @@ export async function editTenant(
     birth_date: formData.birth_date.toISOString(),
     email: formData.email,
     phone: formData.phone,
-    cold_rent: String(formData.cold_rent),
-    additional_costs: String(formData.additional_costs),
-    deposit: String(formData.deposit),
+    cold_rent: String(formData.cold_rent ?? 0),
+    additional_costs: String(formData.additional_costs ?? 0),
+    deposit: String(formData.deposit ?? 0),
     custody_type: formData.custody_type ?? null,
     updated_at: new Date(),
   };

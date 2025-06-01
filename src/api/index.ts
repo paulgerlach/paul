@@ -54,3 +54,53 @@ export async function getTenantsByLocalIDWithAuth(localID: string) {
 
   return result;
 }
+
+export async function getObjectDocuments(objectId: string) {
+  const { data, error } = await supabase.storage
+    .from("documents")
+    .list(objectId, {
+      limit: 100,
+      offset: 0,
+    });
+
+  if (error) {
+    console.error("Error fetching documents:", error.message);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getSignedUrlsForObject(objectId: string) {
+  const { data: files, error } = await supabase.storage
+    .from("documents")
+    .list(objectId);
+
+  if (error || !files) {
+    console.error("Failed to list files:", error?.message);
+    return [];
+  }
+
+  const signedUrlsPromises = files.map(async (file) => {
+    const { data: signedUrlData, error: signedUrlError } =
+      await supabase.storage
+        .from("documents")
+        .createSignedUrl(`${objectId}/${file.name}`, 60 * 60); // valid for 1 hour
+
+    if (signedUrlError) {
+      console.error(
+        `Failed to get signed URL for ${file.name}:`,
+        signedUrlError.message
+      );
+      return null;
+    }
+
+    return {
+      name: file.name,
+      url: signedUrlData.signedUrl,
+    };
+  });
+
+  const signedUrls = await Promise.all(signedUrlsPromises);
+  return signedUrls.filter((url) => url !== null);
+}

@@ -116,7 +116,6 @@ export const locals = pgTable(
     }).defaultNow(),
   },
   () => [
-    // 🔐 Row-level security policy
     pgPolicy("Users can access their own locals", {
       as: "permissive",
       for: "all",
@@ -145,9 +144,7 @@ export const tenants = pgTable(
   "tenants",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    user_id: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id").notNull(),
     local_id: uuid("local_id")
       .notNull()
       .references(() => locals.id, { onDelete: "cascade" }),
@@ -156,15 +153,15 @@ export const tenants = pgTable(
     rental_end_date: date("rental_end_date"),
     first_name: text("first_name").notNull(),
     last_name: text("last_name").notNull(),
-    birth_date: date("birth_date").notNull(),
-    email: text("email").notNull(),
-    phone: text("phone").notNull(),
+    birth_date: date("birth_date"),
+    email: text("email"),
+    phone: text("phone"),
     cold_rent: numeric("cold_rent", { precision: 10, scale: 2 }).notNull(),
     additional_costs: numeric("additional_costs", {
       precision: 10,
       scale: 2,
     }).notNull(),
-    deposit: numeric("deposit", { precision: 10, scale: 2 }).notNull(),
+    deposit: numeric("deposit", { precision: 10, scale: 2 }),
     custody_type: text("custody_type"),
     created_at: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -188,13 +185,11 @@ export const documents = pgTable(
   "documents",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    user_id: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    user_id: uuid("user_id").notNull(),
     document_name: text("document_name").notNull(),
     document_url: text("document_url").notNull(),
     related_id: uuid("related_id").notNull(),
-    related_type: text("related_type").notNull(), // 'objekt', 'local', or 'tenant'
+    related_type: text("related_type").notNull(),
     created_at: timestamp("created_at", {
       withTimezone: true,
       mode: "string",

@@ -1,6 +1,7 @@
 "use client";
 
-import { UploadDocumentArgs } from "@/types";
+import type { UploadDocumentArgs } from "@/types";
+import { sanitizeFileName } from "@/utils/client";
 import { supabase } from "@/utils/supabase/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -55,13 +56,20 @@ export const useUploadDocuments = () => {
       }
 
       for (const file of files) {
+        const sanitizedFileName = sanitizeFileName(file.name);
+        const path = `${relatedType}/${relatedId}/${sanitizedFileName}`;
+
         const { data, error } = await supabase.storage
           .from("documents")
-          .upload(`${user.id}/${file.name}`, file);
+          .upload(path, file, {
+            upsert: true,
+            metadata: {
+              related_id: relatedId,
+              related_table: relatedType,
+            },
+          });
 
         if (error) throw new Error(`Upload failed: ${error.message}`);
-
-        const { path } = data;
 
         const { error: insertError } = await supabase.from("documents").insert({
           document_name: file.name,

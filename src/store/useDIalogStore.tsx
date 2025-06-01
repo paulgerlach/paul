@@ -1,12 +1,7 @@
+import type { DialogDocumentActonType } from "@/types";
 import { create } from "zustand";
 
-export type DialogActionTYpe = "delete";
-
-export type DocumentType = "object" | "local" | "tenant";
-
-export type DialogDocumentActonType = `${DocumentType}_${DialogActionTYpe}`;
-
-export type DeleteDialogStoreType = {
+export type DialogStoreType = {
   openDialogByType: Record<DialogDocumentActonType, boolean>;
   itemID: string | null;
   setItemID: (id: string | null) => void;
@@ -16,13 +11,18 @@ export type DeleteDialogStoreType = {
   toggleDialog: (type: DialogDocumentActonType) => void;
 };
 
-export const useDeleteDialogStore = create<DeleteDialogStoreType>((set) => ({
+export const useDialogStore = create<DialogStoreType>((set) => ({
   itemID: null,
   isOpen: false,
   openDialogByType: {
     object_delete: false,
     local_delete: false,
     tenant_delete: false,
+    heating_bill_delete: false,
+    object_create: false,
+    local_create: false,
+    tenant_create: false,
+    heating_bill_create: false,
   },
 
   setItemID: (id) => set({ itemID: id }),

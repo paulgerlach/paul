@@ -220,10 +220,20 @@ import blog_dropdown from "@/asset/blog_dropdown.png";
 import login from "@/asset/login.png";
 import cellphone from "@/asset/cellphone.png";
 import parking_lot from "@/asset/parking_lot.png";
+import lamp from "@/asset/lamp.png";
+import big_time_clock from "@/asset/big_time_clock.png";
+import doc_preview_building from "@/asset/doc_preview_building.png";
+import heating_bill_preview from "@/asset/heizkostenabrechnung_preview.png";
+import close_dialog from "@/asset/close_dialog.png";
 
 export {
   accentro_colored,
   cold_water,
+  lamp,
+  close_dialog,
+  big_time_clock,
+  doc_preview_building,
+  heating_bill_preview,
   calendar,
   parking_lot,
   pdf_icon,

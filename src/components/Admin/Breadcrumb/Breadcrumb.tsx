@@ -7,12 +7,14 @@ export type BreadcrumbProps = {
   title: string;
   link: string;
   backTitle: string;
+  subtitle?: string;
 };
 
 export default function Breadcrumb({
   backTitle,
   link,
   title,
+  subtitle,
 }: BreadcrumbProps) {
   return (
     <Fragment>
@@ -30,7 +32,10 @@ export default function Breadcrumb({
         />
         {backTitle}
       </Link>
-      <h1 className="mb-4 text-lg">{title}</h1>
+      <h1 className={`text-lg ${!subtitle && "mb-4"}`}>{title}</h1>
+      {subtitle && (
+        <p className="text-[#757575] text-sm max-w-5xl mb-4">{subtitle}</p>
+      )}
     </Fragment>
   );
 }

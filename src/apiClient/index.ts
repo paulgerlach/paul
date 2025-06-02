@@ -22,6 +22,8 @@ async function getTenantsByLocalID(localID: string) {
     .eq("local_id", localID)
     .eq("user_id", user.id);
 
+  console.log(data);
+
   if (error) {
     throw new Error(`Failed to fetch tenants: ${error.message}`);
   }
@@ -33,7 +35,7 @@ export function useTenantsByLocalID(localID: string) {
   return useQuery({
     queryKey: ["tenants", localID],
     queryFn: () => getTenantsByLocalID(localID),
-    enabled: !!localID,
+    refetchOnWindowFocus: false,
   });
 }
 

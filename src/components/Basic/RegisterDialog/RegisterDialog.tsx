@@ -9,7 +9,7 @@ import { supabase } from "@/utils/supabase/client";
 import { setCookie } from "nookies";
 import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
 import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";

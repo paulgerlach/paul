@@ -15,7 +15,7 @@ import FormMoneyInput from "../FormMoneyInput";
 import { custodyTypeOptions } from "@/static/formSelectOptions";
 import { createTenant } from "@/actions/createTenant";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const tenantSchema = z.object({
   is_current: z.boolean(),
@@ -186,7 +186,7 @@ export default function CreateTenantForm({
             />
           </div>
         </div>
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button disabled={methods.formState.isSubmitting} type="submit" className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

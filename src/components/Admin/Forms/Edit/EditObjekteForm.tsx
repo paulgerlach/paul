@@ -18,7 +18,7 @@ import FormTagsInput from "../FormTagsInput";
 import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { editObjekt } from "@/actions/editObjekt";
@@ -226,7 +226,7 @@ export default function EditObjekteForm({
         <FormTechnicalEquipment<EditObjekteFormValues>
           control={methods.control}
         />
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button disabled={methods.formState.isSubmitting} type="submit" className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { supabase } from "@/utils/supabase/client";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
 import { Form } from "@/components/Basic/ui/Form";
@@ -48,7 +48,7 @@ export default function LoginDialog() {
       return;
     }
 
-    const { session, user } = sessionData;
+    const { session } = sessionData;
 
     if (session?.access_token) {
       setCookie(null, "sb-access-token", session.access_token, {
@@ -69,9 +69,9 @@ export default function LoginDialog() {
   };
 
   return (
-    <dialog
+    <div
       id="login-dialog"
-      className="dialog w-screen h-screen flex items-center justify-center bg-black/20">
+      className="dialog flex items-center justify-center min-w-[100dvw] min-h-[100dvh] bg-black/20">
       <Form {...methods}>
         <form
           onSubmit={methods.handleSubmit(onSubmit)}
@@ -131,6 +131,6 @@ export default function LoginDialog() {
           </Button>
         </form>
       </Form>
-    </dialog>
+    </div>
   );
 }

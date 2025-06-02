@@ -62,7 +62,7 @@ export default function FormTechnicalEquipment<
             return (
               <FormItem>
                 <FormLabel className="text-[#757575] text-sm">
-                  Heizungssystem
+                  Heizungssystem*
                 </FormLabel>
                 <Popover>
                   <PopoverTrigger
@@ -127,7 +127,7 @@ export default function FormTechnicalEquipment<
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-[#757575] text-sm">
-                Warmwasserbereitung
+                Warmwasserbereitung*
               </FormLabel>
               <Select
                 disabled={disabled}

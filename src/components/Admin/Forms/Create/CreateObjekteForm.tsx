@@ -8,7 +8,7 @@ import { Button } from "@/components/Basic/ui/Button";
 import Image from "next/image";
 import { white_check_green_box } from "@/static/icons";
 import type { BuildingType } from "@/types";
-import { handleLocalTypeIcon, handleObjektTypeIcon } from "@/utils";
+import { handleObjektTypeIcon } from "@/utils";
 import {
   heatingSystemOptions,
   administrationTypeOptions,
@@ -19,7 +19,7 @@ import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import { createObjekt } from "@/actions/createObjekt";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
@@ -218,7 +218,10 @@ export default function CreateObjekteForm() {
         <FormTechnicalEquipment<CreateObjekteFormValues>
           control={methods.control}
         />
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button
+          disabled={methods.formState.isSubmitting}
+          type="submit"
+          className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

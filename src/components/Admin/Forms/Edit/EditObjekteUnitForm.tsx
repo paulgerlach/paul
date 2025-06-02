@@ -30,7 +30,7 @@ import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import FormDocuments from "../FormDocuments";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { editLocal } from "@/actions/editLocal";
 // import { useUploadDocuments } from "@/apiClient";
@@ -249,7 +249,10 @@ export default function EditObjekteUnitForm({
           name="documents"
           label="Dokumente"
         />
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button
+          disabled={methods.formState.isSubmitting}
+          type="submit"
+          className="mt-6 ml-auto mr-0 block">
           {/* {uploadDocuments.isPending ? "Lädt..." : ""} */}
           Speichern
         </Button>

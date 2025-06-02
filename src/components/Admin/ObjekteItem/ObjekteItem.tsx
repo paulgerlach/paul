@@ -37,7 +37,7 @@ export default async function ObjekteItem({ item }: { item: ObjektType }) {
       <Link
         href={`${ROUTE_OBJEKTE}/${item.id}`}
         className="flex items-center w-full justify-start gap-8">
-        {item.image ? (
+        {!!item.image ? (
           <Image
             width={0}
             height={0}
@@ -48,7 +48,7 @@ export default async function ObjekteItem({ item }: { item: ObjektType }) {
             alt={item.street}
           />
         ) : (
-          <div className="max-w-[218px] max-h-[112px] rounded-2xl bg-card_light" />
+          <div className="w-[218px] h-[112px] rounded-2xl bg-card_light" />
         )}
         <div>
           <p className="text-2xl text-dark_green">{item.street}</p>

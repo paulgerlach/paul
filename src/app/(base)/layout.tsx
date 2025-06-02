@@ -6,7 +6,7 @@ import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
 import LoginDialog from "@/components/Basic/LoginDialog/LoginDialog";
 import RegisterDialog from "@/components/Basic/RegisterDialog/RegisterDialog";
-import ToastProvider from "../(admin)/ToastProvider";
+import { Toaster } from "@/components/Basic/ui/Sonner";
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -28,13 +28,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${exo_2Sans.variable}`}>
         <QueryProvider>
-          <ToastProvider>
-            <Header />
-            {children}
-            <Footer />
-            <LoginDialog />
-            <RegisterDialog />
-          </ToastProvider>
+          <Header />
+          {children}
+          <Footer />
+          <LoginDialog />
+          <RegisterDialog />
+          <Toaster />
         </QueryProvider>
       </body>
     </html>

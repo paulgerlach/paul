@@ -14,7 +14,7 @@ import FormDateInput from "../FormDateInput";
 import FormMoneyInput from "../FormMoneyInput";
 import { custodyTypeOptions } from "@/static/formSelectOptions";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { editTenant } from "@/actions/editTenant";
 import Link from "next/link";
 import Image from "next/image";
@@ -227,7 +227,10 @@ export default function EditTenantForm({
           name="documents"
           label="Dokumente"
         />
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button
+          disabled={methods.formState.isSubmitting}
+          type="submit"
+          className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

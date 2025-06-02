@@ -3,7 +3,7 @@
 import Link from "next/link";
 import HeaderButton from "./HeaderButton";
 import Image from "next/image";
-import { logo } from "@/static/icons";
+import { cellphone, login, logo } from "@/static/icons";
 import { ROUTE_FRAGEBOGEN, ROUTE_HOME, ROUTE_KONTAKT } from "@/routes/routes";
 import Nav from "./Nav";
 import { useEffect, useState, useRef } from "react";
@@ -32,14 +32,14 @@ export default function Header() {
     }
   };
 
-  const handleRegisterClick = () => {
-    const dialog: HTMLDialogElement | null = document.getElementById(
-      "register-dialog"
-    ) as HTMLDialogElement | null;
-    if (dialog) {
-      dialog.showModal();
-    }
-  };
+  // const handleRegisterClick = () => {
+  //   const dialog: HTMLDialogElement | null = document.getElementById(
+  //     "register-dialog"
+  //   ) as HTMLDialogElement | null;
+  //   if (dialog) {
+  //     dialog.showModal();
+  //   }
+  // };
 
   return (
     <header
@@ -48,7 +48,7 @@ export default function Header() {
       className={`sticky w-full top-0 duration-300 ${
         scrolled ? "scrolled" : ""
       }`}>
-      <div className="flex items-center bg-dark_green w-full px-10 max-medium:px-5 duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
+      <div className="flex items-center bg-dark_green w-full px-10 max-medium:px-5 [.scrolled_&]:bg-dark_green/50 [.scrolled_&]:backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
         <Link
           href={ROUTE_HOME}
           className="flex items-center max-w-16 w-full h-5 justify-start gap-3">
@@ -68,15 +68,38 @@ export default function Header() {
             <Nav />
           </div>
           <div className="flex items-center justify-end gap-base">
+            <button
+              onClick={() => handleLoginClick()}
+              className="py-2 px-4 flex items-center cursor-pointer gap-1.5 justify-center text-sm text-white duration-300 hover:opacity-80">
+              <Image
+                width={16}
+                height={16}
+                loading="lazy"
+                className="colored-to-white max-w-4 max-h-4"
+                style={{ width: "100%", height: "auto" }}
+                src={login}
+                alt="login"
+              />
+              Einloggen
+            </button>
             <Link
-              href={ROUTE_FRAGEBOGEN}
-              className="border border-border_base py-2 px-4 flex items-center justify-center text-sm text-white rounded-halfbase max-large:text-dark_text max-large:border-dark_green duration-300 hover:opacity-80">
-              Angebot anfordern
+              href="tel:01759223454"
+              className="py-2 px-4 flex items-center gap-1.5 justify-center text-sm text-white duration-300 hover:opacity-80">
+              <Image
+                width={16}
+                height={16}
+                loading="lazy"
+                className="colored-to-white max-w-4 max-h-4"
+                style={{ width: "100%", height: "auto" }}
+                src={cellphone}
+                alt="cellphone"
+              />
+              01759223454
             </Link>
             <Link
               href={ROUTE_KONTAKT}
               className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-halfbase">
-              Kontakt aufnehmen
+              Demo buchen
             </Link>
           </div>
         </div>
@@ -85,16 +108,6 @@ export default function Header() {
           className="border ml-auto mr-3 hidden max-large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
           Angebot anfordern
         </Link>
-        <button
-          onClick={() => handleLoginClick()}
-          className="border ml-auto mr-3 max-large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
-          ADMIN
-        </button>
-        <button
-          onClick={() => handleRegisterClick()}
-          className="border ml-auto mr-3 max-large:flex border-border_base py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
-          Register
-        </button>
         <HeaderButton />
       </div>
     </header>

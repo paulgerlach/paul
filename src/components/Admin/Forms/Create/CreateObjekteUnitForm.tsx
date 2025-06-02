@@ -30,7 +30,7 @@ import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import { useRouter } from "next/navigation";
 import { createLocal } from "@/actions/createLocal";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
@@ -226,7 +226,7 @@ export default function CreateObjekteUnitForm({
             )}
           />
         </div>
-        <Button type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button disabled={methods.formState.isSubmitting} type="submit" className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

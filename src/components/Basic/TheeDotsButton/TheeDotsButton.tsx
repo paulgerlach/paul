@@ -6,6 +6,8 @@ import { dots_button } from "@/static/icons";
 import Link from "next/link";
 import { useDialogStore } from "@/store/useDIalogStore";
 import type { DialogDocumentActonType } from "@/types";
+import { toast } from "sonner";
+import { Pencil, Trash } from "lucide-react";
 
 export type ThreeDotsButtonProps = {
   editLink: string;
@@ -46,12 +48,12 @@ export default function ThreeDotsButton({
         <Link
           href={editLink}
           className="text-xl text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
-          ✏️ Bearbeiten
+          <Pencil className="w-4 h-4" /> Bearbeiten
         </Link>
         <button
           onClick={() => handleOpenDialog()}
           className="text-xl text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
-          🗑️ Löschen
+          <Trash className="w-4 h-4" /> Löschen
         </button>
       </PopoverContent>
     </Popover>

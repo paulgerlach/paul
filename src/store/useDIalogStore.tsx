@@ -23,6 +23,8 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     local_create: false,
     tenant_create: false,
     heating_bill_create: false,
+    login: false,
+    register: false,
   },
 
   setItemID: (id) => set({ itemID: id }),

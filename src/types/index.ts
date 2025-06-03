@@ -7,6 +7,7 @@ import { type StaticImageData } from "next/image";
 export type NavGroupLink = {
   title: string;
   icon: StaticImageData;
+  link?: string;
 };
 
 export type NavGroupType = {
@@ -131,4 +132,7 @@ export type DialogActionType = "delete" | "create";
 
 export type DocumentType = "object" | "local" | "tenant" | "heating_bill";
 
-export type DialogDocumentActonType = `${DocumentType}_${DialogActionType}`;
+export type DialogDocumentActonType =
+  | `${DocumentType}_${DialogActionType}`
+  | "login"
+  | "register";

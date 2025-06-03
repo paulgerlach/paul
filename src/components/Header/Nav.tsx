@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ROUTE_BLOG,
   ROUTE_FUNKTIONEN,
@@ -21,15 +23,98 @@ import {
   modal_shower,
   modal_water,
   modal_wifi,
-  right_arrow,
 } from "@/static/icons";
-import type { NavGroupType } from "@/types";
+import type { NavGroupLink, NavGroupType } from "@/types";
 import NavGroup from "./NavGroup";
 import Link from "next/link";
 import Image from "next/image";
 import NavFunktionenRightSide from "./NavFunktionenRightSide";
+import { getAllBlogPosts } from "@/utils/getAllBlogPosts";
+import { useQuery } from "@tanstack/react-query";
+import { Content } from "@prismicio/client";
 
 export default function Nav() {
+  const { data: posts } = useQuery({
+    queryKey: ["navBlogPosts"],
+    queryFn: () => getAllBlogPosts(),
+  });
+
+  if (!posts || posts.length === 0) return null;
+
+  const lastPost = posts[0].data.slices;
+  const lastSixPosts = posts.slice(0, 6);
+  const mainTitleSlice = lastPost.find(
+    (slice) => slice.slice_type === "main_title"
+  ) as Content.MainTitleSlice;
+  const lastPostTitle = mainTitleSlice?.primary.maintitle;
+  const mainSubtitleSlice = lastPost.find(
+    (slice) => slice.slice_type === "subtitle"
+  ) as Content.SubtitleSlice;
+  const lastPostSubtitle = mainSubtitleSlice?.primary.subtitle;
+  const lastPostImageSlice = lastPost.find(
+    (slice) => slice.slice_type === "blog_image"
+  ) as Content.BlogImageSlice;
+  const lastPostImage = lastPostImageSlice?.primary.blogMainImage;
+
+  const blogGroup: NavGroupType | null =
+    posts && posts.length > 0
+      ? {
+          route: ROUTE_BLOG,
+          title: "Blog",
+          groupTitle: "Unsere Blog Artikel",
+          rightSide: (
+            <Link className="group" href={`${ROUTE_BLOG}/${posts[0].uid}`}>
+              <p className="mb-5 text-xl flex items-center justify-between text-dark_text">
+                Blog Artikel Highlights
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="size-2.5 max-w-2.5 max-h-2.5"
+                  loading="lazy"
+                  style={{ width: "100%", height: "auto" }}
+                  alt="arrow"
+                  src={arrow}
+                />
+              </p>
+              <div className="rounded-base mb-2.5 flex items-center justify-center">
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  loading="lazy"
+                  className="min-h-[150px] object-cover rounded-2xl"
+                  style={{ width: "100%", height: "auto" }}
+                  src={lastPostImage.url || ""}
+                  alt={lastPostImage.alt || "blog_image"}
+                />
+              </div>
+              <p className="text-dark_text text-[15px] font-bold mb-3">
+                {lastPostTitle}
+              </p>
+              <p className="text-xs text-dark_text">{lastPostSubtitle}</p>
+            </Link>
+          ),
+          groupLinks: lastSixPosts
+            .map((post) => {
+              const mainTitleSlice = post.data.slices.find(
+                (slice) => slice.slice_type === "main_title"
+              ) as Content.MainTitleSlice | undefined;
+
+              const title = mainTitleSlice?.primary?.maintitle || "";
+
+              if (!title) return null;
+
+              return {
+                title,
+                icon: blog_group_link,
+                link: `${ROUTE_BLOG}/${post.uid}`,
+              } as NavGroupLink;
+            })
+            .filter((link): link is NavGroupLink => link !== null),
+        }
+      : null;
+
   const navGroups: NavGroupType[] = [
     {
       groupLinks: [
@@ -129,73 +214,7 @@ export default function Nav() {
         },
       ],
     },
-    {
-      route: ROUTE_BLOG,
-      title: "Blog",
-      groupTitle: "Unsere Blog Artikel",
-      rightSide: (
-        <Link className="group" href={ROUTE_BLOG}>
-          <p className="mb-5 text-xl flex items-center justify-between text-dark_text">
-            Blog Artikel Highlights
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="size-2.5 max-w-2.5 max-h-2.5"
-              loading="lazy"
-              style={{ width: "100%", height: "auto" }}
-              alt="arrow"
-              src={arrow}
-            />
-          </p>
-          <div className="rounded-base mb-2.5 flex items-center justify-center">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="min-h-[150px]"
-              style={{ width: "100%", height: "auto" }}
-              src={blog_dropdown}
-              alt="blog_dropdown"
-            />
-          </div>
-          <p className="text-dark_text text-[15px] font-bold mb-3">
-            Heizkostenverordnung Funkzähler
-          </p>
-          <p className="text-xs text-dark_text">
-            Heizkostenverordnung Funkzähler: Das sind die neuen Pflichten für
-            Eigentümer
-          </p>
-        </Link>
-      ),
-      groupLinks: [
-        {
-          title: "Funkzähler installieren",
-          icon: blog_group_link,
-        },
-        {
-          title: "Funkzähler Pflicht ab wann",
-          icon: blog_group_link,
-        },
-        {
-          title: "Heizkostenverordnung",
-          icon: blog_group_link,
-        },
-        {
-          title: "Funkzähler Pflicht Strom",
-          icon: blog_group_link,
-        },
-        {
-          title: "Rauchmelder Pflicht",
-          icon: blog_group_link,
-        },
-        {
-          title: "Hausverwaltung Pflichten",
-          icon: blog_group_link,
-        },
-      ],
-    },
+    ...(blogGroup ? [blogGroup] : []),
   ];
 
   const handleBurgerMenu = () => {
@@ -218,14 +237,14 @@ export default function Nav() {
       <Link
         onClick={() => handleBurgerMenu()}
         href={ROUTE_HOME}
-        className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-sm text-dark_text justify-start gap-2 max-large:text-dark_text">
         Kunden
       </Link>
 
       <Link
         onClick={() => handleBurgerMenu()}
         href={ROUTE_PREISE}
-        className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-sm text-dark_text justify-start gap-2 max-large:text-dark_text">
         Preise
       </Link>
     </nav>

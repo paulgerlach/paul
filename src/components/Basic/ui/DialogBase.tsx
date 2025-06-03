@@ -27,7 +27,7 @@ export default function DialogBase({
       <div
         ref={dialogRef}
         style={{ maxWidth: `${size}px` }}
-        className="w-full bg-white p-9 rounded space-y-6">
+        className="w-full bg-white px-9 py-4 rounded space-y-6">
         <button
           onClick={() => closeDialog(dialogName)}
           className="cursor-pointer flex items-center justify-center mr-0 ml-auto border-none bg-transparent">

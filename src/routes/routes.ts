@@ -6,7 +6,6 @@ export const ROUTE_FUNKTIONEN = "/funktionen";
 export const ROUTE_GERAETE = "/geraete";
 export const ROUTE_IMPRESSUM = "/impressum";
 export const ROUTE_PREISE = "/preise";
-export const ROUTE_BLOG_REGULATORIK = "/blog/regulatorik";
 export const ROUTE_BLOG = "/blog";
 export const ROUTE_DASHBOARD = "/dashboard";
 export const ROUTE_OBJEKTE = "/objekte";

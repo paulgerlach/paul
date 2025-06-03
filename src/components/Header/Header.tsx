@@ -7,8 +7,10 @@ import { cellphone, login, logo } from "@/static/icons";
 import { ROUTE_FRAGEBOGEN, ROUTE_HOME, ROUTE_KONTAKT } from "@/routes/routes";
 import Nav from "./Nav";
 import { useEffect, useState, useRef } from "react";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 export default function Header() {
+  const { openDialog } = useDialogStore();
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -23,15 +25,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLoginClick = () => {
-    const dialog: HTMLDialogElement | null = document.getElementById(
-      "login-dialog"
-    ) as HTMLDialogElement | null;
-    if (dialog) {
-      dialog.showModal();
-    }
-  };
-
   // const handleRegisterClick = () => {
   //   const dialog: HTMLDialogElement | null = document.getElementById(
   //     "register-dialog"
@@ -45,10 +38,10 @@ export default function Header() {
     <header
       id="header"
       ref={headerRef}
-      className={`sticky w-full top-0 duration-300 ${
+      className={`fixed w-full mx-auto max-w-7xl top-2.5 left-1/2 -translate-x-1/2 duration-300 ${
         scrolled ? "scrolled" : ""
       }`}>
-      <div className="flex items-center bg-dark_green w-full px-10 max-medium:px-5 [.scrolled_&]:bg-dark_green/50 [.scrolled_&]:backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
+      <div className="flex items-center w-full px-5 rounded-full bg-white/50 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
         <Link
           href={ROUTE_HOME}
           className="flex items-center max-w-16 w-full h-5 justify-start gap-3">
@@ -58,7 +51,7 @@ export default function Header() {
             sizes="100vw"
             loading="lazy"
             style={{ width: "100%", height: "auto" }}
-            className="max-w-16 w-full h-5"
+            className="max-w-16 w-full h-5 colored-to-black"
             src={logo}
             alt="logo"
           />
@@ -67,15 +60,15 @@ export default function Header() {
           <div className="flex-grow flex items-center justify-center max-large:items-start max-large:justify-start">
             <Nav />
           </div>
-          <div className="flex items-center justify-end gap-base">
+          <div className="flex items-center justify-end gap-1.5">
             <button
-              onClick={() => handleLoginClick()}
-              className="py-2 px-4 flex items-center cursor-pointer gap-1.5 justify-center text-sm text-white duration-300 hover:opacity-80">
+              onClick={() => openDialog("login")}
+              className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-sm text-dark_text">
               <Image
                 width={16}
                 height={16}
                 loading="lazy"
-                className="colored-to-white max-w-4 max-h-4"
+                className="max-w-4 max-h-4"
                 style={{ width: "100%", height: "auto" }}
                 src={login}
                 alt="login"
@@ -84,12 +77,12 @@ export default function Header() {
             </button>
             <Link
               href="tel:01759223454"
-              className="py-2 px-4 flex items-center gap-1.5 justify-center text-sm text-white duration-300 hover:opacity-80">
+              className="p-2 flex items-center gap-1.5 justify-center text-sm text-dark_text">
               <Image
-                width={16}
-                height={16}
+                width={20}
+                height={20}
                 loading="lazy"
-                className="colored-to-white max-w-4 max-h-4"
+                className="max-w-5 min-w-4 min-h-4 w-full max-h-5"
                 style={{ width: "100%", height: "auto" }}
                 src={cellphone}
                 alt="cellphone"

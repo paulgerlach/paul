@@ -68,6 +68,7 @@ export default function LoginDialog() {
 
       toast.success("Login erfolgreich");
       router.push(ROUTE_DASHBOARD);
+      closeDialog("login");
     }
   };
 

@@ -30,8 +30,6 @@ export default async function ObjekteItem({ item }: { item: ObjektType }) {
       local.usage_type !== "commercial" && local.usage_type !== "parking"
   );
 
-  console.log(relatedLocals);
-
   return (
     <div className="bg-white p-4 rounded-2xl flex items-center justify-between">
       <Link

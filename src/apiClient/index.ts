@@ -15,14 +15,11 @@ async function getTenantsByLocalID(localID: string) {
     throw new Error("Unauthorized");
   }
 
-  // Query tenants table
   const { data, error } = await supabase
     .from("tenants")
     .select("*")
     .eq("local_id", localID)
     .eq("user_id", user.id);
-
-  console.log(data);
 
   if (error) {
     throw new Error(`Failed to fetch tenants: ${error.message}`);
@@ -59,19 +56,18 @@ export const useUploadDocuments = () => {
 
       for (const file of files) {
         const sanitizedFileName = sanitizeFileName(file.name);
-        const path = `${relatedType}/${relatedId}/${sanitizedFileName}`;
+        const fullFileName = `${relatedId}_${sanitizedFileName}`;
+        const path = `${user.id}/${fullFileName}`;
 
-        const { data, error } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("documents")
           .upload(path, file, {
             upsert: true,
-            metadata: {
-              related_id: relatedId,
-              related_table: relatedType,
-            },
           });
 
-        if (error) throw new Error(`Upload failed: ${error.message}`);
+        if (uploadError) {
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
 
         const { error: insertError } = await supabase.from("documents").insert({
           document_name: file.name,
@@ -81,8 +77,9 @@ export const useUploadDocuments = () => {
           user_id: user.id,
         });
 
-        if (insertError)
+        if (insertError) {
           throw new Error(`Insert failed: ${insertError.message}`);
+        }
 
         uploaded.push({ path, name: file.name });
       }

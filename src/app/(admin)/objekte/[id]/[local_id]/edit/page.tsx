@@ -2,11 +2,11 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EditObjekteUnitForm from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
 import database from "@/db";
-import { documents, locals } from "@/db/drizzle/schema";
+import { locals } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { supabaseServer } from "@/utils/supabase/server";
-import { and, eq } from "drizzle-orm";
-// import { getObjectDocuments, getSignedUrlsForObject } from "@/api";
+import { eq } from "drizzle-orm";
+import { getSignedUrlsForObject } from "@/api";
 
 export default async function EditLocalPage({
   params,
@@ -34,27 +34,7 @@ export default async function EditLocalPage({
     return <div>Objekt nicht gefunden</div>;
   }
 
-  // const documentFilesUrls = await getSignedUrlsForObject(local_id);
-  // const documentFiles = await getObjectDocuments(local_id);
-
-  // console.log(documentFilesUrls, documentFiles);
-
-  // const userDocuments = await database
-  //   .select()
-  //   .from(documents)
-  //   .where(
-  //     and(
-  //       eq(documents.user_id, user.id),
-  //       eq(documents.related_type, "locals"),
-  //       eq(documents.related_id, local_id)
-  //     )
-  //   );
-
-  // const mappedDocuments = userDocuments.map((doc) => ({
-  //   id: doc.id,
-  //   name: doc.document_name,
-  //   url: doc.document_url,
-  // }));
+  const documentFilesUrls = await getSignedUrlsForObject(local_id);
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
@@ -68,6 +48,7 @@ export default async function EditLocalPage({
           <EditObjekteUnitForm
             objektID={id}
             localID={local_id}
+            uploadedDocuments={documentFilesUrls}
             initialValues={{
               apartment_type: local.apartment_type,
               cellar_available: local.cellar_available,

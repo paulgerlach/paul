@@ -13,18 +13,20 @@ export type FormRoundedCheckboxProps<T extends FieldValues = FieldValues> = {
   label: string;
   name: Path<T>;
   disabled?: boolean;
+  className?: string;
 };
 
 export default function FormRoundedCheckbox<
   T extends FieldValues = FieldValues,
->({ control, label, name, disabled }: FormRoundedCheckboxProps<T>) {
+>({ control, label, name, disabled, className }: FormRoundedCheckboxProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       disabled={disabled}
       render={({ field }) => (
-        <FormItem className="flex border-[#c4c4c4] transition-all duration-300 border w-fit rounded-full px-2.5 items-center gap-2 form-rounded-checkbox mt-4">
+        <FormItem
+          className={`flex border-[#c4c4c4] transition-all duration-300 border w-fit rounded-full px-2.5 items-center gap-2 form-rounded-checkbox mt-4 ${className}`}>
           <FormControl>
             <RoundedCheckbox
               disabled={disabled}

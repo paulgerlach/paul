@@ -939,3 +939,14 @@ html {
     text-align: center;
   }
 }
+
+[data-sonner-toast][data-styled="true"] [data-description],
+[data-sonner-toaster][data-sonner-theme="dark"] [data-description] {
+  color: #1e322d !important;
+  font-size: 14px;
+}
+
+[data-sonner-toast][data-styled="true"] [data-title] {
+  color: #1e322d !important;
+  font-size: 16px;
+}

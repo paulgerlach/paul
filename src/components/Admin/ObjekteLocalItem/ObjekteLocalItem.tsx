@@ -13,6 +13,7 @@ import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import { useTenantsByLocalID } from "@/apiClient";
+import { Skeleton } from "@/components/Basic/ui/Skeleton";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
@@ -33,7 +34,7 @@ export default function ObjekteLocalItem({
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
 
-  const { data: tenants } = useTenantsByLocalID(localID);
+  const { data: tenants, isLoading } = useTenantsByLocalID(localID);
 
   useEffect(() => {
     if (isOpen) {
@@ -116,7 +117,11 @@ export default function ObjekteLocalItem({
                 alt={item.usage_type || ""}
               />
             </span>
-            {handleStatusImage()}
+            {isLoading ? (
+              <Skeleton className="w-20 h-20 rounded bg-[#E5EBF5]" />
+            ) : (
+              handleStatusImage()
+            )}
           </div>
           <div
             className="flex cursor-pointer items-center justify-start gap-5"
@@ -137,7 +142,11 @@ export default function ObjekteLocalItem({
           </div>
         </div>
         <div className="flex items-center justify-end gap-7">
-          {handleStatusBadge()}
+          {isLoading ? (
+            <Skeleton className="w-56 h-16 rounded-[20px]" />
+          ) : (
+            handleStatusBadge()
+          )}
           <ThreeDotsButton
             editLink={`${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/edit`}
             itemID={item.id}
@@ -145,29 +154,32 @@ export default function ObjekteLocalItem({
           />
         </div>
       </div>
-      {tenants && tenants?.length > 0 ? (
-        <ObjekteLocalItemHistory
-          objektID={id}
-          localID={localID}
-          history={tenants}
+      {tenants && tenants?.length > 0 && (
+        <div
           ref={contentRef}
-        />
-      ) : (
-        <Link
-          ref={contentRef}
-          className="flex items-center [.available_&]:mt-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
-          href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            className="max-w-4 max-h-4"
-            src={admin_plus}
-            alt="admin_plus"
+          className="[.active_&]:pt-9 [.active_&]:pb-2 pl-10 pr-6 [.active_&]:h-auto h-0">
+          {status === "vacancy" && (
+            <Link
+              className="flex items-center [.available_&]:mt-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
+              href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                loading="lazy"
+                className="max-w-4 max-h-4"
+                src={admin_plus}
+                alt="admin_plus"
+              />
+              Mieter hinzufügen
+            </Link>
+          )}
+          <ObjekteLocalItemHistory
+            objektID={id}
+            localID={localID}
+            history={tenants}
           />
-          Mieter hinzufügen
-        </Link>
+        </div>
       )}
     </div>
   );

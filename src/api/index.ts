@@ -2,9 +2,9 @@ import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
 import database from "@/db";
-import { tenants } from "@/db/drizzle/schema";
+import { documents, tenants } from "@/db/drizzle/schema";
 import { and, eq } from "drizzle-orm";
-import { supabase } from "@/utils/supabase/client";
+import { supabaseServer } from "@/utils/supabase/server";
 
 export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
   const filePath = path.resolve(
@@ -38,6 +38,7 @@ export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
 };
 
 export async function getTenantsByLocalIDWithAuth(localID: string) {
+  const supabase = await supabaseServer();
   const {
     data: { user },
     error,
@@ -55,29 +56,26 @@ export async function getTenantsByLocalIDWithAuth(localID: string) {
   return result;
 }
 
-export async function getObjectDocuments(objectId: string) {
-  const { data, error } = await supabase.storage
-    .from("documents")
-    .list(objectId, {
-      limit: 100,
-      offset: 0,
-    });
+export async function getSignedUrlsForObject(objectId: string) {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error("Error fetching documents:", error.message);
-    return [];
+  if (error || !user) {
+    throw new Error("Unauthorized");
   }
 
-  return data;
-}
+  const files = await database
+    .select()
+    .from(documents)
+    .where(
+      and(eq(documents.related_id, objectId), eq(documents.user_id, user.id))
+    );
 
-export async function getSignedUrlsForObject(objectId: string) {
-  const { data: files, error } = await supabase.storage
-    .from("documents")
-    .list(objectId);
-
-  if (error || !files) {
-    console.error("Failed to list files:", error?.message);
+  if (!files) {
+    console.error("Failed to fetch document records:");
     return [];
   }
 
@@ -85,19 +83,21 @@ export async function getSignedUrlsForObject(objectId: string) {
     const { data: signedUrlData, error: signedUrlError } =
       await supabase.storage
         .from("documents")
-        .createSignedUrl(`${objectId}/${file.name}`, 60 * 60); // valid for 1 hour
+        .createSignedUrl(file.document_url, 60 * 60); // 1 hour
 
     if (signedUrlError) {
       console.error(
-        `Failed to get signed URL for ${file.name}:`,
+        `Failed to get signed URL for ${file.document_url}:`,
         signedUrlError.message
       );
       return null;
     }
 
     return {
-      name: file.name,
+      name: file.document_name,
       url: signedUrlData.signedUrl,
+      id: file.id,
+      relatedId: file.related_id,
     };
   });
 

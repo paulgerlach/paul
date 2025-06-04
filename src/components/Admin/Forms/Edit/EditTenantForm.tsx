@@ -19,7 +19,10 @@ import { editTenant } from "@/actions/editTenant";
 import Link from "next/link";
 import Image from "next/image";
 import { admin_plus } from "@/static/icons";
-// import { useUploadDocuments } from "@/apiClient";
+import { useUploadDocuments } from "@/apiClient";
+import { UploadedDocument } from "@/types";
+import { useDocumentDeletion } from "@/utils/client";
+import { deleteDocumentById } from "@/actions/deleteDocument";
 
 const tenantSchema = z.object({
   is_current: z.boolean(),
@@ -70,23 +73,29 @@ const defaultValues: EditTenantFormValues = {
   documents: [],
 };
 
+export type EditTenantFormProps = {
+  id: string;
+  localID: string;
+  tenantID: string;
+  initialValues?: EditTenantFormValues;
+  uploadedDocuments?: UploadedDocument[];
+};
+
 export default function EditTenantForm({
   id: objekteID,
   localID,
   tenantID,
   initialValues,
-}: {
-  id: string;
-  localID: string;
-  tenantID: string;
-  initialValues?: EditTenantFormValues;
-}) {
+  uploadedDocuments,
+}: EditTenantFormProps) {
   const router = useRouter();
-  // const uploadDocuments = useUploadDocuments();
+  const uploadDocuments = useUploadDocuments();
   const methods = useForm({
     resolver: zodResolver(tenantSchema),
     defaultValues: initialValues ?? defaultValues,
   });
+  const { existingDocuments, deletedDocumentIds, handleRemoveExistingFile } =
+    useDocumentDeletion(uploadedDocuments);
 
   return (
     <Form {...methods}>
@@ -97,15 +106,21 @@ export default function EditTenantForm({
           try {
             await editTenant(tenantID, data);
 
-            // if (data.documents && data.documents.length > 0) {
-            //   await uploadDocuments.mutateAsync({
-            //     files: data.documents,
-            //     relatedId: tenantID,
-            //     relatedType: "tenant",
-            //   });
-            // }
+            if (data.documents && data.documents.length > 0) {
+              await uploadDocuments.mutateAsync({
+                files: data.documents,
+                relatedId: tenantID,
+                relatedType: "tenant",
+              });
+            }
 
-            toast.success("Created");
+            if (deletedDocumentIds.length > 0) {
+              await Promise.all(
+                deletedDocumentIds.map((id) => deleteDocumentById(id))
+              );
+            }
+
+            toast.success("Updated successfully");
             router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
             methods.reset();
           } catch (err) {
@@ -115,7 +130,7 @@ export default function EditTenantForm({
         })}>
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <div className="flex items-center justify-start gap-4">
-            <h1 className="text-2xl mb-5 text-dark_green">
+            <h1 className="text-2xl text-dark_green">
               Mieter - {methods.watch("first_name")}{" "}
               {methods.watch("last_name")}
             </h1>
@@ -123,6 +138,7 @@ export default function EditTenantForm({
               control={methods.control}
               name="is_current"
               label="Aktueller Mieter"
+              className="!mt-0"
             />
           </div>
           <div className="space-y-4">
@@ -226,12 +242,17 @@ export default function EditTenantForm({
           control={methods.control}
           name="documents"
           label="Dokumente"
+          existingFiles={existingDocuments}
+          deletedFileIds={deletedDocumentIds}
+          onRemoveExistingFile={handleRemoveExistingFile}
         />
         <Button
           disabled={methods.formState.isSubmitting}
           type="submit"
           className="mt-6 ml-auto mr-0 block">
-          Speichern
+          {methods.formState.isSubmitting || uploadDocuments.isPending
+            ? "Lädt..."
+            : "Speichern"}
         </Button>
       </form>
     </Form>

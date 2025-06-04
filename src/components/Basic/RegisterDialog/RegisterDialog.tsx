@@ -27,7 +27,7 @@ type RegisterFormData = z.infer<typeof RegisterSchema>;
 
 export default function RegisterDialog() {
   const router = useRouter();
-  const { openDialogByType } = useDialogStore();
+  const { openDialogByType, closeDialog } = useDialogStore();
 
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(RegisterSchema),
@@ -81,6 +81,7 @@ export default function RegisterDialog() {
 
     toast.success("Registrierung erfolgreich!");
     router.push(ROUTE_DASHBOARD);
+    closeDialog("register");
   };
 
   if (openDialogByType.register)

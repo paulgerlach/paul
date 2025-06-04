@@ -136,3 +136,10 @@ export type DialogDocumentActonType =
   | `${DocumentType}_${DialogActionType}`
   | "login"
   | "register";
+
+export type UploadedDocument = {
+  id: string;
+  name: string;
+  url: string;
+  relatedId: string;
+};

@@ -1,11 +1,12 @@
+import { getSignedUrlsForObject } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EditTenantForm from "@/components/Admin/Forms/Edit/EditTenantForm";
 import database from "@/db";
-import { documents, tenants } from "@/db/drizzle/schema";
+import { tenants } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { supabaseServer } from "@/utils/supabase/server";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export default async function EditTenantPage({
   params,
@@ -14,14 +15,14 @@ export default async function EditTenantPage({
 }) {
   const { id, local_id, tenant_id } = await params;
 
-  //   const supabase = await supabaseServer();
-  //   const {
-  //     data: { user },
-  //   } = await supabase.auth.getUser();
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  //   if (!user) {
-  //     return <div>Unauthorized</div>;
-  //   }
+  if (!user) {
+    return <div>Unauthorized</div>;
+  }
 
   const tenant = await database
     .select()
@@ -33,22 +34,7 @@ export default async function EditTenantPage({
     return <div>Tenant nicht gefunden</div>;
   }
 
-  //   const userDocuments = await database
-  //     .select()
-  //     .from(documents)
-  //     .where(
-  //       and(
-  //         eq(documents.user_id, user.id),
-  //         eq(documents.related_type, "tenant"),
-  //         eq(documents.related_id, tenant_id)
-  //       )
-  //     );
-
-  //   const mappedDocuments = userDocuments.map((doc) => ({
-  //     id: doc.id,
-  //     name: doc.document_name,
-  //     url: doc.document_url,
-  //   }));
+  const documentFilesUrls = await getSignedUrlsForObject(tenant_id);
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
@@ -63,6 +49,7 @@ export default async function EditTenantPage({
             id={id}
             tenantID={tenant_id}
             localID={local_id}
+            uploadedDocuments={documentFilesUrls}
             initialValues={{
               is_current: tenant.is_current,
               additional_costs: Number(tenant.additional_costs),

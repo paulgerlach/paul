@@ -4,6 +4,8 @@ import { Controller, Control, FieldValues, Path } from "react-hook-form";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { pdf_icon } from "@/static/icons";
+import type { UploadedDocument } from "@/types";
+import Link from "next/link";
 
 type FilePreview = File & { preview: string };
 
@@ -12,6 +14,9 @@ type FormDocumentsProps<T extends FieldValues = FieldValues> = {
   name: Path<T>;
   label?: string;
   disabled?: boolean;
+  existingFiles?: UploadedDocument[];
+  onRemoveExistingFile?: (id: string) => void;
+  deletedFileIds?: string[];
 };
 
 export default function FormDocuments<T extends FieldValues = FieldValues>({
@@ -19,6 +24,9 @@ export default function FormDocuments<T extends FieldValues = FieldValues>({
   name,
   label,
   disabled = false,
+  existingFiles,
+  onRemoveExistingFile,
+  deletedFileIds = [],
 }: FormDocumentsProps<T>) {
   return (
     <div className="w-full py-5 space-y-3">
@@ -32,6 +40,9 @@ export default function FormDocuments<T extends FieldValues = FieldValues>({
             files={field.value || []}
             onChange={field.onChange}
             disabled={disabled}
+            existingFiles={existingFiles}
+            deletedFileIds={deletedFileIds}
+            onRemoveExistingFile={onRemoveExistingFile}
           />
         )}
       />
@@ -43,9 +54,19 @@ type DropzoneAreaProps = {
   files: FilePreview[];
   onChange: (files: FilePreview[]) => void;
   disabled?: boolean;
+  existingFiles?: UploadedDocument[];
+  onRemoveExistingFile?: (id: string) => void;
+  deletedFileIds?: string[];
 };
 
-function DropzoneArea({ files, onChange, disabled }: DropzoneAreaProps) {
+function DropzoneArea({
+  files,
+  onChange,
+  disabled,
+  existingFiles,
+  onRemoveExistingFile,
+  deletedFileIds,
+}: DropzoneAreaProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const filesWithPreview = acceptedFiles.map((file) =>
@@ -66,13 +87,77 @@ function DropzoneArea({ files, onChange, disabled }: DropzoneAreaProps) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "application/pdf": [".pdf"], "image/*": [] },
+    accept: { "application/pdf": [".pdf"] },
     multiple: true,
     disabled,
   });
 
   return (
     <div className="mb-4">
+      {existingFiles && existingFiles.length > 0 && (
+        <ul className="mt-4 mb-6 space-y-6 pb-4">
+          {existingFiles.map((file) => {
+            const isMarkedForDeletion = deletedFileIds?.includes(file.id);
+
+            return (
+              <li
+                key={file.id}
+                className={`flex justify-between items-center pl-12 ${
+                  isMarkedForDeletion ? "opacity-50" : ""
+                }`}>
+                {isMarkedForDeletion ? (
+                  <span className="text-sm flex items-center gap-12 truncate line-through text-gray-400 cursor-not-allowed">
+                    <Image
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      loading="lazy"
+                      className="block mx-auto"
+                      src={pdf_icon}
+                      alt="pdf_icon"
+                    />
+                    {file.name}
+                  </span>
+                ) : (
+                  <Link
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm flex items-center gap-12 truncate text-[#757575]">
+                    <Image
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      loading="lazy"
+                      className="block mx-auto"
+                      src={pdf_icon}
+                      alt="pdf_icon"
+                    />
+                    {file.name}
+                  </Link>
+                )}
+                <div className="flex items-center gap-3">
+                  {!isMarkedForDeletion ? (
+                    <button
+                      type="button"
+                      onClick={() => onRemoveExistingFile?.(file.id)}
+                      className="text-dark_green cursor-pointer hover:text-red-700">
+                      <X size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onRemoveExistingFile?.(file.id)}
+                      className="text-xs cursor-pointer text-blue-600 hover:underline">
+                      Undo
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       {files.length > 0 && (
         <ul className="mt-4 mb-9 space-y-6">
           {files.map((file, idx) => (

@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function ObjektDeatilsPage({
+export default async function ObjektDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;

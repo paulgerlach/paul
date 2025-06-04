@@ -13,7 +13,7 @@ import {
 } from "@/components/Basic/ui/Form";
 import { Input } from "@/components/Basic/ui/Input";
 import { Button } from "@/components/Basic/ui/Button";
-import type { UnitType } from "@/types";
+import type { UnitType, UploadedDocument } from "@/types";
 import {
   apartmentTypeOptions,
   floorOptions,
@@ -33,7 +33,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { editLocal } from "@/actions/editLocal";
-// import { useUploadDocuments } from "@/apiClient";
+import { useUploadDocuments } from "@/apiClient";
+import { useState } from "react";
+import { deleteDocumentById } from "@/actions/deleteDocument";
+import { useDocumentDeletion } from "@/utils/client";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -99,19 +102,23 @@ type EditObjekteUnitFormProps = {
   localID: string;
   objektID: string;
   initialValues?: EditObjekteUnitFormValues;
+  uploadedDocuments?: UploadedDocument[];
 };
 
 export default function EditObjekteUnitForm({
   objektID,
   localID,
   initialValues,
+  uploadedDocuments,
 }: EditObjekteUnitFormProps) {
   const router = useRouter();
-  // const uploadDocuments = useUploadDocuments();
+  const uploadDocuments = useUploadDocuments();
   const methods = useForm({
     resolver: zodResolver(localSchema),
     defaultValues: initialValues ?? defaultValues,
   });
+  const { existingDocuments, deletedDocumentIds, handleRemoveExistingFile } =
+    useDocumentDeletion(uploadedDocuments);
 
   return (
     <Form {...methods}>
@@ -122,15 +129,21 @@ export default function EditObjekteUnitForm({
           try {
             await editLocal(localID, data);
 
-            // if (data.documents && data.documents.length > 0) {
-            //   await uploadDocuments.mutateAsync({
-            //     files: data.documents,
-            //     relatedId: localID,
-            //     relatedType: "local",
-            //   });
-            // }
+            if (data.documents && data.documents.length > 0) {
+              await uploadDocuments.mutateAsync({
+                files: data.documents,
+                relatedId: localID,
+                relatedType: "local",
+              });
+            }
 
-            toast.success("Created");
+            if (deletedDocumentIds.length > 0) {
+              await Promise.all(
+                deletedDocumentIds.map((id) => deleteDocumentById(id))
+              );
+            }
+
+            toast.success("Updated successfully");
             router.push(`${ROUTE_OBJEKTE}/${objektID}`);
             methods.reset();
           } catch (err) {
@@ -248,13 +261,17 @@ export default function EditObjekteUnitForm({
           control={methods.control}
           name="documents"
           label="Dokumente"
+          existingFiles={existingDocuments}
+          deletedFileIds={deletedDocumentIds}
+          onRemoveExistingFile={handleRemoveExistingFile}
         />
         <Button
-          disabled={methods.formState.isSubmitting}
+          disabled={methods.formState.isSubmitting || uploadDocuments.isPending}
           type="submit"
           className="mt-6 ml-auto mr-0 block">
-          {/* {uploadDocuments.isPending ? "Lädt..." : ""} */}
-          Speichern
+          {methods.formState.isSubmitting || uploadDocuments.isPending
+            ? "Lädt..."
+            : "Speichern"}
         </Button>
       </form>
     </Form>

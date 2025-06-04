@@ -154,33 +154,34 @@ export default function ObjekteLocalItem({
           />
         </div>
       </div>
-      {tenants && tenants?.length > 0 && (
-        <div
-          ref={contentRef}
-          className="[.active_&]:pt-9 [.active_&]:pb-2 pl-10 pr-6 [.active_&]:h-auto h-0">
-          {status === "vacancy" && (
-            <Link
-              className="flex items-center [.available_&]:mt-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
-              href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="max-w-4 max-h-4"
-                src={admin_plus}
-                alt="admin_plus"
-              />
-              Mieter hinzufügen
-            </Link>
-          )}
+
+      <div
+        ref={contentRef}
+        className="[.active_&]:pt-9 [.active_&]:pb-2 pl-10 pr-6 [.active_&]:h-auto h-0">
+        {status === "vacancy" && (
+          <Link
+            className="flex items-center [.available_&]:mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
+            href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="max-w-4 max-h-4"
+              src={admin_plus}
+              alt="admin_plus"
+            />
+            Mieter hinzufügen
+          </Link>
+        )}
+        {tenants && tenants?.length > 0 && (
           <ObjekteLocalItemHistory
             objektID={id}
             localID={localID}
             history={tenants}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

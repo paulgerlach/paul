@@ -91,7 +91,7 @@ export default function HomeHero() {
           Fernablesbare Zähler verpflichtend bis 1. Januar 2027
         </Link>
       </div>
-      <div className="px-[50px] mt-[70px] mb-10 max-medium:flex-col w-fit mx-auto max-medium:pr-0 max-medium:justify-end grid grid-cols-4 gap-2 max-medium:px-0">
+      <div className="px-[72px] mt-[70px] mb-10 max-medium:flex-col w-fit mx-auto max-medium:pr-0 max-medium:justify-end grid grid-cols-4 gap-2 max-medium:px-0">
         <div className="bg-card_bg px-9 rounded-base flex items-center justify-center max-medium:hidden">
           <Image
             width={0}

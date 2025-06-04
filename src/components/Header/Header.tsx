@@ -25,20 +25,11 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // const handleRegisterClick = () => {
-  //   const dialog: HTMLDialogElement | null = document.getElementById(
-  //     "register-dialog"
-  //   ) as HTMLDialogElement | null;
-  //   if (dialog) {
-  //     dialog.showModal();
-  //   }
-  // };
-
   return (
     <header
       id="header"
       ref={headerRef}
-      className={`fixed w-full mx-auto max-w-7xl top-2.5 left-1/2 -translate-x-1/2 duration-300 ${
+      className={`fixed w-full mx-auto !px-[72px] max-megalarge:!px-16 max-large:!px-6 max-medium:!px-5 top-2.5 left-1/2 -translate-x-1/2 duration-300 ${
         scrolled ? "scrolled" : ""
       }`}>
       <div className="flex items-center w-full px-5 rounded-full bg-white/50 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
@@ -91,7 +82,7 @@ export default function Header() {
             </Link>
             <Link
               href={ROUTE_KONTAKT}
-              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-white rounded-halfbase">
+              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-sm text-darl_text rounded-halfbase">
               Demo buchen
             </Link>
           </div>

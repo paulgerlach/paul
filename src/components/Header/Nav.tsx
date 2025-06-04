@@ -39,19 +39,17 @@ export default function Nav() {
     queryFn: () => getAllBlogPosts(),
   });
 
-  if (!posts || posts.length === 0) return null;
-
-  const lastPost = posts[0].data.slices;
-  const lastSixPosts = posts.slice(0, 6);
-  const mainTitleSlice = lastPost.find(
+  const lastPost = posts?.[0].data.slices;
+  const lastSixPosts = posts?.slice(0, 6);
+  const mainTitleSlice = lastPost?.find(
     (slice) => slice.slice_type === "main_title"
   ) as Content.MainTitleSlice;
   const lastPostTitle = mainTitleSlice?.primary.maintitle;
-  const mainSubtitleSlice = lastPost.find(
+  const mainSubtitleSlice = lastPost?.find(
     (slice) => slice.slice_type === "subtitle"
   ) as Content.SubtitleSlice;
   const lastPostSubtitle = mainSubtitleSlice?.primary.subtitle;
-  const lastPostImageSlice = lastPost.find(
+  const lastPostImageSlice = lastPost?.find(
     (slice) => slice.slice_type === "blog_image"
   ) as Content.BlogImageSlice;
   const lastPostImage = lastPostImageSlice?.primary.blogMainImage;
@@ -95,23 +93,24 @@ export default function Nav() {
               <p className="text-xs text-dark_text">{lastPostSubtitle}</p>
             </Link>
           ),
-          groupLinks: lastSixPosts
-            .map((post) => {
-              const mainTitleSlice = post.data.slices.find(
-                (slice) => slice.slice_type === "main_title"
-              ) as Content.MainTitleSlice | undefined;
+          groupLinks:
+            lastSixPosts
+              ?.map((post) => {
+                const mainTitleSlice = post.data.slices.find(
+                  (slice) => slice.slice_type === "main_title"
+                ) as Content.MainTitleSlice | undefined;
 
-              const title = mainTitleSlice?.primary?.maintitle || "";
+                const title = mainTitleSlice?.primary?.maintitle || "";
 
-              if (!title) return null;
+                if (!title) return null;
 
-              return {
-                title,
-                icon: blog_group_link,
-                link: `${ROUTE_BLOG}/${post.uid}`,
-              } as NavGroupLink;
-            })
-            .filter((link): link is NavGroupLink => link !== null),
+                return {
+                  title,
+                  icon: blog_group_link,
+                  link: `${ROUTE_BLOG}/${post.uid}`,
+                } as NavGroupLink;
+              })
+              .filter((link): link is NavGroupLink => link !== null) || [],
         }
       : null;
 

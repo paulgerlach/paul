@@ -47,16 +47,21 @@ const contractSchema = z.object({
           })
           .refine((val) => !isNaN(val.getTime()), {
             message: "Ungültiges Datum",
-          }),
-        email: z
-          .string()
-          .min(1, "Pflichtfeld")
-          .email("Ungültige E-Mail-Adresse"),
-        phone: z
-          .string()
-          .min(1, "Pflichtfeld")
-          .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer"),
-        is_main: z.boolean(),
+          })
+          .nullable(),
+        email: z.preprocess(
+          (val) => (val === "" ? undefined : val),
+          z.string().email("Ungültige E-Mail-Adresse").optional().nullable()
+        ),
+
+        phone: z.preprocess(
+          (val) => (val === "" ? undefined : val),
+          z
+            .string()
+            .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer")
+            .optional()
+            .nullable()
+        ),
       })
     )
     .min(1, "Mindestens ein Mieter erforderlich"),
@@ -80,7 +85,6 @@ const defaultValues: EditContractFormValues = {
       birth_date: new Date(),
       email: "",
       phone: "",
-      is_main: true,
     },
   ],
   cold_rent: 0,
@@ -117,10 +121,6 @@ export default function EditContractForm({
   const { addContractor } = useContractorActions(methods);
 
   const watchContractors = methods.watch("contractors");
-  const watchMainContractor = watchContractors.find((c) => c.is_main) || {
-    first_name: "",
-    last_name: "",
-  };
 
   return (
     <Form {...methods}>
@@ -156,8 +156,10 @@ export default function EditContractForm({
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <div className="flex items-center justify-start gap-4">
             <h1 className="text-2xl text-dark_green">
-              Mieter - {watchMainContractor.first_name}{" "}
-              {watchMainContractor.last_name}
+              {watchContractors.length > 1 ? "Mieter -" : "Mieter -"}{" "}
+              {watchContractors
+                .map((c) => `${c.first_name} ${c.last_name}`)
+                .join(", ")}
             </h1>
             <FormRoundedCheckbox<EditContractFormValues>
               control={methods.control}

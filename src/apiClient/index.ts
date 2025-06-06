@@ -67,39 +67,6 @@ export function useContractorsByContractID(contractID?: string) {
   });
 }
 
-async function getMainContractorByContractID(contractID?: string) {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const { data, error } = await supabase
-    .from("contractors")
-    .select("*")
-    .eq("contract_id", contractID)
-    .eq("user_id", user.id)
-    .eq("is_main", true)
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to fetch contractors: ${error.message}`);
-  }
-
-  return data;
-}
-
-export function useMainContractorByContractID(contractID?: string) {
-  return useQuery({
-    queryKey: ["contractors", contractID],
-    queryFn: () => getMainContractorByContractID(contractID),
-    refetchOnWindowFocus: false,
-  });
-}
-
 export const useUploadDocuments = () => {
   return useMutation({
     mutationFn: async ({

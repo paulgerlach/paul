@@ -1,16 +1,9 @@
-import {
-  Control,
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormReturn,
-} from "react-hook-form";
+import { Control, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import FormInputField from "./FormInputField";
 import FormDateInput from "./FormDateInput";
 import { useContractorActions } from "@/hooks/useContractorActions";
 import { X, Undo, Trash } from "lucide-react";
 import { Fragment } from "react";
-import FormRoundedCheckbox from "./FormRoundedCheckbox";
 
 export type FormContractorFieldProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
@@ -96,28 +89,6 @@ export default function FormContractorField<
           label="Telefonnummer"
           placeholder="Telefonnummer"
         />
-        <div className="flex items-end justify-start">
-          <FormRoundedCheckbox<T>
-            control={control}
-            name={`contractors.${index}.is_main` as Path<T>}
-            label="Main Mieter"
-            className="!mt-0 !h-fit"
-            onChange={(checked: boolean) => {
-              if (!checked) return;
-
-              const contractors =
-                methods.getValues("contractors" as Path<T>) || [];
-
-              contractors.forEach((_, i) => {
-                methods.setValue(
-                  `contractors.${i}.is_main` as Path<T>,
-                  (i === index) as PathValue<T, Path<T>>,
-                  { shouldValidate: true, shouldDirty: true }
-                );
-              });
-            }}
-          />
-        </div>
       </div>
     </Fragment>
   );

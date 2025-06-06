@@ -27,7 +27,6 @@ export default function FormMoneyInput<T extends FieldValues = FieldValues>({
     <FormField
       control={control}
       name={name}
-      disabled={disabled}
       render={({ field }) => (
         <FormItem className={`relative ${className}`}>
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>

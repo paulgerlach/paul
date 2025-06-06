@@ -139,7 +139,7 @@ export async function getContractByID(
       .where(
         and(
           eq(contractors.contract_id, contract[0].id),
-          eq(contractors.is_main, true)
+          eq(contractors.user_id, user.id)
         )
       );
 

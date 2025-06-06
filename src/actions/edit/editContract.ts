@@ -5,7 +5,6 @@ import { contractors, contracts } from "@/db/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { EditContractFormValues } from "@/components/Admin/Forms/Edit/EditContractForm";
-import { fi } from "date-fns/locale";
 
 export async function editContract(
   contractId: string,
@@ -76,7 +75,6 @@ export async function editContract(
       created_at: now,
       updated_at: now,
       user_id: user.id,
-      is_main: contractor.is_main ?? false,
     }));
 
     if (contractorRows.length > 0) {

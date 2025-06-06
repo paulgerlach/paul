@@ -1,12 +1,12 @@
 import { pencil, small_calendar, trashcan } from "@/static/icons";
 import type { ContractType } from "@/types";
 import Image from "next/image";
-import { differenceInMonths } from "date-fns";
+import { differenceInMonths, format } from "date-fns";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { useDialogStore } from "@/store/useDIalogStore";
 import { differenceInCalendarDays } from "date-fns";
-import { useMainContractorByContractID } from "@/apiClient";
+import { useContractorsByContractID } from "@/apiClient";
 
 export default function ObjekteLocalItemHistoryItem({
   historyItem,
@@ -18,9 +18,7 @@ export default function ObjekteLocalItemHistoryItem({
   localID?: string;
 }) {
   const { openDialog, setItemID } = useDialogStore();
-  const { data: mainContractor } = useMainContractorByContractID(
-    historyItem?.id
-  );
+  const { data: contractors } = useContractorsByContractID(historyItem?.id);
   const duration =
     differenceInMonths(
       historyItem?.rental_end_date || "",
@@ -70,7 +68,13 @@ export default function ObjekteLocalItemHistoryItem({
             alt="small_calendar"
           />
           <span className="text-[#757575] text-sm">
-            {historyItem?.rental_start_date} - {historyItem?.rental_end_date}
+            {historyItem?.rental_start_date
+              ? format(new Date(historyItem.rental_start_date), "dd.MM.yyyy")
+              : "-"}{" "}
+            -{" "}
+            {historyItem?.rental_end_date
+              ? format(new Date(historyItem.rental_end_date), "dd.MM.yyyy")
+              : "-"}
           </span>
         </div>
         <div className="h-px w-full bg-[#E0E0E0]" />
@@ -84,12 +88,14 @@ export default function ObjekteLocalItemHistoryItem({
                 : "#1E322D1A",
             }}
             className="flex items-center justify-center rounded-full font-medium size-14">
-            {mainContractor?.first_name["0"]}
-            {mainContractor?.last_name["0"]}
+            {contractors?.[0].first_name["0"]}
+            {contractors?.[0].last_name["0"]}
           </span>
           <div>
             <p className="text-[#333333] text-lg">
-              {mainContractor?.first_name} {mainContractor?.last_name}
+              {contractors
+                ?.map((c) => `${c.first_name} ${c.last_name}`)
+                .join(", ")}
             </p>
             <p className="text-[#757575]">
               {formattedAmount} {formattedRate} x {duration}

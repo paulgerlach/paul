@@ -35,7 +35,6 @@ export default function FormRadioOptions<
       <FormField
         control={control}
         name={name}
-        disabled={disabled}
         render={({ field }) => (
           <FormItem>
             <FormControl>

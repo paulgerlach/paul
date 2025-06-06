@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function AdminAccoundDropdown() {
   return (
-    <button className="flex items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-3">
+    <button className="flex items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-[18px]">
       <div className="flex items-center justify-start whitespace-nowrap gap-2">
         <Image
           width={0}

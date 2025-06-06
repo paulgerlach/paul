@@ -52,7 +52,6 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
   return (
     <FormField
       control={control}
-      disabled={disabled}
       name={"tags" as Path<T>}
       render={() => (
         <FormItem className="space-y-4 pb-4 border-b border-dark_green/20">

@@ -157,7 +157,7 @@ export default function ObjekteLocalItem({
 
       <div
         ref={contentRef}
-        className="[.active_&]:pt-9 [.active_&]:pb-2 pl-10 pr-6 [.active_&]:h-auto h-0">
+        className="[.active_&]:pt-6 [.active_&]:pb-2 px-2.5 [.active_&]:h-auto h-0">
         <Link
           className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
           href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-contract`}>
@@ -170,7 +170,7 @@ export default function ObjekteLocalItem({
             src={admin_plus}
             alt="admin_plus"
           />
-          Vertrag hinzufügen
+          Mieter hinzufügen
         </Link>
         {contracts && contracts?.length > 0 && (
           <ObjekteLocalItemHistory

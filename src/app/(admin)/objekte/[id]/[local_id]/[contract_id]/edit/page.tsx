@@ -58,7 +58,6 @@ export default async function EditContractPage({
                   : new Date(),
                 email: contractor.email || "",
                 phone: contractor.phone || "",
-                is_main: contractor.is_main || false,
               })),
               documents: [],
             }}

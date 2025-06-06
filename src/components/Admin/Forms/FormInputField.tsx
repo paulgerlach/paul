@@ -32,7 +32,6 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
     <FormField
       control={control}
       name={name}
-      disabled={disabled}
       render={({ field }) => (
         <FormItem className={className}>
           {label && (
@@ -48,7 +47,7 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
               value={field.value ?? ""}
             />
           </FormControl>
-          {/* <FormMessage className="text-red-500 text-sm" /> */}
+          <FormMessage className="text-red-500 text-sm" />
         </FormItem>
       )}
     />

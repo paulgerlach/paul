@@ -36,7 +36,6 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
     <FormField
       control={control}
       name={name}
-      disabled={disabled}
       render={({ field }) => (
         <FormItem>
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>

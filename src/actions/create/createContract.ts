@@ -69,7 +69,6 @@ export async function createContract(
       birth_date: contractor.birth_date
         ? contractor.birth_date.toISOString()
         : null,
-      is_main: contractor.is_main ?? false,
       user_id: user.id,
       contract_id: insertedContract.id,
       email: contractor.email,

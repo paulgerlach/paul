@@ -7,7 +7,6 @@ import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
 import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
-import FormInputField from "../FormInputField";
 import { useRouter } from "next/navigation";
 import FormDateInput from "../FormDateInput";
 import FormMoneyInput from "../FormMoneyInput";
@@ -44,18 +43,20 @@ const contractSchema = z.object({
           .refine((val) => !isNaN(val.getTime()), {
             message: "Ungültiges Datum",
           })
+          .optional()
           .nullable(),
-        email: z
-          .string()
-          .min(1, "Pflichtfeld")
-          .email("Ungültige E-Mail-Adresse")
-          .nullable(),
-        phone: z
-          .string()
-          .min(1, "Pflichtfeld")
-          .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer")
-          .nullable(),
-        is_main: z.boolean(),
+        email: z.preprocess(
+          (val) => (val === "" ? undefined : val),
+          z.string().email("Ungültige E-Mail-Adresse").optional().nullable()
+        ),
+        phone: z.preprocess(
+          (val) => (val === "" ? undefined : val),
+          z
+            .string()
+            .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer")
+            .optional()
+            .nullable()
+        ),
       })
     )
     .min(1, "Mindestens ein Mieter erforderlich"),
@@ -79,7 +80,6 @@ const defaultValues: CreateContractFormValues = {
       birth_date: new Date(),
       email: "",
       phone: "",
-      is_main: true,
     },
   ],
   cold_rent: 0,
@@ -103,6 +103,8 @@ export default function CreateContractForm({
   });
   const { addContractor } = useContractorActions(methods);
 
+  const watchContractors = methods.watch("contractors");
+
   return (
     <Form {...methods}>
       <form
@@ -121,10 +123,17 @@ export default function CreateContractForm({
         })}>
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <div className="flex items-center justify-start gap-4">
+            <h1 className="text-2xl text-dark_green">
+              {watchContractors.length > 1 ? "Mieter -" : "Mieter -"}{" "}
+              {watchContractors
+                .map((c) => `${c.first_name} ${c.last_name}`)
+                .join(", ")}
+            </h1>
             <FormRoundedCheckbox<CreateContractFormValues>
               control={methods.control}
               name="is_current"
               label="Aktueller Mieter"
+              className="!mt-0"
             />
           </div>
           <div className="space-y-4">

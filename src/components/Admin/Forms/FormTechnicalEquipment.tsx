@@ -46,7 +46,6 @@ export default function FormTechnicalEquipment<
       <div className="grid grid-cols-2 items-start gap-5">
         <FormField
           control={control}
-          disabled={disabled}
           name={"heating_systems" as Path<T>}
           render={({ field }) => {
             const selectedValues = (field.value || []) as string[];

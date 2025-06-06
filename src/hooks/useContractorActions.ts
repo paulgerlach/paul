@@ -24,7 +24,6 @@ export function useContractorActions<T extends FieldValues>(
       birth_date: new Date().toISOString(),
       email: "",
       phone: "",
-      is_main: false,
     };
 
     const updated = [...current, newContractor] as PathValue<T, Path<T>>;

@@ -5,14 +5,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { dots_button } from "@/static/icons";
 import Link from "next/link";
 import { useDialogStore } from "@/store/useDIalogStore";
-import type { DialogDocumentActonType } from "@/types";
-import { toast } from "sonner";
+import type { DialogDocumentActionType } from "@/types";
 import { Pencil, Trash } from "lucide-react";
 
 export type ThreeDotsButtonProps = {
   editLink: string;
-  itemID: string;
-  dialogAction: DialogDocumentActonType;
+  itemID?: string;
+  dialogAction: DialogDocumentActionType;
 };
 
 export default function ThreeDotsButton({

@@ -53,7 +53,6 @@ export default async function EditLocalPage({
               apartment_type: local.apartment_type,
               cellar_available: local.cellar_available,
               floor: local.floor,
-              heating_systems: local.heating_systems,
               house_fee: Number(local.house_fee),
               house_location: local.house_location,
               living_space: Number(local.living_space),
@@ -61,7 +60,10 @@ export default async function EditLocalPage({
               outdoor_area: Number(local.outdoor_area),
               residential_area: local.residential_area,
               rooms: Number(local.rooms),
-              tags: local.tags,
+              heating_systems: Array.isArray(local.heating_systems)
+                ? (local.heating_systems as string[])
+                : [],
+              tags: Array.isArray(local.tags) ? (local.tags as string[]) : [],
               usage_type: local.usage_type,
               documents: [],
             }}

@@ -29,7 +29,7 @@ import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
 import { useRouter } from "next/navigation";
-import { createLocal } from "@/actions/createLocal";
+import { createLocal } from "@/actions/create/createLocal";
 import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 

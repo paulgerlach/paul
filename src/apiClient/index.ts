@@ -5,7 +5,7 @@ import { sanitizeFileName } from "@/utils/client";
 import { supabase } from "@/utils/supabase/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-async function getTenantsByLocalID(localID: string) {
+async function getContractsByLocalID(localID?: string) {
   const {
     data: { user },
     error: authError,
@@ -16,22 +16,86 @@ async function getTenantsByLocalID(localID: string) {
   }
 
   const { data, error } = await supabase
-    .from("tenants")
+    .from("contracts")
     .select("*")
     .eq("local_id", localID)
     .eq("user_id", user.id);
 
   if (error) {
-    throw new Error(`Failed to fetch tenants: ${error.message}`);
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
   }
 
   return data;
 }
 
-export function useTenantsByLocalID(localID: string) {
+export function useContractsByLocalID(localID?: string) {
   return useQuery({
-    queryKey: ["tenants", localID],
-    queryFn: () => getTenantsByLocalID(localID),
+    queryKey: ["contracts", localID],
+    queryFn: () => getContractsByLocalID(localID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getContractorsByContractID(contractID?: string) {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("contractors")
+    .select("*")
+    .eq("contract_id", contractID)
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw new Error(`Failed to fetch contractors: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useContractorsByContractID(contractID?: string) {
+  return useQuery({
+    queryKey: ["contractors", contractID],
+    queryFn: () => getContractorsByContractID(contractID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getMainContractorByContractID(contractID?: string) {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("contractors")
+    .select("*")
+    .eq("contract_id", contractID)
+    .eq("user_id", user.id)
+    .eq("is_main", true)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch contractors: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useMainContractorByContractID(contractID?: string) {
+  return useQuery({
+    queryKey: ["contractors", contractID],
+    queryFn: () => getMainContractorByContractID(contractID),
     refetchOnWindowFocus: false,
   });
 }

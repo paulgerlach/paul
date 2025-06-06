@@ -1,7 +1,6 @@
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
-import { CreateObjekteUnitFormValues } from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
-import { tenants } from "@/db/drizzle/schema";
-import { InferInsertModel } from "drizzle-orm";
+import { contracts, contractors, objekte, locals } from "@/db/drizzle/schema";
+import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
 
 export type NavGroupLink = {
@@ -86,41 +85,13 @@ export type BuildingType =
 
 export type UnitType = "residential" | "commercial" | "parking" | "warehouse";
 
-export type LocalHistoryType = {
-  id: string;
-  start_date: string;
-  end_date: string;
-  last_name: string;
-  first_name: string;
-  price_per_month: number;
-  active: boolean;
-  days: number;
-};
+export type ContractType = InferInsertModel<typeof contracts>;
 
-export type LocalType = CreateObjekteUnitFormValues & {
-  id: string;
-  objekt_id?: string;
-  status?: "renting" | "vacancy" | "unavailable";
-  name?: string;
-  available?: boolean;
-  type?: BuildingType;
-  unit_type?: UnitType;
-  history?: LocalHistoryType[];
-};
+export type ContractorType = InferInsertModel<typeof contractors>;
 
-export type ObjektType = {
-  id: string;
-  image?: StaticImageData;
-  street: string;
-  privateLocals?: number;
-  commercialLocals?: number;
-  percent?: number;
-  message?: string;
-  status?: "full" | "lower" | "higher";
-  locals?: LocalType[];
-};
+export type ObjektType = InferInsertModel<typeof objekte>;
 
-export type TenantType = InferInsertModel<typeof tenants>;
+export type LocalType = InferInsertModel<typeof locals>;
 
 export type UploadDocumentArgs = {
   files: File[];
@@ -130,9 +101,9 @@ export type UploadDocumentArgs = {
 
 export type DialogActionType = "delete" | "create";
 
-export type DocumentType = "object" | "local" | "tenant" | "heating_bill";
+export type DocumentType = "object" | "local" | "contract" | "heating_bill";
 
-export type DialogDocumentActonType =
+export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
   | "login"
   | "register";

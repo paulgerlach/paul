@@ -7,7 +7,6 @@ import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
 import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
-import FormInputField from "../FormInputField";
 import FormDocuments from "../FormDocuments";
 import { useRouter } from "next/navigation";
 import FormDateInput from "../FormDateInput";
@@ -15,16 +14,17 @@ import FormMoneyInput from "../FormMoneyInput";
 import { custodyTypeOptions } from "@/static/formSelectOptions";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { toast } from "sonner";
-import { editTenant } from "@/actions/editTenant";
-import Link from "next/link";
+import { editContract } from "@/actions/edit/editContract";
 import Image from "next/image";
 import { admin_plus } from "@/static/icons";
 import { useUploadDocuments } from "@/apiClient";
 import { UploadedDocument } from "@/types";
-import { useDocumentDeletion } from "@/utils/client";
-import { deleteDocumentById } from "@/actions/deleteDocument";
+import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
+import { deleteDocumentById } from "@/actions/delete/deleteDocument";
+import { useContractorActions } from "@/hooks/useContractorActions";
+import FormContractorField from "../FormContractorFields";
 
-const tenantSchema = z.object({
+const contractSchema = z.object({
   is_current: z.boolean(),
   rental_start_date: z.coerce
     .date({
@@ -36,18 +36,30 @@ const tenantSchema = z.object({
       errorMap: () => ({ message: "Ungültiges Datum" }),
     })
     .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" }),
-  first_name: z.string().min(1, "Pflichtfeld"),
-  last_name: z.string().min(1, "Pflichtfeld"),
-  birth_date: z.coerce
-    .date({
-      errorMap: () => ({ message: "Ungültiges Datum" }),
-    })
-    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" }),
-  email: z.string().min(1, "Pflichtfeld").email("Ungültige E-Mail-Adresse"),
-  phone: z
-    .string()
-    .min(1, "Pflichtfeld")
-    .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer"),
+  contractors: z
+    .array(
+      z.object({
+        first_name: z.string().min(1, "Pflichtfeld"),
+        last_name: z.string().min(1, "Pflichtfeld"),
+        birth_date: z.coerce
+          .date({
+            errorMap: () => ({ message: "Ungültiges Datum" }),
+          })
+          .refine((val) => !isNaN(val.getTime()), {
+            message: "Ungültiges Datum",
+          }),
+        email: z
+          .string()
+          .min(1, "Pflichtfeld")
+          .email("Ungültige E-Mail-Adresse"),
+        phone: z
+          .string()
+          .min(1, "Pflichtfeld")
+          .regex(/^\+?[0-9\s\-()]{7,}$/, "Ungültige Telefonnummer"),
+        is_main: z.boolean(),
+      })
+    )
+    .min(1, "Mindestens ein Mieter erforderlich"),
   cold_rent: z.coerce.number().min(0, "Pflichtfeld"),
   additional_costs: z.coerce.number().min(0, "Pflichtfeld"),
   deposit: z.coerce.number().min(0, "Pflichtfeld"),
@@ -55,17 +67,22 @@ const tenantSchema = z.object({
   documents: z.array(z.instanceof(File)).nullable(),
 });
 
-export type EditTenantFormValues = z.infer<typeof tenantSchema>;
+export type EditContractFormValues = z.infer<typeof contractSchema>;
 
-const defaultValues: EditTenantFormValues = {
+const defaultValues: EditContractFormValues = {
   is_current: false,
   rental_start_date: new Date(),
   rental_end_date: new Date(),
-  first_name: "",
-  last_name: "",
-  birth_date: new Date(),
-  email: "",
-  phone: "",
+  contractors: [
+    {
+      first_name: "",
+      last_name: "",
+      birth_date: new Date(),
+      email: "",
+      phone: "",
+      is_main: true,
+    },
+  ],
   cold_rent: 0,
   additional_costs: 0,
   deposit: 0,
@@ -73,44 +90,52 @@ const defaultValues: EditTenantFormValues = {
   documents: [],
 };
 
-export type EditTenantFormProps = {
+export type EditContractFormProps = {
   id: string;
   localID: string;
-  tenantID: string;
-  initialValues?: EditTenantFormValues;
+  contractID: string;
+  initialValues?: EditContractFormValues;
   uploadedDocuments?: UploadedDocument[];
 };
 
-export default function EditTenantForm({
+export default function EditContractForm({
   id: objekteID,
   localID,
-  tenantID,
+  contractID,
   initialValues,
   uploadedDocuments,
-}: EditTenantFormProps) {
+}: EditContractFormProps) {
   const router = useRouter();
   const uploadDocuments = useUploadDocuments();
   const methods = useForm({
-    resolver: zodResolver(tenantSchema),
+    resolver: zodResolver(contractSchema),
     defaultValues: initialValues ?? defaultValues,
   });
   const { existingDocuments, deletedDocumentIds, handleRemoveExistingFile } =
     useDocumentDeletion(uploadedDocuments);
 
+  const { addContractor } = useContractorActions(methods);
+
+  const watchContractors = methods.watch("contractors");
+  const watchMainContractor = watchContractors.find((c) => c.is_main) || {
+    first_name: "",
+    last_name: "",
+  };
+
   return (
     <Form {...methods}>
       <form
-        id="tenant-form"
+        id="contract-form"
         className="w-10/12"
-        onSubmit={methods.handleSubmit(async (data: EditTenantFormValues) => {
+        onSubmit={methods.handleSubmit(async (data: EditContractFormValues) => {
           try {
-            await editTenant(tenantID, data);
+            await editContract(contractID, localID, data);
 
             if (data.documents && data.documents.length > 0) {
               await uploadDocuments.mutateAsync({
                 files: data.documents,
-                relatedId: tenantID,
-                relatedType: "tenant",
+                relatedId: contractID,
+                relatedType: "contract",
               });
             }
 
@@ -131,10 +156,10 @@ export default function EditTenantForm({
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <div className="flex items-center justify-start gap-4">
             <h1 className="text-2xl text-dark_green">
-              Mieter - {methods.watch("first_name")}{" "}
-              {methods.watch("last_name")}
+              Mieter - {watchMainContractor.first_name}{" "}
+              {watchMainContractor.last_name}
             </h1>
-            <FormRoundedCheckbox<EditTenantFormValues>
+            <FormRoundedCheckbox<EditContractFormValues>
               control={methods.control}
               name="is_current"
               label="Aktueller Mieter"
@@ -144,13 +169,13 @@ export default function EditTenantForm({
           <div className="space-y-4">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
             <div className="flex items-center justify-start gap-7">
-              <FormDateInput<EditTenantFormValues>
+              <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
               />
               <span className="mt-8 inline-block">-</span>
-              <FormDateInput<EditTenantFormValues>
+              <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietende"
                 name="rental_end_date"
@@ -158,63 +183,38 @@ export default function EditTenantForm({
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <FormInputField<EditTenantFormValues>
+          {methods.watch("contractors").map((_, index) => (
+            <FormContractorField<EditContractFormValues>
+              key={index}
               control={methods.control}
-              name="first_name"
-              label="Vorname*"
-              placeholder="Vorname"
+              index={index}
+              methods={methods}
             />
-            <FormInputField<EditTenantFormValues>
-              control={methods.control}
-              name="last_name"
-              label="Famillienname*"
-              placeholder="Famillienname"
-            />
-            <FormDateInput<EditTenantFormValues>
-              control={methods.control}
-              label="Geburtsdatum"
-              name="birth_date"
-            />
-            <FormInputField<EditTenantFormValues>
-              control={methods.control}
-              name="email"
-              type="email"
-              label="Emailadresse"
-              placeholder="Emailadresse"
-            />
-            <FormInputField<EditTenantFormValues>
-              control={methods.control}
-              name="phone"
-              type="phone"
-              label="Telefonnummer"
-              placeholder="Telefonnummer"
-            />
-          </div>
-          <Link
-            className="flex items-center w-fit justify-center gap-2 px-6 py-5 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50"
-            href={`${ROUTE_OBJEKTE}/${objekteID}/${localID}/create-tenant`}>
+          ))}
+          <button
+            type="button"
+            onClick={addContractor}
+            className="flex items-center w-fit justify-center gap-2 px-6 py-5 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50">
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
+              width={16}
+              height={16}
               loading="lazy"
               className="max-w-4 max-h-4"
               src={admin_plus}
               alt="admin_plus"
             />
             Weiteren Mieter hinzufügen
-          </Link>
+          </button>
         </div>
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Monatliche Gesamtmiete</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormMoneyInput<EditTenantFormValues>
+            <FormMoneyInput<EditContractFormValues>
               control={methods.control}
               name="cold_rent"
               label="Kaltmiete *"
             />
-            <FormMoneyInput<EditTenantFormValues>
+            <FormMoneyInput<EditContractFormValues>
               control={methods.control}
               name="additional_costs"
               label="Nebenkosten-Vorauszahlung *"
@@ -224,12 +224,12 @@ export default function EditTenantForm({
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Mietkaution</h2>
           <div className="grid grid-cols-3 gap-4">
-            <FormMoneyInput<EditTenantFormValues>
+            <FormMoneyInput<EditContractFormValues>
               control={methods.control}
               name="deposit"
               label="Kautionshöhe"
             />
-            <FormSelectField<EditTenantFormValues>
+            <FormSelectField<EditContractFormValues>
               control={methods.control}
               name="custody_type"
               label="Art der Verwahrung"
@@ -238,7 +238,7 @@ export default function EditTenantForm({
             />
           </div>
         </div>
-        <FormDocuments<EditTenantFormValues>
+        <FormDocuments<EditContractFormValues>
           control={methods.control}
           name="documents"
           label="Dokumente"

@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Exo_2 } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import FragebogenHeader from "@/components/Header/FragebogenHeader";
-
-const exo_2Sans = Exo_2({
-  variable: "--font-exo_2-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -21,13 +15,9 @@ export default function FragebogenLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${exo_2Sans.variable}`}>
-        <QueryProvider>
-          <FragebogenHeader />
-          {children}
-        </QueryProvider>
-      </body>
-    </html>
+    <QueryProvider>
+      <FragebogenHeader />
+      {children}
+    </QueryProvider>
   );
 }

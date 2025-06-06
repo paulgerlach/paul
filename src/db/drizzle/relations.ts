@@ -1,28 +1,29 @@
 import { relations } from "drizzle-orm/relations";
-import { usersInAuth, users, objekte, tenants, locals } from "./schema";
+import { objekte, locals, contracts, contractors } from "./schema";
 
-export const objekteRelations = relations(objekte, ({ one }) => ({
-  user: one(users, {
-    fields: [objekte.user_id],
-    references: [users.id],
-  }),
+export const localsRelations = relations(locals, ({one, many}) => ({
+	objekte: one(objekte, {
+		fields: [locals.objekt_id],
+		references: [objekte.id]
+	}),
+	contracts: many(contracts),
 }));
 
-export const usersRelations = relations(users, ({ one, many }) => ({
-  objekte: many(objekte),
-  usersInAuth: one(usersInAuth, {
-    fields: [users.id],
-    references: [usersInAuth.id],
-  }),
+export const objekteRelations = relations(objekte, ({many}) => ({
+	locals: many(locals),
 }));
 
-export const usersInAuthRelations = relations(usersInAuth, ({ many }) => ({
-  users: many(users),
+export const contractsRelations = relations(contracts, ({one, many}) => ({
+	local: one(locals, {
+		fields: [contracts.local_id],
+		references: [locals.id]
+	}),
+	contractors: many(contractors),
 }));
 
-export const tenantsRelations = relations(tenants, ({ one }) => ({
-  local: one(locals, {
-    fields: [tenants.local_id],
-    references: [locals.id],
-  }),
+export const contractorsRelations = relations(contractors, ({one}) => ({
+	contract: one(contracts, {
+		fields: [contractors.contract_id],
+		references: [contracts.id]
+	}),
 }));

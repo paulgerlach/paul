@@ -32,11 +32,10 @@ import FormDocuments from "../FormDocuments";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { editLocal } from "@/actions/editLocal";
+import { editLocal } from "@/actions/edit/editLocal";
 import { useUploadDocuments } from "@/apiClient";
-import { useState } from "react";
-import { deleteDocumentById } from "@/actions/deleteDocument";
-import { useDocumentDeletion } from "@/utils/client";
+import { deleteDocumentById } from "@/actions/delete/deleteDocument";
+import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {

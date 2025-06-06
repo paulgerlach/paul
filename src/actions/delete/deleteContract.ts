@@ -3,11 +3,11 @@
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import database from "@/db";
-import { locals, tenants } from "@/db/drizzle/schema";
+import { locals, contracts } from "@/db/drizzle/schema";
 import { supabaseServer } from "@/utils/supabase/server";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
-export async function deleteTenant(tenantId: string) {
+export async function deleteContract(contractId: string) {
   const supabase = await supabaseServer();
 
   const {
@@ -21,8 +21,8 @@ export async function deleteTenant(tenantId: string) {
   }
 
   const result = await database
-    .delete(tenants)
-    .where(and(eq(tenants.id, tenantId), eq(tenants.user_id, user.id)))
+    .delete(contracts)
+    .where(and(eq(contracts.id, contractId), eq(contracts.user_id, user.id)))
     .returning();
 
   if (result.length === 0) {

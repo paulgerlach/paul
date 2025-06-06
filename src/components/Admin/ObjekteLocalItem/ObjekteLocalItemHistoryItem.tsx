@@ -1,21 +1,26 @@
 import { pencil, small_calendar, trashcan } from "@/static/icons";
-import type { TenantType } from "@/types";
+import type { ContractType } from "@/types";
 import Image from "next/image";
 import { differenceInMonths } from "date-fns";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { useDialogStore } from "@/store/useDIalogStore";
+import { differenceInCalendarDays } from "date-fns";
+import { useMainContractorByContractID } from "@/apiClient";
 
 export default function ObjekteLocalItemHistoryItem({
   historyItem,
   objektID,
   localID,
 }: {
-  historyItem?: TenantType;
+  historyItem?: ContractType;
   objektID: string;
-  localID: string;
+  localID?: string;
 }) {
   const { openDialog, setItemID } = useDialogStore();
+  const { data: mainContractor } = useMainContractorByContractID(
+    historyItem?.id
+  );
   const duration =
     differenceInMonths(
       historyItem?.rental_end_date || "",
@@ -34,6 +39,14 @@ export default function ObjekteLocalItemHistoryItem({
     style: "currency",
     currency: "EUR",
   }).format(pricePerMonth);
+
+  const days =
+    historyItem?.rental_start_date && historyItem?.rental_end_date
+      ? differenceInCalendarDays(
+          new Date(historyItem.rental_end_date),
+          new Date(historyItem.rental_start_date)
+        ) + 1
+      : 0;
 
   return (
     <div
@@ -71,12 +84,12 @@ export default function ObjekteLocalItemHistoryItem({
                 : "#1E322D1A",
             }}
             className="flex items-center justify-center rounded-full font-medium size-14">
-            {historyItem?.first_name["0"]}
-            {historyItem?.last_name["0"]}
+            {mainContractor?.first_name["0"]}
+            {mainContractor?.last_name["0"]}
           </span>
           <div>
             <p className="text-[#333333] text-lg">
-              {historyItem?.first_name} {historyItem?.last_name}
+              {mainContractor?.first_name} {mainContractor?.last_name}
             </p>
             <p className="text-[#757575]">
               {formattedAmount} {formattedRate} x {duration}
@@ -84,7 +97,7 @@ export default function ObjekteLocalItemHistoryItem({
           </div>
         </div>
         <div className="flex items-center justify-center gap-4">
-          <p className="text-sm text-[#757575]">0/365 Tage</p>
+          <p className="text-sm text-[#757575]">{days}/365 Tage</p>
           <Link
             className="cursor-pointer"
             href={`${ROUTE_OBJEKTE}/${objektID}/${localID}/${historyItem?.id}/edit`}>
@@ -101,8 +114,8 @@ export default function ObjekteLocalItemHistoryItem({
           <button
             className="cursor-pointer"
             onClick={() => {
-              openDialog("tenant_delete");
-              setItemID(historyItem?.id ?? null);
+              openDialog("contract_delete");
+              setItemID(historyItem?.id ?? undefined);
             }}>
             <Image
               width={0}

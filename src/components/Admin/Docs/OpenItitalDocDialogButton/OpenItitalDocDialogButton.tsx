@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/Basic/ui/Button";
 import { useDialogStore } from "@/store/useDIalogStore";
-import type { DialogDocumentActonType } from "@/types";
+import type { DialogDocumentActionType } from "@/types";
 
 export default function OpenItitalDocDialogButton({
   dialogName,
   buttonText,
 }: {
-  dialogName: DialogDocumentActonType;
+  dialogName: DialogDocumentActionType;
   buttonText: string;
 }) {
   const { openDialog } = useDialogStore();

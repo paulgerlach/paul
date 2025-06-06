@@ -1,27 +1,27 @@
-import type { DialogDocumentActonType } from "@/types";
+import type { DialogDocumentActionType } from "@/types";
 import { create } from "zustand";
 
 export type DialogStoreType = {
-  openDialogByType: Record<DialogDocumentActonType, boolean>;
-  itemID: string | null;
-  setItemID: (id: string | null) => void;
+  openDialogByType: Record<DialogDocumentActionType, boolean>;
+  itemID: string | undefined;
+  setItemID: (id: string | undefined) => void;
   isOpen: boolean;
-  openDialog: (type: DialogDocumentActonType) => void;
-  closeDialog: (type: DialogDocumentActonType) => void;
-  toggleDialog: (type: DialogDocumentActonType) => void;
+  openDialog: (type: DialogDocumentActionType) => void;
+  closeDialog: (type: DialogDocumentActionType) => void;
+  toggleDialog: (type: DialogDocumentActionType) => void;
 };
 
 export const useDialogStore = create<DialogStoreType>((set) => ({
-  itemID: null,
+  itemID: undefined,
   isOpen: false,
   openDialogByType: {
     object_delete: false,
     local_delete: false,
-    tenant_delete: false,
+    contract_delete: false,
     heating_bill_delete: false,
     object_create: false,
     local_create: false,
-    tenant_create: false,
+    contract_create: false,
     heating_bill_create: false,
     login: false,
     register: false,
@@ -37,7 +37,7 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
   closeDialog: (type) =>
     set((s) => ({
       openDialogByType: { ...s.openDialogByType, [type]: false },
-      itemID: null,
+      itemID: undefined,
     })),
 
   toggleDialog: (type) =>

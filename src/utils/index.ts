@@ -136,23 +136,23 @@ export const handleLocalTypeIcon = (
   }
 };
 
-export const renderTradeIcon = (tradeStatus: ObjektType["status"]) => {
-  switch (tradeStatus) {
-    case "full":
-      return trend_check;
-    case "higher":
-      return trend_up;
-    case "lower":
-      return trend_down;
-  }
-};
-export const renderTradeColor = (tradeStatus: ObjektType["status"]) => {
-  switch (tradeStatus) {
-    case "full":
-      return "#8AD68F";
-    case "higher":
-      return "#8AD68F";
-    case "lower":
-      return "#E08E3A";
-  }
-};
+// export const renderTradeIcon = (tradeStatus: ObjektType["status"]) => {
+//   switch (tradeStatus) {
+//     case "full":
+//       return trend_check;
+//     case "higher":
+//       return trend_up;
+//     case "lower":
+//       return trend_down;
+//   }
+// };
+// export const renderTradeColor = (tradeStatus: ObjektType["status"]) => {
+//   switch (tradeStatus) {
+//     case "full":
+//       return "#8AD68F";
+//     case "higher":
+//       return "#8AD68F";
+//     case "lower":
+//       return "#E08E3A";
+//   }
+// };

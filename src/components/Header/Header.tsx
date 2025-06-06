@@ -32,7 +32,7 @@ export default function Header() {
       className={`fixed w-full mx-auto !px-[72px] max-megalarge:!px-16 max-large:!px-6 max-medium:!px-5 top-2.5 left-1/2 -translate-x-1/2 duration-300 ${
         scrolled ? "scrolled" : ""
       }`}>
-      <div className="flex items-center w-full px-5 rounded-full bg-white/50 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
+      <div className="flex items-center w-full px-5 rounded-full bg-white/30 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
         <Link
           href={ROUTE_HOME}
           className="flex items-center max-w-16 w-full h-5 justify-start gap-3">
@@ -70,10 +70,10 @@ export default function Header() {
               href="tel:01759223454"
               className="p-2 flex items-center gap-1.5 justify-center text-sm text-dark_text">
               <Image
-                width={20}
-                height={20}
+                width={16}
+                height={16}
                 loading="lazy"
-                className="max-w-5 min-w-4 min-h-4 w-full max-h-5"
+                className="max-w-4 min-w-4 min-h-4 w-full max-h-4"
                 style={{ width: "100%", height: "auto" }}
                 src={cellphone}
                 alt="cellphone"

@@ -12,7 +12,7 @@ import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
 import Link from "next/link";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
-import { useTenantsByLocalID } from "@/apiClient";
+import { useContractsByLocalID } from "@/apiClient";
 import { Skeleton } from "@/components/Basic/ui/Skeleton";
 
 export type ObjekteLocalItemProps = {
@@ -21,7 +21,7 @@ export type ObjekteLocalItemProps = {
   index: number;
   onClick: (index: number) => void;
   id: string;
-  localID: string;
+  localID?: string;
 };
 
 export default function ObjekteLocalItem({
@@ -34,7 +34,7 @@ export default function ObjekteLocalItem({
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
 
-  const { data: tenants, isLoading } = useTenantsByLocalID(localID);
+  const { data: contracts, isLoading } = useContractsByLocalID(localID);
 
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +44,7 @@ export default function ObjekteLocalItem({
     }
   }, [isOpen]);
 
-  const status = tenants?.some((tenant) => tenant.is_current)
+  const status = contracts?.some((contract) => contract.is_current)
     ? "renting"
     : "vacancy";
 
@@ -158,27 +158,25 @@ export default function ObjekteLocalItem({
       <div
         ref={contentRef}
         className="[.active_&]:pt-9 [.active_&]:pb-2 pl-10 pr-6 [.active_&]:h-auto h-0">
-        {status === "vacancy" && (
-          <Link
-            className="flex items-center [.available_&]:mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
-            href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-tenant`}>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-4 max-h-4"
-              src={admin_plus}
-              alt="admin_plus"
-            />
-            Mieter hinzufügen
-          </Link>
-        )}
-        {tenants && tenants?.length > 0 && (
+        <Link
+          className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
+          href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-contract`}>
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-4 max-h-4"
+            src={admin_plus}
+            alt="admin_plus"
+          />
+          Vertrag hinzufügen
+        </Link>
+        {contracts && contracts?.length > 0 && (
           <ObjekteLocalItemHistory
             objektID={id}
             localID={localID}
-            history={tenants}
+            history={contracts}
           />
         )}
       </div>

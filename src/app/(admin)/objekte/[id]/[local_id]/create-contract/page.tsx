@@ -1,9 +1,9 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import CreateTenantForm from "@/components/Admin/Forms/Create/CreateTenantForm";
+import CreateContractForm from "@/components/Admin/Forms/Create/CreateContractForm";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
-export default async function CreateTenantPage({
+export default async function CreateContractPage({
   params,
 }: {
   params: Promise<{ id: string; local_id: string }>;
@@ -18,7 +18,7 @@ export default async function CreateTenantPage({
       />
       <ContentWrapper className="space-y-4 max-h-[90%]">
         <div className="px-10 py-9 rounded-2xl space-y-5 bg-[#FDFDFC]">
-          <CreateTenantForm localID={local_id} id={id} />
+          <CreateContractForm localID={local_id} id={id} />
         </div>
       </ContentWrapper>
     </div>

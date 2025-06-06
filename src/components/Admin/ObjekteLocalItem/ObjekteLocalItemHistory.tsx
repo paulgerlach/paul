@@ -1,4 +1,4 @@
-import type { TenantType } from "@/types";
+import { ContractType } from "@/types";
 import ObjekteLocalItemHistoryItem from "./ObjekteLocalItemHistoryItem";
 
 export default function ObjekteLocalItemHistory({
@@ -6,9 +6,9 @@ export default function ObjekteLocalItemHistory({
   objektID,
   localID,
 }: {
-  history?: TenantType[];
+  history?: ContractType[];
   objektID: string;
-  localID: string;
+  localID?: string;
 }) {
   return (
     <div>

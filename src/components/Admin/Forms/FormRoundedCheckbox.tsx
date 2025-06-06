@@ -14,11 +14,19 @@ export type FormRoundedCheckboxProps<T extends FieldValues = FieldValues> = {
   name: Path<T>;
   disabled?: boolean;
   className?: string;
+  onChange?: (value: boolean) => void;
 };
 
 export default function FormRoundedCheckbox<
   T extends FieldValues = FieldValues,
->({ control, label, name, disabled, className }: FormRoundedCheckboxProps<T>) {
+>({
+  control,
+  label,
+  name,
+  disabled,
+  className,
+  onChange,
+}: FormRoundedCheckboxProps<T>) {
   return (
     <FormField
       control={control}
@@ -32,7 +40,7 @@ export default function FormRoundedCheckbox<
               disabled={disabled}
               className="border border-[#c4c4c4]"
               checked={field.value}
-              onCheckedChange={field.onChange}
+              onCheckedChange={onChange ? onChange : field.onChange}
             />
           </FormControl>
           <FormLabel className="text-[#333333] py-2 text-xs">{label}</FormLabel>

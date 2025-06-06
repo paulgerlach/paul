@@ -1,7 +1,7 @@
 "use client";
 
 import { useDialogStore } from "@/store/useDIalogStore";
-import { deleteLocal } from "@/actions/deleteLocal";
+import { deleteLocal } from "@/actions/delete/deleteLocal";
 import { useRouter } from "next/navigation";
 import DialogBase from "../ui/DialogBase";
 

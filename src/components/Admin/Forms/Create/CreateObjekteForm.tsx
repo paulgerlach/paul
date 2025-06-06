@@ -18,7 +18,7 @@ import FormTagsInput from "../FormTagsInput";
 import FormRoundedCheckbox from "../FormRoundedCheckbox";
 import FormSelectField from "../FormSelectField";
 import FormInputField from "../FormInputField";
-import { createObjekt } from "@/actions/createObjekt";
+import { createObjekt } from "@/actions/create/createObjekt";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTE_OBJEKTE } from "@/routes/routes";

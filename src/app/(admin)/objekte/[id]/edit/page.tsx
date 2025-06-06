@@ -37,14 +37,16 @@ export default async function EditObjektePage({
             initialValues={{
               administration_type: object.administration_type,
               hot_water_preparation: object.hot_water_preparation,
-              heating_systems: object.heating_systems,
               objekt_type: object.objekt_type,
               street: object.street,
               zip: object.zip,
               buildYear: object.build_year,
               hasElevator: object.has_elevator,
               landArea: object.land_area || null,
-              tags: object.tags || [],
+              heating_systems: Array.isArray(object.heating_systems)
+                ? (object.heating_systems as string[])
+                : [],
+              tags: Array.isArray(object.tags) ? (object.tags as string[]) : [],
               livingArea: object.living_area || null,
               usableArea: object.usable_area || null,
             }}

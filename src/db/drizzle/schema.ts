@@ -3,81 +3,112 @@ import {
   foreignKey,
   pgPolicy,
   uuid,
-  text,
   timestamp,
-  varchar,
+  text,
+  numeric,
   boolean,
   jsonb,
-  integer,
   date,
-  numeric,
+  uniqueIndex,
+  varchar,
+  integer,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
-export const users = pgTable(
-  "users",
+export const locals = pgTable(
+  "locals",
   {
-    id: uuid().primaryKey().notNull(),
-    first_name: text(),
-    last_name: text(),
-    email: text(),
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    objekt_id: uuid().notNull(),
     created_at: timestamp({ withTimezone: true, mode: "string" }).defaultNow(),
+    usage_type: text().notNull(),
+    floor: text().notNull(),
+    living_space: numeric().notNull(),
+    house_location: text(),
+    outdoor: text(),
+    rooms: numeric(),
+    house_fee: numeric(),
+    outdoor_area: numeric(),
+    residential_area: text(),
+    apartment_type: text(),
+    cellar_available: boolean(),
+    tags: jsonb(),
+    heating_systems: jsonb(),
   },
   (table) => [
     foreignKey({
-      columns: [table.id],
-      foreignColumns: [table.id],
-      name: "users_id_fkey",
+      columns: [table.objekt_id],
+      foreignColumns: [objekte.id],
+      name: "locals_objekt_id_objekte_id_fk",
     }).onDelete("cascade"),
-    pgPolicy("User can manage own profile", {
+    pgPolicy("Users can access their own locals", {
       as: "permissive",
       for: "all",
-      to: ["authenticated"],
-      using: sql`auth.uid() = id`,
-      withCheck: sql`auth.uid() = id`,
-    }),
-    pgPolicy("Users can access their own record", {
-      as: "permissive",
-      for: "all",
-      to: ["authenticated"],
-      using: sql`(auth.uid() = id)`,
+      to: ["public"],
+      using: sql`(EXISTS ( SELECT 1
+   FROM objekte
+  WHERE ((objekte.id = locals.objekt_id) AND (objekte.user_id = auth.uid()))))`,
+      withCheck: sql`(EXISTS ( SELECT 1
+   FROM objekte
+  WHERE ((objekte.id = locals.objekt_id) AND (objekte.user_id = auth.uid()))))`,
     }),
   ]
 );
 
-export const usersInAuth = pgTable("users_in_auth", {
-  id: uuid().primaryKey().notNull(),
-  user_id: uuid().notNull(),
-});
-
-export const objekte = pgTable(
-  "objekte",
+export const documents = pgTable(
+  "documents",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    user_id: uuid("user_id").notNull(),
-
-    objekt_type: text("objekt_type").notNull(),
-    street: varchar("street", { length: 255 }).notNull(),
-    zip: varchar("zip", { length: 20 }).notNull(),
-    administration_type: text("administration_type").notNull(),
-    hot_water_preparation: text("hot_water_preparation").notNull(),
-
-    living_area: integer("living_area"),
-    usable_area: integer("usable_area"),
-    land_area: integer("land_area"),
-    build_year: integer("build_year"),
-    has_elevator: boolean("has_elevator").default(false),
-
-    tags: jsonb("tags").$type<string[]>().default([]),
-    heating_systems: jsonb("heating_systems").$type<string[]>().default([]),
-
-    created_at: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).defaultNow(),
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    document_name: text().notNull(),
+    document_url: text().notNull(),
+    related_id: uuid().notNull(),
+    related_type: text().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).defaultNow(),
+    user_id: uuid().notNull(),
   },
-  () => [
-    pgPolicy("Users can access only their own objects", {
+  (table) => [
+    pgPolicy("Users can insert their own documents", {
+      as: "permissive",
+      for: "insert",
+      to: ["public"],
+      withCheck: sql`(user_id = auth.uid())`,
+    }),
+    pgPolicy("Users can select their own documents", {
+      as: "permissive",
+      for: "select",
+      to: ["public"],
+    }),
+    pgPolicy("User can access their own documents", {
+      as: "permissive",
+      for: "all",
+      to: ["public"],
+    }),
+  ]
+);
+
+export const contracts = pgTable(
+  "contracts",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    user_id: uuid().notNull(),
+    local_id: uuid().notNull(),
+    is_current: boolean().default(false).notNull(),
+    rental_start_date: date().notNull(),
+    rental_end_date: date(),
+    cold_rent: numeric({ precision: 10, scale: 2 }).notNull(),
+    additional_costs: numeric({ precision: 10, scale: 2 }).notNull(),
+    deposit: numeric({ precision: 10, scale: 2 }),
+    custody_type: text(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.local_id],
+      foreignColumns: [locals.id],
+      name: "contracts_local_id_locals_id_fk",
+    }).onDelete("cascade"),
+    pgPolicy("Users can access their own contracts", {
       as: "permissive",
       for: "all",
       to: ["public"],
@@ -87,121 +118,70 @@ export const objekte = pgTable(
   ]
 );
 
-export const locals = pgTable(
-  "locals",
+export const contractors = pgTable(
+  "contractors",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-
-    objekt_id: uuid("objekt_id")
-      .notNull()
-      .references(() => objekte.id, { onDelete: "cascade" }),
-
-    usage_type: text("usage_type").notNull(),
-    floor: text("floor").notNull(),
-    living_space: numeric("living_space").notNull(),
-    house_location: text("house_location"),
-    outdoor: text("outdoor"),
-    rooms: numeric("rooms"),
-    house_fee: numeric("house_fee"),
-    outdoor_area: numeric("outdoor_area"),
-    residential_area: text("residential_area"),
-    apartment_type: text("apartment_type"),
-    cellar_available: boolean("cellar_available"),
-    tags: jsonb("tags").$type<string[]>(),
-    heating_systems: jsonb("heating_systems").$type<string[]>(),
-
-    created_at: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).defaultNow(),
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    user_id: uuid().notNull(),
+    contract_id: uuid().notNull(),
+    first_name: text().notNull(),
+    last_name: text().notNull(),
+    birth_date: date(),
+    email: text(),
+    phone: text(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }).notNull(),
+    is_main: boolean().default(false),
   },
-  () => [
-    pgPolicy("Users can access their own locals", {
+  (table) => [
+    uniqueIndex("one_main_contractor_per_contract")
+      .using("btree", table.contract_id.asc().nullsLast().op("uuid_ops"))
+      .where(sql`(is_main = true)`),
+    foreignKey({
+      columns: [table.contract_id],
+      foreignColumns: [contracts.id],
+      name: "contractors_contract_id_contracts_id_fk",
+    }).onDelete("cascade"),
+    pgPolicy("Users can access their own contractors", {
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`
-          EXISTS (
-            SELECT 1
-            FROM objekte
-            WHERE objekte.id = locals.objekt_id
-            AND objekte.user_id = auth.uid()
-          )
-        `,
-      withCheck: sql`
-          EXISTS (
-            SELECT 1
-            FROM objekte
-            WHERE objekte.id = locals.objekt_id
-            AND objekte.user_id = auth.uid()
-          )
-        `,
+      using: sql`(EXISTS ( SELECT 1
+   FROM contracts
+  WHERE ((contracts.id = contractors.contract_id) AND (contracts.user_id = auth.uid()))))`,
+      withCheck: sql`(EXISTS ( SELECT 1
+   FROM contracts
+  WHERE ((contracts.id = contractors.contract_id) AND (contracts.user_id = auth.uid()))))`,
     }),
   ]
 );
 
-export const tenants = pgTable(
-  "tenants",
+export const objekte = pgTable(
+  "objekte",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    user_id: uuid("user_id").notNull(),
-    local_id: uuid("local_id")
-      .notNull()
-      .references(() => locals.id, { onDelete: "cascade" }),
-    is_current: boolean("is_current").default(false).notNull(),
-    rental_start_date: date("rental_start_date").notNull(),
-    rental_end_date: date("rental_end_date"),
-    first_name: text("first_name").notNull(),
-    last_name: text("last_name").notNull(),
-    birth_date: date("birth_date"),
-    email: text("email"),
-    phone: text("phone"),
-    cold_rent: numeric("cold_rent", { precision: 10, scale: 2 }).notNull(),
-    additional_costs: numeric("additional_costs", {
-      precision: 10,
-      scale: 2,
-    }).notNull(),
-    deposit: numeric("deposit", { precision: 10, scale: 2 }),
-    custody_type: text("custody_type"),
-    created_at: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updated_at: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    user_id: uuid().notNull(),
+    objekt_type: text().notNull(),
+    street: varchar({ length: 255 }).notNull(),
+    zip: varchar({ length: 20 }).notNull(),
+    administration_type: text().notNull(),
+    hot_water_preparation: text().notNull(),
+    living_area: integer(),
+    usable_area: integer(),
+    land_area: integer(),
+    build_year: integer(),
+    has_elevator: boolean().default(false),
+    tags: jsonb().default([]),
+    heating_systems: jsonb().default([]),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).defaultNow(),
   },
-  () => [
-    pgPolicy("Users can access their own tenants", {
+  (table) => [
+    pgPolicy("Users can access only their own objects", {
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`auth.uid() = user_id`,
-      withCheck: sql`auth.uid() = user_id`,
-    }),
-  ]
-);
-
-export const documents = pgTable(
-  "documents",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    user_id: uuid("user_id").notNull(),
-    document_name: text("document_name").notNull(),
-    document_url: text("document_url").notNull(),
-    related_id: uuid("related_id").notNull(),
-    related_type: text("related_type").notNull(),
-    created_at: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).defaultNow(),
-  },
-  () => [
-    pgPolicy("Users can access only their own documents", {
-      as: "permissive",
-      for: "all",
-      to: ["public"],
-      using: sql`auth.uid() = user_id`,
-      withCheck: sql`auth.uid() = user_id`,
+      using: sql`(auth.uid() = user_id)`,
+      withCheck: sql`(auth.uid() = user_id)`,
     }),
   ]
 );

@@ -31,9 +31,9 @@ export default async function ObjektDetailsPage({
     await database.select().from(locals).where(eq(locals.objekt_id, id))
   ).map((local) => ({
     ...local,
-    living_space: Number(local.living_space),
-    rooms: local.rooms ? Number(local.rooms) : null,
-    house_fee: local.house_fee ? Number(local.house_fee) : null,
+    living_space: String(local.living_space),
+    rooms: local.rooms ? String(local.rooms) : null,
+    house_fee: local.house_fee ? String(local.house_fee) : null,
     tags: null,
     heating_systems: null,
     documents: null,
@@ -47,7 +47,7 @@ export default async function ObjektDetailsPage({
         title={`Wohneinheiten | ${object?.street}`}
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">
-        <ObjekteLocalsAccordion id={id} locals={relatedLocals as LocalType[]} />
+        <ObjekteLocalsAccordion id={id} locals={relatedLocals} />
         <Link
           href={`${ROUTE_OBJEKTE}/${id}/create-unit`}
           className="border-dashed w-full flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">

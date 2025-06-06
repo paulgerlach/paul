@@ -1,14 +1,14 @@
 "use client";
 
+import { useClickOutside } from "@/hooks/useClickOutside";
 import { close_dialog } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
-import type { DialogDocumentActonType } from "@/types";
-import { useClickOutside } from "@/utils/client";
+import type { DialogDocumentActionType } from "@/types";
 import Image from "next/image";
 import { PropsWithChildren, useRef } from "react";
 
 export type DialogBaseProps = {
-  dialogName: DialogDocumentActonType;
+  dialogName: DialogDocumentActionType;
   size?: number;
 };
 

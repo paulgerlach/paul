@@ -2,7 +2,12 @@ import fs from "fs/promises";
 import path from "path";
 import Papa from "papaparse";
 import database from "@/db";
-import { documents, contracts, contractors } from "@/db/drizzle/schema";
+import {
+  documents,
+  contracts,
+  contractors,
+  objekte,
+} from "@/db/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 
@@ -171,4 +176,23 @@ export async function getRelatedContractors(contractID: string) {
     );
 
   return contractorsData;
+}
+
+export async function getObjekts() {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, user?.id));
+
+  return objekts;
 }

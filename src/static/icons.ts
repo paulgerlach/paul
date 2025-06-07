@@ -225,6 +225,9 @@ import big_time_clock from "@/asset/big_time_clock.png";
 import doc_preview_building from "@/asset/doc_preview_building.png";
 import heating_bill_preview from "@/asset/heizkostenabrechnung_preview.png";
 import close_dialog from "@/asset/close_dialog.png";
+import heating_bill_builing from "@/asset/heating_bill_builing.png";
+import heating_bill_condominium from "@/asset/heating_bill_condominium.png";
+import corner_green_check from "@/asset/corner_green_check.png";
 
 export {
   accentro_colored,
@@ -232,6 +235,9 @@ export {
   lamp,
   close_dialog,
   big_time_clock,
+  heating_bill_condominium,
+  heating_bill_builing,
+  corner_green_check,
   doc_preview_building,
   heating_bill_preview,
   calendar,

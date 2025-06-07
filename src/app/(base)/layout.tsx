@@ -4,8 +4,8 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
-import LoginDialog from "@/components/Basic/LoginDialog/LoginDialog";
-import RegisterDialog from "@/components/Basic/RegisterDialog/RegisterDialog";
+import LoginDialog from "@/components/Basic/Dialog/LoginDialog";
+import RegisterDialog from "@/components/Basic/Dialog/RegisterDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
 
 const exo_2Sans = Exo_2({

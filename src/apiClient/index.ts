@@ -119,3 +119,11 @@ export const useUploadDocuments = () => {
     },
   });
 };
+
+export const fetchStreetsByZip = async (zip: string): Promise<string[]> => {
+  const res = await fetch(
+    `https://openplzapi.org/de/Streets?postalCode=${zip}`
+  );
+  if (!res.ok) throw new Error("Failed to fetch streets");
+  return res.json();
+};

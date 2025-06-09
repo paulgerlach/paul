@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { createLocal } from "@/actions/create/createLocal";
 import { toast } from "sonner";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { buildLocalName } from "@/utils";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -104,6 +105,11 @@ export default function CreateObjekteUnitForm({
     defaultValues,
   });
 
+  const floor = methods.watch("floor");
+  const house_location = methods.watch("house_location");
+  const residential_area = methods.watch("residential_area");
+  const living_space = methods.watch("living_space");
+
   return (
     <Form {...methods}>
       <form
@@ -112,18 +118,25 @@ export default function CreateObjekteUnitForm({
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             await createLocal(data, objekteID);
-            toast.success("Created");
+            toast.success("Einheit wurde erfolgreich erstellt.");
             router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
             methods.reset();
           } catch (err) {
-            toast.error("error");
+            toast.error(
+              "Beim Erstellen der Einheit ist ein Fehler aufgetreten."
+            );
             console.error(err);
           }
         })}>
         <FormTagsInput<CreateObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
-            1. OG Vorderhaus rechts, 76qm
+            {buildLocalName({
+              floor,
+              house_location,
+              residential_area,
+              living_space: String(living_space),
+            })}
           </h1>
           <FormRadioOptions<CreateObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}
@@ -226,7 +239,10 @@ export default function CreateObjekteUnitForm({
             )}
           />
         </div>
-        <Button disabled={methods.formState.isSubmitting} type="submit" className="mt-6 ml-auto mr-0 block">
+        <Button
+          disabled={methods.formState.isSubmitting}
+          type="submit"
+          className="mt-6 ml-auto mr-0 block">
           Speichern
         </Button>
       </form>

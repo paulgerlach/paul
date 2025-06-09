@@ -113,11 +113,13 @@ export default function CreateContractForm({
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             await createContract(data, localID);
-            toast.success("Created");
+            toast.success("Vertrag wurde erfolgreich erstellt.");
             router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
             methods.reset();
           } catch (err) {
-            toast.error("error");
+            toast.error(
+              "Beim Erstellen des Vertrags ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+            );
             console.error(err);
           }
         })}>
@@ -138,7 +140,7 @@ export default function CreateContractForm({
           </div>
           <div className="space-y-4">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
-            <div className="flex items-center justify-start gap-7">
+            <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
               <FormDateInput<CreateContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"

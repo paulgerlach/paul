@@ -228,12 +228,18 @@ import close_dialog from "@/asset/close_dialog.png";
 import heating_bill_builing from "@/asset/heating_bill_builing.png";
 import heating_bill_condominium from "@/asset/heating_bill_condominium.png";
 import corner_green_check from "@/asset/corner_green_check.png";
+import receipt_building from "@/asset/receipt_building.png";
+import receipt_calendar from "@/asset/receipt_calendar.png";
+import receipt_line from "@/asset/receipt_line.png";
 
 export {
   accentro_colored,
   cold_water,
   lamp,
   close_dialog,
+  receipt_building,
+  receipt_calendar,
+  receipt_line,
   big_time_clock,
   heating_bill_condominium,
   heating_bill_builing,

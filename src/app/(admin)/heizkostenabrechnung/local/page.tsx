@@ -1,7 +1,8 @@
 import { getObjekts } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import { ROUTE_DASHBOARD } from "@/routes/routes";
+import ObjekteItemDoc from "@/components/Admin/ObjekteItem/ObjekteItemDoc";
+import { ROUTE_DASHBOARD, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function LocalPage() {
   const objekts = await getObjekts();
@@ -14,7 +15,17 @@ export default async function LocalPage() {
         title="Auswahl der Objektart"
         subtitle="Für welche Immobilie wollen Sie eine Betriebskostenabrechnung erstellen lassen?"
       />
-      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]"></ContentWrapper>
+      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">
+        <div className="overflow-y-auto space-y-4">
+          {objekts.map((objekt) => (
+            <ObjekteItemDoc
+              docLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/local/${objekt.id}`}
+              key={objekt.id}
+              item={objekt}
+            />
+          ))}
+        </div>
+      </ContentWrapper>
     </div>
   );
 }

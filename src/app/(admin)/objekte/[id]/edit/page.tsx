@@ -1,10 +1,8 @@
+import { getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EditObjekteForm from "@/components/Admin/Forms/Edit/EditObjekteForm";
-import database from "@/db";
-import { objekte } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { eq } from "drizzle-orm";
 
 export default async function EditObjektePage({
   params,
@@ -13,11 +11,7 @@ export default async function EditObjektePage({
 }) {
   const { id } = await params;
 
-  const object = await database
-    .select()
-    .from(objekte)
-    .where(eq(objekte.id, id))
-    .then((res) => res[0]);
+  const object = await getObjectById(id);
 
   if (!object) {
     return <div>Objekt nicht gefunden</div>;

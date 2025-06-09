@@ -7,6 +7,7 @@ import {
   contracts,
   contractors,
   objekte,
+  locals,
 } from "@/db/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -41,27 +42,6 @@ export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
     throw err;
   }
 };
-
-export async function getContractsByLocalIDWithAuth(localID: string) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const result = await database
-    .select()
-    .from(contracts)
-    .where(
-      and(eq(contracts.local_id, localID), eq(contracts.user_id, user.id))
-    );
-
-  return result;
-}
 
 export async function getSignedUrlsForObject(objectId: string) {
   const supabase = await supabaseServer();
@@ -154,6 +134,31 @@ export async function getContractByID(
   return { contract: contract[0], mainContractor };
 }
 
+export async function getContractsByLocalID(localID?: string) {
+  if (!localID) {
+    throw new Error("Missing localID");
+  }
+
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const result = await database
+    .select()
+    .from(contracts)
+    .where(
+      and(eq(contracts.local_id, localID), eq(contracts.user_id, user.id))
+    );
+
+  return result;
+}
+
 export async function getRelatedContractors(contractID: string) {
   const supabase = await supabaseServer();
   const {
@@ -195,4 +200,43 @@ export async function getObjekts() {
     .where(eq(objekte.user_id, user?.id));
 
   return objekts;
+}
+
+export async function getObjectById(objectId: string) {
+  const object = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.id, objectId))
+    .then((res) => res[0]);
+
+  return object;
+}
+
+export async function getRelatedLocalsByObjektId(objektID: string) {
+  const relatedLocals = await database
+    .select()
+    .from(locals)
+    .where(eq(locals.objekt_id, objektID));
+
+  return relatedLocals;
+}
+
+export async function getLocalById(localId: string) {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const local = await database
+    .select()
+    .from(locals)
+    .where(eq(locals.id, localId))
+    .then((res) => res[0]);
+
+  return local;
 }

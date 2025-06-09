@@ -1,0 +1,88 @@
+import {
+  receipt_building,
+  receipt_calendar,
+  receipt_line,
+} from "@/static/icons";
+import Image from "next/image";
+
+export type ReceiptProps = {
+  title: string;
+};
+
+export default function Receipt({ title }: ReceiptProps) {
+  return (
+    <div className="bg-[#EFEEEC] min-w-sm w-fit rounded-2xl px-4 py-5 flex items-center justify-center">
+      <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
+        <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-7 max-h-7"
+            src={receipt_building}
+            alt="receipt_building"
+          />
+          {title}
+        </p>
+        <p className="flex items-centerjustify-start gap-2 text-admin_dark_text">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-7 max-h-7"
+            src={receipt_calendar}
+            alt="receipt_calendar"
+          />
+          01.01.2024 - 31.05.2024
+        </p>
+        <div className="flex flex-col items-center justify-center">
+          <p className="text-admin_dark_text">Differenzbetrag</p>
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            className="max-w-[260px] max-h-3"
+            src={receipt_line}
+            alt="receipt_line"
+          />
+          <span className="text-3xl text-admin_dark_text">0€</span>
+        </div>
+        <div>
+          <div className="pb-4 border-b border-[#e0e0e0] space-y-4">
+            <div className="flex items-center justify-between text-admin_dark_text">
+              Kosten für das gesamte Gebäude
+              <span>€</span>
+            </div>
+            <div className="flex items-center justify-between text-admin_dark_text">
+              Direkte Kosten
+              <span>€</span>
+            </div>
+          </div>
+          <div className="py-4 border-b border-[#e0e0e0] space-y-4">
+            <div className="flex items-center justify-between text-admin_dark_text">
+              Gesamtkosten
+              <span>€</span>
+            </div>
+          </div>
+          <div className="py-4 border-b border-[#e0e0e0] space-y-4">
+            <div className="flex items-center justify-between text-admin_dark_text">
+              Hausgeld
+              <span>€</span>
+            </div>
+            <div className="flex items-center justify-between text-admin_dark_text">
+              Nebenkostenvorauszahlung
+              <span>2.400,00 €</span>
+            </div>
+          </div>
+          <div className="border-t border-admin_dark_text pt-4 flex items-center justify-between font-bold text-admin_dark_text">
+            Differenz
+            <span className="text-[#676767] font-normal">€</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

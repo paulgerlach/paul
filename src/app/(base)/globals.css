@@ -25,6 +25,7 @@
   --color-darkest-text: #292929;
   --color-light-text: #545454;
   --color-lighter-text: #4f4f4f;
+  --color-admin_dark_text: #333333;
 
   --breakpoint-*: initial;
   /* --breakpoint-max-*: initial; */

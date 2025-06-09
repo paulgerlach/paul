@@ -5,7 +5,12 @@ import {
   admin_plus,
 } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
-import { handleLocalTypeIcon, slideDown, slideUp } from "@/utils";
+import {
+  buildLocalName,
+  handleLocalTypeIcon,
+  slideDown,
+  slideUp,
+} from "@/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
@@ -126,10 +131,7 @@ export default function ObjekteLocalItem({
           <div
             className="flex cursor-pointer items-center justify-start gap-5"
             onClick={() => onClick(index)}>
-            <p className="text-2xl text-dark_green">
-              {item.floor}
-              {item.living_space ? `, ${item.living_space}qm` : ""}
-            </p>
+            <p className="text-2xl text-dark_green">{buildLocalName(item)}</p>
             <Image
               width={0}
               height={0}
@@ -159,7 +161,7 @@ export default function ObjekteLocalItem({
         ref={contentRef}
         className="[.active_&]:pt-6 [.active_&]:pb-2 px-2.5 [.active_&]:h-auto h-0">
         <Link
-          className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-[#333333]"
+          className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text"
           href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-contract`}>
           <Image
             width={0}

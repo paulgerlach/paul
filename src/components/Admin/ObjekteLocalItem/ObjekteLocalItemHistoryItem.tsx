@@ -92,7 +92,7 @@ export default function ObjekteLocalItemHistoryItem({
             {contractors?.[0].last_name["0"]}
           </span>
           <div>
-            <p className="text-[#333333] text-lg">
+            <p className="text-admin_dark_text text-lg">
               {contractors
                 ?.map((c) => `${c.first_name} ${c.last_name}`)
                 .join(", ")}

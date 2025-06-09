@@ -1,9 +1,8 @@
+import { getRelatedLocalsByObjektId } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
-import database from "@/db";
-import { locals } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { type ObjektType } from "@/types";
-import { eq } from "drizzle-orm";
+import { countLocals } from "@/utils";
 import Link from "next/link";
 
 export default async function ObjekteItem({ item }: { item: ObjektType }) {
@@ -11,26 +10,9 @@ export default async function ObjekteItem({ item }: { item: ObjektType }) {
     throw new Error("Missing item.id");
   }
 
-  const relatedLocals = (
-    await database.select().from(locals).where(eq(locals.objekt_id, item.id))
-  ).map((local) => ({
-    ...local,
-    living_space: Number(local.living_space),
-    rooms: local.rooms ? Number(local.rooms) : null,
-    house_fee: local.house_fee ? Number(local.house_fee) : null,
-    tags: null,
-    heating_systems: null,
-    documents: null,
-  }));
+  const relatedLocals = await getRelatedLocalsByObjektId(item.id);
 
-  const commertialLocals = relatedLocals.filter(
-    (local) => local.usage_type === "commercial"
-  );
-
-  const otherLocals = relatedLocals.filter(
-    (local) =>
-      local.usage_type !== "commercial" && local.usage_type !== "parking"
-  );
+  const { commertialLocals, otherLocals } = countLocals(relatedLocals);
 
   return (
     <div className="bg-white p-4 rounded-2xl flex items-center justify-between">

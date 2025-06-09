@@ -36,6 +36,7 @@ import { editLocal } from "@/actions/edit/editLocal";
 import { useUploadDocuments } from "@/apiClient";
 import { deleteDocumentById } from "@/actions/delete/deleteDocument";
 import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
+import { buildLocalName } from "@/utils";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -119,6 +120,11 @@ export default function EditObjekteUnitForm({
   const { existingDocuments, deletedDocumentIds, handleRemoveExistingFile } =
     useDocumentDeletion(uploadedDocuments);
 
+  const floor = methods.watch("floor");
+  const house_location = methods.watch("house_location");
+  const residential_area = methods.watch("residential_area");
+  const living_space = methods.watch("living_space");
+
   return (
     <Form {...methods}>
       <form
@@ -142,18 +148,23 @@ export default function EditObjekteUnitForm({
               );
             }
 
-            toast.success("Updated successfully");
+            toast.success("Erfolgreich aktualisiert");
             router.push(`${ROUTE_OBJEKTE}/${objektID}`);
             methods.reset();
           } catch (err) {
-            toast.error("error");
+            toast.error("Fehler beim Aktualisieren");
             console.error(err);
           }
         })}>
         <FormTagsInput<EditObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
           <h1 className="text-2xl mb-5 text-dark_green">
-            {methods.watch("floor")}, {methods.watch("living_space")}qm
+            {buildLocalName({
+              floor,
+              house_location,
+              residential_area,
+              living_space: String(living_space),
+            })}
           </h1>
           <FormRadioOptions<EditObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}

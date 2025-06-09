@@ -1,3 +1,4 @@
+import { floorShortcuts } from "@/static/formSelectOptions";
 import {
   commercial,
   keys,
@@ -8,7 +9,7 @@ import {
   trend_down,
   trend_up,
 } from "@/static/icons";
-import { BuildingType, ObjektType, UnitType } from "@/types";
+import { BuildingType, LocalType, UnitType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { type StaticImageData } from "next/image";
 import { twMerge } from "tailwind-merge";
@@ -156,3 +157,35 @@ export const handleLocalTypeIcon = (
 //       return "#E08E3A";
 //   }
 // };
+
+export const countLocals = (locals: LocalType[]) => {
+  const commertialLocals = locals.filter(
+    (local) => local.usage_type === "commercial"
+  );
+
+  const otherLocals = locals.filter(
+    (local) =>
+      local.usage_type !== "commercial" && local.usage_type !== "parking"
+  );
+
+  return { commertialLocals, otherLocals };
+};
+
+export const buildLocalName = ({
+  floor,
+  house_location,
+  residential_area,
+  living_space,
+}: Partial<LocalType>) => {
+  const floorShortcut = floor
+    ? (floorShortcuts[floor as keyof typeof floorShortcuts] ?? floor)
+    : "";
+
+  const mainParts = [floorShortcut, house_location, residential_area].filter(
+    Boolean
+  );
+
+  const livingSpacePart = living_space ? `, ${living_space}qm` : "";
+
+  return mainParts.join(" ") + livingSpacePart;
+};

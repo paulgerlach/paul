@@ -19,6 +19,25 @@ export const floorOptions = [
   "15. Obergeschoss",
 ];
 
+export const floorShortcuts: Record<(typeof floorOptions)[number], string> = {
+  Erdgeschoss: "EG",
+  "1. Obergeschoss": "1. OG",
+  "2. Obergeschoss": "2. OG",
+  "3. Obergeschoss": "3. OG",
+  "4. Obergeschoss": "4. OG",
+  "5. Obergeschoss": "5. OG",
+  "6. Obergeschoss": "6. OG",
+  "7. Obergeschoss": "7. OG",
+  "8. Obergeschoss": "8. OG",
+  "9. Obergeschoss": "9. OG",
+  "10. Obergeschoss": "10. OG",
+  "11. Obergeschoss": "11. OG",
+  "12. Obergeschoss": "12. OG",
+  "13. Obergeschoss": "13. OG",
+  "14. Obergeschoss": "14. OG",
+  "15. Obergeschoss": "15. OG",
+};
+
 export const houseLocatonOptions = [
   "Vorderhaus",
   "Hinterhaus",

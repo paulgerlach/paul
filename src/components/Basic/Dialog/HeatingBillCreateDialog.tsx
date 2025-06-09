@@ -30,10 +30,10 @@ export default function HeatingBillCreateDialog() {
     return (
       <DialogBase size={768} dialogName="heating_bill_create">
         <div className="py-6">
-          <h2 className="text-center mb-4 font-bold text-[#333333] text-lg">
+          <h2 className="text-center mb-4 font-bold text-admin_dark_text text-lg">
             Auswahl der Objektart
           </h2>
-          <p className="text-center text-[#333333] text-sm">
+          <p className="text-center text-admin_dark_text text-sm">
             Für welches Einheit möchten Sie die Heizkostenabrechnung erstellen?
             Bei einem Gebäude mit mehreren Einheiten oder einem Einfamilienhaus
             werden automatisch Ihre Vertrags- und Rechnungsdaten übernommen. Bei
@@ -55,7 +55,7 @@ export default function HeatingBillCreateDialog() {
             <label
               htmlFor="building"
               className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block">
-              <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-[#333333]">
+              <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
                   width={0}
                   height={0}
@@ -68,7 +68,7 @@ export default function HeatingBillCreateDialog() {
                 Gebäude
               </div>
               <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -80,7 +80,7 @@ export default function HeatingBillCreateDialog() {
                   />
                   Für Mietshäuser
                 </li>
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -92,7 +92,7 @@ export default function HeatingBillCreateDialog() {
                   />
                   Für Einfamilienhäuser
                 </li>
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -128,7 +128,7 @@ export default function HeatingBillCreateDialog() {
             <label
               htmlFor="local"
               className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block">
-              <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-[#333333]">
+              <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
                   width={0}
                   height={0}
@@ -141,7 +141,7 @@ export default function HeatingBillCreateDialog() {
                 Eigentumswohnung
               </div>
               <ul className="space-y-2">
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -153,7 +153,7 @@ export default function HeatingBillCreateDialog() {
                   />
                   Optimiert für Eigentumswohnungen
                 </li>
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -165,7 +165,7 @@ export default function HeatingBillCreateDialog() {
                   />
                   Dateneingabe anhand der Hausgeldabrechnung
                 </li>
-                <li className="flex items-start gap-2 text-sm text-[#333333]">
+                <li className="flex items-start gap-2 text-sm text-admin_dark_text">
                   <Image
                     width={0}
                     height={0}
@@ -193,7 +193,7 @@ export default function HeatingBillCreateDialog() {
         <div className="flex items-center justify-between">
           <button
             onClick={() => closeDialog("heating_bill_create")}
-            className="py-2 px-6 rounded-lg flex items-center justify-center border border-[#333333]/50 text-[#333333] bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300">
+            className="py-2 px-6 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300">
             Zurück
           </button>
           <Button onClick={() => handleNavigate(docFor)}>Loslegen</Button>

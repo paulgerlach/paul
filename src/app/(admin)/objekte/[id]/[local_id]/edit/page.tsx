@@ -1,12 +1,8 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EditObjekteUnitForm from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
-import database from "@/db";
-import { locals } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { supabaseServer } from "@/utils/supabase/server";
-import { eq } from "drizzle-orm";
-import { getSignedUrlsForObject } from "@/api";
+import { getLocalById, getSignedUrlsForObject } from "@/api";
 
 export default async function EditLocalPage({
   params,
@@ -15,20 +11,7 @@ export default async function EditLocalPage({
 }) {
   const { id, local_id } = await params;
 
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return <div>Unauthorized</div>;
-  }
-
-  const local = await database
-    .select()
-    .from(locals)
-    .where(eq(locals.id, local_id))
-    .then((res) => res[0]);
+  const local = await getLocalById(local_id);
 
   if (!local) {
     return <div>Objekt nicht gefunden</div>;

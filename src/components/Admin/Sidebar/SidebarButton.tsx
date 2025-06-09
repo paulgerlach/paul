@@ -20,6 +20,8 @@ export default function SidebarButton({
 }) {
   const contentRef = useRef(null);
 
+  const isRouteActive = (route: string) => pathname?.startsWith(route);
+
   useEffect(() => {
     if (isOpen) {
       slideDown(contentRef.current);
@@ -59,7 +61,7 @@ export default function SidebarButton({
           <Link
             key={child.title}
             href={child.route}
-            className={`flex py-3 px-5 transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${pathname === child.route ? "active" : ""} [.active]:bg-black/10`}>
+            className={`flex py-3 px-5 transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(child.route) ? "active" : ""} [.active]:bg-black/10`}>
             <span className="[.active_&]:font-bold">{child.title}</span>
           </Link>
         ))}

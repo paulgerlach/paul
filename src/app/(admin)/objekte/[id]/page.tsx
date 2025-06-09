@@ -1,12 +1,9 @@
+import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteLocalsAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAccordion";
-import database from "@/db";
-import { locals, objekte } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { create_local } from "@/static/icons";
-import { LocalType } from "@/types";
-import { eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,34 +14,14 @@ export default async function ObjektDetailsPage({
 }) {
   const { id } = await params;
 
-  const object = await database
-    .select()
-    .from(objekte)
-    .where(eq(objekte.id, id))
-    .then((res) => res[0]);
-
-  if (!object) {
-    return <div>Objekt nicht gefunden</div>;
-  }
-
-  const relatedLocals = (
-    await database.select().from(locals).where(eq(locals.objekt_id, id))
-  ).map((local) => ({
-    ...local,
-    living_space: String(local.living_space),
-    rooms: local.rooms ? String(local.rooms) : null,
-    house_fee: local.house_fee ? String(local.house_fee) : null,
-    tags: null,
-    heating_systems: null,
-    documents: null,
-  }));
+  const relatedLocals = await getRelatedLocalsByObjektId(id);
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Breadcrumb
         backTitle="Objekte"
         link={ROUTE_OBJEKTE}
-        title={`Wohneinheiten | ${object?.street}`}
+        title={`Wohneinheiten`}
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">
         <ObjekteLocalsAccordion id={id} locals={relatedLocals} />

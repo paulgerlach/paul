@@ -38,7 +38,7 @@ export default function HeizkostenabrechnungPage() {
       />
       <ContentWrapper className="max-h-[90%] gap-14 grid grid-cols-2">
         <div className="flex items-start px-12 max-w-2xl justify-center flex-col gap-10 rounded-2xl bg-white">
-          <h1 className="text-[#333333] text-4xl">
+          <h1 className="text-admin_dark_text text-4xl">
             In wenigen Schritten zur fertigen Abrechnung
           </h1>
           {items.map((item) => (
@@ -55,10 +55,10 @@ export default function HeizkostenabrechnungPage() {
                 alt="item image"
               />
               <div>
-                <p className="font-bold text-base text-[#333333]">
+                <p className="font-bold text-base text-admin_dark_text">
                   {item.title}
                 </p>
-                <p className="text-base text-[#333333] ">{item.text}</p>
+                <p className="text-base text-admin_dark_text ">{item.text}</p>
               </div>
             </div>
           ))}

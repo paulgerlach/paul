@@ -145,11 +145,11 @@ export default function EditContractForm({
               );
             }
 
-            toast.success("Updated successfully");
+            toast.success("Erfolgreich aktualisiert");
             router.push(`${ROUTE_OBJEKTE}/${objekteID}`);
             methods.reset();
           } catch (err) {
-            toast.error("error");
+            toast.error("Fehler beim Aktualisieren");
             console.error(err);
           }
         })}>
@@ -170,7 +170,7 @@ export default function EditContractForm({
           </div>
           <div className="space-y-4">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
-            <div className="flex items-center justify-start gap-7">
+            <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
               <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"

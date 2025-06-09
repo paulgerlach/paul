@@ -43,7 +43,7 @@ export default function FormRoundedCheckbox<
               onCheckedChange={onChange ? onChange : field.onChange}
             />
           </FormControl>
-          <FormLabel className="text-[#333333] py-2 text-xs">{label}</FormLabel>
+          <FormLabel className="text-admin_dark_text py-2 text-xs">{label}</FormLabel>
           <FormMessage />
         </FormItem>
       )}

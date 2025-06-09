@@ -25,6 +25,7 @@
   --color-card_light: #e5ebf5;
   --color-border_base: #efedeb;
   --color-base-bg: #f7f7f7;
+  --color-admin_dark_text: #333333;
 
   --breakpoint-*: initial;
   /* --breakpoint-max-*: initial; */

@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { editObjekt } from "@/actions/edit/editObjekt";
+import FormZipField from "../FormZipField";
 
 const objektTypeOptions: {
   type: BuildingType;
@@ -48,7 +49,7 @@ const objektTypeOptions: {
 const objectSchema = z.object({
   objekt_type: z.string().min(1, "Pflichtfeld"),
   street: z.string().min(1, "Pflichtfeld"),
-  zip: z.string().min(4, "Pflichtfeld"),
+  zip: z.string().regex(/^\d{5}$/, "Ungültige PLZ"),
   administration_type: z.string().min(1, "Pflichtfeld"),
   hot_water_preparation: z.string().min(1, "Pflichtfeld"),
   livingArea: z.coerce.number().nullable(),
@@ -103,11 +104,11 @@ export default function EditObjekteForm({
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             await editObjekt(objekteID, data);
-            toast.success("Updated");
+            toast.success("Erfolgreich aktualisiert");
             router.push(ROUTE_OBJEKTE);
             methods.reset();
           } catch (err) {
-            toast.error("error");
+            toast.error("Fehler beim Aktualisieren");
             console.error(err);
           }
         })}>
@@ -170,19 +171,13 @@ export default function EditObjekteForm({
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Objektdaten</h2>
           <div className="grid grid-cols-9 gap-4">
+            <FormZipField<EditObjekteFormValues> methods={methods} name="zip" />
             <FormInputField<EditObjekteFormValues>
               control={methods.control}
               name="street"
               label="Straßenname*"
               placeholder="Straßenname"
               className="col-span-5"
-            />
-            <FormInputField<EditObjekteFormValues>
-              control={methods.control}
-              name="zip"
-              label="Postleizahl*"
-              placeholder="Postleizahl"
-              className="col-span-3"
             />
             <FormInputField<EditObjekteFormValues>
               control={methods.control}

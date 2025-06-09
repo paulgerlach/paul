@@ -53,7 +53,7 @@ export default function FormRadioOptions<
                     />
                     <FormLabel
                       htmlFor={String(option.type)}
-                      className="text-xs py-2 font-medium cursor-pointer text-[#333333]">
+                      className="text-xs py-2 font-medium cursor-pointer text-admin_dark_text">
                       {option.name}
                     </FormLabel>
                   </FormItem>

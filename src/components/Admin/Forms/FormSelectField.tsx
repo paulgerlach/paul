@@ -22,6 +22,7 @@ export type FormSelectFieldProps<T extends FieldValues = FieldValues> = {
   placeholder: string;
   options: string[];
   disabled?: boolean;
+  className?: string;
 };
 
 export default function FormSelectField<T extends FieldValues = FieldValues>({
@@ -31,13 +32,14 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
   options,
   placeholder,
   disabled = false,
+  className = "",
 }: FormSelectFieldProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={className}>
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>
           <Select
             disabled={disabled}
@@ -61,7 +63,7 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
               </SelectGroup>
             </SelectContent>
           </Select>
-          {/* <FormMessage className="text-red-500 text-sm" /> */}
+          <FormMessage className="text-red-500 text-sm" />
         </FormItem>
       )}
     />

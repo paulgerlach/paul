@@ -231,14 +231,26 @@ import corner_green_check from "@/asset/corner_green_check.png";
 import receipt_building from "@/asset/receipt_building.png";
 import receipt_calendar from "@/asset/receipt_calendar.png";
 import receipt_line from "@/asset/receipt_line.png";
+import admin_form_info from "@/asset/admin_form_info.png";
+import cost_type_cleaning from "@/asset/cost_type_cleaning.png";
+import cost_type_fuel_costs from "@/asset/cost_type_fuel_costs.png";
+import cost_type_heater from "@/asset/cost_type_heater.png";
+import cost_type_pipe from "@/asset/cost_type_pipe.png";
+import cost_type_water_drop from "@/asset/cost_type_water_drop.png";
 
 export {
   accentro_colored,
   cold_water,
   lamp,
+  cost_type_cleaning,
+  cost_type_fuel_costs,
+  cost_type_heater,
+  cost_type_pipe,
+  cost_type_water_drop,
   close_dialog,
   receipt_building,
   receipt_calendar,
+  admin_form_info,
   receipt_line,
   big_time_clock,
   heating_bill_condominium,

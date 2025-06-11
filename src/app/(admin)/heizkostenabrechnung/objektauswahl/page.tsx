@@ -19,7 +19,7 @@ export default async function LocalPage() {
         <div className="overflow-y-auto space-y-4">
           {objekts.map((objekt) => (
             <ObjekteItemDoc
-              docLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/local/${objekt.id}`}
+              docLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt.id}`}
               key={objekt.id}
               item={objekt}
             />

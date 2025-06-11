@@ -14,6 +14,7 @@ export type FormPercentInputProps<T extends FieldValues = FieldValues> = {
   label: string;
   disabled?: boolean;
   className?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 };
 
 export default function FormPercentInput<T extends FieldValues = FieldValues>({
@@ -22,6 +23,7 @@ export default function FormPercentInput<T extends FieldValues = FieldValues>({
   label,
   disabled,
   className,
+  onChange,
 }: FormPercentInputProps<T>) {
   return (
     <FormField
@@ -32,7 +34,18 @@ export default function FormPercentInput<T extends FieldValues = FieldValues>({
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>
           <div className="relative">
             <FormControl>
-              <Input {...field} disabled={disabled} value={field.value ?? ""} />
+              <Input
+                type="number"
+                min={0}
+                step="any"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  onChange?.(e);
+                }}
+                disabled={disabled}
+                value={field.value ?? ""}
+              />
             </FormControl>
             <span className="absolute text-sm text-dark_green right-7 bottom-3">
               %

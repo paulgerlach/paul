@@ -1,12 +1,10 @@
 import { PropsWithChildren } from "react";
 
 export default function CreateDocContentWrapper({
-  className,
   children,
-}: PropsWithChildren<{ className: string }>) {
+}: PropsWithChildren) {
   return (
-    <div
-      className={`max-w-7xl mx-auto overflow-y-auto grid grid-cols-3 gap-16 ${className}`}>
+    <div className={`max-w-7xl mx-auto grid max-h-[90%] grid-cols-3 gap-16`}>
       {children}
     </div>
   );

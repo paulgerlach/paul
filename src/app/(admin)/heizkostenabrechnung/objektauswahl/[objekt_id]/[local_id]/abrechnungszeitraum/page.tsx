@@ -1,7 +1,7 @@
 import { getLocalById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
-import Receipt from "@/components/Admin/Docs/Receipt/Receipt";
+import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
 import AbrechnungszeitraumForm from "@/components/Admin/Forms/DocPreparing/AbrechnungszeitraumForm";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
@@ -19,13 +19,13 @@ export default async function AbrechnungszeitraumPage({
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Breadcrumb
         backTitle="Heizkostenabrechnung"
-        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/local/${objekt_id}`}
+        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}`}
         title={`Abrechnungszeitraum`}
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
-      <CreateDocContentWrapper className="max-h-[90%]">
-        <AbrechnungszeitraumForm id={objekt_id} />
-        <Receipt title={buildLocalName(localData)} />
+      <CreateDocContentWrapper>
+        <AbrechnungszeitraumForm localId={local_id} id={objekt_id} />
+        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
       </CreateDocContentWrapper>
     </div>
   );

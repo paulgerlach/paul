@@ -114,3 +114,30 @@ export type UploadedDocument = {
   url: string;
   relatedId: string;
 };
+
+export type CostTypeKey =
+  | "fuel_costs"
+  | "operating_current"
+  | "maintenance_costs"
+  | "metering_service_costs"
+  | "metering_device_rental"
+  | "chimney_sweep_costs"
+  | "other_operating_costs"
+  | "property_tax"
+  | "cold_water"
+  | "wastewater"
+  | "heating_costs"
+  | "hot_water_supply"
+  | "caretaker"
+  | "liability_insurance"
+  | "waste_disposal"
+  | "elevator"
+  | "street_cleaning"
+  | "building_cleaning"
+  | "garden_care"
+  | "lighting";
+
+export type CostType = {
+  key: CostTypeKey;
+  options?: string[];
+};

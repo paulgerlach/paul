@@ -5,11 +5,13 @@ import {
   multi_family,
   parking_lot,
   special_purpose,
-  trend_check,
-  trend_down,
-  trend_up,
+  cost_type_water_drop,
+  cost_type_pipe,
+  cost_type_heater,
+  cost_type_fuel_costs,
+  cost_type_cleaning,
 } from "@/static/icons";
-import { BuildingType, LocalType, UnitType } from "@/types";
+import type { BuildingType, CostTypeKey, LocalType, UnitType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { type StaticImageData } from "next/image";
 import { twMerge } from "tailwind-merge";
@@ -137,27 +139,6 @@ export const handleLocalTypeIcon = (
   }
 };
 
-// export const renderTradeIcon = (tradeStatus: ObjektType["status"]) => {
-//   switch (tradeStatus) {
-//     case "full":
-//       return trend_check;
-//     case "higher":
-//       return trend_up;
-//     case "lower":
-//       return trend_down;
-//   }
-// };
-// export const renderTradeColor = (tradeStatus: ObjektType["status"]) => {
-//   switch (tradeStatus) {
-//     case "full":
-//       return "#8AD68F";
-//     case "higher":
-//       return "#8AD68F";
-//     case "lower":
-//       return "#E08E3A";
-//   }
-// };
-
 export const countLocals = (locals: LocalType[]) => {
   const commertialLocals = locals.filter(
     (local) => local.usage_type === "commercial"
@@ -189,3 +170,68 @@ export const buildLocalName = ({
 
   return mainParts.join(" ") + livingSpacePart;
 };
+
+export function getCostTypeNameByKey(key: CostTypeKey) {
+  switch (key) {
+    case "fuel_costs":
+      return "Brennstoffkosten";
+    case "operating_current":
+      return "Betriebsstrom";
+    case "maintenance_costs":
+      return "Wartungskosten";
+    case "metering_service_costs":
+      return "Messdienstkosten";
+    case "metering_device_rental":
+      return "Miete der Messgeräte";
+    case "chimney_sweep_costs":
+      return "Schornsteinfegerkosten";
+    case "other_operating_costs":
+      return "Sonstige Betriebskosten";
+
+    case "property_tax":
+      return "Grundsteuer";
+    case "cold_water":
+      return "Kaltwasser (Wasserversorgung)";
+    case "wastewater":
+      return "Entwässerung (Abwasser)";
+    case "heating_costs":
+      return "Heizkosten";
+    case "hot_water_supply":
+      return "Warmwasserversorgung";
+    case "caretaker":
+      return "Hausmeister";
+    case "liability_insurance":
+      return "Sach- & Haftpflichtversicherung";
+    case "waste_disposal":
+      return "Müllabfuhr";
+    case "elevator":
+      return "Aufzüge";
+    case "street_cleaning":
+      return "Straßenreinigung";
+    case "building_cleaning":
+      return "Gebäudereinigung";
+    case "garden_care":
+      return "Gartenpflege";
+    case "lighting":
+      return "Beleuchtung (Gemeinschaftsflächen, z. B. Treppenhaus)";
+  }
+}
+
+export function getCostTypeIconByKey(key: CostTypeKey) {
+  switch (key) {
+    case "fuel_costs":
+      return cost_type_fuel_costs;
+    case "operating_current":
+      return cost_type_water_drop;
+    case "maintenance_costs":
+      return cost_type_pipe;
+    case "metering_service_costs":
+      return cost_type_heater;
+    case "metering_device_rental":
+      return cost_type_water_drop;
+    case "chimney_sweep_costs":
+      return cost_type_fuel_costs;
+    case "other_operating_costs":
+      return cost_type_cleaning;
+  }
+}

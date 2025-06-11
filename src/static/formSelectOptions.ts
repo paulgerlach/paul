@@ -90,3 +90,53 @@ export const custodyTypeOptions = [
   "Kautionsversicherung",
   "Sonstige",
 ];
+
+export const fuelCostTypes = ["Gas", "Öl", "Fernwärme"];
+export const operatingCurrentTypes = ["Strom für Umwälzpumpen", "Regeltechnik"];
+export const maintenanceCostsTypes = [
+  "Regelmäßige Wartung der Heizungsanlage (z. B. Brennerprüfung",
+  "Reinigung",
+];
+export const meteringServiceCostsTypes = [
+  "Ablesung",
+  "Auswertung",
+  "Gerätebereitstellung",
+];
+export const meteringDeviceRentalTypes = [
+  "Für Heizkostenverteiler",
+  "Wärmemengenzähler",
+];
+export const chimneySweepCostsTypes = [
+  "Kosten für die Emissionsmessung",
+  "Nur der auf die Heizung entfallende Teil",
+];
+export const otherOperatingCostsTypes = [
+  "Z. B. Legionellenprüfung bei Warmwasserbereitung",
+  "Kosten für die Reinigung des Heizraums",
+];
+export const propertyTaxTypes = [
+  "Deichabgaben",
+  "Regionale Abgaben",
+  "Wasser- und Bodenverband Beiträge",
+  "Grundsteuer",
+];
+export const liabilityInsuranceTypes = [
+  "Fahrstuhlhaftpflichtversicherung",
+  "Schwamm- Hausbockversicherung",
+  "Öltankhaftpflichtversicherung",
+  "Wasserschadenversicherung",
+  "Gastankhaftpflichtversicherung",
+  "Elementarschädenversicherung (wirtschaftlich relevant)",
+  "Terrorschadenversicherung (wirtschaftlich sinnvoll)",
+];
+export const streetCleaningTypes = [
+  "Streusalz",
+  "Beseitung von Eis und Schnee",
+  "Wartung und Treibstoff für Straßenreinigungsgeräte",
+  "Straßenreinigung",
+  "Reinigung der Mülltonnen",
+  "Uneinbringliche Kosten illegaler Sperrmüllablagerung",
+  "Sperrmüllbeseitung",
+  "Rückerstattung Müllabfuhrgebühren",
+  "Betriebskosten von Müllbeseitungsanlagen",
+];

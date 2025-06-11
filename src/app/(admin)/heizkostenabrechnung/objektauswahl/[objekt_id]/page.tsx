@@ -17,7 +17,7 @@ export default async function ObjektDetailsPage({
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
       <Breadcrumb
         backTitle="Objekte"
-        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/local`}
+        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`}
         title={`Wohneinheiten`}
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">

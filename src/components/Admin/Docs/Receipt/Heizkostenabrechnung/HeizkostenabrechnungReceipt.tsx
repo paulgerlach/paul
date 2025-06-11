@@ -1,17 +1,21 @@
+"use client";
+
 import {
   receipt_building,
   receipt_calendar,
   receipt_line,
 } from "@/static/icons";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import Image from "next/image";
 
 export type ReceiptProps = {
   title: string;
 };
 
-export default function Receipt({ title }: ReceiptProps) {
+export default function HeizkostenabrechnungReceipt({ title }: ReceiptProps) {
+  const { getFormattedDates } = useHeizkostenabrechnungStore();
   return (
-    <div className="bg-[#EFEEEC] min-w-sm w-fit rounded-2xl px-4 py-5 flex items-center justify-center">
+    <div className="bg-[#EFEEEC] h-fit min-w-sm w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text">
           <Image
@@ -35,7 +39,7 @@ export default function Receipt({ title }: ReceiptProps) {
             src={receipt_calendar}
             alt="receipt_calendar"
           />
-          01.01.2024 - 31.05.2024
+          {getFormattedDates().start_date} - {getFormattedDates().end_date}
         </p>
         <div className="flex flex-col items-center justify-center">
           <p className="text-admin_dark_text">Differenzbetrag</p>

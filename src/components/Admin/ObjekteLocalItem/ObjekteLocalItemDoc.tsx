@@ -76,7 +76,7 @@ export default async function ObjekteLocalItemDoc({
 
   return (
     <Link
-      href={`${ROUTE_HEIZKOSTENABRECHNUNG}/local/${id}/${localID}/abrechnungszeitraum`}
+      href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${id}/${localID}/abrechnungszeitraum`}
       className={`bg-white p-2 rounded-2xl ${status === "vacancy" && "available"} flex items-center justify-between`}>
       <div className="flex items-center justify-start gap-8">
         <div className="flex items-center justify-start gap-2">

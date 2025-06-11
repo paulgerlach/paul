@@ -1,7 +1,7 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import OpenItitalDocDialogButton from "@/components/Admin/Docs/OpenItitalDocDialogButton/OpenItitalDocDialogButton";
-import { ROUTE_DASHBOARD } from "@/routes/routes";
+import { ROUTE_DASHBOARD, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import {
   big_time_clock,
   doc_preview_building,
@@ -9,6 +9,7 @@ import {
   lamp,
 } from "@/static/icons";
 import Image from "next/image";
+import Link from "next/link";
 
 const items = [
   {
@@ -62,10 +63,11 @@ export default function HeizkostenabrechnungPage() {
               </div>
             </div>
           ))}
-          <OpenItitalDocDialogButton
-            buttonText="Jetzt Betriebskosten abrechnen"
-            dialogName="heating_bill_create"
-          />
+          <Link
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4">
+            Jetzt Betriebskosten abrechnen
+          </Link>
         </div>
         <div className="space-y-7">
           <p className="text-xl text-[#6d6d6d]">Vorschau</p>

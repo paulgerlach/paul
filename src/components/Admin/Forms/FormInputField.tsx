@@ -17,6 +17,7 @@ export type FormInputFieldProps<T extends FieldValues = FieldValues> = {
   className?: string;
   disabled?: boolean;
   type?: React.HTMLInputTypeAttribute;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 };
 
 export default function FormInputField<T extends FieldValues = FieldValues>({
@@ -27,6 +28,7 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
   type,
   className,
   disabled,
+  onChange,
 }: FormInputFieldProps<T>) {
   return (
     <FormField
@@ -44,6 +46,10 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
               type={type}
               placeholder={placeholder}
               {...field}
+              onChange={(e) => {
+                field.onChange(e);
+                onChange?.(e);
+              }}
               value={field.value ?? ""}
             />
           </FormControl>

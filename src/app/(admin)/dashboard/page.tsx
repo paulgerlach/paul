@@ -1,4 +1,3 @@
-import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EinsparungChart from "@/components/Basic/Charts/EinsparungChart";
 import GaugeChart from "@/components/Basic/Charts/GaugeChart";
 import HeatingCosts from "@/components/Basic/Charts/HeatingCosts";
@@ -8,6 +7,7 @@ import { ROUTE_OBJEKTE } from "@/routes/routes";
 import fs from "fs";
 import path from "path";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
+import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 
 export default async function AdminPage() {
   const coldWaterPath = path.resolve(

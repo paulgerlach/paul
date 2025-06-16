@@ -6,7 +6,6 @@ import {
   CommandList,
 } from "@/components/Basic/ui/Command";
 import {
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -18,19 +17,12 @@ import {
   PopoverTrigger,
 } from "@/components/Basic/ui/Popover";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/Basic/ui/Select";
-import {
   heatingSystemOptions,
   hotWaterPreparationOptions,
 } from "@/static/formSelectOptions";
 import { X } from "lucide-react";
 import { Control, FieldValues, Path } from "react-hook-form";
+import FormSelectField from "./FormSelectField";
 
 export type FormTechnicalEquipmentProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
@@ -81,9 +73,8 @@ export default function FormTechnicalEquipment<
                           <CommandItem
                             key={option}
                             onSelect={() => handleSelect(option)}
-                            className={`cursor-pointer ${
-                              selectedValues.includes(option) ? "bg-muted" : ""
-                            }`}>
+                            className={`cursor-pointer ${selectedValues.includes(option) ? "bg-muted" : ""
+                              }`}>
                             {option}
                           </CommandItem>
                         ))}
@@ -119,40 +110,13 @@ export default function FormTechnicalEquipment<
           }}
         />
 
-        <FormField
-          control={control}
+        <FormSelectField<T>
           disabled={disabled}
+          options={hotWaterPreparationOptions}
+          label="Warmwasserbereitung*"
+          placeholder="Zentrale/Dezentrale"
+          control={control}
           name={"hot_water_preparation" as Path<T>}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-[#757575] text-sm">
-                Warmwasserbereitung*
-              </FormLabel>
-              <Select
-                disabled={disabled}
-                value={field.value}
-                onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      className="line-clamp-1"
-                      placeholder="Zentrale/Dezentrale"
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    {hotWaterPreparationOptions.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
         />
       </div>
     </div>

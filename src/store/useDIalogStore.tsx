@@ -1,14 +1,14 @@
-import type { DialogDocumentActionType } from "@/types";
+import type { DialogStoreActionType } from "@/types";
 import { create } from "zustand";
 
 export type DialogStoreType = {
-  openDialogByType: Record<DialogDocumentActionType, boolean>;
+  openDialogByType: Record<DialogStoreActionType, boolean>;
   itemID: string | undefined;
   setItemID: (id: string | undefined) => void;
   isOpen: boolean;
-  openDialog: (type: DialogDocumentActionType) => void;
-  closeDialog: (type: DialogDocumentActionType) => void;
-  toggleDialog: (type: DialogDocumentActionType) => void;
+  openDialog: (type: DialogStoreActionType) => void;
+  closeDialog: (type: DialogStoreActionType) => void;
+  toggleDialog: (type: DialogStoreActionType) => void;
 };
 
 export const useDialogStore = create<DialogStoreType>((set) => ({
@@ -19,12 +19,34 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     local_delete: false,
     contract_delete: false,
     heating_bill_delete: false,
+    operating_costs_delete: false,
     object_create: false,
     local_create: false,
     contract_create: false,
     heating_bill_create: false,
+    operating_costs_create: false,
     login: false,
     register: false,
+    building_cleaning_upload: false,
+    caretaker_upload: false,
+    chimney_sweep_costs_upload: false,
+    cold_water_upload: false,
+    elevator_upload: false,
+    fuel_costs_upload: false,
+    garden_care_upload: false,
+    heating_costs_upload: false,
+    hot_water_supply_upload: false,
+    liability_insurance_upload: false,
+    lighting_upload: false,
+    maintenance_costs_upload: false,
+    metering_device_rental_upload: false,
+    metering_service_costs_upload: false,
+    operating_current_upload: false,
+    other_operating_costs_upload: false,
+    property_tax_upload: false,
+    street_cleaning_upload: false,
+    waste_disposal_upload: false,
+    wastewater_upload: false,
   },
 
   setItemID: (id) => set({ itemID: id }),

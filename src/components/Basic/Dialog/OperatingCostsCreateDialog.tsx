@@ -10,25 +10,26 @@ import {
   heating_bill_builing,
   heating_bill_condominium,
 } from "@/static/icons";
-import Link from "next/link";
-import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 
-export default function HeatingBillCreateDialog() {
+export default function OperatingCostsCreateDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const router = useRouter();
-  const isOpen = openDialogByType.heating_bill_create;
-  const [docFor, setDocFor] = useState<"building" | "local">("building");
+  const isOpen = openDialogByType.operating_costs_create;
+  const [docFor, setDocFor] = useState<"objektauswahl" | "localauswahl">(
+    "objektauswahl"
+  );
 
-  const handleNavigate = (type: "building" | "local") => {
-    closeDialog("heating_bill_create");
-    router.push(ROUTE_HEIZKOSTENABRECHNUNG + `/${type}`);
+  const handleNavigate = (type: "objektauswahl" | "localauswahl") => {
+    closeDialog("operating_costs_create");
+    router.push(ROUTE_BETRIEBSKOSTENABRECHNUNG + `/${type}`);
   };
 
   if (isOpen)
     return (
-      <DialogBase size={768} dialogName="heating_bill_create">
+      <DialogBase size={768} dialogName="operating_costs_create">
         <div className="py-6">
           <h2 className="text-center mb-4 font-bold text-admin_dark_text text-lg">
             Auswahl der Objektart
@@ -48,12 +49,12 @@ export default function HeatingBillCreateDialog() {
               className="sr-only peer"
               type="radio"
               name="heating_bill_type"
-              id="building"
-              checked={docFor === "building"}
-              onChange={() => setDocFor("building")}
+              id="objektauswahl"
+              checked={docFor === "objektauswahl"}
+              onChange={() => setDocFor("objektauswahl")}
             />
             <label
-              htmlFor="building"
+              htmlFor="objektauswahl"
               className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block">
               <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
@@ -121,12 +122,12 @@ export default function HeatingBillCreateDialog() {
               className="sr-only peer"
               type="radio"
               name="heating_bill_type"
-              id="local"
-              checked={docFor === "local"}
-              onChange={() => setDocFor("local")}
+              id="localauswahl"
+              checked={docFor === "localauswahl"}
+              onChange={() => setDocFor("localauswahl")}
             />
             <label
-              htmlFor="local"
+              htmlFor="localauswahl"
               className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block">
               <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
@@ -192,7 +193,7 @@ export default function HeatingBillCreateDialog() {
         </div>
         <div className="flex items-center justify-between">
           <button
-            onClick={() => closeDialog("heating_bill_create")}
+            onClick={() => closeDialog("operating_costs_create")}
             className="py-2 px-6 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300">
             Zurück
           </button>

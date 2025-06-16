@@ -1,12 +1,17 @@
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
-import { admin_plus, chevron_admin } from "@/static/icons";
-import type { CostType } from "@/types";
+import { admin_plus, chevron_admin, pdf_icon } from "@/static/icons";
+import { useDialogStore } from "@/store/useDIalogStore";
+import {
+  type HeizkostenabrechnungCostType,
+  useHeizkostenabrechnungStore,
+} from "@/store/useHeizkostenabrechnungStore";
 import {
   getCostTypeIconByKey,
   getCostTypeNameByKey,
   slideDown,
   slideUp,
 } from "@/utils";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
@@ -14,7 +19,9 @@ export type CostTypeItemProps = {
   isOpen: boolean;
   index: number;
   onClick: (index: number) => void;
-  type: CostType;
+  type: HeizkostenabrechnungCostType;
+  objektId: string;
+  localId: string;
 };
 
 export default function CostTypeItem({
@@ -22,8 +29,13 @@ export default function CostTypeItem({
   index,
   onClick,
   type,
+  objektId,
+  localId,
 }: CostTypeItemProps) {
   const contentRef = useRef(null);
+  const { openDialog } = useDialogStore();
+  const { setActiveCostType, setPurposeOptions, setLocalID, setObjektID } =
+    useHeizkostenabrechnungStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -32,6 +44,19 @@ export default function CostTypeItem({
       slideUp(contentRef.current);
     }
   }, [isOpen]);
+
+  const handleOpenDialog = () => {
+    setActiveCostType(type.type);
+    setPurposeOptions();
+    setLocalID(localId);
+    setObjektID(objektId);
+    openDialog(`${type.type}_upload`);
+  };
+
+  const totalAmount = type.data.reduce(
+    (acc, item) => acc + Number(item.total_amount ?? 0),
+    0
+  );
 
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>
@@ -56,16 +81,16 @@ export default function CostTypeItem({
               sizes="100vw"
               loading="lazy"
               className="max-w-7 max-h-7"
-              src={getCostTypeIconByKey(type.key)!}
+              src={getCostTypeIconByKey(type.type)!}
               alt="chevron"
             />
           </div>
-          <p className="text-semibold text-dark_green">
-            {getCostTypeNameByKey(type.key)}
+          <p className="font-semibold text-dark_green">
+            {getCostTypeNameByKey(type.type)}
           </p>
         </div>
         <div className="flex items-center whitespace-nowrap justify-end gap-7">
-          <span>0,00 €</span>
+          <span>{totalAmount} €</span>
           <ThreeDotsButton
             editLink={""}
             itemID={""}
@@ -76,7 +101,32 @@ export default function CostTypeItem({
       <div
         ref={contentRef}
         className="[.active_&]:py-5 px-5 [.active_&]:h-auto h-0">
-        <button className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-4 border border-dark_green rounded-md bg-[#E0E0E0] text-lg font-medium text-admin_dark_text">
+        {type.data.map((item, i) => {
+          if (item.document?.length === 1 || item.document_name) {
+            return (
+              <ul key={i} className="mt-4 mb-9">
+                <li className="flex justify-between items-center pl-12">
+                  <span className="text-sm flex items-center gap-12 truncate text-[#757575]">
+                    <Image
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      loading="lazy"
+                      className="block mx-auto"
+                      src={pdf_icon}
+                      alt="pdf_icon"
+                    />
+                    {item.document_name ?? item.document?.[0]?.name}
+                  </span>
+                </li>
+              </ul>
+            );
+          }
+          return null;
+        })}
+        <button
+          onClick={() => handleOpenDialog()}
+          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-4 border border-dark_green cursor-pointer rounded-md bg-[#E0E0E0] text-lg font-medium text-admin_dark_text">
           <Image
             width={0}
             height={0}

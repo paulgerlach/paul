@@ -2,50 +2,17 @@
 
 import { useState } from "react";
 import CostTypeItem from "./CostTypeItem";
-import type { CostType } from "@/types";
-import {
-  fuelCostTypes,
-  chimneySweepCostsTypes,
-  maintenanceCostsTypes,
-  meteringDeviceRentalTypes,
-  meteringServiceCostsTypes,
-  operatingCurrentTypes,
-  otherOperatingCostsTypes,
-} from "@/static/formSelectOptions";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 
-const costTypes: CostType[] = [
-  {
-    key: "fuel_costs",
-    options: fuelCostTypes,
-  },
-  {
-    key: "operating_current",
-    options: operatingCurrentTypes,
-  },
-  {
-    key: "maintenance_costs",
-    options: maintenanceCostsTypes,
-  },
-  {
-    key: "metering_service_costs",
-    options: meteringServiceCostsTypes,
-  },
-  {
-    key: "metering_device_rental",
-    options: meteringDeviceRentalTypes,
-  },
-  {
-    key: "chimney_sweep_costs",
-    options: chimneySweepCostsTypes,
-  },
-  {
-    key: "other_operating_costs",
-    options: otherOperatingCostsTypes,
-  },
-];
-
-export default function CostTypesAccordion() {
+export default function CostTypesAccordion({
+  objektId,
+  localId,
+}: {
+  objektId: string;
+  localId: string;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { documentGroups } = useHeizkostenabrechnungStore();
 
   const handleClick = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -53,13 +20,15 @@ export default function CostTypesAccordion() {
 
   return (
     <div className="overflow-y-auto space-y-4">
-      {costTypes?.map((type, index) => (
+      {documentGroups?.map((type, index) => (
         <CostTypeItem
           isOpen={openIndex === index}
           onClick={handleClick}
-          key={type.key}
+          key={type.type}
           type={type}
           index={index}
+          localId={localId}
+          objektId={objektId}
         />
       ))}
     </div>

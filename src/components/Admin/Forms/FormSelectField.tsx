@@ -1,18 +1,10 @@
 import {
   FormMessage,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
 } from "@/components/Basic/ui/Form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/Basic/ui/Select";
+import Select from "@/components/Basic/ui/Select";
 import { Control, FieldValues, Path } from "react-hook-form";
 
 export type FormSelectFieldProps<T extends FieldValues = FieldValues> = {
@@ -40,29 +32,14 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>
           <Select
             disabled={disabled}
-            value={field.value}
-            onValueChange={field.onChange}>
-            <FormControl>
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  className="line-clamp-1"
-                  placeholder={placeholder}
-                />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              <SelectGroup>
-                {options.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            selectedValue={field.value}
+            onChange={field.onChange}
+            label={label}
+            placeholder={placeholder}
+            options={options}
+          />
           <FormMessage className="text-red-500 text-sm" />
         </FormItem>
       )}

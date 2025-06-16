@@ -1,3 +1,5 @@
+import { CostTypeKey } from "@/types";
+
 export const outdoorOptions = ["Balkon", "Terrasse", "Loggia", "Sonstige"];
 
 export const floorOptions = [
@@ -140,3 +142,16 @@ export const streetCleaningTypes = [
   "Rückerstattung Müllabfuhrgebühren",
   "Betriebskosten von Müllbeseitungsanlagen",
 ];
+
+export const costTypePurposeMap: Partial<Record<CostTypeKey, string[]>> = {
+  fuel_costs: fuelCostTypes,
+  operating_current: operatingCurrentTypes,
+  maintenance_costs: maintenanceCostsTypes,
+  metering_service_costs: meteringServiceCostsTypes,
+  metering_device_rental: meteringDeviceRentalTypes,
+  chimney_sweep_costs: chimneySweepCostsTypes,
+  other_operating_costs: otherOperatingCostsTypes,
+  property_tax: propertyTaxTypes,
+  liability_insurance: liabilityInsuranceTypes,
+  street_cleaning: streetCleaningTypes,
+};

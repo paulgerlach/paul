@@ -1,5 +1,11 @@
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
-import { contracts, contractors, objekte, locals } from "@/db/drizzle/schema";
+import {
+  contracts,
+  contractors,
+  objekte,
+  locals,
+  heating_bill_documents,
+} from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
 
@@ -93,6 +99,10 @@ export type ObjektType = InferInsertModel<typeof objekte>;
 
 export type LocalType = InferInsertModel<typeof locals>;
 
+export type HeatingBillDocumentType = InferInsertModel<
+  typeof heating_bill_documents
+>;
+
 export type UploadDocumentArgs = {
   files: File[];
   relatedId: string;
@@ -101,7 +111,7 @@ export type UploadDocumentArgs = {
 
 export type DialogActionType = "delete" | "create";
 
-export type DocumentType = "object" | "local" | "contract" | "heating_bill";
+export type DocumentType = "object" | "local" | "contract" | "heating_bill" | "operating_costs";
 
 export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
@@ -136,6 +146,15 @@ export type CostTypeKey =
   | "building_cleaning"
   | "garden_care"
   | "lighting";
+
+export type DialogCostActionType = "upload";
+
+export type DialogDocumentCostActionType =
+  `${CostTypeKey}_${DialogCostActionType}`;
+
+export type DialogStoreActionType =
+  | DialogDocumentActionType
+  | DialogDocumentCostActionType;
 
 export type CostType = {
   key: CostTypeKey;

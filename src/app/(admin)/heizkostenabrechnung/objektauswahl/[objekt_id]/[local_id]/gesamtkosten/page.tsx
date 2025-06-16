@@ -25,7 +25,7 @@ export default async function GesamtkostenPage({
       />
       <CreateDocContentWrapper>
         <GesamtkostenForm objektId={objekt_id} localId={local_id} />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+        <HeizkostenabrechnungReceipt objektId={objekt_id} localId={local_id} title={buildLocalName(localData)} />
       </CreateDocContentWrapper>
     </div>
   );

@@ -72,10 +72,10 @@ export default function AbrechnungszeitraumForm({
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] col-span-2 rounded-2xl px-4 flex items-center justify-center">
-      <div className="bg-white overflow-y-auto py-4 px-[18px] rounded w-full shadow-sm space-y-8">
+      <div className="bg-white overflow-y-auto h-full py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <Form {...methods}>
           <form
-            className="flex flex-col justify-between"
+            className="flex flex-col justify-between h-full"
             id="abrechnungszeitraum-form"
             onSubmit={methods.handleSubmit(() => {
               router.push(

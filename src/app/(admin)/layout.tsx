@@ -7,7 +7,8 @@ import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
 import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
-import HeatingBillCreateDialog from "@/components/Basic/Dialog/HeatingBillCreateDialog";
+import OperatingCostsCreateDialog from "@/components/Basic/Dialog/OperatingCostsCreateDialog";
+import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -32,7 +33,8 @@ export default function AdminLayout({
       <ObjekteDeleteDialog />
       <LocalDeleteDialog />
       <ContractDeleteDialog />
-      <HeatingBillCreateDialog />
+      <OperatingCostsCreateDialog />
+      <AddDocHeizkostenabrechnungDialog />
       <Toaster />
     </QueryProvider>
   );

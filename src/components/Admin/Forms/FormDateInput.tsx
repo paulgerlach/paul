@@ -47,7 +47,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                 <button
                   disabled={disabled}
                   className={
-                    "w-full flex items-center min-w-xs justify-between text-left px-6 py-[7px] rounded-md border border-black/20 shadow-xs font-normal"
+                    "w-full flex items-center justify-between text-left px-6 py-[7px] rounded-md border min-h-14 border-black/20 shadow-xs font-normal"
                   }>
                   {field.value ? format(field.value, "PPP") : <span>-</span>}
                   <Image
@@ -63,7 +63,8 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
               </FormControl>
             </PopoverTrigger>
             <PopoverContent
-              className="border-none shadow-none w-fit p-0"
+              disablePortal
+              className="border-none shadow-none w-fit p-0 relative"
               align="start">
               <Calendar
                 mode="single"

@@ -3,12 +3,12 @@
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { close_dialog } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
-import type { DialogDocumentActionType } from "@/types";
+import type { DialogStoreActionType } from "@/types";
 import Image from "next/image";
 import { PropsWithChildren, useRef } from "react";
 
 export type DialogBaseProps = {
-  dialogName: DialogDocumentActionType;
+  dialogName: DialogStoreActionType;
   size?: number;
 };
 

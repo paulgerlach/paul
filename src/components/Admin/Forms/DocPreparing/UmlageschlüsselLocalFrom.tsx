@@ -5,8 +5,10 @@ import CostTypesBuildingSelects from "../../Docs/CostTypes/CostTypesBuildingSele
 
 export default function UmlageschlüsselLocalFrom({
   objektId,
+  localId,
 }: {
   objektId: string;
+  localId: string;
 }) {
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">

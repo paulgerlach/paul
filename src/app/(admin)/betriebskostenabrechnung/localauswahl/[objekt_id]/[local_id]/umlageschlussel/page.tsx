@@ -2,7 +2,6 @@ import { getContractsByLocalID, getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import UmlageschlüsselFrom from "@/components/Admin/Forms/DocPreparing/UmlageschlüsselFrom";
 import UmlageschlüsselLocalFrom from "@/components/Admin/Forms/DocPreparing/UmlageschlüsselLocalFrom";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
@@ -26,7 +25,7 @@ export default async function UmlageschlüsselPage({
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
-        <UmlageschlüsselLocalFrom objektId={objekt_id} />
+        <UmlageschlüsselLocalFrom objektId={objekt_id} localId={local_id} />
         <BetriebskostenabrechnungReceipt
           objektId={objekt_id}
           title={`${objekt.street} ${objekt.zip}`}

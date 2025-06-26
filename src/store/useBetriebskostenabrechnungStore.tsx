@@ -2,48 +2,47 @@ import { create } from "zustand";
 import { format } from "date-fns";
 import type { DocCostCategoryType, HeatingBillDocumentType } from "@/types";
 
-export type HeizkostenabrechnungCostType = Partial<DocCostCategoryType> & {
+export type BetriebskostenabrechnungCostType = Partial<DocCostCategoryType> & {
   data: (Partial<HeatingBillDocumentType> & { document?: File[] })[];
 };
 
-export type HeizkostenabrechnungStoreType = {
+export type BetriebskostenabrechnungStoreType = {
   start_date: Date | null;
   end_date: Date | null;
-  activeCostType: HeizkostenabrechnungCostType["type"] | null;
-  documentGroups: HeizkostenabrechnungCostType[];
-  setDocumentGroups: (groups: HeizkostenabrechnungCostType[]) => void;
+  activeCostType: BetriebskostenabrechnungCostType["type"] | null;
+  documentGroups: BetriebskostenabrechnungCostType[];
+  setDocumentGroups: (groups: BetriebskostenabrechnungCostType[]) => void;
   setStartDate: (date: Date) => void;
   setEndDate: (date: Date) => void;
   getFormattedDates: () => { start_date: string; end_date: string };
-  addDocumentGroup: (group: HeizkostenabrechnungCostType) => void;
+  addDocumentGroup: (group: BetriebskostenabrechnungCostType) => void;
   updateDocumentGroup: (
-    key: HeizkostenabrechnungCostType["type"],
+    key: BetriebskostenabrechnungCostType["type"],
     newItem: Partial<HeatingBillDocumentType> & { document?: File[] }
   ) => void;
-  removeDocumentGroup: (key: HeizkostenabrechnungCostType["type"]) => void;
+  removeDocumentGroup: (key: BetriebskostenabrechnungCostType["type"]) => void;
   purposeOptions: string[];
-  setActiveCostType: (key: HeizkostenabrechnungCostType["type"]) => void;
+  setActiveCostType: (key: BetriebskostenabrechnungCostType["type"]) => void;
   objektID: string | null;
   localID: string | null;
   setObjektID: (id: string) => void;
   setLocalID: (id: string) => void;
   updateDocumentGroupValues: (
-    key: HeizkostenabrechnungCostType["type"],
+    key: BetriebskostenabrechnungCostType["type"],
     index: number,
     values: Partial<HeatingBillDocumentType> & { document?: File }
   ) => void;
   getDocumentGroupByType: (
-    key: HeizkostenabrechnungCostType["type"]
-  ) => HeizkostenabrechnungCostType | undefined;
+    key: BetriebskostenabrechnungCostType["type"]
+  ) => BetriebskostenabrechnungCostType | undefined;
   updateAllocationKey: (
-    key: HeizkostenabrechnungCostType["type"],
-    allocationKey: HeizkostenabrechnungCostType["allocation_key"]
+    key: BetriebskostenabrechnungCostType["type"],
+    allocationKey: BetriebskostenabrechnungCostType["allocation_key"]
   ) => void;
-  setPurposeOptions: () => void;
 };
 
-export const useHeizkostenabrechnungStore =
-  create<HeizkostenabrechnungStoreType>((set, get) => ({
+export const useBetriebskostenabrechnungStore =
+  create<BetriebskostenabrechnungStoreType>((set, get) => ({
     start_date: null,
     end_date: null,
     activeCostType: null,
@@ -67,7 +66,7 @@ export const useHeizkostenabrechnungStore =
         activeCostType: key,
       }));
     },
-    getDocumentGroupByType: (key: HeizkostenabrechnungCostType["type"]) => {
+    getDocumentGroupByType: (key: BetriebskostenabrechnungCostType["type"]) => {
       const { documentGroups } = get();
       return documentGroups.find((group) => group.type === key);
     },
@@ -133,11 +132,4 @@ export const useHeizkostenabrechnungStore =
             : group
         ),
       })),
-    setPurposeOptions: () => {
-      const { documentGroups, activeCostType } = get();
-      const options = documentGroups.find((group) => group.type === activeCostType)?.options;
-      set({
-        purposeOptions: options ?? []
-      });
-    }
   }));

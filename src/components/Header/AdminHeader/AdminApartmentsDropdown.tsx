@@ -1,12 +1,16 @@
 "use client";
 
-import AdminApartmentsDropdownContent from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
+import { useObjektsWithLocals } from "@/apiClient";
+import AdminApartmentsDropdownContent, { ApartmentType } from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
 import { chevron_admin, main_portfolio } from "@/static/icons";
+import { LocalType } from "@/types";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export default function AdminApartmentsDropdown() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
+  const { data: apartments } = useObjektsWithLocals();
 
   const handleOpen = () => {
     setIsOpen(!isOpen);
@@ -21,6 +25,30 @@ export default function AdminApartmentsDropdown() {
     ) {
       setIsOpen(false);
     }
+  };
+
+  const toggleSelection = (localId?: string) => {
+    if (!localId) return;
+    setSelectedLocalIds((prev) =>
+      prev.includes(localId)
+        ? prev.filter((id) => id !== localId)
+        : [...prev, localId]
+    );
+  };
+
+  const selectAll = () => {
+    const allIds =
+      apartments?.flatMap((app) =>
+        app.locals
+          ?.filter((local: LocalType) => local && local.id)
+          .map((local: LocalType) => local.id)
+      ) || [];
+
+    setSelectedLocalIds(allIds);
+  };
+
+  const clearSelection = () => {
+    setSelectedLocalIds([]);
   };
 
   useEffect(() => {
@@ -54,7 +82,7 @@ export default function AdminApartmentsDropdown() {
           />
           <div className="flex flex-col items-start justify-center">
             <span className="font-bold text-sm">Mein Portfolio</span>
-            <span className="text-xs text-black/50">21 Wohnung ausgewählt</span>
+            <span className="text-xs text-black/50">{selectedLocalIds.length} Wohnung ausgewählt</span>
           </div>
         </div>
         <Image
@@ -70,7 +98,7 @@ export default function AdminApartmentsDropdown() {
       </button>
       {isOpen && (
         <div id="admin-apartments-dropdown">
-          <AdminApartmentsDropdownContent />
+          <AdminApartmentsDropdownContent selectedLocalIds={selectedLocalIds} selectAll={selectAll} clearSelection={clearSelection} toggleSelection={toggleSelection} apartments={apartments as ApartmentType[]} />
         </div>
       )}
     </div>

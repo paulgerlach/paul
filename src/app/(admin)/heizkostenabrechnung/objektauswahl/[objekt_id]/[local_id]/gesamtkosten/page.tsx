@@ -1,4 +1,4 @@
-import { getLocalById } from "@/api";
+import { getBasicHeizkostenabrechnungDocCostCategoryTypes, getLocalById, getUserHeizkostenabrechnungDocCostCategoryTypes } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
@@ -14,6 +14,8 @@ export default async function GesamtkostenPage({
   const { objekt_id, local_id } = await params;
 
   const localData = await getLocalById(local_id);
+  const basicDocCosyCategories = await getBasicHeizkostenabrechnungDocCostCategoryTypes();
+  const userDocCostCategories = await getUserHeizkostenabrechnungDocCostCategoryTypes();
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
@@ -24,7 +26,7 @@ export default async function GesamtkostenPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenForm objektId={objekt_id} localId={local_id} />
+        <GesamtkostenForm basicDocCosyCategories={basicDocCosyCategories} userDocCostCategories={userDocCostCategories} objektId={objekt_id} localId={local_id} />
         <HeizkostenabrechnungReceipt objektId={objekt_id} localId={local_id} title={buildLocalName(localData)} />
       </CreateDocContentWrapper>
     </div>

@@ -1,10 +1,10 @@
 import {
   pgTable,
-  foreignKey,
   pgPolicy,
   uuid,
   timestamp,
   text,
+  foreignKey,
   numeric,
   boolean,
   jsonb,
@@ -12,8 +12,58 @@ import {
   varchar,
   integer,
   unique,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+
+export const doc_cost_category_allocation_key = pgEnum(
+  "doc_cost_category_allocation_key",
+  ["Wohneinheiten", "Verbrauch", "m2 Wohnfläche"]
+);
+export const doc_cost_category_document_type = pgEnum(
+  "doc_cost_category_document_type",
+  ["heizkostenabrechnung", "betriebskostenabrechnung"]
+);
+
+export const doc_cost_category = pgTable(
+  "doc_cost_category",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" }),
+    type: text(),
+    name: text(),
+    options: text().array(),
+    allocation_key: doc_cost_category_allocation_key().default("Verbrauch"),
+    document_type: doc_cost_category_document_type(),
+    user_id: uuid(),
+  },
+  (table) => [
+    pgPolicy("Users can update their own doc_cost_category", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+      using: sql`(auth.uid() = user_id)`,
+    }),
+    pgPolicy("Users can insert their own doc_cost_category", {
+      as: "permissive",
+      for: "insert",
+      to: ["public"],
+    }),
+    pgPolicy("Users can delete their own doc_cost_category", {
+      as: "permissive",
+      for: "delete",
+      to: ["public"],
+    }),
+    pgPolicy("Users can select their own doc_cost_category", {
+      as: "permissive",
+      for: "select",
+      to: ["public"],
+    }),
+  ]
+);
 
 export const locals = pgTable(
   "locals",

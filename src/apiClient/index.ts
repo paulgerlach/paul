@@ -127,3 +127,157 @@ export const fetchStreetsByZip = async (zip: string): Promise<string[]> => {
   if (!res.ok) throw new Error("Failed to fetch streets");
   return res.json();
 };
+
+async function getObjektsWithLocals() {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("objekte")
+    .select("*, locals(*)")
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useObjektsWithLocals() {
+  return useQuery({
+    queryKey: ["objekts_with_locals"],
+    queryFn: () => getObjektsWithLocals(),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getBasicBetriebskostenabrechnungDocCostCategoryTypes() {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("doc_cost_category")
+    .select("*")
+    .eq("document_type", "betriebskostenabrechnung")
+    .eq("user_id", null);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useBasicBetriebskostenabrechnungDocCostCategoryTypes() {
+  return useQuery({
+    queryKey: ["doc_cost_category_betriebskostenabrechnung"],
+    queryFn: () => getBasicBetriebskostenabrechnungDocCostCategoryTypes(),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getBasicHeizkostenabrechnungDocCostCategoryTypes() {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("doc_cost_category")
+    .select("*")
+    .eq("document_type", "heizkostenabrechnung")
+    .eq("user_id", null);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useBasicHeizkostenabrechnungDocCostCategoryTypes() {
+  return useQuery({
+    queryKey: ["doc_cost_category_heizkostenabrechnung"],
+    queryFn: () => getBasicHeizkostenabrechnungDocCostCategoryTypes(),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getUserBetriebskostenabrechnungDocCostCategoryTypes() {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("doc_cost_category")
+    .select("*")
+    .eq("document_type", "betriebskostenabrechnung")
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useUserBetriebskostenabrechnungDocCostCategoryTypes() {
+  return useQuery({
+    queryKey: ["doc_cost_user_category_betriebskostenabrechnung"],
+    queryFn: () => getUserBetriebskostenabrechnungDocCostCategoryTypes(),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getUserHeizkostenabrechnungDocCostCategoryTypes() {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data, error } = await supabase
+    .from("doc_cost_category")
+    .select("*")
+    .eq("document_type", "heizkostenabrechnung")
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useUserHeizkostenabrechnungDocCostCategoryTypes() {
+  return useQuery({
+    queryKey: ["doc_cost_user_category_heizkostenabrechnung"],
+    queryFn: () => getUserHeizkostenabrechnungDocCostCategoryTypes(),
+    refetchOnWindowFocus: false,
+  });
+}

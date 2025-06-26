@@ -7,11 +7,9 @@ import {
 } from "@/store/useHeizkostenabrechnungStore";
 import {
   getCostTypeIconByKey,
-  getCostTypeNameByKey,
   slideDown,
   slideUp,
 } from "@/utils";
-import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
@@ -34,7 +32,7 @@ export default function CostTypeItem({
 }: CostTypeItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setPurposeOptions, setLocalID, setObjektID } =
+  const { setActiveCostType, setLocalID, setObjektID, setPurposeOptions } =
     useHeizkostenabrechnungStore();
 
   useEffect(() => {
@@ -47,9 +45,9 @@ export default function CostTypeItem({
 
   const handleOpenDialog = () => {
     setActiveCostType(type.type);
-    setPurposeOptions();
     setLocalID(localId);
     setObjektID(objektId);
+    setPurposeOptions();
     openDialog(`${type.type}_upload`);
   };
 
@@ -81,12 +79,12 @@ export default function CostTypeItem({
               sizes="100vw"
               loading="lazy"
               className="max-w-7 max-h-7"
-              src={getCostTypeIconByKey(type.type)!}
+              src={getCostTypeIconByKey(type.type || "")}
               alt="chevron"
             />
           </div>
           <p className="font-semibold text-dark_green">
-            {getCostTypeNameByKey(type.type)}
+            {type.name}
           </p>
         </div>
         <div className="flex items-center whitespace-nowrap justify-end gap-7">

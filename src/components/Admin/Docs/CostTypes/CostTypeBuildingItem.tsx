@@ -7,7 +7,6 @@ import {
 } from "@/store/useHeizkostenabrechnungStore";
 import {
   getCostTypeIconByKey,
-  getCostTypeNameByKey,
   slideDown,
   slideUp,
 } from "@/utils";
@@ -31,7 +30,7 @@ export default function CostTypeBuildingItem({
 }: CostTypeBuildingItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setPurposeOptions, setObjektID } =
+  const { setActiveCostType, setObjektID } =
     useHeizkostenabrechnungStore();
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function CostTypeBuildingItem({
 
   const handleOpenDialog = () => {
     setActiveCostType(type.type);
-    setPurposeOptions();
     setObjektID(objektId);
     openDialog(`${type.type}_upload`);
   };
@@ -77,12 +75,12 @@ export default function CostTypeBuildingItem({
               sizes="100vw"
               loading="lazy"
               className="max-w-7 max-h-7"
-              src={getCostTypeIconByKey(type.type)!}
+              src={getCostTypeIconByKey(type.type || "")}
               alt="chevron"
             />
           </div>
           <p className="font-semibold text-dark_green">
-            {getCostTypeNameByKey(type.type)}
+            {type.name}
           </p>
         </div>
         <div className="flex items-center whitespace-nowrap justify-end gap-7">

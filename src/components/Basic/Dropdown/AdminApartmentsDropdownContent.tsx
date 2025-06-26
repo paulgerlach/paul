@@ -2,88 +2,25 @@
 
 import { useState } from "react";
 import AdminApartmentsDropdownContentItem from "./AdminApartmentsDropdownContentItem";
+import { LocalType, ObjektType } from "@/types";
 
-export type LocalType = {
-  type: "commersial" | "private";
-  name: string;
-};
-
-export type ApartmentType = {
-  street: string;
+export type ApartmentType = ObjektType & {
   locals: LocalType[];
 };
 
-const apartments: ApartmentType[] = [
-  {
-    street: "Schmelzhütten Str. 39",
-    locals: [
-      {
-        name: "EG HH",
-        type: "commersial",
-      },
-      {
-        name: "1 OG VH links",
-        type: "private",
-      },
-      {
-        name: "1 OG VH rechts",
-        type: "private",
-      },
-      {
-        name: "2 OG VH",
-        type: "private",
-      },
-    ],
-  },
-  {
-    street: "Tucholsky Str. 43",
-    locals: [
-      {
-        name: "EG HH",
-        type: "commersial",
-      },
-      {
-        name: "1 OG VH links",
-        type: "private",
-      },
-      {
-        name: "1 OG VH rechts",
-        type: "private",
-      },
-      {
-        name: "2 OG VH",
-        type: "private",
-      },
-    ],
-  },
-  {
-    street: "Plauensche Str. 114",
-    locals: [
-      {
-        name: "EG HH",
-        type: "commersial",
-      },
-      {
-        name: "1 OG VH links",
-        type: "private",
-      },
-      {
-        name: "1 OG VH rechts",
-        type: "private",
-      },
-      {
-        name: "2 OG VH",
-        type: "private",
-      },
-    ],
-  },
-];
+export type AdminApartmentsDropdownContentProps = {
+  apartments: ApartmentType[];
+  toggleSelection: (localId?: string) => void;
+  clearSelection: () => void;
+  selectAll: () => void;
+  selectedLocalIds: string[];
+}
 
-export default function AdminApartmentsDropdownContent() {
+export default function AdminApartmentsDropdownContent({ apartments, toggleSelection, clearSelection, selectAll, selectedLocalIds }: AdminApartmentsDropdownContentProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredApartments = apartments.filter((app) =>
+  const filteredApartments = apartments?.filter((app) =>
     app.street.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -101,14 +38,16 @@ export default function AdminApartmentsDropdownContent() {
         type="text"
       />
       <div className="space-y-3 px-4">
-        {filteredApartments.length === 0 ? (
+        {filteredApartments?.length === 0 ? (
           <div className="text-sm text-gray-500">Keine Ergebnisse gefunden</div>
         ) : (
-          apartments.map((app, index) => (
+          apartments?.map((app, index) => (
             <AdminApartmentsDropdownContentItem
               isOpen={openIndex === index}
               onClick={handleClick}
               index={index}
+              toggleSelection={toggleSelection}
+              selectedLocalIds={selectedLocalIds}
               key={app.street}
               item={app}
             />
@@ -116,8 +55,8 @@ export default function AdminApartmentsDropdownContent() {
         )}
       </div>
       <div className="flex items-center px-5 justify-between">
-        <span className="text-xs text-black/50">Alle auswählen</span>
-        <span className="text-xs text-black/50">Auswahl entfernen</span>
+        <button onClick={() => selectAll()} className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent">Alle auswählen</button>
+        <button onClick={() => clearSelection()} className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent">Auswahl entfernen</button>
       </div>
     </div>
   );

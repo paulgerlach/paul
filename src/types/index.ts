@@ -5,6 +5,7 @@ import {
   objekte,
   locals,
   heating_bill_documents,
+  doc_cost_category,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -103,6 +104,8 @@ export type HeatingBillDocumentType = InferInsertModel<
   typeof heating_bill_documents
 >;
 
+export type DocCostCategoryType = InferInsertModel<typeof doc_cost_category>;
+
 export type UploadDocumentArgs = {
   files: File[];
   relatedId: string;
@@ -111,7 +114,12 @@ export type UploadDocumentArgs = {
 
 export type DialogActionType = "delete" | "create";
 
-export type DocumentType = "object" | "local" | "contract" | "heating_bill" | "operating_costs";
+export type DocumentType =
+  | "object"
+  | "local"
+  | "contract"
+  | "heating_bill"
+  | "operating_costs";
 
 export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
@@ -125,38 +133,11 @@ export type UploadedDocument = {
   relatedId: string;
 };
 
-export type CostTypeKey =
-  | "fuel_costs"
-  | "operating_current"
-  | "maintenance_costs"
-  | "metering_service_costs"
-  | "metering_device_rental"
-  | "chimney_sweep_costs"
-  | "other_operating_costs"
-  | "property_tax"
-  | "cold_water"
-  | "wastewater"
-  | "heating_costs"
-  | "hot_water_supply"
-  | "caretaker"
-  | "liability_insurance"
-  | "waste_disposal"
-  | "elevator"
-  | "street_cleaning"
-  | "building_cleaning"
-  | "garden_care"
-  | "lighting";
-
 export type DialogCostActionType = "upload";
 
 export type DialogDocumentCostActionType =
-  `${CostTypeKey}_${DialogCostActionType}`;
+  `${DocCostCategoryType["type"]}_${DialogCostActionType}`;
 
 export type DialogStoreActionType =
   | DialogDocumentActionType
   | DialogDocumentCostActionType;
-
-export type CostType = {
-  key: CostTypeKey;
-  options?: string[];
-};

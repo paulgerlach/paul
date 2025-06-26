@@ -3,7 +3,7 @@ import {
   useHeizkostenabrechnungStore,
   type HeizkostenabrechnungCostType,
 } from "@/store/useHeizkostenabrechnungStore";
-import { getCostTypeIconByKey, getCostTypeNameByKey } from "@/utils";
+import { getCostTypeIconByKey } from "@/utils";
 import Image from "next/image";
 
 export type CostTypeBuildingItemProps = {
@@ -31,12 +31,12 @@ export default function CostTypeBuildingSelectItem({
             sizes="100vw"
             loading="lazy"
             className="max-w-7 max-h-7"
-            src={getCostTypeIconByKey(type.type)!}
+            src={getCostTypeIconByKey(type.type || "")}
             alt="chevron"
           />
         </div>
         <p className="font-semibold text-dark_green">
-          {getCostTypeNameByKey(type.type)}
+          {type.name}
         </p>
       </div>
       <div className="flex items-center justify-end w-full gap-5">
@@ -45,7 +45,7 @@ export default function CostTypeBuildingSelectItem({
           label=""
           placeholder=""
           options={["Verbrauch", "m2 Wohnfläche", "Wohneinheiten"]}
-          selectedValue={type.allocation_key}
+          selectedValue={type.allocation_key ? type.allocation_key : ""}
           onChange={(val) =>
             updateAllocationKey(
               type.type,

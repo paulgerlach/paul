@@ -1,5 +1,3 @@
-import { CostTypeKey } from "@/types";
-
 export const outdoorOptions = ["Balkon", "Terrasse", "Loggia", "Sonstige"];
 
 export const floorOptions = [
@@ -92,66 +90,3 @@ export const custodyTypeOptions = [
   "Kautionsversicherung",
   "Sonstige",
 ];
-
-export const fuelCostTypes = ["Gas", "Öl", "Fernwärme"];
-export const operatingCurrentTypes = ["Strom für Umwälzpumpen", "Regeltechnik"];
-export const maintenanceCostsTypes = [
-  "Regelmäßige Wartung der Heizungsanlage (z. B. Brennerprüfung",
-  "Reinigung",
-];
-export const meteringServiceCostsTypes = [
-  "Ablesung",
-  "Auswertung",
-  "Gerätebereitstellung",
-];
-export const meteringDeviceRentalTypes = [
-  "Für Heizkostenverteiler",
-  "Wärmemengenzähler",
-];
-export const chimneySweepCostsTypes = [
-  "Kosten für die Emissionsmessung",
-  "Nur der auf die Heizung entfallende Teil",
-];
-export const otherOperatingCostsTypes = [
-  "Z. B. Legionellenprüfung bei Warmwasserbereitung",
-  "Kosten für die Reinigung des Heizraums",
-];
-export const propertyTaxTypes = [
-  "Deichabgaben",
-  "Regionale Abgaben",
-  "Wasser- und Bodenverband Beiträge",
-  "Grundsteuer",
-];
-export const liabilityInsuranceTypes = [
-  "Fahrstuhlhaftpflichtversicherung",
-  "Schwamm- Hausbockversicherung",
-  "Öltankhaftpflichtversicherung",
-  "Wasserschadenversicherung",
-  "Gastankhaftpflichtversicherung",
-  "Elementarschädenversicherung (wirtschaftlich relevant)",
-  "Terrorschadenversicherung (wirtschaftlich sinnvoll)",
-];
-export const streetCleaningTypes = [
-  "Streusalz",
-  "Beseitung von Eis und Schnee",
-  "Wartung und Treibstoff für Straßenreinigungsgeräte",
-  "Straßenreinigung",
-  "Reinigung der Mülltonnen",
-  "Uneinbringliche Kosten illegaler Sperrmüllablagerung",
-  "Sperrmüllbeseitung",
-  "Rückerstattung Müllabfuhrgebühren",
-  "Betriebskosten von Müllbeseitungsanlagen",
-];
-
-export const costTypePurposeMap: Partial<Record<CostTypeKey, string[]>> = {
-  fuel_costs: fuelCostTypes,
-  operating_current: operatingCurrentTypes,
-  maintenance_costs: maintenanceCostsTypes,
-  metering_service_costs: meteringServiceCostsTypes,
-  metering_device_rental: meteringDeviceRentalTypes,
-  chimney_sweep_costs: chimneySweepCostsTypes,
-  other_operating_costs: otherOperatingCostsTypes,
-  property_tax: propertyTaxTypes,
-  liability_insurance: liabilityInsuranceTypes,
-  street_cleaning: streetCleaningTypes,
-};

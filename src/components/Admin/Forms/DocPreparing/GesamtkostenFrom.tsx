@@ -3,18 +3,40 @@
 import { admin_form_info } from "@/static/icons";
 import Image from "next/image";
 import CostTypesAccordion from "../../Docs/CostTypes/CostTypesAccordion";
-import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { type HeizkostenabrechnungCostType, useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import type { DocCostCategoryType } from "@/types";
+import { useEffect } from "react";
 
 export default function GesamtkostenForm({
   objektId,
   localId,
+  basicDocCosyCategories,
+  userDocCostCategories
 }: {
   objektId: string;
   localId: string;
+  userDocCostCategories: DocCostCategoryType[];
+  basicDocCosyCategories: DocCostCategoryType[];
 }) {
-  const { documentGroups } = useHeizkostenabrechnungStore();
+  const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
+
+  const toHeizkostenabrechnungCostType = (
+    doc: DocCostCategoryType
+  ): HeizkostenabrechnungCostType => {
+    return {
+      ...doc,
+      data: []
+    };
+  }
+
+  useEffect(() => {
+    setDocumentGroups([
+      ...userDocCostCategories.map(toHeizkostenabrechnungCostType),
+      ...basicDocCosyCategories.map(toHeizkostenabrechnungCostType)
+    ]);
+  }, []);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =

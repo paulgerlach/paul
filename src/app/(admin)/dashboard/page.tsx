@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
+// import { parseCSV } from "@/api";
 
 export default async function AdminPage() {
   const coldWaterPath = path.resolve(
@@ -25,6 +26,10 @@ export default async function AdminPage() {
     "public/data/Heat_Meter_Data.csv"
   );
   const heatersText = fs.readFileSync(heatersPath, "utf8");
+
+  // const data = await parseCSV();
+
+  // console.log(data);
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">

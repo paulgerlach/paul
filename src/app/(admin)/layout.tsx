@@ -9,6 +9,12 @@ import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog
 import { Toaster } from "@/components/Basic/ui/Sonner";
 import OperatingCostsCreateDialog from "@/components/Basic/Dialog/OperatingCostsCreateDialog";
 import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
+import AddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddHeizkostenabrechnungCostTypeDialog";
+import AddBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddBetriebskostenabrechnungCostTypeDialog";
+import EditBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditBetriebskostenabrechnungCostTypeDialog copy";
+import EditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditHeizkostenabrechnungCostTypeDialog";
+import CostTypeHeizkostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeHeizkostenabrechnungDeleteDialog";
+import CostTypeBetriebskostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeBetriebskostenabrechnungDeleteDialog";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -35,6 +41,12 @@ export default function AdminLayout({
       <ContractDeleteDialog />
       <OperatingCostsCreateDialog />
       <AddDocHeizkostenabrechnungDialog />
+      <AddHeizkostenabrechnungCostTypeDialog />
+      <AddBetriebskostenabrechnungCostTypeDialog />
+      <EditBetriebskostenabrechnungCostTypeDialog />
+      <EditHeizkostenabrechnungCostTypeDialog />
+      <CostTypeHeizkostenabrechnungDeleteDialog />
+      <CostTypeBetriebskostenabrechnungDeleteDialog />
       <Toaster />
     </QueryProvider>
   );

@@ -30,11 +30,22 @@ export default function GesamtkostenBuildingFrom({
   }
 
   useEffect(() => {
-    setDocumentGroups([
-      ...userDocCostCategories.map(toHeizkostenabrechnungCostType),
-      ...basicDocCosyCategories.map(toHeizkostenabrechnungCostType)
-    ]);
-  }, []);
+    const mergedByType = new Map<string, HeizkostenabrechnungCostType>();
+
+    userDocCostCategories.forEach((doc) => {
+      if (doc.type) {
+        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
+      }
+    });
+
+    basicDocCosyCategories.forEach((doc) => {
+      if (doc.type && !mergedByType.has(doc.type)) {
+        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
+      }
+    });
+
+    setDocumentGroups(Array.from(mergedByType.values()));
+  }, [userDocCostCategories, basicDocCosyCategories, setDocumentGroups]);
 
 
   const totalAmount = documentGroups.reduce((acc, group) => {
@@ -47,7 +58,7 @@ export default function GesamtkostenBuildingFrom({
   }, 0);
 
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[70%] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[40%] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
       <div className="bg-white py-16 pb-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <div className="flex items-center justify-between font-bold text-admin_dark_text pb-6 border-b border-gray-200">
           <h2 className="flex items-center justify-start gap-2">

@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import CostTypeBuildingItem from "./CostTypeBuildingItem";
+import { useDialogStore } from "@/store/useDIalogStore";
+import Image from "next/image";
+import { cost_type_fuel_costs } from "@/static/icons";
 
 export default function CostTypesBuildingAccordion({
   objektId,
@@ -11,6 +14,7 @@ export default function CostTypesBuildingAccordion({
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { documentGroups } = useHeizkostenabrechnungStore();
+  const { openDialog } = useDialogStore();
 
   const handleClick = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -28,6 +32,20 @@ export default function CostTypesBuildingAccordion({
           objektId={objektId}
         />
       ))}
+      <button
+        onClick={() => openDialog("cost_type_betriebskostenabrechnung_create")}
+        className="border-dashed w-full cursor-pointer flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">
+        <Image
+          width={0}
+          height={0}
+          sizes="100vw"
+          loading="lazy"
+          className="max-w-7 opacity-50 max-h-7"
+          src={cost_type_fuel_costs}
+          alt="objekte"
+        />
+        Weiteres cost type
+      </button>
     </div>
   );
 }

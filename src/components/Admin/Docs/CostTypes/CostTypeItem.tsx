@@ -1,4 +1,5 @@
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
+import TheeDotsCostTypeButton from "@/components/Basic/TheeDotsButton/TheeDotsCostTypeButton";
 import { admin_plus, chevron_admin, pdf_icon } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import {
@@ -89,10 +90,11 @@ export default function CostTypeItem({
         </div>
         <div className="flex items-center whitespace-nowrap justify-end gap-7">
           <span>{totalAmount} €</span>
-          <ThreeDotsButton
-            editLink={""}
-            itemID={""}
-            dialogAction="local_delete"
+          <TheeDotsCostTypeButton
+            editDialogAction="cost_type_heizkostenabrechnung_edit"
+            itemID={type.id ?? ""}
+            userID={type.user_id}
+            deleteDialogAction="cost_type_heizkostenabrechnung_create"
           />
         </div>
       </div>

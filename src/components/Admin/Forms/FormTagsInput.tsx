@@ -16,15 +16,17 @@ import {
 export type FormTagsInputProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
   disabled?: boolean;
+  name?: Path<T>;
 };
 
 export default function FormTagsInput<T extends FieldValues = FieldValues>({
   control,
   disabled,
+  name = "tags" as Path<T>,
 }: FormTagsInputProps<T>) {
   const [tagInput, setTagInput] = useState("");
   const { setValue } = useFormContext<T>();
-  const tags: string[] = useWatch({ control, name: "tags" as Path<T> }) || [];
+  const tags: string[] = useWatch({ control, name }) || [];
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -36,7 +38,7 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
       const newTag = tagInput.trim();
       if (!tags.includes(newTag)) {
         const updatedTags = [...tags, newTag];
-        setValue("tags" as Path<T>, updatedTags as any);
+        setValue(name, updatedTags as any);
       }
 
       setTagInput("");
@@ -46,13 +48,13 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
   const handleRemoveTag = (index: number) => {
     const updatedTags = [...tags];
     updatedTags.splice(index, 1);
-    setValue("tags" as Path<T>, updatedTags as any);
+    setValue(name, updatedTags as any);
   };
 
   return (
     <FormField
       control={control}
-      name={"tags" as Path<T>}
+      name={name}
       render={() => (
         <FormItem className="space-y-4 pb-4 border-b border-dark_green/20">
           <FormControl>

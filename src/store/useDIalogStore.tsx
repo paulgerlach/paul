@@ -16,10 +16,15 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
   isOpen: false,
   openDialogByType: {
     object_delete: false,
+    object_edit: false,
     local_delete: false,
+    local_edit: false,
     contract_delete: false,
+    contract_edit: false,
     heating_bill_delete: false,
+    heating_bill_edit: false,
     operating_costs_delete: false,
+    operating_costs_edit: false,
     object_create: false,
     local_create: false,
     contract_create: false,
@@ -47,6 +52,12 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     street_cleaning_upload: false,
     waste_disposal_upload: false,
     wastewater_upload: false,
+    cost_type_heizkostenabrechnung_create: false,
+    cost_type_heizkostenabrechnung_delete: false,
+    cost_type_heizkostenabrechnung_edit: false,
+    cost_type_betriebskostenabrechnung_create: false,
+    cost_type_betriebskostenabrechnung_delete: false,
+    cost_type_betriebskostenabrechnung_edit: false
   },
 
   setItemID: (id) => set({ itemID: id }),

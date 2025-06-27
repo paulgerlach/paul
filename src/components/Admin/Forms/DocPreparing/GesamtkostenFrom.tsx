@@ -32,11 +32,22 @@ export default function GesamtkostenForm({
   }
 
   useEffect(() => {
-    setDocumentGroups([
-      ...userDocCostCategories.map(toHeizkostenabrechnungCostType),
-      ...basicDocCosyCategories.map(toHeizkostenabrechnungCostType)
-    ]);
-  }, []);
+    const mergedByType = new Map<string, HeizkostenabrechnungCostType>();
+
+    userDocCostCategories.forEach((doc) => {
+      if (doc.type) {
+        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
+      }
+    });
+
+    basicDocCosyCategories.forEach((doc) => {
+      if (doc.type && !mergedByType.has(doc.type)) {
+        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
+      }
+    });
+
+    setDocumentGroups(Array.from(mergedByType.values()));
+  }, [userDocCostCategories, basicDocCosyCategories, setDocumentGroups]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =

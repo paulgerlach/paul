@@ -6,6 +6,8 @@ import {
   locals,
   heating_bill_documents,
   doc_cost_category,
+  doc_cost_category_allocation_key,
+  doc_cost_category_document_type,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -106,19 +108,27 @@ export type HeatingBillDocumentType = InferInsertModel<
 
 export type DocCostCategoryType = InferInsertModel<typeof doc_cost_category>;
 
+export const allocationKeys = doc_cost_category_allocation_key.enumValues;
+export type AllocationKeyType = (typeof allocationKeys)[number];
+
+export const documentTypes = doc_cost_category_document_type.enumValues;
+export type DocumentCostType = (typeof documentTypes)[number];
+
 export type UploadDocumentArgs = {
   files: File[];
   relatedId: string;
   relatedType: DocumentType;
 };
 
-export type DialogActionType = "delete" | "create";
+export type DialogActionType = "delete" | "create" | "edit";
 
 export type DocumentType =
   | "object"
   | "local"
   | "contract"
   | "heating_bill"
+  | "cost_type_betriebskostenabrechnung"
+  | "cost_type_heizkostenabrechnung"
   | "operating_costs";
 
 export type DialogDocumentActionType =

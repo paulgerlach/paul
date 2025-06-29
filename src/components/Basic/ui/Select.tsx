@@ -30,10 +30,10 @@ export default function Select({
   return (
     <Listbox value={selectedValue} onChange={onChange}>
       <Label className="text-[#757575] text-sm">{label}</Label>
-      <div className="relative min-w-[195px] mt-2">
+      <div className="relative min-w-[195px]">
         <ListboxButton
           disabled={disabled}
-          className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text outline outline-gray-300 focus:outline-2 focus:outline-green max-small:text-sm px-3.5 py-4 border border-black/20 rounded-md min-h-14">
+          className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green max-small:text-sm px-3.5 py-4 border border-black/20 rounded-md min-h-14">
           <span className="truncate pr-6">
             {selectedValue ? selectedValue : placeholder}
           </span>

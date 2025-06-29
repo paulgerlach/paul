@@ -33,6 +33,7 @@
   --breakpoint-medium: 768px;
   --breakpoint-large: 992px;
   --breakpoint-megalarge: 1200px;
+  --breakpoint-xl: 1640px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

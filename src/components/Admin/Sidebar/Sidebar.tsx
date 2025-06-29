@@ -70,7 +70,7 @@ export default function Sidebar() {
   const isRouteActive = (route: string) => pathname?.startsWith(route);
 
   return (
-    <div className="bg-white max-w-80 border-r border-[#EAEAEA] shadow-2xs min-w-80 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)] px-4 py-9 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
+    <div className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
       <div className="flex flex-col gap-0.5">
         {dashboardLinks.map((link: SidebarLinkType) =>
           link.type === "button" ? (
@@ -85,11 +85,11 @@ export default function Sidebar() {
             <Link
               key={link.title}
               href={link.route}
-              className={`flex py-3 px-5 transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""} [.active]:bg-black/10`}>
+              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""} [.active]:bg-black/10`}>
               <Image
                 width={28}
                 height={28}
-                className="max-w-7 max-h-7"
+                className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
                 loading="lazy"
                 alt={link.title}
                 src={link.icon || ""}

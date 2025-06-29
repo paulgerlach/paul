@@ -74,7 +74,7 @@ export default function AdminApartmentsDropdown() {
             width={0}
             height={0}
             sizes="100vw"
-            className="max-w-4 max-h-5"
+            className="max-w-4 max-h-5 max-xl:max-w-3 max-xl:max-h-4"
             loading="lazy"
             style={{ width: "100%", height: "auto" }}
             alt="main_portfolio"

@@ -41,15 +41,15 @@ export default function ObjekteLocalItemHistoryItem({
   const days =
     historyItem?.rental_start_date && historyItem?.rental_end_date
       ? differenceInCalendarDays(
-          new Date(historyItem.rental_end_date),
-          new Date(historyItem.rental_start_date)
-        ) + 1
+        new Date(historyItem.rental_end_date),
+        new Date(historyItem.rental_start_date)
+      ) + 1
       : 0;
 
   return (
     <div
       style={{ borderColor: historyItem?.is_current ? "#8AD68F" : "#1E322D" }}
-      className="border-l gap-4 relative pl-7">
+      className="border-l gap-4 relative pl-8">
       <span
         style={{
           backgroundColor: historyItem?.is_current ? "#8AD68F" : "#1E322D",
@@ -87,17 +87,17 @@ export default function ObjekteLocalItemHistoryItem({
                 ? "#E7F2E8"
                 : "#1E322D1A",
             }}
-            className="flex items-center justify-center rounded-full font-medium size-14">
+            className="flex items-center justify-center rounded-full font-medium size-14 max-xl:text-sm max-xl:size-10">
             {contractors?.[0].first_name["0"]}
             {contractors?.[0].last_name["0"]}
           </span>
           <div>
-            <p className="text-admin_dark_text text-lg">
+            <p className="text-admin_dark_text text-lg max-xl:text-sm">
               {contractors
                 ?.map((c) => `${c.first_name} ${c.last_name}`)
                 .join(", ")}
             </p>
-            <p className="text-[#757575]">
+            <p className="text-[#757575] max-xl:text-xs">
               {formattedAmount} {formattedRate} x {duration}
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function ObjekteLocalItemHistoryItem({
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-6 max-h-6"
+              className="max-w-6 max-h-6 max-xl:max-w-4 max-xl:max-h-4"
               src={pencil}
               alt="pencil"
             />
@@ -128,7 +128,7 @@ export default function ObjekteLocalItemHistoryItem({
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-6 max-h-6"
+              className="max-w-6 max-h-6 max-xl:max-w-4 max-xl:max-h-4"
               src={trashcan}
               alt="trashcan"
             />

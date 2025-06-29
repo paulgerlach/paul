@@ -30,23 +30,23 @@ const objektTypeOptions: {
   type: BuildingType;
   name: string;
 }[] = [
-  {
-    type: "condominium",
-    name: "Eigentumswohnung",
-  },
-  {
-    type: "multi_family",
-    name: "Mehrfamilienhaus",
-  },
-  {
-    type: "commercial",
-    name: "Gewerbeimmobilie",
-  },
-  {
-    type: "special_purpose",
-    name: "Sonderimmobilie",
-  },
-];
+    {
+      type: "condominium",
+      name: "Eigentumswohnung",
+    },
+    {
+      type: "multi_family",
+      name: "Mehrfamilienhaus",
+    },
+    {
+      type: "commercial",
+      name: "Gewerbeimmobilie",
+    },
+    {
+      type: "special_purpose",
+      name: "Sonderimmobilie",
+    },
+  ];
 
 const objectSchema = z.object({
   objekt_type: z.string().min(1, "Pflichtfeld"),
@@ -90,7 +90,7 @@ export default function CreateObjekteForm() {
     },
   });
 
-  const { streetOptions, showSuggestions, fetchStreets, handleStreetSelect } =
+  const { fetchStreets } =
     useStreetSuggestions<CreateObjekteFormValues>();
 
   useEffect(() => {
@@ -125,7 +125,7 @@ export default function CreateObjekteForm() {
             control={methods.control}
             name="objekt_type"
             render={({ field }) => (
-              <div className="grid grid-cols-4 gap-6">
+              <div className="flex items-center justify-start gap-6">
                 {objektTypeOptions.map((option) => (
                   <div key={option.type}>
                     <input
@@ -138,7 +138,7 @@ export default function CreateObjekteForm() {
                       onChange={field.onChange}
                     />
                     <label
-                      className="cursor-pointer flex min-h-32 rounded bg-white flex-col shadow-md py-5 px-7 items-center border-4 border-transparent justify-center gap-5 text-sm transition-all duration-300 font-medium peer-checked:border-green peer-checked:[&_.objektTypeCheckmark]:opacity-100 relative"
+                      className="cursor-pointer flex min-h-28 rounded w-fit bg-white flex-col shadow-md py-7 h-full px-7 items-center border-4 border-transparent justify-center gap-7 text-sm transition-all duration-300 font-medium peer-checked:border-green peer-checked:[&_.objektTypeCheckmark]:opacity-100 relative"
                       htmlFor={option.type}>
                       <Image
                         width={0}
@@ -166,13 +166,15 @@ export default function CreateObjekteForm() {
             )}
           />
           <h2 className="text-sm font-bold">Verwaltungsrelevante Merkmale </h2>
-          <FormSelectField<CreateObjekteFormValues>
-            control={methods.control}
-            name="administration_type"
-            label="Art der Verwaltung*"
-            placeholder="Art der Verwaltung"
-            options={administrationTypeOptions}
-          />
+          <div className="grid grid-cols-2">
+            <FormSelectField<CreateObjekteFormValues>
+              control={methods.control}
+              name="administration_type"
+              label="Art der Verwaltung*"
+              placeholder="Art der Verwaltung"
+              options={administrationTypeOptions}
+            />
+          </div>
         </div>
         <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Objektdaten</h2>

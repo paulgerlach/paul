@@ -12,6 +12,7 @@ import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { differenceInMonths } from "date-fns";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -27,6 +28,7 @@ const abrechnungszeitraumSchema = z.object({
   consumption_dependent: z.coerce.number().min(0, "Pflichtfeld"),
   living_space_share: z.coerce.number().min(0, "Pflichtfeld"),
 });
+
 
 export type AbrechnungszeitraumFormValues = z.infer<
   typeof abrechnungszeitraumSchema
@@ -71,8 +73,8 @@ export default function AbrechnungszeitraumForm({
   }, []);
 
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] col-span-2 rounded-2xl px-4 flex items-center justify-center">
-      <div className="bg-white overflow-y-auto h-full py-4 px-[18px] rounded w-full shadow-sm space-y-8">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-center justify-center">
+      <div className="bg-white h-full py-4 px-[18px] rounded w-full shadow-sm space-y-8 max-xl:space-y-4">
         <Form {...methods}>
           <form
             className="flex flex-col justify-between h-full"
@@ -82,12 +84,12 @@ export default function AbrechnungszeitraumForm({
                 `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${localId}/gesamtkosten`
               );
             })}>
-            <div className="space-y-9">
+            <div className="space-y-9 max-xl:space-y-4">
               <div className="space-y-3">
                 <h2 className="font-bold text-admin_dark_text">
                   Abrechnungszeitraum
                 </h2>
-                <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
+                <div className="items-center gap-7 max-xl:gap-3.5 grid grid-cols-[1fr_auto_1fr] w-full">
                   <FormDateInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
                     label="Beginn*"
@@ -105,7 +107,7 @@ export default function AbrechnungszeitraumForm({
                 <h2 className="font-bold text-admin_dark_text">
                   Verteilerschlüssel
                 </h2>
-                <div className="grid grid-cols-2 gap-12">
+                <div className="grid grid-cols-2 gap-12 max-xl:gap-8">
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
                     label="Beginn*"

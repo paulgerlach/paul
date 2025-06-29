@@ -237,11 +237,15 @@ import cost_type_fuel_costs from "@/asset/cost_type_fuel_costs.png";
 import cost_type_heater from "@/asset/cost_type_heater.png";
 import cost_type_pipe from "@/asset/cost_type_pipe.png";
 import cost_type_water_drop from "@/asset/cost_type_water_drop.png";
+import admin_logo from "@/asset/admin_logo.png";
+import objekte_placeholder from "@/asset/objekte_placeholder.png";
 
 export {
   accentro_colored,
   cold_water,
   lamp,
+  objekte_placeholder,
+  admin_logo,
   cost_type_cleaning,
   cost_type_fuel_costs,
   cost_type_heater,

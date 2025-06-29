@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { logo } from "@/static/icons";
+import { admin_logo } from "@/static/icons";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
 import AdminAccoundDropdown from "./AdminAccoundDropdown";
 import AdminApartmentsDropdown from "./AdminApartmentsDropdown";
@@ -16,7 +16,7 @@ export default function AdminHeader() {
 
   return (
     <header id="header" className={`w-full`}>
-      <div className="flex items-center justify-between border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full px-5 max-medium:px-5 duration-300 ease-in-out">
+      <div className="flex items-center justify-between border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full pl-8 pr-5 max-medium:px-5 duration-300 ease-in-out">
         <Link
           href={ROUTE_DASHBOARD}
           className="flex min-w-xs items-center justify-start gap-3">
@@ -25,9 +25,9 @@ export default function AdminHeader() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="colored-to-black max-w-16 max-h-5"
-            src={logo}
-            alt="logo"
+            className="max-w-[90px] max-h-7 max-xl:max-w-16 max-xl:max-h-5"
+            src={admin_logo}
+            alt="admin_logo"
           />
         </Link>
         {isDashboard && (

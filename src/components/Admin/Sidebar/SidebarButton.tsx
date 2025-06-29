@@ -32,13 +32,13 @@ export default function SidebarButton({
   return (
     <div>
       <button
-        className={`flex cursor-pointer py-3 px-5 transition-all duration-300 w-full items-center justify-between gap-3 rounded-base hover:bg-base-bg/70 ${isOpen ? "active" : ""}`}
+        className={`flex cursor-pointer py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center justify-between gap-3 rounded-base hover:bg-base-bg/70 ${isOpen ? "active" : ""}`}
         onClick={() => onClick(button.title)}>
         <span className="flex items-center justify-start gap-3">
           <Image
             width={28}
             height={28}
-            className="max-w-7 max-h-7"
+            className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
             loading="lazy"
             alt={button.title}
             src={button.icon || ""}
@@ -49,7 +49,7 @@ export default function SidebarButton({
           width={0}
           height={0}
           sizes="100vw"
-          className="max-w-4 max-h-5 transition-all duration-300 [.active_&]:rotate-180"
+          className="max-w-4 max-h-5 max-xl:max-w-3 max-xl:max-h-4 transition-all duration-300 [.active_&]:rotate-180"
           loading="lazy"
           style={{ width: "100%", height: "auto" }}
           alt="chevron_admin"
@@ -61,7 +61,7 @@ export default function SidebarButton({
           <Link
             key={child.title}
             href={child.route}
-            className={`flex py-3 px-5 transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(child.route) ? "active" : ""} [.active]:bg-black/10`}>
+            className={`flex py-3 px-5 transition-all max-xl:text-sm duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(child.route) ? "active" : ""} [.active]:bg-black/10`}>
             <span className="[.active_&]:font-bold">{child.title}</span>
           </Link>
         ))}

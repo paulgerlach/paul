@@ -18,13 +18,13 @@ export default async function EditObjektePage({
   }
 
   return (
-    <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">
+    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Wohneinheiten"
         link={ROUTE_OBJEKTE}
         title="Objekte"
       />
-      <ContentWrapper className="space-y-4 max-h-[90%]">
+      <ContentWrapper className="space-y-4">
         <div className="px-10 py-9 rounded-2xl space-y-5 bg-[#FDFDFC]">
           <EditObjekteForm
             objekteID={id}

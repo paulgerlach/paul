@@ -31,7 +31,7 @@ export default function CostTypeBuildingItem({
 }: CostTypeBuildingItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setObjektID } =
+  const { setActiveCostType, setObjektID, setPurposeOptions } =
     useHeizkostenabrechnungStore();
 
   useEffect(() => {
@@ -45,6 +45,7 @@ export default function CostTypeBuildingItem({
   const handleOpenDialog = () => {
     setActiveCostType(type.type);
     setObjektID(objektId);
+    setPurposeOptions();
     openDialog(`${type.type}_upload`);
   };
 

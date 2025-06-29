@@ -27,9 +27,6 @@ export default async function AdminPage() {
   );
   const heatersText = fs.readFileSync(heatersPath, "utf8");
 
-  // const data = await parseCSV();
-
-  // console.log(data);
 
   return (
     <div className="py-3 px-5 h-[calc(100dvh-61px)] max-h-[calc(100dvh-61px)]">

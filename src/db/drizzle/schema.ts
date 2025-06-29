@@ -9,9 +9,9 @@ import {
   boolean,
   jsonb,
   date,
+  unique,
   varchar,
   integer,
-  unique,
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -55,6 +55,11 @@ export const doc_cost_category = pgTable(
     pgPolicy("Users can delete their own doc_cost_category", {
       as: "permissive",
       for: "delete",
+      to: ["public"],
+    }),
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
       to: ["public"],
     }),
     pgPolicy("Users can select their own doc_cost_category", {
@@ -117,11 +122,16 @@ export const documents = pgTable(
     user_id: uuid().notNull(),
   },
   (table) => [
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+      using: sql`((user_id = auth.uid()) OR is_admin())`,
+    }),
     pgPolicy("Users can insert their own documents", {
       as: "permissive",
       for: "insert",
       to: ["public"],
-      withCheck: sql`(user_id = auth.uid())`,
     }),
     pgPolicy("Users can select their own documents", {
       as: "permissive",
@@ -158,12 +168,16 @@ export const contracts = pgTable(
       foreignColumns: [locals.id],
       name: "contracts_local_id_locals_id_fk",
     }).onDelete("cascade"),
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+      using: sql`((user_id = auth.uid()) OR is_admin())`,
+    }),
     pgPolicy("Users can access their own contracts", {
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`(auth.uid() = user_id)`,
-      withCheck: sql`(auth.uid() = user_id)`,
     }),
   ]
 );
@@ -188,16 +202,45 @@ export const contractors = pgTable(
       foreignColumns: [contracts.id],
       name: "contractors_contract_id_contracts_id_fk",
     }).onDelete("cascade"),
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+      using: sql`((user_id = auth.uid()) OR is_admin())`,
+    }),
     pgPolicy("Users can access their own contractors", {
       as: "permissive",
       for: "all",
       to: ["public"],
-      using: sql`(EXISTS ( SELECT 1
-   FROM contracts
-  WHERE ((contracts.id = contractors.contract_id) AND (contracts.user_id = auth.uid()))))`,
-      withCheck: sql`(EXISTS ( SELECT 1
-   FROM contracts
-  WHERE ((contracts.id = contractors.contract_id) AND (contracts.user_id = auth.uid()))))`,
+    }),
+  ]
+);
+
+export const users_in_auth = pgTable(
+  "users_in_auth",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    email: text().notNull(),
+    hashed_password: text().notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp({ withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("users_in_auth_email_key").on(table.email),
+    pgPolicy("Users can view their own auth info", {
+      as: "permissive",
+      for: "select",
+      to: ["public"],
+      using: sql`(id = auth.uid())`,
+    }),
+    pgPolicy("Users can update their own auth info", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
     }),
   ]
 );
@@ -228,6 +271,11 @@ export const objekte = pgTable(
       to: ["public"],
       using: sql`(auth.uid() = user_id)`,
       withCheck: sql`(auth.uid() = user_id)`,
+    }),
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
     }),
   ]
 );
@@ -284,6 +332,61 @@ export const heating_bill_documents = pgTable(
       to: ["public"],
     }),
     pgPolicy("Allow users to DELETE their own heating bill documents", {
+      as: "permissive",
+      for: "delete",
+      to: ["public"],
+    }),
+  ]
+);
+
+export const users = pgTable(
+  "users",
+  {
+    id: uuid().primaryKey().notNull(),
+    email: text().notNull(),
+    first_name: text().notNull(),
+    last_name: text().notNull(),
+    permission: text().default("user").notNull(),
+    created_at: timestamp({ withTimezone: true, mode: "string" }).defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.id],
+      foreignColumns: [table.id],
+      name: "users_id_fkey",
+    }).onDelete("cascade"),
+    pgPolicy("Users can insert their own record", {
+      as: "permissive",
+      for: "insert",
+      to: ["public"],
+      withCheck: sql`(auth.uid() = id)`,
+    }),
+    pgPolicy("Users can read their own data", {
+      as: "permissive",
+      for: "select",
+      to: ["public"],
+    }),
+    pgPolicy("Users can update their own data", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+    }),
+    pgPolicy("User can insert their own row", {
+      as: "permissive",
+      for: "insert",
+      to: ["public"],
+    }),
+    pgPolicy("Admins can read all, users only their own", {
+      as: "permissive",
+      for: "select",
+      to: ["public"],
+    }),
+    pgPolicy("Admins can update all, users only their own", {
+      as: "permissive",
+      for: "update",
+      to: ["public"],
+    }),
+    pgPolicy("Admins can delete all, users only their own", {
       as: "permissive",
       for: "delete",
       to: ["public"],

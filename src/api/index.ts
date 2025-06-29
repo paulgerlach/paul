@@ -12,6 +12,7 @@ import {
 } from "@/db/drizzle/schema";
 import { and, eq, isNull } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
+import { isAdminUser } from "@/auth";
 
 interface MeterReading {
   "Frame Type": string;
@@ -424,7 +425,9 @@ export async function getLocalById(localId: string) {
   return local;
 }
 
-export async function getUserBetriebskostenabrechnungDocCostCategoryTypes() {
+export async function getUserBetriebskostenabrechnungDocCostCategoryTypes(
+  userIdParam?: string
+) {
   const supabase = await supabaseServer();
   const {
     data: { user },
@@ -435,13 +438,17 @@ export async function getUserBetriebskostenabrechnungDocCostCategoryTypes() {
     throw new Error("Unauthorized");
   }
 
+  const isAdmin = await isAdminUser(user.id);
+
+  const userIdToQuery = isAdmin && userIdParam ? userIdParam : user.id;
+
   const types = await database
     .select()
     .from(doc_cost_category)
     .where(
       and(
         eq(doc_cost_category.document_type, "betriebskostenabrechnung"),
-        eq(doc_cost_category.user_id, user.id)
+        eq(doc_cost_category.user_id, userIdToQuery)
       )
     );
 

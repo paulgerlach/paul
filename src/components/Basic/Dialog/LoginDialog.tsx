@@ -17,7 +17,7 @@ import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 
 const LoginSchema = z.object({
-  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
+  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresseq  ein."),
   password: z.string().min(6, "Passwort muss mindestens 6 Zeichen lang sein."),
 });
 

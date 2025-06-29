@@ -47,7 +47,6 @@ export default function GesamtkostenBuildingFrom({
     setDocumentGroups(Array.from(mergedByType.values()));
   }, [userDocCostCategories, basicDocCosyCategories, setDocumentGroups]);
 
-
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =
       group.data?.reduce(

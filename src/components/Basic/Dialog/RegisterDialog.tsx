@@ -79,8 +79,24 @@ export default function RegisterDialog() {
       toast.info("Bitte bestätigen Sie Ihre E-Mail-Adresse.");
     }
 
+    const { user } = signUpData;
+
+    const { error: insertError } = await supabase.from("users").insert({
+      id: user.id,
+      email: user.email,
+      first_name,
+      last_name,
+      permission: "user",
+    });
+
+    if (insertError) {
+      console.error("User insert error:", insertError);
+      toast.error("Fehler beim Erstellen des Benutzerprofils.");
+      return;
+    }
+
     toast.success("Registrierung erfolgreich!");
-    router.push(ROUTE_DASHBOARD);
+    await router.push(ROUTE_DASHBOARD);
     closeDialog("register");
   };
 

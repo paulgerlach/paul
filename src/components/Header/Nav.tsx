@@ -236,14 +236,14 @@ export default function Nav() {
       <Link
         onClick={() => handleBurgerMenu()}
         href={ROUTE_HOME}
-        className="flex items-center text-base text-dark_text justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text">
         Kunden
       </Link>
 
       <Link
         onClick={() => handleBurgerMenu()}
         href={ROUTE_PREISE}
-        className="flex items-center text-base text-dark_text justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text">
         Preise
       </Link>
     </nav>

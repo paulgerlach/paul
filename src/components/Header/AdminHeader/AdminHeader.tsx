@@ -35,7 +35,7 @@ export default function AdminHeader() {
             <AdminApartmentsDropdown />
             <AdminDatetimeDropdown />
 
-            <div className="flex w-full items-center gap-4 justify-start bg-transparent border-none px-6 py-3">
+            <div className="flex w-full items-center gap-4 max-xl:text-sm justify-start bg-transparent border-none px-6 py-3">
               <Switch />
               Datenansicht
             </div>

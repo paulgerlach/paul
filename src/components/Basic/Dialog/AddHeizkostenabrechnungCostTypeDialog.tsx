@@ -84,14 +84,14 @@ export default function AddHeizkostenabrechnungCostTypeDialog() {
           <div className="flex items-center justify-between gap-4">
             <button
               type="button"
-              className="px-6 py-4 border border-black/20 cursor-pointer rounded-md bg-white text-admin_dark_text text-lg font-medium shadow-xs transition-all duration-300 hover:opacity-80"
+              className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm font-medium border border-black/20 cursor-pointer rounded-md bg-white text-admin_dark_text text-lg shadow-xs transition-all duration-300 hover:opacity-80"
               onClick={() => {
                 methods.reset(defaultValues);
                 closeDialog("cost_type_heizkostenabrechnung_create");
               }}>
               Abbrechen
             </button>
-            <Button type="submit" className="!font-medium !text-lg">
+            <Button type="submit" className="!font-medium">
               Speichern
             </Button>
           </div>

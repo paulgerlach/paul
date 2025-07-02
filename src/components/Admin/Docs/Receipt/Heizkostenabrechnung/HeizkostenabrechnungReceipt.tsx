@@ -62,7 +62,7 @@ export default function HeizkostenabrechnungReceipt({
     ) * monthsDiff;
 
   return (
-    <div className="bg-[#EFEEEC] h-fit min-w-sm w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
+    <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8 max-xl:space-y-4">
         <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text max-xl:text-sm">
           <Image
@@ -101,8 +101,8 @@ export default function HeizkostenabrechnungReceipt({
           />
           <span className="text-3xl text-admin_dark_text">0€</span>
         </div>
-        <div>
-          <div className="pb-4 border-b border-[#e0e0e0] space-y-4">
+        <div className="max-xl:text-sm">
+          <div className="pb-4 border-b border-[#e0e0e0] space-y-4 max-xl:space-y-2">
             <div className="flex items-center justify-between text-admin_dark_text">
               Kosten für das gesamte Gebäude
               <span>€</span>

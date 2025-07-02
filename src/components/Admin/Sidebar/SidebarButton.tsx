@@ -56,7 +56,7 @@ export default function SidebarButton({
           src={chevron_admin}
         />
       </button>
-      <div className="space-y-1.5 pl-11" ref={contentRef}>
+      <div className="space-y-1.5 pl-11 max-megalarge:pl-4" ref={contentRef}>
         {button.children?.map((child) => (
           <Link
             key={child.title}

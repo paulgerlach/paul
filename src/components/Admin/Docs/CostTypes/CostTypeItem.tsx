@@ -69,22 +69,22 @@ export default function CostTypeItem({
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-5 max-h-4 [.active_&]:-rotate-90 transition-all duration-300"
+            className="max-w-5 max-h-4 max-xl:max-w-3 max-xl:max-h-3 [.active_&]:-rotate-90 transition-all duration-300"
             src={chevron_admin}
             alt="chevron"
           />
-          <div className="size-14 max-w-14 max-h-14 min-w-14 min-h-14 flex items-center justify-center bg-[#E7F2E8] rounded-full">
+          <div className="size-14 max-w-14 max-h-14 min-w-14 min-h-14 max-xl:size-10 max-xl:max-w-10 max-xl:max-h-10 max-xl:min-h-10 max-xl:min-w-10 flex items-center justify-center bg-[#E7F2E8] rounded-full">
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-7 max-h-7"
+              className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
               src={getCostTypeIconByKey(type.type || "")}
               alt="chevron"
             />
           </div>
-          <p className="font-semibold text-dark_green">
+          <p className="font-semibold max-xl:text-sm text-dark_green">
             {type.name}
           </p>
         </div>
@@ -126,13 +126,13 @@ export default function CostTypeItem({
         })}
         <button
           onClick={() => handleOpenDialog()}
-          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-4 border border-dark_green cursor-pointer rounded-md bg-[#E0E0E0] text-lg font-medium text-admin_dark_text">
+          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-4 max-h-4"
+            className="max-w-4 max-h-4 max-xl:max-w-3 max-xl:max-h-3"
             src={admin_plus}
             alt="admin_plus"
           />

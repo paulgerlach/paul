@@ -33,6 +33,7 @@
   --breakpoint-medium: 768px;
   --breakpoint-large: 992px;
   --breakpoint-megalarge: 1200px;
+  --breakpoint-xl: 1640px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -833,25 +834,25 @@ html {
 }
 
 .richTextBlock h1 {
-  @apply text-6xl font-bold max-megalarge:text-5xl max-large:text-4xl max-medium:text-3xl max-small:text-2xl;
+  @apply text-6xl font-bold max-xl:text-5xl max-large:text-4xl max-medium:text-3xl max-small:text-2xl;
 }
 .richTextBlock h2 {
-  @apply text-5xl font-bold max-megalarge:text-4xl max-large:text-3xl max-medium:text-2xl max-small:text-xl;
+  @apply text-5xl font-bold max-xl:text-4xl max-large:text-3xl max-medium:text-2xl max-small:text-xl;
 }
 .richTextBlock h3 {
-  @apply text-4xl font-bold max-megalarge:text-3xl max-large:text-2xl max-medium:text-xl max-small:text-lg;
+  @apply text-4xl font-bold max-xl:text-3xl max-large:text-2xl max-medium:text-xl max-small:text-lg;
 }
 .richTextBlock h4 {
-  @apply text-3xl font-bold max-megalarge:text-2xl max-large:text-xl max-medium:text-lg max-small:text-base;
+  @apply text-3xl font-bold max-xl:text-2xl max-large:text-xl max-medium:text-lg max-small:text-base;
 }
 .richTextBlock h5 {
-  @apply text-2xl font-bold max-megalarge:text-xl max-large:text-lg max-medium:text-base max-small:text-sm;
+  @apply text-2xl font-bold max-xl:text-xl max-large:text-lg max-medium:text-base max-small:text-sm;
 }
 .richTextBlock h6 {
-  @apply text-xl font-bold max-megalarge:text-lg max-large:text-base max-medium:text-sm;
+  @apply text-xl font-bold max-xl:text-lg max-large:text-base max-medium:text-sm;
 }
 .richTextBlock p {
-  @apply text-lg max-large:text-base max-medium:text-sm;
+  @apply text-lg max-xl:text-base max-medium:text-sm;
 }
 
 .richTextBlock ul,

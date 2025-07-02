@@ -60,27 +60,27 @@ export default function BetriebskostenabrechnungReceipt({
     ) * monthsDiff;
 
   return (
-    <div className="bg-[#EFEEEC] h-fit min-w-sm w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
-      <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
-        <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text">
+    <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
+      <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8 max-xl:space-y-4">
+        <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text max-xl:text-sm">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-7 max-h-7"
+            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4"
             src={receipt_building}
             alt="receipt_building"
           />
           {title}
         </p>
-        <p className="flex items-centerjustify-start gap-2 text-admin_dark_text">
+        <p className="flex items-centerjustify-start gap-2 text-admin_dark_text max-xl:text-sm">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-7 max-h-7"
+            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4"
             src={receipt_calendar}
             alt="receipt_calendar"
           />
@@ -99,7 +99,7 @@ export default function BetriebskostenabrechnungReceipt({
           />
           <span className="text-3xl text-admin_dark_text">0€</span>
         </div>
-        <div>
+        <div className="max-xl:text-sm">
           <div className="pb-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Kosten für das gesamte Gebäude

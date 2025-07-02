@@ -47,7 +47,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                 <button
                   disabled={disabled}
                   className={
-                    "w-full flex items-center justify-between text-left px-6 py-[7px] rounded-md border min-h-14 border-black/20 shadow-xs font-normal"
+                    "w-full flex items-center justify-between text-left px-6 py-[7px] rounded-md border max-xl:text-sm max-xl:min-h-10 min-h-14 border-black/20 shadow-xs font-normal"
                   }>
                   {field.value ? format(field.value, "PPP") : <span>-</span>}
                   <Image

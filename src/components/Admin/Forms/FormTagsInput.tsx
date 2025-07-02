@@ -65,7 +65,7 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleTagKeyDown}
               placeholder="Tag hinzufügen (Eigentümer- Zuordnung)"
-              className="w-8/12 block px-[30px] py-4 text-sm border border-dark_green bg-[#757575]/20 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-green focus:ring-green"
+              className="w-8/12 block px-[30px] py-4 max-xl:py-2 max-xl:px-4 text-sm border border-dark_green bg-[#757575]/20 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-green focus:ring-green"
             />
           </FormControl>
           <div className="flex items-center flex-wrap gap-2 mb-2">

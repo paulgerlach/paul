@@ -8,6 +8,7 @@ import {
 } from "@/static/icons";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import type { ContractType } from "@/types";
+import { formatEuro } from "@/utils";
 import { differenceInMonths } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -26,10 +27,34 @@ export default function HeizkostenabrechnungReceipt({
   localId,
   relatedContracts,
 }: ReceiptProps) {
-  const { getFormattedDates } = useHeizkostenabrechnungStore();
+  const { getFormattedDates, documentGroups } = useHeizkostenabrechnungStore();
   const router = useRouter();
 
   const { start_date, end_date } = getFormattedDates();
+
+  const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
+    const groupTotal =
+      group.data?.reduce((sum, item) => {
+        if (item.for_all_tenants) {
+          return sum + Number(item.total_amount || 0);
+        }
+        return sum;
+      }, 0) || 0;
+    return acc + groupTotal;
+  }, 0);
+
+  const totalDirectCosts = documentGroups.reduce((acc, group) => {
+    const groupTotal =
+      group.data?.reduce((sum, item) => {
+        if (!item.for_all_tenants) {
+          return sum + Number(item.total_amount || 0);
+        }
+        return sum;
+      }, 0) || 0;
+    return acc + groupTotal;
+  }, 0);
+
+  const totalAmount = totalSpreadedAmount + totalDirectCosts;
 
   useEffect(() => {
     if (!getFormattedDates().start_date || !getFormattedDates().end_date) {
@@ -47,7 +72,7 @@ export default function HeizkostenabrechnungReceipt({
     const periodStart = new Date(start_date);
     const periodEnd = new Date(end_date);
 
-    return rentalStart >= periodStart && rentalEnd <= periodEnd;
+    return rentalEnd >= periodStart && rentalStart <= periodEnd;
   });
 
   const monthsDiff =
@@ -60,6 +85,8 @@ export default function HeizkostenabrechnungReceipt({
       (acc, contract) => acc + Number(contract.cold_rent ?? 0),
       0
     ) * monthsDiff;
+
+  const totalDiff = totalContractsAmount - totalAmount;
 
   return (
     <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
@@ -99,43 +126,42 @@ export default function HeizkostenabrechnungReceipt({
             src={receipt_line}
             alt="receipt_line"
           />
-          <span className="text-3xl text-admin_dark_text">0€</span>
+          <span className="text-3xl text-admin_dark_text">{formatEuro(totalDiff)}</span>
         </div>
         <div className="max-xl:text-sm">
           <div className="pb-4 border-b border-[#e0e0e0] space-y-4 max-xl:space-y-2">
             <div className="flex items-center justify-between text-admin_dark_text">
               Kosten für das gesamte Gebäude
-              <span>€</span>
+              <span>{formatEuro(totalSpreadedAmount)}</span>
             </div>
             <div className="flex items-center justify-between text-admin_dark_text">
               Direkte Kosten
-              <span>€</span>
+              <span>{formatEuro(totalDirectCosts)}</span>
             </div>
           </div>
           <div className="py-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Gesamtkosten
-              <span>€</span>
+              <span>{formatEuro(totalAmount)}</span>
             </div>
           </div>
           <div className="py-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Hausgeld
-              <span>€</span>
+              <span>0 €</span>
             </div>
             <div className="flex items-center justify-between text-admin_dark_text">
               Nebenkostenvorauszahlung
               <span>
                 {totalContractsAmount
-                  ? totalContractsAmount.toFixed(2)
-                  : "0,00"}{" "}
-                €
+                  ? formatEuro(totalContractsAmount)
+                  : "0,00 €"}
               </span>
             </div>
           </div>
           <div className="border-t border-admin_dark_text pt-4 flex items-center justify-between font-bold text-admin_dark_text">
             Differenz
-            <span className="text-[#676767] font-normal">€</span>
+            <span className="text-[#676767] font-normal">{formatEuro(totalDiff)}</span>
           </div>
         </div>
       </div>

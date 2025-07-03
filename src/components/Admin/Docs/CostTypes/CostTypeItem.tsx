@@ -49,7 +49,7 @@ export default function CostTypeItem({
     setLocalID(localId);
     setObjektID(objektId);
     setPurposeOptions();
-    openDialog(`${type.type}_upload`);
+    openDialog(`${type.type}_heizkostenabrechnung_upload`);
   };
 
   const totalAmount = type.data.reduce(
@@ -104,9 +104,9 @@ export default function CostTypeItem({
         {type.data.map((item, i) => {
           if (item.document?.length === 1 || item.document_name) {
             return (
-              <ul key={i} className="mt-4 mb-9">
-                <li className="flex justify-between items-center pl-12">
-                  <span className="text-sm flex items-center gap-12 truncate text-[#757575]">
+              <ul key={i} className="mt-4 mb-9 max-xl:mt-2 max-xl:mb-5">
+                <li className="flex justify-between items-center pl-12 max-xl:pl-6">
+                  <span className="text-sm flex items-center gap-12 max-xl:gap-6 truncate text-[#757575]">
                     <Image
                       width={0}
                       height={0}

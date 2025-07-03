@@ -1,13 +1,13 @@
 import Select from "@/components/Basic/ui/Select";
 import {
-  useHeizkostenabrechnungStore,
-  type HeizkostenabrechnungCostType,
-} from "@/store/useHeizkostenabrechnungStore";
+  useBetriebskostenabrechnungStore,
+  type BetriebskostenabrechnungCostType,
+} from "@/store/useBetriebskostenabrechnungStore";
 import { getCostTypeIconByKey } from "@/utils";
 import Image from "next/image";
 
 export type CostTypeBuildingItemProps = {
-  type: HeizkostenabrechnungCostType;
+  type: BetriebskostenabrechnungCostType;
   objektId: string;
 };
 
@@ -15,7 +15,7 @@ export default function CostTypeBuildingSelectItem({
   type,
   objektId,
 }: CostTypeBuildingItemProps) {
-  const { updateAllocationKey } = useHeizkostenabrechnungStore();
+  const { updateAllocationKey } = useBetriebskostenabrechnungStore();
   const totalAmount = type.data.reduce(
     (acc, item) => acc + Number(item.total_amount ?? 0),
     0
@@ -35,7 +35,7 @@ export default function CostTypeBuildingSelectItem({
             alt="chevron"
           />
         </div>
-        <p className="font-semibold text-dark_green">
+        <p className="font-semibold max-xl:text-sm text-dark_green">
           {type.name}
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function CostTypeBuildingSelectItem({
           onChange={(val) =>
             updateAllocationKey(
               type.type,
-              val as HeizkostenabrechnungCostType["allocation_key"]
+              val as BetriebskostenabrechnungCostType["allocation_key"]
             )
           }
         />

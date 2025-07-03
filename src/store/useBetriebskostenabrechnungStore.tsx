@@ -39,6 +39,7 @@ export type BetriebskostenabrechnungStoreType = {
     key: BetriebskostenabrechnungCostType["type"],
     allocationKey: BetriebskostenabrechnungCostType["allocation_key"]
   ) => void;
+  setPurposeOptions: () => void;
 };
 
 export const useBetriebskostenabrechnungStore =
@@ -132,4 +133,11 @@ export const useBetriebskostenabrechnungStore =
             : group
         ),
       })),
+    setPurposeOptions: () => {
+      const { documentGroups, activeCostType } = get();
+      const options = documentGroups.find((group) => group.type === activeCostType)?.options;
+      set({
+        purposeOptions: options ?? []
+      });
+    }
   }));

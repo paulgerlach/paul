@@ -10,7 +10,7 @@ import Link from "next/link";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 
 const abrechnungszeitraumBuildingSchema = z.object({
   start_date: z.coerce
@@ -40,7 +40,7 @@ export default function AbrechnungszeitraumBuildingForm({
   id: string;
 }) {
   const router = useRouter();
-  const { setStartDate, setEndDate } = useHeizkostenabrechnungStore();
+  const { setStartDate, setEndDate } = useBetriebskostenabrechnungStore();
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumBuildingSchema),
     defaultValues,
@@ -64,7 +64,7 @@ export default function AbrechnungszeitraumBuildingForm({
   }, []);
 
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] col-span-2 rounded-2xl px-4 flex items-center justify-center">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-center justify-center">
       <div className="bg-white overflow-y-auto h-full py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <Form {...methods}>
           <form
@@ -98,7 +98,7 @@ export default function AbrechnungszeitraumBuildingForm({
             <div className="flex items-center justify-between">
               <Link
                 href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/gesamtkosten`}
-                className="py-2 px-6 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
                 Zurück
               </Link>
               <Button type="submit">Weiter</Button>

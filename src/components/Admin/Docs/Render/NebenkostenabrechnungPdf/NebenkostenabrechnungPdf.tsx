@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, PDFViewer } from "@react-pdf/renderer";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
+import { formatEuro } from "@/utils";
 
 // Styles
 const styles = StyleSheet.create({
@@ -116,23 +118,34 @@ const styles = StyleSheet.create({
     },
 });
 
-// Data
-const costData = [
-    ["Grundsteuer", "708,66 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "31,61 €"],
-    ["Kaltwasser", "985,55 €", "365 / 365", "Verbrauch (Menast)", "", "43,99 €"],
-    ["Entwässerung", "499,99 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "22,30 €"],
-    ["Heizkosten", "7.839,87 €", "", "Verbrauch (Menast)", "44/100", "110,11 €"],
-    ["Heizungs- und Warmwasserbereitstellungskosten", "229,21 €", "365 / 365", "Verbrauch (Menast)", "44/100", "10,22 €"],
-    ["Straßenreinigung und Müll", "541,64 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "24,16 €"],
-    ["Gebäudereinigung", "2.620,73 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "116,89 €"],
-    ["Beleuchtung", "589,19 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "26,28 €"],
-    ["Schornsteinfeger", "91,58 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "4,08 €"],
-    ["Sach- & Haftpflichtversicherung", "2.805,55 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "125,14 €"],
-    ["Hausmeister", "3.132,00 €", "365 / 365", "m2 Wohnfläche", "36,30 / 813,85", "139,70 €"],
-];
-
 // Component
 export default function NebenkostenabrechnungPdf() {
+    const { documentGroups, getFormattedDates } = useBetriebskostenabrechnungStore();
+    const { start_date, end_date } = getFormattedDates();
+
+    const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
+        const groupTotal =
+            group.data?.reduce((sum, item) => {
+                if (item.for_all_tenants) {
+                    return sum + Number(item.total_amount || 0);
+                }
+                return sum;
+            }, 0) || 0;
+        return acc + groupTotal;
+    }, 0);
+
+    const totalDirectCosts = documentGroups.reduce((acc, group) => {
+        const groupTotal =
+            group.data?.reduce((sum, item) => {
+                if (!item.for_all_tenants) {
+                    return sum + Number(item.total_amount || 0);
+                }
+                return sum;
+            }, 0) || 0;
+        return acc + groupTotal;
+    }, 0);
+
+    const totalAmount = totalSpreadedAmount + totalDirectCosts;
     return (
         <PDFViewer width="100%" height="900">
             <Document>
@@ -150,7 +163,7 @@ export default function NebenkostenabrechnungPdf() {
                             <View style={styles.summaryBox}>
                                 <View style={[{ flexDirection: "row", justifyContent: "space-between", borderBottom: "1px solid black", padding: 8 }]}>
                                     <Text style={styles.text}>Ihr Nebenkostenanteil für den Nutzungszeitraum:</Text>
-                                    <Text style={styles.text}>1.734,48 €</Text>
+                                    <Text style={styles.text}>{formatEuro(totalAmount)}</Text>
                                 </View>
                                 <View style={[{ flexDirection: "row", justifyContent: "space-between", borderBottom: "1px solid black", padding: 8 }]}>
                                     <Text style={styles.text}>Ihre Nebenkostenvorauszahlung:</Text>
@@ -166,7 +179,7 @@ export default function NebenkostenabrechnungPdf() {
                     </View>
 
                     <Text style={styles.title}>Nebenkostenabrechnung</Text>
-                    <Text style={styles.subtitle}>für den Abrechnungszeitraum 01.01.2023 - 31.12.2023</Text>
+                    <Text style={styles.subtitle}>für den Abrechnungszeitraum {start_date} - {end_date}</Text>
                     <Text style={[styles.subtitle, { marginBottom: 15 }]}>Altenburger Straße 9, VH 20G rechts - Berger/Rehnelt</Text>
 
                     <View style={styles.mainContent}>
@@ -208,9 +221,9 @@ export default function NebenkostenabrechnungPdf() {
                     <View style={styles.table}>
                         <View style={styles.tableRow}>
                             <Text style={[styles.tableCell, { flex: 2 }]}>Ihr Nutzungszeitraum</Text>
-                            <Text style={[styles.tableCell, { flex: 2 }]}>01.01.2023 - 31.12.2023</Text>
+                            <Text style={[styles.tableCell, { flex: 2 }]}>{start_date} - {end_date}</Text>
                             <Text style={[styles.tableCell, { flex: 2 }]}>Abrechnungszeitraum</Text>
-                            <Text style={[styles.tableCell, { flex: 2 }]}>01.01.2023 - 31.12.2023</Text>
+                            <Text style={[styles.tableCell, { flex: 2 }]}>{start_date} - {end_date}</Text>
                         </View>
                         <View style={styles.tableRow}>
                             <Text style={[styles.tableCell, { flex: 2 }]}>Ihr Nutzungstage</Text>
@@ -237,13 +250,33 @@ export default function NebenkostenabrechnungPdf() {
                             <Text style={styles.tableCell}>Anteil</Text>
                             <Text style={styles.tableCell}>Ihr Anteil</Text>
                         </View>
-                        {costData.map((row, idx) => (
-                            <View style={styles.tableRow} key={idx}>
-                                {row.map((cell, i) => (
-                                    <Text key={i} style={styles.tableCell}>{cell}</Text>
-                                ))}
-                            </View>
-                        ))}
+                        {documentGroups.map((row) => {
+                            const totalSpreadedAmount = row.data?.reduce((sum, item) => {
+                                if (item.for_all_tenants) {
+                                    return sum + Number(item.total_amount || 0);
+                                }
+                                return sum;
+                            }, 0) || 0;
+
+                            const totalDirectCosts = row.data?.reduce((sum, item) => {
+                                if (!item.for_all_tenants) {
+                                    return sum + Number(item.total_amount || 0);
+                                }
+                                return sum;
+                            }, 0) || 0;
+
+                            const totalAmount = totalSpreadedAmount + totalDirectCosts;
+
+                            return (
+                                <View style={styles.tableRow} key={row.id}>
+                                    <Text style={styles.tableCell}>{row.name}</Text>
+                                    <Text style={styles.tableCell}>{formatEuro(totalAmount)}</Text>
+                                    <Text style={styles.tableCell}>365/365</Text>
+                                    <Text style={styles.tableCell}>{row.allocation_key}</Text>
+                                    <Text style={styles.tableCell}>365/365</Text>
+                                </View>
+                            )
+                        })}
                     </View>
 
                     <View style={[styles.summaryTable, { marginRight: 0, marginLeft: "auto", minWidth: 300 }]}>

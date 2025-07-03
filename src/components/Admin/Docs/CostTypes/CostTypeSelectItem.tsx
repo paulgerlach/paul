@@ -37,7 +37,7 @@ export default function CostTypeSelectItem({
             alt="chevron"
           />
         </div>
-        <p className="font-semibold text-dark_green">
+        <p className="font-semibold max-xl:text-sm text-dark_green">
           {type.name}
         </p>
       </div>

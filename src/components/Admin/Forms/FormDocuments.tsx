@@ -102,9 +102,8 @@ function DropzoneArea({
             return (
               <li
                 key={file.id}
-                className={`flex justify-between items-center pl-12 ${
-                  isMarkedForDeletion ? "opacity-50" : ""
-                }`}>
+                className={`flex justify-between items-center pl-12 ${isMarkedForDeletion ? "opacity-50" : ""
+                  }`}>
                 {isMarkedForDeletion ? (
                   <span className="text-sm flex items-center gap-12 truncate line-through text-gray-400 cursor-not-allowed">
                     <Image
@@ -159,10 +158,10 @@ function DropzoneArea({
         </ul>
       )}
       {files.length > 0 && (
-        <ul className="mt-4 mb-9 space-y-6">
+        <ul className="mt-4 mb-9 max-xl:mt-2 max-xl:mb-5">
           {files.map((file, idx) => (
-            <li key={idx} className="flex justify-between items-center pl-12">
-              <span className="text-sm flex items-center justify-start gap-12 truncate text-[#757575]">
+            <li key={idx} className="flex justify-between items-center pl-12 max-xl:pl-6">
+              <span className="text-sm flex items-center gap-12 max-xl:gap-6 truncate text-[#757575]">
                 <Image
                   width={0}
                   height={0}
@@ -187,9 +186,8 @@ function DropzoneArea({
 
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-3.5 text-center cursor-pointer transition ${
-          isDragActive ? "border-green bg-green/20" : "border-link"
-        }`}>
+        className={`border-2 border-dashed rounded-lg p-3.5 text-center cursor-pointer transition ${isDragActive ? "border-green bg-green/20" : "border-link"
+          }`}>
         <input disabled={disabled} {...getInputProps()} />
         {isDragActive ? (
           <p className="text-link">Dateien hier ablegen...</p>

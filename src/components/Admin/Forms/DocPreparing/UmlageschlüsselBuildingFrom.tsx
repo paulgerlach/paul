@@ -9,7 +9,7 @@ export default function UmlageschlüsselBuildingFrom({
   objektId: string;
 }) {
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <CostTypesBuildingSelects objektId={objektId} />
         <div className="flex items-center justify-between">
@@ -18,7 +18,11 @@ export default function UmlageschlüsselBuildingFrom({
             className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
             Zurück
           </Link>
-          <Button>Weiter</Button>
+          <Link
+            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/results`}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm">
+            Weiter
+          </Link>
         </div>
       </div>
     </div>

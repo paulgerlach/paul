@@ -1,11 +1,10 @@
-import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import TheeDotsCostTypeButton from "@/components/Basic/TheeDotsButton/TheeDotsCostTypeButton";
 import { admin_plus, chevron_admin, pdf_icon } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import {
-  type HeizkostenabrechnungCostType,
-  useHeizkostenabrechnungStore,
-} from "@/store/useHeizkostenabrechnungStore";
+  type BetriebskostenabrechnungCostType,
+  useBetriebskostenabrechnungStore,
+} from "@/store/useBetriebskostenabrechnungStore";
 import {
   getCostTypeIconByKey,
   slideDown,
@@ -18,7 +17,7 @@ export type CostTypeBuildingItemProps = {
   isOpen: boolean;
   index: number;
   onClick: (index: number) => void;
-  type: HeizkostenabrechnungCostType;
+  type: BetriebskostenabrechnungCostType;
   objektId: string;
 };
 
@@ -32,7 +31,7 @@ export default function CostTypeBuildingItem({
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
   const { setActiveCostType, setObjektID, setPurposeOptions } =
-    useHeizkostenabrechnungStore();
+    useBetriebskostenabrechnungStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -46,7 +45,7 @@ export default function CostTypeBuildingItem({
     setActiveCostType(type.type);
     setObjektID(objektId);
     setPurposeOptions();
-    openDialog(`${type.type}_upload`);
+    openDialog(`${type.type}_betriebskostenabrechnung_upload`);
   };
 
   const totalAmount = type.data.reduce(
@@ -101,9 +100,9 @@ export default function CostTypeBuildingItem({
         {type.data.map((item, i) => {
           if (item.document?.length === 1 || item.document_name) {
             return (
-              <ul key={i} className="mt-4 mb-9">
-                <li className="flex justify-between items-center pl-12">
-                  <span className="text-sm flex items-center gap-12 truncate text-[#757575]">
+              <ul key={i} className="mt-4 mb-9 max-xl:mt-2 max-xl:mb-5">
+                <li className="flex justify-between items-center pl-12 max-xl:pl-6">
+                  <span className="text-sm flex items-center gap-12 max-xl:gap-6 truncate text-[#757575]">
                     <Image
                       width={0}
                       height={0}

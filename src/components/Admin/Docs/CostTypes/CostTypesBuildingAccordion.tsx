@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import CostTypeBuildingItem from "./CostTypeBuildingItem";
 import { useDialogStore } from "@/store/useDIalogStore";
 import Image from "next/image";
@@ -13,7 +13,7 @@ export default function CostTypesBuildingAccordion({
   objektId: string;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { documentGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups } = useBetriebskostenabrechnungStore();
   const { openDialog } = useDialogStore();
 
   const handleClick = (index: number) => {

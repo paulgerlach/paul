@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormMoneyInput from "@/components/Admin/Forms/FormMoneyInput";
 import FormDateInput from "@/components/Admin/Forms/FormDateInput";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
-import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import FormRoundedCheckbox from "@/components/Admin/Forms/FormRoundedCheckbox";
 import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
@@ -19,7 +19,7 @@ import FormDocument from "@/components/Admin/Forms/FormDocument";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-const addDocHeizkostenabrechnungDialogSchema = z.object({
+const addDocBetriebskostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
@@ -34,11 +34,11 @@ const addDocHeizkostenabrechnungDialogSchema = z.object({
   document: z.array(z.instanceof(File)).optional(),
 });
 
-export type AddDocHeizkostenabrechnungDialogFormValues = z.infer<
-  typeof addDocHeizkostenabrechnungDialogSchema
+export type AddDocBetriebskostenabrechnungDialogFormValues = z.infer<
+  typeof addDocBetriebskostenabrechnungDialogSchema
 >;
 
-const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
+const defaultValues: AddDocBetriebskostenabrechnungDialogFormValues = {
   invoice_date: new Date(),
   total_amount: 0,
   service_period: false,
@@ -48,25 +48,25 @@ const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
   document: [],
 };
 
-export default function AddDocHeizkostenabrechnungDialog() {
+export default function AddDocBetriebskostenabrechnungDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const { purposeOptions, activeCostType, updateDocumentGroup } =
-    useHeizkostenabrechnungStore();
+    useBetriebskostenabrechnungStore();
   const isOpen = Object.entries(openDialogByType).some(
-    ([key, value]) => key.endsWith("_heizkostenabrechnung_upload") && value === true
+    ([key, value]) => key.endsWith("_betriebskostenabrechnung_upload") && value === true
   );
   const activeDialog = Object.entries(openDialogByType).find(
     ([_, value]) => value === true
   )?.[0];
   const methods = useForm({
-    resolver: zodResolver(addDocHeizkostenabrechnungDialogSchema),
+    resolver: zodResolver(addDocBetriebskostenabrechnungDialogSchema),
     defaultValues,
   });
   const { deletedDocumentIds } = useDocumentDeletion([]);
 
   const servicePeriod = methods.watch("service_period");
 
-  const onSubmit = (data: AddDocHeizkostenabrechnungDialogFormValues) => {
+  const onSubmit = (data: AddDocBetriebskostenabrechnungDialogFormValues) => {
     if (!activeCostType) return;
 
     const { document, ...rest } = data;
@@ -107,12 +107,12 @@ export default function AddDocHeizkostenabrechnungDialog() {
           id="heizkostenabrechnung-dialog-form"
           onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="items-start gap-7 grid grid-cols-2 w-full">
-            <FormDateInput<AddDocHeizkostenabrechnungDialogFormValues>
+            <FormDateInput<AddDocBetriebskostenabrechnungDialogFormValues>
               control={methods.control}
               label="Rechnungsdatum"
               name="invoice_date"
             />
-            <FormMoneyInput<AddDocHeizkostenabrechnungDialogFormValues>
+            <FormMoneyInput<AddDocBetriebskostenabrechnungDialogFormValues>
               control={methods.control}
               label="Gesamtbetrag *"
               name="total_amount"
@@ -140,7 +140,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
             <div className="px-3.5 py-4 max-xl:p-2 border border-black/20 rounded-md">
-              <FormRoundedCheckbox<AddDocHeizkostenabrechnungDialogFormValues>
+              <FormRoundedCheckbox<AddDocBetriebskostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"
                 label="Für Alle Mieter der Leigenschaft"
@@ -148,20 +148,20 @@ export default function AddDocHeizkostenabrechnungDialog() {
               />
             </div>
           </div>
-          <FormSelectField<AddDocHeizkostenabrechnungDialogFormValues>
+          <FormSelectField<AddDocBetriebskostenabrechnungDialogFormValues>
             control={methods.control}
             name="purpose"
             label="Zweck auswählen *"
             placeholder=""
             options={purposeOptions}
           />
-          <FormInputField<AddDocHeizkostenabrechnungDialogFormValues>
+          <FormInputField<AddDocBetriebskostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
             label="Anmerkungen"
             placeholder=""
           />
-          <FormDocument<AddDocHeizkostenabrechnungDialogFormValues>
+          <FormDocument<AddDocBetriebskostenabrechnungDialogFormValues>
             control={methods.control}
             name="document"
             deletedFileIds={deletedDocumentIds}

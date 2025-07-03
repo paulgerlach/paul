@@ -31,7 +31,7 @@ export default function FormDocument<T extends FieldValues = FieldValues>({
   title = "Verwaltungsdokumente",
 }: FormDocumentProps<T>) {
   return (
-    <div className="w-full py-5 space-y-3">
+    <div className="w-full py-5 max-xl:py-2.5 space-y-3">
       {title && <h2 className="text-sm font-bold">{title}</h2>}
       <p className="text-[#757575] text-sm">{label}</p>
       <Controller
@@ -102,9 +102,8 @@ function DropzoneArea({
             return (
               <li
                 key={file.id}
-                className={`flex justify-between items-center pl-12 ${
-                  isMarkedForDeletion ? "opacity-50" : ""
-                }`}>
+                className={`flex justify-between items-center pl-12 ${isMarkedForDeletion ? "opacity-50" : ""
+                  }`}>
                 {isMarkedForDeletion ? (
                   <span className="text-sm flex items-center gap-12 truncate line-through text-gray-400 cursor-not-allowed">
                     <Image
@@ -161,9 +160,9 @@ function DropzoneArea({
       )}
 
       {files.length === 1 && (
-        <ul className="mt-4 mb-9">
-          <li className="flex justify-between items-center pl-12">
-            <span className="text-sm flex items-center gap-12 truncate text-[#757575]">
+        <ul className="mt-4 mb-9 max-xl:mt-2 max-xl:mb-5">
+          <li className="flex justify-between items-center pl-12 max-xl:pl-6">
+            <span className="text-sm flex items-center gap-12 max-xl:gap-6 truncate text-[#757575]">
               <Image
                 width={0}
                 height={0}
@@ -188,11 +187,10 @@ function DropzoneArea({
 
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-3.5 text-center cursor-pointer transition ${
-          isDragActive ? "border-green bg-green/20" : "border-link"
-        }`}>
+        className={`border-2 border-dashed rounded-lg p-3.5 text-center cursor-pointer transition ${isDragActive ? "border-green bg-green/20" : "border-link"
+          }`}>
         <input disabled={disabled} {...getInputProps()} />
-        <p className="text-link">
+        <p className="text-link max-xl:text-sm">
           {isDragActive ? "Datei hier ablegen..." : "Rechnung hochladen"}
         </p>
       </div>

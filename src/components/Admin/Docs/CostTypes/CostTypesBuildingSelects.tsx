@@ -1,14 +1,14 @@
 "use client";
 
 import CostTypeBuildingSelectItem from "./CostTypeBuildingSelectItem";
-import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 
 export default function CostTypesBuildingSelects({
   objektId,
 }: {
   objektId: string;
 }) {
-  const { documentGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups } = useBetriebskostenabrechnungStore();
 
   return (
     <div className="overflow-y-auto space-y-4">

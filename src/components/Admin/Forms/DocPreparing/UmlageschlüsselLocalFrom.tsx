@@ -11,7 +11,7 @@ export default function UmlageschlüsselLocalFrom({
   localId: string;
 }) {
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] max-h-[90%] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <CostTypesBuildingSelects objektId={objektId} />
         <div className="flex items-center justify-between">

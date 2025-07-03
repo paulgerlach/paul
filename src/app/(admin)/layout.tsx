@@ -9,6 +9,7 @@ import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog
 import { Toaster } from "@/components/Basic/ui/Sonner";
 import OperatingCostsCreateDialog from "@/components/Basic/Dialog/OperatingCostsCreateDialog";
 import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
+import AddDocBetriebskostenabrechnungDialog from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
 import AddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddHeizkostenabrechnungCostTypeDialog";
 import AddBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddBetriebskostenabrechnungCostTypeDialog";
 import EditBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditBetriebskostenabrechnungCostTypeDialog copy";
@@ -42,6 +43,7 @@ export default function AdminLayout({
       <OperatingCostsCreateDialog />
       <AddDocHeizkostenabrechnungDialog />
       <AddHeizkostenabrechnungCostTypeDialog />
+      <AddDocBetriebskostenabrechnungDialog />
       <AddBetriebskostenabrechnungCostTypeDialog />
       <EditBetriebskostenabrechnungCostTypeDialog />
       <EditHeizkostenabrechnungCostTypeDialog />

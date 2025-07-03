@@ -143,7 +143,7 @@ export type UploadedDocument = {
   relatedId: string;
 };
 
-export type DialogCostActionType = "upload";
+export type DialogCostActionType = "heizkostenabrechnung_upload" | "betriebskostenabrechnung_upload";
 
 export type DialogDocumentCostActionType =
   `${DocCostCategoryType["type"]}_${DialogCostActionType}`;

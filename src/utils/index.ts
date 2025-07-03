@@ -191,3 +191,9 @@ export function getCostTypeIconByKey(key?: string) {
       return cost_type_fuel_costs;
   }
 }
+
+export const formatEuro = (value: number) =>
+  new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(value);

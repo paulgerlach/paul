@@ -11,7 +11,7 @@ import {
   ROUTE_HEIZKOSTENABRECHNUNG,
 } from "@/routes/routes";
 import { abrechnung, dashboard, dokumente, objekte } from "@/static/icons";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
@@ -19,7 +19,7 @@ import { useState } from "react";
 
 export type SidebarLinkType = {
   title: string;
-  icon?: string;
+  icon?: StaticImageData;
   route: string;
   type?: string;
   children?: SidebarLinkType[];

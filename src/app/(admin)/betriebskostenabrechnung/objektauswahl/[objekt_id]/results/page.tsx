@@ -13,7 +13,7 @@ export default async function ResultBuildingPDF() {
                 title="Detailansicht"
                 subtitle="Die fertig erstellten Betriebskostenabrechnung können nun die "
             />
-            <ContentWrapper className="space-y-4 max-h-[90%]">
+            <ContentWrapper className="space-y-4">
                 {/* <NebenkostenabrechnungPdf /> */}
                 <NebenkostenabrechnungPreview />
             </ContentWrapper>

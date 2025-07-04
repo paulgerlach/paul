@@ -447,7 +447,7 @@ export default function Footer() {
             alt="footer logo"
           />
           <p className="max-w-[180px] text-dark_text/50 text-lg leading-[21px]">
-            KI Akademie GmbH Rungestrasse 21 10179 Berlin
+            Heidi Systems GmbH Rungestrasse 21 10179 Berlin
           </p>
         </div>
         <div className="text-dark_text text-[30px] leading-9 max-w-lg max-medium:text-[19px] max-medium:leading-[22px] max-large:max-w-full">

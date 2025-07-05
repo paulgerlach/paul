@@ -18,11 +18,7 @@ export default function UmlageschlüsselBuildingFrom({
             className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
             Zurück
           </Link>
-          <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/results`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm">
-            Weiter
-          </Link>
+          <Button>Weiter</Button>
         </div>
       </div>
     </div>

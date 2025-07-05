@@ -3,9 +3,7 @@
 import { useState } from "react";
 import CostTypeItem from "./CostTypeItem";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
-import Image from "next/image";
-import { cost_type_fuel_costs } from "@/static/icons";
-import { useDialogStore } from "@/store/useDIalogStore";
+import AddCostTypeButton from "./AddCostTypeButton";
 
 export default function CostTypesAccordion({
   objektId,
@@ -16,7 +14,6 @@ export default function CostTypesAccordion({
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { documentGroups } = useHeizkostenabrechnungStore();
-  const { openDialog } = useDialogStore();
 
   const handleClick = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -35,20 +32,7 @@ export default function CostTypesAccordion({
           objektId={objektId}
         />
       ))}
-      <button
-        onClick={() => openDialog("cost_type_heizkostenabrechnung_create")}
-        className="border-dashed w-full cursor-pointer flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl max-xl:p-3 max-xl:text-sm">
-        <Image
-          width={0}
-          height={0}
-          sizes="100vw"
-          loading="lazy"
-          className="max-w-7 opacity-50 max-h-7 max-xl:max-w-4 max-xl:max-h-4"
-          src={cost_type_fuel_costs}
-          alt="objekte"
-        />
-        Weiteres cost type
-      </button>
+      <AddCostTypeButton dialogType="cost_type_heizkostenabrechnung_create" />
     </div>
   );
 }

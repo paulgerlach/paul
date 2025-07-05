@@ -4,6 +4,7 @@ import React from "react";
 import { Document, Page, Text, View, StyleSheet, PDFViewer } from "@react-pdf/renderer";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { formatEuro } from "@/utils";
+import { useReceiptAmounts } from "@/hooks/useReceiptAmounts";
 
 // Styles
 const styles = StyleSheet.create({
@@ -119,33 +120,16 @@ const styles = StyleSheet.create({
 });
 
 // Component
-export default function NebenkostenabrechnungPdf() {
+export default function BetriebskostenabrechnungPdf() {
     const { documentGroups, getFormattedDates } = useBetriebskostenabrechnungStore();
     const { start_date, end_date } = getFormattedDates();
 
-    const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
-        const groupTotal =
-            group.data?.reduce((sum, item) => {
-                if (item.for_all_tenants) {
-                    return sum + Number(item.total_amount || 0);
-                }
-                return sum;
-            }, 0) || 0;
-        return acc + groupTotal;
-    }, 0);
+    const { totalAmount, totalSpreadedAmount, totalDirectCosts } = useReceiptAmounts({
+        documentGroups,
+        start_date,
+        end_date,
+    });
 
-    const totalDirectCosts = documentGroups.reduce((acc, group) => {
-        const groupTotal =
-            group.data?.reduce((sum, item) => {
-                if (!item.for_all_tenants) {
-                    return sum + Number(item.total_amount || 0);
-                }
-                return sum;
-            }, 0) || 0;
-        return acc + groupTotal;
-    }, 0);
-
-    const totalAmount = totalSpreadedAmount + totalDirectCosts;
     return (
         <PDFViewer width="100%" height="900">
             <Document>
@@ -273,6 +257,7 @@ export default function NebenkostenabrechnungPdf() {
                                     <Text style={styles.tableCell}>{formatEuro(totalAmount)}</Text>
                                     <Text style={styles.tableCell}>365/365</Text>
                                     <Text style={styles.tableCell}>{row.allocation_key}</Text>
+                                    <Text style={styles.tableCell}>365/365</Text>
                                     <Text style={styles.tableCell}>365/365</Text>
                                 </View>
                             )

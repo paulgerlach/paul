@@ -50,7 +50,7 @@ const defaultValues: AddDocBetriebskostenabrechnungDialogFormValues = {
 
 export default function AddDocBetriebskostenabrechnungDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
-  const { purposeOptions, activeCostType, updateDocumentGroup } =
+  const { purposeOptions, activeCostType, updateDocumentGroup, objektID } =
     useBetriebskostenabrechnungStore();
   const isOpen = Object.entries(openDialogByType).some(
     ([key, value]) => key.endsWith("_betriebskostenabrechnung_upload") && value === true

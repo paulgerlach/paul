@@ -8,10 +8,10 @@ export default async function ResultBuildingPDF() {
     return (
         <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
             <Breadcrumb
-                backTitle="Umlageschlüssel"
+                backTitle="Objekte"
                 link={ROUTE_OBJEKTE}
-                title="Betriebskostenabrechnung erstellt"
-                subtitle="Die fertig erstellten Betriebskostenabrechnungen können nun direkt an Ihre Mietparteien versendet oder bei Bedarf angepasst werden. Alle relevanten Zahlungsinformationen sind bereits automatisiert im Dokument hinterlegt."
+                title="Detailansicht"
+                subtitle="Die fertig erstellten Betriebskostenabrechnung können nun die "
             />
             <ContentWrapper className="space-y-4">
                 <BetriebskostenabrechnungPdf />

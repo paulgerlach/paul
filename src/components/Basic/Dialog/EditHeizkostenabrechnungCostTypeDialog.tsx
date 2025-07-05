@@ -15,6 +15,7 @@ import FormTagsInput from "@/components/Admin/Forms/FormTagsInput";
 import { createCostType } from "@/actions/create/createCostType";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { useEffect } from "react";
+import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -55,6 +56,8 @@ export default function EditHeizkostenabrechnungCostTypeDialog() {
     }
   }, [initialValues]);
 
+  useAutoSnakeCase(methods, "name", "type");
+
   if (!isOpen) return null;
 
   return (
@@ -76,12 +79,6 @@ export default function EditHeizkostenabrechnungCostTypeDialog() {
               toast.error("Fehler beim Speichern.");
             }
           })}>
-          <FormInputField<AddCostTypeDialogFormValues>
-            control={methods.control}
-            name="type"
-            label="Typ*"
-            placeholder=""
-          />
           <FormInputField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="name"

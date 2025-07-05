@@ -1,36 +1,19 @@
 "use client";
 
+import { useReceiptAmounts } from '@/hooks/useReceiptAmounts';
 import { useBetriebskostenabrechnungStore } from '@/store/useBetriebskostenabrechnungStore';
 import { formatEuro } from '@/utils';
 import React from 'react';
 
-export default function NebenkostenabrechnungPreview() {
+export default function BetriebskostenabrechnungPreview() {
     const { documentGroups, getFormattedDates } = useBetriebskostenabrechnungStore();
     const { start_date, end_date } = getFormattedDates();
 
-    const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
-        const groupTotal =
-            group.data?.reduce((sum, item) => {
-                if (item.for_all_tenants) {
-                    return sum + Number(item.total_amount || 0);
-                }
-                return sum;
-            }, 0) || 0;
-        return acc + groupTotal;
-    }, 0);
-
-    const totalDirectCosts = documentGroups.reduce((acc, group) => {
-        const groupTotal =
-            group.data?.reduce((sum, item) => {
-                if (!item.for_all_tenants) {
-                    return sum + Number(item.total_amount || 0);
-                }
-                return sum;
-            }, 0) || 0;
-        return acc + groupTotal;
-    }, 0);
-
-    const totalAmount = totalSpreadedAmount + totalDirectCosts;
+    const { totalAmount, totalSpreadedAmount, totalDirectCosts } = useReceiptAmounts({
+        documentGroups,
+        start_date,
+        end_date,
+    });
 
     return (
         <div className="grid grid-cols-2 gap-5 mx-auto">

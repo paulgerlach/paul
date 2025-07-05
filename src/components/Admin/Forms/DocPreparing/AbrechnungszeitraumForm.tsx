@@ -12,7 +12,6 @@ import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
-import { differenceInMonths } from "date-fns";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce

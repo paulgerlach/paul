@@ -239,11 +239,17 @@ import cost_type_pipe from "@/asset/cost_type_pipe.png";
 import cost_type_water_drop from "@/asset/cost_type_water_drop.png";
 import admin_logo from "@/asset/admin_logo.png";
 import objekte_placeholder from "@/asset/objekte_placeholder.png";
+import cost_type_plus from "@/asset/cost_type_plus.png";
+import gmail from "@/asset/gmail.png";
+import doc_download from "@/asset/doc_download.png";
 
 export {
   accentro_colored,
   cold_water,
+  cost_type_plus,
   lamp,
+  doc_download,
+  gmail,
   objekte_placeholder,
   admin_logo,
   cost_type_cleaning,

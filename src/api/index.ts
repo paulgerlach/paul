@@ -9,10 +9,22 @@ import {
   objekte,
   locals,
   doc_cost_category,
+  operating_cost_documents,
+  invoice_documents,
 } from "@/db/drizzle/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, gte, lte, or, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
+import type {
+  ContractorType,
+  ContractType,
+  DocCostCategoryType,
+  InvoiceDocumentType,
+  LocalType,
+  ObjektType,
+  OperatingCostDocumentType
+} from "@/types";
 
 interface MeterReading {
   "Frame Type": string;
@@ -87,67 +99,6 @@ interface ParsedDataState {
   error: string | null;
 }
 
-// export const fetchCsvData = async (): Promise<Record<string, string>[]> => {
-//   const filePath = path.resolve(process.cwd(), "public/data/Gateway-CSV.csv");
-
-//   try {
-//     let text = await fs.readFile(filePath, "utf-8");
-
-//     // Remove BOM and normalize line endings
-//     text = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
-
-//     return new Promise((resolve, reject) => {
-//       // First, parse just the header row manually
-//       const [headerLine] = text.split("\n");
-//       let rawHeaders = headerLine.split(",");
-
-//       // De-duplicate headers if necessary
-//       const seen = new Set();
-//       const dedupedHeaders = rawHeaders.map((h, i) => {
-//         let name = h.trim();
-//         if (!name) name = `Column_${i}`;
-//         let uniqueName = name;
-//         let counter = 1;
-//         while (seen.has(uniqueName)) {
-//           uniqueName = `${name}_${counter++}`;
-//         }
-//         seen.add(uniqueName);
-//         return uniqueName;
-//       });
-
-//       // Parse the data
-//       Papa.parse(text, {
-//         header: false, // we'll apply our own headers
-//         skipEmptyLines: true,
-//         delimiter: ",",
-//         quoteChar: '"',
-//         complete: (results) => {
-//           const [, ...rows] = results.data as string[][];
-//           const validRows = rows
-//             .filter((row) => row.length === dedupedHeaders.length)
-//             .map((row) => {
-//               const obj: Record<string, string> = {};
-//               dedupedHeaders.forEach((key, i) => {
-//                 obj[key] = row[i] ?? "";
-//               });
-//               return obj;
-//             });
-
-//           if (validRows.length === 0) {
-//             reject(new Error("No valid rows found in CSV"));
-//           } else {
-//             resolve(validRows);
-//           }
-//         },
-//         error: reject,
-//       });
-//     });
-//   } catch (err) {
-//     console.error("CSV file not found at:", filePath);
-//     throw err;
-//   }
-// };
-
 export const parseCSV = async () => {
   try {
     // Read the CSV file
@@ -181,14 +132,7 @@ export const parseCSV = async () => {
 
 export async function getSignedUrlsForObject(objectId: string) {
   const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await getAuthenticatedServerUser();
 
   const files = await database
     .select()
@@ -231,16 +175,9 @@ export async function getSignedUrlsForObject(objectId: string) {
 export async function getContractByID(
   contractID: string,
   withContractor = false
-) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+): Promise<{ contract: ContractType; mainContractor?: ContractorType | null }> {
 
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await getAuthenticatedServerUser();
 
   const contract = await database
     .select()
@@ -270,41 +207,57 @@ export async function getContractByID(
   return { contract: contract[0], mainContractor };
 }
 
-export async function getContractsByLocalID(localID?: string) {
+export async function getContractsByLocalID(
+  localID?: string,
+): Promise<ContractType[]> {
   if (!localID) {
     throw new Error("Missing localID");
   }
 
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await getAuthenticatedServerUser();
 
   const result = await database
     .select()
     .from(contracts)
     .where(
-      and(eq(contracts.local_id, localID), eq(contracts.user_id, user.id))
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, user.id)
+      )
     );
 
   return result;
 }
 
-export async function getRelatedContractors(contractID: string) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
+export async function getActiveContractByLocalID(
+  localID?: string,
+): Promise<ContractType> {
+  if (!localID) {
+    throw new Error("Missing localID");
   }
+
+  const user = await getAuthenticatedServerUser();
+
+  const result = await database
+    .select()
+    .from(contracts)
+    .where(
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, user.id),
+        eq(contracts.is_current, true),
+      )
+    ).then((res) => res[0]);
+
+  return result;
+}
+
+export async function getRelatedContractors(contractID?: string): Promise<ContractorType[]> {
+  if (!contractID) {
+    throw new Error("Missing contractID");
+  }
+
+  const user = await getAuthenticatedServerUser();
 
   const contractorsData = await database
     .select()
@@ -319,16 +272,8 @@ export async function getRelatedContractors(contractID: string) {
   return contractorsData;
 }
 
-export async function getObjekts() {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+export async function getObjekts(): Promise<ObjektType[]> {
+  const user = await getAuthenticatedServerUser();
 
   const objekts = await database
     .select()
@@ -338,7 +283,7 @@ export async function getObjekts() {
   return objekts;
 }
 
-export async function getObjectById(objectId: string) {
+export async function getObjectById(objectId: string): Promise<ObjektType> {
   const object = await database
     .select()
     .from(objekte)
@@ -348,7 +293,7 @@ export async function getObjectById(objectId: string) {
   return object;
 }
 
-export async function getRelatedLocalsByObjektId(objektID: string) {
+export async function getRelatedLocalsByObjektId(objektID: string): Promise<LocalType[]> {
   const relatedLocals = await database
     .select()
     .from(locals)
@@ -357,64 +302,7 @@ export async function getRelatedLocalsByObjektId(objektID: string) {
   return relatedLocals;
 }
 
-export async function getBasicBetriebskostenabrechnungDocCostCategoryTypes() {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const types = await database
-    .select()
-    .from(doc_cost_category)
-    .where(
-      and(
-        eq(doc_cost_category.document_type, "betriebskostenabrechnung"),
-        isNull(doc_cost_category.user_id)
-      )
-    );
-
-  return types;
-}
-
-export async function getBasicHeizkostenabrechnungDocCostCategoryTypes() {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const types = await database
-    .select()
-    .from(doc_cost_category)
-    .where(
-      and(
-        eq(doc_cost_category.document_type, "heizkostenabrechnung"),
-        isNull(doc_cost_category.user_id)
-      )
-    );
-
-  return types;
-}
-
-export async function getLocalById(localId: string) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+export async function getLocalById(localId: string): Promise<LocalType> {
 
   const local = await database
     .select()
@@ -425,18 +313,11 @@ export async function getLocalById(localId: string) {
   return local;
 }
 
-export async function getUserBetriebskostenabrechnungDocCostCategoryTypes(
+export async function getDocCostCategoryTypes(
+  documentType: "betriebskostenabrechnung" | "heizkostenabrechnung" = "betriebskostenabrechnung",
   userIdParam?: string
-) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
+): Promise<DocCostCategoryType[]> {
+  const user = await getAuthenticatedServerUser();
 
   const isAdmin = await isAdminUser(user.id);
 
@@ -447,7 +328,7 @@ export async function getUserBetriebskostenabrechnungDocCostCategoryTypes(
     .from(doc_cost_category)
     .where(
       and(
-        eq(doc_cost_category.document_type, "betriebskostenabrechnung"),
+        eq(doc_cost_category.document_type, documentType),
         eq(doc_cost_category.user_id, userIdToQuery)
       )
     );
@@ -455,26 +336,25 @@ export async function getUserBetriebskostenabrechnungDocCostCategoryTypes(
   return types;
 }
 
-export async function getUserHeizkostenabrechnungDocCostCategoryTypes() {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+export async function getOperatingCostDocumentByID(docId: string): Promise<OperatingCostDocumentType> {
+  const user = await getAuthenticatedServerUser();
 
-  if (error || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const types = await database
+  const document = await database
     .select()
-    .from(doc_cost_category)
-    .where(
-      and(
-        eq(doc_cost_category.document_type, "heizkostenabrechnung"),
-        eq(doc_cost_category.user_id, user.id)
-      )
-    );
+    .from(operating_cost_documents)
+    .where(and(eq(operating_cost_documents.id, docId), eq(operating_cost_documents.user_id, user.id)))
+    .then((res) => res[0]);
 
-  return types;
+  return document;
+}
+
+export async function getInvoicesByOperatingCostDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
+  const user = await getAuthenticatedServerUser();
+
+  const invoices = await database
+    .select()
+    .from(invoice_documents)
+    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, user.id)));
+
+  return invoices;
 }

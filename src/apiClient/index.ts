@@ -1,19 +1,13 @@
 "use client";
 
-import type { UploadDocumentArgs } from "@/types";
+import type { ContractorType, ContractType, InvoiceDocumentType, LocalType, ObjektType, OperatingCostDocumentType, UploadDocumentArgs } from "@/types";
+import { getAuthenticatedUser } from "@/utils/auth";
 import { sanitizeFileName } from "@/utils/client";
 import { supabase } from "@/utils/supabase/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-async function getContractsByLocalID(localID?: string) {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
+async function getContractsByLocalID(localID?: string): Promise<ContractType[]> {
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("contracts")
@@ -36,15 +30,30 @@ export function useContractsByLocalID(localID?: string) {
   });
 }
 
-async function getContractorsByContractID(contractID?: string) {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
+async function getLocalsByObjektID(objektID?: string): Promise<LocalType[]> {
 
-  if (authError || !user) {
-    throw new Error("Unauthorized");
+  const { data, error } = await supabase
+    .from("locals")
+    .select("*")
+    .eq("objekt_id", objektID);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
   }
+
+  return data;
+}
+
+export function useLocalsByObjektID(objektID?: string) {
+  return useQuery({
+    queryKey: ["locals", objektID],
+    queryFn: () => getLocalsByObjektID(objektID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getContractorsByContractID(contractID?: string): Promise<ContractorType[]> {
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("contractors")
@@ -76,14 +85,7 @@ export const useUploadDocuments = () => {
     }: UploadDocumentArgs) => {
       const uploaded = [];
 
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError || !user) {
-        throw new Error("Unauthorized");
-      }
+      const user = await getAuthenticatedUser();
 
       for (const file of files) {
         const sanitizedFileName = sanitizeFileName(file.name);
@@ -129,14 +131,7 @@ export const fetchStreetsByZip = async (zip: string): Promise<string[]> => {
 };
 
 async function getObjektsWithLocals() {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("objekte")
@@ -158,82 +153,13 @@ export function useObjektsWithLocals() {
   });
 }
 
-async function getBasicBetriebskostenabrechnungDocCostCategoryTypes() {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
+async function getDocCostCategoryTypes(documentType: "betriebskostenabrechnung" | "heizkostenabrechnung") {
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
     .from("doc_cost_category")
     .select("*")
-    .eq("document_type", "betriebskostenabrechnung")
-    .eq("user_id", null);
-
-  if (error) {
-    throw new Error(`Failed to fetch contracts: ${error.message}`);
-  }
-
-  return data;
-}
-
-export function useBasicBetriebskostenabrechnungDocCostCategoryTypes() {
-  return useQuery({
-    queryKey: ["doc_cost_category_betriebskostenabrechnung"],
-    queryFn: () => getBasicBetriebskostenabrechnungDocCostCategoryTypes(),
-    refetchOnWindowFocus: false,
-  });
-}
-
-async function getBasicHeizkostenabrechnungDocCostCategoryTypes() {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const { data, error } = await supabase
-    .from("doc_cost_category")
-    .select("*")
-    .eq("document_type", "heizkostenabrechnung")
-    .eq("user_id", null);
-
-  if (error) {
-    throw new Error(`Failed to fetch contracts: ${error.message}`);
-  }
-
-  return data;
-}
-
-export function useBasicHeizkostenabrechnungDocCostCategoryTypes() {
-  return useQuery({
-    queryKey: ["doc_cost_category_heizkostenabrechnung"],
-    queryFn: () => getBasicHeizkostenabrechnungDocCostCategoryTypes(),
-    refetchOnWindowFocus: false,
-  });
-}
-
-async function getUserBetriebskostenabrechnungDocCostCategoryTypes() {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
-
-  const { data, error } = await supabase
-    .from("doc_cost_category")
-    .select("*")
-    .eq("document_type", "betriebskostenabrechnung")
+    .eq("document_type", documentType)
     .eq("user_id", user.id);
 
   if (error) {
@@ -243,28 +169,46 @@ async function getUserBetriebskostenabrechnungDocCostCategoryTypes() {
   return data;
 }
 
-export function useUserBetriebskostenabrechnungDocCostCategoryTypes() {
+export function useDocCostCategoryTypes(documentType: "betriebskostenabrechnung" | "heizkostenabrechnung" = "betriebskostenabrechnung") {
   return useQuery({
-    queryKey: ["doc_cost_user_category_betriebskostenabrechnung"],
-    queryFn: () => getUserBetriebskostenabrechnungDocCostCategoryTypes(),
+    queryKey: ["doc_cost_user_category", documentType],
+    queryFn: () => getDocCostCategoryTypes(documentType),
     refetchOnWindowFocus: false,
   });
 }
 
-async function getUserHeizkostenabrechnungDocCostCategoryTypes() {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error("Unauthorized");
-  }
+async function getOperatingCostDocumentByID({ id }: { id: string }): Promise<OperatingCostDocumentType> {
+  const user = await getAuthenticatedUser();
 
   const { data, error } = await supabase
-    .from("doc_cost_category")
+    .from("operating_cost_documents")
     .select("*")
-    .eq("document_type", "heizkostenabrechnung")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useOperatingCostDocumentByID(docId: string) {
+  return useQuery({
+    queryKey: ["operating_cost_document", docId],
+    queryFn: () => getOperatingCostDocumentByID({ id: docId }),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getInvoicesByOperatingCostDocumentID({ id }: { id: string }): Promise<InvoiceDocumentType[]> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("invoice_documents")
+    .select("*")
+    .eq("operating_doc_id", id)
     .eq("user_id", user.id);
 
   if (error) {
@@ -274,10 +218,62 @@ async function getUserHeizkostenabrechnungDocCostCategoryTypes() {
   return data;
 }
 
-export function useUserHeizkostenabrechnungDocCostCategoryTypes() {
+export function useInvoicesByOperatingCostDocumentID(docId: string) {
   return useQuery({
-    queryKey: ["doc_cost_user_category_heizkostenabrechnung"],
-    queryFn: () => getUserHeizkostenabrechnungDocCostCategoryTypes(),
+    queryKey: ["invoice_documents", docId],
+    queryFn: () => getInvoicesByOperatingCostDocumentID({ id: docId }),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getLocalByID(localID: string): Promise<LocalType> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("locals")
+    .select("*")
+    .eq("id", localID)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch local: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useLocalByID(localID?: string) {
+  return useQuery({
+    queryKey: ["local", localID],
+    queryFn: () => getLocalByID(localID!),
+    enabled: !!localID,
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getObjectById(objectID: string): Promise<ObjektType> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("objekte")
+    .select("*")
+    .eq("id", objectID)
+    .eq("user_id", user.id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch local: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useObjectById(objectID?: string) {
+  return useQuery({
+    queryKey: ["local", objectID],
+    queryFn: () => getObjectById(objectID!),
+    enabled: !!objectID,
     refetchOnWindowFocus: false,
   });
 }

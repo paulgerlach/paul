@@ -12,9 +12,10 @@ import FormInputField from "@/components/Admin/Forms/FormInputField";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import { toast } from "sonner";
 import FormTagsInput from "@/components/Admin/Forms/FormTagsInput";
-import { updateOrCreateCostType } from "@/actions/edit/editCostType";
+import { editCostType } from "@/actions/edit/editCostType";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -55,6 +56,8 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
     }
   }, [initialValues]);
 
+  useAutoSnakeCase(methods, "name", "type");
+
   if (!isOpen) return null;
 
   return (
@@ -68,7 +71,7 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
           id="cost_type_betriebskostenabrechnung_edit-dialog-form"
           onSubmit={methods.handleSubmit(async (data) => {
             try {
-              await updateOrCreateCostType(data, "betriebskostenabrechnung", itemID);
+              await editCostType(data, "betriebskostenabrechnung", itemID ?? "");
               toast.success("Ausgabe wurde hinzugefügt.");
               methods.reset(defaultValues);
               closeDialog("cost_type_betriebskostenabrechnung_edit");
@@ -76,12 +79,6 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
               toast.error("Fehler beim Speichern.");
             }
           })}>
-          <FormInputField<AddCostTypeDialogFormValues>
-            control={methods.control}
-            name="type"
-            label="Typ*"
-            placeholder=""
-          />
           <FormInputField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="name"

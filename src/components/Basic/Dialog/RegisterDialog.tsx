@@ -95,6 +95,28 @@ export default function RegisterDialog() {
       return;
     }
 
+    const { data: defaults, error: defaultsError } = await supabase
+      .from("doc_cost_category_defaults")
+      .select("*");
+
+    if (defaultsError) {
+      console.error("Failed to fetch default categories", defaultsError);
+      return;
+    }
+
+    const toInsert = defaults.map(({ id, ...rest }) => ({
+      ...rest,
+      user_id: user.id,
+    }));
+
+    const { error: defaultsInsertError } = await supabase
+      .from("doc_cost_category")
+      .insert(toInsert);
+
+    if (defaultsInsertError) {
+      console.error("Failed to insert default categories", defaultsInsertError);
+    }
+
     toast.success("Registrierung erfolgreich!");
     await router.push(ROUTE_DASHBOARD);
     closeDialog("register");
@@ -107,7 +129,8 @@ export default function RegisterDialog() {
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
             method="dialog"
-            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6">
+            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6"
+          >
             <h2 className="text-3xl font-bold text-darkest-text">
               Konto erstellen
             </h2>
@@ -154,7 +177,8 @@ export default function RegisterDialog() {
               {[domus, immoware24, matera].map((icon, idx) => (
                 <div
                   key={idx}
-                  className="rounded bg-base-bg flex items-center justify-center py-4 px-7">
+                  className="rounded bg-base-bg flex items-center justify-center py-4 px-7"
+                >
                   <Image
                     width={0}
                     height={0}
@@ -171,7 +195,8 @@ export default function RegisterDialog() {
             <Button
               type="submit"
               className="mt-6 flex w-fit mx-auto px-[104px] py-5 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
-              disabled={methods.formState.isSubmitting}>
+              disabled={methods.formState.isSubmitting}
+            >
               {methods.formState.isSubmitting
                 ? "Registrieren..."
                 : "Registrieren"}

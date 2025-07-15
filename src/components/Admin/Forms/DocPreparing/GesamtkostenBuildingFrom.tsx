@@ -7,45 +7,27 @@ import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import CostTypesBuildingAccordion from "../../Docs/CostTypes/CostTypesBuildingAccordion";
 import type { DocCostCategoryType } from "@/types";
 import { useEffect } from "react";
-import { type BetriebskostenabrechnungCostType, useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
+import { formatEuro } from "@/utils";
 
 export default function GesamtkostenBuildingFrom({
   objektId,
-  basicDocCosyCategories,
+  operatingDocId,
   userDocCostCategories
 }: {
   objektId: string;
+  operatingDocId: string;
   userDocCostCategories: DocCostCategoryType[];
-  basicDocCosyCategories: DocCostCategoryType[];
 }) {
   const { setDocumentGroups, documentGroups } = useBetriebskostenabrechnungStore();
 
-  const toBetriebskostenabrechnungCostType = (
-    doc: DocCostCategoryType
-  ): BetriebskostenabrechnungCostType => {
-    return {
+  useEffect(() => {
+    const groups = userDocCostCategories.map((doc) => ({
       ...doc,
       data: []
-    };
-  }
-
-  useEffect(() => {
-    const mergedByType = new Map<string, BetriebskostenabrechnungCostType>();
-
-    userDocCostCategories.forEach((doc) => {
-      if (doc.type) {
-        mergedByType.set(doc.type, toBetriebskostenabrechnungCostType(doc));
-      }
-    });
-
-    basicDocCosyCategories.forEach((doc) => {
-      if (doc.type && !mergedByType.has(doc.type)) {
-        mergedByType.set(doc.type, toBetriebskostenabrechnungCostType(doc));
-      }
-    });
-
-    setDocumentGroups(Array.from(mergedByType.values()));
-  }, [userDocCostCategories, basicDocCosyCategories, setDocumentGroups]);
+    }));
+    setDocumentGroups(groups);
+  }, [userDocCostCategories, setDocumentGroups]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =
@@ -72,10 +54,10 @@ export default function GesamtkostenBuildingFrom({
               alt="admin_form_info"
             />
           </h2>
-          <span>{totalAmount} €</span>
+          <span>{formatEuro(totalAmount)}</span>
         </div>
         <h2 className="font-bold text-admin_dark_text">Kostenarten</h2>
-        <CostTypesBuildingAccordion objektId={objektId} />
+        <CostTypesBuildingAccordion objektId={objektId} operatingDocId={operatingDocId} />
         <div className="flex items-center justify-between">
           <Link
             href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`}
@@ -83,7 +65,7 @@ export default function GesamtkostenBuildingFrom({
             Zurück
           </Link>
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/umlageschlussel`}
+            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/umlageschlussel`}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm">
             Weiter
           </Link>

@@ -19,6 +19,7 @@ export type CostTypeBuildingItemProps = {
   onClick: (index: number) => void;
   type: BetriebskostenabrechnungCostType;
   objektId: string;
+  operatingDocId: string;
 };
 
 export default function CostTypeBuildingItem({
@@ -27,10 +28,11 @@ export default function CostTypeBuildingItem({
   onClick,
   type,
   objektId,
+  operatingDocId,
 }: CostTypeBuildingItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setObjektID, setPurposeOptions } =
+  const { setActiveCostType, setObjektID, setPurposeOptions, setOperatingDocID } =
     useBetriebskostenabrechnungStore();
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function CostTypeBuildingItem({
   const handleOpenDialog = () => {
     setActiveCostType(type.type);
     setObjektID(objektId);
+    setOperatingDocID(operatingDocId);
     setPurposeOptions();
     openDialog(`${type.type}_betriebskostenabrechnung_upload`);
   };
@@ -52,6 +55,8 @@ export default function CostTypeBuildingItem({
     (acc, item) => acc + Number(item.total_amount ?? 0),
     0
   );
+
+  console.log(type)
 
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>

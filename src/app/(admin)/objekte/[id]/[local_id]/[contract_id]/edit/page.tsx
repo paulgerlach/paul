@@ -39,7 +39,7 @@ export default async function EditContractPage({
             localID={local_id}
             uploadedDocuments={documentFilesUrls}
             initialValues={{
-              is_current: contract.is_current,
+              is_current: contract.is_current ? contract.is_current : false,
               additional_costs: Number(contract.additional_costs),
               cold_rent: Number(contract.cold_rent),
               deposit: Number(contract.deposit),

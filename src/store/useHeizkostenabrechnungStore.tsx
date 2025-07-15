@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { format } from "date-fns";
-import type { DocCostCategoryType, HeatingBillDocumentType } from "@/types";
+import type { DocCostCategoryType, InvoiceDocumentType } from "@/types";
 
 export type HeizkostenabrechnungCostType = Partial<DocCostCategoryType> & {
-  data: (Partial<HeatingBillDocumentType> & { document?: File[] })[];
+  data: (Partial<InvoiceDocumentType> & { document?: File[] })[];
 };
 
 export type HeizkostenabrechnungStoreType = {
@@ -18,7 +18,7 @@ export type HeizkostenabrechnungStoreType = {
   addDocumentGroup: (group: HeizkostenabrechnungCostType) => void;
   updateDocumentGroup: (
     key: HeizkostenabrechnungCostType["type"],
-    newItem: Partial<HeatingBillDocumentType> & { document?: File[] }
+    newItem: Partial<InvoiceDocumentType> & { document?: File[] }
   ) => void;
   removeDocumentGroup: (key: HeizkostenabrechnungCostType["type"]) => void;
   purposeOptions: string[];
@@ -30,7 +30,7 @@ export type HeizkostenabrechnungStoreType = {
   updateDocumentGroupValues: (
     key: HeizkostenabrechnungCostType["type"],
     index: number,
-    values: Partial<HeatingBillDocumentType> & { document?: File }
+    values: Partial<InvoiceDocumentType> & { document?: File }
   ) => void;
   getDocumentGroupByType: (
     key: HeizkostenabrechnungCostType["type"]

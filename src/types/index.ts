@@ -4,10 +4,11 @@ import {
   contractors,
   objekte,
   locals,
-  heating_bill_documents,
+  invoice_documents,
   doc_cost_category,
   doc_cost_category_allocation_key,
   doc_cost_category_document_type,
+  operating_cost_documents,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -102,8 +103,9 @@ export type ObjektType = InferInsertModel<typeof objekte>;
 
 export type LocalType = InferInsertModel<typeof locals>;
 
-export type HeatingBillDocumentType = InferInsertModel<
-  typeof heating_bill_documents
+export type InvoiceDocumentType = InferInsertModel<typeof invoice_documents>;
+export type OperatingCostDocumentType = InferInsertModel<
+  typeof operating_cost_documents
 >;
 
 export type DocCostCategoryType = InferInsertModel<typeof doc_cost_category>;
@@ -143,7 +145,9 @@ export type UploadedDocument = {
   relatedId: string;
 };
 
-export type DialogCostActionType = "heizkostenabrechnung_upload" | "betriebskostenabrechnung_upload";
+export type DialogCostActionType =
+  | "heizkostenabrechnung_upload"
+  | "betriebskostenabrechnung_upload";
 
 export type DialogDocumentCostActionType =
   `${DocCostCategoryType["type"]}_${DialogCostActionType}`;

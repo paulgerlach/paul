@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { format } from "date-fns";
-import type { DocCostCategoryType, HeatingBillDocumentType } from "@/types";
+import type { DocCostCategoryType, InvoiceDocumentType } from "@/types";
 
 export type BetriebskostenabrechnungCostType = Partial<DocCostCategoryType> & {
-  data: (Partial<HeatingBillDocumentType> & { document?: File[] })[];
+  data: (Partial<InvoiceDocumentType> & { document?: File[] })[];
 };
 
 export type BetriebskostenabrechnungStoreType = {
@@ -18,19 +18,21 @@ export type BetriebskostenabrechnungStoreType = {
   addDocumentGroup: (group: BetriebskostenabrechnungCostType) => void;
   updateDocumentGroup: (
     key: BetriebskostenabrechnungCostType["type"],
-    newItem: Partial<HeatingBillDocumentType> & { document?: File[] }
+    newItem: Partial<InvoiceDocumentType> & { document?: File[] }
   ) => void;
   removeDocumentGroup: (key: BetriebskostenabrechnungCostType["type"]) => void;
   purposeOptions: string[];
   setActiveCostType: (key: BetriebskostenabrechnungCostType["type"]) => void;
-  objektID: string | null;
+  objektID?: string;
+  operatingDocID?: string;
   localID: string | null;
   setObjektID: (id: string) => void;
+  setOperatingDocID: (id: string) => void;
   setLocalID: (id: string) => void;
   updateDocumentGroupValues: (
     key: BetriebskostenabrechnungCostType["type"],
     index: number,
-    values: Partial<HeatingBillDocumentType> & { document?: File }
+    values: Partial<InvoiceDocumentType> & { document?: File }
   ) => void;
   getDocumentGroupByType: (
     key: BetriebskostenabrechnungCostType["type"]
@@ -44,11 +46,12 @@ export type BetriebskostenabrechnungStoreType = {
 
 export const useBetriebskostenabrechnungStore =
   create<BetriebskostenabrechnungStoreType>((set, get) => ({
-    start_date: null,
+    start_date: new Date(new Date().getFullYear(), 0, 1),
     end_date: null,
     activeCostType: null,
     documentGroups: [],
-    objektID: null,
+    objektID: undefined,
+    operatingDocID: undefined,
     localID: null,
     purposeOptions: [],
     setDocumentGroups: (groups) => set({
@@ -61,6 +64,10 @@ export const useBetriebskostenabrechnungStore =
     setObjektID: (id) =>
       set(() => ({
         objektID: id,
+      })),
+    setOperatingDocID: (id) =>
+      set(() => ({
+        operatingDocID: id,
       })),
     setActiveCostType: (key) => {
       set(() => ({

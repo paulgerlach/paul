@@ -34,8 +34,8 @@ export default async function EditObjektePage({
               objekt_type: object.objekt_type,
               street: object.street,
               zip: object.zip,
-              buildYear: object.build_year,
-              hasElevator: object.has_elevator,
+              buildYear: object.build_year ?? null,
+              hasElevator: object.has_elevator ?? null,
               landArea: object.land_area || null,
               heating_systems: Array.isArray(object.heating_systems)
                 ? (object.heating_systems as string[])

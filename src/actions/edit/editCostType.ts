@@ -8,23 +8,20 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 
-export async function updateOrCreateCostType(
+export async function editCostType(
   values: AddCostTypeDialogFormValues,
   documentType: DocumentCostType,
-  id?: string
+  id: string
 ) {
   const supabase = await supabaseServer();
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error) {
     throw new Error(`Supabase Auth Error: ${error.message}`);
   }
 
-  if (!user || !id) {
+  if (!user) {
     throw new Error("Nicht authentifiziert");
   }
 
@@ -48,25 +45,18 @@ export async function updateOrCreateCostType(
       options: values.options ?? [],
       user_id: user.id,
       updated_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
+      created_at: current.created_at,
     };
 
-    if (current.user_id === null) {
-      const inserted = await database
-        .insert(doc_cost_category)
-        .values(baseData)
-        .returning();
-      return inserted[0];
-    } else {
-      const updated = await database
-        .update(doc_cost_category)
-        .set({ ...baseData, created_at: current.created_at })
-        .where(eq(doc_cost_category.id, id))
-        .returning();
-      return updated[0];
-    }
+    const updated = await database
+      .update(doc_cost_category)
+      .set(baseData)
+      .where(eq(doc_cost_category.id, id))
+      .returning();
+
+    return updated[0];
   } catch (error) {
-    console.error("Error updating/creating cost type:", error);
+    console.error("Error updating cost type:", error);
     throw error;
   }
 }

@@ -13,6 +13,7 @@ import {
 } from "@/static/icons";
 import type { BuildingType, LocalType, UnitType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
+import { format } from "date-fns";
 import { type StaticImageData } from "next/image";
 import { twMerge } from "tailwind-merge";
 
@@ -197,3 +198,9 @@ export const formatEuro = (value: number) =>
     style: "currency",
     currency: "EUR",
   }).format(value);
+
+export const formatDateGerman = (dateStr?: string) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return format(date, "dd.MM.yyyy");
+};

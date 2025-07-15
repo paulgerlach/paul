@@ -11,6 +11,7 @@ import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
+import { createBuildingDocuments } from "@/actions/create/createBuildingDocuments";
 
 const abrechnungszeitraumBuildingSchema = z.object({
   start_date: z.coerce
@@ -30,7 +31,7 @@ export type AbrechnungszeitraumBuildingFormValues = z.infer<
 >;
 
 const defaultValues: AbrechnungszeitraumBuildingFormValues = {
-  start_date: new Date(),
+  start_date: new Date(new Date().getFullYear(), 0, 1),
   end_date: new Date(),
 };
 
@@ -70,10 +71,24 @@ export default function AbrechnungszeitraumBuildingForm({
           <form
             className="flex flex-col justify-between h-full"
             id="abrechnungszeitraum-form"
-            onSubmit={methods.handleSubmit(() => {
-              router.push(
-                `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/gesamtkosten`
-              );
+            onSubmit={methods.handleSubmit(async (data) => {
+              try {
+                const result = await createBuildingDocuments(objekteID, {
+                  ...data,
+                  start_date: data.start_date?.toISOString() ?? null,
+                  end_date: data.end_date?.toISOString() ?? null,
+                });
+                const insertedDoc = result?.[0];
+                if (insertedDoc?.id) {
+                  router.push(
+                    `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
+                  );
+                } else {
+                  console.error("Kein Dokument wurde erstellt.");
+                }
+              } catch (err) {
+                console.error("Fehler beim Erstellen des Dokuments:", err);
+              }
             })}>
             <div className="space-y-9">
               <div className="space-y-3">
@@ -83,13 +98,13 @@ export default function AbrechnungszeitraumBuildingForm({
                 <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
                   <FormDateInput<AbrechnungszeitraumBuildingFormValues>
                     control={methods.control}
-                    label="Beginn*"
+                    label="Verbrauchabhänig*"
                     name="start_date"
                   />
                   <span className="mt-8 inline-block">-</span>
                   <FormDateInput<AbrechnungszeitraumBuildingFormValues>
                     control={methods.control}
-                    label="Ende*"
+                    label="Wohnflächenanteil*"
                     name="end_date"
                   />
                 </div>

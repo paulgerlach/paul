@@ -65,7 +65,7 @@ export default function HeizkostenabrechnungPage() {
           <Link
             href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4">
-            Jetzt Betriebskosten abrechnen
+            Jetzt Heizkostenabrechnung
           </Link>
         </div>
         <div className="space-y-7">

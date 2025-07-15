@@ -12,7 +12,6 @@ import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
-import { differenceInMonths } from "date-fns";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -37,8 +36,8 @@ export type AbrechnungszeitraumFormValues = z.infer<
 const defaultValues: AbrechnungszeitraumFormValues = {
   start_date: new Date(),
   end_date: new Date(),
-  consumption_dependent: 50,
-  living_space_share: 50,
+  consumption_dependent: 70,
+  living_space_share: 30,
 };
 
 export default function AbrechnungszeitraumForm({
@@ -92,13 +91,13 @@ export default function AbrechnungszeitraumForm({
                 <div className="items-center gap-7 max-xl:gap-3.5 grid grid-cols-[1fr_auto_1fr] w-full">
                   <FormDateInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Beginn*"
+                    label="Verbrauchabhänig*"
                     name="start_date"
                   />
                   <span className="mt-8 inline-block">-</span>
                   <FormDateInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Ende*"
+                    label="Wohnflächenanteil*"
                     name="end_date"
                   />
                 </div>

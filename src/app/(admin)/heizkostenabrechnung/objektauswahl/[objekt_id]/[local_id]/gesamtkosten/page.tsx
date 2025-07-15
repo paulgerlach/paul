@@ -1,4 +1,4 @@
-import { getBasicHeizkostenabrechnungDocCostCategoryTypes, getLocalById, getUserHeizkostenabrechnungDocCostCategoryTypes } from "@/api";
+import { getDocCostCategoryTypes, getLocalById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
@@ -14,8 +14,9 @@ export default async function GesamtkostenPage({
   const { objekt_id, local_id } = await params;
 
   const localData = await getLocalById(local_id);
-  const basicDocCosyCategories = await getBasicHeizkostenabrechnungDocCostCategoryTypes();
-  const userDocCostCategories = await getUserHeizkostenabrechnungDocCostCategoryTypes();
+  const userDocCostCategories = await getDocCostCategoryTypes(
+    "heizkostenabrechnung"
+  );
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -26,8 +27,16 @@ export default async function GesamtkostenPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenForm basicDocCosyCategories={basicDocCosyCategories} userDocCostCategories={userDocCostCategories} objektId={objekt_id} localId={local_id} />
-        <HeizkostenabrechnungReceipt objektId={objekt_id} localId={local_id} title={buildLocalName(localData)} />
+        <GesamtkostenForm
+          userDocCostCategories={userDocCostCategories}
+          objektId={objekt_id}
+          localId={local_id}
+        />
+        <HeizkostenabrechnungReceipt
+          objektId={objekt_id}
+          localId={local_id}
+          title={buildLocalName(localData)}
+        />
       </CreateDocContentWrapper>
     </div>
   );

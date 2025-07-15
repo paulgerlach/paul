@@ -33,15 +33,17 @@ export default async function EditLocalPage({
             localID={local_id}
             uploadedDocuments={documentFilesUrls}
             initialValues={{
-              apartment_type: local.apartment_type,
-              cellar_available: local.cellar_available,
+              apartment_type: local.apartment_type
+                ? local.apartment_type
+                : null,
+              cellar_available: local.cellar_available ?? null,
               floor: local.floor,
               house_fee: Number(local.house_fee),
-              house_location: local.house_location,
+              house_location: local.house_location ?? null,
               living_space: Number(local.living_space),
-              outdoor: local.outdoor,
+              outdoor: local.outdoor ?? null,
               outdoor_area: Number(local.outdoor_area),
-              residential_area: local.residential_area,
+              residential_area: local.residential_area ?? null,
               rooms: Number(local.rooms),
               heating_systems: Array.isArray(local.heating_systems)
                 ? (local.heating_systems as string[])

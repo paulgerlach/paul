@@ -1,6 +1,6 @@
 "use client";
 
-import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { useReceiptAmounts } from "@/hooks/useReceiptAmounts";
 import {
   receipt_building,
   receipt_calendar,
@@ -9,10 +9,7 @@ import {
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import type { ContractType } from "@/types";
 import { formatEuro } from "@/utils";
-import { differenceInMonths } from "date-fns";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export type ReceiptProps = {
   title: string;
@@ -28,65 +25,21 @@ export default function HeizkostenabrechnungReceipt({
   relatedContracts,
 }: ReceiptProps) {
   const { getFormattedDates, documentGroups } = useHeizkostenabrechnungStore();
-  const router = useRouter();
 
   const { start_date, end_date } = getFormattedDates();
 
-  const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
-    const groupTotal =
-      group.data?.reduce((sum, item) => {
-        if (item.for_all_tenants) {
-          return sum + Number(item.total_amount || 0);
-        }
-        return sum;
-      }, 0) || 0;
-    return acc + groupTotal;
-  }, 0);
-
-  const totalDirectCosts = documentGroups.reduce((acc, group) => {
-    const groupTotal =
-      group.data?.reduce((sum, item) => {
-        if (!item.for_all_tenants) {
-          return sum + Number(item.total_amount || 0);
-        }
-        return sum;
-      }, 0) || 0;
-    return acc + groupTotal;
-  }, 0);
-
-  const totalAmount = totalSpreadedAmount + totalDirectCosts;
-
-  useEffect(() => {
-    if (!getFormattedDates().start_date || !getFormattedDates().end_date) {
-      router.push(
-        `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/abrechnungszeitraum`
-      );
-    }
-  }, []);
-
-  const filteredContracts = relatedContracts?.filter((contract) => {
-    if (!contract.rental_start_date || !contract.rental_end_date) return false;
-
-    const rentalStart = new Date(contract.rental_start_date);
-    const rentalEnd = new Date(contract.rental_end_date);
-    const periodStart = new Date(start_date);
-    const periodEnd = new Date(end_date);
-
-    return rentalEnd >= periodStart && rentalStart <= periodEnd;
+  const {
+    totalAmount,
+    totalContractsAmount,
+    totalDiff,
+    totalDirectCosts,
+    totalSpreadedAmount,
+  } = useReceiptAmounts({
+    documentGroups,
+    contracts: relatedContracts,
+    start_date,
+    end_date,
   });
-
-  const monthsDiff =
-    start_date && end_date
-      ? differenceInMonths(new Date(end_date), new Date(start_date))
-      : 0;
-
-  const totalContractsAmount =
-    (filteredContracts ?? []).reduce(
-      (acc, contract) => acc + Number(contract.cold_rent ?? 0),
-      0
-    ) * monthsDiff;
-
-  const totalDiff = totalContractsAmount - totalAmount;
 
   return (
     <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs w-fit rounded-2xl px-4 py-5 flex items-start justify-center">

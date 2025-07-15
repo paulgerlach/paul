@@ -3,7 +3,10 @@
 import { admin_form_info } from "@/static/icons";
 import Image from "next/image";
 import CostTypesAccordion from "../../Docs/CostTypes/CostTypesAccordion";
-import { type HeizkostenabrechnungCostType, useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import {
+  type HeizkostenabrechnungCostType,
+  useHeizkostenabrechnungStore,
+} from "@/store/useHeizkostenabrechnungStore";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { DocCostCategoryType } from "@/types";
@@ -12,42 +15,21 @@ import { useEffect } from "react";
 export default function GesamtkostenForm({
   objektId,
   localId,
-  basicDocCosyCategories,
-  userDocCostCategories
+  userDocCostCategories,
 }: {
   objektId: string;
   localId: string;
   userDocCostCategories: DocCostCategoryType[];
-  basicDocCosyCategories: DocCostCategoryType[];
 }) {
   const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
 
-  const toHeizkostenabrechnungCostType = (
-    doc: DocCostCategoryType
-  ): HeizkostenabrechnungCostType => {
-    return {
-      ...doc,
-      data: []
-    };
-  }
-
   useEffect(() => {
-    const mergedByType = new Map<string, HeizkostenabrechnungCostType>();
-
-    userDocCostCategories.forEach((doc) => {
-      if (doc.type) {
-        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
-      }
-    });
-
-    basicDocCosyCategories.forEach((doc) => {
-      if (doc.type && !mergedByType.has(doc.type)) {
-        mergedByType.set(doc.type, toHeizkostenabrechnungCostType(doc));
-      }
-    });
-
-    setDocumentGroups(Array.from(mergedByType.values()));
-  }, [userDocCostCategories, basicDocCosyCategories, setDocumentGroups]);
+    const groups = userDocCostCategories.map((doc) => ({
+      ...doc,
+      data: [],
+    }));
+    setDocumentGroups(groups);
+  }, [userDocCostCategories, setDocumentGroups]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =
@@ -81,12 +63,14 @@ export default function GesamtkostenForm({
         <div className="flex items-center justify-between">
           <Link
             href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/abrechnungszeitraum`}
-            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+          >
             Zurück
           </Link>
           <Link
             href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/umlageschlussel`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm">
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm"
+          >
             Weiter
           </Link>
         </div>

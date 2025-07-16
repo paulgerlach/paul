@@ -3,10 +3,7 @@
 import { admin_form_info } from "@/static/icons";
 import Image from "next/image";
 import CostTypesAccordion from "../../Docs/CostTypes/CostTypesAccordion";
-import {
-  type HeizkostenabrechnungCostType,
-  useHeizkostenabrechnungStore,
-} from "@/store/useHeizkostenabrechnungStore";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { DocCostCategoryType } from "@/types";
@@ -15,10 +12,12 @@ import { useEffect } from "react";
 export default function GesamtkostenForm({
   objektId,
   localId,
+  docId,
   userDocCostCategories,
 }: {
   objektId: string;
   localId: string;
+  docId: string;
   userDocCostCategories: DocCostCategoryType[];
 }) {
   const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();

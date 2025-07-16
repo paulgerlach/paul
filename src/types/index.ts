@@ -9,6 +9,7 @@ import {
   doc_cost_category_allocation_key,
   doc_cost_category_document_type,
   operating_cost_documents,
+  heating_bill_documents,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -104,6 +105,7 @@ export type ObjektType = InferInsertModel<typeof objekte>;
 export type LocalType = InferInsertModel<typeof locals>;
 
 export type InvoiceDocumentType = InferInsertModel<typeof invoice_documents>;
+export type HeatingBillDocumentType = InferInsertModel<typeof heating_bill_documents>;
 export type OperatingCostDocumentType = InferInsertModel<
   typeof operating_cost_documents
 >;

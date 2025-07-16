@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from "@/components/Basic/ui/Form";
 import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import { cn } from "@/utils";
 import { Control, FieldValues, Path } from "react-hook-form";
 import {
@@ -48,8 +49,13 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                   disabled={disabled}
                   className={
                     "w-full flex items-center justify-between text-left px-6 py-[7px] rounded-md border max-xl:text-sm max-xl:min-h-10 min-h-14 border-black/20 shadow-xs font-normal"
-                  }>
-                  {field.value ? format(field.value, "PPP") : <span>-</span>}
+                  }
+                >
+                  {field.value ? (
+                    format(field.value, "dd.MM.yyyy", { locale: de })
+                  ) : (
+                    <span>-</span>
+                  )}
                   <Image
                     width={0}
                     height={0}
@@ -65,7 +71,8 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
             <PopoverContent
               disablePortal
               className="border-none shadow-none w-fit p-0 relative"
-              align="start">
+              align="start"
+            >
               <Calendar
                 mode="single"
                 selected={field.value}

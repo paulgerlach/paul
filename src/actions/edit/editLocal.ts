@@ -3,20 +3,14 @@
 import { type EditObjekteUnitFormValues } from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
 import database from "@/db";
 import { locals } from "@/db/drizzle/schema";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq } from "drizzle-orm";
 
 export async function editLocal(
   localId: string,
   formData: EditObjekteUnitFormValues
 ) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) throw new Error(`Supabase Auth Error: ${error.message}`);
+  const user = await getAuthenticatedServerUser();
   if (!user) throw new Error("Nicht authentifiziert");
 
   const updateData = {

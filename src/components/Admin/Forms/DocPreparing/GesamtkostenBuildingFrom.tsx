@@ -13,18 +13,19 @@ import { formatEuro } from "@/utils";
 export default function GesamtkostenBuildingFrom({
   objektId,
   operatingDocId,
-  userDocCostCategories
+  userDocCostCategories,
 }: {
   objektId: string;
   operatingDocId: string;
   userDocCostCategories: DocCostCategoryType[];
 }) {
-  const { setDocumentGroups, documentGroups } = useBetriebskostenabrechnungStore();
+  const { setDocumentGroups, documentGroups } =
+    useBetriebskostenabrechnungStore();
 
   useEffect(() => {
     const groups = userDocCostCategories.map((doc) => ({
       ...doc,
-      data: []
+      data: [],
     }));
     setDocumentGroups(groups);
   }, [userDocCostCategories, setDocumentGroups]);
@@ -57,16 +58,21 @@ export default function GesamtkostenBuildingFrom({
           <span>{formatEuro(totalAmount)}</span>
         </div>
         <h2 className="font-bold text-admin_dark_text">Kostenarten</h2>
-        <CostTypesBuildingAccordion objektId={objektId} operatingDocId={operatingDocId} />
+        <CostTypesBuildingAccordion
+          objektId={objektId}
+          operatingDocId={operatingDocId}
+        />
         <div className="flex items-center justify-between">
           <Link
             href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`}
-            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+          >
             Zurück
           </Link>
           <Link
             href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/umlageschlussel`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm">
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm"
+          >
             Weiter
           </Link>
         </div>

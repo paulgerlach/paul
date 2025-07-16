@@ -12,6 +12,7 @@ import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { createHeatingBillDocuments } from "@/actions/create/createHeatingBillDocuments";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -27,7 +28,6 @@ const abrechnungszeitraumSchema = z.object({
   consumption_dependent: z.coerce.number().min(0, "Pflichtfeld"),
   living_space_share: z.coerce.number().min(0, "Pflichtfeld"),
 });
-
 
 export type AbrechnungszeitraumFormValues = z.infer<
   typeof abrechnungszeitraumSchema
@@ -78,11 +78,32 @@ export default function AbrechnungszeitraumForm({
           <form
             className="flex flex-col justify-between h-full"
             id="abrechnungszeitraum-form"
-            onSubmit={methods.handleSubmit(() => {
-              router.push(
-                `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${localId}/gesamtkosten`
-              );
-            })}>
+            onSubmit={methods.handleSubmit(async (data) => {
+              try {
+                const result = await createHeatingBillDocuments(
+                  objekteID,
+                  localId,
+                  {
+                    ...data,
+                    start_date: data.start_date?.toISOString() ?? null,
+                    end_date: data.end_date?.toISOString() ?? null,
+                    consumption_dependent: String(data.consumption_dependent),
+                    living_space_share: String(data.living_space_share),
+                  }
+                );
+                const insertedDoc = result?.[0];
+                if (insertedDoc?.id) {
+                  router.push(
+                    `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${localId}/${insertedDoc.id}/gesamtkosten`
+                  );
+                } else {
+                  console.error("Kein Dokument wurde erstellt.");
+                }
+              } catch (err) {
+                console.error("Fehler beim Erstellen des Dokuments:", err);
+              }
+            })}
+          >
             <div className="space-y-9 max-xl:space-y-4">
               <div className="space-y-3">
                 <h2 className="font-bold text-admin_dark_text">
@@ -140,7 +161,8 @@ export default function AbrechnungszeitraumForm({
             <div className="flex items-center justify-between">
               <Link
                 href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}`}
-                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+              >
                 Zurück
               </Link>
               <Button type="submit">Weiter</Button>

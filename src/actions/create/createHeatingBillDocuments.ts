@@ -2,14 +2,15 @@
 
 import database from "@/db";
 import {
-  operating_cost_documents,
+  heating_bill_documents
 } from "@/db/drizzle/schema";
-import type { OperatingCostDocumentType } from "@/types";
+import type { HeatingBillDocumentType } from "@/types";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
-export async function createBuildingDocuments(
+export async function createHeatingBillDocuments(
   objectID: string,
-  mainDocumentData: OperatingCostDocumentType
+  localID: string,
+  mainDocumentData: HeatingBillDocumentType
 ) {
   const user = await getAuthenticatedServerUser();
 
@@ -17,7 +18,7 @@ export async function createBuildingDocuments(
     throw new Error("Nicht authentifiziert");
   }
 
-  const insertedDocumentData: OperatingCostDocumentType = {
+  const insertedDocumentData: HeatingBillDocumentType = {
     ...mainDocumentData,
     user_id: user.id,
     start_date: mainDocumentData.start_date
@@ -25,13 +26,16 @@ export async function createBuildingDocuments(
       : null,
     end_date: mainDocumentData.end_date ? mainDocumentData.end_date : null,
     objekt_id: objectID,
+    local_id: localID,
+    consumption_dependent: mainDocumentData.consumption_dependent,
+    living_space_share: mainDocumentData.living_space_share,
     created_at: new Date().toISOString(),
   };
 
 
   try {
     return await database
-      .insert(operating_cost_documents)
+      .insert(heating_bill_documents)
       .values(insertedDocumentData)
       .returning();
   } catch (err) {

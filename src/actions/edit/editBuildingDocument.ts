@@ -5,23 +5,14 @@ import {
     operating_cost_documents,
 } from "@/db/drizzle/schema";
 import { OperatingCostDocumentType } from "@/types";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq } from "drizzle-orm";
 
 export async function editBuildingDocument(
     documentID: string,
     updatedDocumentData: Partial<OperatingCostDocumentType>
 ) {
-    const supabase = await supabaseServer();
-
-    const {
-        data: { user },
-        error,
-    } = await supabase.auth.getUser();
-
-    if (error) {
-        throw new Error(`Supabase Auth Error: ${error.message}`);
-    }
+    const user = await getAuthenticatedServerUser();
 
     if (!user) {
         throw new Error("Nicht authentifiziert");

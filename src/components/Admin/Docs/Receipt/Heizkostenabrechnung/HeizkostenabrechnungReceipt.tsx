@@ -13,15 +13,11 @@ import Image from "next/image";
 
 export type ReceiptProps = {
   title: string;
-  objektId?: string;
-  localId?: string;
   relatedContracts?: ContractType[];
 };
 
 export default function HeizkostenabrechnungReceipt({
   title,
-  objektId,
-  localId,
   relatedContracts,
 }: ReceiptProps) {
   const { getFormattedDates, documentGroups } = useHeizkostenabrechnungStore();
@@ -79,7 +75,9 @@ export default function HeizkostenabrechnungReceipt({
             src={receipt_line}
             alt="receipt_line"
           />
-          <span className="text-3xl text-admin_dark_text">{formatEuro(totalDiff)}</span>
+          <span className="text-3xl text-admin_dark_text">
+            {formatEuro(totalDiff)}
+          </span>
         </div>
         <div className="max-xl:text-sm">
           <div className="pb-4 border-b border-[#e0e0e0] space-y-4 max-xl:space-y-2">
@@ -114,7 +112,9 @@ export default function HeizkostenabrechnungReceipt({
           </div>
           <div className="border-t border-admin_dark_text pt-4 flex items-center justify-between font-bold text-admin_dark_text">
             Differenz
-            <span className="text-[#676767] font-normal">{formatEuro(totalDiff)}</span>
+            <span className="text-[#676767] font-normal">
+              {formatEuro(totalDiff)}
+            </span>
           </div>
         </div>
       </div>

@@ -4,19 +4,13 @@ import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import database from "@/db";
 import { locals, contracts } from "@/db/drizzle/schema";
-import { supabaseServer } from "@/utils/supabase/server";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function deleteContract(contractId: string) {
-  const supabase = await supabaseServer();
+  const user = await getAuthenticatedServerUser();
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (!user || error) {
-    console.error("Auth error:", error);
+  if (!user) {
     throw new Error("Nicht authentifiziert");
   }
 

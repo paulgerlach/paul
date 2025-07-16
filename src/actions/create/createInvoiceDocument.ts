@@ -2,9 +2,9 @@
 
 import { invoice_documents } from "@/db/drizzle/schema";
 import database from "@/db";
-import { supabaseServer } from "@/utils/supabase/server";
 import { type AddDocBetriebskostenabrechnungDialogFormValues } from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
 import type { InvoiceDocumentType } from "@/types";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function createInvoiceDocument(
     formData: AddDocBetriebskostenabrechnungDialogFormValues,
@@ -12,16 +12,7 @@ export async function createInvoiceDocument(
     operatingDocID?: string | null,
     costType?: string | null
 ) {
-    const supabase = await supabaseServer();
-
-    const {
-        data: { user },
-        error,
-    } = await supabase.auth.getUser();
-
-    if (error) {
-        throw new Error(`Supabase Auth Error: ${error.message}`);
-    }
+    const user = await getAuthenticatedServerUser();
 
     if (!user) {
         throw new Error("Nicht authentifiziert");

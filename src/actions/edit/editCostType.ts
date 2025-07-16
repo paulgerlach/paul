@@ -4,7 +4,7 @@ import { AddCostTypeDialogFormValues } from "@/components/Basic/Dialog/AddBetrie
 import database from "@/db";
 import { doc_cost_category } from "@/db/drizzle/schema";
 import type { DocumentCostType } from "@/types";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 
@@ -13,13 +13,7 @@ export async function editCostType(
   documentType: DocumentCostType,
   id: string
 ) {
-  const supabase = await supabaseServer();
-
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(`Supabase Auth Error: ${error.message}`);
-  }
+  const user = await getAuthenticatedServerUser();
 
   if (!user) {
     throw new Error("Nicht authentifiziert");

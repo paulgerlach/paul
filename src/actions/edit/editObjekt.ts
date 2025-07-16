@@ -4,17 +4,12 @@ import { EditObjekteFormValues } from "@/components/Admin/Forms/Edit/EditObjekte
 import database from "@/db";
 import { objekte } from "@/db/drizzle/schema";
 import { eq } from "drizzle-orm";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function editObjekt(id: string, formData: EditObjekteFormValues) {
-  const supabase = await supabaseServer();
+  const user = await getAuthenticatedServerUser();
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (!user || error) {
+  if (!user) {
     throw new Error("Nicht authentifiziert");
   }
 

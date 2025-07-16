@@ -3,17 +3,12 @@
 import { CreateObjekteFormValues } from "@/components/Admin/Forms/Create/CreateObjekteForm";
 import database from "@/db";
 import { objekte } from "@/db/drizzle/schema";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function createObjekt(formData: CreateObjekteFormValues) {
-  const supabase = await supabaseServer();
+  const user = await getAuthenticatedServerUser();
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (!user || error) {
+  if (!user) {
     throw new Error("Nicht authentifiziert");
   }
 

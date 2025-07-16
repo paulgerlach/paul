@@ -3,23 +3,14 @@
 import { type CreateObjekteUnitFormValues } from "@/components/Admin/Forms/Create/CreateObjekteUnitForm";
 import database from "@/db";
 import { locals } from "@/db/drizzle/schema";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { InferInsertModel } from "drizzle-orm";
 
 export async function createLocal(
   formData: CreateObjekteUnitFormValues,
   objekt_id: string
 ) {
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(`Supabase Auth Error: ${error.message}`);
-  }
+  const user = await getAuthenticatedServerUser();
 
   if (!user) {
     throw new Error("Nicht authentifiziert");

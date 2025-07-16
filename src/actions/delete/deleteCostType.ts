@@ -3,19 +3,10 @@
 import database from "@/db";
 import { doc_cost_category } from "@/db/drizzle/schema";
 import { eq } from "drizzle-orm";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function deleteCostType(id: string) {
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(`Supabase Auth Error: ${error.message}`);
-  }
+  const user = await getAuthenticatedServerUser();
 
   if (!user) {
     throw new Error("Nicht authentifiziert");

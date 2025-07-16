@@ -1,9 +1,33 @@
-import { pgTable, pgPolicy, uuid, timestamp, text, foreignKey, boolean, numeric, jsonb, date, unique, varchar, integer, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, uuid, timestamp, boolean, numeric, pgPolicy, text, jsonb, date, unique, varchar, integer, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
 export const doc_cost_category_document_type = pgEnum("doc_cost_category_document_type", ['heizkostenabrechnung', 'betriebskostenabrechnung'])
 
+
+export const heating_bill_documents = pgTable("heating_bill_documents", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	start_date: timestamp({ withTimezone: true, mode: 'string' }),
+	end_date: timestamp({ withTimezone: true, mode: 'string' }),
+	objekt_id: uuid().defaultRandom(),
+	user_id: uuid(),
+	submited: boolean(),
+	local_id: uuid().defaultRandom(),
+	consumption_dependent: numeric().default('70'),
+	living_space_share: numeric().default('30'),
+}, (table) => [
+	foreignKey({
+		columns: [table.local_id],
+		foreignColumns: [locals.id],
+		name: "heating_bill_documents_local_id_fkey"
+	}),
+	foreignKey({
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "heating_bill_documents_objekt_id_fkey1"
+	}),
+]);
 
 export const doc_cost_category = pgTable("doc_cost_category", {
 	id: uuid().defaultRandom().primaryKey().notNull(),

@@ -3,24 +3,15 @@
 import database from "@/db";
 import { contractors, contracts } from "@/db/drizzle/schema";
 import { and, eq } from "drizzle-orm";
-import { supabaseServer } from "@/utils/supabase/server";
 import { EditContractFormValues } from "@/components/Admin/Forms/Edit/EditContractForm";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function editContract(
   contractId: string,
   localID: string,
   formData: EditContractFormValues
 ) {
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(`Supabase Auth Error: ${error.message}`);
-  }
+  const user = await getAuthenticatedServerUser();
 
   if (!user) {
     throw new Error("Nicht authentifiziert");

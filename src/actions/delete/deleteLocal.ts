@@ -4,18 +4,13 @@ import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import database from "@/db";
 import { locals } from "@/db/drizzle/schema";
-import { supabaseServer } from "@/utils/supabase/server";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function deleteLocal(localId: string) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedServerUser();
 
-  if (!user || error) {
-    console.error("Auth error:", error);
+  if (!user) {
     throw new Error("Nicht authentifiziert");
   }
 

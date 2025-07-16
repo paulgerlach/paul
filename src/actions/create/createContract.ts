@@ -4,23 +4,14 @@ import { type CreateContractFormValues } from "@/components/Admin/Forms/Create/C
 import database from "@/db";
 import { contractors, contracts } from "@/db/drizzle/schema";
 import { ContractType } from "@/types";
-import { supabaseServer } from "@/utils/supabase/server";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { and, eq } from "drizzle-orm";
 
 export async function createContract(
   formData: CreateContractFormValues,
   localID: string
 ) {
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    throw new Error(`Supabase Auth Error: ${error.message}`);
-  }
+  const user = await getAuthenticatedServerUser();
 
   if (!user) {
     throw new Error("Nicht authentifiziert");

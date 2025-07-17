@@ -11,17 +11,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import { toast } from "sonner";
-import FormTagsInput from "@/components/Admin/Forms/FormTagsInput";
 import { createCostType } from "@/actions/create/createCostType";
-import { useEffect } from "react";
-import { snakeCase } from "lodash";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
   name: z.string().min(1, "Pflichtfeld").nullable(),
   allocation_key: z.enum(allocationKeys),
-  options: z.array(z.string()).nullable(),
 });
 
 export type AddCostTypeDialogFormValues = z.infer<
@@ -32,7 +28,6 @@ const defaultValues: AddCostTypeDialogFormValues = {
   type: "",
   name: "",
   allocation_key: "Verbrauch",
-  options: [],
 };
 
 export default function AddBetriebskostenabrechnungCostTypeDialog() {
@@ -65,14 +60,14 @@ export default function AddBetriebskostenabrechnungCostTypeDialog() {
             } catch {
               toast.error("Fehler beim Speichern.");
             }
-          })}>
+          })}
+        >
           <FormInputField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="name"
             label="	Name*"
             placeholder=""
           />
-          <FormTagsInput<AddCostTypeDialogFormValues> name="options" control={methods.control} />
           <FormSelectField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="allocation_key"
@@ -87,10 +82,14 @@ export default function AddBetriebskostenabrechnungCostTypeDialog() {
               onClick={() => {
                 methods.reset(defaultValues);
                 closeDialog("cost_type_betriebskostenabrechnung_create");
-              }}>
+              }}
+            >
               Abbrechen
             </button>
-            <Button type="submit" className="!font-medium !text-lg max-xl:!text-sm">
+            <Button
+              type="submit"
+              className="!font-medium !text-lg max-xl:!text-sm"
+            >
               Speichern
             </Button>
           </div>

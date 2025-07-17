@@ -23,7 +23,7 @@ export async function createCostType(
       name: values.name ?? "",
       allocation_key: values.allocation_key,
       document_type: documentType,
-      options: values.options ?? [],
+      options: ["Other"],
       user_id: user.id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

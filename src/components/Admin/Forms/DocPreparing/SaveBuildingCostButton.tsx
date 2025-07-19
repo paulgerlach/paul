@@ -43,7 +43,6 @@ export default function SaveBuildingCostButton({
                 allocation_key: item.allocation_key ?? "Verbrauch",
                 name: item.name ?? "",
                 type: item.type ?? "",
-                options: item.options ?? [],
               },
               documentType as
                 | "heizkostenabrechnung"

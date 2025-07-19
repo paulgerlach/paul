@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { createBuildingDocuments } from "@/actions/create/createBuildingDocuments";
+import type { OperatingCostDocumentType } from "@/types";
 
 const abrechnungszeitraumBuildingSchema = z.object({
   start_date: z.coerce
@@ -37,14 +38,24 @@ const defaultValues: AbrechnungszeitraumBuildingFormValues = {
 
 export default function AbrechnungszeitraumBuildingForm({
   id: objekteID,
+  docValues,
 }: {
   id: string;
+  docValues?: OperatingCostDocumentType;
 }) {
   const router = useRouter();
   const { setStartDate, setEndDate } = useBetriebskostenabrechnungStore();
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumBuildingSchema),
-    defaultValues,
+    defaultValues: docValues
+      ? {
+          ...docValues,
+          start_date: new Date(
+            docValues.start_date ?? defaultValues.start_date
+          ),
+          end_date: new Date(docValues.end_date ?? defaultValues.end_date),
+        }
+      : defaultValues,
   });
   const { watch, getValues } = methods;
 
@@ -53,7 +64,6 @@ export default function AbrechnungszeitraumBuildingForm({
       if (values.start_date) setStartDate(values.start_date);
       if (values.end_date) setEndDate(values.end_date);
     });
-
     return () => subscription.unsubscribe();
   }, [watch, setStartDate, setEndDate]);
 
@@ -89,7 +99,8 @@ export default function AbrechnungszeitraumBuildingForm({
               } catch (err) {
                 console.error("Fehler beim Erstellen des Dokuments:", err);
               }
-            })}>
+            })}
+          >
             <div className="space-y-9">
               <div className="space-y-3">
                 <h2 className="font-bold text-admin_dark_text">
@@ -113,7 +124,8 @@ export default function AbrechnungszeitraumBuildingForm({
             <div className="flex items-center justify-between">
               <Link
                 href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/gesamtkosten`}
-                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+              >
                 Zurück
               </Link>
               <Button type="submit">Weiter</Button>

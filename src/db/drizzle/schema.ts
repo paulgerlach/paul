@@ -54,7 +54,7 @@ export const operating_cost_documents = pgTable("operating_cost_documents", {
 	end_date: timestamp({ withTimezone: true, mode: 'string' }),
 	objekt_id: uuid().defaultRandom(),
 	user_id: uuid(),
-	submited: boolean(),
+	submited: boolean().default(false).notNull(),
 }, (table) => [
 	foreignKey({
 		columns: [table.objekt_id],
@@ -165,6 +165,40 @@ export const users_in_auth = pgTable("users_in_auth", {
 	pgPolicy("Users can update their own auth info", { as: "permissive", for: "update", to: ["public"] }),
 ]);
 
+export const invoice_documents = pgTable("invoice_documents", {
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	document_name: text(),
+	objekt_id: uuid().defaultRandom().notNull(),
+	user_id: uuid().default(sql`auth.uid()`).notNull(),
+	cost_type: text(),
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	invoice_date: date(),
+	total_amount: numeric(),
+	service_period: boolean(),
+	for_all_tenants: boolean(),
+	purpose: text(),
+	notes: text(),
+	operating_doc_id: uuid(),
+	direct_local_id: uuid().array(),
+}, (table) => [
+	foreignKey({
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "heating_bill_documents_objekt_id_fkey"
+	}),
+	foreignKey({
+		columns: [table.operating_doc_id],
+		foreignColumns: [operating_cost_documents.id],
+		name: "invoice_documents_operating_doc_id_fkey"
+	}),
+	unique("heating_bill_documents_objekt_id_key").on(table.objekt_id),
+	unique("heating_bill_documents_user_id_key").on(table.user_id),
+	pgPolicy("Allow users to SELECT their own heating bill documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
+	pgPolicy("Allow users to INSERT their own heating bill documents", { as: "permissive", for: "insert", to: ["public"] }),
+	pgPolicy("Allow users to UPDATE their own heating bill documents", { as: "permissive", for: "update", to: ["public"] }),
+	pgPolicy("Allow users to DELETE their own heating bill documents", { as: "permissive", for: "delete", to: ["public"] }),
+]);
+
 export const objekte = pgTable("objekte", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	user_id: uuid().notNull(),
@@ -198,45 +232,6 @@ export const doc_cost_category_defaults = pgTable("doc_cost_category_defaults", 
 	user_id: text(),
 }, (table) => [
 	pgPolicy("Enable read access for all users", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
-]);
-
-export const invoice_documents = pgTable("invoice_documents", {
-	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	document_name: text(),
-	objekt_id: uuid().defaultRandom().notNull(),
-	user_id: uuid().default(sql`auth.uid()`).notNull(),
-	cost_type: text(),
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	invoice_date: date(),
-	total_amount: numeric(),
-	service_period: boolean(),
-	for_all_tenants: boolean(),
-	purpose: text(),
-	notes: text(),
-	operating_doc_id: uuid(),
-	direct_local_id: uuid(),
-}, (table) => [
-	foreignKey({
-		columns: [table.objekt_id],
-		foreignColumns: [objekte.id],
-		name: "heating_bill_documents_objekt_id_fkey"
-	}),
-	foreignKey({
-		columns: [table.direct_local_id],
-		foreignColumns: [locals.id],
-		name: "invoice_documents_direct_local_id_fkey"
-	}),
-	foreignKey({
-		columns: [table.operating_doc_id],
-		foreignColumns: [operating_cost_documents.id],
-		name: "invoice_documents_operating_doc_id_fkey"
-	}),
-	unique("heating_bill_documents_objekt_id_key").on(table.objekt_id),
-	unique("heating_bill_documents_user_id_key").on(table.user_id),
-	pgPolicy("Allow users to SELECT their own heating bill documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
-	pgPolicy("Allow users to INSERT their own heating bill documents", { as: "permissive", for: "insert", to: ["public"] }),
-	pgPolicy("Allow users to UPDATE their own heating bill documents", { as: "permissive", for: "update", to: ["public"] }),
-	pgPolicy("Allow users to DELETE their own heating bill documents", { as: "permissive", for: "delete", to: ["public"] }),
 ]);
 
 export const users = pgTable("users", {

@@ -22,6 +22,7 @@ import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
 import FormAdvancedSelectField from "@/components/Admin/Forms/FormAdvancedSelectField";
 import { buildLocalName } from "@/utils";
 import { createInvoiceDocument } from "@/actions/create/createInvoiceDocument";
+import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
 
 const addDocBetriebskostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
@@ -33,7 +34,7 @@ const addDocBetriebskostenabrechnungDialogSchema = z.object({
   total_amount: z.coerce.number().min(1, "Pflichtfeld").nullable(),
   service_period: z.boolean().nullable(),
   for_all_tenants: z.boolean().nullable(),
-  direct_local_id: z.string().nullable(),
+  direct_local_id: z.array(z.string()).nullable(),
   purpose: z.string().min(1, "Pflichtfeld").nullable(),
   notes: z.string().nullable(),
   document: z.array(z.instanceof(File)).optional(),
@@ -192,11 +193,7 @@ export default function AddDocBetriebskostenabrechnungDialog() {
             </div>
           </div>
           {!forAllTenants && (
-            <FormAdvancedSelectField<AddDocBetriebskostenabrechnungDialogFormValues>
-              control={methods.control}
-              name="direct_local_id"
-              label="Mieter auswählen *"
-              placeholder="Bitte Mieter auswählen"
+            <FormLocalsultiselect<AddDocBetriebskostenabrechnungDialogFormValues>
               options={
                 locals
                   ?.filter((local) => local.id !== undefined)
@@ -205,6 +202,9 @@ export default function AddDocBetriebskostenabrechnungDialog() {
                     value: local.id as string,
                   })) || []
               }
+              control={methods.control}
+              name="direct_local_id"
+              label="Mieter auswählen *"
             />
           )}
           <FormSelectField<AddDocBetriebskostenabrechnungDialogFormValues>

@@ -36,7 +36,6 @@ export async function editCostType(
       name: values.name ?? "",
       allocation_key: values.allocation_key,
       document_type: documentType,
-      options: values.options ?? [],
       user_id: user.id,
       updated_at: new Date().toISOString(),
       created_at: current.created_at,

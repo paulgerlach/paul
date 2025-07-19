@@ -277,3 +277,26 @@ export function useObjectById(objectID?: string) {
     refetchOnWindowFocus: false,
   });
 }
+
+async function getOperatingCostDocumentsByObjektID(objektID?: string): Promise<OperatingCostDocumentType[]> {
+
+  const { data, error } = await supabase
+    .from("operating_cost_documents")
+    .select("*")
+    .eq("objekt_id", objektID)
+    .eq("submited", false);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useOperatingCostDocumentsByObjektID(objektID?: string) {
+  return useQuery({
+    queryKey: ["operating_cost_documents", objektID],
+    queryFn: () => getOperatingCostDocumentsByObjektID(objektID),
+    refetchOnWindowFocus: false,
+  });
+}

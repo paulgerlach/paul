@@ -1,6 +1,9 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG, ROUTE_DASHBOARD } from "@/routes/routes";
+import {
+  ROUTE_BETRIEBSKOSTENABRECHNUNG,
+  ROUTE_DASHBOARD,
+} from "@/routes/routes";
 import {
   big_time_clock,
   doc_preview_building,
@@ -44,7 +47,8 @@ export default function BetriebskostenabrechnungPage() {
           {items.map((item) => (
             <div
               className="flex items-center justify-start gap-2.5"
-              key={item.title}>
+              key={item.title}
+            >
               <Image
                 width={0}
                 height={0}
@@ -58,13 +62,16 @@ export default function BetriebskostenabrechnungPage() {
                 <p className="font-bold max-xl:text-sm text-base text-admin_dark_text">
                   {item.title}
                 </p>
-                <p className="text-base max-xl:text-sm text-admin_dark_text ">{item.text}</p>
+                <p className="text-base max-xl:text-sm text-admin_dark_text ">
+                  {item.text}
+                </p>
               </div>
             </div>
           ))}
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4">
+            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/zwischenstand`}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4"
+          >
             Jetzt Betriebskosten abrechnen
           </Link>
         </div>

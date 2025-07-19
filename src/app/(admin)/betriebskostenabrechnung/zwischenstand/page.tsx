@@ -1,6 +1,7 @@
 import { getObjekts } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
+import ObjekteItemDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteItemDocAccordion";
 import {
   ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_DASHBOARD,
@@ -20,14 +21,10 @@ export default async function ZwischenstandPage() {
         subtitle="Für welche Immobilie wollen Sie eine Betriebskostenabrechnung erstellen lassen?"
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        {/* <div className="overflow-y-auto space-y-4">
-                    {objekts.map((objekt) => (
-                        <ObjekteItem key={objekt.id} item={objekt} />
-                    ))}
-                </div> */}
+        <ObjekteItemDocAccordion objekts={objekts} />
         <Link
           href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl`}
-          className="border-dashed w-full max-xl:text-base flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl"
+          className="border-dashed w-full max-xl:text-base flex p-5 items-center justify-center text-xl gap-8 text-dark_green/50 border border-dark_green rounded-2xl"
         >
           <Image
             width={0}

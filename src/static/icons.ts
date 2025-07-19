@@ -242,9 +242,11 @@ import objekte_placeholder from "@/asset/objekte_placeholder.png";
 import cost_type_plus from "@/asset/cost_type_plus.png";
 import gmail from "@/asset/gmail.png";
 import doc_download from "@/asset/doc_download.png";
+import operating_cost_documents_pending from "@/asset/operating_cost_documents_pending.png";
 
 export {
   accentro_colored,
+  operating_cost_documents_pending,
   cold_water,
   cost_type_plus,
   lamp,

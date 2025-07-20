@@ -2,7 +2,7 @@ import { getObjectById, getOperatingCostDocumentByID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import AbrechnungszeitraumBuildingForm from "@/components/Admin/Forms/DocPreparing/AbrechnungszeitraumBuildingForm";
+import AbrechnungszeitraumEditBuildingForm from "@/components/Admin/Forms/DocPreparing/AbrechnungszeitraumEditBuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function AbrechnungszeitraumContinuePage({
@@ -25,7 +25,7 @@ export default async function AbrechnungszeitraumContinuePage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumBuildingForm id={objekt.id ?? ""} />
+        <AbrechnungszeitraumEditBuildingForm docValues={doc} />
         <BetriebskostenabrechnungReceipt
           title={`${objekt.street} ${objekt.zip}`}
         />

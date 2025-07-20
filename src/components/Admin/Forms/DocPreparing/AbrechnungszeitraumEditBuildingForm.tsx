@@ -11,7 +11,6 @@ import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
-import { createBuildingDocuments } from "@/actions/create/createBuildingDocuments";
 import { editBuildingDocument } from "@/actions/edit/editBuildingDocument";
 import type { OperatingCostDocumentType } from "@/types";
 
@@ -37,16 +36,24 @@ const defaultValues: AbrechnungszeitraumBuildingFormValues = {
   end_date: new Date(),
 };
 
-export default function AbrechnungszeitraumBuildingForm({
-  id: objekteID,
+export default function AbrechnungszeitraumEditBuildingForm({
+  docValues,
 }: {
-  id: string;
+  docValues?: OperatingCostDocumentType;
 }) {
   const router = useRouter();
   const { setStartDate, setEndDate } = useBetriebskostenabrechnungStore();
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumBuildingSchema),
-    defaultValues,
+    defaultValues: docValues
+      ? {
+          ...docValues,
+          start_date: new Date(
+            docValues.start_date ?? defaultValues.start_date
+          ),
+          end_date: new Date(docValues.end_date ?? defaultValues.end_date),
+        }
+      : defaultValues,
   });
   const { watch, getValues } = methods;
 
@@ -74,23 +81,25 @@ export default function AbrechnungszeitraumBuildingForm({
             id="abrechnungszeitraum-form"
             onSubmit={methods.handleSubmit(async (data) => {
               try {
-                const result = await createBuildingDocuments(objekteID, {
+                const payload = {
                   ...data,
                   start_date: data.start_date?.toISOString() ?? null,
                   end_date: data.end_date?.toISOString() ?? null,
-                });
+                };
 
-                const insertedDoc = result?.[0];
+                await editBuildingDocument(
+                  (docValues && docValues.id) ?? "",
+                  payload
+                );
 
-                if (insertedDoc?.id) {
-                  router.push(
-                    `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
-                  );
-                } else {
-                  console.error("Kein Dokument wurde erstellt.");
-                }
+                router.push(
+                  `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docValues?.id}/gesamtkosten`
+                );
               } catch (err) {
-                console.error("Fehler beim Erstellen des Dokuments:", err);
+                console.error(
+                  "Fehler beim Erstellen/Bearbeiten des Dokuments:",
+                  err
+                );
               }
             })}
           >
@@ -116,7 +125,7 @@ export default function AbrechnungszeitraumBuildingForm({
             </div>
             <div className="flex items-center justify-between">
               <Link
-                href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl`}
+                href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/zwischenstand`}
                 className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
               >
                 Zurück

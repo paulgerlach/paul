@@ -5,7 +5,7 @@ import { Button } from "@/components/Basic/ui/Button";
 import { editCostType } from "@/actions/edit/editCostType";
 import { editBuildingDocument } from "@/actions/edit/editBuildingDocument";
 import type { DocCostCategoryType } from "@/types";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default function SaveBuildingCostButton({

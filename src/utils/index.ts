@@ -199,7 +199,7 @@ export const formatEuro = (value: number) =>
     currency: "EUR",
   }).format(value);
 
-export const formatDateGerman = (dateStr?: string) => {
+export const formatDateGerman = (dateStr?: string | null) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   return format(date, "dd.MM.yyyy");

@@ -5,8 +5,8 @@ import {
 } from "date-fns";
 
 export function useDiffInMonths(
-  startDateStr: string,
-  endDateStr: string
+  startDateStr?: string | null,
+  endDateStr?: string | null
 ): number {
   const dateFormats = [
     "yyyy-MM-dd'T'HH:mm:ss.SSSX",
@@ -28,14 +28,13 @@ export function useDiffInMonths(
     return new Date('Invalid Date');
   };
 
-  const parsedStart = parseDateWithMultipleFormats(startDateStr);
-  const parsedEnd = parseDateWithMultipleFormats(endDateStr);
+  const parsedStart = startDateStr
+    ? parseDateWithMultipleFormats(startDateStr)
+    : new Date('Invalid Date');
 
-  console.log("useDiffInMonths", {
-    parsedStart,
-    parsedEnd,
-    areDatesValid: isValid(parsedStart) && isValid(parsedEnd)
-  });
+  const parsedEnd = endDateStr
+    ? parseDateWithMultipleFormats(endDateStr)
+    : new Date('Invalid Date');
 
   if (!isValid(parsedStart) || !isValid(parsedEnd)) {
     return 0;
@@ -43,9 +42,5 @@ export function useDiffInMonths(
 
   let monthsDiff = differenceInCalendarMonths(parsedEnd, parsedStart) + 1;
 
-  if (monthsDiff < 1) {
-    return 1;
-  }
-
-  return monthsDiff;
+  return monthsDiff < 1 ? 1 : monthsDiff;
 }

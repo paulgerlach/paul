@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import CostTypesBuildingAccordion from "../../Docs/CostTypes/CostTypesBuildingAccordion";
-import type { DocCostCategoryType } from "@/types";
+import type { DocCostCategoryType, InvoiceDocumentType } from "@/types";
 import { useEffect } from "react";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { formatEuro } from "@/utils";
@@ -14,10 +14,12 @@ export default function GesamtkostenEditBuildingFrom({
   objektId,
   operatingDocId,
   userDocCostCategories,
+  relatedInvoices,
 }: {
   objektId: string;
   operatingDocId: string;
   userDocCostCategories: DocCostCategoryType[];
+  relatedInvoices: InvoiceDocumentType[];
 }) {
   const { setDocumentGroups, documentGroups } =
     useBetriebskostenabrechnungStore();
@@ -25,10 +27,10 @@ export default function GesamtkostenEditBuildingFrom({
   useEffect(() => {
     const groups = userDocCostCategories.map((doc) => ({
       ...doc,
-      data: [],
+      data: relatedInvoices.filter((invoice) => invoice.cost_type === doc.type),
     }));
     setDocumentGroups(groups);
-  }, [userDocCostCategories, setDocumentGroups]);
+  }, [userDocCostCategories, setDocumentGroups, relatedInvoices]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =
@@ -64,13 +66,13 @@ export default function GesamtkostenEditBuildingFrom({
         />
         <div className="flex items-center justify-between">
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`}
+            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${operatingDocId}/abrechnungszeitraum`}
             className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
           >
             Zurück
           </Link>
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/umlageschlussel`}
+            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${operatingDocId}/umlageschlussel`}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm"
           >
             Weiter

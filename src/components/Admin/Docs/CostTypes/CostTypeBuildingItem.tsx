@@ -5,11 +5,7 @@ import {
   type BetriebskostenabrechnungCostType,
   useBetriebskostenabrechnungStore,
 } from "@/store/useBetriebskostenabrechnungStore";
-import {
-  getCostTypeIconByKey,
-  slideDown,
-  slideUp,
-} from "@/utils";
+import { getCostTypeIconByKey, slideDown, slideUp } from "@/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
@@ -32,8 +28,12 @@ export default function CostTypeBuildingItem({
 }: CostTypeBuildingItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setObjektID, setPurposeOptions, setOperatingDocID } =
-    useBetriebskostenabrechnungStore();
+  const {
+    setActiveCostType,
+    setObjektID,
+    setPurposeOptions,
+    setOperatingDocID,
+  } = useBetriebskostenabrechnungStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -56,15 +56,15 @@ export default function CostTypeBuildingItem({
     0
   );
 
-  console.log(type)
-
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>
       <div
-        className={`bg-white py-3 px-6 flex items-center justify-between border border-[#E7E9ED] rounded-md`}>
+        className={`bg-white py-3 px-6 flex items-center justify-between border border-[#E7E9ED] rounded-md`}
+      >
         <div
           className="flex cursor-pointer items-center justify-start gap-5 w-full"
-          onClick={() => onClick(index)}>
+          onClick={() => onClick(index)}
+        >
           <Image
             width={0}
             height={0}
@@ -85,9 +85,7 @@ export default function CostTypeBuildingItem({
               alt="chevron"
             />
           </div>
-          <p className="font-semibold text-dark_green">
-            {type.name}
-          </p>
+          <p className="font-semibold text-dark_green">{type.name}</p>
         </div>
         <div className="flex items-center whitespace-nowrap justify-end gap-7">
           <span>{totalAmount} €</span>
@@ -101,7 +99,8 @@ export default function CostTypeBuildingItem({
       </div>
       <div
         ref={contentRef}
-        className="[.active_&]:py-5 px-5 [.active_&]:h-auto h-0">
+        className="[.active_&]:py-5 px-5 [.active_&]:h-auto h-0"
+      >
         {type.data.map((item, i) => {
           if (item.document?.length === 1 || item.document_name) {
             return (
@@ -127,7 +126,8 @@ export default function CostTypeBuildingItem({
         })}
         <button
           onClick={() => handleOpenDialog()}
-          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text">
+          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text"
+        >
           <Image
             width={0}
             height={0}

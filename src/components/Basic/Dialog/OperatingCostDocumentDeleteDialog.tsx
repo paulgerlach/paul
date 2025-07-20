@@ -8,7 +8,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export default function OperatingCostDocumentDeleteDialog() {
-  const { itemID, openDialogByType, closeDialog } = useDialogStore();
+  const {
+    itemID,
+    openDialogByType,
+    closeDialog,
+    queryKey: invalidateKey,
+  } = useDialogStore();
   const isOpen = openDialogByType.operating_costs_delete;
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -20,7 +25,7 @@ export default function OperatingCostDocumentDeleteDialog() {
     onSuccess: (data) => {
       if (data.success) {
         queryClient.invalidateQueries({
-          queryKey: ["operating_cost_documents", itemID],
+          queryKey: invalidateKey,
         });
 
         closeDialog("operating_costs_delete");

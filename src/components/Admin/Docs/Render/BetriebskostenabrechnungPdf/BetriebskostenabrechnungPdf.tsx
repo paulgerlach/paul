@@ -1,14 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  PDFViewer,
-} from "@react-pdf/renderer";
+import React, { useMemo, useState } from "react";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { formatDateGerman, formatEuro } from "@/utils";
 import type {
   ContractorType,
@@ -158,11 +151,7 @@ export default function BetriebskostenabrechnungPdf({
   const { start_date, end_date } = mainDoc ?? {};
   const { living_space } = previewLocal ?? {};
   const { cold_rent } = contract ?? {};
-  const [localPrice, setLocalPrice] = useState<number>(0);
-  const monthsDiff = useDiffInMonths(
-    start_date ? start_date : "",
-    end_date ? end_date : ""
-  );
+  const monthsDiff = useDiffInMonths(mainDoc?.start_date, mainDoc?.end_date);
 
   const baseContractPaymet = Number(cold_rent) * monthsDiff;
 
@@ -171,13 +160,20 @@ export default function BetriebskostenabrechnungPdf({
     0
   );
 
+  const localPrice = useMemo(() => {
+    return invoices.reduce((sum, row) => {
+      const prisePerSquareMeter = Number(row?.total_amount) / totalLivingSpace;
+      const pricePerLocalMeters = prisePerSquareMeter * Number(living_space);
+      return sum + pricePerLocalMeters;
+    }, 0);
+  }, [invoices, totalLivingSpace, living_space]);
+
   const amountsDiff = localPrice - baseContractPaymet;
 
-  const formattedStartDate = formatDateGerman(start_date ? start_date : "");
-  const formattedEndDate = formatDateGerman(end_date ? end_date : "");
+  const formattedStartDate = formatDateGerman(mainDoc?.start_date);
+  const formattedEndDate = formatDateGerman(mainDoc?.end_date);
 
   return (
-    // <PDFViewer width="100%" height="900">
     <Document>
       {/* Page 1 */}
       <Page size="A4" style={styles.page}>
@@ -379,8 +375,6 @@ export default function BetriebskostenabrechnungPdf({
             const pricePerLocalMeters =
               prisePerSquareMeter * Number(living_space);
 
-            setLocalPrice((prevPrice) => prevPrice + pricePerLocalMeters);
-
             return (
               <View style={styles.tableRow} key={row.id}>
                 <Text style={styles.tableCell}>
@@ -462,6 +456,5 @@ export default function BetriebskostenabrechnungPdf({
         />
       </Page>
     </Document>
-    // </PDFViewer>
   );
 }

@@ -13,6 +13,7 @@ import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import { toast } from "sonner";
 import { createCostType } from "@/actions/create/createCostType";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
+import { useRouter } from "next/navigation";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -37,6 +38,7 @@ export default function AddBetriebskostenabrechnungCostTypeDialog() {
     resolver: zodResolver(addCostTypeDialogSchema),
     defaultValues,
   });
+  const router = useRouter();
 
   useAutoSnakeCase(methods, "name", "type");
 
@@ -56,6 +58,7 @@ export default function AddBetriebskostenabrechnungCostTypeDialog() {
               await createCostType(data, "betriebskostenabrechnung");
               toast.success("Ausgabe wurde hinzugefügt.");
               methods.reset(defaultValues);
+              router.refresh();
               closeDialog("cost_type_betriebskostenabrechnung_create");
             } catch {
               toast.error("Fehler beim Speichern.");

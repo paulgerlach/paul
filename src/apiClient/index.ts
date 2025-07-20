@@ -298,6 +298,5 @@ export function useOperatingCostDocumentsByObjektID(objektID?: string) {
     queryKey: ["operating_cost_documents", objektID],
     queryFn: () => getOperatingCostDocumentsByObjektID(objektID),
     refetchOnWindowFocus: false,
-
   });
 }

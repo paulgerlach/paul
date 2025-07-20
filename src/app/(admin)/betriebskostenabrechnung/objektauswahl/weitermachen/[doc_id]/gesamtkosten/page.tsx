@@ -1,5 +1,6 @@
 import {
   getDocCostCategoryTypes,
+  getInvoicesByOperatingCostDocumentID,
   getObjectById,
   getOperatingCostDocumentByID,
 } from "@/api";
@@ -21,19 +22,23 @@ export default async function GesamtkostenEditPage({
     "betriebskostenabrechnung"
   );
 
+  const relatedToDocInvoices =
+    await getInvoicesByOperatingCostDocumentID(doc_id);
+
   const objekt = await getObjectById(doc.objekt_id ?? "");
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Abrechnung"
-        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/weitermachen/${doc.objekt_id}/abrechnungszeitraum`}
+        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.objekt_id}/abrechnungszeitraum`}
         title={`Gesamtkosten für das Objekt`}
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
         <GesamtkostenEditBuildingFrom
           userDocCostCategories={userDocCostCategories}
+          relatedInvoices={relatedToDocInvoices}
           objektId={doc.objekt_id ?? ""}
           operatingDocId={doc_id}
         />

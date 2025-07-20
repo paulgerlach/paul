@@ -11,7 +11,7 @@ import type {
   ObjektType,
 } from "@/types";
 import { formatDateGerman, formatEuro } from "@/utils";
-import React, { useState } from "react";
+import { useMemo } from "react";
 
 export type BetriebskostenabrechnungPreviewProps = {
   mainDoc: OperatingCostDocumentType;
@@ -34,14 +34,9 @@ export default function BetriebskostenabrechnungPreview({
   contractors,
   objekt,
 }: BetriebskostenabrechnungPreviewProps) {
-  const { start_date, end_date } = mainDoc ?? {};
   const { living_space } = previewLocal ?? {};
   const { cold_rent } = contract ?? {};
-  const [localPrice, setLocalPrice] = useState<number>(0);
-  const monthsDiff = useDiffInMonths(
-    start_date ? start_date : "",
-    end_date ? end_date : ""
-  );
+  const monthsDiff = useDiffInMonths(mainDoc?.start_date, mainDoc?.end_date);
 
   const baseContractPaymet = Number(cold_rent) * monthsDiff;
 
@@ -50,10 +45,18 @@ export default function BetriebskostenabrechnungPreview({
     0
   );
 
+  const localPrice = useMemo(() => {
+    return invoices.reduce((sum, row) => {
+      const prisePerSquareMeter = Number(row?.total_amount) / totalLivingSpace;
+      const pricePerLocalMeters = prisePerSquareMeter * Number(living_space);
+      return sum + pricePerLocalMeters;
+    }, 0);
+  }, [invoices, totalLivingSpace, living_space]);
+
   const amountsDiff = localPrice - baseContractPaymet;
 
-  const formattedStartDate = formatDateGerman(start_date ? start_date : "");
-  const formattedEndDate = formatDateGerman(end_date ? end_date : "");
+  const formattedStartDate = formatDateGerman(mainDoc?.start_date);
+  const formattedEndDate = formatDateGerman(mainDoc?.end_date);
 
   return (
     <div className="grid grid-cols-2 gap-5 mx-auto">
@@ -246,8 +249,6 @@ export default function BetriebskostenabrechnungPreview({
 
                 const pricePerLocalMeters =
                   prisePerSquareMeter * Number(living_space);
-
-                setLocalPrice((prevPrice) => prevPrice + pricePerLocalMeters);
 
                 return (
                   <tr key={row.id}>

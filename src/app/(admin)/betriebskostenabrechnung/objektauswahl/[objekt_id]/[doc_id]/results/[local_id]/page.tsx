@@ -20,15 +20,24 @@ export default async function ResultBuildingLocalPreview({
 }) {
   const { objekt_id, doc_id, local_id } = await params;
 
-  const objekt = await getObjectById(objekt_id);
-  const relatedLocals = await getRelatedLocalsByObjektId(objekt_id);
-  const costCategories = await getDocCostCategoryTypes(
-    "betriebskostenabrechnung"
-  );
-  const mainDoc = await getOperatingCostDocumentByID(doc_id);
-  const contract = await getActiveContractByLocalID(local_id);
-  const invoices = await getInvoicesByOperatingCostDocumentID(doc_id);
-  const local = await getLocalById(local_id);
+  const [
+    objekt,
+    relatedLocals,
+    costCategories,
+    mainDoc,
+    contract,
+    invoices,
+    local,
+  ] = await Promise.all([
+    getObjectById(objekt_id),
+    getRelatedLocalsByObjektId(objekt_id),
+    getDocCostCategoryTypes("betriebskostenabrechnung"),
+    getOperatingCostDocumentByID(doc_id),
+    getActiveContractByLocalID(local_id),
+    getInvoicesByOperatingCostDocumentID(doc_id),
+    getLocalById(local_id),
+  ]);
+
   const contractors = contract?.id
     ? await getRelatedContractors(contract.id)
     : [];

@@ -34,7 +34,7 @@ export default function ObjekteItemDocWithHistory({
   onClick,
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
-  const { setItemID, openDialog } = useDialogStore();
+  const { setItemID, openDialog, setQueryKey } = useDialogStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -56,6 +56,7 @@ export default function ObjekteItemDocWithHistory({
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
     openDialog("operating_costs_delete");
+    setQueryKey(["operating_cost_documents", item.id ?? ""]);
   };
 
   return (

@@ -61,6 +61,10 @@ export const operating_cost_documents = pgTable("operating_cost_documents", {
 		foreignColumns: [objekte.id],
 		name: "operating_cost_documents_objekt_id_fkey"
 	}),
+	pgPolicy("Users can view their own documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
+	pgPolicy("Users can insert documents with their own user_id", { as: "permissive", for: "insert", to: ["public"] }),
+	pgPolicy("Users can update their own documents", { as: "permissive", for: "update", to: ["public"] }),
+	pgPolicy("Users can delete their own documents", { as: "permissive", for: "delete", to: ["public"] }),
 ]);
 
 export const locals = pgTable("locals", {
@@ -191,8 +195,6 @@ export const invoice_documents = pgTable("invoice_documents", {
 		foreignColumns: [operating_cost_documents.id],
 		name: "invoice_documents_operating_doc_id_fkey"
 	}),
-	unique("heating_bill_documents_objekt_id_key").on(table.objekt_id),
-	unique("heating_bill_documents_user_id_key").on(table.user_id),
 	pgPolicy("Allow users to SELECT their own heating bill documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
 	pgPolicy("Allow users to INSERT their own heating bill documents", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Allow users to UPDATE their own heating bill documents", { as: "permissive", for: "update", to: ["public"] }),

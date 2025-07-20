@@ -3,10 +3,10 @@
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { Button } from "@/components/Basic/ui/Button";
 import { editCostType } from "@/actions/edit/editCostType";
-import { editBuildingDocument } from "@/actions/edit/editBuildingDocument";
 import type { DocCostCategoryType } from "@/types";
 import { useRouter } from "next/navigation";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
+import { submitBuildingDocument } from "@/actions/edit/submitBuildingDocument";
 
 export default function SaveBuildingCostButton({
   initialDocumentGroups,
@@ -52,7 +52,7 @@ export default function SaveBuildingCostButton({
           )
       );
 
-      await editBuildingDocument(operatingDocId, { submited: true });
+      await submitBuildingDocument(operatingDocId);
       router.push(
         `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`
       );

@@ -1,7 +1,7 @@
 import type { LocalType } from "@/types";
-import ObjekteLocalItemLocalDoc from "../ObjekteLocalItem/ObjekteLocalItemLocalDoc";
+import ObjekteLocalItemDoc from "../ObjekteLocalItem/ObjekteLocalItemDoc";
 
-export default function ObjekteLocalsAccordionLocalDoc({
+export default function ObjekteLocalsDoc({
   locals,
   id,
 }: {
@@ -11,7 +11,7 @@ export default function ObjekteLocalsAccordionLocalDoc({
   return (
     <div className="overflow-y-auto space-y-4">
       {locals?.map((local) => (
-        <ObjekteLocalItemLocalDoc
+        <ObjekteLocalItemDoc
           id={id}
           localID={local.id}
           key={local.id}

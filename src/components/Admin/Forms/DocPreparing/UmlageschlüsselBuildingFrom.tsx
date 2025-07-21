@@ -1,9 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import CostTypesBuildingSelects from "../../Docs/CostTypes/CostTypesBuildingSelects";
-import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import SaveBuildingCostButton from "./SaveBuildingCostButton";
 import { DocCostCategoryType } from "@/types";
 
@@ -16,15 +13,10 @@ export default function UmlageschlüsselBuildingFrom({
   operatingDocId: string;
   initialDocumentGroups: DocCostCategoryType[];
 }) {
-  const { documentGroups } = useBetriebskostenabrechnungStore();
-
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
-        <CostTypesBuildingSelects
-          objektId={objektId}
-          documentGroups={documentGroups}
-        />
+        <CostTypesBuildingSelects objektId={objektId} />
         <div className="flex items-center justify-between">
           <Link
             aria-label="Zurück zu Gesamtkosten"

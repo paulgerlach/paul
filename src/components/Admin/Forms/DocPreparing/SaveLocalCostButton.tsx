@@ -1,25 +1,27 @@
 "use client";
 
-import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { Button } from "@/components/Basic/ui/Button";
 import { editCostType } from "@/actions/edit/editCostType";
 import type { DocCostCategoryType } from "@/types";
 import { useRouter } from "next/navigation";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
-import { submitBuildingDocument } from "@/actions/edit/submitBuildingDocument";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { submitLocalDocument } from "@/actions/edit/submitLocalDocument";
 
-export default function SaveBuildingCostButton({
+export default function SaveLocalCostButton({
   initialDocumentGroups,
   documentType,
   operatingDocId,
   objektId,
+  localId,
 }: {
   initialDocumentGroups: DocCostCategoryType[];
   documentType: "heizkostenabrechnung" | "betriebskostenabrechnung";
   operatingDocId: string;
   objektId: string;
+  localId: string;
 }) {
-  const { documentGroups } = useBetriebskostenabrechnungStore();
+  const { documentGroups } = useHeizkostenabrechnungStore();
   const router = useRouter();
 
   const handleSave = async () => {
@@ -52,9 +54,9 @@ export default function SaveBuildingCostButton({
           )
       );
 
-      await submitBuildingDocument(operatingDocId);
+      await submitLocalDocument(operatingDocId);
       router.push(
-        `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`
+        `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/${operatingDocId}/results`
       );
     } catch (err) {
       console.error(err);

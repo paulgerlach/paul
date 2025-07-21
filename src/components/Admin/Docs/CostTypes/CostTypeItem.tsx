@@ -6,11 +6,7 @@ import {
   type HeizkostenabrechnungCostType,
   useHeizkostenabrechnungStore,
 } from "@/store/useHeizkostenabrechnungStore";
-import {
-  getCostTypeIconByKey,
-  slideDown,
-  slideUp,
-} from "@/utils";
+import { getCostTypeIconByKey, slideDown, slideUp } from "@/utils";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
@@ -21,6 +17,7 @@ export type CostTypeItemProps = {
   type: HeizkostenabrechnungCostType;
   objektId: string;
   localId: string;
+  docId: string;
 };
 
 export default function CostTypeItem({
@@ -29,12 +26,18 @@ export default function CostTypeItem({
   onClick,
   type,
   objektId,
+  docId,
   localId,
 }: CostTypeItemProps) {
   const contentRef = useRef(null);
   const { openDialog } = useDialogStore();
-  const { setActiveCostType, setLocalID, setObjektID, setPurposeOptions } =
-    useHeizkostenabrechnungStore();
+  const {
+    setActiveCostType,
+    setLocalID,
+    setObjektID,
+    setPurposeOptions,
+    setOperatingDocID,
+  } = useHeizkostenabrechnungStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +51,7 @@ export default function CostTypeItem({
     setActiveCostType(type.type);
     setLocalID(localId);
     setObjektID(objektId);
+    setOperatingDocID(docId);
     setPurposeOptions();
     openDialog(`${type.type}_heizkostenabrechnung_upload`);
   };
@@ -60,10 +64,12 @@ export default function CostTypeItem({
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>
       <div
-        className={`bg-white py-3 px-6 flex items-center justify-between border border-[#E7E9ED] rounded-md`}>
+        className={`bg-white py-3 px-6 flex items-center justify-between border border-[#E7E9ED] rounded-md`}
+      >
         <div
           className="flex cursor-pointer items-center justify-start gap-5 w-full"
-          onClick={() => onClick(index)}>
+          onClick={() => onClick(index)}
+        >
           <Image
             width={0}
             height={0}
@@ -100,7 +106,8 @@ export default function CostTypeItem({
       </div>
       <div
         ref={contentRef}
-        className="[.active_&]:py-5 px-5 [.active_&]:h-auto h-0">
+        className="[.active_&]:py-5 px-5 [.active_&]:h-auto h-0"
+      >
         {type.data.map((item, i) => {
           if (item.document?.length === 1 || item.document_name) {
             return (
@@ -126,7 +133,8 @@ export default function CostTypeItem({
         })}
         <button
           onClick={() => handleOpenDialog()}
-          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text">
+          className="flex items-center [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text"
+        >
           <Image
             width={0}
             height={0}

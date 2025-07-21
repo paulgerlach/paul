@@ -34,7 +34,7 @@ export type AbrechnungszeitraumFormValues = z.infer<
 >;
 
 const defaultValues: AbrechnungszeitraumFormValues = {
-  start_date: new Date(),
+  start_date: new Date(new Date().getFullYear(), 0, 1),
   end_date: new Date(),
   consumption_dependent: 70,
   living_space_share: 30,

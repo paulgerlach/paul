@@ -8,9 +8,11 @@ import AddCostTypeButton from "./AddCostTypeButton";
 export default function CostTypesAccordion({
   objektId,
   localId,
+  docId,
 }: {
   objektId: string;
   localId: string;
+  docId: string;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { documentGroups } = useHeizkostenabrechnungStore();
@@ -29,6 +31,7 @@ export default function CostTypesAccordion({
           type={type}
           index={index}
           localId={localId}
+          docId={docId}
           objektId={objektId}
         />
       ))}

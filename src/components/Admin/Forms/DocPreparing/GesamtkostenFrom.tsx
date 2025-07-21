@@ -58,7 +58,11 @@ export default function GesamtkostenForm({
           <span>{totalAmount} €</span>
         </div>
         <h2 className="font-bold text-admin_dark_text">Kostenarten</h2>
-        <CostTypesAccordion localId={localId} objektId={objektId} />
+        <CostTypesAccordion
+          docId={docId}
+          localId={localId}
+          objektId={objektId}
+        />
         <div className="flex items-center justify-between">
           <Link
             href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/abrechnungszeitraum`}
@@ -67,7 +71,7 @@ export default function GesamtkostenForm({
             Zurück
           </Link>
           <Link
-            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/umlageschlussel`}
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/${docId}/umlageschlussel`}
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm"
           >
             Weiter

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { format } from "date-fns";
 import type { DocCostCategoryType, InvoiceDocumentType } from "@/types";
+import { de } from "date-fns/locale";
 
 export type BetriebskostenabrechnungCostType = Partial<DocCostCategoryType> & {
   data: (Partial<InvoiceDocumentType> & { document?: File[] })[];
@@ -54,9 +55,10 @@ export const useBetriebskostenabrechnungStore =
     operatingDocID: undefined,
     localID: null,
     purposeOptions: [],
-    setDocumentGroups: (groups) => set({
-      documentGroups: groups
-    }),
+    setDocumentGroups: (groups) =>
+      set({
+        documentGroups: groups,
+      }),
     setLocalID: (id) =>
       set(() => ({
         localID: id,
@@ -84,7 +86,7 @@ export const useBetriebskostenabrechnungStore =
       const { start_date, end_date } = get();
 
       const formatDate = (date: Date | null): string =>
-        date ? format(date, "dd.MM.yyyy") : "";
+        date ? format(date, "dd.MM.yyyy", { locale: de }) : "";
 
       return {
         start_date: formatDate(start_date),
@@ -110,19 +112,19 @@ export const useBetriebskostenabrechnungStore =
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? {
-              ...group,
-              data: group.data.map((item, i) =>
-                i === index
-                  ? {
-                    ...item,
-                    ...values,
-                    document: values.document
-                      ? [...(item.document ?? []), values.document].flat()
-                      : item.document,
-                  }
-                  : item
-              ),
-            }
+                ...group,
+                data: group.data.map((item, i) =>
+                  i === index
+                    ? {
+                        ...item,
+                        ...values,
+                        document: values.document
+                          ? [...(item.document ?? []), values.document].flat()
+                          : item.document,
+                      }
+                    : item
+                ),
+              }
             : group
         ),
       })),
@@ -142,9 +144,11 @@ export const useBetriebskostenabrechnungStore =
       })),
     setPurposeOptions: () => {
       const { documentGroups, activeCostType } = get();
-      const options = documentGroups.find((group) => group.type === activeCostType)?.options;
+      const options = documentGroups.find(
+        (group) => group.type === activeCostType
+      )?.options;
       set({
-        purposeOptions: options ?? []
+        purposeOptions: options ?? [],
       });
-    }
+    },
   }));

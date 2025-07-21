@@ -44,7 +44,8 @@ export default function HeizkostenabrechnungPage() {
           {items.map((item) => (
             <div
               className="flex items-center justify-start gap-2.5"
-              key={item.title}>
+              key={item.title}
+            >
               <Image
                 width={0}
                 height={0}
@@ -58,13 +59,16 @@ export default function HeizkostenabrechnungPage() {
                 <p className="font-bold max-xl:text-sm text-base text-admin_dark_text">
                   {item.title}
                 </p>
-                <p className="text-base max-xl:text-sm text-admin_dark_text ">{item.text}</p>
+                <p className="text-base max-xl:text-sm text-admin_dark_text ">
+                  {item.text}
+                </p>
               </div>
             </div>
           ))}
           <Link
             href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4">
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none shrink-0 outline-none cursor-pointer bg-green text-dark_text shadow-xs hover:bg-green/80 px-7 py-4"
+          >
             Jetzt Heizkostenabrechnung
           </Link>
         </div>

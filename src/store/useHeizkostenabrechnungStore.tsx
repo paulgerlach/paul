@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { format } from "date-fns";
 import type { DocCostCategoryType, InvoiceDocumentType } from "@/types";
+import { de } from "date-fns/locale";
 
 export type HeizkostenabrechnungCostType = Partial<DocCostCategoryType> & {
   data: (Partial<InvoiceDocumentType> & { document?: File[] })[];
@@ -23,10 +24,12 @@ export type HeizkostenabrechnungStoreType = {
   removeDocumentGroup: (key: HeizkostenabrechnungCostType["type"]) => void;
   purposeOptions: string[];
   setActiveCostType: (key: HeizkostenabrechnungCostType["type"]) => void;
-  objektID: string | null;
+  objektID?: string;
+  operatingDocID?: string;
   localID: string | null;
   setObjektID: (id: string) => void;
   setLocalID: (id: string) => void;
+  setOperatingDocID: (id: string) => void;
   updateDocumentGroupValues: (
     key: HeizkostenabrechnungCostType["type"],
     index: number,
@@ -44,19 +47,25 @@ export type HeizkostenabrechnungStoreType = {
 
 export const useHeizkostenabrechnungStore =
   create<HeizkostenabrechnungStoreType>((set, get) => ({
-    start_date: null,
+    start_date: new Date(new Date().getFullYear(), 0, 1),
     end_date: null,
     activeCostType: null,
     documentGroups: [],
-    objektID: null,
+    objektID: undefined,
+    operatingDocID: undefined,
     localID: null,
     purposeOptions: [],
-    setDocumentGroups: (groups) => set({
-      documentGroups: groups
-    }),
+    setDocumentGroups: (groups) =>
+      set({
+        documentGroups: groups,
+      }),
     setLocalID: (id) =>
       set(() => ({
         localID: id,
+      })),
+    setOperatingDocID: (id) =>
+      set(() => ({
+        operatingDocID: id,
       })),
     setObjektID: (id) =>
       set(() => ({
@@ -77,7 +86,7 @@ export const useHeizkostenabrechnungStore =
       const { start_date, end_date } = get();
 
       const formatDate = (date: Date | null): string =>
-        date ? format(date, "dd.MM.yyyy") : "";
+        date ? format(date, "dd.MM.yyyy", { locale: de }) : "";
 
       return {
         start_date: formatDate(start_date),
@@ -103,19 +112,19 @@ export const useHeizkostenabrechnungStore =
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? {
-              ...group,
-              data: group.data.map((item, i) =>
-                i === index
-                  ? {
-                    ...item,
-                    ...values,
-                    document: values.document
-                      ? [...(item.document ?? []), values.document].flat()
-                      : item.document,
-                  }
-                  : item
-              ),
-            }
+                ...group,
+                data: group.data.map((item, i) =>
+                  i === index
+                    ? {
+                        ...item,
+                        ...values,
+                        document: values.document
+                          ? [...(item.document ?? []), values.document].flat()
+                          : item.document,
+                      }
+                    : item
+                ),
+              }
             : group
         ),
       })),
@@ -135,9 +144,11 @@ export const useHeizkostenabrechnungStore =
       })),
     setPurposeOptions: () => {
       const { documentGroups, activeCostType } = get();
-      const options = documentGroups.find((group) => group.type === activeCostType)?.options;
+      const options = documentGroups.find(
+        (group) => group.type === activeCostType
+      )?.options;
       set({
-        purposeOptions: options ?? []
+        purposeOptions: options ?? [],
       });
-    }
+    },
   }));

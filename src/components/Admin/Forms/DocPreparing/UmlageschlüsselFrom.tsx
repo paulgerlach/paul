@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-import { Button } from "@/components/Basic/ui/Button";
 import CostTypesSelects from "../../Docs/CostTypes/CostTypesSelects";
+import type { DocCostCategoryType } from "@/types";
+import SaveLocalCostButton from "./SaveLocalCostButton";
 
 export default function UmlageschlüsselFrom({
   objektId,
   localId,
+  docId,
+  initialDocumentGroups,
 }: {
   objektId: string;
   localId: string;
+  docId: string;
+  initialDocumentGroups: DocCostCategoryType[];
 }) {
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
@@ -16,11 +21,18 @@ export default function UmlageschlüsselFrom({
         <CostTypesSelects localId={localId} objektId={objektId} />
         <div className="flex items-center justify-between">
           <Link
-            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/gesamtkosten`}
-            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300">
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${localId}/${docId}/gesamtkosten`}
+            className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+          >
             Zurück
           </Link>
-          <Button>Weiter</Button>
+          <SaveLocalCostButton
+            objektId={objektId}
+            initialDocumentGroups={initialDocumentGroups}
+            documentType="heizkostenabrechnung"
+            operatingDocId={docId}
+            localId={localId}
+          />
         </div>
       </div>
     </div>

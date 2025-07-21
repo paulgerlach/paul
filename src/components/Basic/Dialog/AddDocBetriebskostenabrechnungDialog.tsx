@@ -19,7 +19,6 @@ import FormDocument from "@/components/Admin/Forms/FormDocument";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
-import FormAdvancedSelectField from "@/components/Admin/Forms/FormAdvancedSelectField";
 import { buildLocalName } from "@/utils";
 import { createInvoiceDocument } from "@/actions/create/createInvoiceDocument";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
@@ -124,7 +123,7 @@ export default function AddDocBetriebskostenabrechnungDialog() {
         await uploadDocuments.mutateAsync({
           files: data.document,
           relatedId: operatingDocID ?? "",
-          relatedType: "contract",
+          relatedType: "operating_costs",
         });
       }
 

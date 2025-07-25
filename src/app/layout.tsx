@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${exo_2Sans.variable}`}>
-        {children}
+          {children}
       </body>
     </html>
   );

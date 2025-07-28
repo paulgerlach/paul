@@ -29,7 +29,8 @@ export default function ThreeDotsButton({
       <PopoverTrigger asChild>
         <button
           className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
-          onClick={(e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()}
+        >
           <Image
             width={0}
             height={0}
@@ -43,15 +44,18 @@ export default function ThreeDotsButton({
       </PopoverTrigger>
       <PopoverContent
         className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
-        onClick={(e) => e.stopPropagation()}>
+        onClick={(e) => e.stopPropagation()}
+      >
         <Link
           href={editLink}
-          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
+          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+        >
           <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Bearbeiten
         </Link>
         <button
           onClick={() => handleOpenDialog()}
-          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
+          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+        >
           <Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Löschen
         </button>
       </PopoverContent>

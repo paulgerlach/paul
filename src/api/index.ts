@@ -11,6 +11,7 @@ import {
   doc_cost_category,
   operating_cost_documents,
   invoice_documents,
+  heating_bill_documents,
 } from "@/db/drizzle/schema";
 import { and, eq, gte, lte, or, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -20,6 +21,7 @@ import type {
   ContractorType,
   ContractType,
   DocCostCategoryType,
+  HeatingBillDocumentType,
   InvoiceDocumentType,
   LocalType,
   ObjektType,
@@ -349,6 +351,29 @@ export async function getOperatingCostDocumentByID(docId: string): Promise<Opera
 }
 
 export async function getInvoicesByOperatingCostDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
+  const user = await getAuthenticatedServerUser();
+
+  const invoices = await database
+    .select()
+    .from(invoice_documents)
+    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, user.id)));
+
+  return invoices;
+}
+
+export async function getHeatingBillDocumentByID(docId: string): Promise<HeatingBillDocumentType> {
+  const user = await getAuthenticatedServerUser();
+
+  const document = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .then((res) => res[0]);
+
+  return document;
+}
+
+export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 
   const invoices = await database

@@ -1,42 +1,38 @@
-import {
-  blue_x,
-  doc_download,
-  gmail,
-  green_check_circle,
-  pdf_icon,
-} from "@/static/icons";
+import { blue_x, gmail, green_check_circle, pdf_icon } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import {
   getActiveContractByLocalID,
   getContractsByLocalID,
-  getDocCostCategoryTypes,
-  getInvoicesByOperatingCostDocumentID,
-  getLocalById,
-  getObjectById,
-  getOperatingCostDocumentByID,
-  getRelatedContractors,
-  getRelatedLocalsByObjektId,
+  // getDocCostCategoryTypes,
+  // getHeatingBillDocumentByID,
+  // getInvoicesByHeatingBillDocumentID,
+  // getInvoicesByOperatingCostDocumentID,
+  // getLocalById,
+  // getObjectById,
+  // getOperatingCostDocumentByID,
+  // getRelatedContractors,
+  // getRelatedLocalsByObjektId,
 } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
-import PDFDownloadButton from "../Docs/Render/BetriebskostenabrechnungPdf/PDFDownloadButton";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import LocalPDFDownloadButton from "../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
 
-export type ObjekteLocalItemDocProps = {
+export type ObjekteLocalItemHeatingBillDocResultProps = {
   item: LocalType;
   id: string;
   localID?: string;
   docID?: string;
 };
 
-export default async function ObjekteLocalItemDocResult({
+export default async function ObjekteLocalItemHeatingBillDocResult({
   item,
   id,
   localID,
   docID,
-}: ObjekteLocalItemDocProps) {
+}: ObjekteLocalItemHeatingBillDocResultProps) {
   const contracts = await getContractsByLocalID(localID);
 
   const status = contracts?.some((contract) => contract.is_current)
@@ -76,25 +72,21 @@ export default async function ObjekteLocalItemDocResult({
     }
   };
 
-  const objekt = await getObjectById(id);
-  const relatedLocals = await getRelatedLocalsByObjektId(id);
-  const costCategories = await getDocCostCategoryTypes(
-    "betriebskostenabrechnung"
-  );
-  const mainDoc = await getOperatingCostDocumentByID(docID ? docID : "");
-  const contract = await getActiveContractByLocalID(localID);
-  const invoices = await getInvoicesByOperatingCostDocumentID(
-    docID ? docID : ""
-  );
-  const local = await getLocalById(localID ? localID : "");
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
+  // const objekt = await getObjectById(id);
+  // const relatedLocals = await getRelatedLocalsByObjektId(id);
+  // const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
+  // const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
+  // const contract = await getActiveContractByLocalID(localID);
+  // const invoices = await getInvoicesByHeatingBillDocumentID(docID ? docID : "");
+  // const local = await getLocalById(localID ? localID : "");
+  // const contractors = contract?.id
+  //   ? await getRelatedContractors(contract.id)
+  //   : [];
 
-  const totalLivingSpace =
-    relatedLocals?.reduce((sum, local) => {
-      return sum + (Number(local.living_space) || 0);
-    }, 0) || 0;
+  // const totalLivingSpace =
+  //   relatedLocals?.reduce((sum, local) => {
+  //     return sum + (Number(local.living_space) || 0);
+  //   }, 0) || 0;
 
   return (
     <div
@@ -135,7 +127,7 @@ export default async function ObjekteLocalItemDocResult({
         </div>
         <div className="flex items-center justify-end gap-4">
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${id}/${docID}/results/${localID}`}
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${id}/${localID}/${docID}/results/preview`}
           >
             <Image
               width={0}
@@ -158,19 +150,19 @@ export default async function ObjekteLocalItemDocResult({
               alt={"gmail_icon"}
             />
           </button>
-          <PDFDownloadButton
-            mainDoc={mainDoc}
-            previewLocal={local}
-            totalLivingSpace={totalLivingSpace}
-            costCategories={costCategories}
-            invoices={invoices}
-            contract={contract}
-            contractors={contractors}
-            objekt={objekt}
+          <LocalPDFDownloadButton
+          // mainDoc={mainDoc}
+          // previewLocal={local}
+          // totalLivingSpace={totalLivingSpace}
+          // costCategories={costCategories}
+          // invoices={invoices}
+          // contract={contract}
+          // contractors={contractors}
+          // objekt={objekt}
           />
           <ThreeDotsButton
-            dialogAction="operating_costs_delete"
-            editLink={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docID}/abrechnungszeitraum`}
+            dialogAction="heating_bill_delete"
+            editLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docID}/abrechnungszeitraum`}
           />
         </div>
       </div>

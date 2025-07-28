@@ -1,7 +1,7 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalsDoc from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsDoc";
+import ObjekteItemLocalDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteItemLocalDocAccordion";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ObjektDetailsPage({
@@ -21,7 +21,10 @@ export default async function ObjektDetailsPage({
         title={`Wohneinheiten`}
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] max-h-[90%]">
-        <ObjekteLocalsDoc id={objekt_id} locals={relatedLocals} />
+        <ObjekteItemLocalDocAccordion
+          objektID={objekt_id}
+          locals={relatedLocals}
+        />
       </ContentWrapper>
     </div>
   );

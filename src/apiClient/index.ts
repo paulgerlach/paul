@@ -1,6 +1,6 @@
 "use client";
 
-import type { ContractorType, ContractType, InvoiceDocumentType, LocalType, ObjektType, OperatingCostDocumentType, UploadDocumentArgs } from "@/types";
+import type { ContractorType, ContractType, HeatingBillDocumentType, InvoiceDocumentType, LocalType, ObjektType, OperatingCostDocumentType, UploadDocumentArgs } from "@/types";
 import { getAuthenticatedUser } from "@/utils/auth";
 import { sanitizeFileName } from "@/utils/client";
 import { supabase } from "@/utils/supabase/client";
@@ -297,6 +297,29 @@ export function useOperatingCostDocumentsByObjektID(objektID?: string) {
   return useQuery({
     queryKey: ["operating_cost_documents", objektID],
     queryFn: () => getOperatingCostDocumentsByObjektID(objektID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getHeatingBillDocumentsByLocalID(localID?: string): Promise<HeatingBillDocumentType[]> {
+
+  const { data, error } = await supabase
+    .from("heating_bill_documents")
+    .select("*")
+    .eq("local_id", localID)
+    .eq("submited", false);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useHeatingBillDocumentsByLocalID(localID?: string) {
+  return useQuery({
+    queryKey: ["heating_bill_documents", localID],
+    queryFn: () => getHeatingBillDocumentsByLocalID(localID),
     refetchOnWindowFocus: false,
   });
 }

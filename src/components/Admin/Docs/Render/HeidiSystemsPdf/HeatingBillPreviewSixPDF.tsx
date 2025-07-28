@@ -1,27 +1,19 @@
 "use client";
 
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  Image,
-} from "@react-pdf/renderer";
-import { admin_logo } from "@/static/icons";
+import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     padding: 40,
-    fontFamily: 'Helvetica',
+    fontFamily: "Helvetica",
     fontSize: 9,
-    color: '#000000',
+    color: "#000000",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   headerText: {
@@ -33,10 +25,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2563EB',
+    fontWeight: "bold",
+    color: "#2563EB",
     borderBottomWidth: 2,
-    borderBottomColor: '#2563EB',
+    borderBottomColor: "#2563EB",
     paddingBottom: 4,
     marginBottom: 8,
   },
@@ -45,22 +37,22 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   subSectionHeader: {
-    backgroundColor: '#E5E7EB',
-    fontWeight: 'bold',
+    backgroundColor: "#E5E7EB",
+    fontWeight: "bold",
     padding: 2,
     paddingLeft: 4,
     fontSize: 8,
     marginBottom: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   table: {
-    width: '100%',
+    width: "100%",
     fontSize: 7,
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   tableCell: {
     paddingVertical: 2,
@@ -69,46 +61,46 @@ const styles = StyleSheet.create({
   tableCellRight: {
     paddingVertical: 2,
     flex: 1,
-    textAlign: 'right',
+    textAlign: "right",
   },
   tableRowBorderTop: {
     borderTopWidth: 2,
-    borderTopColor: '#000000',
+    borderTopColor: "#000000",
     marginTop: 4,
   },
   chartPlaceholder: {
     width: 200,
     height: 120,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#cccccc',
+    borderColor: "#cccccc",
   },
   chartContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
   chartColumn: {
-    width: '48%',
-    alignItems: 'center',
+    width: "48%",
+    alignItems: "center",
   },
   chartTitle: {
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 4,
     fontSize: 8,
   },
   footerText: {
     fontSize: 7,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 4,
   },
   link: {
-    color: '#2563EB',
-    textDecoration: 'underline',
+    color: "#2563EB",
+    textDecoration: "underline",
   },
 });
 
@@ -339,8 +331,8 @@ const HeatingBillPreviewSixPDF = () => {
           Entgelte für die Gebrauchsüberlassung, für die Verwendung der
           Ausstattung zur Verbrauchserfassung einschließlich der Eichung, sowie
           für die Ablesung und Abrechnung entnehmen Sie bitte Ihrer vorliegenden
-          Heizkostenabrechnung unter dem Punkt "Aufstellung der Kosten / Weitere
-          Heizungsbetriebskosten".
+          Heizkostenabrechnung unter dem Punkt &quot;Aufstellung der Kosten /
+          Weitere Heizungsbetriebskosten&quot;.
         </Text>
         <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
           <View style={styles.chartPlaceholder}>

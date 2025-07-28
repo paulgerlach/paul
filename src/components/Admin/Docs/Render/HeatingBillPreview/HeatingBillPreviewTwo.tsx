@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
 
@@ -22,9 +21,9 @@ const HeatingBillPreviewTwo = () => {
             Warmwasser, Kaltwasser von Heidi
           </div>
           <div className="text-sm">
-            Die Gesamtabrechnung bildet die Aufteilung der Kosten für das gesamte
-            Gebäude ab. Die anteiligen Kosten für Ihre Nutzeinheit entnehmen
-            Sie bitte dem Formular "Ihre Abrechnung".
+            Die Gesamtabrechnung bildet die Aufteilung der Kosten für das
+            gesamte Gebäude ab. Die anteiligen Kosten für Ihre Nutzeinheit
+            entnehmen Sie bitte dem Formular &quot;Ihre Abrechnung&quot;.
           </div>
         </div>
         <div className="text-sm">

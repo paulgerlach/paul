@@ -11,9 +11,10 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import BetriebskostenabrechnungPreview from "@/components/Admin/Docs/Render/BetriebskostenabrechnungPdf/BetriebskostenabrechnungPreview";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG, ROUTE_OBJEKTE } from "@/routes/routes";
+import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
+import { ROUTE_HEIZKOSTENABRECHNUNG, ROUTE_OBJEKTE } from "@/routes/routes";
 
-export default async function ResultBuildingLocalPreview({
+export default async function ResultLocalPreview({
   params,
 }: {
   params: Promise<{ objekt_id: string; doc_id: string; local_id: string }>;
@@ -31,7 +32,7 @@ export default async function ResultBuildingLocalPreview({
   ] = await Promise.all([
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
-    getDocCostCategoryTypes("betriebskostenabrechnung"),
+    getDocCostCategoryTypes("heizkostenabrechnung"),
     getOperatingCostDocumentByID(doc_id),
     getActiveContractByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
@@ -51,20 +52,20 @@ export default async function ResultBuildingLocalPreview({
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Objekte"
-        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/${doc_id}/results`}
+        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/${local_id}/${doc_id}/results`}
         title="Detailansicht"
-        subtitle="Die fertig erstellten Betriebskostenabrechnung können nun die "
+        subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />
       <ContentWrapper className="space-y-4">
-        <BetriebskostenabrechnungPreview
-          mainDoc={mainDoc}
-          previewLocal={local}
-          totalLivingSpace={totalLivingSpace}
-          costCategories={costCategories}
-          invoices={invoices}
-          contract={contract}
-          contractors={contractors}
-          objekt={objekt}
+        <HeatingBillPreview
+        //   mainDoc={mainDoc}
+        //   previewLocal={local}
+        //   totalLivingSpace={totalLivingSpace}
+        //   costCategories={costCategories}
+        //   invoices={invoices}
+        //   contract={contract}
+        //   contractors={contractors}
+        //   objekt={objekt}
         />
       </ContentWrapper>
     </div>

@@ -1,10 +1,7 @@
 "use client";
 
 import CostTypeBuildingSelectItem from "./CostTypeBuildingSelectItem";
-import {
-  useBetriebskostenabrechnungStore,
-  type BetriebskostenabrechnungCostType,
-} from "@/store/useBetriebskostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 
 export default function CostTypesBuildingSelects({
   objektId,

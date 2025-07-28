@@ -181,7 +181,7 @@ const HeatingBillPreviewTwoPDF = () => {
           <Text style={styles.subtitle}>
             Die Gesamtabrechnung bildet die Aufteilung der Kosten für das
             gesamte Gebäude ab. Die anteiligen Kosten für Ihre Nutzeinheit
-            entnehmen Sie bitte dem Formular "Ihre Abrechnung".
+            entnehmen Sie bitte dem Formular &quot;Ihre Abrechnung&quot;.
           </Text>
         </View>
         <View style={styles.titleRight}>

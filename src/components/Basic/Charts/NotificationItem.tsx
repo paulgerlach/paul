@@ -21,20 +21,22 @@ export default function NotificationItem({
     <div className="flex items-center justify-start gap-1.5">
       <span
         className="flex items-center justify-center w-[3vw] h-[3vw] rounded-sm"
-        style={{ backgroundColor: leftBg }}>
+        style={{ backgroundColor: leftBg }}
+      >
         <Image
           width={0}
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="max-w-[1.5vw] max-h-[1.5vw]"
+          className="max-w-5 max-h-[1.5vw]"
           src={leftIcon}
           alt=""
         />
       </span>
       <span
         className="flex items-center justify-center w-[3vw] h-[3vw] rounded-sm"
-        style={{ backgroundColor: rightBg }}>
+        style={{ backgroundColor: rightBg }}
+      >
         <Image
           width={0}
           height={0}

@@ -67,7 +67,7 @@ import header_logosvg from "@/asset/header_logo.svg";
 import heater_form1 from "@/asset/heater_form1.png";
 import heater_form2 from "@/asset/heater_form2.png";
 import heater_form3 from "@/asset/heater_form3.png";
-import heater from "@/asset/heater.svg";
+import heater from "@/asset/heater.png";
 import hero_counter from "@/asset/hero_counter.png";
 import hero_pointer from "@/asset/hero_pointer.png";
 import hero_process_bg from "@/asset/hero_process_bg.png";

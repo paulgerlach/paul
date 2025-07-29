@@ -60,7 +60,7 @@ export default function ContactForm() {
     },
   });
   return (
-    <div className="pt-8 max-small:pt-8 px-[100px] max-large:px-20 max-medium:px-10 max-small:px-5">
+    <div className="pt-20 max-small:pt-8 px-[100px] max-large:px-20 max-medium:px-10 max-small:px-5">
       <h1 className="text-[45px] leading-[54px] mb-6 max-medium:text-2xl text-dark_text">
         Kontaktieren Sie uns
       </h1>

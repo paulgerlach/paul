@@ -47,14 +47,14 @@ export function useLocalStatus(contracts?: ContractType[] | null) {
     switch (status) {
       case "vacancy":
         return (
-          <div className="rounded-[20px] min-h-16 min-w-56 max-xl:min-h-12 max-xl:min-w-40 flex items-center justify-center gap-4 bg-white text-xl max-xl:text-base text-[#6083CC] drop-shadow-xl py-3 px-4">
+          <div className="rounded-[20px] min-h-16 min-w-56 max-xl:min-h-12 max-xl:min-w-40 flex items-center justify-center gap-4 bg-white text-xl max-xl:text-base text-[#6083CC] drop-shadow-sm py-3 px-4">
             <span className="bg-[#6083CC] rounded-full size-3 min-w-3 min-h-3 max-xl:size-2 max-xl:min-w-2 max-xl:min-h-2" />
             Leerstand
           </div>
         );
       case "renting":
         return (
-          <div className="rounded-[20px] min-h-16 min-w-56 max-xl:min-h-12 max-xl:min-w-40 flex items-center justify-center gap-4 bg-white text-xl max-xl:text-base text-green drop-shadow-xl py-3 px-4">
+          <div className="rounded-[20px] min-h-16 min-w-56 max-xl:min-h-12 max-xl:min-w-40 flex items-center justify-center gap-4 bg-white text-xl max-xl:text-base text-green drop-shadow-sm py-3 px-4">
             <span className="bg-green rounded-full size-3 min-w-3 min-h-3 max-xl:size-2 max-xl:min-w-2 max-xl:min-h-2" />
             Voll vermietet
           </div>

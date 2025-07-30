@@ -43,7 +43,6 @@ export default function ObjekteItemLocalDocWithHistory({
   isOpen,
   index,
   onClick,
-  objektID,
 }: ObjekteItemLocalDocWithHistoryProps) {
   const contentRef = useRef(null);
   const { setItemID, openDialog, setQueryKey } = useDialogStore();

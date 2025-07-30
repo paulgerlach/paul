@@ -16,6 +16,8 @@ import { editCostType } from "@/actions/edit/editCostType";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
+import { useRouter } from "next/navigation";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -37,13 +39,21 @@ const defaultValues: AddCostTypeDialogFormValues = {
 
 export default function EditBetriebskostenabrechnungCostTypeDialog() {
   const { openDialogByType, closeDialog, itemID } = useDialogStore();
-  const { documentGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups } = useBetriebskostenabrechnungStore();
   const isOpen = openDialogByType.cost_type_betriebskostenabrechnung_edit;
   const initialValues = documentGroups.find((group) => group.id === itemID);
   const methods = useForm({
     resolver: zodResolver(addCostTypeDialogSchema),
-    defaultValues,
+    defaultValues: initialValues
+      ? {
+          allocation_key: initialValues.allocation_key ?? "Verbrauch",
+          type: initialValues.type ?? "",
+          name: initialValues.name ?? "",
+          options: initialValues.options ?? [],
+        }
+      : defaultValues,
   });
+  const router = useRouter();
 
   useEffect(() => {
     if (initialValues) {
@@ -71,21 +81,30 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
           id="cost_type_betriebskostenabrechnung_edit-dialog-form"
           onSubmit={methods.handleSubmit(async (data) => {
             try {
-              await editCostType(data, "betriebskostenabrechnung", itemID ?? "");
+              await editCostType(
+                data,
+                "betriebskostenabrechnung",
+                itemID ?? ""
+              );
               toast.success("Ausgabe wurde hinzugefügt.");
               methods.reset(defaultValues);
+              router.refresh();
               closeDialog("cost_type_betriebskostenabrechnung_edit");
             } catch {
               toast.error("Fehler beim Speichern.");
             }
-          })}>
+          })}
+        >
           <FormInputField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="name"
             label="	Name*"
             placeholder=""
           />
-          <FormTagsInput<AddCostTypeDialogFormValues> name="options" control={methods.control} />
+          <FormTagsInput<AddCostTypeDialogFormValues>
+            name="options"
+            control={methods.control}
+          />
           <FormSelectField<AddCostTypeDialogFormValues>
             control={methods.control}
             name="allocation_key"
@@ -96,11 +115,12 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
           <div className="flex items-center justify-between gap-4">
             <button
               type="button"
-              className="px-6 py-4 border border-black/20 cursor-pointer rounded-md bg-white text-admin_dark_text text-lg font-medium shadow-xs transition-all duration-300 hover:opacity-80"
+              className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
               onClick={() => {
                 methods.reset(defaultValues);
                 closeDialog("cost_type_betriebskostenabrechnung_edit");
-              }}>
+              }}
+            >
               Abbrechen
             </button>
             <Button type="submit" className="!font-medium !text-lg">

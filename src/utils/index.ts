@@ -131,11 +131,11 @@ export const handleLocalTypeIcon = (
   switch (type) {
     case "commercial":
       return commercial;
-    case "warehouse":
+    case "residential":
       return keys;
     case "parking":
       return parking_lot;
-    case "residential":
+    case "warehouse":
       return special_purpose;
   }
 };

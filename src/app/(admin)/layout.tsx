@@ -12,7 +12,7 @@ import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHe
 import AddDocBetriebskostenabrechnungDialog from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
 import AddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddHeizkostenabrechnungCostTypeDialog";
 import AddBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddBetriebskostenabrechnungCostTypeDialog";
-import EditBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditBetriebskostenabrechnungCostTypeDialog copy";
+import EditBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditBetriebskostenabrechnungCostTypeDialog";
 import EditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/EditHeizkostenabrechnungCostTypeDialog";
 import CostTypeHeizkostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeHeizkostenabrechnungDeleteDialog";
 import CostTypeBetriebskostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeBetriebskostenabrechnungDeleteDialog";

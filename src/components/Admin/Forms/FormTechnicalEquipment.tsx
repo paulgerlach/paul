@@ -30,7 +30,7 @@ export type FormTechnicalEquipmentProps<T extends FieldValues = FieldValues> = {
 };
 
 export default function FormTechnicalEquipment<
-  T extends FieldValues = FieldValues,
+  T extends FieldValues = FieldValues
 >({ control, disabled }: FormTechnicalEquipmentProps<T>) {
   return (
     <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
@@ -58,8 +58,9 @@ export default function FormTechnicalEquipment<
                 <Popover>
                   <PopoverTrigger
                     onClick={(e) => disabled && e.preventDefault()}
-                    asChild>
-                    <div className="border-black/20 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring aria-invalid:ring-green/20 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex items-center justify-between gap-2 rounded border bg-transparent px-3 py-4 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-green disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 w-full">
+                    asChild
+                  >
+                    <div className="border-black/20 aria-invalid:ring-green/20 aria-invalid:border-destructive flex items-center justify-between gap-2 rounded border bg-transparent px-3 py-4 text-sm max-xl:text-sm max-xl:py-2 h-10 whitespace-nowrap outline-none focus-visible:ring-[3px] focus-visible:ring-green disabled:cursor-not-allowed disabled:opacity-50  *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 w-full">
                       {selectedValues.length > 0
                         ? `${selectedValues.length} ausgewählt`
                         : "Optionen auswählen"}
@@ -73,8 +74,10 @@ export default function FormTechnicalEquipment<
                           <CommandItem
                             key={option}
                             onSelect={() => handleSelect(option)}
-                            className={`cursor-pointer ${selectedValues.includes(option) ? "bg-muted" : ""
-                              }`}>
+                            className={`cursor-pointer ${
+                              selectedValues.includes(option) ? "bg-muted" : ""
+                            }`}
+                          >
                             {option}
                           </CommandItem>
                         ))}
@@ -89,10 +92,13 @@ export default function FormTechnicalEquipment<
                       <Badge
                         key={item}
                         variant="secondary"
-                        className="flex items-center gap-1">
+                        className="flex items-center gap-1"
+                      >
                         {item}
                         <X
-                          className={`h-3 w-3 transition-all duration-300 hover:text-red-500 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+                          className={`h-3 w-3 transition-all duration-300 hover:text-red-500 ${
+                            disabled ? "cursor-not-allowed" : "cursor-pointer"
+                          }`}
                           onClick={() =>
                             !disabled &&
                             field.onChange(

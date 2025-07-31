@@ -323,3 +323,24 @@ export function useHeatingBillDocumentsByLocalID(localID?: string) {
     refetchOnWindowFocus: false,
   });
 }
+
+
+export async function uploadObjektImage(file: File, objektId: string): Promise<string> {
+  const filePath = `images/${objektId}/${file.name}`;
+
+  const { error } = await supabase
+    .storage
+    .from("buildings")
+    .upload(filePath, file, { upsert: true });
+
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+
+  const { data } = supabase
+    .storage
+    .from("buildings")
+    .getPublicUrl(filePath);
+
+  if (!data?.publicUrl) throw new Error("Could not get public URL");
+
+  return data.publicUrl;
+}

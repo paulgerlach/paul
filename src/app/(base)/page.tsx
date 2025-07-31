@@ -66,7 +66,8 @@ export default function Home() {
             </p>
             <a
               href="/datenschutzhinweise"
-              className="hidden max-medium:block text-link underline text-sm leading-4">
+              className="hidden max-medium:block text-link underline text-sm leading-4"
+            >
               mehr erfahren
             </a>
           </div>
@@ -93,7 +94,8 @@ export default function Home() {
             </p>
             <a
               href="#"
-              className="border hidden max-medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80">
+              className="border hidden max-medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80"
+            >
               Kosteneinsparung berechnen
             </a>
           </div>
@@ -119,7 +121,8 @@ export default function Home() {
             </p>
             <Link
               href="/fragebogen"
-              className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
+              className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
+            >
               Jetzt installieren lassen
             </Link>
           </div>
@@ -169,7 +172,8 @@ export default function Home() {
               </p>
               <Link
                 href={ROUTE_FRAGEBOGEN}
-                className="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white">
+                className="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white"
+              >
                 Jetzt umrüsten lassen
               </Link>
               <div className="bg-white/90 flex items-center justify-center pt-[60px] px-[116px] max-megalarge:px-20 rounded-t-[20px]">
@@ -193,7 +197,8 @@ export default function Home() {
               </p>
               <Link
                 href={ROUTE_DATENSCHUTZHINWEISE}
-                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]">
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
                 mehr erfahren
               </Link>
               <Image
@@ -231,7 +236,8 @@ export default function Home() {
               </p>
               <Link
                 href={ROUTE_DATENSCHUTZHINWEISE}
-                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]">
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
                 mehr erfahren
               </Link>
               <LazyLottie
@@ -367,7 +373,8 @@ export default function Home() {
                 </p>
                 <a
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise">
+                  href="/datenschutzhinweise"
+                >
                   Erfahren Sie mehr
                   <Image
                     width={0}
@@ -403,7 +410,8 @@ export default function Home() {
                 </p>
                 <a
                   className="mt-10 text-link group text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise">
+                  href="/datenschutzhinweise"
+                >
                   Erfahren Sie mehr
                   <Image
                     width={0}
@@ -443,7 +451,8 @@ export default function Home() {
                 </p>
                 <a
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise">
+                  href="/datenschutzhinweise"
+                >
                   Erfahren Sie mehr
                   <Image
                     width={0}
@@ -482,7 +491,8 @@ export default function Home() {
         />
         <Link
           className="my-10 group mx-auto text-link text-base leading-[19.2px] flex items-center justify-center gap-2"
-          href="/datenschutzhinweise">
+          href="/datenschutzhinweise"
+        >
           Erfahren Sie mehr
           <Image
             width={0}

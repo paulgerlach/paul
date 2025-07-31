@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
         hostname: "images.prismic.io",
       },
     ],
+    domains: [
+      "gjyzysizrvtqthttctlb.supabase.co",
+    ]
   },
   output: "standalone",
 };

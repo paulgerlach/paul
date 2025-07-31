@@ -36,39 +36,58 @@ export default function LoginDialog() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const { email, password } = data;
+    try {
+      const { email, password } = data;
+      const { data: sessionData, error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-    const { data: sessionData, error } = await supabase.auth.signInWithPassword(
-      {
-        email,
-        password,
+      if (error) {
+        toast.error("Login fehlgeschlagen");
+        console.error("Login failed:", error.message);
+        return;
       }
-    );
 
-    if (error) {
-      toast.error("Login fehlgeschlagen");
-      console.error("Login failed:", error.message);
-      return;
-    }
+      const { session } = sessionData;
 
-    const { session } = sessionData;
+      if (session?.access_token && session.refresh_token) {
+        setCookie(null, "sb-access-token", session.access_token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+        });
+        setCookie(null, "sb-refresh-token", session.refresh_token, {
+          maxAge: 30 * 24 * 60 * 60,
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+        });
 
-    if (session?.access_token) {
-      setCookie(null, "sb-access-token", session.access_token, {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      });
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("permission")
+          .eq("id", session.user.id)
+          .single();
 
-      setCookie(null, "sb-refresh-token", session.refresh_token ?? "", {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      });
+        if (userError) {
+          console.error("Failed to fetch user role:", userError.message);
+          toast.error("Konnte Benutzerrolle nicht abrufen");
+          return;
+        }
 
-      toast.success("Login erfolgreich");
-      router.push(ROUTE_DASHBOARD);
-      closeDialog("login");
+        if (userData?.permission === "admin") {
+          router.push("/admin");
+        } else {
+          router.push(ROUTE_DASHBOARD);
+        }
+
+        toast.success("Login erfolgreich");
+        closeDialog("login");
+      }
+    } catch (e) {
+      console.error("Unexpected login error:", e);
+      toast.error("Ein unerwarteter Fehler ist aufgetreten");
     }
   };
 
@@ -79,7 +98,8 @@ export default function LoginDialog() {
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
             method="dialog"
-            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6">
+            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6"
+          >
             <h2 className="text-3xl font-bold text-darkest-text">
               Willkommen zurück
             </h2>
@@ -112,7 +132,8 @@ export default function LoginDialog() {
               {[domus, immoware24, matera].map((icon, idx) => (
                 <div
                   key={idx}
-                  className="rounded bg-base-bg flex items-center justify-center py-4 px-7">
+                  className="rounded bg-base-bg flex items-center justify-center py-4 px-7"
+                >
                   <Image
                     width={0}
                     height={0}
@@ -129,7 +150,8 @@ export default function LoginDialog() {
             <Button
               type="submit"
               className="mt-6 flex w-fit mx-auto px-[104px] py-5 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
-              disabled={methods.formState.isSubmitting}>
+              disabled={methods.formState.isSubmitting}
+            >
               {methods.formState.isSubmitting ? "Einloggen..." : "Log in"}
             </Button>
             <button
@@ -137,7 +159,8 @@ export default function LoginDialog() {
                 openDialog("register");
                 closeDialog("login");
               }}
-              className="text-link cursor-pointer underline mx-auto text-base leading-[19.2px] flex items-center justify-start">
+              className="text-link cursor-pointer underline mx-auto text-base leading-[19.2px] flex items-center justify-start"
+            >
               Jetzt registrieren
             </button>
           </form>

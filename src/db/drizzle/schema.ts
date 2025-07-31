@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, uuid, timestamp, boolean, numeric, pgPolicy, text, jsonb, date, unique, varchar, integer, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -12,7 +12,7 @@ export const heating_bill_documents = pgTable("heating_bill_documents", {
 	end_date: timestamp({ withTimezone: true, mode: 'string' }),
 	objekt_id: uuid().defaultRandom(),
 	user_id: uuid(),
-	submited: boolean(),
+	submited: boolean().default(false).notNull(),
 	local_id: uuid().defaultRandom(),
 	consumption_dependent: numeric().default('70'),
 	living_space_share: numeric().default('30'),
@@ -27,6 +27,10 @@ export const heating_bill_documents = pgTable("heating_bill_documents", {
 		foreignColumns: [objekte.id],
 		name: "heating_bill_documents_objekt_id_fkey1"
 	}),
+	pgPolicy("Users can view their own heating bill documents.", { as: "permissive", for: "select", to: ["public"], using: sql`(auth.uid() = user_id)` }),
+	pgPolicy("Users can insert their own heating bill documents.", { as: "permissive", for: "insert", to: ["public"] }),
+	pgPolicy("Users can update their own heating bill documents.", { as: "permissive", for: "update", to: ["public"] }),
+	pgPolicy("Users can delete their own heating bill documents.", { as: "permissive", for: "delete", to: ["public"] }),
 ]);
 
 export const doc_cost_category = pgTable("doc_cost_category", {
@@ -217,9 +221,17 @@ export const objekte = pgTable("objekte", {
 	tags: jsonb().default([]),
 	heating_systems: jsonb().default([]),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	image_url: text(),
 }, (table) => [
-	pgPolicy("Users can access only their own objects", { as: "permissive", for: "all", to: ["public"], using: sql`(auth.uid() = user_id)`, withCheck: sql`(auth.uid() = user_id)` }),
+	pgPolicy("Users and Admins can access objects", {
+		as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR (EXISTS ( SELECT 1
+   FROM users
+  WHERE ((users.id = auth.uid()) AND (users.permission = 'admin'::text)))))`, withCheck: sql`((user_id = auth.uid()) OR (EXISTS ( SELECT 1
+   FROM users
+  WHERE ((users.id = auth.uid()) AND (users.permission = 'admin'::text)))))`  }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
+	pgPolicy("Users and Admins can insert objects", { as: "permissive", for: "insert", to: ["public"] }),
+	pgPolicy("Users and Admins can delete objects", { as: "permissive", for: "delete", to: ["public"] }),
 ]);
 
 export const doc_cost_category_defaults = pgTable("doc_cost_category_defaults", {

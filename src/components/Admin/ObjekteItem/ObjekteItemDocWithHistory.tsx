@@ -61,24 +61,38 @@ export default function ObjekteItemDocWithHistory({
 
   return (
     <div
-      className={` bg-white/50 max-xl:p-3 rounded-2xl max-xl:rounded-xl ${isOpen ? `active` : ""}`}
+      className={` bg-white/50 max-xl:p-3 rounded-2xl max-xl:rounded-xl ${
+        isOpen ? `active` : ""
+      }`}
     >
       <button
         className="w-full rounded-2xl p-5 bg-white cursor-pointer flex items-center justify-start gap-8"
         onClick={() => onClick(index)}
       >
         <div className={`flex items-center justify-start gap-8 max-xl:gap-4`}>
-          <div className="w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl bg-[#E0E0E0]">
+          {!!item.image_url ? (
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-[30px] max-h-[30px] max-xl:max-w-[24px] max-xl:max-h-[24px]"
-              src={objekte_placeholder}
-              alt="objekte_placeholder"
+              className="w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl"
+              src={item.image_url}
+              alt={item.street}
             />
-          </div>
+          ) : (
+            <div className="w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl bg-[#E0E0E0]">
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                loading="lazy"
+                className="max-w-[30px] max-h-[30px] max-xl:max-w-[24px] max-xl:max-h-[24px]"
+                src={objekte_placeholder}
+                alt="objekte_placeholder"
+              />
+            </div>
+          )}
           <div>
             <p className="text-2xl max-xl:text-xl text-dark_green">
               {item.street}

@@ -51,7 +51,7 @@ const HeatingBillPreviewTwo = () => {
 
       {/* Cost Breakdown */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold text-blue-600 border-b-2 border-blue-600 pb-2 mb-4">
+        <h2 className="text-xl font-bold text-green border-b-2 border-green pb-2 mb-4">
           Aufstellung der Kosten
         </h2>
         <div className="grid grid-cols-2 gap-20">
@@ -137,7 +137,7 @@ const HeatingBillPreviewTwo = () => {
 
       {/* Costs for separate distribution */}
       <div className="mt-10">
-        <h3 className="text-lg font-bold text-blue-600 border-b-2 border-blue-600 pb-2 mb-4">
+        <h3 className="text-lg font-bold text-green border-b-2 border-green pb-2 mb-4">
           Kosten für gesonderte Verteilung
         </h3>
         <div className="grid grid-cols-2 gap-20">
@@ -230,7 +230,7 @@ const HeatingBillPreviewTwo = () => {
 
       {/* Cost Allocation */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold text-blue-600 border-b-2 border-blue-600 pb-2 mb-4">
+        <h2 className="text-xl font-bold text-green border-b-2 border-green pb-2 mb-4">
           Aufteilung der Kosten
         </h2>
         <div className="text-sm">

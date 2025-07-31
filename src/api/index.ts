@@ -12,6 +12,7 @@ import {
   operating_cost_documents,
   invoice_documents,
   heating_bill_documents,
+  users,
 } from "@/db/drizzle/schema";
 import { and, eq, gte, lte, or, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -277,13 +278,29 @@ export async function getRelatedContractors(contractID?: string): Promise<Contra
 export async function getObjekts(): Promise<ObjektType[]> {
   const user = await getAuthenticatedServerUser();
 
-  const objekts = await database
-    .select()
-    .from(objekte)
-    .where(eq(objekte.user_id, user?.id));
+  const [result] = await database
+    .select({ permission: users.permission })
+    .from(users)
+    .where(eq(users.id, user.id));
+
+  const userPermission = result?.permission;
+
+  let objekts;
+
+  if (userPermission === 'admin') {
+    objekts = await database
+      .select()
+      .from(objekte);
+  } else {
+    objekts = await database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.user_id, user.id));
+  }
 
   return objekts;
 }
+
 
 export async function getObjectById(objectId: string): Promise<ObjektType> {
   const object = await database

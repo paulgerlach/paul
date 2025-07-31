@@ -243,12 +243,14 @@ import cost_type_plus from "@/asset/cost_type_plus.png";
 import gmail from "@/asset/gmail.png";
 import doc_download from "@/asset/doc_download.png";
 import operating_cost_documents_pending from "@/asset/operating_cost_documents_pending.png";
+import admin_objekte from "@/asset/admin_objekte.png";
 
 export {
   accentro_colored,
   operating_cost_documents_pending,
   cold_water,
   cost_type_plus,
+  admin_objekte,
   lamp,
   doc_download,
   gmail,

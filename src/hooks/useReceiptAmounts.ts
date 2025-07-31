@@ -11,8 +11,8 @@ export function useReceiptAmounts({
   end_date,
 }: {
   documentGroups:
-    | BetriebskostenabrechnungCostType[]
-    | HeizkostenabrechnungCostType[];
+  | BetriebskostenabrechnungCostType[]
+  | HeizkostenabrechnungCostType[];
   contracts?: ContractType[];
   start_date: string;
   end_date: string;
@@ -64,7 +64,7 @@ export function useReceiptAmounts({
 
     const totalContractsAmount =
       (filteredContracts ?? []).reduce(
-        (acc, contract) => acc + Number(contract.cold_rent ?? 0),
+        (acc, contract) => acc + Number(contract.additional_costs ?? 0),
         0
       ) * monthsDiff;
 

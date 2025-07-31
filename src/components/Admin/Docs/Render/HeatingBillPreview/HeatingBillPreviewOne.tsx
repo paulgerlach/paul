@@ -156,7 +156,7 @@ export default function HeatingBillPreviewOne() {
         <div className="flex justify-end items-center p-2 border-b border-gray-400">
           <span className="font-bold mr-4">Betrag</span>
         </div>
-        <div className="bg-blue-800 text-white p-2 flex justify-between items-center">
+        <div className="bg-green text-white p-2 flex justify-between items-center">
           <span className="font-bold">Gesamtbetrag</span>
           <span className="font-bold text-lg">{mockData.totalAmount}</span>
         </div>

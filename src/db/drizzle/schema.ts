@@ -161,6 +161,21 @@ export const contractors = pgTable("contractors", {
 	pgPolicy("Users can access their own contractors", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
+export const local_meters = pgTable("local_meters", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	meter_number: text(),
+	meter_note: text(),
+	meter_type: text(),
+	local_id: uuid().defaultRandom(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	foreignKey({
+		columns: [table.local_id],
+		foreignColumns: [locals.id],
+		name: "local_meters_local_id_fkey"
+	}),
+]);
+
 export const users_in_auth = pgTable("users_in_auth", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	email: text().notNull(),

@@ -1,15 +1,15 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalsAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAccordion";
+import ObjekteLocalsAdminAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAdminAccordion";
 import { ROUTE_ADMIN } from "@/routes/routes";
 
 export default async function AdminObjektDetailsPage({
   params,
 }: {
-  params: Promise<{ objekte_id: string }>;
+  params: Promise<{ objekte_id: string; user_id: string }>;
 }) {
-  const { objekte_id } = await params;
+  const { objekte_id, user_id } = await params;
 
   const relatedLocals = await getRelatedLocalsByObjektId(objekte_id);
 
@@ -21,7 +21,11 @@ export default async function AdminObjektDetailsPage({
         title={`Wohneinheiten`}
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        <ObjekteLocalsAccordion id={objekte_id} locals={relatedLocals} />
+        <ObjekteLocalsAdminAccordion
+          objektID={objekte_id}
+          userID={user_id}
+          locals={relatedLocals}
+        />
       </ContentWrapper>
     </div>
   );

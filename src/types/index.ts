@@ -10,6 +10,8 @@ import {
   doc_cost_category_document_type,
   operating_cost_documents,
   heating_bill_documents,
+  users,
+  local_meters,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -101,8 +103,10 @@ export type ContractType = InferInsertModel<typeof contracts>;
 export type ContractorType = InferInsertModel<typeof contractors>;
 
 export type ObjektType = InferInsertModel<typeof objekte>;
+export type UserType = InferInsertModel<typeof users>;
 
 export type LocalType = InferInsertModel<typeof locals>;
+export type LocalMeterType = InferInsertModel<typeof local_meters>;
 
 export type InvoiceDocumentType = InferInsertModel<typeof invoice_documents>;
 export type HeatingBillDocumentType = InferInsertModel<typeof heating_bill_documents>;
@@ -138,7 +142,8 @@ export type DocumentType =
 export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
   | "login"
-  | "register";
+  | "register"
+  | "admin_objekte_image";
 
 export type UploadedDocument = {
   id: string;

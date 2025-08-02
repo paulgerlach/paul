@@ -13,6 +13,7 @@ import {
   invoice_documents,
   heating_bill_documents,
   users,
+  local_meters,
 } from "@/db/drizzle/schema";
 import { and, eq, gte, lte, or, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -24,9 +25,11 @@ import type {
   DocCostCategoryType,
   HeatingBillDocumentType,
   InvoiceDocumentType,
+  LocalMeterType,
   LocalType,
   ObjektType,
-  OperatingCostDocumentType
+  OperatingCostDocumentType,
+  UserType
 } from "@/types";
 
 interface MeterReading {
@@ -301,6 +304,26 @@ export async function getObjekts(): Promise<ObjektType[]> {
   return objekts;
 }
 
+export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> {
+
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, userID));
+
+
+  return objekts;
+}
+
+export async function getUsers(): Promise<UserType[]> {
+
+  const basicUsers = await database
+    .select()
+    .from(users)
+    .where(eq(users.permission, "user"));
+
+  return basicUsers;
+}
 
 export async function getObjectById(objectId: string): Promise<ObjektType> {
   const object = await database
@@ -330,6 +353,16 @@ export async function getLocalById(localId: string): Promise<LocalType> {
     .then((res) => res[0]);
 
   return local;
+}
+
+export async function getMetersByLocalId(localId: string): Promise<LocalMeterType[]> {
+
+  const meters = await database
+    .select()
+    .from(local_meters)
+    .where(eq(local_meters.local_id, localId));
+
+  return meters;
 }
 
 export async function getDocCostCategoryTypes(

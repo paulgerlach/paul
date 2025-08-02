@@ -26,7 +26,7 @@ export default function FormImageUpload<T extends FieldValues = FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="w-full space-y-5 border-b py-5 border-dark_green/10">
+        <FormItem className="w-full space-y-5 py-5 border-dark_green/10">
           <FormLabel
             htmlFor={name}
             className="block cursor-pointer bg-green/70 rounded-md w-fit py-2 px-3 text-sm font-medium"

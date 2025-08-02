@@ -6,6 +6,7 @@ import {
 	operating_cost_documents,
 	contracts,
 	contractors,
+	local_meters,
 	invoice_documents,
 	users_in_auth,
 	users,
@@ -32,6 +33,7 @@ export const localsRelations = relations(locals, ({ one, many }) => ({
 		references: [objekte.id],
 	}),
 	contracts: many(contracts),
+	local_meters: many(local_meters),
 }));
 
 export const objekteRelations = relations(objekte, ({ many }) => ({
@@ -64,6 +66,13 @@ export const contractorsRelations = relations(contractors, ({ one }) => ({
 	contract: one(contracts, {
 		fields: [contractors.contract_id],
 		references: [contracts.id],
+	}),
+}));
+
+export const local_metersRelations = relations(local_meters, ({ one }) => ({
+	local: one(locals, {
+		fields: [local_meters.local_id],
+		references: [locals.id],
 	}),
 }));
 

@@ -72,7 +72,8 @@ export default function GaugeChart({ percent = 0.72 }) {
       ref={containerRef}
       role="img"
       aria-label={`Gauge chart showing ${Math.round(value)} percent used`}
-      className="rounded-xl row-span-4 relative shadow p-4 bg-white w-full h-full">
+      className="rounded-xl row-span-4 relative shadow p-4 bg-white w-full h-full"
+    >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium text-gray-800">Gesamtkosten</h2>
         <Image
@@ -97,7 +98,8 @@ export default function GaugeChart({ percent = 0.72 }) {
             innerRadius={iR}
             outerRadius={oR}
             cornerRadius={10}
-            stroke="none">
+            stroke="none"
+          >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}

@@ -139,7 +139,7 @@ async function getObjektsWithLocals() {
     .eq("user_id", user.id);
 
   if (error) {
-    throw new Error(`Failed to fetch contracts: ${error.message}`);
+    throw new Error(`Failed to fetch objekts: ${error.message}`);
   }
 
   return data;

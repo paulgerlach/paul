@@ -12,42 +12,90 @@ import {
   Cell,
 } from "recharts";
 import { useMemo } from "react";
-import Papa from "papaparse";
-
-// const data = [
-//   { month: "JUL", value: 2000 },
-//   { month: "AUG", value: 3000 },
-//   { month: "SEP", value: 2500 },
-// ];
+import { type MeterReadingType } from "@/api";
+import { useChartStore } from "@/store/useChartStore";
 interface HeatingCostsProps {
-  csvText: string;
+  csvText?: MeterReadingType[];
 }
 
-export default function HeatingCosts({ csvText }: HeatingCostsProps) {
-  const data = useMemo(() => {
-    const parsed = Papa.parse(csvText.trim(), { header: true });
-    if (!parsed.data || !Array.isArray(parsed.data)) return [];
+const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
+  if (!readings || readings.length === 0) return null;
+  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  if (!dateString) return null;
+  const [day, month, year] = dateString.split(".").map(Number);
+  return new Date(year, month - 1, day);
+};
 
-    // Extract monthly values (as floats) from the desired column
-    const monthlyValues: number[] = parsed.data.map((row: any) =>
-      parseFloat(row["IV,0,0,0,Wh,E"]?.replace(/"/g, "") || "0")
-    );
+// New helper function that returns an array with both date and value
+const getMonthlyEnergyDataWithDates = (
+  readings: MeterReadingType[]
+): { date: Date; value: number }[] => {
+  const monthlyData: { date: Date; value: number }[] = [];
+  const mostRecentDate = getRecentReadingDate(readings);
+  if (!mostRecentDate) return [];
 
-    // Group into 3 quarters (as evenly as possible)
-    const groups = [[], [], []] as number[][];
-    monthlyValues.forEach((val, idx) => {
-      const groupIndex = Math.floor((idx / monthlyValues.length) * 3);
-      groups[groupIndex].push(val);
+  for (let i = 0; i <= 30; i += 2) {
+    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
+    const historicalDate = new Date(mostRecentDate);
+    historicalDate.setMonth(mostRecentDate.getMonth() - i / 2);
+
+    let totalValue = 0;
+    readings.forEach((reading) => {
+      const value = reading[key];
+      if (typeof value === "string") {
+        totalValue += parseFloat(value.replace(",", ".") || "0");
+      } else if (typeof value === "number") {
+        totalValue += value;
+      }
     });
 
-    // Aggregate each group
-    const groupedData = groups.map((group, idx) => ({
-      quarter: `Q${idx + 1}`,
-      value: group.reduce((sum, v) => sum + v, 0),
-    }));
+    monthlyData.unshift({ date: historicalDate, value: totalValue });
+  }
 
-    return groupedData;
-  }, [csvText]);
+  return monthlyData;
+};
+
+export default function HeatingCosts({ csvText }: HeatingCostsProps) {
+  const { startDate, endDate } = useChartStore();
+
+  const data = useMemo(() => {
+    if (!csvText || !Array.isArray(csvText)) {
+      return [];
+    }
+
+    // Get all historical data with dates
+    const monthlyDataWithDates = getMonthlyEnergyDataWithDates(csvText);
+
+    // Filter the data based on the date range from the store
+    const filteredData = monthlyDataWithDates.filter(({ date }) => {
+      if (!startDate || !endDate) return true; // No filter if dates are not set
+      return date >= startDate && date <= endDate;
+    });
+
+    // Grouping the filtered data into 3 quarters
+    const numMonths = filteredData.length;
+    const monthsPerQuarter = Math.floor(numMonths / 3);
+    const remainder = numMonths % 3;
+
+    const quarters = [
+      { quarter: "Q1", value: 0 },
+      { quarter: "Q2", value: 0 },
+      { quarter: "Q3", value: 0 },
+    ];
+
+    let startIndex = 0;
+    // Distribute remaining months among quarters
+    for (let i = 0; i < 3; i++) {
+      const monthsInThisQuarter = monthsPerQuarter + (i < remainder ? 1 : 0);
+      quarters[i].value = filteredData
+        .slice(startIndex, startIndex + monthsInThisQuarter)
+        .reduce((sum, { value }) => sum + value, 0);
+      startIndex += monthsInThisQuarter;
+    }
+
+    return quarters;
+  }, [csvText, startDate, endDate]);
+
   return (
     <div className="rounded-xl row-span-6 shadow p-4 bg-white">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
@@ -71,13 +119,15 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
             tickLine={false}
           />
           <YAxis hide domain={[0, 10000]} />
-          <Tooltip />
+          <Tooltip
+            formatter={(value: number) => `${value.toLocaleString()} Wh`}
+          />
           <Bar
             dataKey="value"
-            // maxBarSize={40}
             background={{ fill: "#e2e8f0", radius: 10 }}
             fill="#90b4e4"
-            radius={[10, 10, 10, 10]}>
+            radius={[10, 10, 10, 10]}
+          >
             {data.map((_, index) => (
               <Cell key={`cell-${index}`} fill="#90b4e4" />
             ))}

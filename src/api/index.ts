@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import Papa from "papaparse";
 import database from "@/db";
 import {
@@ -32,7 +30,7 @@ import type {
   UserType
 } from "@/types";
 
-interface MeterReading {
+export type MeterReadingType = {
   "Frame Type": string;
   Manufacturer: string;
   ID: string;
@@ -100,18 +98,23 @@ interface DeviceTypeSummary {
 }
 
 interface ParsedDataState {
-  data: MeterReading[];
+  data: MeterReadingType[];
   loading: boolean;
   error: string | null;
 }
 
 export const parseCSV = async () => {
+  const fileId = '1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
+  const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
   try {
     // Read the CSV file
-    const filePath = path.resolve(process.cwd(), "public/data/Gateway-CSV.csv");
-    const csvData = await fs.readFile(filePath, { encoding: "utf8" });
+    const response = await fetch(downloadUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.statusText}`);
+    }
+    const csvData = await response.text();
 
-    const parseResult = Papa.parse<MeterReading>(csvData, {
+    const parseResult = Papa.parse<MeterReadingType>(csvData, {
       header: true, // First row contains headers
       skipEmptyLines: true,
       dynamicTyping: true,

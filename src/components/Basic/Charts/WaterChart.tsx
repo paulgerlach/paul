@@ -11,45 +11,59 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Papa from "papaparse";
 import { useEffect, useState } from "react";
+import { type MeterReadingType } from "@/api";
+import { useChartStore } from "@/store/useChartStore"; // Import the Zustand store
 
-function parseCsvData(csvText: string) {
-  const result = Papa.parse<string[]>(csvText, {
-    header: false,
-    skipEmptyLines: true,
-  });
+// Helper function to extract the most recent reading date
+const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
+  if (!readings || readings.length === 0) return null;
+  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  if (!dateString) return null;
+  const [day, month, year] = dateString.split(".").map(Number);
+  return new Date(year, month - 1, day);
+};
 
-  const rows = result.data.slice(1); // skip header
-  const volumeIndex = 16;
-  const usageStart = volumeIndex + 1;
-  const usageEnd = usageStart + 16;
-
-  return rows.map((row) => {
-    const id = row[3];
-    const history = row
-      .slice(usageStart, usageEnd)
-      .map((v) => parseFloat((v || "0").replace(",", ".")))
-      .reverse(); // chronological order
-    return { id, history };
-  });
+// New helper function to get historical data with associated dates
+function getMonthlyDataWithDatesAndValues(
+  meterReading: MeterReadingType,
+  recentDate: Date
+) {
+  const history = [];
+  for (let i = 30; i >= 0; i -= 2) {
+    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
+    const value = meterReading[key];
+    const historicalDate = new Date(recentDate);
+    historicalDate.setMonth(recentDate.getMonth() - i / 2);
+    let parsedValue = 0;
+    if (typeof value === "string") {
+      parsedValue = parseFloat(value.replace(",", "."));
+    } else if (typeof value === "number") {
+      parsedValue = value;
+    }
+    history.push({ date: historicalDate, value: parsedValue });
+  }
+  return history.reverse();
 }
 
 export default function WarmwasserChart({
   color,
   title,
   chartType,
-  csvText,
+  csvText, // Renamed to meterReadings for clarity
 }: {
   color: string;
   title: string;
   chartType: "hot" | "cold";
-  csvText: string;
+  csvText?: MeterReadingType[];
 }) {
   const [chartData, setChartData] = useState<any[]>([]);
+  const { startDate, endDate } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
-    const parsed = parseCsvData(csvText);
+    if (!csvText || csvText.length === 0) {
+      return;
+    }
 
     const months = [
       "JAN",
@@ -66,24 +80,41 @@ export default function WarmwasserChart({
       "DEC",
     ];
 
-    const groupedData: { [key: string]: { actual: number; lastYear: number } } =
-      {};
+    const recentReadingDate = getRecentReadingDate(csvText);
+    if (!recentReadingDate) {
+      return;
+    }
 
-    // Initialize the grouped data object
+    // Aggregate all devices' historical data into a single array
+    const combinedHistory = csvText.flatMap((device) =>
+      getMonthlyDataWithDatesAndValues(device, recentReadingDate)
+    );
+
+    // Filter the combined data based on the date range from the store
+    const filteredData = combinedHistory.filter(({ date }) => {
+      if (!startDate || !endDate) return true;
+      return date >= startDate && date <= endDate;
+    });
+
+    const groupedData: {
+      [key: string]: { actual: number; lastYear: number };
+    } = {};
+
     months.forEach((month) => {
       groupedData[month] = { actual: 0, lastYear: 0 };
     });
 
-    // Process each device's data and group by month
-    parsed.forEach((device) => {
-      const actualHistory = device.history.slice(-12); // Last 12 months (actual)
-      const lastYearHistory = device.history.slice(0, -12); // First 12 months (last year)
+    // Group the filtered data by month and year
+    filteredData.forEach(({ date, value }) => {
+      const monthName = months[date.getMonth()];
+      const year = date.getFullYear();
 
-      actualHistory.forEach((value, index) => {
-        const month = months[index % 12];
-        groupedData[month].actual += value; // Add actual values
-        groupedData[month].lastYear += lastYearHistory[index] ?? 0; // Add last year values
-      });
+      // Simple logic to distinguish between the current year's data and the previous year's
+      if (year === recentReadingDate.getFullYear()) {
+        groupedData[monthName].actual += value;
+      } else if (year === recentReadingDate.getFullYear() - 1) {
+        groupedData[monthName].lastYear += value;
+      }
     });
 
     // Convert grouped data into an array for the chart
@@ -94,7 +125,7 @@ export default function WarmwasserChart({
     }));
 
     setChartData(dataForChart);
-  }, [csvText]);
+  }, [csvText, startDate, endDate]); // Add startDate and endDate to the dependency array
 
   const gradientId = `gradient-${color.replace("#", "")}`;
 
@@ -116,7 +147,8 @@ export default function WarmwasserChart({
       <ResponsiveContainer width="100%" height="80%">
         <ComposedChart
           data={chartData}
-          margin={{ top: 10, right: -30, left: 10, bottom: 0 }}>
+          margin={{ top: 10, right: -30, left: 10, bottom: 0 }}
+        >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.4} />

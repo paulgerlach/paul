@@ -4,45 +4,40 @@ import HeatingCosts from "@/components/Basic/Charts/HeatingCosts";
 import NotificationsChart from "@/components/Basic/Charts/NotificationsChart";
 import WaterChart from "@/components/Basic/Charts/WaterChart";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import fs from "fs";
-import path from "path";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-// import { parseCSV } from "@/api";
+import { parseCSV } from "@/api";
 
 export default async function AdminPage() {
-  const coldWaterPath = path.resolve(
-    process.cwd(),
-    "public/data/Cold_Water_Meter_Data.csv"
+  const data = await parseCSV();
+  const filteredData = data?.filter(
+    (item) => item["Device Type"] !== "Device Type"
   );
-  const coldWaterText = fs.readFileSync(coldWaterPath, "utf8");
-  const hotWaterPath = path.resolve(
-    process.cwd(),
-    "public/data/Warm_Water_Meter_Data.csv"
+  const heatDevices = filteredData?.filter(
+    (item) => item["Device Type"] === "Heat"
   );
-  const hotWaterText = fs.readFileSync(hotWaterPath, "utf8");
-  const heatersPath = path.resolve(
-    process.cwd(),
-    "public/data/Heat_Meter_Data.csv"
+  const coldWaterDevices = filteredData?.filter(
+    (item) => item["Device Type"] === "Water"
   );
-  const heatersText = fs.readFileSync(heatersPath, "utf8");
-
+  const hotWaterDevices = filteredData?.filter(
+    (item) => item["Device Type"] === "WWater"
+  );
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
       <ContentWrapper className="max-h-[90%] grid grid-cols-3 gap-2 grid-rows-10">
         <WaterChart
-          csvText={coldWaterText}
+          csvText={coldWaterDevices}
           color="#6083CC"
           title="Kaltwasser"
           chartType="cold"
         />
         <GaugeChart />
         <NotificationsChart />
-        <HeatingCosts csvText={heatersText} />
+        <HeatingCosts csvText={heatDevices} />
         <WaterChart
-          csvText={hotWaterText}
+          csvText={hotWaterDevices}
           color="#E74B3C"
           title="Warmwasser"
           chartType="hot"

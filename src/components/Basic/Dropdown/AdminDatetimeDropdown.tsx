@@ -1,8 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { addDays, format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/utils";
@@ -11,14 +9,24 @@ import { Button } from "../ui/Button";
 import { Calendar } from "../ui/Calendar";
 import Image from "next/image";
 import { chevron_admin, clock_dark } from "@/static/icons";
+import { useState } from "react";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminDatetimeDropdown({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: startOfMonth(new Date()),
+    to: endOfMonth(new Date()),
   });
+  const { setDates } = useChartStore();
+
+  const handleDateChange = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    if (date?.from && date?.to) {
+      setDates(date?.from, date?.to);
+    }
+  };
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -26,7 +34,8 @@ export default function AdminDatetimeDropdown({
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-fit shadow-none px-6 hover:!bg-transparent py-3">
+            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-fit shadow-none px-6 hover:!bg-transparent py-3"
+          >
             <div className="flex items-center justify-start whitespace-nowrap gap-5">
               <Image
                 width={0}
@@ -70,12 +79,13 @@ export default function AdminDatetimeDropdown({
         </PopoverTrigger>
         <PopoverContent
           className="w-auto p-0 border-none shadow-none"
-          align="start">
+          align="start"
+        >
           <Calendar
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleDateChange}
             numberOfMonths={2}
           />
         </PopoverContent>

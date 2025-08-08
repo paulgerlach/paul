@@ -1,11 +1,11 @@
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteItem from "@/components/Admin/ObjekteItem/ObjekteItem";
 import { ROUTE_DASHBOARD, ROUTE_OBJEKTE_CREATE } from "@/routes/routes";
 import { objekte } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { getObjekts } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
+import ObjekteItem from "@/components/Admin/ObjekteItem/ObjekteItem";
 
 export default async function ObjekteAdminPage() {
   const objekts = await getObjekts();
@@ -25,7 +25,8 @@ export default async function ObjekteAdminPage() {
         </div>
         <Link
           href={ROUTE_OBJEKTE_CREATE}
-          className="border-dashed w-full flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">
+          className="border-dashed w-full flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl"
+        >
           <Image
             width={0}
             height={0}

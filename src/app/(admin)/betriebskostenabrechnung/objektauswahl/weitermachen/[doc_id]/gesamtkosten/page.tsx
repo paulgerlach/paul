@@ -7,7 +7,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import GesamtkostenEditBuildingFrom from "@/components/Admin/Forms/DocPreparing/GesamtkostenEditBuildingFrom";
+import GesamtkostenBuildingForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/BuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function GesamtkostenEditPage({
@@ -36,14 +36,13 @@ export default async function GesamtkostenEditPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenEditBuildingFrom
+        <GesamtkostenBuildingForm
+          objektId={doc.objekt_id ?? ""}
+          operatingDocId={doc.id ?? ""}
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}
-          objektId={doc.objekt_id ?? ""}
-          operatingDocId={doc_id}
         />
         <BetriebskostenabrechnungReceipt
-          objektId={doc.objekt_id ?? ""}
           title={`${objekt.street} ${objekt.zip}`}
         />
       </CreateDocContentWrapper>

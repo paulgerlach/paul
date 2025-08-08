@@ -8,15 +8,9 @@ import Image from "next/image";
 
 export type CostTypeItemProps = {
   type: HeizkostenabrechnungCostType;
-  objektId: string;
-  localId: string;
 };
 
-export default function CostTypeSelectItem({
-  type,
-  objektId,
-  localId,
-}: CostTypeItemProps) {
+export default function CostTypeSelectItem({ type }: CostTypeItemProps) {
   const { updateAllocationKey } = useHeizkostenabrechnungStore();
   const totalAmount = type.data.reduce(
     (acc, item) => acc + Number(item.total_amount ?? 0),

@@ -2,14 +2,13 @@ import {
   getDocCostCategoryTypes,
   getHeatingBillDocumentByID,
   getInvoicesByHeatingBillDocumentID,
-  getLocalById,
+  getObjectById,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
-import GesamtkostenEditForm from "@/components/Admin/Forms/DocPreparing/GesamtkostenEditFrom";
+import GesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/HeatObjektauswahlForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
-import { buildLocalName } from "@/utils";
 
 export default async function GesamtkostenEditPage({
   params,
@@ -25,7 +24,7 @@ export default async function GesamtkostenEditPage({
 
   const relatedToDocInvoices = await getInvoicesByHeatingBillDocumentID(doc_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
+  const objekt = await getObjectById(doc.objekt_id ?? "");
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -36,14 +35,13 @@ export default async function GesamtkostenEditPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenEditForm
+        <GesamtkostenHeatObjektauswahlForm
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}
           objektId={doc.objekt_id ?? ""}
           docId={doc_id ?? ""}
-          localId={doc.local_id ?? ""}
         />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+        <HeizkostenabrechnungReceipt title={`${objekt.street} ${objekt.zip}`} />
       </CreateDocContentWrapper>
     </div>
   );

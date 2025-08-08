@@ -104,7 +104,7 @@ interface ParsedDataState {
 }
 
 export const parseCSV = async () => {
-  const fileId = '1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
+  const fileId = '17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
   const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
   try {
     // Read the CSV file

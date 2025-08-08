@@ -2,7 +2,7 @@ import { getDocCostCategoryTypes, getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import GesamtkostenBuildingForm from "@/components/Admin/Forms/DocPreparing/GesamtkostenBuildingFrom";
+import GesamtkostenBuildingForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/BuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function GesamtkostenPage({
@@ -32,7 +32,6 @@ export default async function GesamtkostenPage({
           operatingDocId={doc_id}
         />
         <BetriebskostenabrechnungReceipt
-          objektId={objekt_id}
           title={`${objekt.street} ${objekt.zip}`}
         />
       </CreateDocContentWrapper>

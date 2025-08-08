@@ -2,7 +2,7 @@ import { getDocCostCategoryTypes, getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import UmlageschlüsselBuildingFrom from "@/components/Admin/Forms/DocPreparing/UmlageschlüsselBuildingFrom";
+import UmlageschlüsselBuildingFrom from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/BuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function UmlageschlüsselPage({
@@ -32,7 +32,6 @@ export default async function UmlageschlüsselPage({
           objektId={objekt_id}
         />
         <BetriebskostenabrechnungReceipt
-          objektId={objekt_id}
           title={`${objekt.street} ${objekt.zip}`}
         />
       </CreateDocContentWrapper>

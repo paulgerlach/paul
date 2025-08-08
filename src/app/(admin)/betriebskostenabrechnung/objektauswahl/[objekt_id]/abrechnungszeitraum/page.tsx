@@ -2,7 +2,7 @@ import { getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import AbrechnungszeitraumBuildingForm from "@/components/Admin/Forms/DocPreparing/AbrechnungszeitraumBuildingForm";
+import AbrechnungszeitraumBuildingForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/BuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function AbrechnungszeitraumPage({
@@ -24,7 +24,9 @@ export default async function AbrechnungszeitraumPage({
       />
       <CreateDocContentWrapper>
         <AbrechnungszeitraumBuildingForm id={objekt_id} />
-        <BetriebskostenabrechnungReceipt title={`${objekt.street} ${objekt.zip}`} />
+        <BetriebskostenabrechnungReceipt
+          title={`${objekt.street} ${objekt.zip}`}
+        />
       </CreateDocContentWrapper>
     </div>
   );

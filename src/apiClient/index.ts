@@ -324,6 +324,29 @@ export function useHeatingBillDocumentsByLocalID(localID?: string) {
   });
 }
 
+async function getHeatingBillDocumentsByObjektID(objectID?: string): Promise<HeatingBillDocumentType[]> {
+
+  const { data, error } = await supabase
+    .from("heating_bill_documents")
+    .select("*")
+    .eq("objekt_id", objectID)
+    .eq("submited", false);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useHeatingBillDocumentsByObjektID(objectID?: string) {
+  return useQuery({
+    queryKey: ["heating_bill_documents", objectID],
+    queryFn: () => getHeatingBillDocumentsByObjektID(objectID),
+    refetchOnWindowFocus: false,
+  });
+}
+
 
 export async function uploadObjektImage(file: File, objektId: string): Promise<string> {
   const filePath = `images/${objektId}/${file.name}`;

@@ -58,7 +58,7 @@ export default function WarmwasserChart({
   csvText?: MeterReadingType[];
 }) {
   const [chartData, setChartData] = useState<any[]>([]);
-  const { startDate, endDate } = useChartStore(); // Access the state from the store
+  const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
     if (!csvText || csvText.length === 0) {
@@ -85,8 +85,14 @@ export default function WarmwasserChart({
       return;
     }
 
-    // Aggregate all devices' historical data into a single array
-    const combinedHistory = csvText.flatMap((device) =>
+    // Filter devices based on meterIds from the store
+    const filteredDevices =
+      meterIds && meterIds.length > 0
+        ? csvText.filter((device) => meterIds.includes(device.ID))
+        : csvText;
+
+    // Aggregate historical data from the filtered devices
+    const combinedHistory = filteredDevices.flatMap((device) =>
       getMonthlyDataWithDatesAndValues(device, recentReadingDate)
     );
 
@@ -125,7 +131,7 @@ export default function WarmwasserChart({
     }));
 
     setChartData(dataForChart);
-  }, [csvText, startDate, endDate]); // Add startDate and endDate to the dependency array
+  }, [csvText, startDate, endDate, meterIds]); // Add startDate and endDate to the dependency array
 
   const gradientId = `gradient-${color.replace("#", "")}`;
 

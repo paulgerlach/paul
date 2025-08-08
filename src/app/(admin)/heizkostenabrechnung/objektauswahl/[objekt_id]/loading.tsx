@@ -1,5 +1,5 @@
 import Loading from "@/components/Admin/Loading";
 
-export default function ObjektIdLoading() {
+export default function LocalIdLoading() {
     return <Loading />
 }

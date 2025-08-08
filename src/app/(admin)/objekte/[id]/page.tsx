@@ -27,7 +27,8 @@ export default async function ObjektDetailsPage({
         <ObjekteLocalsAccordion id={id} locals={relatedLocals} />
         <Link
           href={`${ROUTE_OBJEKTE}/${id}/create-unit`}
-          className="border-dashed w-full max-xl:text-base flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl">
+          className="border-dashed w-full max-xl:text-base flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl"
+        >
           <Image
             width={0}
             height={0}

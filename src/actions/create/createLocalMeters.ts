@@ -2,8 +2,9 @@
 
 import { AdminEditObjekteUnitFormValues } from "@/components/Admin/Forms/Edit/AdminEditObjekteUnitForm";
 import database from "@/db";
-import { local_meters } from "@/db/drizzle/schema";
+import { local_meters, locals } from "@/db/drizzle/schema";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
+import { eq } from "drizzle-orm";
 
 export async function createLocalMeters(
   formData: AdminEditObjekteUnitFormValues["meters"],
@@ -27,6 +28,23 @@ export async function createLocalMeters(
   const inserted = await database.insert(local_meters)
     .values(insertData)
     .returning();
+
+  const newMeterIds = inserted.map((m) => m.meter_number || "");
+
+  const existingLocal = await database
+    .select()
+    .from(locals)
+    .where(eq(locals.id, localID))
+    .limit(1);
+
+  const existingMeterIds = existingLocal[0]?.meter_ids ?? [];
+
+  const updatedMeterIds = [...existingMeterIds, ...newMeterIds];
+
+  await database
+    .update(locals)
+    .set({ meter_ids: updatedMeterIds })
+    .where(eq(locals.id, localID));
 
   return inserted;
 }

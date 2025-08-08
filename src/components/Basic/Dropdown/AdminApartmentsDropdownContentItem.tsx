@@ -1,14 +1,17 @@
 "use client";
 
-import {
-  chevron_admin,
-  green_check_single,
-} from "@/static/icons";
+import { chevron_admin, green_check_single } from "@/static/icons";
 import { type ApartmentType } from "./AdminApartmentsDropdownContent";
 import Image from "next/image";
-import { buildLocalName, handleLocalTypeIcon, slideDown, slideUp } from "@/utils";
+import {
+  buildLocalName,
+  handleLocalTypeIcon,
+  slideDown,
+  slideUp,
+} from "@/utils";
 import { useEffect, useRef } from "react";
 import { UnitType } from "@/types";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminApartmentsDropdownContentItem({
   item,
@@ -16,7 +19,7 @@ export default function AdminApartmentsDropdownContentItem({
   isOpen,
   onClick,
   toggleSelection,
-  selectedLocalIds
+  selectedLocalIds,
 }: {
   item: ApartmentType;
   index: number;
@@ -26,6 +29,7 @@ export default function AdminApartmentsDropdownContentItem({
   selectedLocalIds: string[];
 }) {
   const contentRef = useRef(null);
+  const { setMeterIds } = useChartStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -38,7 +42,8 @@ export default function AdminApartmentsDropdownContentItem({
     <div className={`${isOpen ? "active" : ""}`}>
       <div
         onClick={() => onClick(index)}
-        className="flex cursor-pointer max-xl:text-sm items-center justify-between mb-1.5 text-dark_green font-bold">
+        className="flex cursor-pointer max-xl:text-sm items-center justify-between mb-1.5 text-dark_green font-bold"
+      >
         {item.street}
         {item.locals.length > 0 && (
           <Image
@@ -57,7 +62,10 @@ export default function AdminApartmentsDropdownContentItem({
           <div className="rounded-md localItem" key={local.id}>
             <input
               type="checkbox"
-              onChange={() => toggleSelection(local.id)}
+              onChange={() => {
+                setMeterIds(local.meter_ids || []);
+                toggleSelection(local.id);
+              }}
               id={local.id}
               checked={selectedLocalIds.includes(local?.id || "")}
               name={local.id}
@@ -66,7 +74,8 @@ export default function AdminApartmentsDropdownContentItem({
             <label
               htmlFor={local.id}
               className="text-sm text-dark_green max-xl:text-xs cursor-pointer p-2 flex items-center justify-between py-1 px-2 rounded-md transition-all border border-transparent duration-300
-                 peer-checked:bg-green/10 peer-checked:border-green peer-checked:[&_.appartmentCheckmark]:block">
+                 peer-checked:bg-green/10 peer-checked:border-green peer-checked:[&_.appartmentCheckmark]:block"
+            >
               <div className="flex items-center justify-start gap-5 rounded-md">
                 <span className="flex size-7 rounded-md items-center justify-center bg-[#E7E8EA]">
                   <Image
@@ -75,7 +84,9 @@ export default function AdminApartmentsDropdownContentItem({
                     sizes="100vw"
                     loading="lazy"
                     className="max-w-3.5 max-h-3.5"
-                    src={handleLocalTypeIcon(local.usage_type as UnitType) || ""}
+                    src={
+                      handleLocalTypeIcon(local.usage_type as UnitType) || ""
+                    }
                     alt={`local type ${local.usage_type}`}
                   />
                 </span>

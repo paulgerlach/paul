@@ -9,18 +9,15 @@ import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrec
 import type { ContractType } from "@/types";
 import { formatEuro } from "@/utils";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useReceiptAmounts } from "@/hooks/useReceiptAmounts";
 
 export type ReceiptProps = {
   title: string;
-  objektId?: string;
   relatedContracts?: ContractType[];
 };
 
 export default function BetriebskostenabrechnungReceipt({
   title,
-  objektId,
   relatedContracts,
 }: ReceiptProps) {
   const { getFormattedDates, documentGroups } =

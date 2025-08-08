@@ -8,12 +8,10 @@ import Image from "next/image";
 
 export type CostTypeBuildingItemProps = {
   type: BetriebskostenabrechnungCostType;
-  objektId: string;
 };
 
 export default function CostTypeBuildingSelectItem({
   type,
-  objektId,
 }: CostTypeBuildingItemProps) {
   const { updateAllocationKey } = useBetriebskostenabrechnungStore();
   const totalAmount = type.data.reduce(

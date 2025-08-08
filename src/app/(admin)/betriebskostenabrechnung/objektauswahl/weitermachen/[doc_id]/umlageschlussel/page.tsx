@@ -1,13 +1,12 @@
 import {
   getDocCostCategoryTypes,
-  getInvoicesByOperatingCostDocumentID,
   getObjectById,
   getOperatingCostDocumentByID,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
-import UmlageschlüsselEditBuildingFrom from "@/components/Admin/Forms/DocPreparing/UmlageschlüsselEditBuildingFrom";
+import UmlageschlüsselBuildingForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/BuildingForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function UmlageschlüsselEditPage({
@@ -33,13 +32,13 @@ export default async function UmlageschlüsselEditPage({
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
-        <UmlageschlüsselEditBuildingFrom
-          initialDocumentGroups={userDocCostCategories}
-          objektId={doc.objekt_id ?? ""}
-          operatingDocId={doc_id}
-        />
+        <UmlageschlüsselBuildingForm
+        objektId={doc.objekt_id ?? ""}
+        operatingDocId={doc_id}
+        initialDocumentGroups={userDocCostCategories}
+        isEditMode
+      />
         <BetriebskostenabrechnungReceipt
-          objektId={doc.objekt_id ?? ""}
           title={`${objekt.street} ${objekt.zip}`}
         />
       </CreateDocContentWrapper>

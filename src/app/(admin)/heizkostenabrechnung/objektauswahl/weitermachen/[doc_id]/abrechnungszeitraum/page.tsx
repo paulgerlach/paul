@@ -1,10 +1,9 @@
-import { getHeatingBillDocumentByID, getLocalById } from "@/api";
+import { getHeatingBillDocumentByID, getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
-import AbrechnungszeitraumEditForm from "@/components/Admin/Forms/DocPreparing/AbrechnungszeitraumEditForm";
+import AbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/HeatObjektauswahlForm";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-import { buildLocalName } from "@/utils";
 
 export default async function AbrechnungszeitraumContinuePage({
   params,
@@ -15,7 +14,7 @@ export default async function AbrechnungszeitraumContinuePage({
 
   const doc = await getHeatingBillDocumentByID(doc_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
+  const objekt = await getObjectById(doc.objekt_id ?? "");
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -26,8 +25,11 @@ export default async function AbrechnungszeitraumContinuePage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumEditForm docValues={doc} />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+        <AbrechnungszeitraumHeatObjektauswahlForm
+          id={doc.objekt_id ?? ""}
+          docValues={doc}
+        />
+        <HeizkostenabrechnungReceipt title={`${objekt.street} ${objekt.zip}`} />
       </CreateDocContentWrapper>
     </div>
   );

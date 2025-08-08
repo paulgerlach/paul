@@ -56,15 +56,20 @@ const getMonthlyEnergyDataWithDates = (
 };
 
 export default function HeatingCosts({ csvText }: HeatingCostsProps) {
-  const { startDate, endDate } = useChartStore();
+  const { startDate, endDate, meterIds } = useChartStore();
 
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
       return [];
     }
 
+    const filteredDevices =
+      meterIds && meterIds.length > 0
+        ? csvText.filter((device) => meterIds.includes(device.ID))
+        : csvText;
+
     // Get all historical data with dates
-    const monthlyDataWithDates = getMonthlyEnergyDataWithDates(csvText);
+    const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
 
     // Filter the data based on the date range from the store
     const filteredData = monthlyDataWithDates.filter(({ date }) => {
@@ -94,7 +99,7 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
     }
 
     return quarters;
-  }, [csvText, startDate, endDate]);
+  }, [csvText, startDate, endDate, meterIds]);
 
   return (
     <div className="rounded-xl row-span-6 shadow p-4 bg-white">

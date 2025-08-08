@@ -7,7 +7,7 @@ import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
 import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
-import OperatingCostsCreateDialog from "@/components/Basic/Dialog/OperatingCostsCreateDialog";
+import HeatingBillCreateDialog from "@/components/Basic/Dialog/HeatingBillCreateDialog";
 import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
 import AddDocBetriebskostenabrechnungDialog from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
 import AddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/AddHeizkostenabrechnungCostTypeDialog";
@@ -41,7 +41,7 @@ export default function AdminLayout({
       <ObjekteDeleteDialog />
       <LocalDeleteDialog />
       <ContractDeleteDialog />
-      <OperatingCostsCreateDialog />
+      <HeatingBillCreateDialog />
       <AddDocHeizkostenabrechnungDialog />
       <AddHeizkostenabrechnungCostTypeDialog />
       <AddDocBetriebskostenabrechnungDialog />

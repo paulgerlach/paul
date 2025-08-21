@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { admin_logo } from "@/static/icons";
+import { Checkbox } from "@radix-ui/react-checkbox";
+import Image from "next/image";
 
 type BillDataType = {
   billNumber: string;
@@ -47,7 +48,7 @@ const mockData: BillDataType = {
   totalAmount: "1.429,55 €",
   userId: "1901913711",
   securityCode: "QNQH27LF1j",
-  portalLink: "heidi.systems/34053",
+  portalLink: "heidi.systems/3303",
   properties: [
     "10179 Berlin, Rungestr. 21",
     "10179 Berlin, Rungestr. 21A",
@@ -61,193 +62,203 @@ const mockData: BillDataType = {
 
 export default function HeatingBillPreviewOne() {
   return (
-    <div className="max-w-4xl mx-auto bg-white p-12 font-sans text-black">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-10">
-        <div className="text-xs">1/6 {mockData.billNumber}</div>
-        <div className="flex items-center gap-2">
-          <Image width={100} height={32} src={admin_logo} alt="Heidi Logo" />
-        </div>
-      </div>
-
-      {/* Customer and Company Info */}
-      <div className="mb-4 border-b border-black pb-2">
-        <div className="text-xs">
-          Heidi Systems GmbH, Runge Straße 21, 10974 Berlin
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-20">
-        <div>
-          <div className="font-bold text-md mb-1">{mockData.customerName}</div>
-          <div className="text-md">{mockData.customerAddress}</div>
-          <div className="text-md">{mockData.city}</div>
+    <div className="mx-auto max-w-[1400px] space-y-[70px] font-sans text-sm">
+      {/* Green Header Box */}
+      <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
+        <div className="flex justify-between items-start">
+          <div className="text-xs text-pdf-text">1/6 {mockData.billNumber}</div>
+          <Image
+            width={130}
+            height={48}
+            src={admin_logo}
+            alt="admin preview heidi"
+          />
         </div>
 
-        <div className="text-left">
-          <div className="font-bold text-xl leading-tight mb-4">
-            Ihre Abrechnung für Heizung,
-            <br />
-            Warmwasser, Kaltwasser von Heidi
-          </div>
-          <div className="font-bold text-lg">Zusammenstellung Ihrer Kosten</div>
-        </div>
-      </div>
-
-      {/* Billing Details */}
-      <div className="grid grid-cols-2 gap-20 mt-10">
-        <div className="text-sm">
-          <div className="mb-4">
-            <div className="font-bold">Erstellt im Auftrag von</div>
-            <div>{mockData.createdBy}</div>
-            <div>Immobilienmanagement</div>
-            <div>{mockData.createdByAddress}</div>
-            <div>{mockData.createdByCity}</div>
-          </div>
-
-          <div className="grid grid-cols-2">
-            <div className="font-bold">Abrechnungszeitraum</div>
-            <div>{mockData.billingPeriod.heating}</div>
-            <div className="font-bold">Ihr Nutzungszeitraum</div>
-            <div>{mockData.billingPeriod.usage}</div>
-          </div>
-        </div>
-
-        <div className="text-sm">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-20 items-end">
+          <div className="space-y-8">
+            <p className="border-b pb-2 font-bold text-base">
+              Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
+            </p>
             <div>
-              <div className="font-bold">Erstellt am</div>
-              <div>{mockData.createdDate}</div>
-            </div>
-            <div>
-              <div className="font-bold">Liegenschaft</div>
-              <div>{mockData.propertyAccount}</div>
-              <div>{mockData.propertyCity}</div>
+              <p className="text-2xl font-bold">{mockData.customerName}</p>
+              <p className="text-2xl font-bold">{mockData.customerAddress}</p>
+              <p className="text-2xl font-bold">{mockData.city}</p>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <div className="font-bold">Liegenschaftsnummer</div>
-              <div>{mockData.propertyNumber}</div>
-            </div>
-            <div>
-              <div className="font-bold">Heidi Nutzernummer</div>
-              <div>{mockData.heidiCustomerNumber}</div>
-              <div className="font-bold">Ihre Nutzernummer</div>
-              <div>{mockData.userNumber}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Greeting */}
-      <div className="mt-10 text-sm">
-        <div className="font-bold mb-2">Sehr geehrte Damen und Herren,</div>
-        <div className="leading-relaxed">
-          wir haben die Kosten, die im vergangenen Abrechnungszeitraum
-          angefallen sind, abgerechnet. Unsere Abrechnung ist auf den
-          <br />
-          folgenden Seiten dieses Schreibens detailliert beschrieben.
-        </div>
-      </div>
-
-      {/* Total Amount */}
-      <div className="bg-gray-200 mt-4">
-        <div className="flex justify-end items-center p-2 border-b border-gray-400">
-          <span className="font-bold mr-4">Betrag</span>
-        </div>
-        <div className="bg-green text-white p-2 flex justify-between items-center">
-          <span className="font-bold">Gesamtbetrag</span>
-          <span className="font-bold text-lg">{mockData.totalAmount}</span>
-        </div>
-      </div>
-
-      {/* Important Notice */}
-      <div className="mt-6 text-sm">
-        <div className="font-bold mb-2">
-          Beachten Sie bitte folgende Hinweise:
-        </div>
-        <div className="space-y-2">
-          <div className="flex">
-            <span className="mr-2">·</span>
-            <span>
-              Bitte rechnen Sie Nachzahlungen oder Guthaben{" "}
-              <span className="font-bold">ausschließlich</span> mit Ihrem
-              Vermieter/Verwalter ab. Leisten Sie keine Zahlungen an
-            </span>
-          </div>
-          <div className="flex">
-            <span className="mr-2">·</span>
-            <span>
-              Im Zuge der Energiekrise sind die Energiepreise gegenüber dem
-              Vorjahr extrem gestiegen. Dies kann dazu führen, dass Ihre
-              Energiekosten in diesem Abrechnungszeitraum höher liegen als
-              bisher - selbst bei reduziertem Verbrauch.
+          <div>
+            <h2 className="text-2xl font-bold">
+              Ihre Heidi Systems<sup className="text-xs">®</sup> Abrechnung für
               <br />
-              Unter www.brudirekt.de/3600 können Sie prüfen, wie sehr sich die
-              Energiepreise in Ihrer Liegenschaft und für Sie persönlich
-              verändert haben.
-            </span>
-          </div>
-          <div className="flex">
-            <span className="mr-2">·</span>
-            <span>
-              Allgemeine Hinweise und Informationen zur Abrechnung finden Sie
-            </span>
+              Heizung, Warmwasser, Kaltwasser
+            </h2>
+            <p className="mt-2 text-base font-bold">
+              Zusammenstellung Ihrer Kosten
+            </p>
           </div>
         </div>
       </div>
 
-      {/* QR Code and Access Info */}
-      <div className="bg-gray-100 p-4 mt-6 flex justify-between items-start">
-        <div className="flex-1 text-sm">
-          <div className="mb-4">
-            <span className="font-bold">
-              Ihre persönlichen Zugangsdaten für - Das Nutzerportal.
-            </span>
+      <div className="grid grid-cols-2 gap-x-8 text-xs mb-8">
+        <div className="space-y-3">
+          <div className="grid grid-cols-[auto_1fr] gap-10">
+            <p>Erstellt im Auftrag von</p>
+            <p>
+              {mockData.createdBy}
+              <br />
+              Immobilienmanagement
+              <br />
+              {mockData.createdByAddress}
+              <br />
+              {mockData.createdByCity}
+            </p>
           </div>
-          <div className="space-y-1">
-            <div>
-              Mit BRUdirekt bekommen Sie Zugriff auf die unterjährigen
+          <div className="space-y-1 font-bold text-pdf-dark">
+            <div className="grid grid-cols-[auto_1fr] gap-10">
+              <p>Abrechnungszeitraum</p>
+              <p>{mockData.billingPeriod.heating}</p>
+            </div>
+            <div className="grid grid-cols-[auto_1fr] gap-10">
+              <p>Ihr Nutzungszeitraum</p>
+              <p>{mockData.billingPeriod.usage}</p>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="grid grid-cols-3 gap-10 text-pdf-text">
+            <p className="col-span-2">Erstellt am</p>
+            <p>{mockData.createdDate}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
+            <p className="col-span-2">Liegenschaft</p>
+            <p>
+              {mockData.propertyAccount}
+              <br />
+              {mockData.propertyCity}
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
+            <p className="col-span-2">Liegenschaftsnummer</p>
+            <p>{mockData.propertyNumber}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-10 text-pdf-text">
+            <p className="col-span-2">Heidi Nutzernummer</p>
+            <p>{mockData.heidiCustomerNumber}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-10 text-pdf-text">
+            <p className="col-span-2">Ihre Nutzernummer</p>
+            <p>{mockData.userNumber}</p>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-2 text-pdf-text">
+        <p>Sehr geehrte Damen und Herren,</p>
+        <p>
+          wir haben die Kosten, die im vergangenen Abrechnungszeitraum
+          angefallen sind, abgerechnet. Unsere Abrechnung ist auf den folgenden
+          <br />
+          Seiten dieses Schreibens detailliert beschrieben.
+        </p>
+      </div>
+      <div className="bg-pdf-dark rounded-base px-4 py-6 text-white">
+        <p className="text-sm text-right font-medium">Betrag</p>
+        <div className="bg-white h-px w-full my-4" />
+        <div className="flex justify-between items-center">
+          <p className="text-lg font-medium">Gesamtbetrag</p>
+          <div className="text-right">
+            <p className="text-2xl font-bold">{mockData.totalAmount}</p>
+          </div>
+        </div>
+      </div>
+      <div className="space-y-5">
+        <p className="font-bold text-pdf-dark">
+          Beachten Sie bitte folgende Hinweise:
+        </p>
+        <div className="flex items-start justify-start gap-6">
+          <span className="size-6 w-6 h-6 rounded-md bg-[#F3F8F5]" />
+          <p className="text-pdf-text">
+            Bitte rechnen Sie Nachzahlungen oder Guthaben ausschließlich mit
+            Ihrem Vermieter/Verwalter ab. Leisten Sie keine
+            <br />
+            Zahlungen an Heidi Systems GmbH.
+          </p>
+        </div>
+        <div className="flex items-start justify-start gap-6">
+          <span className="size-6 w-6 h-6 rounded-md bg-[#F3F8F5]" />
+          <p className="text-pdf-text">
+            Im Zuge der Energiekrise sind die Energiepreise gegenüber dem
+            Vorjahr extrem gestiegen. Dies kann dazu führen, dass Ihre
+            <br />
+            Energiekosten in diesem Abrechnungszeitraum höher liegen als bisher
+            selbst bei reduziertem Verbrauch.
+            <br />
+            Unter {mockData.portalLink} können Sie prüfen, wie sehr sich die
+            Energiepreise in Ihrer Liegenschaft und für Sie persönlich
+            <br />
+            verändert haben.
+          </p>
+        </div>
+        <div className="flex items-start justify-start gap-6">
+          <span className="size-6 w-6 h-6 rounded-md bg-[#F3F8F5]" />
+          <p className="text-pdf-text">
+            Allgemeine Hinweise und Informationen zur Abrechnung finden Sie
+            unter: {mockData.portalLink}
+          </p>
+        </div>
+      </div>
+      <div className="bg-pdf-accent p-5 rounded-base">
+        <div className="grid grid-cols-6 items-start gap-2">
+          <div className="col-span-4 text-sm space-y-5">
+            <p className="font-bold text-pdf-dark">
+              Ihre persönlichen Zugangsdaten für das Heidi Nutzerportal.
+            </p>
+            <p className="text-pdf-text">
+              Mit Heidi Systems bekommen Sie Zugriff auf die unterjährigen
               Verbrauchsinformationen
-            </div>
-            <div>
-              - eine übersichtliche, monatliche Darstellung Ihrer Verbräuche -
-            </div>
-            <div>
+              <br />- eine übersichtliche, monatliche Darstellung Ihrer
+              Verbräuche - <br />
               und können so Einsparmöglichkeiten auch zwischen den Abrechnungen
               erkennen.
+            </p>
+            <div>
+              <div className="grid grid-cols-[110px_1fr] gap-10 font-bold text-pdf-dark">
+                <p>Nutzer-ID:</p>
+                <p>{mockData.userId}</p>
+              </div>
+              <div className="grid grid-cols-[110px_1fr] gap-10 font-bold text-pdf-dark">
+                <p>Sicherheitscode:</p>
+                <p>{mockData.securityCode}</p>
+              </div>
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <div>
-              <div className="font-bold">Nutzer-ID:</div>
-              <div className="font-mono">{mockData.userId}</div>
+          <div className="flex flex-col col-span-2 items-end space-y-1">
+            <div className="w-40 h-40 bg-transparent">
+              <Image
+                src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=https://heidi.systems/3303"
+                alt="QR code"
+                width={160}
+                height={160}
+              />
             </div>
-            <div>
-              <div className="font-bold">Sicherheitscode:</div>
-              <div className="font-mono">{mockData.securityCode}</div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center ml-4">
-          <div className="text-xs mt-2 text-blue-600">
-            Oder registrieren unter{" "}
-            <a href="#" className="underline">
-              {mockData.portalLink}
-            </a>
+            <p className="text-pdf-dark font-bold">
+              Oder registrieren unter {mockData.portalLink}.
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Properties List */}
-      <div className="mt-6 text-sm">
-        <div className="font-bold mb-2">
+      <div className="space-y-5">
+        <p className="font-bold text-pdf-dark">
           Folgende Objekte sind in dieser Abrechnung berücksichtigt:
-        </div>
-        <div className="grid grid-cols-3 gap-x-6 gap-y-2">
-          {mockData.properties.map((property, index: number) => (
-            <div key={index}>{property}</div>
+        </p>
+        <div className="grid grid-cols-3 text-pdf-text gap-x-4 gap-y-1">
+          {mockData.properties.slice(0, 3).map((prop, i) => (
+            <p key={i}>{prop}</p>
+          ))}
+          {mockData.properties.slice(3, 5).map((prop, i) => (
+            <p key={i}>{prop}</p>
+          ))}
+          {mockData.properties.slice(5).map((prop, i) => (
+            <p key={i}>{prop}</p>
           ))}
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { admin_logo } from "@/static/icons";
+import { admin_logo, pdf_home, pdf_user } from "@/static/icons";
 import {
   BarChart,
   Bar,
@@ -32,55 +32,65 @@ const waterData = [
 
 const HeatingBillPreviewSix = () => {
   return (
-    <div className="max-w-4xl mx-auto bg-white p-12 font-sans text-black">
+    <div className="mx-auto max-w-[1400px] space-y-6 font-sans text-sm">
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div className="text-xs">6/6 355703/0010</div>
-        <div className="flex items-center gap-2">
-          <Image
-            width={150}
-            height={32}
-            src={admin_logo}
-            alt="Brunata Metrona Logo"
-          />
+      <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
+        <div className="flex justify-between items-start">
+          <div className="text-xs text-pdf-text">6/6 355703/0010</div>
+          <div className="flex items-center gap-2">
+            <Image
+              width={130}
+              height={48}
+              src={admin_logo}
+              alt="admin preview heidi"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Title */}
-      <div className="mb-4">
-        <h1 className="text-xl font-bold text-blue-600 border-b-2 border-blue-600 pb-2">
-          Ergänzende Informationen in der Abrechnung
-        </h1>
-      </div>
-
-      <p className="text-xs mb-6">
+      <p className="text-xs text-pdf-text">
         Die Heizkostenabrechnung trägt bereits stark zum Umweltschutz bei, indem
         sie sparsames Heizen fördert. Ergänzend erhalten Sie hier Informationen,
         um Ihren Energieverbrauch bewerten zu können.
       </p>
 
-      {/* Energy Sources */}
-      <div className="bg-gray-200 font-bold p-1 pl-2 text-sm mb-2 flex justify-between items-center">
-        <span>Energieträger der Liegenschaft</span>
-        <span className="text-lg">🏠</span>
+      {/* Title */}
+      <div className="mb-4 relative">
+        <h1 className="text-lg font-bold text-white p-2.5 rounded-base bg-pdf-accent2">
+          Energieträger der Liegenschaft
+        </h1>
+        <Image
+          className="absolute right-8 -top-3.5"
+          src={pdf_home}
+          alt="pdf-home"
+          width={40}
+          height={40}
+        />
       </div>
-      <div className="text-xs mb-4">
-        <table className="w-full">
+
+      <div className="text-sm mb-4">
+        <table className="w-full text-pdf-text border-spacing-0 border-separate">
           <tbody>
             <tr>
-              <td className="py-1 font-bold">Eingesetzte Energieträger</td>
-              <td className="py-1 text-right">Nah-/Fernwärme</td>
-              <td className="py-1 text-right">761.123,0 kWh</td>
+              <td className="py-1 px-2 font-bold text-pdf-dark rounded-l-base border border-r-0 border-pdf-dark">
+                Eingesetzte Energieträger
+              </td>
+              <td className="py-1 border-y border-pdf-dark text-right">
+                Nah-/Fernwärme
+              </td>
+              <td className="py-1 px-2 font-bold text-pdf-dark rounded-r-base border border-l-0 border-pdf-dark text-right">
+                761.123,0 kWh
+              </td>
             </tr>
             <tr>
-              <td className="py-1 font-bold">
+              <td className="py-1 px-2 font-bold text-pdf-dark">
                 CO2-Emissionsfaktor¹ des Nah-/Fernwärmenetzes
               </td>
               <td className="py-1 text-right">0,21010 kg CO2/kWh</td>
               <td></td>
             </tr>
-            <tr className="font-bold">
-              <td className="py-1">
+            <tr className="font-bold text-pdf-dark">
+              <td className="py-1 px-2">
                 Primärenergiefaktoren² für Nah-/Fernwärmenetze laut DIN V 18599³
               </td>
               <td></td>
@@ -105,23 +115,35 @@ const HeatingBillPreviewSix = () => {
               <td className="py-1 text-right">0,70</td>
               <td></td>
             </tr>
-            <tr className="border-t-2 border-black">
-              <td className="py-1 font-bold">
+            <tr>
+              <td className="py-1 px-2 rounded-l-base border border-r-0 border-pdf-dark text-pdf-dark font-bold">
                 CO2-Emissionen der Liegenschaft
               </td>
-              <td className="py-1 text-right">Nah-/Fernwärme</td>
-              <td className="py-1 text-right font-bold">159.911,9 kg</td>
+              <td className="py-1 border-y border-pdf-dark text-right">
+                Nah-/Fernwärme
+              </td>
+              <td className="py-1 text-right px-2 rounded-r-base border border-l-0 border-pdf-dark text-pdf-dark font-bold">
+                159.911,9 kg
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Energy Consumption */}
-      <div className="bg-gray-200 font-bold p-1 pl-2 text-sm mb-2 flex justify-between items-center">
-        <span>Ihr Energieverbrauch</span>
-        <span className="text-lg">👤</span>
+      <div className="mb-4 relative">
+        <h1 className="text-lg font-bold text-white p-2.5 rounded-base bg-pdf-accent2">
+          Ihr Energieverbrauch
+        </h1>
+        <Image
+          className="absolute right-8 -top-3.5"
+          src={pdf_user}
+          alt="pdf-user"
+          width={40}
+          height={40}
+        />
       </div>
-      <p className="text-xs mb-4">
+      <p className="text-xs text-pdf-text mb-4">
         Die hier dargestellten Werte berücksichtigen neben Ihren individuellen
         Verbrauchswerten u.a. den Wirkungsgrad der Heizungsanlage und
         Leitungsverluste im Gebäude.⁴
@@ -137,17 +159,17 @@ const HeatingBillPreviewSix = () => {
             <Legend />
             <Bar
               dataKey="vorjahreszeitraum"
-              fill="#8884d8"
+              fill="#25453A"
               name="Vorjahreszeitraum"
             />
             <Bar
               dataKey="aktuellerZeitraum"
-              fill="#82ca9d"
+              fill="#459157"
               name="aktueller Zeitraum"
             />
             <Bar
               dataKey="witterungsbereinigt"
-              fill="#ffc658"
+              fill="#83B78F"
               name="witterungsbereinigt⁵"
             />
           </BarChart>
@@ -162,67 +184,92 @@ const HeatingBillPreviewSix = () => {
             <Legend />
             <Bar
               dataKey="vorjahreszeitraum"
-              fill="#8884d8"
+              fill="#25453A"
               name="Vorjahreszeitraum"
             />
           </BarChart>
         </div>
       </div>
-      <div className="text-xs mt-4">
-        <div className="flex items-center gap-4">
-          <span>* Keine Werte verfügbar</span>
-        </div>
-        <table className="w-full mt-4">
+      <div className="text-sm grid grid-cols-2 gap-10 mt-4">
+        <table className="w-full text-pdf-text border-spacing-0 border-separate mb-2">
           <tbody>
             <tr>
-              <td className="py-1 font-bold">Ihr Heizungsverbrauch</td>
-              <td className="py-1 text-right border-b-2 border-black">
-                5.945,0 kWh
-              </td>
-              <td className="w-1/3"></td>
+              <td className="py-1">Ihr Heizungsverbrauch</td>
+              <td />
+              <td className="py-1 text-right">5.945,0 kWh</td>
             </tr>
             <tr>
-              <td className="py-1 font-bold">Ihr Warmwasserverbrauch</td>
-              <td className="py-1 text-right border-b-2 border-black">
+              <td className="py-1 border-b border-pdf-dark pb-2">
+                Ihr Warmwasserverbrauch
+              </td>
+              <td className="pb-2 border-b border-pdf-dark" />
+              <td className="py-1 border-b border-pdf-dark pb-2 text-right">
                 1.534,0 kWh
               </td>
-              <td></td>
-            </tr>
-            <tr className="font-bold">
-              <td className="py-1">GESAMT</td>
-              <td className="py-1 text-right border-b-2 border-black">
-                7.479,1 kWh
-              </td>
-              <td className="text-center">Vergleichswerte⁶</td>
             </tr>
             <tr>
-              <td className="py-1 font-bold">Ihre Wohnfläche</td>
-              <td className="py-1 text-right border-b-2 border-black">
-                77,0 m²
-              </td>
-              <td className="text-center">Bundesweiter Vergleichsnutzer</td>
-              <td className="text-center">Liegenschafts-durchschnitt</td>
+              <td className="py-1">GESAMT</td>
+              <td />
+              <td className="py-1 text-right">7.479,1 kWh</td>
             </tr>
-            <tr className="text-blue-600 font-bold">
-              <td className="py-1">
+            <tr>
+              <td className="py-1 pb-2">Ihre Wohnfläche</td>
+              <td className="pb-2" />
+              <td className="py-1 pb-2 text-right">77,0 m²</td>
+            </tr>
+            <tr className="text-pdf-dark font-bold">
+              <td className="py-1 border-pdf-dark border border-r-0 rounded-l-base px-2">
                 Ihr Energieverbrauch je
-                <br />
+              </td>
+              <td className="py-1 border-y border-pdf-dark text-right">
                 Quadratmeter Wohnfläche
               </td>
-              <td className="py-1 text-right">97,1 kWh / m²</td>
-              <td className="text-center">92,9 kWh / m²</td>
-              <td className="text-center">68,0 kWh / m²</td>
+              <td className="py-1 border-pdf-dark border border-l-0 rounded-r-base px-2 text-right">
+                97,1 kWh / m²
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table className="w-full text-pdf-text border-spacing-0 border-separate mb-2 ">
+          <tbody>
+            <tr>
+              <td
+                colSpan={2}
+                className="py-1 border-b border-pdf-dark text-center font-bold text-pdf-dark"
+              >
+                Vergleichswerte⁶
+              </td>
+            </tr>
+            <tr>
+              <td className="py-1">Bundesweiter Vergleichsnutzer</td>
+              <td className="py-1 text-right">Liegenschafts - durchschnitt</td>
+            </tr>
+            <tr className="text-pdf-dark font-bold">
+              <td className="py-1 border-pdf-dark border border-r-0 rounded-l-base px-2">
+                92,9 kWh/ m²
+              </td>
+              <td className="py-1 border-pdf-dark border border-l-0 rounded-r-base px-2 text-right">
+                68,0 kWh/m²
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Further Information */}
-      <div className="bg-gray-200 font-bold p-1 pl-2 text-sm mb-2 mt-6 flex justify-between items-center">
-        <span>Weitere Informationen und Informationsquellen</span>
-        <span className="text-lg">ℹ️</span>
+      <div className="mb-4 relative">
+        <h1 className="text-lg font-bold text-white p-2.5 rounded-base bg-pdf-accent2">
+          Weitere Informationen und Informationsquellen
+        </h1>
+        <Image
+          className="absolute right-8 -top-3.5"
+          src={pdf_user}
+          alt="pdf-user"
+          width={40}
+          height={40}
+        />
       </div>
-      <div className="text-xs mb-4">
+      <div className="text-sm text-pdf-text mb-4">
         <p className="mb-2">
           Entgelte für die Gebrauchsüberlassung, für die Verwendung der
           Ausstattung zur Verbrauchserfassung einschließlich der Eichung, sowie
@@ -231,20 +278,22 @@ const HeatingBillPreviewSix = () => {
           Weitere Heizungsbetriebskosten&quot;.
         </p>
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 border border-black"></div>{" "}
-          {/* QR Code Placeholder */}
+          <div className="w-40 h-40 bg-transparent">
+            <Image
+              src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=https://heidi.systems/3303"
+              alt="QR code"
+              width={160}
+              height={160}
+            />
+          </div>
           <p>
             Informationen zu Verbraucherorganisationen, Energiespartipps zur
             Reduzierung der Heizkosten und des Energieverbrauches sowie Hinweise
             zur Steigerung der Effizienz Ihrer Heizungsanlage und Heizkörper
             finden Sie unter{" "}
-            <a
-              href="https://www.brunata-metrona.de/ida"
-              className="text-blue-600"
-            >
-              www.brunata-metrona.de/ida
+            <a href="www.heidisystems.de/co2" className="text-pdf-link">
+              www.heidisystems.de/co2.
             </a>
-            .
             <br />
             <br />
             Hier finden Sie auch weitere Informationen zu Steuern, Abgaben und
@@ -253,16 +302,15 @@ const HeatingBillPreviewSix = () => {
             <br />
             <br />
             Informationen zu Energieagenturen finden Sie z.B. unter{" "}
-            <a href="https://www.energieagenturen.de" className="text-blue-600">
-              www.energieagenturen.de
+            <a href="www.energieagenturen.de" className="text-pdf-link">
+              www.energieagenturen.de.
             </a>
-            .
           </p>
         </div>
       </div>
 
       {/* Footnotes */}
-      <div className="text-xs text-gray-500 space-y-1">
+      <div className="text-xs text-pdf-text space-y-1">
         <p>
           1 Der CO2-Emissionsfaktor berücksichtigt die unterschiedlichen
           Energieträger bei der Wärmeerzeugung und gibt an, wieviele

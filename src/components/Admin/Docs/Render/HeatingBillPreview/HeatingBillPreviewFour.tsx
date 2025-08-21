@@ -1,79 +1,87 @@
-
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
 
 const HeatingBillPreviewFour = () => {
   return (
-    <div className="max-w-4xl mx-auto bg-white p-12 font-sans text-black">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div className="text-xs">4/6 355703/0010</div>
-        <div className="flex items-center gap-2">
-          <Image width={150} height={32} src={admin_logo} alt="Brunata Metrona Logo" />
+    <div className="mx-auto max-w-[1400px] space-y-5 font-sans text-sm">
+      <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
+        <div className="flex justify-between items-start">
+          <div className="text-xs text-pdf-text">4/6 355703/0010</div>
+          <Image
+            width={130}
+            height={48}
+            src={admin_logo}
+            alt="admin preview heidi"
+          />
         </div>
-      </div>
-
-      {/* Address Info */}
-      <div className="grid grid-cols-2 gap-20 text-sm">
-        <div>
-          <div className="border-b border-black pb-1 mb-2">
-            BRUNATA-METRONA GmbH & Co. KG - 81366 München
+        <div className="grid grid-cols-2 gap-20 items-end">
+          <div>
+            <div className="font-bold text-2xl mb-4">
+              Ihre Heidi Systems ® Abrechnung für <br /> Heizung, Warmwasser,
+              Kaltwasser
+            </div>
+            <div className="space-y-2 mb-4">
+              <div className="grid grid-cols-[200px_1fr] font-bold text-pdf-dark gap-5">
+                <div className="">Liegenschaft</div>
+                <div>Rungestr. 21 u.a. 10179 Berlin</div>
+              </div>
+              <div className="grid grid-cols-[200px_1fr] text-pdf-text gap-5">
+                <div>Erstellt im Auftrag von</div>
+                <div>
+                  <div>Braun & Hubertus GmbH</div>
+                  <div>Immobilienmanagement</div>
+                  <div>Keithstr. 2-4</div>
+                  <div>10787 Berlin</div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2 text-pdf-text">
+              <div className="grid grid-cols-[200px_1fr] font-bold text-pdf-dark gap-5">
+                <div>Liegenschaftsnummer</div>
+                <div>355703</div>
+              </div>
+              <div className="grid grid-cols-[200px_1fr] gap-5">
+                <div>Heidi Nutzernummer</div>
+                <div>0010</div>
+              </div>
+              <div className="grid grid-cols-[200px_1fr] gap-5">
+                <div>Abrechnungszeitraum</div>
+                <div>01.01.2023 - 31.12.2023</div>
+              </div>
+              <div className="grid grid-cols-[200px_1fr] gap-5">
+                <div>erstellt am</div>
+                <div>14.11.2024</div>
+              </div>
+            </div>
           </div>
-          <div className="font-bold">Andreas Preissler Eigennutzer</div>
-          <div>Lindenstraße 49</div>
-          <div>12589 Berlin</div>
-        </div>
-        <div>
-          <div className="font-bold text-lg mb-4">
-            Ihre BRUNATA® Abrechnung für
-            <br />
-            Heizung, Warmwasser, Kaltwasser
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="font-bold">Liegenschaft</div>
-              <div>Rungestr. 21 u.a.</div>
-              <div>10179 Berlin</div>
+          <div className="text-pdf-dark font-bold">
+            <div className="border-b border-pdf-dark pb-1 mb-2">
+              Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
             </div>
-            <div>
-              <div className="font-bold">Erstellt im Auftrag von</div>
-              <div>Braun & Hubertus GmbH</div>
-              <div>Immobilienmanagement</div>
-              <div>Keithstr. 2-4</div>
-              <div>10787 Berlin</div>
-            </div>
-            <div>
-              <div className="font-bold">Liegenschaftsnummer</div>
-              <div>355703</div>
-            </div>
-            <div>
-              <div className="font-bold">BRUNATA Nutzernummer</div>
-              <div>0010</div>
-            </div>
-            <div>
-              <div className="font-bold">Abrechnungszeitraum</div>
-              <div>01.01.2023 - 31.12.2023</div>
-            </div>
-            <div>
-              <div className="font-bold">erstellt am</div>
-              <div>14.11.2024</div>
+            <div className="text-2xl">
+              Andreas Preissler Eigennutzer <br />
+              Lindenstraße 49
+              <br />
+              12589 Berlin
             </div>
           </div>
         </div>
       </div>
 
       {/* Costs */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold text-blue-600 border-b-2 border-blue-600 pb-2 mb-4">
-          Ihre Kosten
-        </h2>
+      <div className="space-y-5">
+        <h2 className="text-xl font-bold text-pdf-title mb-4">Ihre Kosten</h2>
         <div className="text-sm">
           {/* Heating Costs */}
-          <div className="bg-gray-200 font-bold p-1 pl-2">Kosten für Heizung</div>
-          <table className="w-full">
+          <div className="bg-pdf-accent rounded-base font-bold p-1 pl-2">
+            Kosten für Heizung
+          </div>
+          <table className="w-full text-pdf-text">
             <tbody>
               <tr>
-                <td className="py-1 pr-2">Grundkosten</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Grundkosten
+                </td>
                 <td className="py-1 px-2 text-right">77,02 m² Wohnfläche</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">1,869733 € je m²</td>
@@ -81,7 +89,9 @@ const HeatingBillPreviewFour = () => {
                 <td className="py-1 pl-2 text-right">144,01 €</td>
               </tr>
               <tr>
-                <td className="py-1 pr-2">Verbrauchskosten</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Verbrauchskosten
+                </td>
                 <td className="py-1 px-2 text-right">7,00 MWh</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">120,895580 € je MWh</td>
@@ -91,11 +101,15 @@ const HeatingBillPreviewFour = () => {
             </tbody>
           </table>
           {/* Hot Water Costs */}
-          <div className="bg-gray-200 font-bold p-1 pl-2 mt-2">Kosten für Warmwasser</div>
-          <table className="w-full">
+          <div className="bg-pdf-accent rounded-base font-bold p-1 pl-2 mt-2">
+            Kosten für Warmwasser
+          </div>
+          <table className="w-full border-spacing-0 border-separate text-pdf-text">
             <tbody>
               <tr>
-                <td className="py-1 pr-2">Grundkosten</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Grundkosten
+                </td>
                 <td className="py-1 px-2 text-right">77,02 m² Wohnfläche</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">1,453210 € je m²</td>
@@ -103,26 +117,36 @@ const HeatingBillPreviewFour = () => {
                 <td className="py-1 pl-2 text-right">111,93 €</td>
               </tr>
               <tr>
-                <td className="py-1 pr-2">Verbrauchskosten</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Verbrauchskosten
+                </td>
                 <td className="py-1 px-2 text-right">10,88 m³</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">12,059077 € je m³</td>
                 <td className="py-1 pl-2 text-right">=</td>
                 <td className="py-1 pl-2 text-right">131,20 €</td>
               </tr>
-              <tr className="border-t-2 border-black">
-                <td className="py-1 font-bold">Summe Kosten für Heizung und Warmwasser</td>
-                <td colSpan={4}></td>
-                <td className="py-1 text-right font-bold">1.233,41 €</td>
+              <tr>
+                <td className="py-1 rounded-l-base border-pdf-dark border border-r-0 px-2 text-pdf-dark font-bold">
+                  Summe Kosten für Heizung und Warmwasser
+                </td>
+                <td className="border-y border-pdf-dark" colSpan={4}></td>
+                <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-pdf-dark text-right font-bold">
+                  1.233,41 €
+                </td>
               </tr>
             </tbody>
           </table>
           {/* Cold Water Costs */}
-          <div className="bg-gray-200 font-bold p-1 pl-2 mt-2">Kosten für Kaltwasser</div>
-          <table className="w-full">
+          <div className="bg-pdf-accent rounded-base font-bold p-1 pl-2 mt-2">
+            Kosten für Kaltwasser
+          </div>
+          <table className="w-full border-spacing-0 border-separate text-pdf-text">
             <tbody>
               <tr>
-                <td className="py-1 pr-2">Kaltwasser Gesamt</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Kaltwasser Gesamt
+                </td>
                 <td className="py-1 px-2 text-right">45,20 m³</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">1,713411 € je m³</td>
@@ -130,7 +154,9 @@ const HeatingBillPreviewFour = () => {
                 <td className="py-1 pl-2 text-right">77,45 €</td>
               </tr>
               <tr>
-                <td className="py-1 pr-2">Abwasser Gesamt</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Abwasser Gesamt
+                </td>
                 <td className="py-1 px-2 text-right">45,20 m³</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">2,014517 € je m³</td>
@@ -138,7 +164,9 @@ const HeatingBillPreviewFour = () => {
                 <td className="py-1 pl-2 text-right">91,06 €</td>
               </tr>
               <tr>
-                <td className="py-1 pr-2">Gerätemiete Kaltwasser</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Gerätemiete Kaltwasser
+                </td>
                 <td className="py-1 px-2 text-right">45,20 m³</td>
                 <td className="py-1 px-2">x</td>
                 <td className="py-1 px-2 text-right">0,228791 € je m³</td>
@@ -146,175 +174,206 @@ const HeatingBillPreviewFour = () => {
                 <td className="py-1 pl-2 text-right">10,34 €</td>
               </tr>
               <tr>
-                <td className="py-1 pr-2">Abrechnung Kaltwasser</td>
+                <td className="py-1 pr-2 font-bold text-pdf-dark">
+                  Abrechnung Kaltwasser
+                </td>
                 <td className="py-1 px-2 text-right">1,00 Nutzeinh.</td>
                 <td className="py-1 px-2">x</td>
-                <td className="py-1 px-2 text-right">17,290569 € je Nutzeinh.</td>
+                <td className="py-1 px-2 text-right">
+                  17,290569 € je Nutzeinh.
+                </td>
                 <td className="py-1 pl-2 text-right">=</td>
                 <td className="py-1 pl-2 text-right">17,29 €</td>
               </tr>
-              <tr className="border-t-2 border-black">
-                <td className="py-1 font-bold">Summe Kosten für Kaltwasser</td>
-                <td colSpan={4}></td>
-                <td className="py-1 text-right font-bold">196,14 €</td>
+              <tr>
+                <td className="py-1 rounded-l-base border-pdf-dark border border-r-0 px-2 text-pdf-dark font-bold">
+                  Summe Kosten für Kaltwasser
+                </td>
+                <td className="border-y border-pdf-dark" colSpan={4}></td>
+                <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-pdf-dark text-right font-bold">
+                  1.233,41 €
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
         {/* Total Amount */}
-        <div className="bg-blue-800 text-white p-2 flex justify-between items-center mt-4">
-          <span className="font-bold">Gesamtbetrag</span>
-          <span className="font-bold text-lg">1.429,55 €</span>
+        <div className="bg-pdf-accent2 rounded-base text-white font-bold p-2.5 flex justify-between items-center mt-4">
+          <span className="">Gesamtbetrag</span>
+          <span className="text-lg">1.429,55 €</span>
         </div>
       </div>
 
       {/* State Relief */}
-      <div className="mt-8 text-sm">
-        <div className="bg-gray-200 font-bold p-1 pl-2 flex justify-between">
-          <span>Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)</span>
+      <div className="bg-pdf-accent2 rounded-base text-white font-bold py-4 px-2.5 text-sm">
+        <div className="grid grid-cols-6 font-semibold items-center">
+          <p className="col-span-4">
+            Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)
+          </p>
+          <span>Betrag</span>
+          <span className="text-right">Ihr Anteil</span>
         </div>
-        <table className="w-full">
-          <thead>
-            <tr className="border-b-2 border-black">
-              <th className="text-left font-normal py-1"></th>
-              <th className="text-right font-normal py-1">Betrag</th>
-              <th className="text-right font-normal py-1">Ihr Anteil</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-1">Preisbremse Energie</td>
-              <td className="py-1 text-right">21.035,94 €</td>
-              <td className="py-1 text-right">209,21 €</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="my-5 h-px bg-white w-full" />
+        <div className="grid grid-cols-6 items-center">
+          <p className="col-span-4">Preisbremse Energie</p>
+          <span>21.035,94 €</span>
+          <span className="text-right">209,21 €</span>
+        </div>
       </div>
 
       {/* Consumption Values */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold text-blue-600 border-b-2 border-blue-600 pb-2 mb-4">
+      <div className="space-y-5">
+        <h2 className="text-xl font-bold text-pdf-title pb-2 mb-4">
           Ihre Verbrauchswerte
         </h2>
-        <div className="text-xs">
+        <div className="text-sm">
           {/* Heating in MWh */}
-          <div className="bg-gray-200 font-bold p-1 pl-2">Heizung in MWh</div>
-          <table className="w-full">
+          <div className="bg-pdf-accent rounded-base text-pdf-dark font-bold p-1 pl-2">
+            Heizung in MWh
+          </div>
+          <table className="w-full border-spacing-0 border-separate">
             <thead>
-              <tr className="border-b-2 border-black">
-                <th className="text-left font-normal py-1">RAUMBEZEICHNUNG</th>
-                <th className="text-left font-normal py-1">GERÄTENUMMER</th>
-                <th className="text-left font-normal py-1">GERÄTEART</th>
-                <th className="text-right font-normal py-1">ANF.-STAND</th>
-                <th className="text-right font-normal py-1">ABLESUNG</th>
-                <th className="text-right font-normal py-1">FAKTOR</th>
-                <th className="text-right font-normal py-1">VERBRAUCH</th>
-                <th className="text-left font-normal py-1">BEMERKUNG</th>
+              <tr className="text-pdf-dark font-bold uppercase">
+                <th className="text-left py-1">RAUMBEZEICHNUNG</th>
+                <th className="text-left py-1">GERÄTENUMMER</th>
+                <th className="text-left py-1">GERÄTEART</th>
+                <th className="text-left py-1">ANF.-STAND</th>
+                <th className="text-left py-1">ABLESUNG</th>
+                <th className="text-left py-1">FAKTOR</th>
+                <th className="text-left py-1">VERBRAUCH</th>
+                <th className="text-left py-1">BEMERKUNG</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-1">Flur</td>
-                <td className="py-1">6EFE0121755587</td>
-                <td className="py-1">Wärmezähler</td>
-                <td className="py-1 text-right">1,918</td>
-                <td className="py-1 text-right">8,916</td>
-                <td className="py-1"></td>
-                <td className="py-1 text-right">7,000</td>
-                <td className="py-1"></td>
+              <tr className="text-pdf-text">
+                <td className="text-left py-1">Flur</td>
+                <td className="text-left py-1">6EFE0121755587</td>
+                <td className="text-left py-1">Wärmezähler</td>
+                <td className="text-left py-1">1,918</td>
+                <td className="text-left py-1">8,916</td>
+                <td className="text-left py-1"></td>
+                <td className="text-left py-1">7,000</td>
+                <td className="text-left py-1"></td>
               </tr>
-              <tr className="border-t-2 border-black">
-                <td className="py-1 font-bold" colSpan={6}>Summe Heizung</td>
-                <td className="py-1 text-right font-bold">7,000</td>
-                <td></td>
+              <tr>
+                <td
+                  className="py-1 rounded-l-base border-pdf-dark border border-r-0 px-2 text-pdf-dark font-bold"
+                  colSpan={6}
+                >
+                  Summe Heizung
+                </td>
+                <td className="border-y font-bold text-pdf-dark border-pdf-dark">
+                  7,000
+                </td>
+                <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
               </tr>
             </tbody>
           </table>
-
-          {/* Hot water in m³ */}
-          <div className="bg-gray-200 font-bold p-1 pl-2 mt-4">Warmwasser in m³</div>
-          <table className="w-full">
+        </div>
+        {/* Hot water in m³ */}
+        <div className="text-sm text-pdf-text">
+          <div className="bg-pdf-accent rounded-base text-pdf-dark font-bold p-1 pl-2">
+            Warmwasser in m³
+          </div>
+          <table className="w-full border-spacing-0 border-separate">
             <thead>
-              <tr className="border-b-2 border-black">
-                <th className="text-left font-normal py-1">RAUMBEZEICHNUNG</th>
-                <th className="text-left font-normal py-1">GERÄTENUMMER</th>
-                <th className="text-left font-normal py-1">GERÄTEART</th>
-                <th className="text-right font-normal py-1">ANF.-STAND</th>
-                <th className="text-right font-normal py-1">ABLESUNG</th>
-                <th className="text-right font-normal py-1">FAKTOR</th>
-                <th className="text-right font-normal py-1">VERBRAUCH</th>
-                <th className="text-left font-normal py-1">BEMERKUNG</th>
+              <tr className="text-pdf-dark font-bold uppercase">
+                <th className="text-left py-1">RAUMBEZEICHNUNG</th>
+                <th className="text-left py-1">GERÄTENUMMER</th>
+                <th className="text-left py-1">GERÄTEART</th>
+                <th className="text-left py-1">ANF.-STAND</th>
+                <th className="text-left py-1">ABLESUNG</th>
+                <th className="text-left py-1">FAKTOR</th>
+                <th className="text-left py-1">VERBRAUCH</th>
+                <th className="text-left py-1">BEMERKUNG</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-1">Bad</td>
-                <td className="py-1">9DWZ0122156287</td>
-                <td className="py-1">Warmwasserzähler</td>
-                <td className="py-1 text-right">3,52</td>
-                <td className="py-1 text-right">11,381</td>
-                <td className="py-1"></td>
-                <td className="py-1 text-right">7,86</td>
-                <td className="py-1"></td>
+              <tr className="text-pdf-text">
+                <td className="text-left py-1">Bad</td>
+                <td className="text-left py-1">9DWZ0122156287</td>
+                <td className="text-left py-1">Warmwasserzähler</td>
+                <td className="text-left py-1">1,918</td>
+                <td className="text-left py-1">8,916</td>
+                <td className="text-left py-1"></td>
+                <td className="text-left py-1">7,000</td>
+                <td className="text-left py-1"></td>
+              </tr>
+              <tr className="text-pdf-text">
+                <td className="text-left py-1">Bad</td>
+                <td className="text-left py-1">9DWZ0122156287</td>
+                <td className="text-left py-1">Warmwasserzähler</td>
+                <td className="text-left py-1">1,918</td>
+                <td className="text-left py-1">8,916</td>
+                <td className="text-left py-1"></td>
+                <td className="text-left py-1">7,000</td>
+                <td className="text-left py-1"></td>
               </tr>
               <tr>
-                <td className="py-1">Bad</td>
-                <td className="py-1">9DWZ0122156297</td>
-                <td className="py-1">Warmwasserzähler</td>
-                <td className="py-1 text-right">1,04</td>
-                <td className="py-1 text-right">4,051</td>
-                <td className="py-1"></td>
-                <td className="py-1 text-right">3,02</td>
-                <td className="py-1"></td>
-              </tr>
-              <tr className="border-t-2 border-black">
-                <td className="py-1 font-bold" colSpan={6}>Summe Warmwasser</td>
-                <td className="py-1 text-right font-bold">10,88</td>
-                <td></td>
+                <td
+                  className="py-1 rounded-l-base border-pdf-dark border border-r-0 px-2 text-pdf-dark font-bold"
+                  colSpan={6}
+                >
+                  Summe Warmwasser
+                </td>
+                <td className="border-y font-bold text-pdf-dark border-pdf-dark">
+                  7,000
+                </td>
+                <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
               </tr>
             </tbody>
           </table>
-
-          {/* Cold water in m³ */}
-          <div className="bg-gray-200 font-bold p-1 pl-2 mt-4">Kaltwasser in m³</div>
-          <table className="w-full">
+        </div>
+        {/* Cold water in m³ */}
+        <div className="text-sm text-pdf-text">
+          <div className="bg-pdf-accent rounded-base text-pdf-dark font-bold p-1 pl-2">
+            Kaltwasser in m³
+          </div>
+          <table className="w-full border-spacing-0 border-separate">
             <thead>
-              <tr className="border-b-2 border-black">
-                <th className="text-left font-normal py-1">RAUMBEZEICHNUNG</th>
-                <th className="text-left font-normal py-1">GERÄTENUMMER</th>
-                <th className="text-left font-normal py-1">GERÄTEART</th>
-                <th className="text-right font-normal py-1">ANF.-STAND</th>
-                <th className="text-right font-normal py-1">ABLESUNG</th>
-                <th className="text-right font-normal py-1">FAKTOR</th>
-                <th className="text-right font-normal py-1">VERBRAUCH</th>
-                <th className="text-left font-normal py-1">BEMERKUNG</th>
+              <tr className="text-pdf-dark font-bold uppercase">
+                <th className="text-left py-1">RAUMBEZEICHNUNG</th>
+                <th className="text-left py-1">GERÄTENUMMER</th>
+                <th className="text-left py-1">GERÄTEART</th>
+                <th className="text-left py-1">ANF.-STAND</th>
+                <th className="text-left py-1">ABLESUNG</th>
+                <th className="text-left py-1">FAKTOR</th>
+                <th className="text-left py-1">VERBRAUCH</th>
+                <th className="text-left py-1">BEMERKUNG</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-1">Bad</td>
-                <td className="py-1">8DWZ0122033399</td>
-                <td className="py-1">Kaltwasserzähler</td>
-                <td className="py-1 text-right">7,56</td>
-                <td className="py-1 text-right">23,291</td>
-                <td className="py-1"></td>
-                <td className="py-1 text-right">15,73</td>
-                <td className="py-1"></td>
+              <tr className="text-pdf-text">
+                <td className="text-left py-1">Bad</td>
+                <td className="text-left py-1">8DWZ0122033399</td>
+                <td className="text-left py-1">Kaltwasserzähler</td>
+                <td className="text-left py-1">1,918</td>
+                <td className="text-left py-1">8,916</td>
+                <td className="text-left py-1"></td>
+                <td className="text-left py-1">7,000</td>
+                <td className="text-left py-1"></td>
+              </tr>
+              <tr className="text-pdf-text">
+                <td className="text-left py-1">Bad</td>
+                <td className="text-left py-1">8DWZ0122033399</td>
+                <td className="text-left py-1">Kaltwasserzähler</td>
+                <td className="text-left py-1">1,918</td>
+                <td className="text-left py-1">8,916</td>
+                <td className="text-left py-1"></td>
+                <td className="text-left py-1">7,000</td>
+                <td className="text-left py-1"></td>
               </tr>
               <tr>
-                <td className="py-1">Bad</td>
-                <td className="py-1">8DWZ0122033396</td>
-                <td className="py-1">Kaltwasserzähler</td>
-                <td className="py-1 text-right">11,91</td>
-                <td className="py-1 text-right">30,494</td>
-                <td className="py-1"></td>
-                <td className="py-1 text-right">18,59</td>
-                <td className="py-1"></td>
-              </tr>
-              <tr className="border-t-2 border-black">
-                <td className="py-1 font-bold" colSpan={6}>Summe Kaltwasser</td>
-                <td className="py-1 text-right font-bold">34,32</td>
-                <td></td>
+                <td
+                  className="py-1 rounded-l-base border-pdf-dark border border-r-0 px-2 text-pdf-dark font-bold"
+                  colSpan={6}
+                >
+                  Summe Kaltwasser
+                </td>
+                <td className="border-y font-bold text-pdf-dark border-pdf-dark">
+                  7,000
+                </td>
+                <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
               </tr>
             </tbody>
           </table>
@@ -322,8 +381,12 @@ const HeatingBillPreviewFour = () => {
       </div>
 
       {/* Footer */}
-      <div className="mt-8 text-xs text-gray-600">
-        Detaillierte Berechnung und Verteilung auf alle Nutzeinheiten des Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie sich bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden Sie unter www.brunata-metrona.de.
+      <div className="mt-8 text-sm text-pdf-text">
+        Detaillierte Berechnung und Verteilung auf alle Nutzeinheiten des
+        Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie sich
+        bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder
+        Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden Sie
+        unter www.brunata-metrona.de.
       </div>
     </div>
   );

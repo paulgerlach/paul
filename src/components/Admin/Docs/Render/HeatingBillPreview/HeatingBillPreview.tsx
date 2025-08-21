@@ -7,7 +7,7 @@ import HeatingBillPreviewSix from "./HeatingBillPreviewSix";
 
 export default function HeatingBillPreview() {
   return (
-    <div>
+    <div className="py-[60px] space-y-[60px] px-[100px] bg-white">
       <HeatingBillPreviewOne />
       <HeatingBillPreviewTwo />
       <HeatingBillPreviewThree />

@@ -127,7 +127,7 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
         </div>
         <div className="flex items-center justify-end gap-4">
           <Link
-            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${id}/${localID}/${docID}/results/preview`}
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${id}/${localID}/${docID}/results/preview`}
           >
             <Image
               width={0}

@@ -7,6 +7,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const protectedRoutes = [ROUTE_DASHBOARD, ROUTE_OBJEKTE, ROUTE_OBJEKTE_CREATE];
+const adminPrefix = "/admin"; // will match /admin and any subpath
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -37,14 +38,37 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Only check auth for protected routes
   const path = request.nextUrl.pathname;
-  const isProtected = protectedRoutes.some((route) => path.startsWith(route));
 
+  // 🔒 Step 1: Auth check for protected routes
+  const isProtected = protectedRoutes.some((route) => path.startsWith(route));
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  // 🔑 Step 2: Permission check for /admin and all subpaths
+  const isAdminRoute = path.startsWith(adminPrefix);
+  if (isAdminRoute) {
+    if (!user) {
+      // Not logged in → send to login
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+
+    const { data: userRecord, error } = await supabase
+      .from("users")
+      .select("permission")
+      .eq("id", user.id)
+      .single();
+
+    if (error || !userRecord || userRecord.permission !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = ROUTE_DASHBOARD;
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

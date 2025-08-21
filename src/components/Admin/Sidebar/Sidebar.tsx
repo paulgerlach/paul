@@ -9,13 +9,15 @@ import {
   ROUTE_DATENSCHUTZHINWEISE,
   ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_HEIZKOSTENABRECHNUNG,
+  ROUTE_ADMIN,
 } from "@/routes/routes";
 import { abrechnung, dashboard, dokumente, objekte } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import { useState } from "react";
+import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
   title: string;
@@ -27,7 +29,15 @@ export type SidebarLinkType = {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user_id } = useParams();
   const [openLink, setOpenLink] = useState<string | null>(null);
+
+  const withUserPrefix = (route: string) =>
+    user?.permission === "admin" ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
+
+  const { data: user } = useAuthUser();
+
+  const isAdmin = user?.permission === "admin";
 
   const handleClick = (link: string) => {
     setOpenLink((prev) => (prev === link ? null : link));
@@ -37,37 +47,46 @@ export default function Sidebar() {
     {
       title: "Dashboard",
       icon: dashboard,
-      route: ROUTE_DASHBOARD,
+      route: withUserPrefix(ROUTE_DASHBOARD),
     },
     {
       title: "Objekte",
       icon: objekte,
-      route: ROUTE_OBJEKTE,
+      route: withUserPrefix(ROUTE_OBJEKTE),
     },
     {
       title: "Dokumente",
       icon: dokumente,
-      route: ROUTE_DOKUMENTE,
+      route: withUserPrefix(ROUTE_DOKUMENTE),
     },
     {
       title: "Abrechnung",
       icon: abrechnung,
-      route: ROUTE_ABRECHNUNG,
+      route: withUserPrefix(ROUTE_ABRECHNUNG),
       type: "button",
       children: [
         {
           title: "Heizkostenabrechnung",
-          route: ROUTE_HEIZKOSTENABRECHNUNG,
+          route: withUserPrefix(ROUTE_HEIZKOSTENABRECHNUNG),
         },
         {
           title: "Betriebskostenabrechnung",
-          route: ROUTE_BETRIEBSKOSTENABRECHNUNG,
+          route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
         },
       ],
     },
   ];
 
-  const isRouteActive = (route: string) => pathname?.startsWith(route);
+  if (user?.permission === "admin") {
+    dashboardLinks.unshift({
+      title: "User Übersicht",
+      icon: dashboard,
+      route: ROUTE_ADMIN,
+    });
+  }
+
+  const isRouteActive = (route: string) =>
+    isAdmin ? pathname === route : pathname?.startsWith(route);
 
   return (
     <div className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[200px] h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
@@ -80,12 +99,29 @@ export default function Sidebar() {
               onClick={handleClick}
               key={link.title}
               button={link}
+              user={user}
             />
+          ) : pathname === ROUTE_ADMIN && link.route !== ROUTE_ADMIN ? (
+            <div
+              key={link.title}
+              className="flex py-3 px-5 max-xl:text-sm w-full items-center gap-3 rounded-base text-gray-400 cursor-not-allowed opacity-50"
+            >
+              <Image
+                width={28}
+                height={28}
+                className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+                loading="lazy"
+                alt={link.title}
+                src={link.icon || ""}
+              />
+              <span>{link.title}</span>
+            </div>
           ) : (
             <Link
               key={link.title}
               href={link.route}
-              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""} [.active]:bg-black/10`}>
+              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""} [.active]:bg-black/10`}
+            >
               <Image
                 width={28}
                 height={28}
@@ -105,7 +141,8 @@ export default function Sidebar() {
         </Link>
         <Link
           className="text-sm text-light-text"
-          href={ROUTE_DATENSCHUTZHINWEISE}>
+          href={ROUTE_DATENSCHUTZHINWEISE}
+        >
           Datenschutz
         </Link>
       </div>

@@ -14,9 +14,15 @@ export type AdminApartmentsDropdownContentProps = {
   clearSelection: () => void;
   selectAll: () => void;
   selectedLocalIds: string[];
-}
+};
 
-export default function AdminApartmentsDropdownContent({ apartments, toggleSelection, clearSelection, selectAll, selectedLocalIds }: AdminApartmentsDropdownContentProps) {
+export default function AdminApartmentsDropdownContent({
+  apartments,
+  toggleSelection,
+  clearSelection,
+  selectAll,
+  selectedLocalIds,
+}: AdminApartmentsDropdownContentProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -41,7 +47,7 @@ export default function AdminApartmentsDropdownContent({ apartments, toggleSelec
         {filteredApartments?.length === 0 ? (
           <div className="text-sm text-gray-500">Keine Ergebnisse gefunden</div>
         ) : (
-          apartments?.map((app, index) => (
+          filteredApartments?.map((app, index) => (
             <AdminApartmentsDropdownContentItem
               isOpen={openIndex === index}
               onClick={handleClick}
@@ -55,8 +61,18 @@ export default function AdminApartmentsDropdownContent({ apartments, toggleSelec
         )}
       </div>
       <div className="flex items-center px-5 justify-between">
-        <button onClick={() => selectAll()} className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent">Alle auswählen</button>
-        <button onClick={() => clearSelection()} className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent">Auswahl entfernen</button>
+        <button
+          onClick={() => selectAll()}
+          className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
+        >
+          Alle auswählen
+        </button>
+        <button
+          onClick={() => clearSelection()}
+          className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
+        >
+          Auswahl entfernen
+        </button>
       </div>
     </div>
   );

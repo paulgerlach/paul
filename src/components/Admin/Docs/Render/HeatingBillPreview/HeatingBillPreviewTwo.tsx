@@ -1,7 +1,12 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
+import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 
-const HeatingBillPreviewTwo = () => {
+const HeatingBillPreviewTwo = ({
+  previewData,
+}: {
+  previewData: HeatingBillPreviewData;
+}) => {
   return (
     <div className="mx-auto max-w-[1400px] space-y-6 font-sans text-sm">
       {/* Green Header Box */}
@@ -31,7 +36,13 @@ const HeatingBillPreviewTwo = () => {
           <div className="space-y-2 text-sm text-pdf-text">
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Liegenschaft</p>
-              <p>Rungestr. 21 u.a. 10179 Berlin</p>
+              <p>
+                {previewData.contractorsNames}
+                <br />
+                {previewData.objektInfo.street}
+                <br />
+                {previewData.objektInfo.zip}
+              </p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Liegenschaftsnummer</p>
@@ -39,11 +50,14 @@ const HeatingBillPreviewTwo = () => {
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Abrechnungszeitraum</p>
-              <p>01.01.2023 - 31.12.2023</p>
+              <p>
+                {previewData.mainDocDates.start_date} -{" "}
+                {previewData.mainDocDates.end_date}
+              </p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>erstellt am</p>
-              <p>14.11.2024</p>
+              <p>{previewData.mainDocDates.created_at}</p>
             </div>
           </div>
         </div>

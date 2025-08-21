@@ -244,11 +244,15 @@ import gmail from "@/asset/gmail.png";
 import doc_download from "@/asset/doc_download.png";
 import operating_cost_documents_pending from "@/asset/operating_cost_documents_pending.png";
 import admin_objekte from "@/asset/admin_objekte.png";
+import pdf_user from "@/asset/pdf-user.png";
+import pdf_home from "@/asset/pdf-home.png";
 
 export {
   accentro_colored,
   operating_cost_documents_pending,
   cold_water,
+  pdf_home,
+  pdf_user,
   cost_type_plus,
   admin_objekte,
   lamp,

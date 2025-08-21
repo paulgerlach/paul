@@ -25,7 +25,6 @@ export default function ObjekteLocalsAdminAccordion({
         <ObjekteLocalAdminItem
           objektID={objektID}
           userID={userID}
-          localID={local.id}
           isOpen={openIndex === index}
           onClick={handleClick}
           key={local.id}

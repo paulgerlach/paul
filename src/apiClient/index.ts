@@ -1,6 +1,6 @@
 "use client";
 
-import type { ContractorType, ContractType, HeatingBillDocumentType, InvoiceDocumentType, LocalType, ObjektType, OperatingCostDocumentType, UploadDocumentArgs } from "@/types";
+import type { ContractorType, ContractType, HeatingBillDocumentType, InvoiceDocumentType, LocalType, ObjektType, OperatingCostDocumentType, UploadDocumentArgs, UserType } from "@/types";
 import { getAuthenticatedUser } from "@/utils/auth";
 import { sanitizeFileName } from "@/utils/client";
 import { supabase } from "@/utils/supabase/client";
@@ -26,6 +26,29 @@ export function useContractsByLocalID(localID?: string) {
   return useQuery({
     queryKey: ["contracts", localID],
     queryFn: () => getContractsByLocalID(localID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getAdminContractsByLocalID(localID?: string, userID?: string): Promise<ContractType[]> {
+
+  const { data, error } = await supabase
+    .from("contracts")
+    .select("*")
+    .eq("local_id", localID)
+    .eq("user_id", userID);
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useAdminContractsByLocalID(localID?: string, userID?: string) {
+  return useQuery({
+    queryKey: ["contracts", localID],
+    queryFn: () => getAdminContractsByLocalID(localID, userID),
     refetchOnWindowFocus: false,
   });
 }
@@ -72,6 +95,29 @@ export function useContractorsByContractID(contractID?: string) {
   return useQuery({
     queryKey: ["contractors", contractID],
     queryFn: () => getContractorsByContractID(contractID),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getAdminContractorsByContractID(contractID?: string, userID?: string): Promise<ContractorType[]> {
+
+  const { data, error } = await supabase
+    .from("contractors")
+    .select("*")
+    .eq("contract_id", contractID)
+    .eq("user_id", userID);
+
+  if (error) {
+    throw new Error(`Failed to fetch contractors: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useAdminContractorsByContractID(contractID?: string, userID?: string) {
+  return useQuery({
+    queryKey: ["contractors", contractID, userID],
+    queryFn: () => getAdminContractorsByContractID(contractID, userID),
     refetchOnWindowFocus: false,
   });
 }
@@ -153,6 +199,32 @@ export function useObjektsWithLocals() {
   });
 }
 
+async function getUsersObjektsWithLocals(user_id?: string) {
+
+  if (!user_id) {
+    throw new Error("User ID is required to fetch objekts");
+  }
+
+  const { data, error } = await supabase
+    .from("objekte")
+    .select("*, locals(*)")
+    .eq("user_id", user_id);
+
+  if (error) {
+    throw new Error(`Failed to fetch objekts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useUsersObjektsWithLocals(user_id?: string) {
+  return useQuery({
+    queryKey: ["objekts_with_locals"],
+    queryFn: () => getUsersObjektsWithLocals(user_id),
+    refetchOnWindowFocus: false,
+  });
+}
+
 async function getDocCostCategoryTypes(documentType: "betriebskostenabrechnung" | "heizkostenabrechnung") {
   const user = await getAuthenticatedUser();
 
@@ -198,6 +270,30 @@ export function useOperatingCostDocumentByID(docId: string) {
   return useQuery({
     queryKey: ["operating_cost_document", docId],
     queryFn: () => getOperatingCostDocumentByID({ id: docId }),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getAuthenticatedUserData(): Promise<UserType> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch contracts: ${error.message}`);
+  }
+
+  return data;
+}
+
+export const useAuthUser = () => {
+  return useQuery({
+    queryKey: ["auth_user"],
+    queryFn: getAuthenticatedUserData,
     refetchOnWindowFocus: false,
   });
 }
@@ -366,4 +462,25 @@ export async function uploadObjektImage(file: File, objektId: string): Promise<s
   if (!data?.publicUrl) throw new Error("Could not get public URL");
 
   return data.publicUrl;
+}
+
+async function getBasicUsers(): Promise<UserType[]> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("permission", "user")
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useBasicUsers() {
+  return useQuery({
+    queryKey: ["basic_users"],
+    queryFn: getBasicUsers,
+    refetchOnWindowFocus: false,
+  });
 }

@@ -18,19 +18,20 @@ export const heating_bill_documents = pgTable("heating_bill_documents", {
 	living_space_share: numeric().default('30'),
 }, (table) => [
 	foreignKey({
-			columns: [table.local_id],
-			foreignColumns: [locals.id],
-			name: "heating_bill_documents_local_id_fkey"
-		}),
+		columns: [table.local_id],
+		foreignColumns: [locals.id],
+		name: "heating_bill_documents_local_id_fkey"
+	}),
 	foreignKey({
-			columns: [table.objekt_id],
-			foreignColumns: [objekte.id],
-			name: "heating_bill_documents_objekt_id_fkey1"
-		}),
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "heating_bill_documents_objekt_id_fkey1"
+	}),
 	pgPolicy("Users can view their own heating bill documents.", { as: "permissive", for: "select", to: ["public"], using: sql`(auth.uid() = user_id)` }),
 	pgPolicy("Users can insert their own heating bill documents.", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Users can update their own heating bill documents.", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Users can delete their own heating bill documents.", { as: "permissive", for: "delete", to: ["public"] }),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const doc_cost_category = pgTable("doc_cost_category", {
@@ -49,6 +50,7 @@ export const doc_cost_category = pgTable("doc_cost_category", {
 	pgPolicy("Users can delete their own doc_cost_category", { as: "permissive", for: "delete", to: ["public"] }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Users can select their own doc_cost_category", { as: "permissive", for: "select", to: ["public"] }),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const operating_cost_documents = pgTable("operating_cost_documents", {
@@ -61,14 +63,15 @@ export const operating_cost_documents = pgTable("operating_cost_documents", {
 	submited: boolean().default(false).notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.objekt_id],
-			foreignColumns: [objekte.id],
-			name: "operating_cost_documents_objekt_id_fkey"
-		}),
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "operating_cost_documents_objekt_id_fkey"
+	}),
 	pgPolicy("Users can view their own documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
 	pgPolicy("Users can insert documents with their own user_id", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Users can update their own documents", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Users can delete their own documents", { as: "permissive", for: "delete", to: ["public"] }),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const documents = pgTable("documents", {
@@ -84,6 +87,7 @@ export const documents = pgTable("documents", {
 	pgPolicy("Users can insert their own documents", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Users can select their own documents", { as: "permissive", for: "select", to: ["public"] }),
 	pgPolicy("User can access their own documents", { as: "permissive", for: "all", to: ["public"] }),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const locals = pgTable("locals", {
@@ -106,11 +110,12 @@ export const locals = pgTable("locals", {
 	meter_ids: text().array(),
 }, (table) => [
 	foreignKey({
-			columns: [table.objekt_id],
-			foreignColumns: [objekte.id],
-			name: "locals_objekt_id_objekte_id_fk"
-		}).onDelete("cascade"),
-	pgPolicy("Users can access their own locals", { as: "permissive", for: "all", to: ["public"], using: sql`(EXISTS ( SELECT 1
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "locals_objekt_id_objekte_id_fk"
+	}).onDelete("cascade"),
+	pgPolicy("Users can access their own locals", {
+		as: "permissive", for: "all", to: ["public"], using: sql`(EXISTS ( SELECT 1
    FROM objekte
   WHERE ((objekte.id = locals.objekt_id) AND (objekte.user_id = auth.uid()))))`, withCheck: sql`(EXISTS ( SELECT 1
    FROM objekte
@@ -124,18 +129,18 @@ export const contracts = pgTable("contracts", {
 	is_current: boolean().default(false).notNull(),
 	rental_start_date: date().notNull(),
 	rental_end_date: date(),
-	cold_rent: numeric({ precision: 10, scale:  2 }).notNull(),
-	additional_costs: numeric({ precision: 10, scale:  2 }).notNull(),
-	deposit: numeric({ precision: 10, scale:  2 }),
+	cold_rent: numeric({ precision: 10, scale: 2 }).notNull(),
+	additional_costs: numeric({ precision: 10, scale: 2 }).notNull(),
+	deposit: numeric({ precision: 10, scale: 2 }),
 	custody_type: text(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 	updated_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.local_id],
-			foreignColumns: [locals.id],
-			name: "contracts_local_id_locals_id_fk"
-		}).onDelete("cascade"),
+		columns: [table.local_id],
+		foreignColumns: [locals.id],
+		name: "contracts_local_id_locals_id_fk"
+	}).onDelete("cascade"),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Users can access their own contracts", { as: "permissive", for: "all", to: ["public"] }),
 ]);
@@ -153,12 +158,13 @@ export const contractors = pgTable("contractors", {
 	updated_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.contract_id],
-			foreignColumns: [contracts.id],
-			name: "contractors_contract_id_contracts_id_fk"
-		}).onDelete("cascade"),
+		columns: [table.contract_id],
+		foreignColumns: [contracts.id],
+		name: "contractors_contract_id_contracts_id_fk"
+	}).onDelete("cascade"),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Users can access their own contractors", { as: "permissive", for: "all", to: ["public"] }),
+	pgPolicy("Update policy: Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const local_meters = pgTable("local_meters", {
@@ -170,10 +176,10 @@ export const local_meters = pgTable("local_meters", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.local_id],
-			foreignColumns: [locals.id],
-			name: "local_meters_local_id_fkey"
-		}),
+		columns: [table.local_id],
+		foreignColumns: [locals.id],
+		name: "local_meters_local_id_fkey"
+	}),
 ]);
 
 export const users_in_auth = pgTable("users_in_auth", {
@@ -205,19 +211,20 @@ export const invoice_documents = pgTable("invoice_documents", {
 	direct_local_id: uuid().array(),
 }, (table) => [
 	foreignKey({
-			columns: [table.objekt_id],
-			foreignColumns: [objekte.id],
-			name: "heating_bill_documents_objekt_id_fkey"
-		}),
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "heating_bill_documents_objekt_id_fkey"
+	}),
 	foreignKey({
-			columns: [table.operating_doc_id],
-			foreignColumns: [operating_cost_documents.id],
-			name: "invoice_documents_operating_doc_id_fkey"
-		}),
+		columns: [table.operating_doc_id],
+		foreignColumns: [operating_cost_documents.id],
+		name: "invoice_documents_operating_doc_id_fkey"
+	}),
 	pgPolicy("Allow users to SELECT their own heating bill documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
 	pgPolicy("Allow users to INSERT their own heating bill documents", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Allow users to UPDATE their own heating bill documents", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Allow users to DELETE their own heating bill documents", { as: "permissive", for: "delete", to: ["public"] }),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const objekte = pgTable("objekte", {
@@ -238,7 +245,7 @@ export const objekte = pgTable("objekte", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 	image_url: text(),
 }, (table) => [
-	pgPolicy("Users and Admins can access objects", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())`  }),
+	pgPolicy("Users and Admins can access objects", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Users and Admins can insert objects", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Users and Admins can delete objects", { as: "permissive", for: "delete", to: ["public"] }),
@@ -267,11 +274,11 @@ export const users = pgTable("users", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	foreignKey({
-			columns: [table.id],
-			foreignColumns: [table.id],
-			name: "users_id_fkey"
-		}).onDelete("cascade"),
-	pgPolicy("Users can insert their own record", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`(auth.uid() = id)`  }),
+		columns: [table.id],
+		foreignColumns: [table.id],
+		name: "users_id_fkey"
+	}).onDelete("cascade"),
+	pgPolicy("Users can insert their own record", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`(auth.uid() = id)` }),
 	pgPolicy("Users can read their own data", { as: "permissive", for: "select", to: ["public"] }),
 	pgPolicy("Users can update their own data", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("User can insert their own row", { as: "permissive", for: "insert", to: ["public"] }),

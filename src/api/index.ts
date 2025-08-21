@@ -181,6 +181,47 @@ export async function getSignedUrlsForObject(objectId: string) {
   return signedUrls.filter((url) => url !== null);
 }
 
+export async function getAdminSignedUrlsForObject(objectId: string, userId: string) {
+  const supabase = await supabaseServer();
+
+  const files = await database
+    .select()
+    .from(documents)
+    .where(
+      and(eq(documents.related_id, objectId), eq(documents.user_id, userId))
+    );
+
+  if (!files) {
+    console.error("Failed to fetch document records:");
+    return [];
+  }
+
+  const signedUrlsPromises = files.map(async (file) => {
+    const { data: signedUrlData, error: signedUrlError } =
+      await supabase.storage
+        .from("documents")
+        .createSignedUrl(file.document_url, 60 * 60); // 1 hour
+
+    if (signedUrlError) {
+      console.error(
+        `Failed to get signed URL for ${file.document_url}:`,
+        signedUrlError.message
+      );
+      return null;
+    }
+
+    return {
+      name: file.document_name,
+      url: signedUrlData.signedUrl,
+      id: file.id,
+      relatedId: file.related_id,
+    };
+  });
+
+  const signedUrls = await Promise.all(signedUrlsPromises);
+  return signedUrls.filter((url) => url !== null);
+}
+
 export async function getContractByID(
   contractID: string,
   withContractor = false
@@ -207,6 +248,40 @@ export async function getContractByID(
         and(
           eq(contractors.contract_id, contract[0].id),
           eq(contractors.user_id, user.id)
+        )
+      );
+
+    mainContractor = contractorResult[0] || null;
+  }
+
+  return { contract: contract[0], mainContractor };
+}
+
+export async function getAdminContractByID(
+  contractID: string,
+  userID: string,
+  withContractor = false
+): Promise<{ contract: ContractType; mainContractor?: ContractorType | null }> {
+
+  const contract = await database
+    .select()
+    .from(contracts)
+    .where(and(eq(contracts.id, contractID), eq(contracts.user_id, userID)));
+
+  if (!contract.length) {
+    throw new Error("Contract not found");
+  }
+
+  let mainContractor = null;
+
+  if (withContractor) {
+    const contractorResult = await database
+      .select()
+      .from(contractors)
+      .where(
+        and(
+          eq(contractors.contract_id, contract[0].id),
+          eq(contractors.user_id, userID)
         )
       );
 
@@ -281,6 +356,24 @@ export async function getRelatedContractors(contractID?: string): Promise<Contra
   return contractorsData;
 }
 
+export async function getAdminRelatedContractors(contractID?: string, userID?: string): Promise<ContractorType[]> {
+  if (!contractID || !userID) {
+    throw new Error("Missing contractID");
+  }
+
+  const contractorsData = await database
+    .select()
+    .from(contractors)
+    .where(
+      and(
+        eq(contractors.contract_id, contractID),
+        eq(contractors.user_id, userID)
+      )
+    );
+
+  return contractorsData;
+}
+
 export async function getObjekts(): Promise<ObjektType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -326,6 +419,29 @@ export async function getUsers(): Promise<UserType[]> {
     .where(eq(users.permission, "user"));
 
   return basicUsers;
+}
+
+export async function getUserData(): Promise<UserType> {
+  const user = await getAuthenticatedServerUser();
+
+  const data = await database
+    .select()
+    .from(users)
+    .where(eq(users.id, user.id))
+    .then((res) => res[0]);
+
+  return data;
+}
+
+export async function getAdminUserData(userID: string): Promise<UserType> {
+
+  const data = await database
+    .select()
+    .from(users)
+    .where(eq(users.id, userID))
+    .then((res) => res[0]);
+
+  return data;
 }
 
 export async function getObjectById(objectId: string): Promise<ObjektType> {

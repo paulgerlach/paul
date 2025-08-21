@@ -9,17 +9,24 @@ import AdminApartmentsDropdown from "./AdminApartmentsDropdown";
 import AdminDatetimeDropdown from "@/components/Basic/Dropdown/AdminDatetimeDropdown";
 import { Switch } from "@/components/Basic/ui/Switch";
 import { usePathname } from "next/navigation";
+import { useAuthUser } from "@/apiClient";
+import AdminUsersDropdown from "./AdminUsersDropdown";
 
 export default function AdminHeader() {
   const pathname = usePathname();
-  const isDashboard = pathname === ROUTE_DASHBOARD;
+  const isDashboard = pathname.includes(ROUTE_DASHBOARD);
+
+  const { data: user } = useAuthUser();
+
+  const isAdmin = user?.permission === "admin";
 
   return (
     <header id="header" className={`w-full`}>
       <div className="flex items-center justify-between border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full pl-8 pr-5 max-medium:px-5 duration-300 ease-in-out">
         <Link
           href={ROUTE_DASHBOARD}
-          className="flex min-w-xs items-center justify-start gap-3">
+          className="flex min-w-xs items-center justify-start gap-3"
+        >
           <Image
             width={0}
             height={0}
@@ -31,9 +38,12 @@ export default function AdminHeader() {
           />
         </Link>
         {isDashboard && (
-          <div className="grid grid-cols-3 w-full gap-4">
+          <div
+            className={`grid ${isAdmin ? "grid-cols-4" : "grid-cols-3"} w-full gap-4`}
+          >
             <AdminApartmentsDropdown />
             <AdminDatetimeDropdown />
+            {isAdmin && <AdminUsersDropdown user={user} />}
 
             <div className="flex w-full items-center gap-4 max-xl:text-sm justify-start bg-transparent border-none px-6 py-3">
               <Switch />

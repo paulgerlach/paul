@@ -15,7 +15,7 @@ import { Form } from "@/components/Basic/ui/Form";
 import FormImageUpload from "@/components/Admin/Forms/FormImageUpload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { editAdminObjektImageUrl } from "@/actions/edit/editAdminObjektImageUrl";
+import { editAdminObjektImageUrl } from "@/actions/edit/admin/editAdminObjektImageUrl";
 import { Button } from "@/components/Basic/ui/Button";
 
 const adminEditObjekteImageDialogSchema = z.object({
@@ -58,7 +58,7 @@ export default function AdminEditObjekteImageButton({
               alt={item.street}
             />
           ) : (
-            <div className="w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl bg-[#E0E0E0]">
+            <div className="min-w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl bg-[#E0E0E0]">
               <Image
                 width={0}
                 height={0}
@@ -72,7 +72,7 @@ export default function AdminEditObjekteImageButton({
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[218px] max-xl:w-[180px] bg-white border-green shadow p-2">
+      <PopoverContent className="min-w-[218px] max-xl:w-[180px] bg-white border-green shadow p-2">
         <Form {...methods}>
           <form
             className="space-y-2"

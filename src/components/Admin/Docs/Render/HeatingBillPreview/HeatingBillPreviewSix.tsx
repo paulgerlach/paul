@@ -11,6 +11,7 @@ import {
   Legend,
   CartesianGrid,
 } from "recharts";
+import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 
 const heatingData = [
   {
@@ -30,7 +31,11 @@ const waterData = [
   { name: "01.01.2023 - 31.12.2023", vorjahreszeitraum: 1534 },
 ];
 
-const HeatingBillPreviewSix = () => {
+const HeatingBillPreviewSix = ({
+  previewData,
+}: {
+  previewData: HeatingBillPreviewData;
+}) => {
   return (
     <div className="mx-auto max-w-[1400px] space-y-6 font-sans text-sm">
       {/* Header */}

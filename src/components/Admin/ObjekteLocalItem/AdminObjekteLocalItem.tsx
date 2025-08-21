@@ -20,6 +20,7 @@ import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import { useContractsByLocalID } from "@/apiClient";
 import { Skeleton } from "@/components/Basic/ui/Skeleton";
 import { useLocalStatus } from "@/hooks/useLocalStatus";
+import { useSubRouteLink } from "@/lib/clientNavigation";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
@@ -41,6 +42,8 @@ export default function AdminObjekteLocalItem({
   const contentRef = useRef(null);
 
   const { data: contracts, isLoading } = useContractsByLocalID(localID);
+
+  const editLInk = useSubRouteLink(`${item.id}/edit`);
 
   useEffect(() => {
     if (isOpen) {
@@ -106,9 +109,9 @@ export default function AdminObjekteLocalItem({
             renderStatusBadge()
           )}
           <ThreeDotsButton
-            editLink={`${ROUTE_ADMIN}${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/edit`}
+            editLink={editLInk}
             itemID={item.id}
-            dialogAction="local_delete"
+            dialogAction="admin_local_delete"
           />
         </div>
       </div>

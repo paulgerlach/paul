@@ -7,12 +7,12 @@ import {
   getOperatingCostDocumentByID,
   getRelatedContractors,
   getRelatedLocalsByObjektId,
+  getUserData,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import BetriebskostenabrechnungPreview from "@/components/Admin/Docs/Render/BetriebskostenabrechnungPdf/BetriebskostenabrechnungPreview";
 import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
-import { ROUTE_HEIZKOSTENABRECHNUNG, ROUTE_OBJEKTE } from "@/routes/routes";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPreview({
   params,
@@ -29,6 +29,7 @@ export default async function ResultLocalPreview({
     contract,
     invoices,
     local,
+    user,
   ] = await Promise.all([
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
@@ -37,6 +38,7 @@ export default async function ResultLocalPreview({
     getActiveContractByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
+    getUserData(),
   ]);
 
   const contractors = contract?.id
@@ -58,14 +60,15 @@ export default async function ResultLocalPreview({
       />
       <ContentWrapper className="space-y-4">
         <HeatingBillPreview
-        //   mainDoc={mainDoc}
-        //   previewLocal={local}
-        //   totalLivingSpace={totalLivingSpace}
-        //   costCategories={costCategories}
-        //   invoices={invoices}
-        //   contract={contract}
-        //   contractors={contractors}
-        //   objekt={objekt}
+          mainDoc={mainDoc}
+          local={local}
+          user={user}
+          totalLivingSpace={totalLivingSpace}
+          costCategories={costCategories}
+          invoices={invoices}
+          contract={contract}
+          contractors={contractors}
+          objekt={objekt}
         />
       </ContentWrapper>
     </div>

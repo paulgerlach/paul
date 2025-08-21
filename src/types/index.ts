@@ -132,12 +132,19 @@ export type DialogActionType = "delete" | "create" | "edit";
 
 export type DocumentType =
   | "object"
+  | "admin_object"
   | "local"
+  | "admin_local"
   | "contract"
+  | "admin_contract"
   | "heating_bill"
+  | "admin_heating_bill"
   | "cost_type_betriebskostenabrechnung"
   | "cost_type_heizkostenabrechnung"
-  | "operating_costs";
+  | "admin_cost_type_betriebskostenabrechnung"
+  | "admin_cost_type_heizkostenabrechnung"
+  | "operating_costs"
+  | "admin_operating_costs";
 
 export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`

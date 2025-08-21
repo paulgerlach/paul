@@ -3,14 +3,13 @@ import type { ContractType } from "@/types";
 import Image from "next/image";
 import { differenceInMonths, format } from "date-fns";
 import Link from "next/link";
-import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { useDialogStore } from "@/store/useDIalogStore";
 import { differenceInCalendarDays } from "date-fns";
 import { useContractorsByContractID } from "@/apiClient";
+import { useSubRouteLink } from "@/lib/clientNavigation";
 
 export default function ObjekteLocalItemHistoryItem({
   historyItem,
-  objektID,
   localID,
 }: {
   historyItem?: ContractType;
@@ -19,6 +18,9 @@ export default function ObjekteLocalItemHistoryItem({
 }) {
   const { openDialog, setItemID } = useDialogStore();
   const { data: contractors } = useContractorsByContractID(historyItem?.id);
+
+  const editLink = useSubRouteLink(`${localID}/${historyItem?.id}/edit`);
+
   const duration =
     differenceInMonths(
       historyItem?.rental_end_date || "",
@@ -41,15 +43,16 @@ export default function ObjekteLocalItemHistoryItem({
   const days =
     historyItem?.rental_start_date && historyItem?.rental_end_date
       ? differenceInCalendarDays(
-        new Date(historyItem.rental_end_date),
-        new Date(historyItem.rental_start_date)
-      ) + 1
+          new Date(historyItem.rental_end_date),
+          new Date(historyItem.rental_start_date)
+        ) + 1
       : 0;
 
   return (
     <div
       style={{ borderColor: historyItem?.is_current ? "#8AD68F" : "#1E322D" }}
-      className="border-l gap-4 relative pl-8">
+      className="border-l gap-4 relative pl-8"
+    >
       <span
         style={{
           backgroundColor: historyItem?.is_current ? "#8AD68F" : "#1E322D",
@@ -87,7 +90,8 @@ export default function ObjekteLocalItemHistoryItem({
                 ? "#E7F2E8"
                 : "#1E322D1A",
             }}
-            className="flex items-center justify-center rounded-full font-medium size-14 max-xl:text-sm max-xl:size-10">
+            className="flex items-center justify-center rounded-full font-medium size-14 max-xl:text-sm max-xl:size-10"
+          >
             {contractors?.[0].first_name["0"]}
             {contractors?.[0].last_name["0"]}
           </span>
@@ -104,9 +108,7 @@ export default function ObjekteLocalItemHistoryItem({
         </div>
         <div className="flex items-center justify-center gap-4">
           <p className="text-sm text-[#757575]">{days}/365 Tage</p>
-          <Link
-            className="cursor-pointer"
-            href={`${ROUTE_OBJEKTE}/${objektID}/${localID}/${historyItem?.id}/edit`}>
+          <Link className="cursor-pointer" href={editLink}>
             <Image
               width={0}
               height={0}
@@ -122,7 +124,8 @@ export default function ObjekteLocalItemHistoryItem({
             onClick={() => {
               openDialog("contract_delete");
               setItemID(historyItem?.id ?? undefined);
-            }}>
+            }}
+          >
             <Image
               width={0}
               height={0}

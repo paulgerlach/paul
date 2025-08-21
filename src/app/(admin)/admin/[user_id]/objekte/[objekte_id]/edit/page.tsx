@@ -1,15 +1,15 @@
 import { getObjectById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import AdminEditObjekteForm from "@/components/Admin/Forms/Edit/AdminEditObjekteForm";
-import { ROUTE_OBJEKTE } from "@/routes/routes";
+import AdminEditObjekteForm from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteForm";
+import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 
 export default async function EditObjektePage({
   params,
 }: {
-  params: Promise<{ objekte_id: string }>;
+  params: Promise<{ objekte_id: string; user_id: string }>;
 }) {
-  const { objekte_id } = await params;
+  const { objekte_id, user_id } = await params;
 
   const object = await getObjectById(objekte_id);
 
@@ -21,7 +21,7 @@ export default async function EditObjektePage({
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Wohneinheiten"
-        link={ROUTE_OBJEKTE}
+        link={`${ROUTE_ADMIN}/${user_id}${ROUTE_OBJEKTE}`}
         title="Objekte"
       />
       <ContentWrapper className="space-y-4">

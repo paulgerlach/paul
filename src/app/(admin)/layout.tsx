@@ -17,6 +17,14 @@ import EditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Ed
 import CostTypeHeizkostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeHeizkostenabrechnungDeleteDialog";
 import CostTypeBetriebskostenabrechnungDeleteDialog from "@/components/Basic/Dialog/CostTypeBetriebskostenabrechnungDeleteDialog";
 import OperatingCostDocumentDeleteDialog from "@/components/Basic/Dialog/OperatingCostDocumentDeleteDialog";
+import AdminAddBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminAddBetriebskostenabrechnungCostTypeDialog";
+import AdminEditBetriebskostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminEditBetriebskostenabrechnungCostTypeDialog";
+import AdminAddDocBetriebskostenabrechnungDialog from "@/components/Basic/Dialog/Admin/AdminAddDocBetriebskostenabrechnungDialog";
+import AdminHeatingBillCreateDialog from "@/components/Basic/Dialog/Admin/AdminHeatingBillCreateDialog";
+import AdminOperatingCostDocumentDeleteDialog from "@/components/Basic/Dialog/Admin/AdminOperatingCostDocumentDeleteDialog";
+import AdminContractDeleteDialog from "@/components/Basic/Dialog/Admin/AdminContractDeleteDialog";
+import AdminLocalDeleteDialog from "@/components/Basic/Dialog/Admin/AdminLocalDeleteDialog";
+import AdminObjekteDeleteDialog from "@/components/Basic/Dialog/Admin/AdminObjekteDeleteDialog";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -39,18 +47,26 @@ export default function AdminLayout({
         </div>
       </div>
       <ObjekteDeleteDialog />
+      <AdminObjekteDeleteDialog />
       <LocalDeleteDialog />
+      <AdminLocalDeleteDialog />
       <ContractDeleteDialog />
+      <AdminContractDeleteDialog />
       <HeatingBillCreateDialog />
+      <AdminHeatingBillCreateDialog />
       <AddDocHeizkostenabrechnungDialog />
       <AddHeizkostenabrechnungCostTypeDialog />
       <AddDocBetriebskostenabrechnungDialog />
       <AddBetriebskostenabrechnungCostTypeDialog />
+      <AdminAddBetriebskostenabrechnungCostTypeDialog />
       <EditBetriebskostenabrechnungCostTypeDialog />
+      <AdminEditBetriebskostenabrechnungCostTypeDialog />
       <EditHeizkostenabrechnungCostTypeDialog />
       <CostTypeHeizkostenabrechnungDeleteDialog />
       <CostTypeBetriebskostenabrechnungDeleteDialog />
       <OperatingCostDocumentDeleteDialog />
+      <AdminOperatingCostDocumentDeleteDialog />
+      <AdminAddDocBetriebskostenabrechnungDialog />
       <Toaster />
     </QueryProvider>
   );

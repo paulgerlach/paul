@@ -1,16 +1,16 @@
 import {
-  getActiveContractByLocalID,
+  // getActiveContractByLocalID,
   getDocCostCategoryTypes,
   getInvoicesByOperatingCostDocumentID,
-  getLocalById,
+  // getLocalById,
   getObjectById,
   getOperatingCostDocumentByID,
-  getRelatedContractors,
+  // getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
+// import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPreview({
@@ -56,7 +56,7 @@ export default async function ResultLocalPreview({
         subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />
       <ContentWrapper className="space-y-4">
-        <HeatingBillPreview
+        {/* <HeatingBillPreview
         //   mainDoc={mainDoc}
         //   previewLocal={local}
         //   totalLivingSpace={totalLivingSpace}
@@ -65,7 +65,7 @@ export default async function ResultLocalPreview({
         //   contract={contract}
         //   contractors={contractors}
         //   objekt={objekt}
-        />
+        /> */}
       </ContentWrapper>
     </div>
   );

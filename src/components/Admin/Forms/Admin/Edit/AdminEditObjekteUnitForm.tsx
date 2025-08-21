@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -22,24 +22,23 @@ import {
   outdoorOptions,
   residentialAreaOptions,
 } from "@/static/formSelectOptions";
-import FormTagsInput from "../FormTagsInput";
-import FormRadioOptions, { FormRadioOption } from "../FormRadioOptions";
-import FormTechnicalEquipment from "../FormTechnicalEquipment";
-import FormRoundedCheckbox from "../FormRoundedCheckbox";
-import FormSelectField from "../FormSelectField";
-import FormInputField from "../FormInputField";
-import FormDocuments from "../FormDocuments";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 import { editLocal } from "@/actions/edit/editLocal";
 import { useUploadDocuments } from "@/apiClient";
 import { deleteDocumentById } from "@/actions/delete/deleteDocument";
 import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
 import { buildLocalName } from "@/utils";
-import { admin_plus } from "@/static/icons";
-import Image from "next/image";
 import { createLocalMeters } from "@/actions/create/createLocalMeters";
+import FormTagsInput from "../../FormTagsInput";
+import FormRadioOptions, { type FormRadioOption } from "../../FormRadioOptions";
+import FormSelectField from "../../FormSelectField";
+import FormInputField from "../../FormInputField";
+import FormRoundedCheckbox from "../../FormRoundedCheckbox";
+import FormTechnicalEquipment from "../../FormTechnicalEquipment";
+import FormDocuments from "../../FormDocuments";
+import FormMetersField from "../../FormMetersField";
 
 const unitTypeOptions: FormRadioOption<UnitType>[] = [
   {
@@ -116,6 +115,7 @@ const defaultValues: AdminEditObjekteUnitFormValues = {
 type EditObjekteUnitFormProps = {
   localID: string;
   objektID: string;
+  userID: string;
   initialValues?: AdminEditObjekteUnitFormValues;
   uploadedDocuments?: UploadedDocument[];
 };
@@ -123,6 +123,7 @@ type EditObjekteUnitFormProps = {
 export default function AdminEditObjekteUnitForm({
   objektID,
   localID,
+  userID,
   initialValues,
   uploadedDocuments,
 }: EditObjekteUnitFormProps) {
@@ -131,10 +132,6 @@ export default function AdminEditObjekteUnitForm({
   const methods = useForm({
     resolver: zodResolver(localSchema),
     defaultValues: initialValues ?? defaultValues,
-  });
-  const { fields, append, remove } = useFieldArray({
-    control: methods.control,
-    name: "meters",
   });
   const { existingDocuments, deletedDocumentIds, handleRemoveExistingFile } =
     useDocumentDeletion(uploadedDocuments);
@@ -172,7 +169,7 @@ export default function AdminEditObjekteUnitForm({
             }
 
             toast.success("Erfolgreich aktualisiert");
-            router.push(`${ROUTE_OBJEKTE}/${objektID}`);
+            router.push(`${ROUTE_ADMIN}/${userID}${ROUTE_OBJEKTE}/${objektID}`);
             methods.reset();
           } catch (err) {
             toast.error("Fehler beim Aktualisieren");
@@ -293,63 +290,7 @@ export default function AdminEditObjekteUnitForm({
             )}
           />
         </div>
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
-          <h2 className="text-sm font-bold">Funkzählerkonfiguration</h2>
-          <FormInputField<AdminEditObjekteUnitFormValues>
-            control={methods.control}
-            name="id"
-            label="Wohnungs Identifikationsnummer*"
-            placeholder=""
-            disabled
-          />
-          {fields.map((field, index) => (
-            <div key={field.id} className="grid grid-cols-4 gap-4 items-end">
-              <FormInputField<AdminEditObjekteUnitFormValues>
-                control={methods.control}
-                className="w-fit"
-                name={`meters.${index}.meter_number`}
-                label="Zähler Identifikationsnummer"
-                placeholder="Zählernummer"
-              />
-              <FormSelectField<AdminEditObjekteUnitFormValues>
-                control={methods.control}
-                name={`meters.${index}.meter_type`}
-                label="Zählerart"
-                options={[
-                  "Kaltwasserzähler",
-                  "Warmwasserzähler",
-                  "Wärmemengenzähler",
-                  "Heizkostenverteiler",
-                  "Stromzähler",
-                ]}
-                placeholder="Notiz"
-              />
-              <FormInputField<AdminEditObjekteUnitFormValues>
-                control={methods.control}
-                name={`meters.${index}.meter_note`}
-                label="Gerätestandort"
-                placeholder="Gerätestandort"
-              />
-            </div>
-          ))}
-          <button
-            onClick={() =>
-              append({ meter_number: "", meter_note: "", meter_type: "" })
-            }
-            className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-white text-sm font-medium text-admin_dark_text"
-          >
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-4 max-h-4 max-xl:max-w-3 max-xl:max-h-3"
-              src={admin_plus}
-              alt="admin_plus"
-            />
-            Mieter hinzufügen
-          </button>
-        </div>
+        <FormMetersField control={methods.control} />
         <FormDocuments<AdminEditObjekteUnitFormValues>
           control={methods.control}
           name="documents"

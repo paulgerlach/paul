@@ -1,16 +1,25 @@
 "use client";
 
-import { useObjektsWithLocals } from "@/apiClient";
-import AdminApartmentsDropdownContent, { ApartmentType } from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
+import { useObjektsWithLocals, useUsersObjektsWithLocals } from "@/apiClient";
+import AdminApartmentsDropdownContent, {
+  ApartmentType,
+} from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
 import { chevron_admin, main_portfolio } from "@/static/icons";
 import { LocalType } from "@/types";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function AdminApartmentsDropdown() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
+  const { user_id } = useParams();
   const { data: apartments } = useObjektsWithLocals();
+  const { data: usersApartments } = useUsersObjektsWithLocals(String(user_id));
+
+  const isAdmin = user_id === "admin";
+
+  const apartmentsToUse = isAdmin ? apartments : usersApartments;
 
   const handleOpen = () => {
     setIsOpen(!isOpen);
@@ -38,7 +47,7 @@ export default function AdminApartmentsDropdown() {
 
   const selectAll = () => {
     const allIds =
-      apartments?.flatMap((app) =>
+      apartmentsToUse?.flatMap((app) =>
         app.locals
           ?.filter((local: LocalType) => local && local.id)
           .map((local: LocalType) => local.id)
@@ -68,7 +77,8 @@ export default function AdminApartmentsDropdown() {
         onClick={handleOpen}
         aria-expanded={isOpen}
         aria-controls="admin-apartments-dropdown"
-        className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-3">
+        className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-3"
+      >
         <div className="flex items-center justify-start whitespace-nowrap gap-5">
           <Image
             width={0}
@@ -82,7 +92,9 @@ export default function AdminApartmentsDropdown() {
           />
           <div className="flex flex-col items-start justify-center">
             <span className="font-bold text-sm">Mein Portfolio</span>
-            <span className="text-xs text-black/50">{selectedLocalIds.length} Wohnung ausgewählt</span>
+            <span className="text-xs text-black/50">
+              {selectedLocalIds.length} Wohnung ausgewählt
+            </span>
           </div>
         </div>
         <Image
@@ -98,7 +110,13 @@ export default function AdminApartmentsDropdown() {
       </button>
       {isOpen && (
         <div id="admin-apartments-dropdown">
-          <AdminApartmentsDropdownContent selectedLocalIds={selectedLocalIds} selectAll={selectAll} clearSelection={clearSelection} toggleSelection={toggleSelection} apartments={apartments as ApartmentType[]} />
+          <AdminApartmentsDropdownContent
+            selectedLocalIds={selectedLocalIds}
+            selectAll={selectAll}
+            clearSelection={clearSelection}
+            toggleSelection={toggleSelection}
+            apartments={apartmentsToUse as ApartmentType[]}
+          />
         </div>
       )}
     </div>

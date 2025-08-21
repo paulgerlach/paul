@@ -1,4 +1,4 @@
-import { chevron_admin } from "@/static/icons";
+import { admin_plus, chevron_admin } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
 import {
   buildLocalName,
@@ -9,11 +9,13 @@ import {
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import ObjekteLocalItemHistory from "./ObjekteLocalItemHistory";
-import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
-import { useContractsByLocalID } from "@/apiClient";
+import { useAdminContractsByLocalID } from "@/apiClient";
 import { Skeleton } from "@/components/Basic/ui/Skeleton";
 import { useLocalStatus } from "@/hooks/useLocalStatus";
+import { useSubRouteLink } from "@/lib/clientNavigation";
+import Link from "next/link";
+import AdminObjekteLocalItemHistory from "./Admin/AdminObjekteLocalItemHistory";
 
 export type ObjekteLocalItemProps = {
   item: LocalType;
@@ -22,7 +24,6 @@ export type ObjekteLocalItemProps = {
   onClick: (index: number) => void;
   objektID: string;
   userID: string;
-  localID?: string;
 };
 
 export default function ObjekteLocalAdminItem({
@@ -32,11 +33,16 @@ export default function ObjekteLocalAdminItem({
   onClick,
   objektID,
   userID,
-  localID,
 }: ObjekteLocalItemProps) {
   const contentRef = useRef(null);
 
-  const { data: contracts, isLoading } = useContractsByLocalID(localID);
+  const { data: contracts, isLoading } = useAdminContractsByLocalID(
+    item.id,
+    userID
+  );
+
+  const createContractLink = useSubRouteLink(`${item.id}/create-contract`);
+  const editLink = useSubRouteLink(`${item.id}/edit`);
 
   useEffect(() => {
     if (isOpen) {
@@ -102,7 +108,7 @@ export default function ObjekteLocalAdminItem({
             renderStatusBadge()
           )}
           <ThreeDotsButton
-            editLink={`${ROUTE_ADMIN}/${userID}${ROUTE_OBJEKTE}/${item.objekt_id}/${item.id}/edit`}
+            editLink={editLink}
             itemID={item.id}
             dialogAction="local_delete"
           />
@@ -113,9 +119,9 @@ export default function ObjekteLocalAdminItem({
         ref={contentRef}
         className="[.active_&]:pt-6 [.active_&]:pb-2 px-2.5 [.active_&]:h-auto h-0"
       >
-        {/* <Link
+        <Link
           className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-[#E0E0E0] text-sm font-medium text-admin_dark_text"
-          href={`${ROUTE_OBJEKTE}/${id}/${localID}/create-contract`}
+          href={createContractLink}
         >
           <Image
             width={0}
@@ -127,13 +133,9 @@ export default function ObjekteLocalAdminItem({
             alt="admin_plus"
           />
           Mieter hinzufügen
-        </Link> */}
+        </Link>
         {contracts && contracts?.length > 0 && (
-          <ObjekteLocalItemHistory
-            objektID={objektID}
-            localID={localID}
-            history={contracts}
-          />
+          <AdminObjekteLocalItemHistory localID={item.id} history={contracts} />
         )}
       </div>
     </div>

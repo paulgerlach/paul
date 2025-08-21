@@ -6,7 +6,7 @@ import {
   getMetersByLocalId,
   getSignedUrlsForObject,
 } from "@/api";
-import AdminEditObjekteUnitForm from "@/components/Admin/Forms/Edit/AdminEditObjekteUnitForm";
+import AdminEditObjekteUnitForm from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
 
 export default async function AdminEditLocalPage({
   params,
@@ -36,6 +36,7 @@ export default async function AdminEditLocalPage({
           <AdminEditObjekteUnitForm
             objektID={objekte_id}
             localID={local_id}
+            userID={user_id}
             uploadedDocuments={documentFilesUrls}
             initialValues={{
               apartment_type: local.apartment_type

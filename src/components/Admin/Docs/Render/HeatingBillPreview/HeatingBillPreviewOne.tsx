@@ -1,6 +1,8 @@
 import { admin_logo } from "@/static/icons";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import Image from "next/image";
+import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { ContractorType } from "@/types";
 
 type BillDataType = {
   billNumber: string;
@@ -60,7 +62,13 @@ const mockData: BillDataType = {
   ],
 };
 
-export default function HeatingBillPreviewOne() {
+export default function HeatingBillPreviewOne({
+  previewData,
+  contractors,
+}: {
+  previewData: HeatingBillPreviewData;
+  contractors: ContractorType[];
+}) {
   return (
     <div className="mx-auto max-w-[1400px] space-y-[70px] font-sans text-sm">
       {/* Green Header Box */}
@@ -81,9 +89,13 @@ export default function HeatingBillPreviewOne() {
               Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
             </p>
             <div>
-              <p className="text-2xl font-bold">{mockData.customerName}</p>
-              <p className="text-2xl font-bold">{mockData.customerAddress}</p>
-              <p className="text-2xl font-bold">{mockData.city}</p>
+              <p className="text-2xl font-bold">
+                {previewData.contractorsNames}
+              </p>
+              <p className="text-2xl font-bold">
+                {previewData.objektInfo.street}
+              </p>
+              <p className="text-2xl font-bold">{previewData.objektInfo.zip}</p>
             </div>
           </div>
           <div>
@@ -104,37 +116,45 @@ export default function HeatingBillPreviewOne() {
           <div className="grid grid-cols-[auto_1fr] gap-10">
             <p>Erstellt im Auftrag von</p>
             <p>
-              {mockData.createdBy}
+              {previewData.userInfo.first_name} {previewData.userInfo.last_name}
               <br />
               Immobilienmanagement
               <br />
-              {mockData.createdByAddress}
+              {previewData.objektInfo.street}
               <br />
-              {mockData.createdByCity}
+              {previewData.objektInfo.zip}
             </p>
           </div>
           <div className="space-y-1 font-bold text-pdf-dark">
             <div className="grid grid-cols-[auto_1fr] gap-10">
               <p>Abrechnungszeitraum</p>
-              <p>{mockData.billingPeriod.heating}</p>
+              <p>
+                {previewData.mainDocDates.start_date}{" "}
+                {previewData.mainDocDates.end_date}
+              </p>
             </div>
             <div className="grid grid-cols-[auto_1fr] gap-10">
               <p>Ihr Nutzungszeitraum</p>
-              <p>{mockData.billingPeriod.usage}</p>
+              <p>
+                {previewData.mainDocDates.start_date}{" "}
+                {previewData.mainDocDates.end_date}
+              </p>
             </div>
           </div>
         </div>
         <div className="space-y-1">
           <div className="grid grid-cols-3 gap-10 text-pdf-text">
             <p className="col-span-2">Erstellt am</p>
-            <p>{mockData.createdDate}</p>
+            <p>{previewData.mainDocDates.created_at}</p>
           </div>
           <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
             <p className="col-span-2">Liegenschaft</p>
             <p>
-              {mockData.propertyAccount}
+              {previewData.contractorsNames}
               <br />
-              {mockData.propertyCity}
+              {previewData.objektInfo.street}
+              <br />
+              {previewData.objektInfo.zip}
             </p>
           </div>
           <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
@@ -251,14 +271,15 @@ export default function HeatingBillPreviewOne() {
           Folgende Objekte sind in dieser Abrechnung berücksichtigt:
         </p>
         <div className="grid grid-cols-3 text-pdf-text gap-x-4 gap-y-1">
-          {mockData.properties.slice(0, 3).map((prop, i) => (
-            <p key={i}>{prop}</p>
-          ))}
-          {mockData.properties.slice(3, 5).map((prop, i) => (
-            <p key={i}>{prop}</p>
-          ))}
-          {mockData.properties.slice(5).map((prop, i) => (
-            <p key={i}>{prop}</p>
+          {contractors.map((contractor) => (
+            <p key={contractor.id}>
+              {contractor.first_name}
+              {contractor.last_name}
+              <br />
+              {previewData.objektInfo.street}
+              <br />
+              {previewData.objektInfo.zip}
+            </p>
           ))}
         </div>
       </div>

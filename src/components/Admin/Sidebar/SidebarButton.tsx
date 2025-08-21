@@ -6,21 +6,28 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { chevron_admin } from "@/static/icons";
 import Link from "next/link";
+import { ROUTE_ADMIN } from "@/routes/routes";
+import type { UserType } from "@/types";
 
 export default function SidebarButton({
   button,
   isOpen,
   onClick,
   pathname,
+  user,
 }: {
   button: SidebarLinkType;
   isOpen: boolean;
   pathname: string;
   onClick: (index: string) => void;
+  user?: UserType;
 }) {
   const contentRef = useRef(null);
 
   const isRouteActive = (route: string) => pathname?.startsWith(route);
+
+  const withUserPrefix = (route: string) =>
+    user?.permission === "admin" ? `/${route}` : route;
 
   useEffect(() => {
     if (isOpen) {
@@ -32,8 +39,10 @@ export default function SidebarButton({
   return (
     <div>
       <button
-        className={`flex cursor-pointer py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center justify-between gap-3 rounded-base hover:bg-base-bg/70 ${isOpen ? "active" : ""}`}
-        onClick={() => onClick(button.title)}>
+        disabled={pathname === ROUTE_ADMIN}
+        className={`flex cursor-pointer py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center justify-between gap-3 rounded-base hover:bg-base-bg/70 ${isOpen ? "active" : ""} [.active]:bg-black/10 disabled:hover:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed`}
+        onClick={() => onClick(button.title)}
+      >
         <span className="flex items-center justify-start gap-3">
           <Image
             width={28}
@@ -60,8 +69,9 @@ export default function SidebarButton({
         {button.children?.map((child) => (
           <Link
             key={child.title}
-            href={child.route}
-            className={`flex py-3 px-5 transition-all max-xl:text-sm duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(child.route) ? "active" : ""} [.active]:bg-black/10`}>
+            href={withUserPrefix(child.route)}
+            className={`flex py-3 px-5 transition-all max-xl:text-sm duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(child.route) ? "active" : ""} [.active]:bg-black/10`}
+          >
             <span className="[.active_&]:font-bold">{child.title}</span>
           </Link>
         ))}

@@ -12,7 +12,7 @@ export default async function AdminUserItem({ item }: { item: UserType }) {
   return (
     <div className="bg-white p-5 max-xl:p-3 rounded-2xl max-xl:rounded-xl flex items-center justify-between">
       <Link
-        href={`${ROUTE_ADMIN}/${item.id}`}
+        href={`${ROUTE_ADMIN}/${item.id}/dashboard`}
         className="flex items-center w-full justify-start gap-8 max-xl:gap-4"
       >
         <div className="w-20 h-20 max-xl:w-16 max-xl:h-16 flex items-center justify-center rounded-2xl max-xl:rounded-xl bg-[#E0E0E0]">

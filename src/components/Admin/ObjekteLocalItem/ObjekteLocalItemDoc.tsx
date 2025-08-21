@@ -76,8 +76,9 @@ export default async function ObjekteLocalItemDoc({
 
   return (
     <Link
-      href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${id}/${localID}/abrechnungszeitraum`}
-      className={`bg-white p-2 rounded-2xl ${status === "vacancy" && "available"} flex items-center justify-between`}>
+      href={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${id}/${localID}/abrechnungszeitraum`}
+      className={`bg-white p-2 rounded-2xl ${status === "vacancy" && "available"} flex items-center justify-between`}
+    >
       <div className="flex items-center justify-start gap-8">
         <div className="flex items-center justify-start gap-2">
           <span className="flex items-center size-20 max-xl:size-14 justify-center rounded bg-[#E7E8EA]">
@@ -95,7 +96,9 @@ export default async function ObjekteLocalItemDoc({
           {handleStatusImage()}
         </div>
         <div className="flex cursor-pointer items-center justify-start gap-5">
-          <p className="text-2xl max-xl:text-lg text-dark_green">{buildLocalName(item)}</p>
+          <p className="text-2xl max-xl:text-lg text-dark_green">
+            {buildLocalName(item)}
+          </p>
         </div>
       </div>
       <div className="flex items-center justify-end gap-7">

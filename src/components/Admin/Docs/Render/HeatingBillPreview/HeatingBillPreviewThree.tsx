@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
+import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 
-const HeatingBillPreviewThree = () => {
+const HeatingBillPreviewThree = ({
+  previewData,
+}: {
+  previewData: HeatingBillPreviewData;
+}) => {
   return (
     <div className="mx-auto max-w-[1400px] space-y-[70px] font-sans text-sm">
       {/* Header */}

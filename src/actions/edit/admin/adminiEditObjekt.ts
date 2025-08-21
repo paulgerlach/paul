@@ -4,9 +4,9 @@ import database from "@/db";
 import { objekte } from "@/db/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
-import { AdminEditObjekteFormValues } from "@/components/Admin/Forms/Edit/AdminEditObjekteForm";
+import { AdminEditObjekteFormValues } from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteForm";
 
-export async function editAdminObjekt(id: string, formData: AdminEditObjekteFormValues) {
+export async function adminiEditObjekt(id: string, formData: AdminEditObjekteFormValues) {
   const user = await getAuthenticatedServerUser();
 
   if (!user) {

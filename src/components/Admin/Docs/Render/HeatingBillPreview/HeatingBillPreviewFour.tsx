@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
+import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 
-const HeatingBillPreviewFour = () => {
+const HeatingBillPreviewFour = ({
+  previewData,
+}: {
+  previewData: HeatingBillPreviewData;
+}) => {
   return (
     <div className="mx-auto max-w-[1400px] space-y-5 font-sans text-sm">
       <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
@@ -23,15 +28,22 @@ const HeatingBillPreviewFour = () => {
             <div className="space-y-2 mb-4">
               <div className="grid grid-cols-[200px_1fr] font-bold text-pdf-dark gap-5">
                 <div className="">Liegenschaft</div>
-                <div>Rungestr. 21 u.a. 10179 Berlin</div>
+                <div>
+                  {previewData.contractorsNames}
+                  <br />
+                  {previewData.objektInfo.street}
+                  <br />
+                  {previewData.objektInfo.zip}
+                </div>
               </div>
               <div className="grid grid-cols-[200px_1fr] text-pdf-text gap-5">
                 <div>Erstellt im Auftrag von</div>
                 <div>
-                  <div>Braun & Hubertus GmbH</div>
-                  <div>Immobilienmanagement</div>
-                  <div>Keithstr. 2-4</div>
-                  <div>10787 Berlin</div>
+                  {previewData.contractorsNames}
+                  <br />
+                  {previewData.objektInfo.street}
+                  <br />
+                  {previewData.objektInfo.zip}
                 </div>
               </div>
             </div>
@@ -46,11 +58,14 @@ const HeatingBillPreviewFour = () => {
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>Abrechnungszeitraum</div>
-                <div>01.01.2023 - 31.12.2023</div>
+                <div>
+                  {previewData.mainDocDates.start_date} -{" "}
+                  {previewData.mainDocDates.end_date}
+                </div>
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>erstellt am</div>
-                <div>14.11.2024</div>
+                <div>{previewData.mainDocDates.created_at}</div>
               </div>
             </div>
           </div>
@@ -59,10 +74,11 @@ const HeatingBillPreviewFour = () => {
               Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
             </div>
             <div className="text-2xl">
-              Andreas Preissler Eigennutzer <br />
-              Lindenstraße 49
+              {previewData.contractorsNames}
               <br />
-              12589 Berlin
+              {previewData.objektInfo.street}
+              <br />
+              {previewData.objektInfo.zip}
             </div>
           </div>
         </div>

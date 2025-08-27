@@ -25,6 +25,8 @@ import AdminOperatingCostDocumentDeleteDialog from "@/components/Basic/Dialog/Ad
 import AdminContractDeleteDialog from "@/components/Basic/Dialog/Admin/AdminContractDeleteDialog";
 import AdminLocalDeleteDialog from "@/components/Basic/Dialog/Admin/AdminLocalDeleteDialog";
 import AdminObjekteDeleteDialog from "@/components/Basic/Dialog/Admin/AdminObjekteDeleteDialog";
+import AdminEditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminEditHeizkostenabrechnungCostTypeDialog";
+import AdminAddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminAddHeizkostenabrechnungCostTypeDialog";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -56,12 +58,14 @@ export default function AdminLayout({
       <AdminHeatingBillCreateDialog />
       <AddDocHeizkostenabrechnungDialog />
       <AddHeizkostenabrechnungCostTypeDialog />
+      <AdminAddHeizkostenabrechnungCostTypeDialog />
       <AddDocBetriebskostenabrechnungDialog />
       <AddBetriebskostenabrechnungCostTypeDialog />
       <AdminAddBetriebskostenabrechnungCostTypeDialog />
       <EditBetriebskostenabrechnungCostTypeDialog />
       <AdminEditBetriebskostenabrechnungCostTypeDialog />
       <EditHeizkostenabrechnungCostTypeDialog />
+      <AdminEditHeizkostenabrechnungCostTypeDialog />
       <CostTypeHeizkostenabrechnungDeleteDialog />
       <CostTypeBetriebskostenabrechnungDeleteDialog />
       <OperatingCostDocumentDeleteDialog />

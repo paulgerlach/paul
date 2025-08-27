@@ -2,7 +2,7 @@ import { getAdminContractsByLocalID, getLocalById } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
-import AbrechnungszeitraumLocalForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/LocalForm";
+import AdminAbrechnungszeitraumLocalForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/Admin/AdminLocalForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
 
@@ -28,7 +28,11 @@ export default async function AbrechnungszeitraumPage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumLocalForm localId={local_id} id={objekt_id} />
+        <AdminAbrechnungszeitraumLocalForm
+          localId={local_id}
+          userID={user_id}
+          objektID={objekt_id}
+        />
         <HeizkostenabrechnungReceipt
           local={localWithContacts}
           title={buildLocalName(localData)}

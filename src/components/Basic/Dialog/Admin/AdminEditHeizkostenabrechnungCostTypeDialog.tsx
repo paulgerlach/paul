@@ -1,10 +1,10 @@
 "use client";
 
 import { useDialogStore } from "@/store/useDIalogStore";
-import DialogBase from "../ui/DialogBase";
+import DialogBase from "../../ui/DialogBase";
 import { allocationKeys } from "@/types";
-import { Button } from "../ui/Button";
-import { Form } from "../ui/Form";
+import { Button } from "../../ui/Button";
+import { Form } from "../../ui/Form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,11 +12,12 @@ import FormInputField from "@/components/Admin/Forms/FormInputField";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import { toast } from "sonner";
 import FormTagsInput from "@/components/Admin/Forms/FormTagsInput";
-import { editCostType } from "@/actions/edit/editCostType";
+import { createCostType } from "@/actions/create/createCostType";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { useEffect } from "react";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
-import { useRouter } from "next/navigation";
-import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
+import { useRouter, useParams } from "next/navigation";
+import { adminEditCostType } from "@/actions/edit/admin/adminEditCostType";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -36,10 +37,10 @@ const defaultValues: AddCostTypeDialogFormValues = {
   options: [],
 };
 
-export default function EditBetriebskostenabrechnungCostTypeDialog() {
+export default function AdminEditHeizkostenabrechnungCostTypeDialog() {
   const { openDialogByType, closeDialog, itemID } = useDialogStore();
-  const { documentGroups } = useBetriebskostenabrechnungStore();
-  const isOpen = openDialogByType.cost_type_betriebskostenabrechnung_edit;
+  const { documentGroups } = useHeizkostenabrechnungStore();
+  const isOpen = openDialogByType.admin_cost_type_heizkostenabrechnung_edit;
   const initialValues = documentGroups.find((group) => group.id === itemID);
   const methods = useForm({
     resolver: zodResolver(addCostTypeDialogSchema),
@@ -53,6 +54,7 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
       : defaultValues,
   });
   const router = useRouter();
+  const { user_id } = useParams();
 
   useEffect(() => {
     if (initialValues) {
@@ -70,25 +72,26 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
   if (!isOpen) return null;
 
   return (
-    <DialogBase dialogName={"cost_type_betriebskostenabrechnung_edit"}>
+    <DialogBase dialogName={"admin_cost_type_heizkostenabrechnung_edit"}>
       <p className="font-bold text-lg text-admin_dark_text -mt-6">
         Neue Ausgabeart erstellen
       </p>
       <Form {...methods}>
         <form
           className="flex flex-col justify-between space-y-6 h-full"
-          id="cost_type_betriebskostenabrechnung_edit-dialog-form"
+          id="admin_cost_type_create-dialog-form"
           onSubmit={methods.handleSubmit(async (data) => {
             try {
-              await editCostType(
+              await adminEditCostType(
                 data,
-                "betriebskostenabrechnung",
-                itemID ?? ""
+                "heizkostenabrechnung",
+                itemID ?? "",
+                String(user_id)
               );
               toast.success("Ausgabe wurde hinzugefügt.");
               methods.reset(defaultValues);
               router.refresh();
-              closeDialog("cost_type_betriebskostenabrechnung_edit");
+              closeDialog("admin_cost_type_heizkostenabrechnung_edit");
             } catch {
               toast.error("Fehler beim Speichern.");
             }
@@ -117,7 +120,7 @@ export default function EditBetriebskostenabrechnungCostTypeDialog() {
               className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
               onClick={() => {
                 methods.reset(defaultValues);
-                closeDialog("cost_type_betriebskostenabrechnung_edit");
+                closeDialog("admin_cost_type_heizkostenabrechnung_edit");
               }}
             >
               Abbrechen

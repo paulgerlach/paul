@@ -12,7 +12,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
-import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPreview({
   params,
@@ -59,7 +59,7 @@ export default async function ResultLocalPreview({
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Objekte"
-        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekt_id}/${local_id}/${doc_id}/results`}
+        link={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekt_id}/${local_id}/${doc_id}/results`}
         title="Detailansicht"
         subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />

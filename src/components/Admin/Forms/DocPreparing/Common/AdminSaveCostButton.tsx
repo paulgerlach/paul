@@ -76,7 +76,7 @@ export default function AdminSaveCostButton({
         if (localId) {
           redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
         } else {
-          redirectUrl = `$userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+          redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
         }
       }
       router.push(redirectUrl);

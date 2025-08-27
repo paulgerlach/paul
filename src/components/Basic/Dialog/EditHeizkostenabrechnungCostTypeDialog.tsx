@@ -12,11 +12,11 @@ import FormInputField from "@/components/Admin/Forms/FormInputField";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import { toast } from "sonner";
 import FormTagsInput from "@/components/Admin/Forms/FormTagsInput";
-import { createCostType } from "@/actions/create/createCostType";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { useEffect } from "react";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
 import { useRouter } from "next/navigation";
+import { editCostType } from "@/actions/edit/editCostType";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),
@@ -80,7 +80,7 @@ export default function EditHeizkostenabrechnungCostTypeDialog() {
           id="cost_type_create-dialog-form"
           onSubmit={methods.handleSubmit(async (data) => {
             try {
-              await createCostType(data, "heizkostenabrechnung");
+              await editCostType(data, "heizkostenabrechnung", itemID ?? "");
               toast.success("Ausgabe wurde hinzugefügt.");
               methods.reset(defaultValues);
               router.refresh();

@@ -1,13 +1,12 @@
 import {
   getAdminContractsByLocalID,
-  getContractsByLocalID,
   getDocCostCategoryTypes,
   getLocalById,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
-import UmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/LocalForm";
+import AdminUmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/Admin/AdminLocalForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
 
@@ -26,7 +25,8 @@ export default async function UmlageschlüsselPage({
   const localData = await getLocalById(local_id);
 
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "heizkostenabrechnung"
+    "heizkostenabrechnung",
+    user_id
   );
 
   const contracts = await getAdminContractsByLocalID(local_id, user_id);
@@ -42,10 +42,11 @@ export default async function UmlageschlüsselPage({
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
-        <UmlageschlüsselLocalForm
+        <AdminUmlageschlüsselLocalForm
           objektId={objekt_id}
           localId={local_id}
           docId={doc_id}
+          userId={user_id}
           initialDocumentGroups={userDocCostCategories}
         />
         <HeizkostenabrechnungReceipt

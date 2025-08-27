@@ -106,8 +106,6 @@ export default function AddDocBetriebskostenabrechnungDialog() {
       toast.error("Rechnung beifügen");
       return;
     } else {
-      updateDocumentGroup(activeCostType, formattedPayload);
-
       await createInvoiceDocument(
         {
           ...formattedPayload,
@@ -118,6 +116,8 @@ export default function AddDocBetriebskostenabrechnungDialog() {
         operatingDocID,
         activeCostType
       );
+
+      updateDocumentGroup(activeCostType, formattedPayload);
 
       if (data.document && data.document.length > 0) {
         await uploadDocuments.mutateAsync({
@@ -167,14 +167,18 @@ export default function AddDocBetriebskostenabrechnungDialog() {
               <button
                 type="button"
                 onClick={() => methods.setValue("service_period", false)}
-                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 max-xl: rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"} cursor-pointer transition-all duration-300`}
+                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 max-xl: rounded-full ${
+                  servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
+                } cursor-pointer transition-all duration-300`}
               >
                 Nein
               </button>
               <button
                 type="button"
                 onClick={() => methods.setValue("service_period", true)}
-                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"} cursor-pointer transition-all duration-300`}
+                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${
+                  servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
+                } cursor-pointer transition-all duration-300`}
               >
                 Ja
               </button>
@@ -182,30 +186,31 @@ export default function AddDocBetriebskostenabrechnungDialog() {
           </div>
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
-            <div className="px-3.5 py-4 max-xl:p-2 border border-black/20 rounded-md">
+            <div className="px-3.5 py-4 grid grid-cols-2 gap-6 max-xl:p-2 border border-black/20 rounded-md">
               <FormRoundedCheckbox<AddDocBetriebskostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"
                 label="Für Alle Mieter der Leigenschaft"
-                className="!mt-0"
+                className="!mt-0 h-fit"
               />
+              {!forAllTenants && (
+                <FormLocalsultiselect<AddDocBetriebskostenabrechnungDialogFormValues>
+                  options={
+                    locals
+                      ?.filter((local) => local.id !== undefined)
+                      .map((local) => ({
+                        label: buildLocalName(local),
+                        value: local.id as string,
+                      })) || []
+                  }
+                  control={methods.control}
+                  name="direct_local_id"
+                  label="Mieter auswählen *"
+                />
+              )}
             </div>
           </div>
-          {!forAllTenants && (
-            <FormLocalsultiselect<AddDocBetriebskostenabrechnungDialogFormValues>
-              options={
-                locals
-                  ?.filter((local) => local.id !== undefined)
-                  .map((local) => ({
-                    label: buildLocalName(local),
-                    value: local.id as string,
-                  })) || []
-              }
-              control={methods.control}
-              name="direct_local_id"
-              label="Mieter auswählen *"
-            />
-          )}
+
           <FormSelectField<AddDocBetriebskostenabrechnungDialogFormValues>
             control={methods.control}
             name="purpose"

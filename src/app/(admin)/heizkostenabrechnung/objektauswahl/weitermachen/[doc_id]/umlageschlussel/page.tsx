@@ -2,10 +2,11 @@ import {
   getDocCostCategoryTypes,
   getHeatingBillDocumentByID,
   getObjectById,
+  getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
-import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
+import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
 import UmlageschlüsselHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/HeatObjektauswahlForm";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
@@ -22,6 +23,9 @@ export default async function UmlageschlüsselEditPage({
   );
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
+  const locals = await getRelatedLocalsWithContractsByObjektId(
+    doc.objekt_id ?? ""
+  );
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -33,12 +37,15 @@ export default async function UmlageschlüsselEditPage({
       />
       <CreateDocContentWrapper>
         <UmlageschlüsselHeatObjektauswahlForm
-        objektId={doc.objekt_id ?? ""}
-        docId={doc_id}
-        initialDocumentGroups={userDocCostCategories}
-        isEditMode
-      />
-        <HeizkostenabrechnungReceipt title={`${objekt.street} ${objekt.zip}`} />
+          objektId={doc.objekt_id ?? ""}
+          docId={doc_id}
+          initialDocumentGroups={userDocCostCategories}
+          isEditMode
+        />
+        <HeizkostenabrechnungBuildingReceipt
+          locals={locals}
+          title={`${objekt.street} ${objekt.zip}`}
+        />
       </CreateDocContentWrapper>
     </div>
   );

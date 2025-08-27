@@ -11,7 +11,7 @@ import {
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { submitBuildingDocument } from "@/actions/edit/submitBuildingDocument";
-import { submitLocalDocument } from "@/actions/edit/submitLocalDocument";
+import { submitHeatLocalDocument } from "@/actions/edit/submitHeatLocalDocument";
 
 export default function SaveCostButton({
   initialDocumentGroups,
@@ -69,7 +69,7 @@ export default function SaveCostButton({
         await submitBuildingDocument(operatingDocId);
         redirectUrl = `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
       } else {
-        await submitLocalDocument(operatingDocId);
+        await submitHeatLocalDocument(operatingDocId);
         if (localId) {
           redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
         } else {

@@ -23,17 +23,17 @@ import LocalPDFDownloadButton from "../Docs/Render/HeidiSystemsPdf/LocalPDFDownl
 export type ObjekteLocalItemHeatingBillDocResultProps = {
   item: LocalType;
   id: string;
-  localID?: string;
   docID?: string;
+  docType: "localauswahl" | "objektauswahl";
 };
 
 export default async function ObjekteLocalItemHeatingBillDocResult({
   item,
   id,
-  localID,
   docID,
+  docType,
 }: ObjekteLocalItemHeatingBillDocResultProps) {
-  const contracts = await getContractsByLocalID(localID);
+  const contracts = await getContractsByLocalID(item.id);
 
   const status = contracts?.some((contract) => contract.is_current)
     ? "renting"
@@ -117,17 +117,17 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
         </div>
       </div>
       <div className="flex items-center justify-end gap-12">
-        <div className="rounded-[20px] min-h-16 min-w-48 max-xl:min-h-12 max-xl:min-w-36 flex items-start justify-center flex-col bg-white shadow-sm py-3 px-4">
+        {/* <div className="rounded-[20px] min-h-16 min-w-48 max-xl:min-h-12 max-xl:min-w-36 flex items-start justify-center flex-col bg-white shadow-sm py-3 px-4">
           <span className="text-base max-xl:text-sm text-[#757575]">
             Differenz:
           </span>
           <span className="text-xl max-xl:text-base text-[#757575] font-bold">
             -124,56 €
           </span>
-        </div>
+        </div> */}
         <div className="flex items-center justify-end gap-4">
           <Link
-            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${id}/${localID}/${docID}/results/preview`}
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${id}/${item.id}/${docID}/results/preview`}
           >
             <Image
               width={0}
@@ -162,7 +162,7 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
           />
           <ThreeDotsButton
             dialogAction="heating_bill_delete"
-            editLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docID}/abrechnungszeitraum`}
+            editLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}
           />
         </div>
       </div>

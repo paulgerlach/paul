@@ -29,7 +29,7 @@ export type FormLocalsultiselectProps<T extends FieldValues = FieldValues> = {
 };
 
 export default function FormLocalsultiselect<
-  T extends FieldValues = FieldValues,
+  T extends FieldValues = FieldValues
 >({ control, disabled, options, name, label }: FormLocalsultiselectProps<T>) {
   return (
     <FormField
@@ -92,11 +92,13 @@ export default function FormLocalsultiselect<
                 <Badge
                   key={item}
                   variant="secondary"
-                  className="flex items-center gap-1"
+                  className="flex items-center flex-wrap w-fit gap-1"
                 >
                   {option?.label ?? item}
                   <X
-                    className={`h-3 w-3 transition-all duration-300 hover:text-red-500 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+                    className={`h-3 w-3 transition-all duration-300 hover:text-red-500 ${
+                      disabled ? "cursor-not-allowed" : "cursor-pointer"
+                    }`}
                     onClick={() =>
                       !disabled &&
                       field.onChange(

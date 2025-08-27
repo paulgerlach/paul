@@ -1,795 +1,479 @@
-// "use client";
+"use client";
 
-// import {
-//   Page,
-//   Text,
-//   View,
-//   Document,
-//   StyleSheet,
-//   Image,
-// } from "@react-pdf/renderer";
-// import { admin_logo } from "@/static/icons";
+import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
 
-// const styles = StyleSheet.create({
-//   page: {
-//     backgroundColor: "#ffffff",
-//     padding: 40,
-//     fontFamily: "Helvetica",
-//     fontSize: 9,
-//     color: "#000000",
-//   },
-//   header: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "flex-start",
-//     marginBottom: 12,
-//   },
-//   headerText: {
-//     fontSize: 7,
-//   },
-//   logo: {
-//     width: 70,
-//     height: 22,
-//   },
-//   addressInfo: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     fontSize: 8,
-//     marginBottom: 15,
-//   },
-//   addressLeft: {
-//     width: "50%",
-//   },
-//   addressRight: {
-//     width: "50%",
-//   },
-//   addressBorder: {
-//     borderBottomWidth: 1,
-//     borderBottomColor: "#000000",
-//     paddingBottom: 1,
-//     marginBottom: 4,
-//   },
-//   boldText: {
-//     fontWeight: "bold",
-//   },
-//   mainTitle: {
-//     fontWeight: "bold",
-//     fontSize: 12,
-//     marginBottom: 8,
-//   },
-//   detailGrid: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     justifyContent: "space-between",
-//   },
-//   detailItem: {
-//     width: "48%",
-//     marginBottom: 6,
-//   },
-//   sectionTitle: {
-//     fontSize: 14,
-//     fontWeight: "bold",
-//     color: "#2563EB",
-//     borderBottomWidth: 2,
-//     borderBottomColor: "#2563EB",
-//     paddingBottom: 4,
-//     marginBottom: 8,
-//   },
-//   costSection: {
-//     marginTop: 15,
-//     fontSize: 8,
-//   },
-//   costHeader: {
-//     backgroundColor: "#E5E7EB",
-//     fontWeight: "bold",
-//     padding: 2,
-//     paddingLeft: 4,
-//   },
-//   table: {
-//     width: "100%",
-//   },
-//   tableRow: {
-//     flexDirection: "row",
-//   },
-//   tableCell: {
-//     paddingVertical: 2,
-//     paddingRight: 4,
-//   },
-//   tableCellRight: {
-//     textAlign: "right",
-//     paddingVertical: 2,
-//     paddingHorizontal: 4,
-//   },
-//   tableBorderTop: {
-//     borderTopWidth: 2,
-//     borderTopColor: "#000000",
-//     marginTop: 4,
-//   },
-//   totalAmount: {
-//     backgroundColor: "#1E40AF",
-//     color: "#ffffff",
-//     padding: 6,
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     marginTop: 8,
-//     fontWeight: "bold",
-//     fontSize: 11,
-//   },
-//   stateRelief: {
-//     marginTop: 15,
-//     fontSize: 8,
-//   },
-//   stateReliefHeader: {
-//     backgroundColor: "#E5E7EB",
-//     fontWeight: "bold",
-//     padding: 2,
-//     paddingLeft: 4,
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//   },
-//   stateReliefTable: {
-//     width: "100%",
-//   },
-//   stateReliefTableHeader: {
-//     flexDirection: "row",
-//     borderBottomWidth: 2,
-//     borderBottomColor: "#000000",
-//   },
-//   stateReliefTableHeaderCell: {
-//     fontWeight: "normal",
-//     paddingVertical: 2,
-//   },
-//   stateReliefTableHeaderCellLeft: {
-//     width: "33%",
-//     textAlign: "left",
-//   },
-//   stateReliefTableHeaderCellRight: {
-//     width: "33%",
-//     textAlign: "right",
-//   },
-//   stateReliefTableRow: {
-//     flexDirection: "row",
-//   },
-//   stateReliefTableCell: {
-//     paddingVertical: 2,
-//   },
-//   stateReliefTableCellLeft: {
-//     width: "33%",
-//     textAlign: "left",
-//   },
-//   stateReliefTableCellRight: {
-//     width: "33%",
-//     textAlign: "right",
-//   },
-//   consumptionValues: {
-//     marginTop: 15,
-//   },
-//   consumptionTableHeader: {
-//     flexDirection: "row",
-//     borderBottomWidth: 2,
-//     borderBottomColor: "#000000",
-//   },
-//   consumptionTableHeaderCell: {
-//     fontWeight: "normal",
-//     paddingVertical: 2,
-//     flex: 1,
-//   },
-//   consumptionTableHeaderCellRight: {
-//     fontWeight: "normal",
-//     paddingVertical: 2,
-//     flex: 1,
-//     textAlign: "right",
-//   },
-//   consumptionTableRow: {
-//     flexDirection: "row",
-//   },
-//   consumptionTableCell: {
-//     paddingVertical: 2,
-//     flex: 1,
-//   },
-//   consumptionTableCellRight: {
-//     paddingVertical: 2,
-//     flex: 1,
-//     textAlign: "right",
-//   },
-//   footer: {
-//     marginTop: 15,
-//     fontSize: 7,
-//     color: "#6B7280",
-//   },
-// });
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: "#ffffff",
+    padding: 40,
+    fontFamily: "Helvetica",
+    fontSize: 9,
+    color: "#0D282FCC",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  headerText: { fontSize: 7 },
+  twoCol: { flexDirection: "row", justifyContent: "space-between", gap: 20 },
+  col: { width: "48%" },
+  bold: { fontWeight: "bold", color: "#083123" },
+  title: {
+    fontWeight: "bold",
+    fontSize: 12,
+    marginBottom: 8,
+    color: "#083123",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  rowLabel: { width: 200 },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#5A917F",
+    borderBottomWidth: 2,
+    borderBottomColor: "#083123",
+    paddingBottom: 4,
+    marginBottom: 8,
+  },
+  chip: {
+    backgroundColor: "#DDE9E0",
+    padding: 4,
+    borderRadius: 8,
+    fontWeight: "bold",
+    color: "#083123",
+    marginTop: 8,
+  },
+});
 
-// const HeatingBillPreviewFourPDF = () => {
-//   return (
-//     // <Document>
-//     <Page size="A4" style={styles.page}>
-//       <View style={styles.header}>
-//         <Text style={styles.headerText}>4/6 355703/0010</Text>
-//         <Image style={styles.logo} src={admin_logo} />
-//       </View>
+export default function HeatingBillPreviewFourPDF({
+  previewData,
+}: {
+  previewData: HeatingBillPreviewData;
+}) {
+  return (
+    <Page size="A4" style={styles.page}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>4/6 355703/0010</Text>
+      </View>
 
-//       <View style={styles.addressInfo}>
-//         <View style={styles.addressLeft}>
-//           <Text style={styles.addressBorder}>
-//             BRUNATA-METRONA GmbH & Co. KG - 81366 München
-//           </Text>
-//           <Text style={styles.boldText}>Andreas Preissler Eigennutzer</Text>
-//           <Text>Lindenstraße 49</Text>
-//           <Text>12589 Berlin</Text>
-//         </View>
-//         <View style={styles.addressRight}>
-//           <Text style={styles.mainTitle}>
-//             Ihre BRUNATA® Abrechnung für\nHeizung, Warmwasser, Kaltwasser
-//           </Text>
-//           <View style={styles.detailGrid}>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>Liegenschaft</Text>
-//               <Text>Rungestr. 21 u.a.</Text>
-//               <Text>10179 Berlin</Text>
-//             </View>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>Erstellt im Auftrag von</Text>
-//               <Text>Braun & Hubertus GmbH</Text>
-//               <Text>Immobilienmanagement</Text>
-//               <Text>Keithstr. 2-4</Text>
-//               <Text>10787 Berlin</Text>
-//             </View>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>Liegenschaftsnummer</Text>
-//               <Text>355703</Text>
-//             </View>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>BRUNATA Nutzernummer</Text>
-//               <Text>0010</Text>
-//             </View>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>Abrechnungszeitraum</Text>
-//               <Text>01.01.2023 - 31.12.2023</Text>
-//             </View>
-//             <View style={styles.detailItem}>
-//               <Text style={styles.boldText}>erstellt am</Text>
-//               <Text>14.11.2024</Text>
-//             </View>
-//           </View>
-//         </View>
-//       </View>
+      <View style={styles.twoCol}>
+        <View style={styles.col}>
+          <Text style={styles.title}>
+            Ihre Heidi Systems ® Abrechnung für{"\n"}Heizung, Warmwasser,
+            Kaltwasser
+          </Text>
+          <View style={{ marginBottom: 8 }}>
+            <View style={styles.row}>
+              <Text style={[styles.bold, styles.rowLabel]}>Liegenschaft</Text>
+              <Text>
+                {previewData.contractorsNames}
+                {"\n"}
+                {previewData.objektInfo.street}
+                {"\n"}
+                {previewData.objektInfo.zip}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Erstellt im Auftrag von</Text>
+              <Text>
+                {previewData.contractorsNames}
+                {"\n"}
+                {previewData.objektInfo.street}
+                {"\n"}
+                {previewData.objektInfo.zip}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <View style={styles.row}>
+              <Text style={[styles.bold, styles.rowLabel]}>
+                Liegenschaftsnummer
+              </Text>
+              <Text>355703</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Heidi Nutzernummer</Text>
+              <Text>0010</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={[styles.bold, styles.rowLabel]}>
+                Abrechnungszeitraum
+              </Text>
+              <Text>
+                {previewData.mainDocDates.start_date} -{" "}
+                {previewData.mainDocDates.end_date}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>erstellt am</Text>
+              <Text>{previewData.mainDocDates.created_at}</Text>
+            </View>
+          </View>
+        </View>
+        <View style={[styles.col, { alignItems: "flex-end" }]}>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "#083123",
+              paddingBottom: 4,
+              marginBottom: 6,
+              width: "100%",
+            }}
+          >
+            <Text style={styles.bold}>
+              Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
+            </Text>
+          </View>
+          <Text style={[styles.bold, { fontSize: 16, textAlign: "right" }]}>
+            {previewData.contractorsNames}
+            {"\n"}
+            {previewData.objektInfo.street}
+            {"\n"}
+            {previewData.objektInfo.zip}
+          </Text>
+        </View>
+      </View>
 
-//       <View style={styles.costSection}>
-//         <Text style={styles.sectionTitle}>Ihre Kosten</Text>
-//         <View style={styles.costHeader}>
-//           <Text>Kosten für Heizung</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Grundkosten
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               77,02 m² Wohnfläche
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               1,869733 € je m²
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               144,01 €
-//             </Text>
-//           </View>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Verbrauchskosten
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               7,00 MWh
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               120,895580 € je MWh
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               846,27 €
-//             </Text>
-//           </View>
-//         </View>
+      <View style={{ marginTop: 16 }}>
+        <Text style={styles.sectionTitle}>Ihre Kosten</Text>
+        <Text style={styles.chip}>Kosten für Heizung</Text>
+        <View style={{ marginTop: 4 }}>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>Grundkosten</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>
+              77,02 m² Wohnfläche
+            </Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              1,869733 € je m²
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>144,01 €</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>
+              Verbrauchskosten
+            </Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>7,00 MWh</Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              120,895580 € je MWh
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>846,27 €</Text>
+          </View>
+        </View>
 
-//         <View style={[styles.costHeader, { marginTop: 10 }]}>
-//           <Text>Kosten für Warmwasser</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Grundkosten
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               77,02 m² Wohnfläche
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               1,453210 € je m²
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               111,93 €
-//             </Text>
-//           </View>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Verbrauchskosten
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               10,88 m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               12,059077 € je m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               131,20 €
-//             </Text>
-//           </View>
-//           <View style={[styles.tableRow, styles.tableBorderTop]}>
-//             <Text style={[styles.tableCell, styles.boldText, { width: "80%" }]}>
-//               Summe Kosten für Heizung und Warmwasser
-//             </Text>
-//             <Text
-//               style={[styles.tableCellRight, styles.boldText, { width: "20%" }]}
-//             >
-//               1.233,41 €
-//             </Text>
-//           </View>
-//         </View>
+        <Text style={[styles.chip, { marginTop: 10 }]}>
+          Kosten für Warmwasser
+        </Text>
+        <View style={{ marginTop: 4 }}>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>Grundkosten</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>
+              77,02 m² Wohnfläche
+            </Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              1,453210 € je m²
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>111,93 €</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>
+              Verbrauchskosten
+            </Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>10,88 m³</Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              12,059077 € je m³
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>131,20 €</Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderTopColor: "#083123",
+                paddingTop: 4,
+                marginTop: 4,
+              },
+            ]}
+          >
+            <Text style={[styles.bold, { width: "80%" }]}>
+              Summe Kosten für Heizung und Warmwasser
+            </Text>
+            <Text style={[styles.bold, { width: "20%", textAlign: "right" }]}>
+              1.233,41 €
+            </Text>
+          </View>
+        </View>
 
-//         <View style={[styles.costHeader, { marginTop: 10 }]}>
-//           <Text>Kosten für Kaltwasser</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Kaltwasser Gesamt
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               45,20 m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               1,713411 € je m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               77,45 €
-//             </Text>
-//           </View>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Abwasser Gesamt
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               45,20 m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               2,014517 € je m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               91,06 €
-//             </Text>
-//           </View>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Gerätemiete Kaltwasser
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               45,20 m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               0,228791 € je m³
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               10,34 €
-//             </Text>
-//           </View>
-//           <View style={styles.tableRow}>
-//             <Text style={[styles.tableCell, { width: "20%" }]}>
-//               Abrechnung Kaltwasser
-//             </Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               1,00 Nutzeinh.
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-//             <Text style={[styles.tableCellRight, { width: "30%" }]}>
-//               17,290569 € je Nutzeinh.
-//             </Text>
-//             <Text style={[styles.tableCell, { width: "5%" }]}>=</Text>
-//             <Text style={[styles.tableCellRight, { width: "20%" }]}>
-//               17,29 €
-//             </Text>
-//           </View>
-//           <View style={[styles.tableRow, styles.tableBorderTop]}>
-//             <Text style={[styles.tableCell, styles.boldText, { width: "80%" }]}>
-//               Summe Kosten für Kaltwasser
-//             </Text>
-//             <Text
-//               style={[styles.tableCellRight, styles.boldText, { width: "20%" }]}
-//             >
-//               196,14 €
-//             </Text>
-//           </View>
-//         </View>
-//       </View>
+        <Text style={[styles.chip, { marginTop: 10 }]}>
+          Kosten für Kaltwasser
+        </Text>
+        <View style={{ marginTop: 4 }}>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>
+              Kaltwasser Gesamt
+            </Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>45,20 m³</Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              1,713411 € je m³
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>77,45 €</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>Abwasser Gesamt</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>45,20 m³</Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              2,014517 € je m³
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>91,06 €</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>
+              Gerätemiete Kaltwasser
+            </Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>45,20 m³</Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              0,228791 € je m³
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>10,34 €</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={[styles.bold, { width: "20%" }]}>
+              Abrechnung Kaltwasser
+            </Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>
+              1,00 Nutzeinh.
+            </Text>
+            <Text style={{ width: "5%" }}>x</Text>
+            <Text style={{ width: "30%", textAlign: "right" }}>
+              17,290569 € je Nutzeinh.
+            </Text>
+            <Text style={{ width: "5%" }}>=</Text>
+            <Text style={{ width: "20%", textAlign: "right" }}>17,29 €</Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderTopColor: "#083123",
+                paddingTop: 4,
+                marginTop: 4,
+              },
+            ]}
+          >
+            <Text style={[styles.bold, { width: "80%" }]}>
+              Summe Kosten für Kaltwasser
+            </Text>
+            <Text style={[styles.bold, { width: "20%", textAlign: "right" }]}>
+              1.233,41 €
+            </Text>
+          </View>
+        </View>
 
-//       <View style={styles.totalAmount}>
-//         <Text>Gesamtbetrag</Text>
-//         <Text>1.429,55 €</Text>
-//       </View>
+        <View
+          style={[
+            styles.row,
+            {
+              backgroundColor: "#7F9D86",
+              color: "#ffffff",
+              padding: 8,
+              borderRadius: 8,
+              marginTop: 10,
+            },
+          ]}
+        >
+          <Text style={{ color: "#ffffff" }}>Gesamtbetrag</Text>
+          <Text style={{ color: "#ffffff" }}>1.429,55 €</Text>
+        </View>
+      </View>
 
-//       <View style={styles.stateRelief}>
-//         <View style={styles.stateReliefHeader}>
-//           <Text>
-//             Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)
-//           </Text>
-//         </View>
-//         <View style={styles.stateReliefTable}>
-//           <View style={styles.stateReliefTableHeader}>
-//             <Text style={styles.stateReliefTableHeaderCellLeft}></Text>
-//             <Text style={styles.stateReliefTableHeaderCellRight}>Betrag</Text>
-//             <Text style={styles.stateReliefTableHeaderCellRight}>
-//               Ihr Anteil
-//             </Text>
-//           </View>
-//           <View style={styles.stateReliefTableRow}>
-//             <Text style={styles.stateReliefTableCellLeft}>
-//               Preisbremse Energie
-//             </Text>
-//             <Text style={styles.stateReliefTableCellRight}>21.035,94 €</Text>
-//             <Text style={styles.stateReliefTableCellRight}>209,21 €</Text>
-//           </View>
-//         </View>
-//       </View>
+      <View style={{ marginTop: 16 }}>
+        <View
+          style={[
+            styles.row,
+            {
+              backgroundColor: "#7F9D86",
+              color: "#ffffff",
+              padding: 6,
+              borderRadius: 8,
+            },
+          ]}
+        >
+          <Text style={{ color: "#ffffff", flex: 1 }}>
+            Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)
+          </Text>
+          <Text style={{ color: "#ffffff", width: 60 }}>Betrag</Text>
+          <Text style={{ color: "#ffffff", width: 60, textAlign: "right" }}>
+            Ihr Anteil
+          </Text>
+        </View>
+        <View style={[styles.row, { marginTop: 6 }]}>
+          <Text style={{ flex: 1 }}>Preisbremse Energie</Text>
+          <Text style={{ width: 60 }}>21.035,94 €</Text>
+          <Text style={{ width: 60, textAlign: "right" }}>209,21 €</Text>
+        </View>
+      </View>
 
-//       <View style={styles.consumptionValues}>
-//         <Text style={styles.sectionTitle}>Ihre Verbrauchswerte</Text>
-//         <View style={styles.costHeader}>
-//           <Text>Heizung in MWh</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.consumptionTableHeader}>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               RAUMBEZEICHNUNG
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "20%" }]}>
-//               GERÄTENUMMER
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               GERÄTEART
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ANF.-STAND
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ABLESUNG
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               FAKTOR
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               VERBRAUCH
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "10%" }]}>
-//               BEMERKUNG
-//             </Text>
-//           </View>
-//           <View style={styles.consumptionTableRow}>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Flur
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "20%" }]}>
-//               6EFE0121755587
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Wärmezähler
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               1,918
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               8,916
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCellRight, { width: "10%" }]}
-//             ></Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               7,000
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//           <View style={[styles.consumptionTableRow, styles.tableBorderTop]}>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCell,
-//                 styles.boldText,
-//                 { width: "80%" },
-//               ]}
-//               // colSpan={6}
-//             >
-//               Summe Heizung
-//             </Text>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCellRight,
-//                 styles.boldText,
-//                 { width: "10%" },
-//               ]}
-//             >
-//               7,000
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//         </View>
+      <View style={{ marginTop: 16 }}>
+        <Text style={styles.sectionTitle}>Ihre Verbrauchswerte</Text>
+        <Text style={styles.chip}>Heizung in MWh</Text>
+        <View style={{ marginTop: 6 }}>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderBottomWidth: 2,
+                borderColor: "#083123",
+                paddingVertical: 4,
+              },
+            ]}
+          >
+            <Text style={{ flex: 1 }}>RAUMBEZEICHNUNG</Text>
+            <Text style={{ flex: 1 }}>GERÄTENUMMER</Text>
+            <Text style={{ flex: 1 }}>GERÄTEART</Text>
+            <Text style={{ flex: 1 }}>ANF.-STAND</Text>
+            <Text style={{ flex: 1 }}>ABLESUNG</Text>
+            <Text style={{ flex: 1 }}>FAKTOR</Text>
+            <Text style={{ flex: 1 }}>VERBRAUCH</Text>
+            <Text style={{ flex: 1 }}>BEMERKUNG</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={{ flex: 1 }}>Flur</Text>
+            <Text style={{ flex: 1 }}>6EFE0121755587</Text>
+            <Text style={{ flex: 1 }}>Wärmezähler</Text>
+            <Text style={{ flex: 1 }}>1,918</Text>
+            <Text style={{ flex: 1 }}>8,916</Text>
+            <Text style={{ flex: 1 }}></Text>
+            <Text style={{ flex: 1 }}>7,000</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderTopColor: "#083123",
+                paddingTop: 4,
+                marginTop: 4,
+              },
+            ]}
+          >
+            <Text style={[styles.bold, { flex: 6 }]}>Summe Heizung</Text>
+            <Text style={[styles.bold, { flex: 1 }]}>7,000</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+        </View>
 
-//         <View style={[styles.costHeader, { marginTop: 10 }]}>
-//           <Text>Warmwasser in m³</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.consumptionTableHeader}>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               RAUMBEZEICHNUNG
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "20%" }]}>
-//               GERÄTENUMMER
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               GERÄTEART
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ANF.-STAND
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ABLESUNG
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               FAKTOR
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               VERBRAUCH
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "10%" }]}>
-//               BEMERKUNG
-//             </Text>
-//           </View>
-//           <View style={styles.consumptionTableRow}>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Bad
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "20%" }]}>
-//               9DWZ0122156287
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Warmwasserzähler
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               3,52
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               11,381
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCellRight, { width: "10%" }]}
-//             ></Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               7,86
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//           <View style={styles.consumptionTableRow}>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Bad
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "20%" }]}>
-//               9DWZ0122156297
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Warmwasserzähler
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               1,04
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               4,051
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCellRight, { width: "10%" }]}
-//             ></Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               3,02
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//           <View style={[styles.consumptionTableRow, styles.tableBorderTop]}>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCell,
-//                 styles.boldText,
-//                 { width: "80%" },
-//               ]}
-//               // colSpan={6}
-//             >
-//               Summe Warmwasser
-//             </Text>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCellRight,
-//                 styles.boldText,
-//                 { width: "10%" },
-//               ]}
-//             >
-//               10,88
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//         </View>
+        <Text style={[styles.chip, { marginTop: 10 }]}>Warmwasser in m³</Text>
+        <View style={{ marginTop: 6 }}>
+          <View style={styles.row}>
+            <Text style={{ flex: 1 }}>Bad</Text>
+            <Text style={{ flex: 1 }}>9DWZ0122156287</Text>
+            <Text style={{ flex: 1 }}>Warmwasserzähler</Text>
+            <Text style={{ flex: 1 }}>3,52</Text>
+            <Text style={{ flex: 1 }}>11,381</Text>
+            <Text style={{ flex: 1 }}></Text>
+            <Text style={{ flex: 1 }}>7,86</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={{ flex: 1 }}>Bad</Text>
+            <Text style={{ flex: 1 }}>9DWZ0122156297</Text>
+            <Text style={{ flex: 1 }}>Warmwasserzähler</Text>
+            <Text style={{ flex: 1 }}>1,04</Text>
+            <Text style={{ flex: 1 }}>4,051</Text>
+            <Text style={{ flex: 1 }}></Text>
+            <Text style={{ flex: 1 }}>3,02</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderTopColor: "#083123",
+                paddingTop: 4,
+                marginTop: 4,
+              },
+            ]}
+          >
+            <Text style={[styles.bold, { flex: 6 }]}>Summe Warmwasser</Text>
+            <Text style={[styles.bold, { flex: 1 }]}>10,88</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+        </View>
 
-//         <View style={[styles.costHeader, { marginTop: 10 }]}>
-//           <Text>Kaltwasser in m³</Text>
-//         </View>
-//         <View style={styles.table}>
-//           <View style={styles.consumptionTableHeader}>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               RAUMBEZEICHNUNG
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "20%" }]}>
-//               GERÄTENUMMER
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "15%" }]}>
-//               GERÄTEART
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ANF.-STAND
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               ABLESUNG
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               FAKTOR
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableHeaderCellRight, { width: "10%" }]}
-//             >
-//               VERBRAUCH
-//             </Text>
-//             <Text style={[styles.consumptionTableHeaderCell, { width: "10%" }]}>
-//               BEMERKUNG
-//             </Text>
-//           </View>
-//           <View style={styles.consumptionTableRow}>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Bad
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "20%" }]}>
-//               8DWZ0122033399
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Kaltwasserzähler
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               7,56
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               23,291
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCellRight, { width: "10%" }]}
-//             ></Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               15,73
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//           <View style={styles.consumptionTableRow}>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Bad
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "20%" }]}>
-//               8DWZ0122033396
-//             </Text>
-//             <Text style={[styles.consumptionTableCell, { width: "15%" }]}>
-//               Kaltwasserzähler
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               11,91
-//             </Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               30,494
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCellRight, { width: "10%" }]}
-//             ></Text>
-//             <Text style={[styles.consumptionTableCellRight, { width: "10%" }]}>
-//               18,59
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//           <View style={[styles.consumptionTableRow, styles.tableBorderTop]}>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCell,
-//                 styles.boldText,
-//                 { width: "80%" },
-//               ]}
-//               // colSpan={6}
-//             >
-//               Summe Kaltwasser
-//             </Text>
-//             <Text
-//               style={[
-//                 styles.consumptionTableCellRight,
-//                 styles.boldText,
-//                 { width: "10%" },
-//               ]}
-//             >
-//               34,32
-//             </Text>
-//             <Text
-//               style={[styles.consumptionTableCell, { width: "10%" }]}
-//             ></Text>
-//           </View>
-//         </View>
-//       </View>
+        <Text style={[styles.chip, { marginTop: 10 }]}>Kaltwasser in m³</Text>
+        <View style={{ marginTop: 6 }}>
+          <View style={styles.row}>
+            <Text style={{ flex: 1 }}>Bad</Text>
+            <Text style={{ flex: 1 }}>8DWZ0122033399</Text>
+            <Text style={{ flex: 1 }}>Kaltwasserzähler</Text>
+            <Text style={{ flex: 1 }}>7,56</Text>
+            <Text style={{ flex: 1 }}>23,291</Text>
+            <Text style={{ flex: 1 }}></Text>
+            <Text style={{ flex: 1 }}>15,73</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={{ flex: 1 }}>Bad</Text>
+            <Text style={{ flex: 1 }}>8DWZ0122033396</Text>
+            <Text style={{ flex: 1 }}>Kaltwasserzähler</Text>
+            <Text style={{ flex: 1 }}>11,91</Text>
+            <Text style={{ flex: 1 }}>30,494</Text>
+            <Text style={{ flex: 1 }}></Text>
+            <Text style={{ flex: 1 }}>18,59</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+          <View
+            style={[
+              styles.row,
+              {
+                borderTopWidth: 2,
+                borderTopColor: "#083123",
+                paddingTop: 4,
+                marginTop: 4,
+              },
+            ]}
+          >
+            <Text style={[styles.bold, { flex: 6 }]}>Summe Kaltwasser</Text>
+            <Text style={[styles.bold, { flex: 1 }]}>34,32</Text>
+            <Text style={{ flex: 1 }}></Text>
+          </View>
+        </View>
+      </View>
 
-//       <View style={styles.footer}>
-//         <Text>
-//           Detaillierte Berechnung und Verteilung auf alle Nutzeinheiten des
-//           Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie
-//           sich bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder
-//           Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden
-//           Sie unter www.brunata-metrona.de.
-//         </Text>
-//       </View>
-//     </Page>
-//     // </Document>
-//   );
-// };
-
-// export default HeatingBillPreviewFourPDF;
+      <View style={{ marginTop: 16, color: "#6B7280" }}>
+        <Text>
+          Detaillierte Berechnung und Verteilung auf alle Nutzeinheiten des
+          Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie
+          sich bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder
+          Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden
+          Sie unter www.brunata-metrona.de.
+        </Text>
+      </View>
+    </Page>
+  );
+}

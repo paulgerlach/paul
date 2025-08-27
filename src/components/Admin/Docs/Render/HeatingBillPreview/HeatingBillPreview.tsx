@@ -14,6 +14,7 @@ import type {
   ObjektType,
   UserType,
 } from "@/types";
+import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
 
 export type HeatingBillPreviewProps = {
   mainDoc: HeatingBillDocumentType;
@@ -33,6 +34,7 @@ export type HeatingBillPreviewData = {
     start_date?: string | null;
     end_date?: string | null;
   };
+  mainDocData: HeatingBillDocumentType;
   userInfo: {
     first_name: string;
     last_name: string;
@@ -46,6 +48,8 @@ export type HeatingBillPreviewData = {
   totalLivingSpace: number;
   contract: ContractType;
   costCategories: DocCostCategoryType[];
+  propertyNumber: string;
+  heidiCustomerNumber: string;
 };
 
 export default function HeatingBillPreview({
@@ -65,6 +69,7 @@ export default function HeatingBillPreview({
       start_date: mainDoc?.start_date,
       end_date: mainDoc?.end_date,
     },
+    mainDocData: mainDoc,
     userInfo: {
       first_name: user?.first_name,
       last_name: user?.last_name,
@@ -83,6 +88,8 @@ export default function HeatingBillPreview({
     totalLivingSpace,
     contract,
     costCategories,
+    propertyNumber: generatePropertyNumber(),
+    heidiCustomerNumber: generateHeidiCustomerNumber(),
   };
 
   return (

@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  useHeatingBillBuildingDocumentsByObjektID,
   useLocalsByObjektID,
+  useOperatingCostDocumentsByObjektID,
 } from "@/apiClient";
-import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { close_dialog, operating_cost_documents_pending } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import { type ObjektType } from "@/types";
@@ -23,7 +23,7 @@ export type ObjekteLocalItemProps = {
   onClick: (index: number) => void;
 };
 
-export default function ObjekteItemDocWithHistory({
+export default function OperatingObjekteItemDocWithHistory({
   item,
   isOpen,
   index,
@@ -41,8 +41,9 @@ export default function ObjekteItemDocWithHistory({
   }, [isOpen]);
 
   const { data: relatedLocals } = useLocalsByObjektID(item.id);
-  const { data: relatedOpenedDocuments } =
-    useHeatingBillBuildingDocumentsByObjektID(item.id);
+  const { data: relatedOpenedDocuments } = useOperatingCostDocumentsByObjektID(
+    item.id
+  );
 
   const { commertialLocals, otherLocals } = countLocals(
     relatedLocals ? relatedLocals : []
@@ -50,8 +51,8 @@ export default function ObjekteItemDocWithHistory({
 
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
-    openDialog("heating_bill_delete");
-    setQueryKey(["heating_bill_documents", item.id ?? ""]);
+    openDialog("operating_costs_delete");
+    setQueryKey(["operating_cost_documents", item.id ?? ""]);
   };
 
   return (
@@ -65,7 +66,7 @@ export default function ObjekteItemDocWithHistory({
         isOpen={isOpen}
         index={index}
         onClick={onClick}
-        link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${item.id}/abrechnungszeitraum`}
+        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${item.id}/abrechnungszeitraum`}
         onClickAccordion={() => onClick(index)}
         hasDocuments={!!relatedOpenedDocuments?.length}
         commertialCount={commertialLocals.length}
@@ -79,7 +80,7 @@ export default function ObjekteItemDocWithHistory({
           <div className="flex items-center justify-between" key={doc.id}>
             <Link
               className="flex items-center justify-start gap-8"
-              href={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
+              href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
             >
               <Image
                 width={0}

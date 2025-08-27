@@ -28,6 +28,7 @@ export default async function ResultLocalPDF({
               id={objekt_id}
               key={local.id}
               item={local}
+              docType="objektauswahl"
               docID={doc_id}
             />
           ))}

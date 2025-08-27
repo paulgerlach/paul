@@ -12,7 +12,9 @@ const HeatingBillPreviewThree = ({
       {/* Header */}
       <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
         <div className="flex justify-between items-start">
-          <div className="text-xs text-pdf-text">3/6 355703/0010</div>
+          <div className="text-xs text-pdf-text">
+            3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </div>
           <Image
             width={130}
             height={48}

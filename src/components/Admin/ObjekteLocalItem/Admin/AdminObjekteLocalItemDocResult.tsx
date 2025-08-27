@@ -3,14 +3,13 @@ import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import {
-  getActiveContractByLocalID,
   getContractsByLocalID,
+  getContractsWithContractorsByLocalID,
   getDocCostCategoryTypes,
   getInvoicesByOperatingCostDocumentID,
   getLocalById,
   getObjectById,
   getOperatingCostDocumentByID,
-  getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
@@ -78,14 +77,13 @@ export default async function AdminObjekteLocalItemDocResult({
     "betriebskostenabrechnung"
   );
   const mainDoc = await getOperatingCostDocumentByID(docID ? docID : "");
-  const contract = await getActiveContractByLocalID(localID);
+  const contractsWithContractors = await getContractsWithContractorsByLocalID(
+    localID
+  );
   const invoices = await getInvoicesByOperatingCostDocumentID(
     docID ? docID : ""
   );
   const local = await getLocalById(localID ? localID : "");
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -121,14 +119,14 @@ export default async function AdminObjekteLocalItemDocResult({
         </div>
       </div>
       <div className="flex items-center justify-end gap-12">
-        <div className="rounded-[20px] min-h-16 min-w-48 max-xl:min-h-12 max-xl:min-w-36 flex items-start justify-center flex-col bg-white shadow-sm py-3 px-4">
+        {/* <div className="rounded-[20px] min-h-16 min-w-48 max-xl:min-h-12 max-xl:min-w-36 flex items-start justify-center flex-col bg-white shadow-sm py-3 px-4">
           <span className="text-base max-xl:text-sm text-[#757575]">
             Differenz:
           </span>
           <span className="text-xl max-xl:text-base text-[#757575] font-bold">
             -124,56 €
           </span>
-        </div>
+        </div> */}
         <div className="flex items-center justify-end gap-4">
           <Link
             href={`${ROUTE_ADMIN}/${userID}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${id}/${docID}/results/${localID}`}
@@ -160,8 +158,7 @@ export default async function AdminObjekteLocalItemDocResult({
             totalLivingSpace={totalLivingSpace}
             costCategories={costCategories}
             invoices={invoices}
-            contract={contract}
-            contractors={contractors}
+            contracts={contractsWithContractors}
             objekt={objekt}
           />
           <ThreeDotsButton

@@ -12,6 +12,7 @@ import {
   heating_bill_documents,
   users,
   local_meters,
+  heating_invoices,
 } from "@/db/drizzle/schema";
 import { type InferInsertModel } from "drizzle-orm";
 import { type StaticImageData } from "next/image";
@@ -109,6 +110,7 @@ export type LocalType = InferInsertModel<typeof locals>;
 export type LocalMeterType = InferInsertModel<typeof local_meters>;
 
 export type InvoiceDocumentType = InferInsertModel<typeof invoice_documents>;
+export type HeatingInvoiceType = InferInsertModel<typeof heating_invoices>;
 export type HeatingBillDocumentType = InferInsertModel<typeof heating_bill_documents>;
 export type OperatingCostDocumentType = InferInsertModel<
   typeof operating_cost_documents

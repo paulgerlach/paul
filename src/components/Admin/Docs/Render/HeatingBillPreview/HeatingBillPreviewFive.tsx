@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
 import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { formatDateGerman } from "@/utils";
 
 const HeatingBillPreviewFive = ({
   previewData,
@@ -12,7 +13,9 @@ const HeatingBillPreviewFive = ({
       {/* Header */}
       <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
         <div className="flex justify-between items-start">
-          <div className="text-xs text-pdf-text">5/6 355703/0010</div>
+          <div className="text-xs text-pdf-text">
+            5/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </div>
           <div className="flex items-center gap-2">
             <Image
               width={130}
@@ -62,7 +65,9 @@ const HeatingBillPreviewFive = ({
           <tbody>
             <tr>
               <td className="py-1 px-2">Bezug</td>
-              <td className="py-1">31.12.2023</td>
+              <td className="py-1">
+                {formatDateGerman(previewData.mainDocDates.created_at)}
+              </td>
               <td className="py-1">761.123</td>
               <td className="py-1">159.911,9</td>
               <td className="py-1 px-2">14.318,13</td>
@@ -212,36 +217,56 @@ const HeatingBillPreviewFive = ({
             ].map((item, index) => (
               <tr key={index}>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white rounded-l-base" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight
+                      ? "bg-pdf-accent2 text-white rounded-l-base"
+                      : ""
+                  }`}
                 >
                   {item.bis}
                 </td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 >
                   {item.range}
                 </td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 >
                   {item.co}
                 </td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight ? "bg-pdf-accent2 text-white" : ""
+                  }`}
                 >
                   {item.mieter}
                 </td>
                 <td
-                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white rounded-r-base" : ""}`}
+                  className={`py-1 px-2 ${
+                    item.highlight
+                      ? "bg-pdf-accent2 text-white rounded-r-base"
+                      : ""
+                  }`}
                 >
                   {item.vermieter}
                 </td>

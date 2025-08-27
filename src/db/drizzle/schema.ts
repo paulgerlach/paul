@@ -120,6 +120,7 @@ export const locals = pgTable("locals", {
   WHERE ((objekte.id = locals.objekt_id) AND (objekte.user_id = auth.uid()))))`, withCheck: sql`(EXISTS ( SELECT 1
    FROM objekte
   WHERE ((objekte.id = locals.objekt_id) AND (objekte.user_id = auth.uid()))))`  }),
+	pgPolicy("Admins can access locals", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
 export const contracts = pgTable("contracts", {
@@ -285,4 +286,34 @@ export const users = pgTable("users", {
 	pgPolicy("Admins can read all, users only their own", { as: "permissive", for: "select", to: ["public"] }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Admins can delete all, users only their own", { as: "permissive", for: "delete", to: ["public"] }),
+]);
+
+export const heating_invoices = pgTable("heating_invoices", {
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	document_name: text(),
+	objekt_id: uuid().defaultRandom().notNull(),
+	user_id: uuid().default(sql`auth.uid()`).notNull(),
+	cost_type: text(),
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	invoice_date: date(),
+	total_amount: numeric(),
+	service_period: boolean(),
+	for_all_tenants: boolean(),
+	purpose: text(),
+	notes: text(),
+	heating_doc_id: uuid(),
+	direct_local_id: uuid().array(),
+}, (table) => [
+	foreignKey({
+		columns: [table.heating_doc_id],
+		foreignColumns: [heating_bill_documents.id],
+		name: "heating_invoices_heating_doc_id_fkey"
+	}),
+	foreignKey({
+		columns: [table.objekt_id],
+		foreignColumns: [objekte.id],
+		name: "heating_invoices_objekt_id_fkey"
+	}),
+	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())` }),
+	pgPolicy("Allow users to ALL their own heating bill documents", { as: "permissive", for: "all", to: ["public"] }),
 ]);

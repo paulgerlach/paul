@@ -7,8 +7,9 @@ import {
 import type { HeatingBillDocumentType } from "@/types";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
-export async function createHeatingBillBuildingDocuments(
+export async function adminCreateHeatingBillBuildingDocuments(
   objectID: string,
+  userID: string,
   mainDocumentData: HeatingBillDocumentType
 ) {
   const user = await getAuthenticatedServerUser();
@@ -19,7 +20,7 @@ export async function createHeatingBillBuildingDocuments(
 
   const insertedDocumentData: HeatingBillDocumentType = {
     ...mainDocumentData,
-    user_id: user.id,
+    user_id: userID,
     start_date: mainDocumentData.start_date
       ? mainDocumentData.start_date
       : null,

@@ -1,11 +1,10 @@
 import {
-  getActiveContractByLocalID,
+  getContractsWithContractorsByLocalID,
   getDocCostCategoryTypes,
   getInvoicesByOperatingCostDocumentID,
   getLocalById,
   getObjectById,
   getOperatingCostDocumentByID,
-  getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -30,7 +29,7 @@ export default async function ResultBuildingLocalPreview({
     relatedLocals,
     costCategories,
     mainDoc,
-    contract,
+    contracts,
     invoices,
     local,
   ] = await Promise.all([
@@ -38,14 +37,10 @@ export default async function ResultBuildingLocalPreview({
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("betriebskostenabrechnung"),
     getOperatingCostDocumentByID(doc_id),
-    getActiveContractByLocalID(local_id),
+    getContractsWithContractorsByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
   ]);
-
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -67,8 +62,7 @@ export default async function ResultBuildingLocalPreview({
           totalLivingSpace={totalLivingSpace}
           costCategories={costCategories}
           invoices={invoices}
-          contract={contract}
-          contractors={contractors}
+          contracts={contracts}
           objekt={objekt}
         />
       </ContentWrapper>

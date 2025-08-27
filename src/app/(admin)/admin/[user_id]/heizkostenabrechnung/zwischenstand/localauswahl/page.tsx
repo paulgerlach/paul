@@ -1,4 +1,4 @@
-import { getObjekts } from "@/api";
+import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteItemDoc from "@/components/Admin/ObjekteItem/ObjekteItemDoc";
@@ -10,7 +10,7 @@ export default async function ZwischenstandPage({
   params: Promise<{ user_id: string }>;
 }) {
   const { user_id } = await params;
-  const objekts = await getObjekts();
+  const objekts = await getObjektsByUserID(user_id);
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb

@@ -24,9 +24,11 @@ export default function AdminHeatingBillCreateDialog() {
   const { user_id } = useParams();
 
   const handleNavigate = (type: "objektauswahl" | "localauswahl") => {
-    closeDialog("heating_bill_create");
+    closeDialog("admin_heating_bill_create");
     router.push(
-      `${ROUTE_ADMIN}/${String(user_id)}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/${type}`
+      `${ROUTE_ADMIN}/${String(
+        user_id
+      )}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/${type}`
     );
   };
 
@@ -198,7 +200,7 @@ export default function AdminHeatingBillCreateDialog() {
         </div>
         <div className="flex items-center justify-between">
           <button
-            onClick={() => closeDialog("heating_bill_create")}
+            onClick={() => closeDialog("admin_heating_bill_create")}
             className="py-2 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300"
           >
             Zurück

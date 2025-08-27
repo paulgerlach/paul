@@ -219,7 +219,7 @@ async function getUsersObjektsWithLocals(user_id?: string) {
 
 export function useUsersObjektsWithLocals(user_id?: string) {
   return useQuery({
-    queryKey: ["objekts_with_locals"],
+    queryKey: ["objekts_with_locals", user_id],
     queryFn: () => getUsersObjektsWithLocals(user_id),
     refetchOnWindowFocus: false,
   });
@@ -440,6 +440,31 @@ export function useHeatingBillDocumentsByObjektID(objectID?: string) {
     queryKey: ["heating_bill_documents", objectID],
     queryFn: () => getHeatingBillDocumentsByObjektID(objectID),
     refetchOnWindowFocus: false,
+  });
+}
+
+async function getHeatingBillBuildingDocumentsByObjektID(objectID?: string): Promise<HeatingBillDocumentType[]> {
+
+  const { data, error } = await supabase
+    .from("heating_bill_documents")
+    .select("*")
+    .eq("objekt_id", objectID)
+    .is("local_id", null)
+    .eq("submited", false);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useHeatingBillBuildingDocumentsByObjektID(objectID?: string) {
+  return useQuery({
+    queryKey: ["heating_bill_building_documents", objectID],
+    queryFn: () => getHeatingBillBuildingDocumentsByObjektID(objectID),
+    refetchOnWindowFocus: false,
+    enabled: !!objectID,
   });
 }
 

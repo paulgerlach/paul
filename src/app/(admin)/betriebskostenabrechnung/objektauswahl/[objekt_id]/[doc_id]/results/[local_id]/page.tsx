@@ -1,17 +1,16 @@
 import {
-  getActiveContractByLocalID,
+  getContractsWithContractorsByLocalID,
   getDocCostCategoryTypes,
   getInvoicesByOperatingCostDocumentID,
   getLocalById,
   getObjectById,
   getOperatingCostDocumentByID,
-  getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import BetriebskostenabrechnungPreview from "@/components/Admin/Docs/Render/BetriebskostenabrechnungPdf/BetriebskostenabrechnungPreview";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG, ROUTE_OBJEKTE } from "@/routes/routes";
+import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultBuildingLocalPreview({
   params,
@@ -25,7 +24,7 @@ export default async function ResultBuildingLocalPreview({
     relatedLocals,
     costCategories,
     mainDoc,
-    contract,
+    contracts,
     invoices,
     local,
   ] = await Promise.all([
@@ -33,14 +32,10 @@ export default async function ResultBuildingLocalPreview({
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("betriebskostenabrechnung"),
     getOperatingCostDocumentByID(doc_id),
-    getActiveContractByLocalID(local_id),
+    getContractsWithContractorsByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
   ]);
-
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -62,8 +57,7 @@ export default async function ResultBuildingLocalPreview({
           totalLivingSpace={totalLivingSpace}
           costCategories={costCategories}
           invoices={invoices}
-          contract={contract}
-          contractors={contractors}
+          contracts={contracts}
           objekt={objekt}
         />
       </ContentWrapper>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
 import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { formatDateGerman } from "@/utils";
 
 const HeatingBillPreviewFour = ({
   previewData,
@@ -11,7 +12,9 @@ const HeatingBillPreviewFour = ({
     <div className="mx-auto max-w-[1400px] space-y-5 font-sans text-sm">
       <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
         <div className="flex justify-between items-start">
-          <div className="text-xs text-pdf-text">4/6 355703/0010</div>
+          <div className="text-xs text-pdf-text">
+            4/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </div>
           <Image
             width={130}
             height={48}
@@ -50,22 +53,24 @@ const HeatingBillPreviewFour = ({
             <div className="space-y-2 text-pdf-text">
               <div className="grid grid-cols-[200px_1fr] font-bold text-pdf-dark gap-5">
                 <div>Liegenschaftsnummer</div>
-                <div>355703</div>
+                <div>{previewData.propertyNumber}</div>
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>Heidi Nutzernummer</div>
-                <div>0010</div>
+                <div>{previewData.heidiCustomerNumber}</div>
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>Abrechnungszeitraum</div>
                 <div>
-                  {previewData.mainDocDates.start_date} -{" "}
-                  {previewData.mainDocDates.end_date}
+                  {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
+                  {formatDateGerman(previewData.mainDocDates.end_date)}
                 </div>
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>erstellt am</div>
-                <div>{previewData.mainDocDates.created_at}</div>
+                <div>
+                  {formatDateGerman(previewData.mainDocDates.created_at)}
+                </div>
               </div>
             </div>
           </div>

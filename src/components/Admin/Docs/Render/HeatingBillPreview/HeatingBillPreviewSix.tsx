@@ -41,7 +41,9 @@ const HeatingBillPreviewSix = ({
       {/* Header */}
       <div className="bg-pdf-accent rounded-base p-6 space-y-6 text-pdf-dark">
         <div className="flex justify-between items-start">
-          <div className="text-xs text-pdf-text">6/6 355703/0010</div>
+          <div className="text-xs text-pdf-text">
+            6/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </div>
           <div className="flex items-center gap-2">
             <Image
               width={130}

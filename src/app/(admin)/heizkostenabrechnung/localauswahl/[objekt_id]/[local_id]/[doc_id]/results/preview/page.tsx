@@ -1,6 +1,8 @@
 import {
   getActiveContractByLocalID,
   getDocCostCategoryTypes,
+  getHeatingBillDocumentByID,
+  getHeatingInvoicesByHeatingBillDocumentID,
   getInvoicesByOperatingCostDocumentID,
   getLocalById,
   getObjectById,
@@ -34,9 +36,9 @@ export default async function ResultLocalPreview({
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("heizkostenabrechnung"),
-    getOperatingCostDocumentByID(doc_id),
+    getHeatingBillDocumentByID(doc_id),
     getActiveContractByLocalID(local_id),
-    getInvoicesByOperatingCostDocumentID(doc_id),
+    getHeatingInvoicesByHeatingBillDocumentID(doc_id),
     getLocalById(local_id),
     getUserData(),
   ]);

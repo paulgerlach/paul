@@ -26,6 +26,7 @@ import { Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { ObjekteItemLocalHeader } from "../ObjekteItemLocalHeader";
 
 export type ObjekteItemLocalDocWithHistoryProps = {
   item: LocalType;
@@ -75,54 +76,16 @@ export default function AdminObjekteItemLocalDocWithHistory({
         status === "vacancy" && "available"
       } [.available.active]:pb-7`}
     >
-      <div
-        className={`bg-white p-2 rounded-2xl flex items-center justify-between`}
-      >
-        <div className="flex items-center justify-start gap-8">
-          <div className="flex items-center justify-start gap-2">
-            <span className="flex items-center size-20 max-xl:size-14 justify-center rounded bg-[#E7E8EA]">
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="max-w-9 max-h-9 max-xl:max-w-7 max-xl:max-h-7"
-                src={handleLocalTypeIcon(item.usage_type as UnitType) || ""}
-                alt={item.usage_type || ""}
-              />
-            </span>
-            {isLoading ? (
-              <Skeleton className="w-20 h-20 max-xl:w-14 max-xl:h-14 rounded bg-[#E5EBF5]" />
-            ) : (
-              renderStatusImage()
-            )}
-          </div>
-          <div
-            className="flex cursor-pointer items-center justify-start gap-5"
-            onClick={() => onClick(index)}
-          >
-            <p className="text-2xl max-xl:text-lg text-dark_green">
-              {buildLocalName(item)}
-            </p>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-2.5 max-h-4 -rotate-90 [.active_&]:rotate-0 transition-all duration-300"
-              src={chevron_admin}
-              alt="chevron"
-            />
-          </div>
-        </div>
-        <div className="flex items-center justify-end gap-7">
-          {isLoading ? (
-            <Skeleton className="w-56 h-16 rounded-[20px]" />
-          ) : (
-            renderStatusBadge()
-          )}
-        </div>
-      </div>
+      <ObjekteItemLocalHeader
+        item={item}
+        isLoading={isLoading}
+        hasDocuments={!!relatedOpenedDocuments?.length}
+        onClickAccordion={() => onClick(index)}
+        renderStatusImage={renderStatusImage}
+        renderStatusBadge={renderStatusBadge}
+        link={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${item.objekt_id}/${item.id}/abrechnungszeitraum`}
+        isOpen={isOpen}
+      />
       <div
         ref={contentRef}
         className="[.active_&]:pt-6 [.active_&]:pb-2 space-y-6 px-24 [.active_&]:h-auto h-0"
@@ -131,7 +94,7 @@ export default function AdminObjekteItemLocalDocWithHistory({
           <div className="flex items-center justify-between" key={doc.id}>
             <Link
               className="flex items-center justify-start gap-8"
-              href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
+              href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
             >
               <Image
                 width={0}

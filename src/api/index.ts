@@ -12,6 +12,7 @@ import {
   heating_bill_documents,
   users,
   local_meters,
+  heating_invoices,
 } from "@/db/drizzle/schema";
 import { and, eq, gte, lte, or, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -22,6 +23,7 @@ import type {
   ContractType,
   DocCostCategoryType,
   HeatingBillDocumentType,
+  HeatingInvoiceType,
   InvoiceDocumentType,
   LocalMeterType,
   LocalType,
@@ -313,6 +315,68 @@ export async function getContractsByLocalID(
   return result;
 }
 
+export async function getAdminContractsByLocalID(
+  localID?: string,
+  userID?: string,
+): Promise<ContractType[]> {
+  if (!localID || !userID) {
+    throw new Error("Missing localID or userID");
+  }
+
+  const result = await database
+    .select()
+    .from(contracts)
+    .where(
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, userID)
+      )
+    );
+
+  return result;
+}
+
+export async function getContractsWithContractorsByLocalID(
+  localID?: string,
+): Promise<(ContractType & { contractors: ContractorType[] })[]> {
+  if (!localID) {
+    throw new Error("Missing localID");
+  }
+
+  const user = await getAuthenticatedServerUser();
+
+  const results = await database
+    .select()
+    .from(contracts)
+    .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
+    .where(
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, user.id)
+      )
+    );
+
+  const contractsWithContractors: Record<string, ContractType & { contractors: ContractorType[] }> = {};
+
+  for (const row of results) {
+    const contract = row.contracts;
+    const contractor = row.contractors;
+
+    if (!contractsWithContractors[contract.id]) {
+      contractsWithContractors[contract.id] = {
+        ...contract,
+        contractors: [],
+      };
+    }
+
+    if (contractor) {
+      contractsWithContractors[contract.id].contractors.push(contractor);
+    }
+  }
+
+  return Object.values(contractsWithContractors);
+}
+
 export async function getActiveContractByLocalID(
   localID?: string,
 ): Promise<ContractType> {
@@ -463,6 +527,39 @@ export async function getRelatedLocalsByObjektId(objektID: string): Promise<Loca
   return relatedLocals;
 }
 
+export async function getRelatedLocalsWithContractsByObjektId(objektID: string): Promise<
+  (LocalType & { contracts: ContractType[] })[]
+> {
+  const results = await database
+    .select()
+    .from(locals)
+    .leftJoin(contracts, and(
+      eq(contracts.local_id, locals.id)
+    ))
+    .where(eq(locals.objekt_id, objektID));
+
+  const localsWithContracts: Record<string, LocalType & { contracts: ContractType[] }> = {};
+
+  for (const row of results) {
+    const local = row.locals;
+    const contract = row.contracts;
+
+    if (!localsWithContracts[local.id]) {
+      localsWithContracts[local.id] = {
+        ...local,
+        contracts: [],
+      };
+    }
+
+    if (contract) {
+      localsWithContracts[local.id].contracts.push(contract);
+    }
+  }
+
+  return Object.values(localsWithContracts);
+}
+
+
 export async function getLocalById(localId: string): Promise<LocalType> {
 
   const local = await database
@@ -472,6 +569,28 @@ export async function getLocalById(localId: string): Promise<LocalType> {
     .then((res) => res[0]);
 
   return local;
+}
+
+export async function getLocalWithContractsById(
+  localId: string
+): Promise<(LocalType & { contracts: ContractType[] }) | null> {
+  const local = await database
+    .select()
+    .from(locals)
+    .where(eq(locals.id, localId))
+    .then((res) => res[0]);
+
+  if (!local) return null;
+
+  const relatedContracts = await database
+    .select()
+    .from(contracts)
+    .where(eq(contracts.local_id, localId));
+
+  return {
+    ...local,
+    contracts: relatedContracts,
+  };
 }
 
 export async function getMetersByLocalId(localId: string): Promise<LocalMeterType[]> {
@@ -549,6 +668,17 @@ export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise
     .select()
     .from(invoice_documents)
     .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, user.id)));
+
+  return invoices;
+}
+
+export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
+  const user = await getAuthenticatedServerUser();
+
+  const invoices = await database
+    .select()
+    .from(heating_invoices)
+    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
 
   return invoices;
 }

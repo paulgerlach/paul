@@ -6,19 +6,19 @@ import {
   receipt_line,
 } from "@/static/icons";
 import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
-import type { ContractType } from "@/types";
+import type { ContractType, LocalType } from "@/types";
 import { formatEuro } from "@/utils";
 import Image from "next/image";
 import { useReceiptAmounts } from "@/hooks/useReceiptAmounts";
 
 export type ReceiptProps = {
   title: string;
-  relatedContracts?: ContractType[];
+  locals: (LocalType & { contracts: ContractType[] })[];
 };
 
 export default function BetriebskostenabrechnungReceipt({
   title,
-  relatedContracts,
+  locals,
 }: ReceiptProps) {
   const { getFormattedDates, documentGroups } =
     useBetriebskostenabrechnungStore();
@@ -31,11 +31,12 @@ export default function BetriebskostenabrechnungReceipt({
     totalDiff,
     totalDirectCosts,
     totalSpreadedAmount,
+    totalHouseFee,
   } = useReceiptAmounts({
     documentGroups,
-    contracts: relatedContracts,
     start_date,
     end_date,
+    locals,
   });
 
   return (
@@ -104,7 +105,7 @@ export default function BetriebskostenabrechnungReceipt({
           <div className="py-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Hausgeld
-              <span>0 €</span>
+              <span>{formatEuro(totalHouseFee)}</span>
             </div>
             <div className="flex items-center justify-between text-admin_dark_text">
               Nebenkostenvorauszahlung

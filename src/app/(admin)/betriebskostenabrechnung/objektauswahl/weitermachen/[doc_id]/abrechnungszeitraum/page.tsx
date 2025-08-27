@@ -1,4 +1,8 @@
-import { getObjectById, getOperatingCostDocumentByID } from "@/api";
+import {
+  getObjectById,
+  getOperatingCostDocumentByID,
+  getRelatedLocalsWithContractsByObjektId,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import BetriebskostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Betriebskostenabrechnung/BetriebskostenabrechnungReceipt";
@@ -15,6 +19,9 @@ export default async function AbrechnungszeitraumContinuePage({
   const doc = await getOperatingCostDocumentByID(doc_id);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
+  const locals = await getRelatedLocalsWithContractsByObjektId(
+    doc.objekt_id ?? ""
+  );
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -30,6 +37,7 @@ export default async function AbrechnungszeitraumContinuePage({
           docValues={doc}
         />
         <BetriebskostenabrechnungReceipt
+          locals={locals}
           title={`${objekt.street} ${objekt.zip}`}
         />
       </CreateDocContentWrapper>

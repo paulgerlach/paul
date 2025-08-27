@@ -17,9 +17,9 @@ export default function AdminApartmentsDropdown() {
   const { data: apartments } = useObjektsWithLocals();
   const { data: usersApartments } = useUsersObjektsWithLocals(String(user_id));
 
-  const isAdmin = user_id === "admin";
+  const isAdmin = !!user_id;
 
-  const apartmentsToUse = isAdmin ? apartments : usersApartments;
+  const apartmentsToUse = isAdmin ? usersApartments : apartments;
 
   const handleOpen = () => {
     setIsOpen(!isOpen);
@@ -55,6 +55,12 @@ export default function AdminApartmentsDropdown() {
 
     setSelectedLocalIds(allIds);
   };
+
+  useEffect(() => {
+    if (apartmentsToUse) {
+      selectAll();
+    }
+  }, [apartmentsToUse]);
 
   const clearSelection = () => {
     setSelectedLocalIds([]);

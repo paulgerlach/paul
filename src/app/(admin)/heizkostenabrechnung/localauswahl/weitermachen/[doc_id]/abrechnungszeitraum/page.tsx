@@ -1,4 +1,8 @@
-import { getHeatingBillDocumentByID, getLocalById } from "@/api";
+import {
+  getContractsByLocalID,
+  getHeatingBillDocumentByID,
+  getLocalById,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
@@ -16,6 +20,11 @@ export default async function AbrechnungszeitraumContinuePage({
   const doc = await getHeatingBillDocumentByID(doc_id);
 
   const localData = await getLocalById(doc.local_id ? doc.local_id : "");
+  const contracts = await getContractsByLocalID(
+    doc.local_id ? doc.local_id : ""
+  );
+
+  const localWithContacts = { ...localData, contracts };
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -31,7 +40,10 @@ export default async function AbrechnungszeitraumContinuePage({
           localId={doc.local_id ?? ""}
           docValues={doc}
         />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+        <HeizkostenabrechnungReceipt
+          local={localWithContacts}
+          title={buildLocalName(localData)}
+        />
       </CreateDocContentWrapper>
     </div>
   );

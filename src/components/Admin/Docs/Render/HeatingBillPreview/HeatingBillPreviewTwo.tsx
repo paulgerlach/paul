@@ -1,6 +1,7 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
 import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { formatDateGerman } from "@/utils";
 
 const HeatingBillPreviewTwo = ({
   previewData,
@@ -12,7 +13,9 @@ const HeatingBillPreviewTwo = ({
       {/* Green Header Box */}
       <div className="bg-pdf-accent rounded-base p-6 text-pdf-dark">
         <div className="flex justify-between items-start">
-          <div className="text-xs text-pdf-text">2/ 6 355703/0010</div>
+          <div className="text-xs text-pdf-text">
+            2/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </div>
           <Image
             width={130}
             height={48}
@@ -46,18 +49,18 @@ const HeatingBillPreviewTwo = ({
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Liegenschaftsnummer</p>
-              <p>355703</p>
+              <p>{previewData.propertyNumber}</p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Abrechnungszeitraum</p>
               <p>
-                {previewData.mainDocDates.start_date} -{" "}
-                {previewData.mainDocDates.end_date}
+                {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
+                {formatDateGerman(previewData.mainDocDates.end_date)}
               </p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>erstellt am</p>
-              <p>{previewData.mainDocDates.created_at}</p>
+              <p>{formatDateGerman(previewData.mainDocDates.created_at)}</p>
             </div>
           </div>
         </div>
@@ -329,7 +332,7 @@ const HeatingBillPreviewTwo = ({
           </div>
           <div className="grid grid-cols-4 text-pdf-text gap-4 mt-2">
             <div className="text-pdf-dark font-bold">
-              davon 30 % Grundkosten
+              davon {previewData.mainDocData.living_space_share} % Grundkosten
             </div>
             <div className="text-right">16.270,72 € :</div>
             <div className="text-right">11.196,40 m²</div>
@@ -337,7 +340,8 @@ const HeatingBillPreviewTwo = ({
           </div>
           <div className="grid grid-cols-4 text-pdf-text gap-4">
             <div className="text-pdf-dark font-bold">
-              davon 70 % Verbrauchskosten
+              davon {previewData.mainDocData.consumption_dependent} %
+              Verbrauchskosten
             </div>
             <div className="text-right">37.964,99 € :</div>
             <div className="text-right">3.148,25 m³</div>

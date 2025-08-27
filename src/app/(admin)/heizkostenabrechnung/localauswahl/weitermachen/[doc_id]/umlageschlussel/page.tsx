@@ -1,4 +1,5 @@
 import {
+  getContractsByLocalID,
   getDocCostCategoryTypes,
   getHeatingBillDocumentByID,
   getLocalById,
@@ -23,6 +24,11 @@ export default async function UmlageschlüsselEditPage({
   );
 
   const localData = await getLocalById(doc.local_id ? doc.local_id : "");
+  const contracts = await getContractsByLocalID(
+    doc.local_id ? doc.local_id : ""
+  );
+
+  const localWithContacts = { ...localData, contracts };
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -34,13 +40,16 @@ export default async function UmlageschlüsselEditPage({
       />
       <CreateDocContentWrapper>
         <UmlageschlüsselLocalForm
-        objektId={doc.objekt_id ?? ""}
-        localId={doc.local_id ?? ""}
-        docId={doc_id}
-        initialDocumentGroups={userDocCostCategories}
-        isEditMode
-      />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+          objektId={doc.objekt_id ?? ""}
+          localId={doc.local_id ?? ""}
+          docId={doc_id}
+          initialDocumentGroups={userDocCostCategories}
+          isEditMode
+        />
+        <HeizkostenabrechnungReceipt
+          local={localWithContacts}
+          title={buildLocalName(localData)}
+        />
       </CreateDocContentWrapper>
     </div>
   );

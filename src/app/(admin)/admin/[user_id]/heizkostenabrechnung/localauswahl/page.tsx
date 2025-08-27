@@ -1,17 +1,23 @@
-import { getObjekts } from "@/api";
+import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteItemDoc from "@/components/Admin/ObjekteItem/ObjekteItemDoc";
-import { ROUTE_DASHBOARD, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
-export default async function LocalPage() {
-  const objekts = await getObjekts();
+export default async function LocalPage({
+  params,
+}: {
+  params: Promise<{ user_id: string }>;
+}) {
+  const { user_id } = await params;
+
+  const objekts = await getObjektsByUserID(user_id);
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Dashboard"
-        link={ROUTE_DASHBOARD}
+        link={ROUTE_ADMIN}
         title="Auswahl der Objektart"
         subtitle="Für welche Immobilie wollen Sie eine Betriebskostenabrechnung erstellen lassen?"
       />
@@ -19,7 +25,7 @@ export default async function LocalPage() {
         <div className="overflow-y-auto space-y-4">
           {objekts.map((objekt) => (
             <ObjekteItemDoc
-              docLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekt.id}`}
+              docLink={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekt.id}`}
               key={objekt.id}
               item={objekt}
             />

@@ -1,7 +1,11 @@
-import { getHeatingBillDocumentByID, getObjectById } from "@/api";
+import {
+  getHeatingBillDocumentByID,
+  getObjectById,
+  getRelatedLocalsWithContractsByObjektId,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
-import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
+import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
 import AbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/HeatObjektauswahlForm";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
@@ -15,6 +19,9 @@ export default async function AbrechnungszeitraumContinuePage({
   const doc = await getHeatingBillDocumentByID(doc_id);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
+  const locals = await getRelatedLocalsWithContractsByObjektId(
+    doc.objekt_id ?? ""
+  );
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -29,7 +36,10 @@ export default async function AbrechnungszeitraumContinuePage({
           id={doc.objekt_id ?? ""}
           docValues={doc}
         />
-        <HeizkostenabrechnungReceipt title={`${objekt.street} ${objekt.zip}`} />
+        <HeizkostenabrechnungBuildingReceipt
+          locals={locals}
+          title={`${objekt.street} ${objekt.zip}`}
+        />
       </CreateDocContentWrapper>
     </div>
   );

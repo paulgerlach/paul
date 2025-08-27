@@ -204,3 +204,20 @@ export const formatDateGerman = (dateStr?: string | null) => {
   const date = new Date(dateStr);
   return format(date, "dd.MM.yyyy");
 };
+
+export function generatePropertyNumber(): string {
+  // 6 random digits
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+export function generateHeidiCustomerNumber(): string {
+  // 4-digit number padded with zeros
+  return String(Math.floor(1 + Math.random() * 9999)).padStart(4, "0");
+}
+
+export function generateUserNumber(): string {
+  const part1 = Math.floor(100 + Math.random() * 900);
+  const part2 = Math.floor(1000 + Math.random() * 9000);
+  const part3 = Math.floor(100 + Math.random() * 900);
+  return `W${part1}/${part2}/${part3}`;
+}

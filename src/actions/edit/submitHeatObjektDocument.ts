@@ -7,7 +7,7 @@ import {
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq } from "drizzle-orm";
 
-export async function submitLocalDocument(
+export async function submitHeatObjektDocument(
     documentID: string,
 ) {
     const user = await getAuthenticatedServerUser();

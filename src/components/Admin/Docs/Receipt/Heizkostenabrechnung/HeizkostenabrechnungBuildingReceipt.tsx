@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocalReceiptAmounts } from "@/hooks/useLocalReceiptAmounts";
+import { useReceiptAmounts } from "@/hooks/useReceiptAmounts";
 import {
   receipt_building,
   receipt_calendar,
@@ -13,14 +13,14 @@ import Image from "next/image";
 
 export type ReceiptProps = {
   title: string;
-  local: LocalType & {
+  locals: (LocalType & {
     contracts: ContractType[];
-  };
+  })[];
 };
 
-export default function HeizkostenabrechnungReceipt({
+export default function HeizkostenabrechnungBuildingReceipt({
   title,
-  local,
+  locals,
 }: ReceiptProps) {
   const { getFormattedDates, documentGroups } = useHeizkostenabrechnungStore();
 
@@ -32,11 +32,12 @@ export default function HeizkostenabrechnungReceipt({
     totalDiff,
     totalDirectCosts,
     totalSpreadedAmount,
-  } = useLocalReceiptAmounts({
+    totalHouseFee,
+  } = useReceiptAmounts({
     documentGroups,
     start_date,
     end_date,
-    local,
+    locals,
   });
 
   return (
@@ -101,9 +102,7 @@ export default function HeizkostenabrechnungReceipt({
           <div className="py-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Hausgeld
-              <span>
-                {formatEuro(local?.house_fee ? Number(local?.house_fee) : 0)}
-              </span>
+              <span>{formatEuro(totalHouseFee)}</span>
             </div>
             <div className="flex items-center justify-between text-admin_dark_text">
               Nebenkostenvorauszahlung

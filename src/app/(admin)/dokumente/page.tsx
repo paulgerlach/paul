@@ -1,7 +1,6 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-// import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
-// import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
+
 import { ROUTE_DASHBOARD } from "@/routes/routes";
 
 export default function DokumentePage() {
@@ -14,8 +13,7 @@ export default function DokumentePage() {
         subtitle="Die fertig erstellten Betriebskostenabrechnung können nun die Ihre Mietparteinversenden. Alle Informationen zur Zahlung befinden sich bereits automatisiert auf dem Dokument."
       />
       <ContentWrapper className="max-h-[90%]">
-        {/* <HeatingBillPreview /> */}
-        {/* <HeidiSystemsPdf /> */}
+        {/* <DokumenteLayout /> */}
       </ContentWrapper>
     </div>
   );

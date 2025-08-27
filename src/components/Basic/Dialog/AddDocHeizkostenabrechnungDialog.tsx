@@ -19,9 +19,9 @@ import FormDocument from "@/components/Admin/Forms/FormDocument";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
-import { createInvoiceDocument } from "@/actions/create/createInvoiceDocument";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
 import { buildLocalName } from "@/utils";
+import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
@@ -103,9 +103,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
     if (!document?.length) {
       toast.error("Rechnung beifügen");
     } else {
-      updateDocumentGroup(activeCostType, formattedPayload);
-
-      await createInvoiceDocument(
+      await createHeatingInvoice(
         {
           ...formattedPayload,
           invoice_date: rest.invoice_date,
@@ -115,6 +113,8 @@ export default function AddDocHeizkostenabrechnungDialog() {
         operatingDocID,
         activeCostType
       );
+
+      updateDocumentGroup(activeCostType, formattedPayload);
 
       if (data.document && data.document.length > 0) {
         await uploadDocuments.mutateAsync({
@@ -183,30 +183,31 @@ export default function AddDocHeizkostenabrechnungDialog() {
           </div>
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
-            <div className="px-3.5 py-4 max-xl:p-2 border border-black/20 rounded-md">
+            <div className="px-3.5 py-4 grid grid-cols-2 gap-6 max-xl:p-2 border border-black/20 rounded-md">
               <FormRoundedCheckbox<AddDocHeizkostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"
                 label="Für Alle Mieter der Leigenschaft"
-                className="!mt-0"
+                className="!mt-0 h-fit"
               />
+              {!forAllTenants && (
+                <FormLocalsultiselect<AddDocHeizkostenabrechnungDialogFormValues>
+                  options={
+                    locals
+                      ?.filter((local) => local.id !== undefined)
+                      .map((local) => ({
+                        label: buildLocalName(local),
+                        value: local.id as string,
+                      })) || []
+                  }
+                  control={methods.control}
+                  name="direct_local_id"
+                  label="Mieter auswählen *"
+                />
+              )}
             </div>
           </div>
-          {!forAllTenants && (
-            <FormLocalsultiselect<AddDocHeizkostenabrechnungDialogFormValues>
-              options={
-                locals
-                  ?.filter((local) => local.id !== undefined)
-                  .map((local) => ({
-                    label: buildLocalName(local),
-                    value: local.id as string,
-                  })) || []
-              }
-              control={methods.control}
-              name="direct_local_id"
-              label="Mieter auswählen *"
-            />
-          )}
+
           <FormSelectField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="purpose"

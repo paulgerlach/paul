@@ -1,6 +1,5 @@
 "use client";
 
-import { useDiffInMonths } from "@/hooks/useDiffInMonths";
 import type {
   DocCostCategoryType,
   ContractType,
@@ -11,14 +10,14 @@ import type {
   ObjektType,
 } from "@/types";
 import { formatDateGerman, formatEuro } from "@/utils";
+import { differenceInMonths, min, max, differenceInDays } from "date-fns";
 import { useMemo } from "react";
 
 export type BetriebskostenabrechnungPreviewProps = {
   mainDoc: OperatingCostDocumentType;
   previewLocal: LocalType;
   totalLivingSpace: number;
-  contract: ContractType;
-  contractors: ContractorType[];
+  contracts: (ContractType & { contractors: ContractorType[] })[];
   costCategories: DocCostCategoryType[];
   invoices: InvoiceDocumentType[];
   objekt: ObjektType;
@@ -28,17 +27,52 @@ export default function BetriebskostenabrechnungPreview({
   mainDoc,
   previewLocal,
   totalLivingSpace,
-  contract,
+  contracts,
   costCategories,
   invoices,
-  contractors,
   objekt,
 }: BetriebskostenabrechnungPreviewProps) {
   const { living_space } = previewLocal ?? {};
-  const { cold_rent } = contract ?? {};
-  const monthsDiff = useDiffInMonths(mainDoc?.start_date, mainDoc?.end_date);
 
-  const baseContractPaymet = Number(cold_rent) * monthsDiff;
+  const periodStart = useMemo(() => {
+    return mainDoc?.start_date ? new Date(mainDoc?.start_date) : null;
+  }, [mainDoc?.start_date]);
+
+  const periodEnd = useMemo(() => {
+    return mainDoc?.end_date ? new Date(mainDoc?.end_date) : null;
+  }, [mainDoc?.end_date]);
+
+  const filteredContracts = useMemo(() => {
+    if (!periodEnd) return [];
+
+    return contracts.filter((contract) => {
+      if (!contract.rental_start_date || !contract.rental_end_date)
+        return false;
+
+      const rentalEndDate = new Date(contract.rental_end_date);
+
+      return rentalEndDate <= periodEnd;
+    });
+  }, [contracts, periodEnd]);
+
+  const baseContractPayment = useMemo(() => {
+    return filteredContracts.reduce((acc, contract) => {
+      const rentalStart = new Date(contract.rental_start_date!);
+      const rentalEnd = new Date(contract.rental_end_date!);
+
+      if (!rentalStart || !rentalEnd || !periodStart || !periodEnd) return 0;
+
+      const overlapStart = max([rentalStart, periodStart]);
+      const overlapEnd = min([rentalEnd, periodEnd]);
+
+      let overlapMonths = differenceInMonths(overlapEnd, overlapStart) + 1;
+      if (overlapMonths < 0) overlapMonths = 0;
+
+      const coldRent = Number(contract.cold_rent ?? 0);
+
+      return acc + coldRent * overlapMonths;
+    }, 0);
+  }, [filteredContracts, periodStart, periodEnd]);
 
   const totalInvoicesAmount = invoices.reduce(
     (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
@@ -53,8 +87,17 @@ export default function BetriebskostenabrechnungPreview({
     }, 0);
   }, [invoices, totalLivingSpace, living_space]);
 
-  const amountsDiff = localPrice - baseContractPaymet;
+  const allFilteredContractors = useMemo(() => {
+    return filteredContracts.flatMap((contract) => contract.contractors);
+  }, [filteredContracts]);
 
+  if (!periodStart || !periodEnd) {
+    return null;
+  }
+
+  const daysDiff = differenceInDays(periodEnd, periodStart);
+  const amountsDiff =
+    localPrice - baseContractPayment - Number(previewLocal.house_fee);
   const formattedStartDate = formatDateGerman(mainDoc?.start_date);
   const formattedEndDate = formatDateGerman(mainDoc?.end_date);
 
@@ -71,7 +114,7 @@ export default function BetriebskostenabrechnungPreview({
               </p>
               <p className="text-[8px] mb-1">Gera</p>
               <p className="text-[8px] mb-1">
-                {contractors
+                {allFilteredContractors
                   ?.map((c) => `${c.first_name} ${c.last_name}`)
                   .join(", ")}
               </p>
@@ -86,7 +129,11 @@ export default function BetriebskostenabrechnungPreview({
                 </p>
                 <p className="text-[8px] border-b border-black p-2 flex items-end justify-between">
                   Ihre Nebenkostenvorauszahlung:
-                  <span>{formatEuro(baseContractPaymet)}</span>
+                  <span>
+                    {formatEuro(
+                      baseContractPayment + Number(previewLocal.house_fee)
+                    )}
+                  </span>
                 </p>
                 <p className="text-[8px] p-2 flex items-center justify-between">
                   Nachzuzahlender <br /> Betrag:
@@ -95,7 +142,9 @@ export default function BetriebskostenabrechnungPreview({
                   </span>
                 </p>
               </div>
-              <p className="text-[8px]">Erstellungsdatum: 13.02.2024</p>
+              <p className="text-[8px]">
+                Erstellungsdatum: {formatDateGerman(mainDoc.created_at)}
+              </p>
             </div>
           </div>
 
@@ -114,7 +163,7 @@ export default function BetriebskostenabrechnungPreview({
             <div className="flex-1">
               <p className="text-[8px] mb-4">
                 Sehr geehrter{" "}
-                {contractors
+                {allFilteredContractors
                   ?.map((c) => `${c.first_name} ${c.last_name}`)
                   .join(", ")}
                 ,
@@ -186,13 +235,13 @@ export default function BetriebskostenabrechnungPreview({
                   Ihr Nutzungstage
                 </td>
                 <td className="text-[8px] px-1 py-0.5 text-center border-r border-b border-black">
-                  365
+                  {daysDiff}
                 </td>
                 <td className="text-[8px] px-1 py-0.5 border-r border-b border-black">
                   Abrechnungstage
                 </td>
                 <td className="text-[8px] px-1 py-0.5 text-center border-b border-black">
-                  365
+                  {daysDiff}
                 </td>
               </tr>
               <tr>
@@ -259,7 +308,7 @@ export default function BetriebskostenabrechnungPreview({
                       {formatEuro(Number(row.total_amount))}
                     </td>
                     <td className="text-[8px] p-1 border-r border-b border-black text-center last:border-r-0">
-                      365/365
+                      {daysDiff}/{daysDiff}
                     </td>
                     <td className="text-[8px] p-1 border-r border-b border-black text-center last:border-r-0">
                       {costCategory?.allocation_key || ""}
@@ -267,7 +316,7 @@ export default function BetriebskostenabrechnungPreview({
                     <td className="text-[8px] p-1 border-r border-b border-black text-center last:border-r-0">
                       {costCategory?.allocation_key === "m2 Wohnfläche"
                         ? `${living_space}/${totalLivingSpace}`
-                        : "365/365"}
+                        : `${daysDiff}/${daysDiff}`}
                     </td>
                     <td className="text-[8px] p-1 border-r border-b border-black text-center last:border-r-0">
                       {formatEuro(pricePerLocalMeters)}
@@ -295,7 +344,9 @@ export default function BetriebskostenabrechnungPreview({
                     Ihre Nebenkostenvorauszahlung
                   </td>
                   <td className="text-[8px] p-1 border-b border-black text-right">
-                    {formatEuro(baseContractPaymet)}
+                    {formatEuro(
+                      baseContractPayment + Number(previewLocal.house_fee)
+                    )}
                   </td>
                 </tr>
                 <tr>

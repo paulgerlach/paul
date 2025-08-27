@@ -4,17 +4,18 @@ import { Form } from "@/components/Basic/ui/Form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import FormDateInput from "../../FormDateInput";
-import FormPercentInput from "../../FormPercentInput";
+
 import { Button } from "@/components/Basic/ui/Button";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
-import { createHeatingBillBuildingDocuments } from "@/actions/create/createHeatingBillBuildingDocuments";
 import { editHeatingBillDocument } from "@/actions/edit/editHeatingBillDocument";
 import type { HeatingBillDocumentType } from "@/types";
+import FormDateInput from "../../../FormDateInput";
+import FormPercentInput from "../../../FormPercentInput";
+import { adminCreateHeatingBillBuildingDocuments } from "@/actions/create/admin/adminCreateHeatingBillBuildingDocuments";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -42,11 +43,13 @@ const defaultValues: AbrechnungszeitraumFormValues = {
   living_space_share: 30,
 };
 
-export default function AbrechnungszeitraumHeatObjektauswahlForm({
-  id: objekteID,
+export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
+  objekteID,
+  userID,
   docValues,
 }: {
-  id: string;
+  objekteID: string;
+  userID: string;
   docValues?: HeatingBillDocumentType;
 }) {
   const router = useRouter();
@@ -98,11 +101,12 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
       if (isEditMode) {
         await editHeatingBillDocument(docValues.id ?? "", payload);
         router.push(
-          `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docValues.id}/gesamtkosten`
+          `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/gesamtkosten`
         );
       } else {
-        const result = await createHeatingBillBuildingDocuments(
+        const result = await adminCreateHeatingBillBuildingDocuments(
           objekteID,
+          userID,
           payload
         );
         const insertedDoc = result?.[0];
@@ -158,7 +162,7 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
                 <div className="grid grid-cols-2 gap-12 max-xl:gap-8">
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Verbrauchsabhänig*"
+                    label="Beginn*"
                     onChange={(e) => {
                       setValue(
                         "living_space_share",
@@ -169,7 +173,7 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
                   />
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Wohnflächenanteil*"
+                    label="Ende*"
                     onChange={(e) => {
                       setValue(
                         "consumption_dependent",

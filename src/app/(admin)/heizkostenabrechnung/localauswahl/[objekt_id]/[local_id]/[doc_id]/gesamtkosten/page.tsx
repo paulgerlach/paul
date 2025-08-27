@@ -1,4 +1,8 @@
-import { getDocCostCategoryTypes, getLocalById } from "@/api";
+import {
+  getContractsByLocalID,
+  getDocCostCategoryTypes,
+  getLocalById,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
@@ -17,6 +21,9 @@ export default async function GesamtkostenPage({
   const userDocCostCategories = await getDocCostCategoryTypes(
     "heizkostenabrechnung"
   );
+  const contracts = await getContractsByLocalID(local_id);
+
+  const localWithContacts = { ...localData, contracts };
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
@@ -28,12 +35,15 @@ export default async function GesamtkostenPage({
       />
       <CreateDocContentWrapper>
         <GesamtkostenLocalForm
-        objektId={objekt_id}
-        localId={local_id}
-        docId={doc_id}
-        userDocCostCategories={userDocCostCategories}
-      />
-        <HeizkostenabrechnungReceipt title={buildLocalName(localData)} />
+          objektId={objekt_id}
+          localId={local_id}
+          docId={doc_id}
+          userDocCostCategories={userDocCostCategories}
+        />
+        <HeizkostenabrechnungReceipt
+          local={localWithContacts}
+          title={buildLocalName(localData)}
+        />
       </CreateDocContentWrapper>
     </div>
   );

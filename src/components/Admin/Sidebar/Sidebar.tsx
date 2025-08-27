@@ -17,7 +17,6 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import { useState } from "react";
-import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
   title: string;
@@ -32,12 +31,10 @@ export default function Sidebar() {
   const { user_id } = useParams();
   const [openLink, setOpenLink] = useState<string | null>(null);
 
+  const isAdmin = !!user_id;
+
   const withUserPrefix = (route: string) =>
-    user?.permission === "admin" ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
-
-  const { data: user } = useAuthUser();
-
-  const isAdmin = user?.permission === "admin";
+    isAdmin ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
 
   const handleClick = (link: string) => {
     setOpenLink((prev) => (prev === link ? null : link));
@@ -77,7 +74,7 @@ export default function Sidebar() {
     },
   ];
 
-  if (user?.permission === "admin") {
+  if (isAdmin) {
     dashboardLinks.unshift({
       title: "User Übersicht",
       icon: dashboard,
@@ -99,7 +96,6 @@ export default function Sidebar() {
               onClick={handleClick}
               key={link.title}
               button={link}
-              user={user}
             />
           ) : pathname === ROUTE_ADMIN && link.route !== ROUTE_ADMIN ? (
             <div
@@ -120,7 +116,9 @@ export default function Sidebar() {
             <Link
               key={link.title}
               href={link.route}
-              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""} [.active]:bg-black/10`}
+              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${
+                isRouteActive(link.route) ? "active" : ""
+              } [.active]:bg-black/10`}
             >
               <Image
                 width={28}

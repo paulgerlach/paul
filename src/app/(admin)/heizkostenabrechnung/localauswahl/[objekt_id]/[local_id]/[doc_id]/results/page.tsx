@@ -24,9 +24,9 @@ export default async function ResultLocalPDF({
       <ContentWrapper className="space-y-4 max-h-[90%]">
         <ObjekteLocalItemHeatingBillDocResult
           id={objekt_id}
-          localID={localData.id}
           item={localData}
           docID={doc_id}
+          docType="localauswahl"
         />
       </ContentWrapper>
     </div>

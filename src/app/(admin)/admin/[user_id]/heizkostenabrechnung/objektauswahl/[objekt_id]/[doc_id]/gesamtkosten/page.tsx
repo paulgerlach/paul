@@ -6,7 +6,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import GesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/HeatObjektauswahlForm";
+import AdminGesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function GesamtkostenPage({
@@ -18,7 +18,8 @@ export default async function GesamtkostenPage({
 
   const objekt = await getObjectById(objekt_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "heizkostenabrechnung"
+    "heizkostenabrechnung",
+    user_id
   );
   const locals = await getRelatedLocalsWithContractsByObjektId(objekt_id);
 
@@ -31,10 +32,11 @@ export default async function GesamtkostenPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenHeatObjektauswahlForm
+        <AdminGesamtkostenHeatObjektauswahlForm
           userDocCostCategories={userDocCostCategories}
           objektId={objekt_id}
           docId={doc_id}
+          userId={user_id}
         />
         <HeizkostenabrechnungBuildingReceipt
           locals={locals}

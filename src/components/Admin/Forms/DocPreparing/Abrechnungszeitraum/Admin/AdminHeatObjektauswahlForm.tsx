@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/Basic/ui/Button";
 import Link from "next/link";
-import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
@@ -101,7 +101,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
       if (isEditMode) {
         await editHeatingBillDocument(docValues.id ?? "", payload);
         router.push(
-          `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/gesamtkosten`
+          `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/gesamtkosten`
         );
       } else {
         const result = await adminCreateHeatingBillBuildingDocuments(
@@ -112,7 +112,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
         const insertedDoc = result?.[0];
         if (insertedDoc?.id) {
           router.push(
-            `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
+            `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
           );
         } else {
           console.error("Kein Dokument wurde erstellt.");
@@ -124,8 +124,8 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
   };
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`;
+    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-center justify-center">

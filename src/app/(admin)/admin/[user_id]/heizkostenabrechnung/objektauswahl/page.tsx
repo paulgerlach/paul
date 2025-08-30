@@ -2,7 +2,11 @@ import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteItemDoc from "@/components/Admin/ObjekteItem/ObjekteItemDoc";
-import { ROUTE_DASHBOARD, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import {
+  ROUTE_ADMIN,
+  ROUTE_DASHBOARD,
+  ROUTE_HEIZKOSTENABRECHNUNG,
+} from "@/routes/routes";
 
 export default async function LocalPage({
   params,
@@ -24,7 +28,7 @@ export default async function LocalPage({
         <div className="overflow-y-auto space-y-4">
           {objekts.map((objekt) => (
             <ObjekteItemDoc
-              docLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt.id}/abrechnungszeitraum`}
+              docLink={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt.id}/abrechnungszeitraum`}
               key={objekt.id}
               item={objekt}
             />

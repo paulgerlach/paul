@@ -6,6 +6,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
+import AdminUmlageschlüsselHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/Admin/AdminHeatObjektauswahlForm";
 import UmlageschlüsselHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/HeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
@@ -19,7 +20,8 @@ export default async function UmlageschlüsselPage({
   const objekt = await getObjectById(objekt_id);
 
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "heizkostenabrechnung"
+    "heizkostenabrechnung",
+    user_id
   );
   const locals = await getRelatedLocalsWithContractsByObjektId(objekt_id);
 
@@ -32,9 +34,10 @@ export default async function UmlageschlüsselPage({
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
-        <UmlageschlüsselHeatObjektauswahlForm
+        <AdminUmlageschlüsselHeatObjektauswahlForm
           initialDocumentGroups={userDocCostCategories}
           docId={doc_id}
+          userId={user_id}
           objektId={objekt_id}
         />
         <HeizkostenabrechnungBuildingReceipt

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  useHeatingBillDocumentsByObjektID,
+  useHeatingBillBuildingDocumentsByObjektID,
   useLocalsByObjektID,
 } from "@/apiClient";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
@@ -43,9 +43,8 @@ export default function AdminHeatObjekteItemDocWithHistory({
   }, [isOpen]);
 
   const { data: relatedLocals } = useLocalsByObjektID(item.id);
-  const { data: relatedOpenedDocuments } = useHeatingBillDocumentsByObjektID(
-    item.id
-  );
+  const { data: relatedOpenedDocuments } =
+    useHeatingBillBuildingDocumentsByObjektID(item.id);
 
   const { commertialLocals, otherLocals } = countLocals(
     relatedLocals ? relatedLocals : []

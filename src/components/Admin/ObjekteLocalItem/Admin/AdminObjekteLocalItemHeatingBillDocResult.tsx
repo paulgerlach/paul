@@ -90,6 +90,11 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   //     return sum + (Number(local.living_space) || 0);
   //   }, 0) || 0;
 
+  const previewLink =
+    docType === "objektauswahl"
+      ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`
+      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${item.id}/${docID}/results/preview`;
+
   return (
     <div
       className={`bg-white p-2 rounded-2xl ${
@@ -128,9 +133,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
           </span>
         </div> */}
         <div className="flex items-center justify-end gap-4">
-          <Link
-            href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${item.id}/${docID}/results/preview`}
-          >
+          <Link href={previewLink}>
             <Image
               width={0}
               height={0}

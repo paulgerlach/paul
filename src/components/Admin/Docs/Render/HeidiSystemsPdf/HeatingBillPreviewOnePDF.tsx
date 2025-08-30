@@ -1,16 +1,9 @@
 "use client";
 import React from "react";
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  Image,
-  Font,
-} from "@react-pdf/renderer";
+import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
 import type { ContractorType } from "@/types";
+import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 
 const colors = {
   accent: "#DDE9E0",
@@ -24,7 +17,7 @@ const colors = {
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
-    fontSize: 10,
+    fontSize: 8,
     padding: 30,
     color: colors.text,
   },
@@ -62,25 +55,25 @@ const styles = StyleSheet.create({
     color: "white",
     borderRadius: 12,
     padding: 12,
-    marginVertical: 20,
+    marginVertical: 10,
   },
   hintRow: {
     flexDirection: "row",
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 6,
   },
   square: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
+    width: 12,
+    height: 12,
+    borderRadius: 2,
     backgroundColor: "#F3F8F5",
-    marginRight: 10,
+    marginRight: 5,
   },
   accessBox: {
     backgroundColor: colors.accent,
     padding: 16,
     borderRadius: 12,
-    marginTop: 30,
+    marginTop: 15,
   },
   qr: { width: 100, height: 100, alignSelf: "flex-end" },
   contractorsGrid: {
@@ -140,7 +133,15 @@ export default function HeatingBillPreviewOnePDF({
       {/* ✅ Header */}
       <View style={styles.headerBox}>
         <View style={styles.flexRow}>
-          <Text style={{ fontSize: 8 }}>1/6 {mockData.billNumber}</Text>
+          <Text style={{ fontSize: 8 }}>
+            1/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </Text>
+          <View>
+            <Image
+              style={{ width: 80, height: 20, alignSelf: "center" }}
+              src="/admin_logo.png"
+            />
+          </View>
           {/* Logo intentionally omitted in PDF to avoid bundling issues */}
         </View>
 
@@ -163,9 +164,9 @@ export default function HeatingBillPreviewOnePDF({
 
           {/* Right Side Title */}
           <View>
-            <Text style={[styles.title]}>
-              Ihre Heidi Systems® Abrechnung für Heizung, Warmwasser, Kaltwasser
-            </Text>
+            <Text style={[styles.title]}>Ihre Heidi Systems®</Text>
+            <Text style={[styles.title]}>Abrechnung für Heizung,</Text>
+            <Text style={[styles.title]}>Warmwasser, Kaltwasser</Text>
             <Text style={styles.subTitle}>Zusammenstellung Ihrer Kosten</Text>
           </View>
         </View>
@@ -189,15 +190,15 @@ export default function HeatingBillPreviewOnePDF({
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Abrechnungszeitraum</Text>
             <Text>
-              {previewData.mainDocDates.start_date}{" "}
-              {previewData.mainDocDates.end_date}
+              {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
+              {formatDateGerman(previewData.mainDocDates.end_date)}
             </Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Ihr Nutzungszeitraum</Text>
             <Text>
-              {previewData.mainDocDates.start_date}{" "}
-              {previewData.mainDocDates.end_date}
+              {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
+              {formatDateGerman(previewData.mainDocDates.end_date)}
             </Text>
           </View>
         </View>
@@ -206,7 +207,7 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.colHalf}>
           <View style={styles.gridRow}>
             <Text>Erstellt am</Text>
-            <Text>{previewData.mainDocDates.created_at}</Text>
+            <Text>{formatDateGerman(previewData.mainDocDates.created_at)}</Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Liegenschaft</Text>
@@ -228,13 +229,13 @@ export default function HeatingBillPreviewOnePDF({
           </View>
           <View style={styles.gridRow}>
             <Text>Ihre Nutzernummer</Text>
-            <Text>{mockData.userNumber}</Text>
+            <Text>{generateUserNumber()}</Text>
           </View>
         </View>
       </View>
 
       {/* ✅ Greeting */}
-      <View style={{ marginBottom: 16 }}>
+      <View style={{ marginBottom: 8 }}>
         <Text>Sehr geehrte Damen und Herren,</Text>
         <Text>
           wir haben die Kosten, die im vergangenen Abrechnungszeitraum
@@ -253,7 +254,7 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.flexRow}>
           <Text style={{ fontSize: 12 }}>Gesamtbetrag</Text>
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {mockData.totalAmount}
+            {formatEuro(previewData.totalInvoicesAmount)}
           </Text>
         </View>
       </View>
@@ -321,7 +322,7 @@ export default function HeatingBillPreviewOnePDF({
           <View style={[styles.colHalf, { alignItems: "flex-end" }]}>
             <Image
               src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303"
-              style={{ width: 160, height: 160 }}
+              style={{ width: 40, height: 40 }}
             />
             <Text style={[styles.bold, { marginTop: 4 }]}>
               Oder registrieren unter {mockData.portalLink}.

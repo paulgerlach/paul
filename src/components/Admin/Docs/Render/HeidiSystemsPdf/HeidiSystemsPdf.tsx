@@ -7,52 +7,65 @@ import HeatingBillPreviewTwoPDF from "./HeatingBillPreviewTwoPDF";
 import HeatingBillPreviewThreePDF from "./HeatingBillPreviewThreePDF";
 import HeatingBillPreviewFourPDF from "./HeatingBillPreviewFourPDF";
 import HeatingBillPreviewSixPDF from "./HeatingBillPreviewSixPDF";
-import type { ContractorType, ContractType } from "@/types";
+import {
+  type HeatingBillPreviewData,
+  type HeatingBillPreviewProps,
+} from "../HeatingBillPreview/HeatingBillPreview";
+import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
 
-export default function HeidiSystemsPdf() {
-  const stubbedPreviewData = {
+export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
+  const {
+    mainDoc,
+    user,
+    objekt,
+    contractors,
+    contract,
+    invoices,
+    totalLivingSpace,
+    costCategories,
+  } = props;
+  const previewData: HeatingBillPreviewData = {
     mainDocDates: {
-      created_at: "14.11.2024",
-      start_date: "01.01.2023",
-      end_date: "31.12.2023",
+      created_at: mainDoc?.created_at,
+      start_date: mainDoc?.start_date,
+      end_date: mainDoc?.end_date,
     },
-    userInfo: { first_name: "Braun &", last_name: "Hubertus GmbH" },
-    objektInfo: { street: "Rungestr. 21", zip: "10179 Berlin" },
-    contractorsNames: "Heidi Systems GmbH",
-    totalInvoicesAmount: 0,
-    totalLivingSpace: 0,
-    contract: {
-      id: "stub-id",
-      user_id: "stub-user-id",
-      local_id: "stub-local-id",
-      is_current: false,
-      rental_start_date: "2023-01-01",
-      rental_end_date: null,
-      cold_rent: "1000.00",
-      additional_costs: "200.00",
-      deposit: "1000.00",
-      custody_type: null,
-      created_at: "2023-01-01T00:00:00Z",
-      updated_at: "2023-01-01T00:00:00Z",
-    } as ContractType,
-    costCategories: [],
+    mainDocData: mainDoc,
+    userInfo: {
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+    },
+    objektInfo: {
+      zip: objekt?.zip,
+      street: objekt?.street,
+    },
+    contractorsNames: contractors
+      ?.map((c) => `${c.first_name} ${c.last_name}`)
+      .join(", "),
+    totalInvoicesAmount: invoices.reduce(
+      (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
+      0
+    ),
+    totalLivingSpace,
+    contract,
+    costCategories,
+    propertyNumber: generatePropertyNumber(),
+    heidiCustomerNumber: generateHeidiCustomerNumber(),
   };
 
-  const stubbedContractors: ContractorType[] = [];
-
   return (
-    <PDFViewer width={"100%"} height={"100%"}>
-      <Document>
-        {/* <HeatingBillPreviewOnePDF
-          previewData={stubbedPreviewData}
-          contractors={stubbedContractors}
-        />
-        <HeatingBillPreviewTwoPDF previewData={stubbedPreviewData} />
-        <HeatingBillPreviewThreePDF previewData={stubbedPreviewData} />
-        <HeatingBillPreviewFourPDF previewData={stubbedPreviewData} />
-        <HeatingBillPreviewFivePDF previewData={stubbedPreviewData} />
-        <HeatingBillPreviewSixPDF previewData={stubbedPreviewData} /> */}
-      </Document>
-    </PDFViewer>
+    // <PDFViewer width={"100%"} height={"100%"}>
+    <Document>
+      <HeatingBillPreviewOnePDF
+        previewData={previewData}
+        contractors={props.contractors}
+      />
+      <HeatingBillPreviewTwoPDF previewData={previewData} />
+      <HeatingBillPreviewThreePDF previewData={previewData} />
+      <HeatingBillPreviewFourPDF previewData={previewData} />
+      <HeatingBillPreviewFivePDF previewData={previewData} />
+      <HeatingBillPreviewSixPDF previewData={previewData} />
+    </Document>
+    // </PDFViewer>
   );
 }

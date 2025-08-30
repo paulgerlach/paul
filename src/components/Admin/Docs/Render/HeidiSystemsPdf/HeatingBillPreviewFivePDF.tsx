@@ -2,6 +2,7 @@
 
 import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import { formatDateGerman } from "@/utils";
 
 const styles = StyleSheet.create({
   page: {
@@ -115,7 +116,9 @@ export default function HeatingBillPreviewFivePDF({
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>5/6 355703/0010</Text>
+        <Text style={styles.headerText}>
+          5/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+        </Text>
       </View>
 
       <View style={{ marginBottom: 10 }}>
@@ -147,7 +150,9 @@ export default function HeatingBillPreviewFivePDF({
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Bezug</Text>
-            <Text style={styles.tableCell}>31.12.2023</Text>
+            <Text style={styles.tableCell}>
+              {formatDateGerman(previewData.mainDocDates.created_at)}
+            </Text>
             <Text style={styles.tableCellRight}>761.123</Text>
             <Text style={styles.tableCellRight}>159.911,9</Text>
             <Text style={styles.tableCellRight}>14.318,13</Text>

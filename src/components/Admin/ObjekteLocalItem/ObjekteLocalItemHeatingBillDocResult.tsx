@@ -5,6 +5,14 @@ import Image from "next/image";
 import {
   getActiveContractByLocalID,
   getContractsByLocalID,
+  getDocCostCategoryTypes,
+  getHeatingBillDocumentByID,
+  getInvoicesByHeatingBillDocumentID,
+  getLocalById,
+  getObjectById,
+  getRelatedContractors,
+  getRelatedLocalsByObjektId,
+  getUserData,
   // getDocCostCategoryTypes,
   // getHeatingBillDocumentByID,
   // getInvoicesByHeatingBillDocumentID,
@@ -72,21 +80,22 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
     }
   };
 
-  // const objekt = await getObjectById(id);
-  // const relatedLocals = await getRelatedLocalsByObjektId(id);
-  // const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
-  // const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
-  // const contract = await getActiveContractByLocalID(localID);
-  // const invoices = await getInvoicesByHeatingBillDocumentID(docID ? docID : "");
-  // const local = await getLocalById(localID ? localID : "");
-  // const contractors = contract?.id
-  //   ? await getRelatedContractors(contract.id)
-  //   : [];
+  const objekt = await getObjectById(id);
+  const relatedLocals = await getRelatedLocalsByObjektId(id);
+  const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
+  const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
+  const contract = await getActiveContractByLocalID(item.id);
+  const invoices = await getInvoicesByHeatingBillDocumentID(docID ? docID : "");
+  const local = await getLocalById(item.id ?? "");
+  const user = await getUserData();
+  const contractors = contract?.id
+    ? await getRelatedContractors(contract.id)
+    : [];
 
-  // const totalLivingSpace =
-  //   relatedLocals?.reduce((sum, local) => {
-  //     return sum + (Number(local.living_space) || 0);
-  //   }, 0) || 0;
+  const totalLivingSpace =
+    relatedLocals?.reduce((sum, local) => {
+      return sum + (Number(local.living_space) || 0);
+    }, 0) || 0;
 
   return (
     <div
@@ -151,14 +160,15 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
             />
           </button>
           <LocalPDFDownloadButton
-          // mainDoc={mainDoc}
-          // previewLocal={local}
-          // totalLivingSpace={totalLivingSpace}
-          // costCategories={costCategories}
-          // invoices={invoices}
-          // contract={contract}
-          // contractors={contractors}
-          // objekt={objekt}
+            mainDoc={mainDoc}
+            local={local}
+            user={user}
+            totalLivingSpace={totalLivingSpace}
+            costCategories={costCategories}
+            invoices={invoices}
+            contract={contract}
+            contractors={contractors}
+            objekt={objekt}
           />
           <ThreeDotsButton
             dialogAction="heating_bill_delete"

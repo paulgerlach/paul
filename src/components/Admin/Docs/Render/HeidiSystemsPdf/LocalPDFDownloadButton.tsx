@@ -4,11 +4,12 @@ import Image from "next/image";
 import { pdf } from "@react-pdf/renderer";
 import { doc_download } from "@/static/icons";
 import HeidiSystemsPdf from "./HeidiSystemsPdf";
+import { type HeatingBillPreviewProps } from "../HeatingBillPreview/HeatingBillPreview";
 
-export default function LocalPDFDownloadButton() {
+export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
   const handleDownload = async () => {
     try {
-      const blob = await pdf(<HeidiSystemsPdf />).toBlob();
+      const blob = await pdf(<HeidiSystemsPdf {...props} />).toBlob();
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");

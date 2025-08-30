@@ -81,7 +81,9 @@ export default function HeatingBillPreviewSixPDF({
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>6/6 355703/0010</Text>
+        <Text style={styles.headerText}>
+          6/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+        </Text>
       </View>
 
       <View style={{ marginBottom: 10 }}>

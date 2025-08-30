@@ -1,15 +1,8 @@
 import { admin_logo } from "@/static/icons";
-import { Checkbox } from "@radix-ui/react-checkbox";
 import Image from "next/image";
 import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 import { ContractorType } from "@/types";
-import {
-  formatDateGerman,
-  formatEuro,
-  generateHeidiCustomerNumber,
-  generatePropertyNumber,
-  generateUserNumber,
-} from "@/utils";
+import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 
 type BillDataType = {
   billNumber: string;

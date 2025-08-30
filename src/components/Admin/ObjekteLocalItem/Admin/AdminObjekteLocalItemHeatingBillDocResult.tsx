@@ -4,7 +4,7 @@ import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import {
   getAdminContractsByLocalID,
-  getContractsByLocalID,
+  // getContractsByLocalID,
   // getDocCostCategoryTypes,
   // getHeatingBillDocumentByID,
   // getInvoicesByHeatingBillDocumentID,
@@ -18,7 +18,7 @@ import {
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-import LocalPDFDownloadButton from "../../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
+// import LocalPDFDownloadButton from "../../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
   item: LocalType;
@@ -155,7 +155,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
               alt={"gmail_icon"}
             />
           </button>
-          <LocalPDFDownloadButton
+          {/* <LocalPDFDownloadButton
           // mainDoc={mainDoc}
           // previewLocal={local}
           // totalLivingSpace={totalLivingSpace}
@@ -164,7 +164,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
           // contract={contract}
           // contractors={contractors}
           // objekt={objekt}
-          />
+          /> */}
           <ThreeDotsButton
             dialogAction="admin_heating_bill_delete"
             editLink={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}

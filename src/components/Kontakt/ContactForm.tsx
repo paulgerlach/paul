@@ -32,7 +32,7 @@ export default function ContactForm() {
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       const response = await fetch(
-        "https://hook.eu2.make.com/o27b9d40ybvj3ft6o22d3qigzujlf2yo",
+        process.env.NEXT_PUBLIC_CONTACT_URL as string,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

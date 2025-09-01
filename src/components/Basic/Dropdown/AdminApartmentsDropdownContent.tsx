@@ -26,8 +26,8 @@ export default function AdminApartmentsDropdownContent({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredApartments = apartments?.filter((app) =>
-    app.street.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredApartments = apartments?.filter((apartment) =>
+    apartment.street.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleClick = (index: number) => {
@@ -47,28 +47,32 @@ export default function AdminApartmentsDropdownContent({
         {filteredApartments?.length === 0 ? (
           <div className="text-sm text-gray-500">Keine Ergebnisse gefunden</div>
         ) : (
-          filteredApartments?.map((app, index) => (
+          filteredApartments?.map((apartment, index) => (
             <AdminApartmentsDropdownContentItem
               isOpen={openIndex === index}
               onClick={handleClick}
               index={index}
               toggleSelection={toggleSelection}
               selectedLocalIds={selectedLocalIds}
-              key={app.street}
-              item={app}
+              key={apartment.street}
+              item={apartment}
             />
           ))
         )}
       </div>
       <div className="flex items-center px-5 justify-between">
         <button
-          onClick={() => selectAll()}
+          onClick={() => {
+            selectAll();
+          }}
           className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
         >
           Alle auswählen
         </button>
         <button
-          onClick={() => clearSelection()}
+          onClick={() => {
+            clearSelection();
+          }}
           className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
         >
           Auswahl entfernen

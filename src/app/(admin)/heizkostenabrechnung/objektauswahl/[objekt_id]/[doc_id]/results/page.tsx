@@ -1,7 +1,7 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/ObjekteLocalItemHeatingBillDocResult";
+import ObjekteObjektItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/ObjekteObjektItemHeatingBillDocResult";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPDF({
@@ -24,7 +24,7 @@ export default async function ResultLocalPDF({
       <ContentWrapper className="space-y-4 max-h-[90%]">
         <div className="overflow-y-auto space-y-4">
           {locals?.map((local) => (
-            <ObjekteLocalItemHeatingBillDocResult
+            <ObjekteObjektItemHeatingBillDocResult
               id={objekt_id}
               key={local.id}
               item={local}

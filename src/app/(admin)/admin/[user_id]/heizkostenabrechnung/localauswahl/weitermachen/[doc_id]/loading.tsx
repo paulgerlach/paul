@@ -1,5 +1,5 @@
-import Loading from "@/components/Admin/Loading";
+import Loading from "@/components/Basic/Loading/Loading";
 
 export default function DocIdLoading() {
-    return <Loading />
+  return <Loading />;
 }

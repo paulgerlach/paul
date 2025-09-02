@@ -102,6 +102,7 @@ export default function DokumenteLayout() {
     }
   };
 
+  const getObjektDisplayName = (objekt: Objekt): string => {
     return `${objekt.street}`;
   };
 

@@ -3,6 +3,15 @@
 import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
 
+const colors = {
+  accent: "#DDE9E0",
+  accent2: "#7F9D86",
+  dark: "#083123",
+  text: "#0D282FCC",
+  title: "#5A917F",
+  link: "#6BCAAA",
+};
+
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
@@ -41,6 +50,13 @@ const styles = StyleSheet.create({
   tableRow: { flexDirection: "row", paddingVertical: 2 },
   cell: { flex: 1 },
   cellRight: { flex: 1, textAlign: "right" },
+  headerBox: {
+    backgroundColor: colors.accent,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginBottom: 10,
+  },
 });
 
 export default function HeatingBillPreviewThreePDF({

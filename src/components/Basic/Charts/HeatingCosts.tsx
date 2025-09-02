@@ -65,8 +65,8 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
 
     const filteredDevices =
       meterIds && meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID))
-        : csvText;
+        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
+        : [];
 
     // Get all historical data with dates
     const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);

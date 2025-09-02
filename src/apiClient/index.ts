@@ -168,6 +168,67 @@ export const useUploadDocuments = () => {
   });
 };
 
+async function getUserDocuments(): Promise<any[]> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch documents: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+export function useUserDocuments() {
+  return useQuery({
+    queryKey: ["user_documents"],
+    queryFn: () => getUserDocuments(),
+    refetchOnWindowFocus: false,
+  });
+}
+
+async function getUserDocumentsByType(documentType: string): Promise<any[]> {
+  const user = await getAuthenticatedUser();
+
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("related_type", documentType)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to fetch documents: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+export function useUserDocumentsByType(documentType: string) {
+  return useQuery({
+    queryKey: ["user_documents", documentType],
+    queryFn: () => getUserDocumentsByType(documentType),
+    refetchOnWindowFocus: false,
+  });
+}
+
+export const getDocumentDownloadUrl = async (documentPath: string): Promise<string> => {
+  const data = await supabase.storage
+    .from("documents")
+    .createSignedUrl(documentPath, 60 * 60, {download: true});
+
+    if(data.error) {
+      throw new Error(`Failed to fetch document download URL: ${data.error.message}`);
+    }
+
+  return data.data.signedUrl;
+};
+
 export const fetchStreetsByZip = async (zip: string): Promise<string[]> => {
   const res = await fetch(
     `https://openplzapi.org/de/Streets?postalCode=${zip}`

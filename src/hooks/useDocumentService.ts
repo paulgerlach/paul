@@ -71,8 +71,6 @@ export const useDocumentService = () => {
   return {
     isLoading,
     documents,
-    stats,
-     
     fetchDocuments,
     fetchDocumentsByType,
     refreshDocuments,

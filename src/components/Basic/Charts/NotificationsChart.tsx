@@ -52,7 +52,7 @@ export default function NotificationsChart() {
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">
+        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           Benachrichtigungen
         </h2>
         <Image
@@ -60,7 +60,7 @@ export default function NotificationsChart() {
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="max-w-6 max-h-6"
+          className="max-w-6 max-h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={notification}
           alt="notification"
         />

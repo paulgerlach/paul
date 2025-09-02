@@ -12,16 +12,16 @@ export default async function AdminDashboardPage() {
   const data = await parseCSV();
   const filteredData = data?.filter(
     (item) => item["Device Type"] !== "Device Type"
-  );
+  ) || [];
   const heatDevices = filteredData?.filter(
     (item) => item["Device Type"] === "Heat"
-  );
+  ) || [];
   const coldWaterDevices = filteredData?.filter(
     (item) => item["Device Type"] === "Water"
-  );
+  ) || [];
   const hotWaterDevices = filteredData?.filter(
     (item) => item["Device Type"] === "WWater"
-  );
+  ) || [];
 
   return (
     <div className="py-6 px-9 overflow-scroll">
@@ -48,7 +48,11 @@ export default async function AdminDashboardPage() {
 
         <div className="flex flex-col gap-3">
           <div className="h-[265px]">
-            <GaugeChart />
+            <GaugeChart
+              heatReadings={heatDevices}
+              coldWaterReadings={coldWaterDevices}
+              hotWaterReadings={hotWaterDevices}
+            />
           </div>
           <div className="h-[320px]">
             <HeatingCosts csvText={heatDevices} />

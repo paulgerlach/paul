@@ -104,13 +104,13 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
   return (
     <div className="rounded-xl shadow p-4 bg-white h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">Heizkosten</h2>
+        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">Heizkosten</h2>
         <Image
           width={24}
           height={24}
           sizes="100%"
           loading="lazy"
-          className="max-w-6 max-h-6 w-auto"
+          className="max-w-6 max-h-6 w-auto max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={heater}
           alt="heater"
         />

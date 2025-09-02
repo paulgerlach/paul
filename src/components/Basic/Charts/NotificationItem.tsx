@@ -28,7 +28,7 @@ export default function NotificationItem({
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="w-4 h-4 md:w-3.5 md:h-3.5 lg:w-5 lg:h-5"
+          className="w-auto h-4 md:w-3.5 md:h-3.5 lg:w-5 lg:h-5"
           src={leftIcon}
           alt=""
         />

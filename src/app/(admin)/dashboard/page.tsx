@@ -23,6 +23,8 @@ export default async function AdminPage() {
     (item) => item["Device Type"] === "WWater"
   );
 
+  console.log(data)
+
   return (
     <div className="py-6 px-9 overflow-scroll">
       <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
@@ -30,7 +32,7 @@ export default async function AdminPage() {
         <div className="flex flex-col gap-3">
           <div className="h-[280px]">
             <WaterChart
-              csvText={coldWaterDevices}
+              csvText={coldWaterDevices || []}
               color="#6083CC"
               title="Kaltwasser"
               chartType="cold"
@@ -38,7 +40,7 @@ export default async function AdminPage() {
           </div>
           <div className="h-[280px]">
             <WaterChart
-              csvText={hotWaterDevices}
+              csvText={hotWaterDevices || []}
               color="#E74B3C"
               title="Warmwasser"
               chartType="hot"
@@ -48,7 +50,11 @@ export default async function AdminPage() {
 
         <div className="flex flex-col gap-3">
           <div className="h-[265px]">
-            <GaugeChart />
+            <GaugeChart
+              heatReadings={heatDevices}
+              coldWaterReadings={coldWaterDevices}
+              hotWaterReadings={hotWaterDevices}
+            />
           </div>
           <div className="h-[380px]">
             <HeatingCosts csvText={heatDevices} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { endOfMonth, format, startOfMonth } from "date-fns";
+import { endOfMonth, format, isSameDay, startOfMonth, subDays, subMonths } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useEffect } from "react";
 
@@ -25,12 +25,45 @@ export default function AdminDatetimeDropdown({
 
   // Set initial dates in the store when component mounts
   useEffect(() => {
+    if (startDate && endDate) {
+      setDate({ from: startDate, to: endDate });
+      return;
+    }
+
     const initialFrom = date?.from ?? startOfMonth(new Date());
     const initialTo = date?.to ?? endOfMonth(new Date());
-
     setDates(initialFrom, initialTo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setDates]);
+  }, [setDates, startDate, endDate]);
+
+  const getDefaultPreset = () => {
+    const today = new Date();
+    if (startDate && endDate) {
+      // Exact day matches
+      if (isSameDay(startDate, today) && isSameDay(endDate, today)) return "today" as const;
+      const yesterday = subDays(today, 1);
+      if (isSameDay(startDate, yesterday) && isSameDay(endDate, yesterday)) return "yesterday" as const;
+
+      // Rolling windows ending today
+      if (isSameDay(endDate, today)) {
+        if (isSameDay(startDate, subDays(today, 6))) return "7d" as const;
+        if (isSameDay(startDate, subDays(today, 29))) return "30d" as const;
+        if (isSameDay(startDate, subDays(today, 89))) return "90d" as const;
+      }
+
+      // Month presets
+      if (isSameDay(startDate, startOfMonth(today)) && isSameDay(endDate, endOfMonth(today))) {
+        return "thisMonth" as const;
+      }
+      const prev = subMonths(today, 1);
+      if (isSameDay(startDate, startOfMonth(prev)) && isSameDay(endDate, endOfMonth(prev))) {
+        return "lastMonth" as const;
+      }
+
+      return "custom" as const;
+    }
+    return "thisMonth" as const;
+  };
 
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
@@ -94,6 +127,7 @@ export default function AdminDatetimeDropdown({
             startDate={startDate}
             endDate={endDate}
             onCommitRange={(from, to) => setDates(from, to)}
+            defaultPreset={getDefaultPreset()}
           />
         </PopoverContent>
       </Popover>

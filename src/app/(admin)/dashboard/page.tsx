@@ -24,25 +24,45 @@ export default async function AdminPage() {
   );
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 overflow-scroll">
       <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-      <ContentWrapper className="grid grid-cols-3 gap-2 grid-rows-10">
-        <WaterChart
-          csvText={coldWaterDevices}
-          color="#6083CC"
-          title="Kaltwasser"
-          chartType="cold"
-        />
-        <GaugeChart />
-        <NotificationsChart />
-        <HeatingCosts csvText={heatDevices} />
-        <WaterChart
-          csvText={hotWaterDevices}
-          color="#E74B3C"
-          title="Warmwasser"
-          chartType="hot"
-        />
-        <EinsparungChart />
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+        <div className="flex flex-col gap-3">
+          <div className="h-[280px]">
+            <WaterChart
+              csvText={coldWaterDevices}
+              color="#6083CC"
+              title="Kaltwasser"
+              chartType="cold"
+            />
+          </div>
+          <div className="h-[280px]">
+            <WaterChart
+              csvText={hotWaterDevices}
+              color="#E74B3C"
+              title="Warmwasser"
+              chartType="hot"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="h-[265px]">
+            <GaugeChart />
+          </div>
+          <div className="h-[380px]">
+            <HeatingCosts csvText={heatDevices} />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="h-[420px]">
+            <NotificationsChart />
+          </div>
+          <div className="h-[140px]">
+            <EinsparungChart />
+          </div>
+        </div>
       </ContentWrapper>
     </div>
   );

@@ -50,7 +50,7 @@ const notifications = [
 
 export default function NotificationsChart() {
   return (
-    <div className="rounded-2xl row-span-7 shadow p-4 bg-white px-5">
+    <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium text-gray-800">
           Benachrichtigungen
@@ -65,14 +65,14 @@ export default function NotificationsChart() {
           alt="notification"
         />
       </div>
-      <div className="space-y-1.5">
+      <div className="space-y-2 flex-1 overflow-auto pr-1">
         {notifications.map((n, idx) => (
           <NotificationItem key={idx} {...n} />
         ))}
       </div>
       <div>
         <Link
-          className="text-[10px] text-link text-center underline w-full inline-block mt-[1.5vw]"
+          className="text-xs text-link text-center underline w-full inline-block mt-3"
           href={ROUTE_HOME}>
           Weitere Benachrichtigungen anzeigen
         </Link>

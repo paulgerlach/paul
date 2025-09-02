@@ -72,7 +72,7 @@ export default function GaugeChart({ percent = 0.72 }) {
       ref={containerRef}
       role="img"
       aria-label={`Gauge chart showing ${Math.round(value)} percent used`}
-      className="rounded-xl row-span-4 relative shadow p-4 bg-white w-full h-full"
+      className="rounded-xl relative shadow p-4 bg-white w-full h-full"
     >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium text-gray-800">Gesamtkosten</h2>
@@ -133,11 +133,11 @@ export default function GaugeChart({ percent = 0.72 }) {
         </PieChart>
       </ResponsiveContainer>
 
-      <div className="absolute bottom-[20%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
+      <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
         {Math.round(value)}%
       </div>
-      <div className="absolute bottom-[5%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium">
-        Gesamtkosten: {formattedCost}
+      <div className="absolute bottom-[20%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
+        <span>Gesamtkosten: {formattedCost}</span>
       </div>
     </div>
   );

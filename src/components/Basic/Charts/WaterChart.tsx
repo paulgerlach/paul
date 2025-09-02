@@ -136,13 +136,13 @@ export default function WarmwasserChart({
   const gradientId = `gradient-${color.replace("#", "")}`;
 
   return (
-    <div className="rounded-2xl row-span-5 shadow p-4 bg-white px-5">
-      <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2 mr-8">
+    <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
+      <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium text-gray-800">{title}</h2>
         <Image
           width={0}
           height={0}
-          sizes="100vw"
+          sizes="100%"
           loading="lazy"
           className="max-w-6 max-h-6"
           src={chartType === "hot" ? hot_water : cold_water}
@@ -150,7 +150,8 @@ export default function WarmwasserChart({
         />
       </div>
 
-      <ResponsiveContainer width="100%" height="80%">
+      <div className="flex-1">
+      <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={chartData}
           margin={{ top: 10, right: -30, left: 10, bottom: 0 }}
@@ -200,6 +201,7 @@ export default function WarmwasserChart({
           />
         </ComposedChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }

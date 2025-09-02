@@ -47,42 +47,98 @@ export default async function SharedDashboard({
   const filteredData = parsedData?.data?.filter((item: any) => item["Device Type"] !== "Device Type");
   
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">📤 Shared Dashboard</h1>
-        <div className="text-gray-600 space-y-1">
-          <p>🔒 Read-only view - data snapshot shared by dashboard owner</p>
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <h3 className="font-medium text-blue-800">Applied Filters:</h3>
-            <div className="text-sm text-blue-600">
-              {filters.startDate && filters.endDate ? (
-                <p>📅 Date Range: {filters.startDate} to {filters.endDate}</p>
-              ) : (
-                <p>📅 All dates (no date filter applied)</p>
-              )}
-              {filters.meterIds && filters.meterIds.length > 0 ? (
-                <p>📊 Specific meters: {filters.meterIds.length} selected</p>
-              ) : (
-                <p>📊 All meters (no meter filter applied)</p>
-              )}
-              {expirationInfo.expiresAt && (
-                <p className="text-orange-600 font-medium">
-                  ⏰ Link expires in {expirationInfo.hoursRemaining} hour{expirationInfo.hoursRemaining !== 1 ? 's' : ''} 
-                  ({expirationInfo.expiresAt.toLocaleString()})
-                </p>
-              )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Clean Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <span className="text-blue-600">📊</span>
+                Dashboard Snapshot
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">Read-only view • Shared dashboard</p>
+            </div>
+            <div className="text-right">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
+                ⏰ Expires in {expirationInfo.hoursRemaining}h
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <div className="grid grid-cols-3 gap-2 grid-rows-10 max-h-[90vh]">
-        <WaterChart csvText={filteredData?.filter((item: any) => item["Device Type"] === "Water")} color="#6083CC" title="Kaltwasser" chartType="cold" />
-        <GaugeChart />
-        <NotificationsChart />
-        <HeatingCosts csvText={filteredData?.filter((item: any) => item["Device Type"] === "Heat")} />
-        <WaterChart csvText={filteredData?.filter((item: any) => item["Device Type"] === "WWater")} color="#E74B3C" title="Warmwasser" chartType="hot" />
-        <EinsparungChart />
+
+      {/* Filter Info Panel */}
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+            Applied Filters
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-blue-600">📅</span>
+              <span className="font-medium text-gray-700">Date Range:</span>
+              <span className="text-gray-600">
+                {filters.startDate && filters.endDate 
+                  ? `${filters.startDate} to ${filters.endDate}`
+                  : 'All dates'
+                }
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">📊</span>
+              <span className="font-medium text-gray-700">Meters:</span>
+              <span className="text-gray-600">
+                {filters.meterIds && filters.meterIds.length > 0 
+                  ? `${filters.meterIds.length} selected`
+                  : 'All meters'
+                }
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-purple-600">🔗</span>
+              <span className="font-medium text-gray-700">Expires:</span>
+              <span className="text-gray-600">
+                {expirationInfo.expiresAt?.toLocaleDateString()} at {expirationInfo.expiresAt?.toLocaleTimeString()}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dashboard Content */}
+      <div className="max-w-7xl mx-auto px-6 pb-8">
+        <div className="grid grid-cols-3 gap-6 auto-rows-fr">
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <WaterChart 
+              csvText={filteredData?.filter((item: any) => item["Device Type"] === "Water")} 
+              color="#6083CC" 
+              title="Kaltwasser" 
+              chartType="cold" 
+            />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <GaugeChart />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <NotificationsChart />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <HeatingCosts csvText={filteredData?.filter((item: any) => item["Device Type"] === "Heat")} />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <WaterChart 
+              csvText={filteredData?.filter((item: any) => item["Device Type"] === "WWater")} 
+              color="#E74B3C" 
+              title="Warmwasser" 
+              chartType="hot" 
+            />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <EinsparungChart />
+          </div>
+        </div>
       </div>
     </div>
   );

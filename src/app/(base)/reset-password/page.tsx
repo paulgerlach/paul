@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabase/client";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
@@ -22,11 +22,11 @@ const ResetPasswordSchema = z.object({
 
 type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
-
+  const searchParams = useSearchParams();
   const methods = useForm<ResetPasswordFormData>({
     resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
@@ -36,19 +36,72 @@ export default function ResetPasswordPage() {
   });
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsValidToken(true);
-      } else {
+    const checkPasswordResetSession = async () => {
+    const token = searchParams.get("token");
+    if (!token) {
+      toast.error("Ungültiger oder abgelaufener Link");
+      router.push("/");
+      return;
+    }
+
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error("Session error:", sessionError);
         toast.error("Ungültiger oder abgelaufener Link");
         router.push("/");
+        return;
       }
+
+      if (!session) {
+        toast.error("Ungültiger oder abgelaufener Link");
+        router.push("/");
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Ungültiger oder abgelaufener Link");
+        router.push("/");
+        return;
+      }
+
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+
+      if (userError || !userData) {
+        toast.error("Benutzer nicht gefunden");
+        router.push("/");
+        return;
+      }
+
+      setIsValidToken(true);
     };
 
-    checkSession();
-  }, [router]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          setIsValidToken(true);
+        } else if (event === 'SIGNED_OUT' || !session) {
+          toast.error("Ungültiger oder abgelaufener Link");
+          router.push("/");
+        } else if (event === 'SIGNED_IN' && session) {
+          checkPasswordResetSession();
+        }
+      }
+    );
 
+    checkPasswordResetSession();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router, searchParams]);
+  
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!isValidToken) return;
 
@@ -135,5 +188,26 @@ export default function ResetPasswordPage() {
         </Form>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white py-8 px-6 rounded-lg shadow-md">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Wird geladen...
+            </h2>
+            <p className="text-gray-600">
+              Bitte warten Sie einen Moment.
+            </p>
+          </div>
+        </div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

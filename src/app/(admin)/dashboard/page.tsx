@@ -7,6 +7,7 @@ import { ROUTE_OBJEKTE } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { parseCSVs } from "@/api";
+import ShareButton from "@/components/ShareButton";
 
 export default async function AdminPage() {
   const parsedData = await parseCSVs();
@@ -25,7 +26,10 @@ export default async function AdminPage() {
 
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
-      <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
+      <div className="flex justify-between items-center mb-4">
+        <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
+        <ShareButton />
+      </div>
       <ContentWrapper className="max-h-[90%] grid grid-cols-3 gap-2 grid-rows-10">
         <WaterChart
           csvText={coldWaterDevices}

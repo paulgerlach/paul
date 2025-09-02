@@ -40,6 +40,11 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  // 🔓 Allow shared dashboard access without authentication
+  if (path.startsWith('/shared/dashboard')) {
+    return supabaseResponse;
+  }
+
   // 🔒 Step 1: Auth check for protected routes
   const isProtected = protectedRoutes.some((route) => path.startsWith(route));
   if (!user && isProtected) {

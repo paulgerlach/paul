@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-
+import DokumenteLayout from "@/components/Admin/Docs/DokumenteLayout/DokumenteLayout";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
 
 export default function DokumentePage() {
@@ -12,8 +12,8 @@ export default function DokumentePage() {
         title="Dokumente organisieren"
         subtitle="Die fertig erstellten Betriebskostenabrechnung können nun die Ihre Mietparteinversenden. Alle Informationen zur Zahlung befinden sich bereits automatisiert auf dem Dokument."
       />
-      <ContentWrapper className="max-h-[90%]">
-        {/* <DokumenteLayout /> */}
+      <ContentWrapper className="h-full">
+        <DokumenteLayout />
       </ContentWrapper>
     </div>
   );

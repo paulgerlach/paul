@@ -99,8 +99,7 @@ export default function DokumenteLayout() {
     }
   };
 
-  const getObjektDisplayName = (objekt: Objekt): string => {
-    return `${objekt.street} `;
+    return `${objekt.street}`;
   };
 
   if (documentsLoading || objektsLoading) {

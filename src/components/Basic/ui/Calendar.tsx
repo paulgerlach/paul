@@ -45,16 +45,16 @@ function Calendar({
           "w-10 h-10 p-0 font-normal rounded-none text-sm"
         ),
         day_range_start:
-          "day-range-start aria-selected:bg-primary aria-selected:text-primary-foreground",
+          "day-range-start aria-selected:!bg-[#9AD993] aria-selected:!text-black aria-selected:hover:!bg-[#9AD993] aria-selected:focus:!bg-[#9AD993]",
         day_range_end:
-          "day-range-end aria-selected:bg-primary aria-selected:text-primary-foreground",
+          "day-range-end aria-selected:!bg-[#9AD993] aria-selected:!text-black aria-selected:hover:!bg-[#9AD993] aria-selected:focus:!bg-[#9AD993]",
         day_selected:
           "bg-[#C3F3C0] text-black hover:bg-[#C3F3C0] hover:text-black focus:bg-[#C3F3C0] focus:text-black",
         day_today: "bg-accent text-accent-foreground",
         day_outside: "text-[#A0A0A0] opacity-70",
         day_disabled: "text-muted-foreground opacity-50",
         day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+          "aria-selected:bg-[#C3F3C0] aria-selected:text-black",
         day_hidden: "invisible",
         ...classNames,
       }}

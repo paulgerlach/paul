@@ -55,8 +55,6 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     return filtered;
   }, [parsedData?.data, startDate, endDate]);
 
-  console.log({ selectedData });
-
   // Filter by device type using useMemo for performance
   const heatDevices = useMemo(
     () => selectedData?.filter((item) => item["Device Type"] === "Heat"),
@@ -77,8 +75,6 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const calculateGaugePercent = (data: MeterReadingType[] | undefined) => {
     return 0.5;
   };
-
-  console.log({ coldWaterDevices, hotWaterDevices });
 
   return (
     <ContentWrapper className="max-h-[90%] grid grid-cols-3 gap-2 grid-rows-10">

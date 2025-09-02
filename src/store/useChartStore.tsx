@@ -14,7 +14,6 @@ export const useChartStore = create<ChartState>((set, get) => ({
   meterIds: [],
   setMeterIds: (ids: string[]) => {
     const current = get().meterIds;
-    console.log({ ids, current });
 
     if (ids?.every((id) => current.includes(id))) {
       set({

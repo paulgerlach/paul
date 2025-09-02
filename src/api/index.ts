@@ -1,4 +1,3 @@
-import Papa from "papaparse";
 import database from "@/db";
 import {
   documents,
@@ -14,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq, gte, lte, or, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -31,6 +30,7 @@ import type {
   OperatingCostDocumentType,
   UserType
 } from "@/types";
+import { parseCsv } from "@/utils/parser";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -105,90 +105,10 @@ interface ParsedDataState {
   error: string | null;
 }
 
-interface ParseResult {
+export interface ParseResult {
   data: MeterReadingType[];
   errors: { row: number; error: string; rawRow: any }[];
 }
-
-// Helper function to clean and convert numbers (handles comma as decimal separator)
-function cleanNumber(val: any): number | null {
-  if (typeof val === "number") return val;
-
-  if (typeof val === "string") {
-    const cleaned = val.replace(/\./g, "").replace(",", ".").replace(/[^0-9.-]/g, "");
-    const num = parseFloat(cleaned);
-
-    return isNaN(num) ? null : num;
-  }
-
-  return null;
-}
-
-export const parseCSVAndAccumulateErrors = (csvText: string): ParseResult => {
-  const errors: { row: number; error: string; rawRow: any }[] = [];
-  const cleanedData: MeterReadingType[] = [];
-
-  // Parse with PapaParse
-  const result = Papa.parse<Record<string, any>>(csvText, {
-    header: true,
-    skipEmptyLines: true,
-    delimiter: ";",
-    transformHeader: (header) => header.trim(),
-    dynamicTyping: false,
-  });
-
-  let rowNumber = 1;
-  for (const row of result.data) {
-    // Skip header rows that are repeated in the middle
-    if (row["Frame Type"] === "Frame Type") continue;
-
-    try {
-      // Clean numeric fields
-      const cleanedRow: any = {};
-      for (const [key, value] of Object.entries(row)) {
-        if (typeof value === "string" && value.match(/^-?\d+([.,]\d+)?$/)) {
-          cleanedRow[key] = cleanNumber(value);
-        } else {
-          cleanedRow[key] = value;
-        }
-      }
-
-      // Validate required fields
-      if (!cleanedRow["Frame Type"] || !cleanedRow["Device Type"]) {
-        errors.push({
-          row: rowNumber,
-          error: "Missing required fields (Frame Type or Device Type)",
-          rawRow: row
-        });
-
-        rowNumber++;
-        continue;
-      }
-
-      // Type validation for Device Type
-      if (!["Heat", "WWater", "Water"].includes(cleanedRow["Device Type"])) {
-        errors.push({
-          row: rowNumber,
-          error: `Invalid Device Type: ${cleanedRow["Device Type"]}`,
-          rawRow: row
-        });
-        // Continue processing but log the error
-      }
-
-      cleanedData.push(cleanedRow as MeterReadingType);
-    } catch (parseError) {
-      errors.push({
-        row: rowNumber,
-        error: `Parse error: ${parseError}`,
-        rawRow: row
-      });
-    }
-
-    rowNumber++;
-  }
-
-  return { data: cleanedData, errors };
-};
 
 export const parseCSVs = async () => {
   const GatewayUrlFileUrl = 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
@@ -218,9 +138,9 @@ export const parseCSVs = async () => {
     const gatewayOneCsvData = await gatewayOneResponse.text();
 
     // Use the new robust parser
-    const parseResultGateway = parseCSVAndAccumulateErrors(gatewayCsvData);
-    const parseResultHeinWeis = parseCSVAndAccumulateErrors(heinWeisCsvData);
-    const parseResultGatewayOne = parseCSVAndAccumulateErrors(gatewayOneCsvData);
+    const parseResultGateway = parseCsv(gatewayCsvData);
+    const parseResultHeinWeis = parseCsv(heinWeisCsvData);
+    const parseResultGatewayOne = parseCsv(gatewayOneCsvData);
 
     if (parseResultGateway.errors.length > 0) {
       console.warn("Parse errors found in Gateway:", parseResultGateway.errors);

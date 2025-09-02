@@ -57,15 +57,18 @@ export default function DokumenteLayout() {
 
   // Fetch file sizes when documents change
   useEffect(() => {
-    if (filteredDocuments && filteredDocuments.length > 0) {
-      filteredDocuments.forEach(async (doc) => {
-        const size = await getDocumentFileSize(doc.document_url);
-        setFileSizes((prev: Record<string, string>) => ({
-          ...prev,
-          [doc.id]: size
-        }));
-      });
-    }
+    const fetchSizes = async () => {
+      if (filteredDocuments && filteredDocuments.length > 0) {
+        for (const doc of filteredDocuments) {
+          const size = await getDocumentFileSize(doc.document_url);
+          setFileSizes((prev: Record<string, string>) => ({
+            ...prev,
+            [doc.id]: size
+          }));
+        }
+      }
+    };
+    fetchSizes();
   }, [filteredDocuments, getDocumentFileSize]);
 
   const handleDownload = async (document: DocumentMetadata) => {

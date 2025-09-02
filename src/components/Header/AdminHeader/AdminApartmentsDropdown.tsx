@@ -83,16 +83,15 @@ export default function AdminApartmentsDropdown() {
         onClick={handleOpen}
         aria-expanded={isOpen}
         aria-controls="admin-apartments-dropdown"
-        className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-6 py-3"
+        className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-2 py-3 h-full"
       >
-        <div className="flex items-center justify-start whitespace-nowrap gap-5">
+        <div className="flex items-center justify-start whitespace-nowrap gap-3">
           <Image
             width={0}
             height={0}
             sizes="100vw"
-            className="max-w-4 max-h-5 max-xl:max-w-3 max-xl:max-h-4"
+            className="max-w-6 max-h-6 max-xl:max-w-6 max-xl:max-h-6 w-6 h-6"
             loading="lazy"
-            style={{ width: "100%", height: "auto" }}
             alt="main_portfolio"
             src={main_portfolio}
           />
@@ -107,7 +106,7 @@ export default function AdminApartmentsDropdown() {
           width={0}
           height={0}
           sizes="100vw"
-          className="max-w-4 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
+          className="max-w-2 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
           loading="lazy"
           style={{ width: "100%", height: "auto" }}
           alt="chevron_admin"

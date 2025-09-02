@@ -2,15 +2,16 @@
 
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { useEffect } from "react";
 
 import { cn } from "@/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { Button } from "../ui/Button";
-import { Calendar } from "../ui/Calendar";
 import Image from "next/image";
 import { chevron_admin, clock_dark } from "@/static/icons";
 import { useState } from "react";
 import { useChartStore } from "@/store/useChartStore";
+import TimeFilterPresets from "./TimeFilterPresets";
 
 export default function AdminDatetimeDropdown({
   className,
@@ -19,31 +20,37 @@ export default function AdminDatetimeDropdown({
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date()),
   });
-  const { setDates } = useChartStore();
+  const { setDates, startDate, endDate } = useChartStore();
+  const [open, setOpen] = useState(false);
+
+  // Set initial dates in the store when component mounts
+  useEffect(() => {
+    const initialFrom = date?.from ?? startOfMonth(new Date());
+    const initialTo = date?.to ?? endOfMonth(new Date());
+
+    setDates(initialFrom, initialTo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setDates]);
 
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
-    if (date?.from && date?.to) {
-      setDates(date?.from, date?.to);
-    }
   };
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             id="date"
-            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-fit shadow-none px-6 hover:!bg-transparent py-3"
+            className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer h-full shadow-none px-2 py-3 hover:!bg-transparent"
           >
             <div className="flex items-center justify-start whitespace-nowrap gap-5">
               <Image
                 width={0}
                 height={0}
                 sizes="100vw"
-                className="max-w-4 max-h-5"
+                className="max-w-6 max-h-6 max-xl:max-w-6 max-xl:max-h-6 w-6 h-6"
                 loading="lazy"
-                style={{ width: "100%", height: "auto" }}
                 alt="clock_dark"
                 src={clock_dark}
               />
@@ -69,7 +76,7 @@ export default function AdminDatetimeDropdown({
               width={0}
               height={0}
               sizes="100vw"
-              className="max-w-4 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
+              className="max-w-2 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
               loading="lazy"
               style={{ width: "100%", height: "auto" }}
               alt="chevron_admin"
@@ -81,12 +88,12 @@ export default function AdminDatetimeDropdown({
           className="w-auto p-0 border-none shadow-none"
           align="start"
         >
-          <Calendar
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={handleDateChange}
-            numberOfMonths={2}
+          <TimeFilterPresets
+            date={date}
+            setDate={handleDateChange}
+            startDate={startDate}
+            endDate={endDate}
+            onCommitRange={(from, to) => setDates(from, to)}
           />
         </PopoverContent>
       </Popover>

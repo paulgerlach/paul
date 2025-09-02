@@ -25,7 +25,7 @@ export default function AdminHeader() {
       <div className="flex items-center justify-between border-b border-b-[#EAEAEA] shadow-2xs bg-white w-full pl-8 pr-5 max-medium:px-5 duration-300 ease-in-out">
         <Link
           href={ROUTE_DASHBOARD}
-          className="flex min-w-xs items-center justify-start gap-3"
+          className="flex max-w-[356px] min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[190px] items-center justify-start gap-3"
         >
           <Image
             width={0}

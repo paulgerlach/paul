@@ -19,30 +19,30 @@ function Calendar({
     <DayPicker
       locale={de}
       showOutsideDays={showOutsideDays}
-      className={cn("p-3 border-none", className)}
+      className={cn("border-none", className)}
       classNames={{
         months: "flex max-small:flex-col flex-row gap-3",
-        month: "flex flex-col gap-4 bg-white p-7 rounded-2xl",
+        month: "flex flex-col gap-4 bg-white p-5 rounded-2xl",
         caption:
-          "flex justify-between items-center w-full [&:has(.monthBack)]:flex-row-reverse px-2 mb-2",
+          "flex justify-between items-center w-full [&:has(.monthBack)]:flex-row-reverse",
         caption_label: "text-2xl text-black font-black",
         nav: "flex items-center gap-1",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
-        nav_button_previous: "border-none cursor-pointer monthBack shadow-none",
-        nav_button_next: "border-none cursor-pointer shadow-none",
+        nav_button_previous: "border-none cursor-pointer monthBack !shadow-none",
+        nav_button_next: "border-none cursor-pointer !shadow-none",
         table: "w-full border-collapse space-x-1",
-        head_row: "flex",
-        head_cell: "text-muted-foreground w-8 font-normal text-[0.8rem]",
+        head_row: "flex justify-between",
+        head_cell: "text-muted-foreground w-10 font-normal text-[0.8rem]",
         row: "flex w-full",
         cell: cn(
-          "relative p-0 border border-[#D5D4DF] text-center text-sm focus-within:relative focus-within:z-20 aria-selected:opacity-100 [&:has([aria-selected])]:!bg-green [&:has([aria-selected])]:bg-accent"
+          "relative p-0 border-[0.5px] border-[#D5D4DF] text-center text-sm focus-within:relative focus-within:z-20 aria-selected:opacity-100 [&:has([aria-selected])]:!bg-green [&:has([aria-selected])]:bg-accent"
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "w-8 h-8 p-0 font-normal rounded-none text-sm"
+          "w-10 h-10 p-0 font-normal rounded-none text-sm"
         ),
         day_range_start:
           "day-range-start aria-selected:bg-primary aria-selected:text-primary-foreground",

@@ -6,13 +6,18 @@ import HeatingCosts from "@/components/Basic/Charts/HeatingCosts";
 import NotificationsChart from "@/components/Basic/Charts/NotificationsChart";
 import WaterChart from "@/components/Basic/Charts/WaterChart";
 
-export default async function SharedDashboard({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function SharedDashboard({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> 
+}) {
+  const params = await searchParams;
   // Fetch data server-side like other dashboards
   const parsedData = await parseCSVs();
   
   // Convert URLSearchParams-like object to URLSearchParams
   const urlSearchParams = new URLSearchParams();
-  Object.entries(searchParams).forEach(([key, value]) => {
+  Object.entries(params).forEach(([key, value]) => {
     if (value) {
       urlSearchParams.set(key, Array.isArray(value) ? value[0] : value);
     }

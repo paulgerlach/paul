@@ -10,10 +10,13 @@ import {
 import { chevron_admin, main_portfolio } from "@/static/icons";
 import type { UserType } from "@/types";
 import Image from "next/image";
-import { } from "react";
+import { useParams } from "next/navigation";
 
 export default function AdminUsersDropdown({ user }: { user?: UserType }) {
+  const { user_id } = useParams();
   const { data: users } = useBasicUsers();
+
+  const currentUser = users?.find((user) => user.id === user_id);
 
   return (
     <Popover>
@@ -35,8 +38,8 @@ export default function AdminUsersDropdown({ user }: { user?: UserType }) {
             <div className="flex flex-col items-start justify-center">
               <span className="font-bold text-sm">Current User</span>
               <span className="text-xs text-black/50">
-                {user
-                  ? `${user.first_name} ${user.last_name}`
+                {currentUser
+                  ? `${currentUser.first_name} ${currentUser.last_name}`
                   : "No user selected"}
               </span>
             </div>

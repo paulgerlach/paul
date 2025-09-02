@@ -222,7 +222,7 @@ export const getDocumentDownloadUrl = async (documentPath: string): Promise<stri
     .from("documents")
     .createSignedUrl(documentPath, 60 * 60, {download: true});
 
-    if(data.error) {
+    if (data.error) {
       throw new Error(`Failed to fetch document download URL: ${data.error.message}`);
     }
 

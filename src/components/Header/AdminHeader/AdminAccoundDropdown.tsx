@@ -21,7 +21,7 @@ export default function AdminAccoundDropdown() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex items-center gap-16 justify-between bg-transparent border-none cursor-pointer px-2 py-6 max-xl:py-4 h-full">
+        <button className="flex items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-2 py-6 max-xl:py-4 h-full">
           <div className="flex items-center justify-start text-lg max-xl:text-sm whitespace-nowrap gap-3">
             <Image
               width={0}

@@ -35,7 +35,7 @@ export default function AdminApartmentsDropdownContent({
   };
 
   return (
-    <div className="absolute w-full bg-white rounded-base shadow-sm px-2.5 py-4 left-0 top-[110%] space-y-3">
+    <div className="w-full bg-white rounded-base shadow-sm px-2.5 py-4 space-y-3 z-10">
       <input
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

@@ -9,7 +9,7 @@ import { Button } from "../ui/Button";
 import { Calendar } from "../ui/Calendar";
 import Image from "next/image";
 import { chevron_admin, clock_dark } from "@/static/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminDatetimeDropdown({
@@ -21,10 +21,20 @@ export default function AdminDatetimeDropdown({
   });
   const { setDates } = useChartStore();
 
+  // Set initial dates in the store when component mounts
+  useEffect(() => {
+    const initialFrom = date?.from || startOfMonth(new Date());
+    const initialTo = date?.to || endOfMonth(new Date());
+
+    setDates(initialFrom, initialTo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setDates]);
+
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
-    if (date?.from && date?.to) {
-      setDates(date?.from, date?.to);
+
+    if (newDate?.from && newDate?.to) {
+      setDates(newDate.from, newDate.to);
     }
   };
 

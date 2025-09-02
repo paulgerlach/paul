@@ -18,9 +18,13 @@ import { useChartStore } from "@/store/useChartStore"; // Import the Zustand sto
 // Helper function to extract the most recent reading date
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
+
   const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+
   if (!dateString) return null;
+
   const [day, month, year] = dateString.split(".").map(Number);
+
   return new Date(year, month - 1, day);
 };
 
@@ -36,15 +40,33 @@ function getMonthlyDataWithDatesAndValues(
     const historicalDate = new Date(recentDate);
     historicalDate.setMonth(recentDate.getMonth() - i / 2);
     let parsedValue = 0;
+
     if (typeof value === "string") {
       parsedValue = parseFloat(value.replace(",", "."));
     } else if (typeof value === "number") {
       parsedValue = value;
     }
+
     history.push({ date: historicalDate, value: parsedValue });
   }
+
   return history.reverse();
 }
+
+const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
 
 export default function WarmwasserChart({
   color,
@@ -65,31 +87,15 @@ export default function WarmwasserChart({
       return;
     }
 
-    const months = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
-
     const recentReadingDate = getRecentReadingDate(csvText);
     if (!recentReadingDate) {
       return;
     }
 
     // Filter devices based on meterIds from the store
-    const filteredDevices =
-      meterIds && meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID))
-        : csvText;
+    const filteredDevices = (meterIds.length > 0)
+      ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
+      : [];
 
     // Aggregate historical data from the filtered devices
     const combinedHistory = filteredDevices.flatMap((device) =>

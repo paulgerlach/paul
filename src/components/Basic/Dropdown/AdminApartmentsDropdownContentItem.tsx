@@ -63,7 +63,7 @@ export default function AdminApartmentsDropdownContentItem({
             <input
               type="checkbox"
               onChange={() => {
-                setMeterIds(local.meter_ids || []);
+                setMeterIds(local.meter_ids?.filter(Boolean) || []);
                 toggleSelection(local.id);
               }}
               id={local.id}

@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore"; // Import the Zustand store
+import { EmptyState } from "@/components/Basic/ui/States";
 
 // Helper function to extract the most recent reading date (robust: finds first available)
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
@@ -72,11 +73,17 @@ export default function WarmwasserChart({
   title,
   chartType,
   csvText, // Renamed to meterReadings for clarity
+  isEmpty,
+  emptyTitle,
+  emptyDescription,
 }: {
   color: string;
   title: string;
   chartType: "hot" | "cold";
   csvText: MeterReadingType[];
+  isEmpty?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }) {
   const [chartData, setChartData] = useState<any[]>([]);
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 4000]);
@@ -255,7 +262,15 @@ export default function WarmwasserChart({
       </div>
 
       <div className="flex-1">
-      <ResponsiveContainer width="100%" height="100%">
+      {isEmpty ? (
+        <EmptyState
+          title={emptyTitle ?? "No data available."}
+          description={emptyDescription ?? "No data available."}
+          imageSrc={chartType === "hot" ? hot_water.src : cold_water.src}
+          imageAlt={chartType === "hot" ? "Hot water" : "Cold water"}
+        />
+      ) : (
+        <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={chartData}
           margin={{ top: 10, right: -30, left: 10, bottom: 0 }}
@@ -305,6 +320,7 @@ export default function WarmwasserChart({
           />
         </ComposedChart>
       </ResponsiveContainer>
+      )}
       </div>
     </div>
   );

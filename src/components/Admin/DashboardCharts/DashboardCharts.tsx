@@ -8,6 +8,7 @@ import { MeterReadingType } from "@/api";
 import { parseGermanDate } from "@/utils";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import Widget from "@/components/Basic/ui/Widget";
+import { cold_water, hot_water, cross_arrows, heater } from "@/static/icons";
 
 // Widget moved to ui/Widget
 
@@ -101,6 +102,10 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     [selectedData]
   );
 
+  const onRetry = () => {
+    window.location.reload();
+  };
+
   const isColdEmpty = (coldWaterDevices?.length || 0) === 0;
   const isHotEmpty = (hotWaterDevices?.length || 0) === 0;
   const isHeatEmpty = (heatDevices?.length || 0) === 0;
@@ -113,59 +118,49 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   return (
     <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
       <div className="flex flex-col gap-3">
-        <Widget
-          heightClass="h-[312px]"
-          showError={false}
-          errorMessage=""
-          showEmpty={isColdEmpty}
-          emptyMessage="Keine Daten für Kaltwasser im gewählten Zeitraum."
-        >
+        <div className="h-[312px]">
           <WaterChart
             csvText={coldWaterDevices}
             color="#6083CC"
             title="Kaltwasser"
             chartType="cold"
+            isEmpty={isColdEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data for cold water in the selected period"
           />
-        </Widget>
-        <Widget
-          heightClass="h-[271px]"
-          showError={false}
-          errorMessage=""
-          showEmpty={isHotEmpty}
-          emptyMessage="Keine Daten für Warmwasser im gewählten Zeitraum."
-        >
+        </div>
+        <div className="h-[271px]">
           <WaterChart
             csvText={hotWaterDevices || []}
             color="#E74B3C"
             title="Warmwasser"
             chartType="hot"
+            isEmpty={isHotEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data for hot water in the selected period"
           />
-        </Widget>
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        <Widget
-          heightClass="h-[265px]"
-          showError={false}
-          errorMessage=""
-          showEmpty={isAllEmpty}
-          emptyMessage="Keine Messdaten im gewählten Zeitraum."
-        >
+        <div className="h-[265px]">
           <GaugeChart
             heatReadings={heatDevices}
             coldWaterReadings={coldWaterDevices}
             hotWaterReadings={hotWaterDevices}
+            isEmpty={isAllEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data in the selected period"
           />
-        </Widget>
-        <Widget
-          heightClass="h-[318px]"
-          showError={false}
-          errorMessage=""
-          showEmpty={isHeatEmpty}
-          emptyMessage="Keine Heizungsdaten im gewählten Zeitraum."
-        >
-          <HeatingCosts csvText={heatDevices} />
-        </Widget>
+        </div>
+        <div className="h-[318px]">
+          <HeatingCosts
+            csvText={heatDevices}
+            isEmpty={isHeatEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No heating data in the selected period"
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">

@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import NotificationItem from "./NotificationItem";
+import { EmptyState } from "@/components/Basic/ui/States";
 
 const notifications = [
   {
@@ -48,7 +49,7 @@ const notifications = [
   },
 ];
 
-export default function NotificationsChart() {
+export default function NotificationsChart({ isEmpty, emptyTitle, emptyDescription }: { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
@@ -66,9 +67,17 @@ export default function NotificationsChart() {
         />
       </div>
       <div className="space-y-2 flex-1 overflow-auto pr-1">
-        {notifications.map((n, idx) => (
-          <NotificationItem key={idx} {...n} />
-        ))}
+        {isEmpty ? (
+          <EmptyState
+            title={emptyTitle ?? "No data available."}
+            description={emptyDescription}
+            imageSrc={notification}
+            imageAlt="Benachrichtigungen"
+            panelClassName="rounded-xl"
+          />
+        ) : (
+          notifications.map((n, idx) => <NotificationItem key={idx} {...n} />)
+        )}
       </div>
       <div>
         <Link

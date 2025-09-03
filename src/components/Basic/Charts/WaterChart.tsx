@@ -80,6 +80,10 @@ export default function WarmwasserChart({
   csvText?: MeterReadingType[];
 }) {
   const [chartData, setChartData] = useState<any[]>([]);
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 4000]);
+  const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
+    () => (value: number) => `${value / 1000}k`
+  );
   const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
@@ -93,9 +97,10 @@ export default function WarmwasserChart({
     }
 
     // Filter devices based on meterIds from the store
-    const filteredDevices = (meterIds.length > 0)
-      ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-      : [];
+    const filteredDevices =
+      meterIds.length > 0
+        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
+        : [];
 
     // Aggregate historical data from the filtered devices
     const combinedHistory = filteredDevices.flatMap((device) =>
@@ -137,6 +142,37 @@ export default function WarmwasserChart({
     }));
 
     setChartData(dataForChart);
+
+    // Calculate dynamic domain and tick formatter based on chart data
+    if (dataForChart.length > 0) {
+      const allValues = dataForChart.flatMap((item) => [
+        item.actual,
+        item.lastYear,
+      ]);
+      const maxValue = Math.max(...allValues);
+      const minValue = Math.min(...allValues);
+
+      // Add some padding to the domain (10% above max, start from 0 or slightly below min)
+      const domainMax = Math.ceil(maxValue * 1.1);
+      const domainMin = Math.max(0, Math.floor(minValue * 0.9));
+
+      // Determine appropriate tick formatter based on the scale of values
+      let formatter: (value: number) => string;
+
+      if (domainMax >= 1000000) {
+        // For millions
+        formatter = (value) => `${(value / 1000000).toFixed(1)}M`;
+      } else if (domainMax >= 1000) {
+        // For thousands
+        formatter = (value) => `${(value / 1000).toFixed(1)}k`;
+      } else {
+        // For smaller values
+        formatter = (value) => value.toString();
+      }
+
+      setYAxisDomain([domainMin, domainMax]);
+      setTickFormatter(() => formatter);
+    }
   }, [csvText, startDate, endDate, meterIds]); // Add startDate and endDate to the dependency array
 
   const gradientId = `gradient-${color.replace("#", "")}`;
@@ -176,8 +212,8 @@ export default function WarmwasserChart({
           />
           <YAxis
             orientation="right"
-            domain={[0, 4000]}
-            tickFormatter={(value) => `${value / 1000}k`}
+            domain={yAxisDomain}
+            tickFormatter={tickFormatter}
             tick={{ fill: color, fontSize: 12 }}
             axisLine={false}
             tickLine={false}

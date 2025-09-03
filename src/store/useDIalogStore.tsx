@@ -47,6 +47,7 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     admin_operating_costs_create: false,
     login: false,
     register: false,
+    forgotPassword: false,
     admin_objekte_image: false,
     // building_cleaning_upload: false,
     // caretaker_upload: false,

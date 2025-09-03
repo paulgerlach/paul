@@ -152,6 +152,7 @@ export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
   | "login"
   | "register"
+  | "forgotPassword"
   | "admin_objekte_image";
 
 export type UploadedDocument = {

@@ -7,10 +7,6 @@ import { useChartStore } from "@/store/useChartStore";
 import { MeterReadingType } from "@/api";
 import { parseGermanDate } from "@/utils";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
-import Widget from "@/components/Basic/ui/Widget";
-import { cold_water, hot_water, cross_arrows, heater } from "@/static/icons";
-
-// Widget moved to ui/Widget
 
 const WaterChart = dynamic(() => import("@/components/Basic/Charts/WaterChart"), {
   loading: () => <ChartCardSkeleton />,

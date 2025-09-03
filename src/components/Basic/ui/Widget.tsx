@@ -6,14 +6,20 @@ export default function Widget({
   showError,
   errorMessage,
   showEmpty,
-  emptyMessage,
+  emptyTitle,
+  emptyDescription,
+  emptyImageSrc,
+  emptyImageAlt,
   children,
 }: {
   heightClass: string;
   showError: boolean;
   errorMessage: string;
   showEmpty: boolean;
-  emptyMessage: string;
+  emptyTitle: string;
+  emptyDescription: string;
+  emptyImageSrc: string;
+  emptyImageAlt: string;
   children: ReactNode;
 }) {
   return (
@@ -21,7 +27,12 @@ export default function Widget({
       {showError ? (
         <ErrorState message={errorMessage} />
       ) : showEmpty ? (
-        <EmptyState message={emptyMessage} />
+        <EmptyState
+          title={emptyTitle}
+          description={emptyDescription}
+          imageSrc={emptyImageSrc}
+          imageAlt={emptyImageAlt}
+        />
       ) : (
         children
       )}

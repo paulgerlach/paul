@@ -136,7 +136,7 @@ export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescri
   }, [data]);
 
   return (
-    <div className="rounded-xl shadow p-4 bg-white h-full flex flex-col">
+    <div className={`rounded-xl shadow p-4 bg-white h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}>
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">Heizkosten</h2>
         <Image
@@ -153,10 +153,9 @@ export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescri
       {isEmpty ? (
         <EmptyState
           title={emptyTitle ?? "No data available."}
-          description={emptyDescription}
-          imageSrc={heater}
+          description={emptyDescription ?? "No data available."}
+          imageSrc={heater.src}
           imageAlt="Heizkosten"
-          panelClassName="rounded-xl"
         />
       ) : (
       <ResponsiveContainer className="heating-costs" width="100%" height="100%">

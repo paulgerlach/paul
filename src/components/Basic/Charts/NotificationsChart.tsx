@@ -51,7 +51,7 @@ const notifications = [
 
 export default function NotificationsChart({ isEmpty, emptyTitle, emptyDescription }: { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   return (
-    <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
+    <div className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}>
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           Benachrichtigungen
@@ -70,10 +70,9 @@ export default function NotificationsChart({ isEmpty, emptyTitle, emptyDescripti
         {isEmpty ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
-            description={emptyDescription}
-            imageSrc={notification}
+            description={emptyDescription ?? "No data available."}
+            imageSrc={notification.src}
             imageAlt="Benachrichtigungen"
-            panelClassName="rounded-xl"
           />
         ) : (
           notifications.map((n, idx) => <NotificationItem key={idx} {...n} />)

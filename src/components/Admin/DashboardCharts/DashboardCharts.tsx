@@ -8,15 +8,21 @@ import { MeterReadingType } from "@/api";
 import { parseGermanDate } from "@/utils";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 
-const WaterChart = dynamic(() => import("@/components/Basic/Charts/WaterChart"), {
-  loading: () => <ChartCardSkeleton />,
-  ssr: false,
-});
+const WaterChart = dynamic(
+  () => import("@/components/Basic/Charts/WaterChart"),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+);
 
-const GaugeChart = dynamic(() => import("@/components/Basic/Charts/GaugeChart"), {
-  loading: () => <ChartCardSkeleton />,
-  ssr: false,
-});
+const GaugeChart = dynamic(
+  () => import("@/components/Basic/Charts/GaugeChart"),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+);
 
 const HeatingCosts = dynamic(
   () => import("@/components/Basic/Charts/HeatingCosts"),
@@ -98,10 +104,6 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     [selectedData]
   );
 
-  const onRetry = () => {
-    window.location.reload();
-  };
-
   const isColdEmpty = (coldWaterDevices?.length || 0) === 0;
   const isHotEmpty = (hotWaterDevices?.length || 0) === 0;
   const isHeatEmpty = (heatDevices?.length || 0) === 0;
@@ -121,8 +123,8 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             title="Kaltwasser"
             chartType="cold"
             isEmpty={isColdEmpty}
-            emptyTitle="No data available."
-            emptyDescription="No data for cold water in the selected period"
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
           />
         </div>
         <div className="h-[271px]">
@@ -132,8 +134,8 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             title="Warmwasser"
             chartType="hot"
             isEmpty={isHotEmpty}
-            emptyTitle="No data available."
-            emptyDescription="No data for hot water in the selected period"
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
           />
         </div>
       </div>
@@ -145,16 +147,16 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             coldWaterReadings={coldWaterDevices}
             hotWaterReadings={hotWaterDevices}
             isEmpty={isAllEmpty}
-            emptyTitle="No data available."
-            emptyDescription="No data in the selected period"
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten im ausgewählten Zeitraum."
           />
         </div>
         <div className="h-[318px]">
           <HeatingCosts
             csvText={heatDevices}
             isEmpty={isHeatEmpty}
-            emptyTitle="No data available."
-            emptyDescription="No heating data in the selected period"
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
           />
         </div>
       </div>

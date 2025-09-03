@@ -53,7 +53,7 @@ function getMonthlyDataWithDatesAndValues(
   return history.reverse();
 }
 
-const months = [
+const ALL_MONTHS = [
   "JAN",
   "FEB",
   "MAR",
@@ -93,21 +93,6 @@ export default function WarmwasserChart({
   const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
-    const ALL_MONTHS = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
-
     const getMonthSpanCount = (): number => {
       if (!startDate || !endDate) return 12;
       const startY = startDate.getFullYear();

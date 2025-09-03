@@ -18,9 +18,13 @@ import { useChartStore } from "@/store/useChartStore"; // Import the Zustand sto
 // Helper function to extract the most recent reading date
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
+
   const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+
   if (!dateString) return null;
+
   const [day, month, year] = dateString.split(".").map(Number);
+
   return new Date(year, month - 1, day);
 };
 
@@ -36,15 +40,33 @@ function getMonthlyDataWithDatesAndValues(
     const historicalDate = new Date(recentDate);
     historicalDate.setMonth(recentDate.getMonth() - i / 2);
     let parsedValue = 0;
+
     if (typeof value === "string") {
       parsedValue = parseFloat(value.replace(",", "."));
     } else if (typeof value === "number") {
       parsedValue = value;
     }
+
     history.push({ date: historicalDate, value: parsedValue });
   }
+
   return history.reverse();
 }
+
+const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
 
 export default function WarmwasserChart({
   color,
@@ -58,27 +80,16 @@ export default function WarmwasserChart({
   csvText?: MeterReadingType[];
 }) {
   const [chartData, setChartData] = useState<any[]>([]);
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 4000]);
+  const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
+    () => (value: number) => `${value / 1000}k`
+  );
   const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
     if (!csvText || csvText.length === 0) {
       return;
     }
-
-    const months = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
 
     const recentReadingDate = getRecentReadingDate(csvText);
     if (!recentReadingDate) {
@@ -87,9 +98,9 @@ export default function WarmwasserChart({
 
     // Filter devices based on meterIds from the store
     const filteredDevices =
-      meterIds && meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID))
-        : csvText;
+      meterIds.length > 0
+        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
+        : [];
 
     // Aggregate historical data from the filtered devices
     const combinedHistory = filteredDevices.flatMap((device) =>
@@ -131,6 +142,37 @@ export default function WarmwasserChart({
     }));
 
     setChartData(dataForChart);
+
+    // Calculate dynamic domain and tick formatter based on chart data
+    if (dataForChart.length > 0) {
+      const allValues = dataForChart.flatMap((item) => [
+        item.actual,
+        item.lastYear,
+      ]);
+      const maxValue = Math.max(...allValues);
+      const minValue = Math.min(...allValues);
+
+      // Add some padding to the domain (10% above max, start from 0 or slightly below min)
+      const domainMax = Math.ceil(maxValue * 1.1);
+      const domainMin = Math.max(0, Math.floor(minValue * 0.9));
+
+      // Determine appropriate tick formatter based on the scale of values
+      let formatter: (value: number) => string;
+
+      if (domainMax >= 1000000) {
+        // For millions
+        formatter = (value) => `${(value / 1000000).toFixed(1)}M`;
+      } else if (domainMax >= 1000) {
+        // For thousands
+        formatter = (value) => `${(value / 1000).toFixed(1)}k`;
+      } else {
+        // For smaller values
+        formatter = (value) => value.toString();
+      }
+
+      setYAxisDomain([domainMin, domainMax]);
+      setTickFormatter(() => formatter);
+    }
   }, [csvText, startDate, endDate, meterIds]); // Add startDate and endDate to the dependency array
 
   const gradientId = `gradient-${color.replace("#", "")}`;
@@ -170,8 +212,8 @@ export default function WarmwasserChart({
           />
           <YAxis
             orientation="right"
-            domain={[0, 4000]}
-            tickFormatter={(value) => `${value / 1000}k`}
+            domain={yAxisDomain}
+            tickFormatter={tickFormatter}
             tick={{ fill: color, fontSize: 12 }}
             axisLine={false}
             tickLine={false}

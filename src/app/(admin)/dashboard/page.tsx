@@ -6,11 +6,11 @@ import WaterChart from "@/components/Basic/Charts/WaterChart";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import { parseCSV } from "@/api";
+import { parseCSVs } from "@/api";
 
 export default async function AdminPage() {
-  const data = await parseCSV();
-  const filteredData = data?.filter(
+  const parsedData = await parseCSVs();
+  const filteredData = parsedData?.data?.filter(
     (item) => item["Device Type"] !== "Device Type"
   );
   const heatDevices = filteredData?.filter(

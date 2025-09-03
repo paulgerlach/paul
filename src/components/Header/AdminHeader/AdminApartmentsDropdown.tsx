@@ -5,6 +5,7 @@ import AdminApartmentsDropdownContent, {
   ApartmentType,
 } from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
 import { chevron_admin, main_portfolio } from "@/static/icons";
+import { useChartStore } from "@/store/useChartStore";
 import { LocalType } from "@/types";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -16,6 +17,7 @@ export default function AdminApartmentsDropdown() {
   const { user_id } = useParams();
   const { data: apartments } = useObjektsWithLocals();
   const { data: usersApartments } = useUsersObjektsWithLocals(String(user_id));
+  const { setMeterIds } = useChartStore();
 
   const isAdmin = !!user_id;
 
@@ -54,16 +56,27 @@ export default function AdminApartmentsDropdown() {
       ) || [];
 
     setSelectedLocalIds(allIds);
+
+    setMeterIds(
+      (usersApartments as ApartmentType[])?.flatMap(
+        (appartment) =>
+          (appartment.locals
+            .flatMap((local) => local.meter_ids)
+            ?.filter(Boolean) as string[]) || []
+      )
+    );
   };
 
   useEffect(() => {
     if (apartmentsToUse) {
       selectAll();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apartmentsToUse]);
 
   const clearSelection = () => {
     setSelectedLocalIds([]);
+    setMeterIds([]);
   };
 
   useEffect(() => {

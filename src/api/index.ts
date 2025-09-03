@@ -1,4 +1,3 @@
-import Papa from "papaparse";
 import database from "@/db";
 import {
   documents,
@@ -14,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq, gte, lte, or, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -31,6 +30,7 @@ import type {
   OperatingCostDocumentType,
   UserType
 } from "@/types";
+import { parseCsv } from "@/utils/parser";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -105,39 +105,70 @@ interface ParsedDataState {
   error: string | null;
 }
 
-export const parseCSV = async () => {
-  const fileId = '17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
-  const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+export interface ParseResult {
+  data: MeterReadingType[];
+  errors: { row: number; error: string; rawRow: any }[];
+}
+
+export const parseCSVs = async () => {
+  const GatewayUrlFileUrl = 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
+  const GatewayOneUrlFileUrl = 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
+  const HeinWeisCodeFileUrl = 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM';
+
   try {
-    // Read the CSV file
-    const response = await fetch(downloadUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch file: ${response.statusText}`);
+    // download the Gateway CSV file
+    const gatewayResponse = await fetch(GatewayUrlFileUrl);
+    if (!gatewayResponse.ok) {
+      throw new Error(`Failed to fetch Gateway file: ${gatewayResponse.statusText}`);
     }
-    const csvData = await response.text();
+    const gatewayCsvData = await gatewayResponse.text();
 
-    const parseResult = Papa.parse<MeterReadingType>(csvData, {
-      header: true, // First row contains headers
-      skipEmptyLines: true,
-      dynamicTyping: true,
-      delimiter: ";", // Your data uses semicolon delimiter
-      transformHeader: (header) => header.trim(), // Clean whitespace from headers
-    });
+    // download the HeinWeisCode CSV file
+    const heinWeisResponse = await fetch(HeinWeisCodeFileUrl);
+    if (!heinWeisResponse.ok) {
+      throw new Error(`Failed to fetch HeinWeisCode file: ${heinWeisResponse.statusText}`);
+    }
+    const heinWeisCsvData = await heinWeisResponse.text();
 
-    if (parseResult.errors.length > 0) {
-      console.warn("Parse warnings:", parseResult.errors);
+    // download the GatewayOne CSV file
+    const gatewayOneResponse = await fetch(GatewayOneUrlFileUrl);
+    if (!gatewayOneResponse.ok) {
+      throw new Error(`Failed to fetch GatewayOne file: ${gatewayOneResponse.statusText}`);
+    }
+    const gatewayOneCsvData = await gatewayOneResponse.text();
+
+    // Use the new robust parser
+    const parseResultGateway = parseCsv(gatewayCsvData);
+    const parseResultHeinWeis = parseCsv(heinWeisCsvData);
+    const parseResultGatewayOne = parseCsv(gatewayOneCsvData);
+
+    if (parseResultGateway.errors.length > 0) {
+      console.warn("Parse errors found in Gateway:", parseResultGateway.errors);
     }
 
-    // The parsed data is already an array of objects
-    const dataArray = parseResult.data.filter(
-      (row) =>
-        // Filter out any empty rows or rows without Frame Type
-        row && row["Frame Type"] && row["Frame Type"] !== ""
-    );
+    if (parseResultHeinWeis.errors.length > 0) {
+      console.warn("Parse errors found in HeinWeis:", parseResultHeinWeis.errors);
+    }
 
-    return dataArray;
+    if (parseResultGatewayOne.errors.length > 0) {
+      console.warn("Parse errors found in GatewayOne:", parseResultGatewayOne.errors);
+    }
+
+    return {
+      data: [
+        ...parseResultGateway.data,
+        ...parseResultHeinWeis.data,
+        ...parseResultGatewayOne.data
+      ],
+      errors: [
+        ...parseResultGateway.errors,
+        ...parseResultHeinWeis.errors,
+        ...parseResultGatewayOne.errors
+      ]
+    };
   } catch (err) {
     console.log(err);
+    return { data: [], errors: [] };
   }
 };
 

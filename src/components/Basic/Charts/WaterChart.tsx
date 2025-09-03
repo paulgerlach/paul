@@ -144,7 +144,7 @@ export default function WarmwasserChart({
     const filteredDevices =
       meterIds.length > 0
         ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : [];
+        : csvText;
 
     const recentReadingDate = getRecentReadingDate(filteredDevices);
     if (!recentReadingDate) {

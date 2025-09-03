@@ -1,7 +1,8 @@
 import { earth } from "@/static/icons";
 import Image from "next/image";
+import { EmptyState } from "@/components/Basic/ui/States";
 
-export default function EinsparungChart() {
+export default function EinsparungChart({ isEmpty, emptyTitle, emptyDescription }: { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
@@ -17,7 +18,16 @@ export default function EinsparungChart() {
         />
       </div>
       <div className="flex-1 flex items-center">
-        <p className="text-3xl md:text-4xl lg:text-5xl text-black/50">11,3t CO2</p>
+        {isEmpty ? (
+          <EmptyState
+            title={emptyTitle ?? "No data available."}
+            description={emptyDescription ?? "No data available."}
+            imageSrc={earth.src}
+            imageAlt="Einsparung"
+          />
+        ) : (
+          <p className="text-3xl md:text-4xl lg:text-5xl text-black/50">11,3t CO2</p>
+        )}
       </div>
     </div>
   );

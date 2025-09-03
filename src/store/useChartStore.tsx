@@ -13,17 +13,9 @@ export const useChartStore = create<ChartState>((set, get) => ({
   endDate: null,
   meterIds: [],
   setMeterIds: (ids: string[]) => {
-    const current = get().meterIds;
-
-    if (ids?.every((id) => current.includes(id))) {
-      set({
-        meterIds: current.filter((id) => !ids.includes(id)),
-      });
-    } else {
-      set({
-        meterIds: Array.from(new Set([...current, ...(ids || [])])),
-      });
-    }
+    set({
+      meterIds: ids?.length ? Array.from(new Set(ids)) : [],
+    });
   },
   setDates: (start, end) => set({ startDate: start, endDate: end }),
 }));

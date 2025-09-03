@@ -156,7 +156,7 @@ export default function GaugeChart({
       totalFilteredM3Cold * selectedPricing.coldWaterPerM3EUR +
       totalFilteredM3Hot * selectedPricing.hotWaterPerM3EUR;
 
-    const percentValue = allCostEUR > 0 ? Math.min(filteredCostEUR / allCostEUR, 1) : 0;
+    const percentValue = allCostEUR > 0 ? Math.min(filteredCostEUR / allCostEUR, 1) : filteredCostEUR > 0 ? 1 : 0;
 
     return { percent: percentValue, euroCost: filteredCostEUR };
   }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, startDate, endDate, meterIds]);
@@ -285,7 +285,7 @@ export default function GaugeChart({
       </ResponsiveContainer>
 
       <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
-        {Math.round(value)}%
+        {value < 1 && value > 0 ? value.toFixed(2) : Math.round(value)}%
       </div>
       <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
         <span>Gesamtkosten: {formattedCost}</span>

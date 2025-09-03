@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import NotificationItem from "./NotificationItem";
+import { EmptyState } from "@/components/Basic/ui/States";
 
 const notifications = [
   {
@@ -48,11 +49,11 @@ const notifications = [
   },
 ];
 
-export default function NotificationsChart() {
+export default function NotificationsChart({ isEmpty, emptyTitle, emptyDescription }: { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   return (
-    <div className="rounded-2xl row-span-7 shadow p-4 bg-white px-5">
+    <div className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}>
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">
+        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           Benachrichtigungen
         </h2>
         <Image
@@ -60,19 +61,26 @@ export default function NotificationsChart() {
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="max-w-6 max-h-6"
+          className="max-w-6 max-h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={notification}
           alt="notification"
         />
       </div>
-      <div className="space-y-1.5">
-        {notifications.map((n, idx) => (
-          <NotificationItem key={idx} {...n} />
-        ))}
+      <div className="space-y-2 flex-1 overflow-auto pr-1">
+        {isEmpty ? (
+          <EmptyState
+            title={emptyTitle ?? "No data available."}
+            description={emptyDescription ?? "No data available."}
+            imageSrc={notification.src}
+            imageAlt="Benachrichtigungen"
+          />
+        ) : (
+          notifications.map((n, idx) => <NotificationItem key={idx} {...n} />)
+        )}
       </div>
       <div>
         <Link
-          className="text-[10px] text-link text-center underline w-full inline-block mt-[1.5vw]"
+          className="text-xs text-link text-center underline w-full inline-block mt-3"
           href={ROUTE_HOME}>
           Weitere Benachrichtigungen anzeigen
         </Link>

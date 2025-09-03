@@ -14,6 +14,7 @@ import {
 import { useMemo, useState, useEffect } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
+import { EmptyState } from "@/components/Basic/ui/States";
 interface HeatingCostsProps {
   csvText?: MeterReadingType[];
 }
@@ -55,7 +56,7 @@ const getMonthlyEnergyDataWithDates = (
   return monthlyData;
 };
 
-export default function HeatingCosts({ csvText }: HeatingCostsProps) {
+export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescription }: HeatingCostsProps & { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   const { startDate, endDate, meterIds } = useChartStore();
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 10000]);
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
@@ -70,7 +71,7 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
     const filteredDevices =
       meterIds && meterIds.length > 0
         ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : [];
+        : csvText;
 
     // Get all historical data with dates
     const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
@@ -135,20 +136,29 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
   }, [data]);
 
   return (
-    <div className="rounded-xl row-span-6 shadow p-4 bg-white">
+    <div className={`rounded-xl shadow p-4 bg-white h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}>
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium text-gray-800">Heizkosten</h2>
+        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">Heizkosten</h2>
         <Image
-          width={0}
-          height={0}
-          sizes="100vw"
+          width={24}
+          height={24}
+          sizes="100%"
           loading="lazy"
-          className="max-w-6 max-h-6"
+          className="max-w-6 max-h-6 w-auto max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={heater}
           alt="heater"
         />
       </div>
-      <ResponsiveContainer className="heating-costs" width="100%" height="80%">
+      <div className="flex-1">
+      {isEmpty ? (
+        <EmptyState
+          title={emptyTitle ?? "No data available."}
+          description={emptyDescription ?? "No data available."}
+          imageSrc={heater.src}
+          imageAlt="Heizkosten"
+        />
+      ) : (
+      <ResponsiveContainer className="heating-costs" width="100%" height="100%">
         <BarChart data={data}>
           <XAxis
             orientation="top"
@@ -175,6 +185,8 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      )}
+      </div>
     </div>
   );
 }

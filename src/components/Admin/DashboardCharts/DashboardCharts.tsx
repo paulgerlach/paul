@@ -1,15 +1,46 @@
 "use client";
 
 import { useMemo } from "react";
-import EinsparungChart from "@/components/Basic/Charts/EinsparungChart";
-import GaugeChart from "@/components/Basic/Charts/GaugeChart";
-import HeatingCosts from "@/components/Basic/Charts/HeatingCosts";
-import NotificationsChart from "@/components/Basic/Charts/NotificationsChart";
-import WaterChart from "@/components/Basic/Charts/WaterChart";
+import dynamic from "next/dynamic";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import { MeterReadingType } from "@/api";
 import { parseGermanDate } from "@/utils";
+import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+
+const WaterChart = dynamic(() => import("@/components/Basic/Charts/WaterChart"), {
+  loading: () => <ChartCardSkeleton />,
+  ssr: false,
+});
+
+const GaugeChart = dynamic(() => import("@/components/Basic/Charts/GaugeChart"), {
+  loading: () => <ChartCardSkeleton />,
+  ssr: false,
+});
+
+const HeatingCosts = dynamic(
+  () => import("@/components/Basic/Charts/HeatingCosts"),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+);
+
+const NotificationsChart = dynamic(
+  () => import("@/components/Basic/Charts/NotificationsChart"),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+);
+
+const EinsparungChart = dynamic(
+  () => import("@/components/Basic/Charts/EinsparungChart"),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+);
 
 interface DashboardChartsProps {
   parsedData: {
@@ -20,10 +51,6 @@ interface DashboardChartsProps {
 
 export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const { startDate, endDate } = useChartStore();
-
-  // Extract date strings for proper dependency tracking
-  const startDateString = startDate?.toString();
-  const endDateString = endDate?.toString();
 
   // Use useMemo to recalculate filtered data when dependencies change
   const selectedData = useMemo(() => {
@@ -71,29 +98,75 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     [selectedData]
   );
 
-  // some calculations for gauge chart
-  const calculateGaugePercent = (data: MeterReadingType[] | undefined) => {
-    return 0.5;
+  const onRetry = () => {
+    window.location.reload();
   };
 
+  const isColdEmpty = (coldWaterDevices?.length || 0) === 0;
+  const isHotEmpty = (hotWaterDevices?.length || 0) === 0;
+  const isHeatEmpty = (heatDevices?.length || 0) === 0;
+  const isAllEmpty =
+    (heatDevices?.length || 0) +
+      (coldWaterDevices?.length || 0) +
+      (hotWaterDevices?.length || 0) ===
+    0;
+
   return (
-    <ContentWrapper className="max-h-[90%] grid grid-cols-3 gap-2 grid-rows-10">
-      <WaterChart
-        csvText={coldWaterDevices}
-        color="#6083CC"
-        title="Kaltwasser"
-        chartType="cold"
-      />
-      <GaugeChart percent={calculateGaugePercent(coldWaterDevices)} />
-      <NotificationsChart />
-      <HeatingCosts csvText={heatDevices} />
-      <WaterChart
-        csvText={hotWaterDevices}
-        color="#E74B3C"
-        title="Warmwasser"
-        chartType="hot"
-      />
-      <EinsparungChart />
+    <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+      <div className="flex flex-col gap-3">
+        <div className="h-[312px]">
+          <WaterChart
+            csvText={coldWaterDevices}
+            color="#6083CC"
+            title="Kaltwasser"
+            chartType="cold"
+            isEmpty={isColdEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data for cold water in the selected period"
+          />
+        </div>
+        <div className="h-[271px]">
+          <WaterChart
+            csvText={hotWaterDevices || []}
+            color="#E74B3C"
+            title="Warmwasser"
+            chartType="hot"
+            isEmpty={isHotEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data for hot water in the selected period"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="h-[265px]">
+          <GaugeChart
+            heatReadings={heatDevices}
+            coldWaterReadings={coldWaterDevices}
+            hotWaterReadings={hotWaterDevices}
+            isEmpty={isAllEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No data in the selected period"
+          />
+        </div>
+        <div className="h-[318px]">
+          <HeatingCosts
+            csvText={heatDevices}
+            isEmpty={isHeatEmpty}
+            emptyTitle="No data available."
+            emptyDescription="No heating data in the selected period"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="h-[410px]">
+          <NotificationsChart />
+        </div>
+        <div className="h-[173px]">
+          <EinsparungChart />
+        </div>
+      </div>
     </ContentWrapper>
   );
 }

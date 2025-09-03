@@ -121,6 +121,19 @@ export default function LoginDialog() {
               type="password"
             />
 
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  openDialog("forgotPassword");
+                  closeDialog("login");
+                }}
+                className="text-sm text-link cursor-pointer underline hover:no-underline"
+              >
+                Passwort vergessen?
+              </button>
+            </div>
+
             <div className="flex items-center justify-start gap-8 my-9">
               <span className="text-base text-light-text whitespace-nowrap">
                 Weitere Wege

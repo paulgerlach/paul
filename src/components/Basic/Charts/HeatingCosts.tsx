@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
 interface HeatingCostsProps {
@@ -57,6 +57,10 @@ const getMonthlyEnergyDataWithDates = (
 
 export default function HeatingCosts({ csvText }: HeatingCostsProps) {
   const { startDate, endDate, meterIds } = useChartStore();
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 10000]);
+  const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
+    () => (value: number) => `${value.toLocaleString()}`
+  );
 
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
@@ -65,8 +69,8 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
 
     const filteredDevices =
       meterIds && meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID))
-        : csvText;
+        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
+        : [];
 
     // Get all historical data with dates
     const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
@@ -101,6 +105,35 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
     return quarters;
   }, [csvText, startDate, endDate, meterIds]);
 
+  // Calculate dynamic domain and formatting based on chart data
+  useEffect(() => {
+    if (data.length > 0) {
+      const values = data.map((item) => item.value);
+      const maxValue = Math.max(...values);
+
+      // Add padding to the domain (10% above max, start from 0)
+      const domainMax = Math.ceil(maxValue * 1.1);
+      const domainMin = 0;
+
+      // Determine appropriate tick formatter based on the scale of values
+      let formatter: (value: number) => string;
+
+      if (domainMax >= 1000000) {
+        // For millions of Wh (MWh)
+        formatter = (value) => `${(value / 1000000).toFixed(1)}M`;
+      } else if (domainMax >= 1000) {
+        // For thousands of Wh (kWh)
+        formatter = (value) => `${(value / 1000).toFixed(1)}k`;
+      } else {
+        // For smaller values (Wh)
+        formatter = (value) => value.toLocaleString();
+      }
+
+      setYAxisDomain([domainMin, domainMax]);
+      setTickFormatter(() => formatter);
+    }
+  }, [data]);
+
   return (
     <div className="rounded-xl shadow p-4 bg-white h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
@@ -124,9 +157,12 @@ export default function HeatingCosts({ csvText }: HeatingCostsProps) {
             axisLine={false}
             tickLine={false}
           />
-          <YAxis hide domain={[0, 10000]} />
+          <YAxis hide domain={yAxisDomain} />
           <Tooltip
-            formatter={(value: number) => `${value.toLocaleString()} Wh`}
+            formatter={(value: number) => {
+              const formattedValue = tickFormatter(value);
+              return [`${formattedValue} Wh`, "Heizkosten"];
+            }}
           />
           <Bar
             dataKey="value"

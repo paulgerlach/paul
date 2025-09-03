@@ -221,3 +221,23 @@ export function generateUserNumber(): string {
   const part3 = Math.floor(100 + Math.random() * 900);
   return `W${part1}/${part2}/${part3}`;
 }
+
+// Helper function to parse German date format (DD.MM.YYYY)
+export const parseGermanDate = (dateString: string): Date | null => {
+  if (!dateString) return null;
+
+  // Handle DD.MM.YYYY format
+  const parts = dateString.split(".");
+  if (parts.length === 3) {
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+
+    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+      return new Date(year, month, day);
+    }
+  }
+
+  // Fallback to standard parsing
+  return new Date(dateString);
+};

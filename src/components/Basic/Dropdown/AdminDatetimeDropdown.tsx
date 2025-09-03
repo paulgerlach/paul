@@ -2,14 +2,12 @@
 
 import { endOfMonth, format, isSameDay, startOfMonth, subDays, subMonths } from "date-fns";
 import { DateRange } from "react-day-picker";
-import { useEffect } from "react";
-
 import { cn } from "@/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { Button } from "../ui/Button";
 import Image from "next/image";
 import { chevron_admin, clock_dark } from "@/static/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChartStore } from "@/store/useChartStore";
 import TimeFilterPresets from "./TimeFilterPresets";
 
@@ -65,8 +63,21 @@ export default function AdminDatetimeDropdown({
     return "thisMonth" as const;
   };
 
+  // Set initial dates in the store when component mounts
+  useEffect(() => {
+    const initialFrom = date?.from || startOfMonth(new Date());
+    const initialTo = date?.to || endOfMonth(new Date());
+
+    setDates(initialFrom, initialTo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setDates]);
+
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
+
+    if (newDate?.from && newDate?.to) {
+      setDates(newDate.from, newDate.to);
+    }
   };
 
   return (

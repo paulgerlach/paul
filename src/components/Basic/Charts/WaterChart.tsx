@@ -95,7 +95,7 @@ export default function WarmwasserChart({
     // Filter devices based on meterIds from the store
     const filteredDevices = (meterIds.length > 0)
       ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-      : [];
+      : csvText; // Show ALL devices when no specific meters selected
 
     // Aggregate historical data from the filtered devices
     const combinedHistory = filteredDevices.flatMap((device) =>

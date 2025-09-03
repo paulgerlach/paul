@@ -1,6 +1,6 @@
 "use client";
 
-import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
 
 const colors = {
@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 15,
   },
   headerText: { fontSize: 7 },
   sectionTitle: {
@@ -37,13 +36,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   summaryRow: {
-    backgroundColor: "#DDE9E0",
+    backgroundColor: colors.dark,
     padding: 4,
     borderRadius: 6,
     flexDirection: "row",
     justifyContent: "space-between",
-    fontWeight: "bold",
-    color: "#083123",
+    fontWeight: 700,
+    color: "#FFFFFF",
     marginBottom: 8,
   },
   table: { width: "100%", fontSize: 8, marginBottom: 10 },
@@ -66,10 +65,13 @@ export default function HeatingBillPreviewThreePDF({
 }) {
   return (
     <Page size="A4" style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>
-          3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
-        </Text>
+      <View style={styles.headerBox}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>
+            3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </Text>
+          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+        </View>
       </View>
 
       <View>

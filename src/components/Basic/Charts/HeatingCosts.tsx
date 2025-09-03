@@ -56,7 +56,16 @@ const getMonthlyEnergyDataWithDates = (
   return monthlyData;
 };
 
-export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescription }: HeatingCostsProps & { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
+export default function HeatingCosts({
+  csvText,
+  isEmpty,
+  emptyTitle,
+  emptyDescription,
+}: HeatingCostsProps & {
+  isEmpty?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
+}) {
   const { startDate, endDate, meterIds } = useChartStore();
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 10000]);
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
@@ -71,7 +80,7 @@ export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescri
     const filteredDevices =
       meterIds && meterIds.length > 0
         ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : csvText;
+        : [];
 
     // Get all historical data with dates
     const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
@@ -136,9 +145,13 @@ export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescri
   }, [data]);
 
   return (
-    <div className={`rounded-xl shadow p-4 bg-white h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}>
+    <div
+      className={`rounded-xl shadow p-4 bg-white h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}
+    >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">Heizkosten</h2>
+        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
+          Heizkosten
+        </h2>
         <Image
           width={24}
           height={24}
@@ -150,42 +163,46 @@ export default function HeatingCosts({ csvText, isEmpty, emptyTitle, emptyDescri
         />
       </div>
       <div className="flex-1">
-      {isEmpty ? (
-        <EmptyState
-          title={emptyTitle ?? "No data available."}
-          description={emptyDescription ?? "No data available."}
-          imageSrc={heater.src}
-          imageAlt="Heizkosten"
-        />
-      ) : (
-      <ResponsiveContainer className="heating-costs" width="100%" height="100%">
-        <BarChart data={data}>
-          <XAxis
-            orientation="top"
-            dataKey="quarter"
-            axisLine={false}
-            tickLine={false}
+        {isEmpty ? (
+          <EmptyState
+            title={emptyTitle ?? "No data available."}
+            description={emptyDescription ?? "No data available."}
+            imageSrc={heater.src}
+            imageAlt="Heizkosten"
           />
-          <YAxis hide domain={yAxisDomain} />
-          <Tooltip
-            formatter={(value: number) => {
-              const formattedValue = tickFormatter(value);
-              return [`${formattedValue} Wh`, "Heizkosten"];
-            }}
-          />
-          <Bar
-            dataKey="value"
-            background={{ fill: "#e2e8f0", radius: 10 }}
-            fill="#90b4e4"
-            radius={[10, 10, 10, 10]}
+        ) : (
+          <ResponsiveContainer
+            className="heating-costs"
+            width="100%"
+            height="100%"
           >
-            {data.map((_, index) => (
-              <Cell key={`cell-${index}`} fill="#90b4e4" />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-      )}
+            <BarChart data={data}>
+              <XAxis
+                orientation="top"
+                dataKey="quarter"
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis hide domain={yAxisDomain} />
+              <Tooltip
+                formatter={(value: number) => {
+                  const formattedValue = tickFormatter(value);
+                  return [`${formattedValue} Wh`, "Heizkosten"];
+                }}
+              />
+              <Bar
+                dataKey="value"
+                background={{ fill: "#e2e8f0", radius: 10 }}
+                fill="#90b4e4"
+                radius={[10, 10, 10, 10]}
+              >
+                {data.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill="#90b4e4" />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

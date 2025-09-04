@@ -5,12 +5,10 @@ import {
   ComposedChart,
   Area,
   Bar,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  ReferenceLine,
   CartesianGrid,
   Legend,
 } from "recharts";
@@ -87,7 +85,7 @@ export default function ElectricityChart({
 }: ElectricityChartProps) {
   const { startDate, endDate, meterIds } = useChartStore();
 
-  const { data, maxKWh, usedDummy, isDaily } = useMemo(() => {
+  const { data, maxKWh, usedDummy } = useMemo(() => {
     const readings = Array.isArray(electricityReadings)
       ? electricityReadings
       : [];
@@ -183,7 +181,6 @@ export default function ElectricityChart({
         data: rows,
         maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
         usedDummy: true,
-        isDaily: calcIsDaily(),
       };
     }
 
@@ -191,7 +188,6 @@ export default function ElectricityChart({
       data: rows,
       maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
       usedDummy: false,
-      isDaily: calcIsDaily(),
     };
   }, [electricityReadings, startDate, endDate, meterIds]);
 
@@ -203,7 +199,6 @@ export default function ElectricityChart({
   // enrich with moving average and benchmark per row for composed chart
   const chartData = useMemo(() => {
     const windowSize = 3;
-    const perUnitBenchmark = isDaily ? BENCHMARK_KWH_PER_MONTH / 30 : BENCHMARK_KWH_PER_MONTH;
     const out = data.map((d, idx) => {
       const start = Math.max(0, idx - (windowSize - 1));
       const slice = data.slice(start, idx + 1);
@@ -211,20 +206,18 @@ export default function ElectricityChart({
       return {
         ...d,
         avg,
-        benchmark: perUnitBenchmark,
       };
     });
     return out;
-  }, [data, isDaily]);
+  }, [data]);
 
   const yMax = useMemo(() => {
     const values = chartData.map((d) => d.kwh as number);
     const maxData = values.length ? Math.max(...values) : 0;
-    const bench = isDaily ? BENCHMARK_KWH_PER_MONTH / 30 : BENCHMARK_KWH_PER_MONTH;
-    const maxVal = Math.max(maxData, bench);
+    const maxVal = maxData;
     const step = maxVal >= 100 ? 50 : maxVal >= 50 ? 10 : maxVal >= 10 ? 5 : 1;
     return Math.ceil((maxVal * 1.1) / step) * step;
-  }, [chartData, isDaily]);
+  }, [chartData]);
 
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
@@ -271,10 +264,8 @@ export default function ElectricityChart({
                 contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8 }}
               />
               <Legend verticalAlign="top" height={24} wrapperStyle={{ fontSize: 12 }} />
-              <ReferenceLine y={isDaily ? BENCHMARK_KWH_PER_MONTH / 30 : BENCHMARK_KWH_PER_MONTH} stroke="#EF4444" strokeDasharray="4 4" />
               <Area type="monotone" dataKey="avg" name="Ø (3M)" stroke="#FBBF24" fill="#FEF3C7" fillOpacity={0.6} />
               <Bar dataKey="kwh" name="kWh" radius={[8, 8, 8, 8]} fill="url(#elecGradient)" />
-              <Line type="monotone" dataKey="benchmark" name="Benchmark" stroke="#EF4444" dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         )}

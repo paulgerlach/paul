@@ -16,7 +16,7 @@ const colors = {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    padding: 40,
+    padding: 10,
     fontFamily: "Helvetica",
     fontSize: 8,
     color: colors.text,
@@ -25,13 +25,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 15,
   },
   headerText: { fontSize: 7 },
   titleSection: {
@@ -55,12 +54,12 @@ const styles = StyleSheet.create({
   },
   detailItem: { width: "48%", marginBottom: 6 },
   detailLabel: { fontWeight: "bold", color: "#083123" },
-  costBreakdown: { marginTop: 15 },
+  costBreakdown: { marginTop: 7 },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: "bold",
     color: colors.title,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: colors.dark,
     paddingBottom: 4,
     marginBottom: 8,
@@ -115,12 +114,13 @@ const styles = StyleSheet.create({
     padding: 4,
     flexDirection: "row",
     justifyContent: "space-between",
+    borderRadius: 6,
     fontWeight: "bold",
   },
   costAllocationBox: {
     borderRadius: 12,
     padding: 10,
-    marginTop: 10,
+    marginVertical: 10,
     backgroundColor: colors.accent2,
   },
   costAllocationHeader: {
@@ -134,9 +134,10 @@ const styles = StyleSheet.create({
   allocationRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 2,
   },
-  allocationLabelBold: { fontWeight: "bold", color: colors.dark },
+  allocationLabelBold: { fontWeight: "700", color: colors.dark },
   allocationBox: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -433,20 +434,26 @@ export default function HeatingBillPreviewTwoPDF({
       {/* Cost allocation – Warmwasser */}
       <View style={styles.costAllocationBox}>
         <Text style={styles.costAllocationHeader}>Aufteilung der Kosten</Text>
-        <Text style={{ fontWeight: "bold", marginBottom: 4 }}>
+        <Text style={{ fontWeight: "bold", marginBottom: 4, color: "#FFFFFF" }}>
           Berechnung und Aufteilung der Kosten für Warmwasser-Erwärmung
         </Text>
         <View style={styles.allocationRow}>
           <View style={styles.formulaBox}>
             <Text
-              style={{ borderBottomWidth: 2, borderBottomColor: "#FFFFFF" }}
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#FFFFFF",
+                fontWeight: 400,
+              }}
             >
               2,5 kWh/m³/K x 3.148,25 m³ x (60-10°C)
             </Text>
-            <Text>1,15</Text>
+            <Text style={{ textAlign: "center" }}>1,15</Text>
           </View>
-          <Text>= 342.201,09 kWh Nah-/Fernwärme</Text>
-          <Text>= 44,96 % d. Gesamtverbr.</Text>
+          <Text style={{ color: "#FFFFFF" }}>
+            = 342.201,09 kWh Nah-/Fernwärme
+          </Text>
+          <Text style={{ color: "#FFFFFF" }}>= 44,96 % d. Gesamtverbr.</Text>
         </View>
       </View>
       <View style={styles.allocationRow}>

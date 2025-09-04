@@ -45,9 +45,9 @@ export default function AdminHeader() {
             <AdminDatetimeDropdown />
             {isAdmin && <AdminUsersDropdown user={user} />}
 
-            <div className="flex w-full items-center gap-4 max-xl:text-sm justify-start bg-transparent border-none px-6 py-3">
+            <div className="flex w-full items-center gap-3 justify-start bg-transparent border-none px-6 py-3">
               <Switch />
-              Datenansicht
+              <span className="text-sm">Datenansicht</span>
             </div>
           </div>
         )}

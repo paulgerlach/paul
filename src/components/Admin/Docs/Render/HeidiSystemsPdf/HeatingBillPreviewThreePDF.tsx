@@ -1,14 +1,23 @@
 "use client";
 
-import { Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+
+const colors = {
+  accent: "#DDE9E0",
+  accent2: "#7F9D86",
+  dark: "#083123",
+  text: "#0D282FCC",
+  title: "#5A917F",
+  link: "#6BCAAA",
+};
 
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    padding: 40,
+    padding: 10,
     fontFamily: "Helvetica",
-    fontSize: 9,
+    fontSize: 8,
     color: "#0D282FCC",
   },
   header: {
@@ -28,19 +37,35 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   summaryRow: {
-    backgroundColor: "#DDE9E0",
+    backgroundColor: colors.dark,
     padding: 4,
     borderRadius: 6,
     flexDirection: "row",
     justifyContent: "space-between",
     fontWeight: "bold",
-    color: "#083123",
+    color: "#FFFFFF",
+    marginBottom: 8,
+  },
+  summaryTopRow: {
+    backgroundColor: colors.accent,
+    padding: 4,
+    borderRadius: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    fontWeight: "bold",
+    color: colors.dark,
     marginBottom: 8,
   },
   table: { width: "100%", fontSize: 8, marginBottom: 10 },
   tableRow: { flexDirection: "row", paddingVertical: 2 },
   cell: { flex: 1 },
   cellRight: { flex: 1, textAlign: "right" },
+  headerBox: {
+    backgroundColor: colors.accent,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+  },
 });
 
 export default function HeatingBillPreviewThreePDF({
@@ -50,10 +75,13 @@ export default function HeatingBillPreviewThreePDF({
 }) {
   return (
     <Page size="A4" style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>
-          3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
-        </Text>
+      <View style={styles.headerBox}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>
+            3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+          </Text>
+          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+        </View>
       </View>
 
       <View>
@@ -62,7 +90,7 @@ export default function HeatingBillPreviewThreePDF({
         </Text>
       </View>
 
-      <View style={styles.summaryRow}>
+      <View style={styles.summaryTopRow}>
         <Text>Kosten für Kaltwasser</Text>
         <Text>41.468,88 €</Text>
       </View>

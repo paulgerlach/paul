@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
+import { EmptyState } from "@/components/Basic/ui/States";
 
 interface GaugeChartProps {
   heatReadings?: MeterReadingType[];
@@ -90,7 +91,10 @@ export default function GaugeChart({
   coldWaterReadings,
   hotWaterReadings,
   pricing,
-}: GaugeChartProps) {
+  isEmpty,
+  emptyTitle,
+  emptyDescription,
+}: GaugeChartProps & { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
   const { startDate, endDate, meterIds } = useChartStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [animatedPercent, setAnimatedPercent] = useState(0);
@@ -223,7 +227,7 @@ export default function GaugeChart({
       ref={containerRef}
       role="img"
       aria-label={`Gauge chart showing ${Math.round(value)} percent used`}
-      className="rounded-xl relative shadow p-4 bg-white w-full h-full"
+      className={`rounded-xl relative shadow p-4 bg-white w-full h-full ${isEmpty ? "flex flex-col" : ""}`}
     >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">Gesamtkosten</h2>
@@ -237,59 +241,70 @@ export default function GaugeChart({
         />
       </div>
 
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            dataKey="value"
-            startAngle={180}
-            endAngle={0}
-            data={data}
-            cx={cx}
-            cy={cy}
-            innerRadius={iR}
-            outerRadius={oR}
-            cornerRadius={10}
-            stroke="none"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
+      {isEmpty ? (
+        <EmptyState
+          title={emptyTitle ?? "No data available."}
+          description={emptyDescription ?? "No data available."}
+          imageSrc={cross_arrows.src}
+          imageAlt="Gesamtkosten"
+        />
+      ) : (
+        <>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                dataKey="value"
+                startAngle={180}
+                endAngle={0}
+                data={data}
+                cx={cx}
+                cy={cy}
+                innerRadius={iR}
+                outerRadius={oR}
+                cornerRadius={10}
+                stroke="none"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
 
-          {width > 0 && height > 0 && (
-            <circle
-              cx={dotX}
-              cy={dotY}
-              r={16}
-              fill="#B0C5F1"
-              stroke="#FFFFFF"
-              strokeWidth={6}
-            />
-          )}
+              {width > 0 && height > 0 && (
+                <circle
+                  cx={dotX}
+                  cy={dotY}
+                  r={16}
+                  fill="#B0C5F1"
+                  stroke="#FFFFFF"
+                  strokeWidth={6}
+                />
+              )}
 
-          <Tooltip
-            formatter={(value: number, name: string) => [
-              `${Math.round(value)}%`,
-              name === "used" ? "Verbraucht" : "Frei",
-            ]}
-            contentStyle={{
-              backgroundColor: "#FFFFFF",
-              borderRadius: "8px",
-              border: "1px solid #E5E7EB", // optional subtle border
-              color: "#374151", // optional text color
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              zIndex: "999",
-            }}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+              <Tooltip
+                formatter={(value: number, name: string) => [
+                  `${Math.round(value)}%`,
+                  name === "used" ? "Verbraucht" : "Frei",
+                ]}
+                contentStyle={{
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "8px",
+                  border: "1px solid #E5E7EB", // optional subtle border
+                  color: "#374151", // optional text color
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  zIndex: "999",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
 
-      <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
-        {value < 1 && value > 0 ? value.toFixed(2) : Math.round(value)}%
-      </div>
-      <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
-        <span>Gesamtkosten: {formattedCost}</span>
-      </div>
+          <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
+            {value < 1 && value > 0 ? value.toFixed(2) : Math.round(value)}%
+          </div>
+          <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
+            <span>Gesamtkosten: {formattedCost}</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -130,6 +130,90 @@ export class DocumentService {
       throw error;
     }
   }
+
+  static async getDocumentsByUserId(targetUserId: string): Promise<DocumentMetadata[]> {
+    try {
+      const currentUser = await getAuthenticatedUser();
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("permission")
+        .eq("id", currentUser.id)
+        .single();
+
+      if (userError || !userData || userData.permission !== "admin") {
+        throw new Error("Unauthorized: Only admin users can access other users' documents");
+      }
+
+      const { data: documents, error } = await supabase
+        .from("documents")
+        .select("*")
+        .eq("user_id", targetUserId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(`Failed to fetch documents: ${error.message}`);
+      }
+      
+      if (!documents || documents.length === 0) {
+        return [];
+      }
+
+      const heatingBillIds = documents
+        .filter(doc => doc.related_type === "heating_bill")
+        .map(doc => doc.related_id);
+
+      let heatingBillObjekts: Record<string, string> = {};
+      if (heatingBillIds.length > 0) {
+        const { data: heatingBills, error: heatingError } = await supabase
+          .from("heating_bill_documents")
+          .select("id, objekt_id")
+          .in("id", heatingBillIds);
+
+        if (!heatingError && heatingBills) {
+          heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+            if (bill.objekt_id) {
+              acc[bill.id] = bill.objekt_id;
+            }
+            return acc;
+          }, {} as Record<string, string>);
+        }
+      }
+
+      const operatingCostIds = documents
+        .filter(doc => doc.related_type === "operating_costs")
+        .map(doc => doc.related_id);
+
+      let operatingCostObjekts: Record<string, string> = {};
+      if (operatingCostIds.length > 0) {
+        const { data: operatingCosts, error: operatingError } = await supabase
+          .from("operating_cost_documents")
+          .select("id, objekt_id")
+          .in("id", operatingCostIds);
+
+        if (!operatingError && operatingCosts) {
+          operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
+            if (cost.objekt_id) {
+              acc[cost.id] = cost.objekt_id;
+            }
+            return acc;
+          }, {} as Record<string, string>);
+        }
+      }
+
+      return documents.map(doc => ({
+        ...doc,
+        objekt_id: doc.related_type === "heating_bill" 
+          ? heatingBillObjekts[doc.related_id] || null
+          : doc.related_type === "operating_costs"
+          ? operatingCostObjekts[doc.related_id] || null
+          : null
+      }));
+    } catch (error) {
+      console.error("Error fetching user documents by ID:", error);
+      throw error;
+    }
+  }
   
   static async getDocumentFileSize(documentPath: string): Promise<string> {
     try {

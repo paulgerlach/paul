@@ -365,8 +365,8 @@ export default function HeatingBillPreviewSixPDF({
           Entgelte für die Gebrauchsüberlassung, für die Verwendung der
           Ausstattung zur Verbrauchserfassung einschließlich der Eichung, sowie
           für die Ablesung und Abrechnung entnehmen Sie bitte Ihrer vorliegenden
-          Heizkostenabrechnung unter dem Punkt "Aufstellung der Kosten / Weitere
-          Heizungsbetriebskosten".
+          Heizkostenabrechnung unter dem Punkt &quot;Aufstellung der Kosten /
+          Weitere Heizungsbetriebskosten&quot;.
         </Text>
         <View
           style={{ flexDirection: "row", gap: 16, alignItems: "flex-start" }}

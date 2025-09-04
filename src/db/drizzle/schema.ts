@@ -181,6 +181,7 @@ export const local_meters = pgTable("local_meters", {
 		foreignColumns: [locals.id],
 		name: "local_meters_local_id_fkey"
 	}),
+	pgPolicy("Only admin can edit this data", { as: "permissive", for: "all", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
 ]);
 
 export const users_in_auth = pgTable("users_in_auth", {

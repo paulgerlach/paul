@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 15,
   },
   headerText: { fontSize: 7 },
   titleSection: {
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "bold",
     color: colors.title,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: colors.dark,
     paddingBottom: 4,
     marginBottom: 8,
@@ -115,12 +114,13 @@ const styles = StyleSheet.create({
     padding: 4,
     flexDirection: "row",
     justifyContent: "space-between",
+    borderRadius: 6,
     fontWeight: "bold",
   },
   costAllocationBox: {
     borderRadius: 12,
     padding: 10,
-    marginTop: 10,
+    marginVertical: 10,
     backgroundColor: colors.accent2,
   },
   costAllocationHeader: {
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 2,
   },
-  allocationLabelBold: { fontWeight: "bold", color: colors.dark },
+  allocationLabelBold: { fontWeight: "700", color: colors.dark },
   allocationBox: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -440,11 +440,15 @@ export default function HeatingBillPreviewTwoPDF({
         <View style={styles.allocationRow}>
           <View style={styles.formulaBox}>
             <Text
-              style={{ borderBottomWidth: 2, borderBottomColor: "#FFFFFF" }}
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#FFFFFF",
+                fontWeight: 400,
+              }}
             >
               2,5 kWh/m³/K x 3.148,25 m³ x (60-10°C)
             </Text>
-            <Text>1,15</Text>
+            <Text style={{ textAlign: "center" }}>1,15</Text>
           </View>
           <Text style={{ color: "#FFFFFF" }}>
             = 342.201,09 kWh Nah-/Fernwärme

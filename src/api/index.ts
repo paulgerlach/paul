@@ -13,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -504,6 +504,170 @@ export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> 
 
 
   return objekts;
+}
+
+export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[]> {
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, userID));
+
+  if (!objekts || objekts.length === 0) {
+    return [];
+  }
+  const objektsWithLocals = await Promise.all(
+    objekts.map(async (objekt) => {
+      const localsData = await database
+        .select()
+        .from(locals)
+        .where(eq(locals.objekt_id, objekt.id));
+
+      return { ...objekt, locals: localsData || [] };
+    })
+  );
+
+  return objektsWithLocals;
+}
+
+export async function getObjektsWithLocals(): Promise<any[]> {
+  const user = await getAuthenticatedServerUser();
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, user.id));
+
+  if (!objekts || objekts.length === 0) {
+    return [];
+  }
+  const objektsWithLocals = await Promise.all(
+    objekts.map(async (objekt) => {
+      const localsData = await database
+        .select()
+        .from(locals)
+        .where(eq(locals.objekt_id, objekt.id));
+
+      return { ...objekt, locals: localsData || [] };
+    })
+  );
+
+  return objektsWithLocals;
+}
+
+export async function getDocumentsByUserId(userId: string): Promise<any[]> {
+  const userDocuments = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.user_id, userId))
+    .orderBy(documents.created_at);
+
+  if (!userDocuments || userDocuments.length === 0) {
+    return [];
+  }
+  const heatingBillIds = userDocuments
+    .filter(doc => doc.related_type === "heating_bill")
+    .map(doc => doc.related_id);
+
+  let heatingBillObjekts: Record<string, string> = {};
+  if (heatingBillIds.length > 0) {
+    const heatingBills = await database
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .from(heating_bill_documents)
+      .where(inArray(heating_bill_documents.id, heatingBillIds));
+
+    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+      if (bill.objekt_id) {
+        acc[bill.id] = bill.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  const operatingCostIds = userDocuments
+    .filter(doc => doc.related_type === "operating_costs")
+    .map(doc => doc.related_id);
+
+  let operatingCostObjekts: Record<string, string> = {};
+  if (operatingCostIds.length > 0) {
+    const operatingCosts = await database
+      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .from(operating_cost_documents)
+      .where(inArray(operating_cost_documents.id, operatingCostIds));
+
+    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
+      if (cost.objekt_id) {
+        acc[cost.id] = cost.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  return userDocuments.map(doc => ({
+    ...doc,
+    objekt_id: doc.related_type === "heating_bill" 
+      ? heatingBillObjekts[doc.related_id] || null
+      : doc.related_type === "operating_costs"
+      ? operatingCostObjekts[doc.related_id] || null
+      : null
+  }));
+}
+
+export async function getCurrentUserDocuments(): Promise<any[]> {
+  // Get current user
+  const user = await getAuthenticatedServerUser();
+  
+  // Get documents for the current user using direct database query
+  const userDocuments = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.user_id, user.id))
+    .orderBy(documents.created_at);
+
+  if (!userDocuments || userDocuments.length === 0) {
+    return [];
+  }
+  const heatingBillIds = userDocuments
+    .filter(doc => doc.related_type === "heating_bill")
+    .map(doc => doc.related_id);
+
+  let heatingBillObjekts: Record<string, string> = {};
+  if (heatingBillIds.length > 0) {
+    const heatingBills = await database
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .from(heating_bill_documents)
+      .where(inArray(heating_bill_documents.id, heatingBillIds));
+
+    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+      if (bill.objekt_id) {
+        acc[bill.id] = bill.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  const operatingCostIds = userDocuments
+    .filter(doc => doc.related_type === "operating_costs")
+    .map(doc => doc.related_id);
+
+  let operatingCostObjekts: Record<string, string> = {};
+  if (operatingCostIds.length > 0) {
+    const operatingCosts = await database
+      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .from(operating_cost_documents)
+      .where(inArray(operating_cost_documents.id, operatingCostIds));
+
+    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
+      if (cost.objekt_id) {
+        acc[cost.id] = cost.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+
+  return userDocuments.map(doc => ({
+    ...doc,
+    objekt_id: doc.related_type === "heating_bill" 
+      ? heatingBillObjekts[doc.related_id] || null
+      : doc.related_type === "operating_costs"
+      ? operatingCostObjekts[doc.related_id] || null
+      : null
+  }));
 }
 
 export async function getUsers(): Promise<UserType[]> {

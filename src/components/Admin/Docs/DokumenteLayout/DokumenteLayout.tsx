@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useDocumentService, DocumentMetadata } from "@/hooks/useDocumentService";
-import { useObjektsWithLocals } from "@/apiClient";
 import { 
   BuildingOfficeIcon
 } from "@heroicons/react/24/outline";
@@ -21,41 +20,53 @@ interface Objekt {
   city: string;
 }
 
-export default function DokumenteLayout() {
+interface ObjektWithLocals {
+  id?: string;
+  user_id: string;
+  objekt_type: string;
+  street: string;
+  zip: string;
+  administration_type: string;
+  hot_water_preparation: string;
+  living_area?: number;
+  usable_area?: number;
+  land_area?: number;
+  build_year?: number;
+  has_elevator: boolean;
+  tags?: any;
+  heating_systems?: any;
+  created_at?: string;
+  image_url?: string;
+  locals: any[];
+}
+
+interface DokumenteLayoutProps {
+  userId?: string;
+  objektsWithLocals: ObjektWithLocals[];
+  documents: any[]; 
+}
+
+export default function DokumenteLayout({ userId, objektsWithLocals, documents: serverDocuments }: DokumenteLayoutProps) {
   const [fileSizes, setFileSizes] = useState<Record<string, string>>({});
   const [selectedObjekt, setSelectedObjekt] = useState<string | null>(null);
   
   const {
-    documents,
-    isLoading: documentsLoading,
     getDocumentFileSize,
     getDownloadUrl,
-    refreshDocuments,
   } = useDocumentService();
+  
+  const documents = serverDocuments;
+  const documentsLoading = false;
 
-  const { data: objekts, isLoading: objektsLoading } = useObjektsWithLocals();
+  const objektsToUse = useMemo(() => objektsWithLocals || [], [objektsWithLocals]);
+  const isLoadingObjekts = false;
 
-  // Load documents on component mount
-  useEffect(() => {
-    console.log("Component mounted, calling refreshDocuments");
-    refreshDocuments();
-  }, [refreshDocuments]);
-
-  // Auto-select the only objekt if there's just one
-  useEffect(() => {
-    if (objekts && objekts.length === 1) {
-      setSelectedObjekt(objekts[0].id);
-    }
-  }, [objekts]);
-
-  // Filter documents by selected objekt
   const filteredDocuments = useMemo(() => {
     if (!documents) return [];
     if (!selectedObjekt) return documents;
     return documents.filter(doc => doc.objekt_id === selectedObjekt);
   }, [documents, selectedObjekt]);
 
-  // Fetch file sizes when documents change
   useEffect(() => {
     const fetchSizes = async () => {
       if (filteredDocuments && filteredDocuments.length > 0) {
@@ -75,7 +86,6 @@ export default function DokumenteLayout() {
     try {
       const downloadUrl = await getDownloadUrl(document.document_url);
       if (downloadUrl) {
-        // Open in new tab instead of downloading
         window.open(downloadUrl, '_blank');
         toast.success("Dokument wird in neuem Tab geöffnet");
       }
@@ -102,11 +112,11 @@ export default function DokumenteLayout() {
     }
   };
 
-  const getObjektDisplayName = (objekt: Objekt): string => {
+  const getObjektDisplayName = (objekt: ObjektWithLocals): string => {
     return `${objekt.street}`;
   };
 
-  if (documentsLoading || objektsLoading) {
+  if (documentsLoading || isLoadingObjekts) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green"></div>
@@ -121,10 +131,16 @@ export default function DokumenteLayout() {
         {/* Property Navigation */}
         <div className="px-6 py-4">
           <div className="flex gap-3 overflow-x-auto">
-            {objekts?.map((objekt) => (
+            {objektsToUse?.map((objekt) => (
               <button
                 key={objekt.id}
-                onClick={() => setSelectedObjekt(objekt.id)}
+                onClick={() => {
+                  if (selectedObjekt === objekt.id) {
+                    setSelectedObjekt(null);
+                  } else {
+                    setSelectedObjekt(objekt.id || null);
+                  }
+                }}
                 className={`flex flex-col items-start gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
                   selectedObjekt === objekt.id
                     ? "border-green bg-green-50 text-green-800"
@@ -143,12 +159,12 @@ export default function DokumenteLayout() {
         {/* Header */}
         <div className="px-6 pb-10 flex items-center justify-between">
           <h2 className="text-xl font-light text-gray-900">
-            {selectedObjekt 
-              ? (() => {
-                  const objekt = objekts?.find(o => o.id === selectedObjekt);
+            {selectedObjekt === null 
+              ? "Alle Dokumente"
+              : (() => {
+                  const objekt = objektsToUse?.find(o => o.id === selectedObjekt);
                   return objekt ? getObjektDisplayName(objekt) : "Unbekanntes Objekt";
                 })()
-              : "Alle Dokumente"
             }
           </h2>
         </div>

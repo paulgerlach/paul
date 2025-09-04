@@ -6,19 +6,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
-// ✅ Zod schema for validation
 const emailSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
 });
 
-// ✅ TypeScript type for form values
 type EmailFormValues = z.infer<typeof emailSchema>;
 
-// ✅ API request function (used in TanStack Query)
 const sendEmail = async (email: string) => {
-  const url = process.env.NEXT_PUBLIC_EMAIL_URL as string;
-
-  const response = await fetch(url, {
+  const response = await fetch("/api/send-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),

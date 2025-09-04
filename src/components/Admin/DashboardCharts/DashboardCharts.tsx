@@ -16,6 +16,14 @@ const WaterChart = dynamic(
   }
 )
 
+const ElectricityChart = dynamic(
+  () => import('@/components/Basic/Charts/ElectricityChart'),
+  {
+    loading: () => <ChartCardSkeleton />,
+    ssr: false,
+  }
+)
+
 const GaugeChart = dynamic(
   () => import('@/components/Basic/Charts/GaugeChart'),
   {
@@ -104,14 +112,28 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     [selectedData]
   )
 
+  // Heuristic detection for electricity meters: device type matches electricity synonyms
+  const electricityDevices = useMemo(
+    () =>
+      selectedData?.filter((item) => {
+        const type = String(item['Device Type'] || '')
+        return /(electric|strom|power)/i.test(type)
+      }) ?? [],
+    [selectedData]
+  )
+
   const isColdEmpty = (coldWaterDevices?.length || 0) === 0
   const isHotEmpty = (hotWaterDevices?.length || 0) === 0
   const isHeatEmpty = (heatDevices?.length || 0) === 0
+  const isElectricityEmpty = (electricityDevices?.length || 0) === 0
   const isAllEmpty =
     (heatDevices?.length || 0) +
       (coldWaterDevices?.length || 0) +
       (hotWaterDevices?.length || 0) ===
     0
+
+  const forceElecDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === '1'
+  const shouldShowElectricityChart = !isElectricityEmpty || forceElecDummy
 
   return (
     <ContentWrapper className='grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1'>
@@ -142,14 +164,23 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
 
       <div className='flex flex-col gap-3'>
         <div className='h-[265px]'>
-          <GaugeChart
-            heatReadings={heatDevices}
-            coldWaterReadings={coldWaterDevices}
-            hotWaterReadings={hotWaterDevices}
-            isEmpty={isAllEmpty}
-            emptyTitle='Keine Daten verfügbar.'
-            emptyDescription='Keine Daten im ausgewählten Zeitraum.'
-          />
+          {!shouldShowElectricityChart ? (
+            <GaugeChart
+              heatReadings={heatDevices}
+              coldWaterReadings={coldWaterDevices}
+              hotWaterReadings={hotWaterDevices}
+              isEmpty={isAllEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Daten im ausgewählten Zeitraum.'
+            />
+          ) : (
+            <ElectricityChart
+              electricityReadings={electricityDevices}
+              isEmpty={isElectricityEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Stromdaten im ausgewählten Zeitraum.'
+            />
+          )}
         </div>
         <div className='h-[318px]'>
           <HeatingCosts

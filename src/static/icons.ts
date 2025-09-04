@@ -246,9 +246,11 @@ import operating_cost_documents_pending from "@/asset/operating_cost_documents_p
 import admin_objekte from "@/asset/admin_objekte.png";
 import pdf_user from "@/asset/pdf-user.png";
 import pdf_home from "@/asset/pdf-home.png";
+import electricity from "@/asset/electricity.png";
 
 export {
   accentro_colored,
+  electricity,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,

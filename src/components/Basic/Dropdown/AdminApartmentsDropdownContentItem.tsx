@@ -29,7 +29,7 @@ export default function AdminApartmentsDropdownContentItem({
   selectedLocalIds: string[];
 }) {
   const contentRef = useRef(null);
-  const { setMeterIds } = useChartStore();
+  const { setMeterIds, meterIds } = useChartStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -63,7 +63,25 @@ export default function AdminApartmentsDropdownContentItem({
             <input
               type="checkbox"
               onChange={() => {
-                setMeterIds(local.meter_ids?.filter(Boolean) || []);
+                // Find the non-empty meterId from the meter_ids array
+                const meterId = (local?.meter_ids || []).find(
+                  (id) => id && id.trim() !== ""
+                );
+
+                if (meterId) {
+                  // If checkbox is being checked (not currently selected)
+                  if (!selectedLocalIds.includes(local?.id || "")) {
+                    // Add meterId to the store if it's not already there
+                    if (!meterIds.includes(meterId)) {
+                      setMeterIds([...meterIds, meterId]);
+                    }
+                  } else {
+                    // If checkbox is being unchecked (currently selected)
+                    // Remove meterId from the store
+                    setMeterIds(meterIds?.filter((id) => id !== meterId) || []);
+                  }
+                }
+
                 toggleSelection(local.id);
               }}
               id={local.id}

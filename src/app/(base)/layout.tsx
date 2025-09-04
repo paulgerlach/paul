@@ -6,6 +6,7 @@ import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
 import LoginDialog from "@/components/Basic/Dialog/LoginDialog";
 import RegisterDialog from "@/components/Basic/Dialog/RegisterDialog";
+import ForgotPasswordDialog from "@/components/Basic/Dialog/ForgotPasswordDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
 
 const exo_2Sans = Exo_2({
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Footer />
           <LoginDialog />
           <RegisterDialog />
+          <ForgotPasswordDialog />
           <Toaster />
         </QueryProvider>
       </body>

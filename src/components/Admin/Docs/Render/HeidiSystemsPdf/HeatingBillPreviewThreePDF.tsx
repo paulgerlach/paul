@@ -1,7 +1,17 @@
 "use client";
 
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+
+const colors = {
+  accent: "#DDE9E0",
+  accent2: "#7F9D86",
+  dark: "#083123",
+  text: "#0D282FCC",
+  title: "#5A917F",
+  link: "#6BCAAA",
+};
 
 const colors = {
   accent: "#DDE9E0",
@@ -15,9 +25,9 @@ const colors = {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    padding: 40,
+    padding: 10,
     fontFamily: "Helvetica",
-    fontSize: 9,
+    fontSize: 8,
     color: "#0D282FCC",
   },
   header: {
@@ -41,8 +51,18 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     flexDirection: "row",
     justifyContent: "space-between",
-    fontWeight: 700,
+    fontWeight: "bold",
     color: "#FFFFFF",
+    marginBottom: 8,
+  },
+  summaryTopRow: {
+    backgroundColor: colors.accent,
+    padding: 4,
+    borderRadius: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    fontWeight: "bold",
+    color: colors.dark,
     marginBottom: 8,
   },
   table: { width: "100%", fontSize: 8, marginBottom: 10 },
@@ -52,8 +72,7 @@ const styles = StyleSheet.create({
   headerBox: {
     backgroundColor: colors.accent,
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    padding: 16,
     marginBottom: 10,
   },
 });
@@ -80,7 +99,7 @@ export default function HeatingBillPreviewThreePDF({
         </Text>
       </View>
 
-      <View style={styles.summaryRow}>
+      <View style={styles.summaryTopRow}>
         <Text>Kosten für Kaltwasser</Text>
         <Text>41.468,88 €</Text>
       </View>

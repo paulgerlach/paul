@@ -43,7 +43,7 @@ export default function SidebarButton({
           <Image
             width={28}
             height={28}
-            className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+            className="max-w-7 max-h-7 max-xl:max-w-7 max-xl:max-h-7 w-7 h-7"
             loading="lazy"
             alt={button.title}
             src={button.icon || ""}
@@ -54,7 +54,7 @@ export default function SidebarButton({
           width={0}
           height={0}
           sizes="100vw"
-          className="max-w-4 max-h-5 max-xl:max-w-3 max-xl:max-h-4 transition-all duration-300 [.active_&]:rotate-180"
+          className="max-w-2 max-h-5 max-xl:max-w-3 max-xl:max-h-4 transition-all duration-300 [.active_&]:rotate-180"
           loading="lazy"
           style={{ width: "100%", height: "auto" }}
           alt="chevron_admin"

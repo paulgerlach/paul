@@ -15,3 +15,4 @@ export const ROUTE_DOKUMENTE = "/dokumente";
 export const ROUTE_ABRECHNUNG = "/abrechnung";
 export const ROUTE_HEIZKOSTENABRECHNUNG = "/heizkostenabrechnung";
 export const ROUTE_BETRIEBSKOSTENABRECHNUNG = "/betriebskostenabrechnung";
+export const ROUTE_RESET_PASSWORD = "/reset-password";

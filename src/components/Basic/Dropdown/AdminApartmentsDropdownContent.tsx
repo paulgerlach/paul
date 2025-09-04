@@ -35,7 +35,7 @@ export default function AdminApartmentsDropdownContent({
   };
 
   return (
-    <div className="absolute w-full bg-white rounded-base shadow-sm px-2.5 py-4 left-0 top-[110%] space-y-3">
+    <div className="w-full bg-white rounded-base shadow-sm px-2.5 py-4 space-y-3 z-10">
       <input
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
@@ -60,12 +60,12 @@ export default function AdminApartmentsDropdownContent({
           ))
         )}
       </div>
-      <div className="flex items-center px-5 justify-between">
+      <div className="flex items-center justify-between">
         <button
           onClick={() => {
             selectAll();
           }}
-          className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
+          className="px-5 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 border-rounded"
         >
           Alle auswählen
         </button>
@@ -73,7 +73,7 @@ export default function AdminApartmentsDropdownContent({
           onClick={() => {
             clearSelection();
           }}
-          className="text-xs text-black/50 cursor-pointer border-transparent bg-transparent"
+          className="px-5 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 border-rounded"
         >
           Auswahl entfernen
         </button>

@@ -16,7 +16,7 @@ const colors = {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
-    padding: 40,
+    padding: 10,
     fontFamily: "Helvetica",
     fontSize: 8,
     color: colors.text,
@@ -24,9 +24,8 @@ const styles = StyleSheet.create({
   headerBox: {
     backgroundColor: colors.accent,
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 10,
+    padding: 16,
+    marginBottom: 5,
   },
   header: {
     flexDirection: "row",
@@ -55,9 +54,9 @@ const styles = StyleSheet.create({
   },
   detailItem: { width: "48%", marginBottom: 6 },
   detailLabel: { fontWeight: "bold", color: "#083123" },
-  costBreakdown: { marginTop: 15 },
+  costBreakdown: { marginTop: 7 },
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "bold",
     color: colors.title,
     borderBottomWidth: 1,

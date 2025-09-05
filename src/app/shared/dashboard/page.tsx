@@ -106,11 +106,43 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
 
   // SECURITY: Enforce date range filtering if specified
   if (filters.startDate && filters.endDate) {
+    const beforeDateFilter = filteredData?.length || 0;
     filteredData = filteredData?.filter((item: any) => {
-      const itemDate = new Date(item["Date"]);
+      // Use the correct date field from the CSV data
+      const dateTimeField = item["IV,0,0,0,,Date/Time"];
+      if (!dateTimeField) return false;
+      
+      // Extract date part (format: "16.05.2025 09:00 invalid 0 summer time 0")
+      const datePart = dateTimeField.split(' ')[0]; // Get "16.05.2025"
+      if (!datePart) return false;
+      
+      // Parse German date format (DD.MM.YYYY)
+      const [day, month, year] = datePart.split('.');
+      if (!day || !month || !year) return false;
+      
+      const itemDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       const startDate = new Date(filters.startDate!);
       const endDate = new Date(filters.endDate!);
+      
+      // Log first few items to debug date range issues
+      if (beforeDateFilter <= 3) {
+        console.log('Date filtering debug:', {
+          rawDate: dateTimeField,
+          parsedDate: datePart,
+          itemDate: itemDate.toISOString(),
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          inRange: itemDate >= startDate && itemDate <= endDate
+        });
+      }
+      
       return itemDate >= startDate && itemDate <= endDate;
+    });
+    
+    console.log('After date filtering:', {
+      beforeDateFilter,
+      afterDateFilter: filteredData?.length || 0,
+      dateRange: `${filters.startDate} to ${filters.endDate}`
     });
   }
 
@@ -126,8 +158,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   // Create header info
   const meterCount = filters.meterIds?.length || 0;
   const headerTitle = meterCount > 0 
-    ? `Shared Dashboard (${meterCount} meter${meterCount === 1 ? '' : 's'})`
-    : "Shared Dashboard (All data)";
+    ? `Tenant View (${meterCount} meter${meterCount === 1 ? '' : 's'})`
+    : "Tenant View";
 
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">

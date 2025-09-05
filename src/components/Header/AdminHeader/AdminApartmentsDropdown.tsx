@@ -46,14 +46,15 @@ export default function AdminApartmentsDropdown() {
 
     setSelectedLocalIds(allIds);
 
-    setMeterIds(
-      (usersApartments as ApartmentType[])?.flatMap(
-        (appartment) =>
-          (appartment.locals
-            .flatMap((local) => local.meter_ids)
-            ?.filter(Boolean) as string[]) || []
-      )
-    );
+    if (allIds.length > 0) {
+      const allMeterIds = allIds.flatMap((id) => {
+        const local = apartmentsToUse?.find((app) => app.locals?.find((local: LocalType) => local.id === id));
+        return local?.locals?.flatMap((local: LocalType) => local.meter_ids) || [];
+      });
+      setMeterIds(allMeterIds);
+    } else {
+      setMeterIds([]);
+    }
   };
 
   useEffect(() => {

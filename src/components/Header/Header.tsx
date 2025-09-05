@@ -31,7 +31,7 @@ export default function Header() {
       ref={headerRef}
       className={`fixed w-full mx-auto !px-[72px] max-megalarge:!px-16 max-large:!px-6 max-medium:!px-5 top-2.5 left-1/2 -translate-x-1/2 duration-300 ${scrolled ? "scrolled" : ""
         }`}>
-      <div className="flex items-center w-full px-5 rounded-full bg-white/30 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
+      <div className={`flex items-center w-full px-5 rounded-full backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between ${scrolled ? 'bg-white/30' : 'bg-white'}`}>
         <Link
           href={ROUTE_HOME}
           className="flex items-center max-w-16 w-full h-5 justify-start gap-3">

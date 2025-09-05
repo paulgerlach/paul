@@ -63,6 +63,22 @@ export default function AdminApartmentsDropdown() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apartmentsToUse]);
 
+  // Listen for global reset to select all
+  useEffect(() => {
+    const handler = () => {
+      selectAll();
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("admin-select-all-apartments", handler);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("admin-select-all-apartments", handler);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usersApartments, apartmentsToUse]);
+
   const clearSelection = () => {
     setSelectedLocalIds([]);
     setMeterIds([]);
@@ -73,14 +89,14 @@ export default function AdminApartmentsDropdown() {
       <PopoverTrigger asChild>
         <button
           aria-controls="admin-apartments-dropdown"
-          className="flex w-full items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-2 py-3 h-full"
+          className="flex w-full items-center gap-2 justify-between bg-transparent border-none cursor-pointer px-2 py-3 h-full"
         >
           <div className="flex items-center justify-start whitespace-nowrap gap-3">
             <Image
               width={0}
               height={0}
               sizes="100vw"
-              className="max-w-6 max-h-6 max-xl:max-w-6 max-xl:max-h-6 w-6 h-6"
+              className="max-w-4 max-h-4 max-xl:max-w-4 max-xl:max-h-4 w-4 h-4"
               loading="lazy"
               alt="main_portfolio"
               src={main_portfolio}

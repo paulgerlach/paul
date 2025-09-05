@@ -105,7 +105,7 @@ export default function Sidebar() {
               <Image
                 width={28}
                 height={28}
-                className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+                className="max-w-5 max-h-5 max-xl:max-w-5 max-xl:max-h-5"
                 loading="lazy"
                 alt={link.title}
                 src={link.icon || ""}
@@ -123,7 +123,7 @@ export default function Sidebar() {
               <Image
                 width={28}
                 height={28}
-                className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+                className="max-w-5 max-h-5 max-xl:max-w-5 max-xl:max-h-5"
                 loading="lazy"
                 alt={link.title}
                 src={link.icon || ""}

@@ -1,8 +1,30 @@
 import { earth } from "@/static/icons";
 import Image from "next/image";
 import { EmptyState } from "@/components/Basic/ui/States";
+import { MeterReadingType } from "@/api";
+import { calculateCO2Savings, formatCO2Savings, getCO2Context } from "@/utils/co2Calculator";
 
-export default function EinsparungChart({ isEmpty, emptyTitle, emptyDescription }: { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
+interface EinsparungChartProps {
+  isEmpty?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  selectedData?: MeterReadingType[];
+}
+
+export default function EinsparungChart({
+  isEmpty,
+  emptyTitle,
+  emptyDescription,
+  selectedData
+}: EinsparungChartProps) {
+  // Calculate CO₂ savings from the selected data
+  const co2Result = selectedData ? calculateCO2Savings(selectedData) : null;
+  const co2Display = co2Result ? formatCO2Savings(co2Result.totalCO2SavedTons) : "0t CO₂";
+  const co2Context = co2Result ? getCO2Context(co2Result.totalCO2SavedTons) : null;
+
+  // Determine if we should show empty state
+  const shouldShowEmpty = isEmpty || !selectedData || selectedData.length === 0 || co2Result?.totalCO2SavedTons === 0;
+
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
@@ -17,16 +39,30 @@ export default function EinsparungChart({ isEmpty, emptyTitle, emptyDescription 
           alt="earth"
         />
       </div>
-      <div className="flex-1 flex items-center">
-        {isEmpty ? (
+      <div className="flex-1 flex flex-col justify-center">
+        {shouldShowEmpty ? (
           <EmptyState
-            title={emptyTitle ?? "No data available."}
-            description={emptyDescription ?? "No data available."}
+            title={emptyTitle ?? "Keine Daten verfügbar."}
+            description={emptyDescription ?? "Keine CO₂-Einsparungen im ausgewählten Zeitraum."}
             imageSrc={earth.src}
             imageAlt="Einsparung"
           />
         ) : (
-          <p className="text-3xl md:text-4xl lg:text-5xl text-black/50">11,3t CO2</p>
+          <div className="text-center">
+            <p className="text-3xl md:text-4xl lg:text-5xl text-black/50 mb-2">
+              {co2Display}
+            </p>
+            {co2Context && co2Result && co2Result.totalCO2SavedTons > 0.1 && (
+              <p className="text-xs text-gray-500 max-small:text-xs">
+                {co2Context.description}
+              </p>
+            )}
+            {co2Result && (
+              <div className="mt-2 text-xs text-gray-400">
+                {co2Result.details.deviceCount.heating + co2Result.details.deviceCount.hotWater + co2Result.details.deviceCount.coldWater} Geräte
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

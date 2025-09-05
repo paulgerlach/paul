@@ -104,55 +104,19 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     console.log('No meter filtering - showing all data');
   }
 
-  // SECURITY: Enforce date range filtering if specified
-  if (filters.startDate && filters.endDate) {
-    const beforeDateFilter = filteredData?.length || 0;
-    filteredData = filteredData?.filter((item: any) => {
-      // Use the correct date field from the CSV data
-      const dateTimeField = item["IV,0,0,0,,Date/Time"];
-      if (!dateTimeField) return false;
-      
-      // Extract date part (format: "16.05.2025 09:00 invalid 0 summer time 0")
-      const datePart = dateTimeField.split(' ')[0]; // Get "16.05.2025"
-      if (!datePart) return false;
-      
-      // Parse German date format (DD.MM.YYYY)
-      const [day, month, year] = datePart.split('.');
-      if (!day || !month || !year) return false;
-      
-      const itemDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      const startDate = new Date(filters.startDate!);
-      const endDate = new Date(filters.endDate!);
-      
-      // Log first few items to debug date range issues
-      if (beforeDateFilter <= 3) {
-        console.log('Date filtering debug:', {
-          rawDate: dateTimeField,
-          parsedDate: datePart,
-          itemDate: itemDate.toISOString(),
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-          inRange: itemDate >= startDate && itemDate <= endDate
-        });
-      }
-      
-      return itemDate >= startDate && itemDate <= endDate;
-    });
-    
-    console.log('After date filtering:', {
-      beforeDateFilter,
-      afterDateFilter: filteredData?.length || 0,
-      dateRange: `${filters.startDate} to ${filters.endDate}`
-    });
-  }
+  // NOTE: Following main dashboard pattern - no date filtering
+  // The main dashboard shows all available data, so shared dashboard should too
+  // Date filtering is handled by the individual chart components if needed
+  console.log('Following main dashboard pattern - no server-side date filtering applied');
 
   // DEVELOPMENT METRICS: Server-side logging (build time)
   console.log('Share Dashboard Access:', {
     timestamp: new Date().toISOString(),
     meterCount: filters.meterIds?.length || 0,
-    dateRange: filters.startDate && filters.endDate ? `${filters.startDate} to ${filters.endDate}` : 'All dates',
+    dateRange: filters.startDate && filters.endDate ? `${filters.startDate} to ${filters.endDate} (URL params only)` : 'All dates',
     dataPoints: filteredData?.length || 0,
-    expiresAt: expirationInfo.expiryDate?.toISOString()
+    expiresAt: expirationInfo.expiryDate?.toISOString(),
+    note: 'Following main dashboard pattern - charts handle their own date filtering'
   });
 
   // Create header info

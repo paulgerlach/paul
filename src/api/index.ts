@@ -601,18 +601,18 @@ export async function getDocumentsByUserId(userId: string): Promise<any[]> {
   }
   return userDocuments.map(doc => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill" 
+    objekt_id: doc.related_type === "heating_bill"
       ? heatingBillObjekts[doc.related_id] || null
       : doc.related_type === "operating_costs"
-      ? operatingCostObjekts[doc.related_id] || null
-      : null
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
   }));
 }
 
 export async function getCurrentUserDocuments(): Promise<any[]> {
   // Get current user
   const user = await getAuthenticatedServerUser();
-  
+
   // Get documents for the current user using direct database query
   const userDocuments = await database
     .select()
@@ -662,11 +662,11 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
 
   return userDocuments.map(doc => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill" 
+    objekt_id: doc.related_type === "heating_bill"
       ? heatingBillObjekts[doc.related_id] || null
       : doc.related_type === "operating_costs"
-      ? operatingCostObjekts[doc.related_id] || null
-      : null
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
   }));
 }
 

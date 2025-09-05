@@ -246,11 +246,12 @@ import operating_cost_documents_pending from "@/asset/operating_cost_documents_p
 import admin_objekte from "@/asset/admin_objekte.png";
 import pdf_user from "@/asset/pdf-user.png";
 import pdf_home from "@/asset/pdf-home.png";
-import filter_reset from "@/asset/filter_reset.png";
+import electricity from "@/asset/electricity.png";
+import close_white from "@/asset/close_white.png";
 
 export {
   accentro_colored,
-  filter_reset,
+  electricity,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,
@@ -498,4 +499,5 @@ export {
   chevron_admin,
   main_portfolio,
   clock_dark,
+  close_white,
 };

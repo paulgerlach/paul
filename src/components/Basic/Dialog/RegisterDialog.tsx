@@ -27,7 +27,7 @@ type RegisterFormData = z.infer<typeof RegisterSchema>;
 
 export default function RegisterDialog() {
   const router = useRouter();
-  const { openDialogByType, closeDialog } = useDialogStore();
+  const { openDialogByType, openDialog, closeDialog } = useDialogStore();
 
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(RegisterSchema),
@@ -129,7 +129,7 @@ export default function RegisterDialog() {
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
             method="dialog"
-            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6"
+            className="max-w-xl w-full bg-white py-3 px-4 rounded space-y-6"
           >
             <h2 className="text-3xl font-bold text-darkest-text">
               Konto erstellen
@@ -166,7 +166,7 @@ export default function RegisterDialog() {
               type="password"
             />
 
-            <div className="flex items-center justify-start gap-8 my-9">
+            <div className="flex items-center justify-start gap-8 my-8">
               <span className="text-base text-light-text whitespace-nowrap">
                 Weitere Wege
               </span>
@@ -201,6 +201,16 @@ export default function RegisterDialog() {
                 ? "Registrieren..."
                 : "Registrieren"}
             </Button>
+
+            <button
+              onClick={() => {
+                openDialog("login");
+                closeDialog("register");
+              }}
+              className="text-link cursor-pointer underline mx-auto text-base leading-[19.2px] flex items-center justify-start"
+            >
+              Jetzt einloggen
+            </button>
           </form>
         </Form>
       </DialogBase>

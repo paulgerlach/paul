@@ -18,7 +18,7 @@ const ForgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
 
 export default function ForgotPasswordDialog() {
-  const { openDialogByType, closeDialog } = useDialogStore();
+  const { openDialogByType, openDialog, closeDialog } = useDialogStore();
 
   const methods = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(ForgotPasswordSchema),
@@ -30,7 +30,7 @@ export default function ForgotPasswordDialog() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       const { email } = data;
-      
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/reset-password`,
       });
@@ -87,6 +87,18 @@ export default function ForgotPasswordDialog() {
               >
                 E-Mail senden
               </Button>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  closeDialog("forgotPassword");
+                  openDialog("login");
+                }}
+                className="text-link cursor-pointer underline mx-auto text-base leading-[19.2px] flex items-center justify-start"
+              >
+                Zurück zur Anmeldung
+              </button>
             </div>
           </form>
         </Form>

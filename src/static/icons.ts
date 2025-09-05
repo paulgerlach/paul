@@ -247,6 +247,7 @@ import admin_objekte from "@/asset/admin_objekte.png";
 import pdf_user from "@/asset/pdf-user.png";
 import pdf_home from "@/asset/pdf-home.png";
 import electricity from "@/asset/electricity.png";
+import close_white from "@/asset/close_white.png";
 
 export {
   accentro_colored,
@@ -498,4 +499,5 @@ export {
   chevron_admin,
   main_portfolio,
   clock_dark,
+  close_white,
 };

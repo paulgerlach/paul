@@ -195,7 +195,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       </div>
 
       <div className='flex flex-col gap-3'>
-        <div className='h-[410px]'>
+        <div className='h-[360px]'>
           <NotificationsChart
             isEmpty={isAllEmpty}
             emptyTitle='Keine Daten verfügbar.'
@@ -203,8 +203,13 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             parsedData={parsedData}
           />
         </div>
-        <div className='h-[173px]'>
-          <EinsparungChart />
+        <div className='h-[220px]'>
+          <EinsparungChart
+            selectedData={selectedData}
+            isEmpty={isAllEmpty}
+            emptyTitle='Keine Daten verfügbar.'
+            emptyDescription='Keine CO₂-Einsparungen im ausgewählten Zeitraum.'
+          />
         </div>
       </div>
     </ContentWrapper>

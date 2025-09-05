@@ -111,11 +111,20 @@ export interface ParseResult {
 }
 
 export const parseCSVs = async () => {
+  // from public folder
+  const GatewayLatestUrlFileUrl = 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5';
   const GatewayUrlFileUrl = 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
   const GatewayOneUrlFileUrl = 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
   const HeinWeisCodeFileUrl = 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM';
 
   try {
+    const gatewayResponseLatest = await fetch(GatewayLatestUrlFileUrl);
+    if (!gatewayResponseLatest.ok) {
+      throw new Error(`Failed to fetch Gateway file: ${gatewayResponseLatest.statusText}`);
+    }
+    const gatewayCsvDataLatest = await gatewayResponseLatest.text();
+
+
     // download the Gateway CSV file
     const gatewayResponse = await fetch(GatewayUrlFileUrl);
     if (!gatewayResponse.ok) {
@@ -141,6 +150,7 @@ export const parseCSVs = async () => {
     const parseResultGateway = parseCsv(gatewayCsvData);
     const parseResultHeinWeis = parseCsv(heinWeisCsvData);
     const parseResultGatewayOne = parseCsv(gatewayOneCsvData);
+    const parseResultGatewayLatest = parseCsv(gatewayCsvDataLatest);
 
     if (parseResultGateway.errors.length > 0) {
       console.warn("Parse errors found in Gateway:", parseResultGateway.errors);
@@ -154,16 +164,25 @@ export const parseCSVs = async () => {
       console.warn("Parse errors found in GatewayOne:", parseResultGatewayOne.errors);
     }
 
+    const meterIds = Array.from(new Set([
+      ...parseResultGateway.data.map((item) => item.ID),
+      ...parseResultHeinWeis.data.map((item) => item.ID),
+      ...parseResultGatewayOne.data.map((item) => item.ID),
+      ...parseResultGatewayLatest.data.map((item) => item.ID)
+    ]));
+
     return {
       data: [
         ...parseResultGateway.data,
         ...parseResultHeinWeis.data,
-        ...parseResultGatewayOne.data
+        ...parseResultGatewayOne.data,
+        ...parseResultGatewayLatest.data
       ],
       errors: [
         ...parseResultGateway.errors,
         ...parseResultHeinWeis.errors,
-        ...parseResultGatewayOne.errors
+        ...parseResultGatewayOne.errors,
+        ...parseResultGatewayLatest.errors
       ]
     };
   } catch (err) {
@@ -601,18 +620,18 @@ export async function getDocumentsByUserId(userId: string): Promise<any[]> {
   }
   return userDocuments.map(doc => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill" 
+    objekt_id: doc.related_type === "heating_bill"
       ? heatingBillObjekts[doc.related_id] || null
       : doc.related_type === "operating_costs"
-      ? operatingCostObjekts[doc.related_id] || null
-      : null
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
   }));
 }
 
 export async function getCurrentUserDocuments(): Promise<any[]> {
   // Get current user
   const user = await getAuthenticatedServerUser();
-  
+
   // Get documents for the current user using direct database query
   const userDocuments = await database
     .select()
@@ -662,11 +681,11 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
 
   return userDocuments.map(doc => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill" 
+    objekt_id: doc.related_type === "heating_bill"
       ? heatingBillObjekts[doc.related_id] || null
       : doc.related_type === "operating_costs"
-      ? operatingCostObjekts[doc.related_id] || null
-      : null
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
   }));
 }
 

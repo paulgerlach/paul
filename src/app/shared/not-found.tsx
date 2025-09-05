@@ -8,7 +8,7 @@ export default function SharedNotFound() {
           Shared Dashboard Not Found
         </h1>
         <p className="text-gray-600 mb-6">
-          The shared dashboard you're looking for doesn't exist or the link may be invalid.
+          The shared dashboard you&apos;re looking for doesn&apos;t exist or the link may be invalid.
         </p>
         <Link 
           href="/"

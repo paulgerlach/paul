@@ -30,7 +30,7 @@ export default function AdminUsersDropdown({ user }: { user?: UserType }) {
               width={0}
               height={0}
               sizes="100vw"
-              className="max-w-6 max-h-6 max-xl:max-w-6 max-xl:max-h-6 w-6 h-6"
+              className="max-w-4 max-h-4 max-xl:max-w-4 max-xl:max-h-4 w-4 h-4"
               loading="lazy"
               alt="main_portfolio"
               src={main_portfolio}

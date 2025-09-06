@@ -70,6 +70,8 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const selectedData = useMemo(() => {
     if (!parsedData?.data) return []
 
+    console.log("parsedData", parsedData);
+
     let filtered = parsedData.data
       .filter((item) => item['Device Type'] !== 'Device Type')
       .filter((item) => item.ID) // Only items with valid IDs

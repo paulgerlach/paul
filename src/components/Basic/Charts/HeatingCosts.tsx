@@ -27,33 +27,93 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   return new Date(year, month - 1, day);
 };
 
-// New helper function that returns an array with both date and value
-const getMonthlyEnergyDataWithDates = (
-  readings: MeterReadingType[]
+// Helper function to get energy data with dates for different time ranges
+const getEnergyDataWithDates = (
+  readings: MeterReadingType[],
+  startDate?: Date,
+  endDate?: Date
 ): { date: Date; value: number }[] => {
-  const monthlyData: { date: Date; value: number }[] = [];
+  const energyData: { date: Date; value: number }[] = [];
   const mostRecentDate = getRecentReadingDate(readings);
   if (!mostRecentDate) return [];
 
-  for (let i = 0; i <= 30; i += 2) {
-    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
-    const historicalDate = new Date(mostRecentDate);
-    historicalDate.setMonth(mostRecentDate.getMonth() - i / 2);
+  // Calculate the time range
+  const rangeStart = startDate || new Date(mostRecentDate.getFullYear(), mostRecentDate.getMonth() - 15, 1);
+  const rangeEnd = endDate || mostRecentDate;
+  const monthsDiff = (rangeEnd.getFullYear() - rangeStart.getFullYear()) * 12 + (rangeEnd.getMonth() - rangeStart.getMonth());
+  const daysDiff = Math.ceil((rangeEnd.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
 
-    let totalValue = 0;
-    readings.forEach((reading) => {
-      const value = reading[key];
-      if (typeof value === "string") {
-        totalValue += parseFloat(value.replace(",", ".") || "0");
-      } else if (typeof value === "number") {
-        totalValue += value;
+  // Determine granularity based on time range
+  if (monthsDiff >= 8) {
+    // Quarterly data (8+ months)
+    const quarters = Math.ceil(monthsDiff / 3);
+    for (let i = 0; i < quarters; i++) {
+      const quarterStart = new Date(rangeStart);
+      quarterStart.setMonth(rangeStart.getMonth() + i * 3);
+      const quarterEnd = new Date(quarterStart);
+      quarterEnd.setMonth(quarterStart.getMonth() + 3);
+
+      let totalValue = 0;
+      // Sum energy for all months in this quarter
+      for (let monthOffset = 0; monthOffset < 3; monthOffset++) {
+        const monthIndex = i * 3 + monthOffset;
+        const key = `IV,${monthIndex * 2},0,0,Wh,E` as keyof MeterReadingType;
+
+        readings.forEach((reading) => {
+          const value = reading[key];
+          if (typeof value === "string") {
+            totalValue += parseFloat(value.replace(",", ".") || "0");
+          } else if (typeof value === "number") {
+            totalValue += value;
+          }
+        });
       }
-    });
 
-    monthlyData.unshift({ date: historicalDate, value: totalValue });
+      energyData.push({ date: quarterStart, value: totalValue });
+    }
+  } else if (monthsDiff < 1) {
+    // Daily data (<3 months)
+    const maxDays = Math.min(daysDiff, 90); // Limit to 60 days for performance
+    for (let i = 0; i <= maxDays; i++) {
+      const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
+      const historicalDate = new Date(rangeStart);
+      historicalDate.setDate(rangeStart.getDate() + i);
+
+      let totalValue = 0;
+      readings.forEach((reading) => {
+        const value = reading[key];
+        if (typeof value === "string") {
+          totalValue += parseFloat(value.replace(",", ".") || "0");
+        } else if (typeof value === "number") {
+          totalValue += value;
+        }
+      });
+
+      energyData.push({ date: historicalDate, value: totalValue });
+    }
+  } else {
+    // Monthly data (3-8 months)
+    const numMonths = Math.min(monthsDiff + 1, 8); // +1 to include both start and end months, cap at 8
+    for (let i = 0; i < numMonths; i++) {
+      const key = `IV,${i * 2},0,0,Wh,E` as keyof MeterReadingType;
+      const historicalDate = new Date(rangeStart);
+      historicalDate.setMonth(rangeStart.getMonth() + i);
+
+      let totalValue = 0;
+      readings.forEach((reading) => {
+        const value = reading[key];
+        if (typeof value === "string") {
+          totalValue += parseFloat(value.replace(",", ".") || "0");
+        } else if (typeof value === "number") {
+          totalValue += value;
+        }
+      });
+
+      energyData.push({ date: historicalDate, value: totalValue });
+    }
   }
 
-  return monthlyData;
+  return energyData;
 };
 
 export default function HeatingCosts({
@@ -80,39 +140,44 @@ export default function HeatingCosts({
     const filteredDevices =
       meterIds && meterIds.length > 0
         ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : [];
+        : csvText;
 
-    // Get all historical data with dates
-    const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
+    // Get energy data with appropriate granularity
+    const energyData = getEnergyDataWithDates(filteredDevices, startDate || undefined, endDate || undefined);
 
-    // Filter the data based on the date range from the store
-    const filteredData = monthlyDataWithDates.filter(({ date }) => {
-      if (!startDate || !endDate) return true; // No filter if dates are not set
-      return date >= startDate && date <= endDate;
-    });
+    if (energyData.length === 0) return [];
 
-    // Grouping the filtered data into 3 quarters
-    const numMonths = filteredData.length;
-    const monthsPerQuarter = Math.floor(numMonths / 3);
-    const remainder = numMonths % 3;
+    // Calculate time range to determine display format
+    const rangeStart = startDate || energyData[0]?.date;
+    const rangeEnd = endDate || energyData[energyData.length - 1]?.date;
 
-    const quarters = [
-      { quarter: "Q1", value: 0 },
-      { quarter: "Q2", value: 0 },
-      { quarter: "Q3", value: 0 },
-    ];
+    if (!rangeStart || !rangeEnd) return [];
 
-    let startIndex = 0;
-    // Distribute remaining months among quarters
-    for (let i = 0; i < 3; i++) {
-      const monthsInThisQuarter = monthsPerQuarter + (i < remainder ? 1 : 0);
-      quarters[i].value = filteredData
-        .slice(startIndex, startIndex + monthsInThisQuarter)
-        .reduce((sum, { value }) => sum + value, 0);
-      startIndex += monthsInThisQuarter;
+    const monthsDiff = (rangeEnd.getFullYear() - rangeStart.getFullYear()) * 12 + (rangeEnd.getMonth() - rangeStart.getMonth());
+
+    // Format data based on time range
+    if (monthsDiff >= 8) {
+      // Quarterly display
+      return energyData.map((item, index) => ({
+        period: `Q${index + 1}`,
+        value: item.value,
+        date: item.date
+      }));
+    } else if (monthsDiff < 1) {
+      // Daily display
+      return energyData.map((item) => ({
+        period: item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: item.value,
+        date: item.date
+      }));
+    } else {
+      // Monthly display
+      return energyData.map((item) => ({
+        period: item.date.toLocaleDateString('en-US', { month: 'short' }),
+        value: item.value,
+        date: item.date
+      }));
     }
-
-    return quarters;
   }, [csvText, startDate, endDate, meterIds]);
 
   // Calculate dynamic domain and formatting based on chart data
@@ -179,15 +244,21 @@ export default function HeatingCosts({
             <BarChart data={data}>
               <XAxis
                 orientation="top"
-                dataKey="quarter"
+                dataKey="period"
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis hide domain={yAxisDomain} />
               <Tooltip
-                formatter={(value: number) => {
+                formatter={(value: number, name, props) => {
                   const formattedValue = tickFormatter(value);
-                  return [`${formattedValue} Wh`, "Heizkosten"];
+                  const date = props.payload?.date;
+                  const dateStr = date ? date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : '';
+                  return [`${formattedValue} Wh`, `Heizkosten${dateStr ? ` (${dateStr})` : ''}`];
                 }}
               />
               <Bar
@@ -207,3 +278,4 @@ export default function HeatingCosts({
     </div>
   );
 }
+

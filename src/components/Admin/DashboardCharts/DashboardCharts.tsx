@@ -137,6 +137,9 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const forceElecDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === '1'
   const shouldShowElectricityChart = !isElectricityEmpty || forceElecDummy
 
+  const totalCost = 34321
+  const totalPercent = 72 / 100
+
   return (
     <ContentWrapper className='grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1'>
       <div className='flex flex-col gap-3'>
@@ -167,14 +170,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       <div className='flex flex-col gap-3'>
         <div className='h-[265px]'>
           {!shouldShowElectricityChart ? (
-            <GaugeChart
-              heatReadings={heatDevices}
-              coldWaterReadings={coldWaterDevices}
-              hotWaterReadings={hotWaterDevices}
-              isEmpty={isAllEmpty}
-              emptyTitle='Keine Daten verfügbar.'
-              emptyDescription='Keine Daten im ausgewählten Zeitraum.'
-            />
+            <GaugeChart totalCost={totalCost} totalPercent={totalPercent} />
           ) : (
             <ElectricityChart
               electricityReadings={electricityDevices}

@@ -122,8 +122,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   // Create header info
   const meterCount = filters.meterIds?.length || 0;
   const headerTitle = meterCount > 0 
-    ? `Tenant View (${meterCount} meter${meterCount === 1 ? '' : 's'})`
-    : "Tenant View";
+    ? `Mieteransicht (${meterCount} Zähler)`
+    : "Mieteransicht";
 
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">

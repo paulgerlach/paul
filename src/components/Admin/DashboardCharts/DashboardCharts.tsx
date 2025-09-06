@@ -7,6 +7,10 @@ import { useChartStore } from '@/store/useChartStore'
 import { MeterReadingType } from '@/api'
 import { parseGermanDate } from '@/utils'
 import ChartCardSkeleton from '@/components/Basic/ui/ChartCardSkeleton'
+import IoTStatusOverlay from '@/components/Demo/IoTStatusOverlay'
+import MockTestPanel from '@/components/Demo/MockTestPanel'
+import LiveCardFlip from '@/components/Demo/LiveCardFlip'
+import { getDemoConfig } from '@/lib/demo/config'
 
 const WaterChart = dynamic(
   () => import('@/components/Basic/Charts/WaterChart'),
@@ -65,6 +69,7 @@ interface DashboardChartsProps {
 
 export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const { startDate, endDate } = useChartStore()
+  const { isDemo, showMockPanel, showIoTOverlay } = getDemoConfig()
 
   // Use useMemo to recalculate filtered data when dependencies change
   const selectedData = useMemo(() => {
@@ -141,26 +146,30 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     <ContentWrapper className='grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1'>
       <div className='flex flex-col gap-3'>
         <div className='h-[312px]'>
-          <WaterChart
-            csvText={coldWaterDevices}
-            color='#6083CC'
-            title='Kaltwasser'
-            chartType='cold'
-            isEmpty={isColdEmpty}
-            emptyTitle='Keine Daten verfügbar.'
-            emptyDescription='Keine Daten für Kaltwasser im ausgewählten Zeitraum.'
-          />
+          <LiveCardFlip cardType="water-cold" isDemo={isDemo}>
+            <WaterChart
+              csvText={coldWaterDevices}
+              color='#6083CC'
+              title='Kaltwasser'
+              chartType='cold'
+              isEmpty={isColdEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Daten für Kaltwasser im ausgewählten Zeitraum.'
+            />
+          </LiveCardFlip>
         </div>
         <div className='h-[271px]'>
-          <WaterChart
-            csvText={hotWaterDevices || []}
-            color='#E74B3C'
-            title='Warmwasser'
-            chartType='hot'
-            isEmpty={isHotEmpty}
-            emptyTitle='Keine Daten verfügbar.'
-            emptyDescription='Keine Daten für Warmwasser im ausgewählten Zeitraum.'
-          />
+          <LiveCardFlip cardType="water-hot" isDemo={isDemo}>
+            <WaterChart
+              csvText={hotWaterDevices || []}
+              color='#E74B3C'
+              title='Warmwasser'
+              chartType='hot'
+              isEmpty={isHotEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Daten für Warmwasser im ausgewählten Zeitraum.'
+            />
+          </LiveCardFlip>
         </div>
       </div>
 
@@ -176,12 +185,14 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
               emptyDescription='Keine Daten im ausgewählten Zeitraum.'
             />
           ) : (
-            <ElectricityChart
-              electricityReadings={electricityDevices}
-              isEmpty={isElectricityEmpty}
-              emptyTitle='Keine Daten verfügbar.'
-              emptyDescription='Keine Stromdaten im ausgewählten Zeitraum.'
-            />
+            <LiveCardFlip cardType="electricity" isDemo={isDemo}>
+              <ElectricityChart
+                electricityReadings={electricityDevices}
+                isEmpty={isElectricityEmpty}
+                emptyTitle='Keine Daten verfügbar.'
+                emptyDescription='Keine Stromdaten im ausgewählten Zeitraum.'
+              />
+            </LiveCardFlip>
           )}
         </div>
         <div className='h-[318px]'>
@@ -207,6 +218,22 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
           <EinsparungChart />
         </div>
       </div>
+      
+      {/* IoT Demo Overlay - Only shows in demo mode */}
+      {showIoTOverlay && (
+        <IoTStatusOverlay 
+          isDemo={isDemo} 
+          tenantContext={{
+            street: "Schmelzhütten Str. 39",
+            floor: "2.OG",
+            location: "Hinterhaus",
+            area: "mitte"
+          }}
+        />
+      )}
+      
+      {/* Mock Test Panel - Only shows in demo mode */}
+      {showMockPanel && <MockTestPanel isDemo={isDemo} />}
     </ContentWrapper>
   )
 }

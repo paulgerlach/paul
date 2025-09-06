@@ -6,6 +6,7 @@ import {
   getObjectById,
   getOperatingCostDocumentByID,
   getRelatedLocalsByObjektId,
+  // parseCSVs,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
@@ -27,6 +28,7 @@ export default async function ResultBuildingLocalPreview({
     contracts,
     invoices,
     local,
+    // parsedData,
   ] = await Promise.all([
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
@@ -35,6 +37,7 @@ export default async function ResultBuildingLocalPreview({
     getContractsWithContractorsByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
+    // parseCSVs(),
   ]);
 
   const totalLivingSpace =

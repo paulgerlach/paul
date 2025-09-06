@@ -98,7 +98,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "today" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("today")}
@@ -109,7 +109,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "yesterday" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("yesterday")}
@@ -120,7 +120,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "7d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("7d")}
@@ -131,7 +131,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "30d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("30d")}
@@ -142,7 +142,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "90d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("90d")}
@@ -153,7 +153,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "thisMonth" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("thisMonth")}
@@ -164,7 +164,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "lastMonth" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("lastMonth")}
@@ -175,7 +175,7 @@ export default function TimeFilterPresets({
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "custom" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("custom")}

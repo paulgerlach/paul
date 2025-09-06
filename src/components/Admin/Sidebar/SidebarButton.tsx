@@ -43,7 +43,7 @@ export default function SidebarButton({
           <Image
             width={28}
             height={28}
-            className="max-w-7 max-h-7 max-xl:max-w-7 max-xl:max-h-7 w-7 h-7"
+            className="max-w-6 max-h-6 max-xl:max-w-5 max-xl:max-h-5 w-6 h-6"
             loading="lazy"
             alt={button.title}
             src={button.icon || ""}
@@ -61,12 +61,12 @@ export default function SidebarButton({
           src={chevron_admin}
         />
       </button>
-      <div className="space-y-1.5 pl-11 max-megalarge:pl-4" ref={contentRef}>
+      <div className="space-y-1.5 pl-11 pt-2 max-megalarge:pl-4" ref={contentRef}>
         {button.children?.map((child) => (
           <Link
             key={child.title}
             href={child.route}
-            className={`flex py-3 px-5 transition-all max-xl:text-sm duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${
+            className={`flex py-3 px-2 transition-all max-xl:text-sm duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${
               isRouteActive(child.route) ? "active" : ""
             } [.active]:bg-black/10`}
           >

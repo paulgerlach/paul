@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { useChartStore } from "@/store/useChartStore";
 import { useDialogStore } from "@/store/useDIalogStore";
@@ -183,21 +184,21 @@ Mit freundlichen Grüßen`);
                     onClick={() => handlePDFExport()}
                     className="w-8 h-8 cursor-pointer hover:scale-110 transition-transform duration-200"
                   >
-                    <img src="/pdf_icon.png" alt="PDF Export" className="w-full h-full object-contain opacity-80 hover:opacity-100" />
+                    <Image src="/pdf_icon.png" alt="PDF Export" width={32} height={32} className="w-full h-full object-contain opacity-80 hover:opacity-100" />
                   </div>
                   {/* Download Link */}
                   <div 
                     onClick={() => handleDownloadLink()}
                     className="w-8 h-8 cursor-pointer hover:scale-110 transition-transform duration-200"
                   >
-                    <img src="/doc_download.png" alt="Download" className="w-full h-full object-contain opacity-50 hover:opacity-100" />
+                    <Image src="/doc_download.png" alt="Download" width={32} height={32} className="w-full h-full object-contain opacity-50 hover:opacity-100" />
                   </div>
                   {/* Gmail Share */}
                   <div 
                     onClick={() => handleGmailShare()}
                     className="w-8 h-8 cursor-pointer hover:scale-110 transition-transform duration-200"
                   >
-                    <img src="/gmail.png" alt="Gmail" className="w-full h-full object-contain opacity-80 hover:opacity-100" />
+                    <Image src="/gmail.png" alt="Gmail" width={32} height={32} className="w-full h-full object-contain opacity-80 hover:opacity-100" />
                   </div>
                 </div>
               </div>

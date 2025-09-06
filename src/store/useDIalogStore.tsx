@@ -84,6 +84,8 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     admin_contract_create: false,
     admin_local_create: false,
     admin_object_create: false,
+    shareModal: false,
+    shareExtendedModal: false,
   },
   setQueryKey: (keys) => set({ queryKey: keys }),
   setItemID: (id) => set({ itemID: id }),

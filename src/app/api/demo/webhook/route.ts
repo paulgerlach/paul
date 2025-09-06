@@ -1,22 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Store for SSE connections (in production, use Redis or similar)
-const connections = new Set<ReadableStreamDefaultController>();
-
-// Broadcast function to send data to all connected clients
-async function broadcastToConnections(data: any) {
-  const encoder = new TextEncoder();
-  const message = `data: ${JSON.stringify(data)}\n\n`;
-  
-  connections.forEach(controller => {
-    try {
-      controller.enqueue(encoder.encode(message));
-    } catch (error) {
-      console.warn('Error broadcasting to connection:', error);
-      connections.delete(controller);
-    }
-  });
-}
+import { broadcastToConnections } from "../../../../lib/demo/connections";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -63,5 +46,3 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// Export the connections for use by SSE endpoint
-export { connections };

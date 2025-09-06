@@ -1,7 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-
-// Import connections from webhook endpoint
-const connections = new Set<ReadableStreamDefaultController>();
+import { NextRequest } from 'next/server';
+import { connections } from '../../../../lib/demo/connections';
 
 export async function GET(request: NextRequest) {
   // Create SSE stream
@@ -66,5 +64,3 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// Export connections for webhook to use
-export { connections };

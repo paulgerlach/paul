@@ -48,6 +48,7 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     ),
     totalLivingSpace,
     contract,
+    invoices,
     costCategories,
     propertyNumber: generatePropertyNumber(),
     heidiCustomerNumber: generateHeidiCustomerNumber(),

@@ -186,7 +186,7 @@ export default function AddDocBetriebskostenabrechnungDialog() {
           </div>
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
-            <div className="px-3.5 py-4 grid grid-cols-2 gap-6 max-xl:p-2 border border-black/20 rounded-md">
+            <div className="px-3.5 py-4 space-y-6 max-xl:p-2 border border-black/20 rounded-md">
               <FormRoundedCheckbox<AddDocBetriebskostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"

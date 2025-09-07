@@ -47,6 +47,7 @@ export type HeatingBillPreviewData = {
   totalInvoicesAmount: number;
   totalLivingSpace: number;
   contract: ContractType;
+  invoices: InvoiceDocumentType[];
   costCategories: DocCostCategoryType[];
   propertyNumber: string;
   heidiCustomerNumber: string;
@@ -85,6 +86,7 @@ export default function HeatingBillPreview({
       (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
       0
     ),
+    invoices,
     totalLivingSpace,
     contract,
     costCategories,

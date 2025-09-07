@@ -1,5 +1,5 @@
 import {
-  getActiveContractByLocalID,
+  getAdminContractsWithContractorsByLocalID,
   getAdminUserData,
   getDocCostCategoryTypes,
   getInvoicesByOperatingCostDocumentID,
@@ -31,7 +31,7 @@ export default async function ResultLocalPreview({
     relatedLocals,
     costCategories,
     mainDoc,
-    contract,
+    contracts,
     invoices,
     local,
     user,
@@ -40,15 +40,11 @@ export default async function ResultLocalPreview({
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("heizkostenabrechnung"),
     getOperatingCostDocumentByID(doc_id),
-    getActiveContractByLocalID(local_id),
+    getAdminContractsWithContractorsByLocalID(local_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
     getAdminUserData(user_id),
   ]);
-
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -71,8 +67,7 @@ export default async function ResultLocalPreview({
           totalLivingSpace={totalLivingSpace}
           costCategories={costCategories}
           invoices={invoices}
-          contract={contract}
-          contractors={contractors}
+          contracts={contracts}
           objekt={objekt}
         />
       </ContentWrapper>

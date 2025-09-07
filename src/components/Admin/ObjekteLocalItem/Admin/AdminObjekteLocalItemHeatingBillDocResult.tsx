@@ -3,22 +3,19 @@ import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import {
-  getAdminContractsByLocalID,
-  // getContractsByLocalID,
-  // getDocCostCategoryTypes,
-  // getHeatingBillDocumentByID,
-  // getInvoicesByHeatingBillDocumentID,
-  // getInvoicesByOperatingCostDocumentID,
-  // getLocalById,
-  // getObjectById,
-  // getOperatingCostDocumentByID,
-  // getRelatedContractors,
-  // getRelatedLocalsByObjektId,
+  getAdminContractsWithContractorsByLocalID,
+  getAdminHeatingBillDocumentByID,
+  getAdminHeatingInvoicesByHeatingBillDocumentID,
+  getAdminUserData,
+  getDocCostCategoryTypes,
+  getLocalById,
+  getObjectById,
+  getRelatedLocalsByObjektId,
 } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-// import LocalPDFDownloadButton from "../../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
+import LocalPDFDownloadButton from "../../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
   item: LocalType;
@@ -35,7 +32,10 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   docID,
   docType,
 }: ObjekteLocalItemHeatingBillDocResultProps) {
-  const contracts = await getAdminContractsByLocalID(item.id, userID);
+  const contracts = await getAdminContractsWithContractorsByLocalID(
+    item.id,
+    userID
+  );
 
   const status = contracts?.some((contract) => contract.is_current)
     ? "renting"
@@ -74,26 +74,29 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
     }
   };
 
-  // const objekt = await getObjectById(id);
-  // const relatedLocals = await getRelatedLocalsByObjektId(id);
-  // const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
-  // const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
-  // const contract = await getActiveContractByLocalID(localID);
-  // const invoices = await getInvoicesByHeatingBillDocumentID(docID ? docID : "");
-  // const local = await getLocalById(localID ? localID : "");
-  // const contractors = contract?.id
-  //   ? await getRelatedContractors(contract.id)
-  //   : [];
+  const objekt = await getObjectById(objektID);
+  const relatedLocals = await getRelatedLocalsByObjektId(objektID);
+  const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
+  const mainDoc = await getAdminHeatingBillDocumentByID(
+    docID ? docID : "",
+    userID
+  );
+  const invoices = await getAdminHeatingInvoicesByHeatingBillDocumentID(
+    docID ? docID : "",
+    userID
+  );
+  const local = await getLocalById(item.id ?? "");
+  const user = await getAdminUserData(userID);
 
-  // const totalLivingSpace =
-  //   relatedLocals?.reduce((sum, local) => {
-  //     return sum + (Number(local.living_space) || 0);
-  //   }, 0) || 0;
+  const totalLivingSpace =
+    relatedLocals?.reduce((sum, local) => {
+      return sum + (Number(local.living_space) || 0);
+    }, 0) || 0;
 
   const previewLink =
     docType === "objektauswahl"
-      ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`
-      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${item.id}/${docID}/results/preview`;
+      ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/${item.id}/preview`
+      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`;
 
   return (
     <div
@@ -144,27 +147,27 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
               alt={"pdf_icon"}
             />
           </Link>
+          <LocalPDFDownloadButton
+            mainDoc={mainDoc}
+            local={local}
+            totalLivingSpace={totalLivingSpace}
+            costCategories={costCategories}
+            invoices={invoices}
+            contracts={contracts}
+            user={user}
+            objekt={objekt}
+          />
           <button>
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
+              className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
               src={gmail}
               alt={"gmail_icon"}
             />
           </button>
-          {/* <LocalPDFDownloadButton
-          // mainDoc={mainDoc}
-          // previewLocal={local}
-          // totalLivingSpace={totalLivingSpace}
-          // costCategories={costCategories}
-          // invoices={invoices}
-          // contract={contract}
-          // contractors={contractors}
-          // objekt={objekt}
-          /> */}
           <ThreeDotsButton
             dialogAction="admin_heating_bill_delete"
             editLink={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}

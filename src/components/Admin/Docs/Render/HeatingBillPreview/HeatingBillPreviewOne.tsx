@@ -156,7 +156,7 @@ export default function HeatingBillPreviewOne({
           <p className="text-lg font-medium">Gesamtbetrag</p>
           <div className="text-right">
             <p className="text-2xl font-bold">
-              {formatEuro(previewData.totalInvoicesAmount)}
+              {formatEuro(previewData.totalDiff)}
             </p>
           </div>
         </div>

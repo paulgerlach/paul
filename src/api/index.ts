@@ -119,11 +119,11 @@ async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseRes
     }
     const csvData = await response.text();
     const parseResult = parseCsv(csvData);
-    
+
     if (parseResult.errors.length > 0) {
       console.warn(`Parse errors found in ${fileName}:`, parseResult.errors);
     }
-    
+
     return parseResult;
   } catch (error) {
     console.error(`Error processing ${fileName}:`, error);
@@ -376,6 +376,46 @@ export async function getContractsWithContractorsByLocalID(
       and(
         eq(contracts.local_id, localID),
         eq(contracts.user_id, user.id)
+      )
+    );
+
+  const contractsWithContractors: Record<string, ContractType & { contractors: ContractorType[] }> = {};
+
+  for (const row of results) {
+    const contract = row.contracts;
+    const contractor = row.contractors;
+
+    if (!contractsWithContractors[contract.id]) {
+      contractsWithContractors[contract.id] = {
+        ...contract,
+        contractors: [],
+      };
+    }
+
+    if (contractor) {
+      contractsWithContractors[contract.id].contractors.push(contractor);
+    }
+  }
+
+  return Object.values(contractsWithContractors);
+}
+
+export async function getAdminContractsWithContractorsByLocalID(
+  localID?: string,
+  userID?: string,
+): Promise<(ContractType & { contractors: ContractorType[] })[]> {
+  if (!localID || !userID) {
+    throw new Error("Missing localID or userID");
+  }
+
+  const results = await database
+    .select()
+    .from(contracts)
+    .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
+    .where(
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, userID)
       )
     );
 
@@ -848,6 +888,17 @@ export async function getHeatingBillDocumentByID(docId: string): Promise<Heating
   return document;
 }
 
+export async function getAdminHeatingBillDocumentByID(docId: string, userId: string): Promise<HeatingBillDocumentType> {
+
+  const document = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, userId)))
+    .then((res) => res[0]);
+
+  return document;
+}
+
 export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -859,6 +910,16 @@ export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise
   return invoices;
 }
 
+export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<InvoiceDocumentType[]> {
+
+  const invoices = await database
+    .select()
+    .from(invoice_documents)
+    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, userId)));
+
+  return invoices;
+}
+
 export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -866,6 +927,16 @@ export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): 
     .select()
     .from(heating_invoices)
     .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+
+  return invoices;
+}
+
+export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<HeatingInvoiceType[]> {
+
+  const invoices = await database
+    .select()
+    .from(heating_invoices)
+    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
 
   return invoices;
 }

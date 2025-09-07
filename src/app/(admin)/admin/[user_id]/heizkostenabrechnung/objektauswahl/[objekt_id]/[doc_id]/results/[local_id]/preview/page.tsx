@@ -1,46 +1,49 @@
 import {
-  // getActiveContractByLocalID,
+  getAdminContractsWithContractorsByLocalID,
+  getAdminHeatingBillDocumentByID,
+  getAdminHeatingInvoicesByHeatingBillDocumentID,
+  getAdminUserData,
   getDocCostCategoryTypes,
-  getInvoicesByOperatingCostDocumentID,
-  // getLocalById,
+  getLocalById,
   getObjectById,
-  getOperatingCostDocumentByID,
-  // getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-// import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
+import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPreview({
   params,
 }: {
-  params: Promise<{ objekt_id: string; doc_id: string }>;
+  params: Promise<{
+    objekt_id: string;
+    doc_id: string;
+    local_id: string;
+    user_id: string;
+  }>;
 }) {
-  const { objekt_id, doc_id } = await params;
+  const { objekt_id, doc_id, local_id, user_id } = await params;
 
   const [
     objekt,
     relatedLocals,
     costCategories,
     mainDoc,
-    // contract,
+    contracts,
     invoices,
-    // local,
+    local,
+    user,
   ] = await Promise.all([
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("heizkostenabrechnung"),
-    getOperatingCostDocumentByID(doc_id),
-    // getActiveContractByLocalID(local_id),
-    getInvoicesByOperatingCostDocumentID(doc_id),
-    // getLocalById(local_id),
+    getAdminHeatingBillDocumentByID(doc_id, user_id),
+    getAdminContractsWithContractorsByLocalID(local_id, user_id),
+    getAdminHeatingInvoicesByHeatingBillDocumentID(doc_id, user_id),
+    getLocalById(local_id),
+    getAdminUserData(user_id),
   ]);
-
-  // const contractors = contract?.id
-  //   ? await getRelatedContractors(contract.id)
-  //   : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -56,16 +59,16 @@ export default async function ResultLocalPreview({
         subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />
       <ContentWrapper className="space-y-4">
-        {/* <HeatingBillPreview
+        <HeatingBillPreview
           mainDoc={mainDoc}
           local={local}
+          user={user}
           totalLivingSpace={totalLivingSpace}
           costCategories={costCategories}
           invoices={invoices}
-          contract={contract}
-          contractors={contractors}
+          contracts={contracts}
           objekt={objekt}
-        /> */}
+        />
       </ContentWrapper>
     </div>
   );

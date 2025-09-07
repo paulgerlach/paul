@@ -254,7 +254,7 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.flexRow}>
           <Text style={{ fontSize: 12 }}>Gesamtbetrag</Text>
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {formatEuro(previewData.totalInvoicesAmount)}
+            {formatEuro(previewData.totalDiff)}
           </Text>
         </View>
       </View>

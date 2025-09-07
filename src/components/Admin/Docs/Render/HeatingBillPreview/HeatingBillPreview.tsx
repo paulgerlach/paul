@@ -15,13 +15,13 @@ import type {
   UserType,
 } from "@/types";
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
+import { differenceInMonths, max, min, parse } from "date-fns";
 
 export type HeatingBillPreviewProps = {
   mainDoc: HeatingBillDocumentType;
   local: LocalType;
   totalLivingSpace: number;
-  contract: ContractType;
-  contractors: ContractorType[];
+  contracts: (ContractType & { contractors: ContractorType[] })[];
   costCategories: DocCostCategoryType[];
   invoices: InvoiceDocumentType[];
   objekt: ObjektType;
@@ -45,8 +45,9 @@ export type HeatingBillPreviewData = {
   };
   contractorsNames: string;
   totalInvoicesAmount: number;
+  totalDiff: number;
   totalLivingSpace: number;
-  contract: ContractType;
+  contracts: (ContractType & { contractors: ContractorType[] })[];
   invoices: InvoiceDocumentType[];
   costCategories: DocCostCategoryType[];
   propertyNumber: string;
@@ -54,8 +55,7 @@ export type HeatingBillPreviewData = {
 };
 
 export default function HeatingBillPreview({
-  contract,
-  contractors,
+  contracts,
   costCategories,
   invoices,
   local,
@@ -64,6 +64,48 @@ export default function HeatingBillPreview({
   totalLivingSpace,
   user,
 }: HeatingBillPreviewProps) {
+  const periodStart = parse(
+    mainDoc?.start_date ? mainDoc.start_date : "",
+    "dd.MM.yyyy",
+    new Date()
+  );
+  const periodEnd = parse(
+    mainDoc?.end_date ? mainDoc.end_date : "",
+    "dd.MM.yyyy",
+    new Date()
+  );
+
+  const filteredContracts = contracts.filter((contract) => {
+    if (!contract.rental_start_date || !contract.rental_end_date) return false;
+    const rentalEnd = new Date(contract.rental_end_date);
+    return rentalEnd <= periodEnd;
+  });
+
+  const totalContractsAmount = filteredContracts?.reduce((acc, contract) => {
+    const rentalStart = new Date(contract.rental_start_date!);
+    const rentalEnd = new Date(contract.rental_end_date!);
+
+    const overlapStart = max([rentalStart, periodStart]);
+    const overlapEnd = min([rentalEnd, periodEnd]);
+
+    let overlapMonths = differenceInMonths(overlapEnd, overlapStart) + 1;
+    if (overlapMonths < 0) overlapMonths = 0;
+
+    return acc + overlapMonths * Number(contract.additional_costs ?? 0);
+  }, 0);
+
+  const totalAmount = invoices.reduce(
+    (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
+    0
+  );
+
+  const totalDiff =
+    totalContractsAmount -
+    totalAmount +
+    (local?.house_fee ? Number(local?.house_fee) : 0);
+
+  const contractors = contracts.flatMap((contract) => contract.contractors);
+
   const previewData: HeatingBillPreviewData = {
     mainDocDates: {
       created_at: mainDoc?.created_at,
@@ -82,13 +124,11 @@ export default function HeatingBillPreview({
     contractorsNames: contractors
       ?.map((c) => `${c.first_name} ${c.last_name}`)
       .join(", "),
-    totalInvoicesAmount: invoices.reduce(
-      (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-      0
-    ),
+    totalInvoicesAmount: totalAmount,
     invoices,
     totalLivingSpace,
-    contract,
+    contracts,
+    totalDiff,
     costCategories,
     propertyNumber: generatePropertyNumber(),
     heidiCustomerNumber: generateHeidiCustomerNumber(),

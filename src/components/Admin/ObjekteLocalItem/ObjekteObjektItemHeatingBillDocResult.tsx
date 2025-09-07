@@ -3,14 +3,13 @@ import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import {
-  getActiveContractByLocalID,
-  getContractsByLocalID,
+  getContractsWithContractorsByLocalID,
   getDocCostCategoryTypes,
   getHeatingBillDocumentByID,
+  getHeatingInvoicesByHeatingBillDocumentID,
   getInvoicesByHeatingBillDocumentID,
   getLocalById,
   getObjectById,
-  getRelatedContractors,
   getRelatedLocalsByObjektId,
   getUserData,
 } from "@/api";
@@ -32,7 +31,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
   docID,
   docType,
 }: ObjekteLocalItemHeatingBillDocResultProps) {
-  const contracts = await getContractsByLocalID(item.id);
+  const contracts = await getContractsWithContractorsByLocalID(item.id);
 
   const status = contracts?.some((contract) => contract.is_current)
     ? "renting"
@@ -75,13 +74,11 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
   const relatedLocals = await getRelatedLocalsByObjektId(id);
   const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
   const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
-  const contract = await getActiveContractByLocalID(item.id);
-  const invoices = await getInvoicesByHeatingBillDocumentID(docID ? docID : "");
+  const invoices = await getHeatingInvoicesByHeatingBillDocumentID(
+    docID ? docID : ""
+  );
   const local = await getLocalById(item.id ?? "");
   const user = await getUserData();
-  const contractors = contract?.id
-    ? await getRelatedContractors(contract.id)
-    : [];
 
   const totalLivingSpace =
     relatedLocals?.reduce((sum, local) => {
@@ -147,8 +144,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
             totalLivingSpace={totalLivingSpace}
             costCategories={costCategories}
             invoices={invoices}
-            contract={contract}
-            contractors={contractors}
+            contracts={contracts}
             objekt={objekt}
           />
           <button>

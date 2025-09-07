@@ -4,31 +4,6 @@ import { type HeatingBillPreviewData } from "./HeatingBillPreview";
 import { ContractorType } from "@/types";
 import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 
-type BillDataType = {
-  billNumber: string;
-  customerName: string;
-  customerAddress: string;
-  city: string;
-  createdBy: string;
-  createdByAddress: string;
-  createdByCity: string;
-  createdDate: string;
-  billingPeriod: {
-    heating: string;
-    usage: string;
-  };
-  propertyAccount: string;
-  propertyCity: string;
-  propertyNumber: string;
-  heidiCustomerNumber: string;
-  userNumber: string;
-  totalAmount: string;
-  userId: string;
-  securityCode: string;
-  portalLink: string;
-  properties: string[];
-};
-
 export default function HeatingBillPreviewOne({
   previewData,
   contractors,

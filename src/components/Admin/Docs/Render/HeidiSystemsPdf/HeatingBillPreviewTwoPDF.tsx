@@ -210,7 +210,9 @@ export default function HeatingBillPreviewTwoPDF({
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>erstellt am</Text>
                 <Text>
-                  {formatDateGerman(previewData.mainDocDates.created_at)}
+                  {formatDateGerman(
+                    formatDateGerman(previewData.mainDocDates.created_at)
+                  )}
                 </Text>
               </View>
             </View>
@@ -373,18 +375,22 @@ export default function HeatingBillPreviewTwoPDF({
             {[
               {
                 label: "Gerätemiete Heizung/Warmwasser",
-                date: "04.08.2023",
+                date: formatDateGerman(previewData.mainDocDates.created_at),
                 amount: "6.210,80 €",
               },
               {
                 label: "Kaltwasser",
-                date: "31.12.2023",
+                date: formatDateGerman(previewData.mainDocDates.created_at),
                 amount: "17.036,69 €",
               },
-              { label: "Abwasser", date: "31.12.2023", amount: "20.030,62 €" },
+              {
+                label: "Abwasser",
+                date: formatDateGerman(previewData.mainDocDates.created_at),
+                amount: "20.030,62 €",
+              },
               {
                 label: "Gerätemiete Kaltwasser",
-                date: "04.08.2023",
+                date: formatDateGerman(previewData.mainDocDates.created_at),
                 amount: "2.274,90 €",
               },
               {
@@ -394,7 +400,7 @@ export default function HeatingBillPreviewTwoPDF({
               },
               {
                 label: "Gerätemiete Heizung/Warmwasser",
-                date: "04.08.2023",
+                date: formatDateGerman(previewData.mainDocDates.created_at),
                 amount: "2.307,77 €",
               },
             ].map((r, i) => (

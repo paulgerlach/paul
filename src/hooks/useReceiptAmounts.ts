@@ -81,7 +81,7 @@ export function useReceiptAmounts({
       0
     );
 
-    const totalDiff = totalContractsAmount - totalAmount + totalHouseFee;
+    const totalDiff = totalContractsAmount - totalAmount;
 
     return {
       totalSpreadedAmount,

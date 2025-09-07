@@ -23,8 +23,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     return (
       <div className="py-6 px-9 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Share Link</h1>
-          <p className="text-gray-600">This share link has been tampered with or is invalid.</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Ungültiger Freigabe-Link</h1>
+          <p className="text-gray-600">Dieser Freigabe-Link wurde manipuliert oder ist ungültig.</p>
         </div>
       </div>
     );
@@ -40,8 +40,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     return (
       <div className="py-6 px-9 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Share Link</h1>
-          <p className="text-gray-600">The share link appears to be malformed or corrupted.</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Ungültiger Freigabe-Link</h1>
+          <p className="text-gray-600">Der Freigabe-Link scheint fehlerhaft oder beschädigt zu sein.</p>
         </div>
       </div>
     );
@@ -52,12 +52,12 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     return (
       <div className="py-6 px-9 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Share Link Expired</h1>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Freigabe-Link abgelaufen</h1>
           <p className="text-gray-600">
-            This share link expired on {expirationInfo.expiryDate?.toLocaleString()}
+            Dieser Freigabe-Link ist am {expirationInfo.expiryDate?.toLocaleDateString('de-DE')} abgelaufen
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            Please request a new share link from the dashboard owner.
+            Bitte fordern Sie einen neuen Freigabe-Link vom Dashboard-Eigentümer an.
           </p>
         </div>
       </div>
@@ -71,8 +71,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     return (
       <div className="py-6 px-9 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Data Unavailable</h1>
-          <p className="text-gray-600">Unable to load dashboard data at this time.</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Daten nicht verfügbar</h1>
+          <p className="text-gray-600">Dashboard-Daten können derzeit nicht geladen werden.</p>
         </div>
       </div>
     );
@@ -126,8 +126,8 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   // Create header info
   const meterCount = filters.meterIds?.length || 0;
   const headerTitle = meterCount > 0 
-    ? `Shared Dashboard (${meterCount} meter${meterCount === 1 ? '' : 's'})`
-    : "Shared Dashboard (All data)";
+    ? `Geteiltes Dashboard (${meterCount} Zähler)`
+    : "Geteiltes Dashboard (Alle Daten)";
 
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">
@@ -141,7 +141,7 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
                 </h1>
                 {expirationInfo.expiryDate && (
                     <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm max-md:text-xs font-medium">
-                    ⏰ Expires: {expirationInfo.expiryDate.toLocaleDateString()}
+                    ⏰ Läuft ab: {expirationInfo.expiryDate.toLocaleDateString('de-DE')}
                     </div>
                 )}
             </div>

@@ -39,7 +39,7 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
       await navigator.clipboard.writeText(fullUrl);
     } catch (error) {
       console.error('Failed to create share link:', error);
-      alert('Failed to create share link. Please try again.');
+      alert('Freigabe-Link konnte nicht erstellt werden. Bitte versuchen Sie es erneut.');
     } finally {
       setIsSharing(false);
     }
@@ -52,7 +52,7 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
       setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
     } catch (error) {
       console.error('Failed to copy:', error);
-      alert('Failed to copy to clipboard');
+      alert('Kopieren in die Zwischenablage fehlgeschlagen');
     }
   };
 
@@ -66,12 +66,12 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
         {isSharing ? (
           <>
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            <span className="animate-pulse">Creating Link...</span>
+            <span className="animate-pulse">Erstelle Link...</span>
           </>
         ) : (
           <>
             <span className="animate-bounce">📤</span>
-            <span>Share Dashboard</span>
+            <span>Dashboard teilen</span>
           </>
         )}
       </button>
@@ -87,7 +87,7 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
                   <span className="text-white text-sm animate-bounce">📊</span>
                 </div>
                 <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                  Share Dashboard
+                  Dashboard teilen
                 </h3>
               </div>
               <button

@@ -20,10 +20,22 @@ export default function LiveViewToggle() {
   // Don't show if not in demo mode or not client-side yet
   if (!isDemo || !isClient) return null;
 
-  // Check if pump is currently active (this will trigger re-renders when liveDataPoints changes)
+  // Check if any device is currently active (pump, wwater, or heat)
   const latestPumpStatus = getLatestDeviceStatus('pump');
+  const latestWaterStatus = getLatestDeviceStatus('wwater');
+  const latestHeatStatus = getLatestDeviceStatus('heat');
+  
   const isPumpOn = latestPumpStatus?.status === 'on';
-  const hasLiveData = getLatestDeviceStatus('pump') !== undefined;
+  const isWaterOn = latestWaterStatus?.status === 'on';
+  const isHeatOn = latestHeatStatus?.status === 'on';
+  const isAnyDeviceOn = isPumpOn || isWaterOn || isHeatOn;
+  
+  const isPumpOff = latestPumpStatus?.status === 'off';
+  const isWaterOff = latestWaterStatus?.status === 'off';
+  const isHeatOff = latestHeatStatus?.status === 'off';
+  const hasAnyDeviceOff = isPumpOff || isWaterOff || isHeatOff;
+  
+  const hasLiveData = latestPumpStatus !== undefined || latestWaterStatus !== undefined || latestHeatStatus !== undefined;
 
   // Always show toggle in demo mode, regardless of live data
   // if (!hasLiveData) return null;
@@ -32,23 +44,27 @@ export default function LiveViewToggle() {
     <button
       onClick={toggleLiveView}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 ${
-        isPumpOn
+        isAnyDeviceOn
           ? 'text-white hover:opacity-90'
-          : isLiveView
+          : hasAnyDeviceOff
             ? 'bg-red-500 text-white hover:bg-red-600'
-            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            : isLiveView
+              ? 'bg-red-500 text-white hover:bg-red-600'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
       }`}
-      style={isPumpOn ? { backgroundColor: '#8AD68F' } : {}}
+      style={isAnyDeviceOn ? { backgroundColor: '#8AD68F' } : {}}
     >
       <div 
         className={`w-2 h-2 rounded-full ${
-          isPumpOn
+          isAnyDeviceOn
             ? 'animate-pulse'
-            : isLiveView
+            : hasAnyDeviceOff
               ? 'bg-red-200 animate-pulse'
-              : 'bg-gray-500'
+              : isLiveView
+                ? 'bg-red-200 animate-pulse'
+                : 'bg-gray-500'
         }`}
-        style={isPumpOn ? { backgroundColor: 'rgba(255, 255, 255, 0.7)' } : {}}
+        style={isAnyDeviceOn ? { backgroundColor: 'rgba(255, 255, 255, 0.7)' } : {}}
       ></div>
       {isLiveView ? '📊 Historisch' : '⚡ Live-Ansicht'}
     </button>

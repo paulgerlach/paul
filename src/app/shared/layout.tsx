@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../(admin)/globals.css";
 
 export const metadata: Metadata = {
-  title: "Shared Dashboard - Heidi Systems",
-  description: "Shared dashboard view for Heidi Systems utility monitoring",
+  title: "Geteiltes Dashboard - Heidi Systems",
+  description: "Geteilte Dashboard-Ansicht für Heidi Systems Verbrauchsüberwachung",
 };
 
 export default function SharedLayout({

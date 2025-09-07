@@ -47,14 +47,14 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
       setLastResponse(`${device.toUpperCase()} ${status.toUpperCase()}: ${data.message || 'Success'}`);
       console.log('Mock webhook response:', data);
       
-      // Also inject directly into live store for immediate chart update
-      const livePoint = {
-        timestamp: new Date().toISOString(),
-        device: device,
-        status: status
-      };
-      console.log('[MockTest] Adding live data point:', livePoint);
-      addLiveDataPoint(livePoint);
+      // Remove direct injection - let SSE handle it to match real webhook behavior
+      // const livePoint = {
+      //   timestamp: new Date().toISOString(),
+      //   device: device,
+      //   status: status
+      // };
+      // console.log('[MockTest] Adding live data point:', livePoint);
+      // addLiveDataPoint(livePoint);
     } catch (error) {
       console.error('Mock webhook error:', error);
       setLastResponse(`Error: ${error}`);

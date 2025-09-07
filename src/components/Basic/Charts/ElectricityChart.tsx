@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
-import { useLiveIoTStore } from "@/store/useLiveIoTStore";
+// Electricity chart stays in historical mode only - no live view needed
 import { EmptyState } from "@/components/Basic/ui/States";
 import { electricity } from "@/static/icons";
 import Image from "next/image";
@@ -86,48 +86,10 @@ export default function ElectricityChart({
   emptyDescription,
 }: ElectricityChartProps) {
   const { startDate, endDate, meterIds } = useChartStore();
-  const liveDataPoints = useLiveIoTStore(state => state.liveDataPoints);
-  const [viewMode, setViewMode] = useState<'historical' | 'live'>('historical');
+  // Electricity chart stays in historical mode only
 
   const { data, maxKWh, usedDummy } = useMemo(() => {
-    // If in live mode, show live data instead of historical
-    if (viewMode === 'live') {
-      const now = new Date();
-      const liveData = [];
-      
-      // Show last 24 hours with live updates
-      for (let i = 23; i >= 0; i--) {
-        const hour = new Date(now.getTime() - i * 60 * 60 * 1000);
-        const hourLabel = `${hour.getHours().toString().padStart(2, '0')}:00`;
-        
-        // Find live data points for this hour
-        const hourData = liveDataPoints.filter(point => {
-          const pointHour = new Date(point.timestamp);
-          return pointHour.getHours() === hour.getHours() && 
-                 pointHour.toDateString() === now.toDateString();
-        });
-        
-        const totalKwh = hourData.reduce((sum, point) => 
-          sum + ((point.electricityWh || 0) / 1000), 0
-        );
-        
-        liveData.push({
-          label: hourLabel,
-          kwh: totalKwh,
-          hasLiveData: hourData.length > 0,
-          isLive: true
-        });
-      }
-      
-      const maxLiveKwh = Math.max(...liveData.map(d => d.kwh), 0.5); // Min 0.5 for visibility
-      
-      return {
-        data: liveData,
-        maxKWh: maxLiveKwh,
-        usedDummy: false
-      };
-    }
-
+    // Electricity chart stays in historical mode only
     // Historical mode (existing logic)
     const readings = Array.isArray(electricityReadings)
       ? electricityReadings
@@ -232,7 +194,7 @@ export default function ElectricityChart({
       maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
       usedDummy: false,
     };
-  }, [electricityReadings, startDate, endDate, meterIds, viewMode, liveDataPoints]);
+  }, [electricityReadings, startDate, endDate, meterIds]);
 
   // Medium benchmark per image: 2-person household ≈210 kWh/month
   const BENCHMARK_KWH_PER_MONTH = 210;
@@ -253,7 +215,7 @@ export default function ElectricityChart({
     });
 
     return out;
-  }, [data, liveDataPoints]);
+  }, [data]);
 
   const yMax = useMemo(() => {
     const values = chartData.map((d) => d.kwh as number);
@@ -305,32 +267,17 @@ export default function ElectricityChart({
               <XAxis dataKey="label" tickLine={false} axisLine={false} />
               <YAxis width={36} tickFormatter={(v) => `${Math.round(v)}`} domain={[0, yMax]} tickLine={false} axisLine={false} />
               <Tooltip
-                formatter={(v: number, name: string, props: any) => {
-                  const value = `${(v as number).toFixed(0)} kWh`;
-                  if (props.payload?.hasLiveData && name === 'kWh') {
-                    const liveKwh = props.payload?.liveKwh || 0;
-                    return [`${value} (${liveKwh.toFixed(2)} kWh live)`, name];
-                  }
-                  return [value, name];
-                }}
+                formatter={(v: number, name: string) => [
+                  `${(v as number).toFixed(0)} kWh`,
+                  name
+                ]}
                 labelFormatter={(l) => `${l}`}
                 contentStyle={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8 }}
               />
               <Legend verticalAlign="top" height={24} wrapperStyle={{ fontSize: 12 }} />
               <Area type="monotone" dataKey="avg" name="Ø (3M)" stroke="#FBBF24" fill="#FEF3C7" fillOpacity={0.6} />
               <Bar dataKey="kwh" name="kWh" radius={[8, 8, 8, 8]} fill="url(#elecGradient)" />
-              {/* Live IoT indicator dots */}
-              {chartData.filter(d => (d as any).hasLiveData).map((point, index) => (
-                <ReferenceDot
-                  key={`live-${index}`}
-                  x={(point as any).label}
-                  y={(point as any).kwh}
-                  r={4}
-                  fill="#10B981"
-                  stroke="#fff"
-                  strokeWidth={2}
-                />
-              ))}
+              {/* Electricity chart stays historical - no live indicators */}
             </ComposedChart>
           </ResponsiveContainer>
         )}

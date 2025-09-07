@@ -14,7 +14,6 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore"; // Import the Zustand store
-import { useLiveIoTStore } from "@/store/useLiveIoTStore";
 import { EmptyState } from "@/components/Basic/ui/States";
 
 // Helper function to extract the most recent reading date (robust: finds first available)
@@ -91,46 +90,9 @@ export default function WarmwasserChart({
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value / 1000}k`
   );
-  const [viewMode, setViewMode] = useState<'historical' | 'live'>('historical');
   const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
-  const liveDataPoints = useLiveIoTStore(state => state.liveDataPoints);
 
   useEffect(() => {
-    // Handle live view mode
-    if (viewMode === 'live') {
-      const now = new Date();
-      const liveData = [];
-      
-      // Show last 24 hours with live updates
-      for (let i = 23; i >= 0; i--) {
-        const hour = new Date(now.getTime() - i * 60 * 60 * 1000);
-        const hourLabel = `${hour.getHours().toString().padStart(2, '0')}:00`;
-        
-        // Find live data points for this hour
-        const hourData = liveDataPoints.filter(point => {
-          const pointHour = new Date(point.timestamp);
-          return pointHour.getHours() === hour.getHours() && 
-                 pointHour.toDateString() === now.toDateString();
-        });
-        
-        const totalM3 = hourData.reduce((sum, point) => 
-          sum + (point.waterM3 || 0), 0
-        );
-        
-        liveData.push({
-          label: hourLabel,
-          cold: chartType === 'cold' ? totalM3 : 0,
-          hot: chartType === 'hot' ? totalM3 : 0,
-          hasLiveData: hourData.length > 0
-        });
-      }
-      
-      setChartData(liveData);
-      setYAxisDomain([0, Math.max(0.1, Math.max(...liveData.map(d => Math.max(d.cold || 0, d.hot || 0))))]);
-      setTickFormatter(() => (value: number) => `${value.toFixed(2)}m³`);
-      return;
-    }
-
     const getMonthSpanCount = (): number => {
       if (!startDate || !endDate) return 12;
       const startY = startDate.getFullYear();

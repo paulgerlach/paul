@@ -185,23 +185,23 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
               emptyDescription='Keine Daten im ausgewählten Zeitraum.'
             />
           ) : (
-            <LiveCardFlip cardType="electricity" isDemo={isDemo}>
-              <ElectricityChart
-                electricityReadings={electricityDevices}
-                isEmpty={isElectricityEmpty}
-                emptyTitle='Keine Daten verfügbar.'
-                emptyDescription='Keine Stromdaten im ausgewählten Zeitraum.'
-              />
-            </LiveCardFlip>
+            <ElectricityChart
+              electricityReadings={electricityDevices}
+              isEmpty={isElectricityEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Stromdaten im ausgewählten Zeitraum.'
+            />
           )}
         </div>
         <div className='h-[318px]'>
-          <HeatingCosts
-            csvText={heatDevices}
-            isEmpty={isHeatEmpty}
-            emptyTitle='Keine Daten verfügbar.'
-            emptyDescription='Keine Heizungsdaten im ausgewählten Zeitraum.'
-          />
+          <LiveCardFlip cardType="heat" isDemo={isDemo}>
+            <HeatingCosts
+              csvText={heatDevices}
+              isEmpty={isHeatEmpty}
+              emptyTitle='Keine Daten verfügbar.'
+              emptyDescription='Keine Heizungsdaten im ausgewählten Zeitraum.'
+            />
+          </LiveCardFlip>
         </div>
       </div>
 

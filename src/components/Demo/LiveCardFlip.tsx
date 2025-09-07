@@ -3,10 +3,11 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { useLiveIoTStore } from '@/store/useLiveIoTStore';
 import { useLiveViewStore } from '@/store/useLiveViewStore';
+import { ComposedChart, Area, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface LiveCardFlipProps {
   children: ReactNode; // The original chart component
-  cardType: 'electricity' | 'water-cold' | 'water-hot';
+  cardType: 'heat' | 'water-cold' | 'water-hot';
   isDemo?: boolean;
 }
 
@@ -20,8 +21,8 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
   const getDeviceForChart = (chartType: string): string => {
     switch (chartType) {
       case 'water-cold': return 'pump';
-      case 'water-hot': return 'heating';
-      case 'electricity': return 'electricity';
+      case 'water-hot': return 'wwater'; // Hot water uses wwater device
+      case 'heat': return 'heat'; // Heat chart uses heat device
       default: return 'pump';
     }
   };
@@ -33,9 +34,14 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
 
   // Update live data every 5 seconds when device is ON
   useEffect(() => {
-    if (!isDeviceOn || !isDemo) {
+    if (!isDemo) {
       setLiveData([]);
       return;
+    }
+    
+    // Don't clear data when device turns off - keep historical data
+    if (!isDeviceOn) {
+      return; // Keep existing data, don't update
     }
 
     const updateLiveData = () => {
@@ -51,16 +57,16 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     // Initial reading
     updateLiveData();
     
-    // Update every 5 seconds
-    const interval = setInterval(updateLiveData, 5000);
+    // Update every 3 seconds
+    const interval = setInterval(updateLiveData, 3000);
     return () => clearInterval(interval);
   }, [isDeviceOn, cardType, isDemo, deviceType]);
 
   const generateRealisticConsumption = (type: string): number => {
     const baseValues = {
-      'electricity': 150, // 150W base
-      'water-cold': 0.05, // Increased from 0.01 to 0.05 m³ per 5s (5x more sensitive)
-      'water-hot': 0.04, // Increased from 0.008 to 0.04 m³ per 5s (5x more sensitive)
+      'heat': 300, // 300W base for heating
+      'water-cold': 0.05, // Increased from 0.01 to 0.05 m³ per 3s (5x more sensitive)
+      'water-hot': 0.04, // Increased from 0.008 to 0.04 m³ per 3s (5x more sensitive)
     };
     
     const base = baseValues[type as keyof typeof baseValues] || 0;
@@ -71,9 +77,9 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
 
   const getUnit = () => {
     switch (cardType) {
-      case 'electricity': return 'W';
+      case 'heat': return 'W';
       case 'water-cold':
-      case 'water-hot': return 'm³/5s';
+      case 'water-hot': return 'm³/3s';
       default: return '';
     }
   };
@@ -82,9 +88,34 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     return liveData.length > 0 ? liveData[liveData.length - 1] : 0;
   };
 
+  const getChartData = () => {
+    if (cardType === 'heat') {
+      // For heat chart live view, show as time periods (minutes/seconds)
+      return liveData.map((value, index) => ({
+        time: index < 20 ? `${index * 3}s` : `${Math.floor(index * 3 / 60)}m`,
+        value: value
+      }));
+    } else {
+      // For water charts, show as time periods
+      return liveData.map((value, index) => ({
+        time: `${index * 3}s`,
+        value: value
+      }));
+    }
+  };
+
+  const getChartColor = () => {
+    switch (cardType) {
+      case 'heat': return '#6083CC'; // Blue like original Heizkosten
+      case 'water-cold': return '#6083CC'; // Blue like original Kaltwasser
+      case 'water-hot': return '#E74B3C'; // Red like original Warmwasser
+      default: return '#6083CC';
+    }
+  };
+
   const getTitle = () => {
     switch (cardType) {
-      case 'electricity': return 'Live Stromverbrauch';
+      case 'heat': return 'Live Heizkosten';
       case 'water-cold': return 'Live Kaltwasser Verbrauch';
       case 'water-hot': return 'Live Warmwasser Verbrauch';
       default: return 'Live Daten';
@@ -112,48 +143,76 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
 
         {/* Back Side - Live Interface */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
-          <div className="rounded-2xl shadow p-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white h-full flex flex-col">
+          <div className="rounded-2xl shadow p-4 bg-white text-gray-800 h-full flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full animate-pulse ${
-                      isDeviceOn ? 'bg-green-400' : 'bg-red-400'
+                      isDeviceOn ? 'bg-green-600' : 'bg-red-500'
                     }`}></div>
                 <h3 className="text-lg font-medium">{getTitle()}</h3>
               </div>
             </div>
 
-            {/* Live Value Display */}
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <div className="text-center mb-6">
-                <div className="text-4xl font-bold text-green-400 mb-2">
-                  {getCurrentValue().toFixed(cardType === 'electricity' ? 0 : 3)}
-                </div>
-                <div className="text-gray-400 text-sm">{getUnit()}</div>
-              </div>
-
-              {/* Mini Live Chart */}
-              <div className="w-full max-w-xs">
-                <div className="flex items-end justify-center h-20 gap-1">
-                  {liveData.map((value, index) => {
-                    const maxValue = Math.max(...liveData, 1);
-                    const height = (value / maxValue) * 100;
-                    return (
-                      <div
-                        key={index}
-                        className="bg-green-400 rounded-t transition-all duration-300"
-                        style={{
-                          height: `${height}%`,
-                          width: '6px',
-                          opacity: index === liveData.length - 1 ? 1 : 0.7 - (liveData.length - index) * 0.1
-                        }}
+            {/* Live Chart Display - Full Size Like Original */}
+            <div className="flex-1 flex flex-col">
+              {/* Chart Area */}
+              <div className="flex-1 min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={getChartData()} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                    <defs>
+                      <linearGradient id={`colorLive${cardType}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={getChartColor()} stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor={getChartColor()} stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="time" 
+                      axisLine={false} 
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#6B7280' }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#6B7280' }}
+                      tickFormatter={(value) => cardType === 'heat' ? `${value}W` : `${value.toFixed(2)}`}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #E5E7EB', 
+                        borderRadius: '8px',
+                        fontSize: '12px'
+                      }}
+                      formatter={(value: number) => [
+                        `${cardType === 'heat' ? value.toFixed(0) : value.toFixed(3)} ${getUnit()}`, 
+                        getTitle().replace('Live ', '')
+                      ]}
+                    />
+                    {cardType === 'heat' ? (
+                      <Bar 
+                        dataKey="value" 
+                        fill={getChartColor()}
+                        radius={[2, 2, 0, 0]}
                       />
-                    );
-                  })}
-                </div>
-                <div className="text-xs text-gray-500 text-center mt-2">
-                  Letzte {Math.max(liveData.length * 5, 5)} Sekunden
-                </div>
+                    ) : (
+                      <Area 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke={getChartColor()} 
+                        strokeWidth={2}
+                        fillOpacity={1} 
+                        fill={`url(#colorLive${cardType})`} 
+                      />
+                    )}
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+              
+              {/* Status Text */}
+              <div className="text-xs text-gray-500 text-center mt-2">
+                Letzte {Math.max(liveData.length * 3, 3)} Sekunden • Live Updates
               </div>
             </div>
           </div>

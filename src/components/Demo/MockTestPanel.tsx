@@ -13,7 +13,8 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
   const [lastResponse, setLastResponse] = useState<string>('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const { addLiveDataPoint } = useLiveIoTStore();
+  const { addLiveDataPoint, getStorageInfo, clearLiveData } = useLiveIoTStore();
+  const [showStorage, setShowStorage] = useState(false);
   
   // Make the panel draggable
   const { position, isDragging, dragRef, dragHandleProps, updatePosition, isInitialized } = useDraggable({
@@ -34,7 +35,7 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
 
   if (!isDemo || !isClient) return null;
 
-  const sendMockWebhook = async (status: 'on' | 'off', device: 'pump' | 'electricity' | 'heating') => {
+  const sendMockWebhook = async (status: 'on' | 'off', device: 'pump' | 'wwater' | 'heat') => {
     setIsLoading(true);
     try {
       // Use relative path - works for both localhost and production
@@ -65,7 +66,7 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
   return (
     <div 
       ref={dragRef}
-      className={`fixed z-50 bg-gray-900 text-white rounded-lg shadow-lg p-4 min-w-[240px] ${isDragging ? 'shadow-2xl' : ''}`}
+      className={`fixed z-50 bg-white text-gray-800 rounded-lg shadow-lg p-4 min-w-[240px] ${isDragging ? 'shadow-2xl' : ''}`}
       style={{ 
         left: `${position.x}px`, 
         top: `${position.y}px`,
@@ -82,13 +83,13 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
           {...dragHandleProps}
           title="Drag to move panel"
         >
-          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
           <h3 className="font-semibold">Test Panel</h3>
-          <div className="text-gray-400 text-xs ml-2">⋮⋮</div>
+          <div className="text-gray-600 text-xs ml-2">⋮⋮</div>
         </div>
         <button
           onClick={() => setIsMinimized(!isMinimized)}
-          className="text-gray-400 hover:text-white transition-colors p-1"
+          className="text-gray-600 hover:text-gray-800 transition-colors p-1"
           title={isMinimized ? "Maximieren" : "Minimieren"}
         >
           {isMinimized ? "□" : "−"}
@@ -104,7 +105,7 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
               <button
                 onClick={() => sendMockWebhook('on', 'pump')}
                 disabled={isLoading}
-                className="flex-1 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
                 style={{ backgroundColor: '#8AD68F' }}
                 onMouseEnter={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#7BC87F')}
                 onMouseLeave={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#8AD68F')}
@@ -114,60 +115,94 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
               <button
                 onClick={() => sendMockWebhook('off', 'pump')}
                 disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
               >
                 {isLoading ? '⏳' : '💧 Pumpe AUS'}
               </button>
             </div>
             
-            {/* Heating Controls */}
+            {/* Hot Water Controls */}
             <div className="flex gap-2">
               <button
-                onClick={() => sendMockWebhook('on', 'heating')}
+                onClick={() => sendMockWebhook('on', 'wwater')}
                 disabled={isLoading}
-                className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
               >
-                {isLoading ? '⏳' : '🔥 Heizung EIN'}
+                {isLoading ? '⏳' : '🚿 Warmwasser EIN'}
               </button>
               <button
-                onClick={() => sendMockWebhook('off', 'heating')}
+                onClick={() => sendMockWebhook('off', 'wwater')}
                 disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
               >
-                {isLoading ? '⏳' : '🔥 Heizung AUS'}
+                {isLoading ? '⏳' : '🚿 Warmwasser AUS'}
               </button>
             </div>
             
-            {/* Electricity Controls */}
+            {/* Heat Controls */}
             <div className="flex gap-2">
               <button
-                onClick={() => sendMockWebhook('on', 'electricity')}
+                onClick={() => sendMockWebhook('on', 'heat')}
                 disabled={isLoading}
-                className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
               >
-                {isLoading ? '⏳' : '⚡ Strom EIN'}
+                {isLoading ? '⏳' : '🌡️ Wärme EIN'}
               </button>
               <button
-                onClick={() => sendMockWebhook('off', 'electricity')}
+                onClick={() => sendMockWebhook('off', 'heat')}
                 disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
               >
-                {isLoading ? '⏳' : '⚡ Strom AUS'}
+                {isLoading ? '⏳' : '🌡️ Wärme AUS'}
               </button>
             </div>
           </div>
 
       {/* Response Display */}
       {lastResponse && (
-        <div className="text-xs bg-gray-800 p-2 rounded border">
-          <div className="text-gray-400 mb-1">Letzte Antwort:</div>
-          <div className="text-green-400">{lastResponse}</div>
+        <div className="text-xs bg-gray-50 p-2 rounded border border-gray-200">
+          <div className="text-gray-600 mb-1">Letzte Antwort:</div>
+          <div className="text-green-700">{lastResponse}</div>
         </div>
       )}
 
+          {/* Storage Info */}
+          <div className="mt-3 pt-3 border-t border-gray-200">
+            <button
+              onClick={() => setShowStorage(!showStorage)}
+              className="text-xs text-gray-600 hover:text-gray-800 mb-2"
+            >
+              📊 Speicher Info {showStorage ? '▼' : '▶'}
+            </button>
+            
+            {showStorage && (
+              <div className="text-xs text-gray-600 space-y-1">
+                {(() => {
+                  const info = getStorageInfo();
+                  return (
+                    <>
+                      <div>Datenpunkte: {info.dataPoints}</div>
+                      <div>Geräte: {info.devices.join(', ') || 'Keine'}</div>
+                      <div>Größe: {info.storageSize}</div>
+                      <button
+                        onClick={() => {
+                          clearLiveData();
+                          setLastResponse('Speicher geleert');
+                        }}
+                        className="mt-2 px-2 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200"
+                      >
+                        🗑️ Speicher leeren
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+
           {/* Info */}
-          <div className="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-700">
-            Test Modus • Simuliert Shelly Gerät
+          <div className="text-xs text-gray-600 mt-2">
+            Test Modus • Daten werden gespeichert
           </div>
         </>
       )}

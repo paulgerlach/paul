@@ -10,10 +10,12 @@ export default async function AdminPage() {
 
   return (
     <div className="py-6 px-9 overflow-scroll">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex justify-between items-end mb-6">
+        <div className="flex items-end gap-4">
           <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-          <LiveViewToggle />
+          <div className="mb-1">
+            <LiveViewToggle />
+          </div>
         </div>
         <ShareButton />
       </div>

@@ -9,9 +9,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="py-6 px-9 overflow-scroll">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-end gap-4 mb-6">
         <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-        <LiveViewToggle />
+        <div className="mb-1">
+          <LiveViewToggle />
+        </div>
       </div>
       <DashboardCharts parsedData={parsedData!} />
     </div>

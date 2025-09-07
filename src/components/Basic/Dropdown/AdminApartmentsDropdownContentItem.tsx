@@ -63,8 +63,6 @@ export default function AdminApartmentsDropdownContentItem({
             <input
               type="checkbox"
               onChange={() => {
-                console.log({ meterIds, localMeterIds: local.meter_ids });
-
                 // Find the non-empty meterIds from the meter_ids array
                 const localMeterIds = (local?.meter_ids || [])
                   .map((id) => id.trim())

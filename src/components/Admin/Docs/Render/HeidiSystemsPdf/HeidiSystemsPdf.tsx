@@ -20,22 +20,15 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     user,
     objekt,
     contracts,
-    local,
     invoices,
     totalLivingSpace,
     costCategories,
   } = props;
 
-  const periodStart = parse(
-    mainDoc?.start_date ? mainDoc.start_date : "",
-    "dd.MM.yyyy",
-    new Date()
-  );
-  const periodEnd = parse(
-    mainDoc?.end_date ? mainDoc.end_date : "",
-    "dd.MM.yyyy",
-    new Date()
-  );
+  const periodStart = mainDoc?.start_date
+    ? new Date(mainDoc.start_date)
+    : new Date();
+  const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
 
   const filteredContracts = contracts.filter((contract) => {
     if (!contract.rental_start_date || !contract.rental_end_date) return false;
@@ -61,10 +54,7 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     0
   );
 
-  const totalDiff =
-    totalContractsAmount -
-    totalAmount +
-    (local?.house_fee ? Number(local?.house_fee) : 0);
+  const totalDiff = totalContractsAmount - totalAmount;
 
   const contractors = contracts.flatMap((contract) => contract.contractors);
 

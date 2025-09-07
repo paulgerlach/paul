@@ -74,7 +74,7 @@ export function useLocalReceiptAmounts({
       return acc + overlapMonths * Number(contract.additional_costs ?? 0);
     }, 0);
 
-    const totalDiff = totalContractsAmount - totalAmount + (local?.house_fee ? Number(local?.house_fee) : 0);
+    const totalDiff = totalContractsAmount - totalAmount;
 
     return {
       totalSpreadedAmount,

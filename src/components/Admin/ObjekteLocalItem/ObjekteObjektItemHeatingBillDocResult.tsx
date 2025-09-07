@@ -13,19 +13,10 @@ import {
   getRelatedContractors,
   getRelatedLocalsByObjektId,
   getUserData,
-  // getDocCostCategoryTypes,
-  // getHeatingBillDocumentByID,
-  // getInvoicesByHeatingBillDocumentID,
-  // getInvoicesByOperatingCostDocumentID,
-  // getLocalById,
-  // getObjectById,
-  // getOperatingCostDocumentByID,
-  // getRelatedContractors,
-  // getRelatedLocalsByObjektId,
 } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import LocalPDFDownloadButton from "../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
@@ -136,7 +127,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
         </div> */}
         <div className="flex items-center justify-end gap-4">
           <Link
-            href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/${docType}/${id}/${docID}/${item.id}/results/preview`}
+            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${id}/${docID}/results/${item.id}/preview`}
           >
             <Image
               width={0}
@@ -148,17 +139,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
               alt={"pdf_icon"}
             />
           </Link>
-          <button>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-              src={gmail}
-              alt={"gmail_icon"}
-            />
-          </button>
+
           <LocalPDFDownloadButton
             mainDoc={mainDoc}
             local={local}
@@ -170,9 +151,20 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
             contractors={contractors}
             objekt={objekt}
           />
+          <button>
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
+              src={gmail}
+              alt={"gmail_icon"}
+            />
+          </button>
           <ThreeDotsButton
             dialogAction="heating_bill_delete"
-            editLink={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}
+            editLink={`${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}
           />
         </div>
       </div>

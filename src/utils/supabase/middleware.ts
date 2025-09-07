@@ -44,7 +44,7 @@ export async function updateSession(request: NextRequest) {
   const isProtected = protectedRoutes.some((route) => path.startsWith(route));
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 
@@ -54,7 +54,7 @@ export async function updateSession(request: NextRequest) {
     if (!user) {
       // Not logged in → send to login
       const url = request.nextUrl.clone();
-      url.pathname = "/login";
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
 

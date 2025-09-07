@@ -110,83 +110,56 @@ export interface ParseResult {
   errors: { row: number; error: string; rawRow: any }[];
 }
 
+// Helper function to fetch and parse a single CSV file
+async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseResult> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${fileName} file: ${response.statusText}`);
+    }
+    const csvData = await response.text();
+    const parseResult = parseCsv(csvData);
+    
+    if (parseResult.errors.length > 0) {
+      console.warn(`Parse errors found in ${fileName}:`, parseResult.errors);
+    }
+    
+    return parseResult;
+  } catch (error) {
+    console.error(`Error processing ${fileName}:`, error);
+    return { data: [], errors: [{ row: 0, error: `Failed to fetch ${fileName}: ${error}`, rawRow: null }] };
+  }
+}
+
 export const parseCSVs = async () => {
-  // from public folder
-  const GatewayLatestUrlFileUrl = 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5';
-  const GatewayUrlFileUrl = 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
-  const GatewayOneUrlFileUrl = 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
-  const HeinWeisCodeFileUrl = 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM';
+  // Configuration for all CSV files
+  const csvFiles = [
+    { url: 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5', name: 'GatewayLatest' },
+    { url: 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy', name: 'Gateway' },
+    { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
+    { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
+    { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' }
+  ];
 
   try {
-    const gatewayResponseLatest = await fetch(GatewayLatestUrlFileUrl);
-    if (!gatewayResponseLatest.ok) {
-      throw new Error(`Failed to fetch Gateway file: ${gatewayResponseLatest.statusText}`);
-    }
-    const gatewayCsvDataLatest = await gatewayResponseLatest.text();
+    // Fetch and parse all CSV files in parallel
+    const parseResults = await Promise.all(
+      csvFiles.map(({ url, name }) => fetchAndParseCsv(url, name))
+    );
 
+    // Combine all data and errors
+    const combinedData = parseResults.flatMap(result => result.data);
+    const combinedErrors = parseResults.flatMap(result => result.errors);
 
-    // download the Gateway CSV file
-    const gatewayResponse = await fetch(GatewayUrlFileUrl);
-    if (!gatewayResponse.ok) {
-      throw new Error(`Failed to fetch Gateway file: ${gatewayResponse.statusText}`);
-    }
-    const gatewayCsvData = await gatewayResponse.text();
-
-    // download the HeinWeisCode CSV file
-    const heinWeisResponse = await fetch(HeinWeisCodeFileUrl);
-    if (!heinWeisResponse.ok) {
-      throw new Error(`Failed to fetch HeinWeisCode file: ${heinWeisResponse.statusText}`);
-    }
-    const heinWeisCsvData = await heinWeisResponse.text();
-
-    // download the GatewayOne CSV file
-    const gatewayOneResponse = await fetch(GatewayOneUrlFileUrl);
-    if (!gatewayOneResponse.ok) {
-      throw new Error(`Failed to fetch GatewayOne file: ${gatewayOneResponse.statusText}`);
-    }
-    const gatewayOneCsvData = await gatewayOneResponse.text();
-
-    // Use the new robust parser
-    const parseResultGateway = parseCsv(gatewayCsvData);
-    const parseResultHeinWeis = parseCsv(heinWeisCsvData);
-    const parseResultGatewayOne = parseCsv(gatewayOneCsvData);
-    const parseResultGatewayLatest = parseCsv(gatewayCsvDataLatest);
-
-    if (parseResultGateway.errors.length > 0) {
-      console.warn("Parse errors found in Gateway:", parseResultGateway.errors);
-    }
-
-    if (parseResultHeinWeis.errors.length > 0) {
-      console.warn("Parse errors found in HeinWeis:", parseResultHeinWeis.errors);
-    }
-
-    if (parseResultGatewayOne.errors.length > 0) {
-      console.warn("Parse errors found in GatewayOne:", parseResultGatewayOne.errors);
-    }
-
-    const meterIds = Array.from(new Set([
-      ...parseResultGateway.data.map((item) => item.ID),
-      ...parseResultHeinWeis.data.map((item) => item.ID),
-      ...parseResultGatewayOne.data.map((item) => item.ID),
-      ...parseResultGatewayLatest.data.map((item) => item.ID)
-    ]));
+    // Extract unique meter IDs
+    const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
 
     return {
-      data: [
-        ...parseResultGateway.data,
-        ...parseResultHeinWeis.data,
-        ...parseResultGatewayOne.data,
-        ...parseResultGatewayLatest.data
-      ],
-      errors: [
-        ...parseResultGateway.errors,
-        ...parseResultHeinWeis.errors,
-        ...parseResultGatewayOne.errors,
-        ...parseResultGatewayLatest.errors
-      ]
+      data: combinedData,
+      errors: combinedErrors
     };
   } catch (err) {
-    console.log(err);
+    console.error('Unexpected error in parseCSVs:', err);
     return { data: [], errors: [] };
   }
 };

@@ -16,14 +16,24 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
   const getLatestDeviceStatus = useLiveIoTStore(state => state.getLatestDeviceStatus);
   const isLiveView = useLiveViewStore(state => state.isLiveView);
 
-  // Check if pump is currently ON
-  const isPumpOn = getLatestDeviceStatus('pump')?.status === 'on';
+  // Map chart types to device types
+  const getDeviceForChart = (chartType: string): string => {
+    switch (chartType) {
+      case 'water-cold': return 'pump';
+      case 'water-hot': return 'heating';
+      case 'electricity': return 'electricity';
+      default: return 'pump';
+    }
+  };
+
+  const deviceType = getDeviceForChart(cardType);
+  const isDeviceOn = getLatestDeviceStatus(deviceType)?.status === 'on';
 
   // No auto-flip - controlled by global live view toggle
 
-  // Update live data every 5 seconds when pump is ON
+  // Update live data every 5 seconds when device is ON
   useEffect(() => {
-    if (!isPumpOn || !isDemo) {
+    if (!isDeviceOn || !isDemo) {
       setLiveData([]);
       return;
     }
@@ -44,13 +54,13 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     // Update every 5 seconds
     const interval = setInterval(updateLiveData, 5000);
     return () => clearInterval(interval);
-  }, [isPumpOn, cardType, isDemo]);
+  }, [isDeviceOn, cardType, isDemo, deviceType]);
 
   const generateRealisticConsumption = (type: string): number => {
     const baseValues = {
       'electricity': 150, // 150W base
-      'water-cold': 0.01, // 0.01 m³ per 5s
-      'water-hot': 0.008, // 0.008 m³ per 5s
+      'water-cold': 0.05, // Increased from 0.01 to 0.05 m³ per 5s (5x more sensitive)
+      'water-hot': 0.04, // Increased from 0.008 to 0.04 m³ per 5s (5x more sensitive)
     };
     
     const base = baseValues[type as keyof typeof baseValues] || 0;
@@ -74,10 +84,10 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
 
   const getTitle = () => {
     switch (cardType) {
-      case 'electricity': return 'Live Power Consumption';
-      case 'water-cold': return 'Live Cold Water Flow';
-      case 'water-hot': return 'Live Hot Water Flow';
-      default: return 'Live Data';
+      case 'electricity': return 'Live Stromverbrauch';
+      case 'water-cold': return 'Live Kaltwasser Verbrauch';
+      case 'water-hot': return 'Live Warmwasser Verbrauch';
+      default: return 'Live Daten';
     }
   };
 
@@ -106,9 +116,9 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full animate-pulse ${
-                  isPumpOn ? 'bg-green-400' : 'bg-red-400'
-                }`}></div>
+                    <div className={`w-3 h-3 rounded-full animate-pulse ${
+                      isDeviceOn ? 'bg-green-400' : 'bg-red-400'
+                    }`}></div>
                 <h3 className="text-lg font-medium">{getTitle()}</h3>
               </div>
             </div>
@@ -142,7 +152,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                   })}
                 </div>
                 <div className="text-xs text-gray-500 text-center mt-2">
-                  Letzte {liveData.length * 5} Sekunden
+                  Letzte {Math.max(liveData.length * 5, 5)} Sekunden
                 </div>
               </div>
             </div>

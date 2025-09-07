@@ -8,17 +8,17 @@ export async function GET(request: NextRequest) {
   
   // Validate input parameters
   const validStatuses = ['on', 'off'];
-  const validDevices = ['pump'];
+  const validDevices = ['pump', 'electricity', 'heating'];
   
   if (!status || !device) {
     return NextResponse.json({ 
-      error: 'Missing parameters. Required: status (on/off) and device (pump)' 
+      error: 'Missing parameters. Required: status (on/off) and device (pump/electricity/heating)' 
     }, { status: 400 });
   }
   
   if (!validStatuses.includes(status) || !validDevices.includes(device)) {
     return NextResponse.json({ 
-      error: 'Invalid parameters. Status must be on/off, device must be pump' 
+      error: 'Invalid parameters. Status must be on/off, device must be pump/electricity/heating' 
     }, { status: 400 });
   }
   

@@ -31,6 +31,7 @@ import type {
   UserType
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
+import { MASTER_DATA } from "./data";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -118,7 +119,9 @@ async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseRes
       throw new Error(`Failed to fetch ${fileName} file: ${response.statusText}`);
     }
     const csvData = await response.text();
-    const parseResult = parseCsv(csvData);
+
+    // if filename includes .json then parse as json otherwise parse as csv
+    const parseResult = fileName.endsWith('.txt') ? JSON.parse(csvData) : parseCsv(csvData);
 
     if (parseResult.errors.length > 0) {
       console.warn(`Parse errors found in ${fileName}:`, parseResult.errors);
@@ -139,18 +142,27 @@ export const parseCSVs = async () => {
     // { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
     // { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
     // { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' },
-    { url: 'https://drive.google.com/uc?export=download&id=1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g', name: 'All Together' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g', name: 'All Together' },
+    { url: 'http://localhost:3000/data/data.json', name: 'All Together' },
   ];
 
   try {
     // Fetch and parse all CSV files in parallel
-    const parseResults = await Promise.all(
-      csvFiles.map(({ url, name }) => fetchAndParseCsv(url, name))
-    );
+    // const parseResults = await Promise.all(
+    //   csvFiles.map(({ url, name }) => fetchAndParseCsv(url, name))
+    // );
+
+    // fetch directly from localhost for data.json file using native fetch
+    // const parseResults: any = await fetch('http://localhost:3000/data/data.json')
+    //   .then(response => response.json())
+    //   .catch(error => {
+    //     console.error('Error fetching local data:', error);
+    //     return null;
+    //   });
 
     // Combine all data and errors
-    const combinedData = parseResults.flatMap(result => result.data);
-    const combinedErrors = parseResults.flatMap(result => result.errors);
+    const combinedData = MASTER_DATA;
+    const combinedErrors : any = [];
 
     // Extract unique meter IDs
     const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));

@@ -27,6 +27,7 @@ import AdminLocalDeleteDialog from "@/components/Basic/Dialog/Admin/AdminLocalDe
 import AdminObjekteDeleteDialog from "@/components/Basic/Dialog/Admin/AdminObjekteDeleteDialog";
 import AdminEditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminEditHeizkostenabrechnungCostTypeDialog";
 import AdminAddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminAddHeizkostenabrechnungCostTypeDialog";
+import ShareDashboardDialog from "@/components/Basic/Dialog/ShareDashboardDialog";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -71,6 +72,7 @@ export default function AdminLayout({
       <OperatingCostDocumentDeleteDialog />
       <AdminOperatingCostDocumentDeleteDialog />
       <AdminAddDocBetriebskostenabrechnungDialog />
+      <ShareDashboardDialog />
       <Toaster />
     </QueryProvider>
   );

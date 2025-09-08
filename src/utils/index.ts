@@ -10,6 +10,13 @@ import {
   cost_type_heater,
   cost_type_fuel_costs,
   cost_type_cleaning,
+  cost_type_fuel_costs_direct,
+  cost_type_operating_current,
+  cost_type_maintenance_costs,
+  cost_type_metering_service_costs,
+  cost_type_metering_device_rental,
+  cost_type_chimney_sweep_costs,
+  cost_type_other_operating_costs,
 } from "@/static/icons";
 import type { BuildingType, LocalType, UnitType } from "@/types";
 import { clsx, type ClassValue } from "clsx";
@@ -175,19 +182,19 @@ export const buildLocalName = ({
 export function getCostTypeIconByKey(key?: string) {
   switch (key) {
     case "fuel_costs":
-      return cost_type_fuel_costs;
+      return cost_type_fuel_costs_direct;
     case "operating_current":
-      return cost_type_water_drop;
+      return cost_type_operating_current;
     case "maintenance_costs":
-      return cost_type_pipe;
+      return cost_type_maintenance_costs;
     case "metering_service_costs":
-      return cost_type_heater;
+      return cost_type_metering_service_costs;
     case "metering_device_rental":
-      return cost_type_water_drop;
+      return cost_type_metering_device_rental;
     case "chimney_sweep_costs":
-      return cost_type_fuel_costs;
+      return cost_type_chimney_sweep_costs;
     case "other_operating_costs":
-      return cost_type_cleaning;
+      return cost_type_other_operating_costs;
     default:
       return cost_type_fuel_costs;
   }

@@ -39,24 +39,51 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
     setIsLoading(true);
     try {
       // Use relative path - works for both localhost and production
-      const response = await fetch(`/api/demo/webhook?status=${status}&device=${device}`, {
+      // Add source=mock parameter to identify this as mock data
+      const response = await fetch(`/api/demo/webhook?status=${status}&device=${device}&source=mock`, {
         method: 'GET',
       });
       
       const data = await response.json();
       setLastResponse(`${device.toUpperCase()} ${status.toUpperCase()}: ${data.message || 'Success'}`);
       console.log('Mock webhook response:', data);
+      console.log('Mock webhook - sent source=mock, received data:', {
+        success: data.success,
+        source: data.data?.source,
+        message: data.data?.message
+      });
       
-      // Remove direct injection - let SSE handle it to match real webhook behavior
-      // const livePoint = {
-      //   timestamp: new Date().toISOString(),
-      //   device: device,
-      //   status: status
-      // };
-      // console.log('[MockTest] Adding live data point:', livePoint);
-      // addLiveDataPoint(livePoint);
+      // Data will flow through SSE stream - no direct injection needed
+      // This ensures proper separation between mock and live data sources
     } catch (error) {
       console.error('Mock webhook error:', error);
+      setLastResponse(`Error: ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendLiveSimulation = async (status: 'on' | 'off', device: 'pump' | 'wwater' | 'heat') => {
+    setIsLoading(true);
+    try {
+      // Use relative path - works for both localhost and production
+      // NO source parameter - simulates real Shelly device (defaults to live)
+      const response = await fetch(`/api/demo/webhook?status=${status}&device=${device}`, {
+        method: 'GET',
+      });
+      
+      const data = await response.json();
+      setLastResponse(`LIVE SIM ${device.toUpperCase()} ${status.toUpperCase()}: ${data.message || 'Success'}`);
+      console.log('Live simulation response:', data);
+      console.log('Live simulation - no source param, received data:', {
+        success: data.success,
+        source: data.data?.source,
+        message: data.data?.message
+      });
+      
+      // Data will flow through SSE stream - simulates real Shelly device behavior
+    } catch (error) {
+      console.error('Live simulation error:', error);
       setLastResponse(`Error: ${error}`);
     } finally {
       setIsLoading(false);
@@ -66,7 +93,7 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
   return (
     <div 
       ref={dragRef}
-      className={`fixed z-50 bg-white text-gray-800 rounded-lg shadow-lg p-4 min-w-[240px] ${isDragging ? 'shadow-2xl' : ''}`}
+      className={`fixed z-50 bg-white text-gray-800 rounded-lg shadow-lg p-4 min-w-[320px] max-h-[80vh] overflow-y-auto ${isDragging ? 'shadow-2xl' : ''}`}
       style={{ 
         left: `${position.x}px`, 
         top: `${position.y}px`,
@@ -98,73 +125,145 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
 
       {!isMinimized && (
         <>
-          {/* Test Buttons */}
-          <div className="space-y-2 mb-3">
-            {/* Pump Controls */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => sendMockWebhook('on', 'pump')}
-                disabled={isLoading}
-                className="flex-1 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-                style={{ backgroundColor: '#8AD68F' }}
-                onMouseEnter={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#7BC87F')}
-                onMouseLeave={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#8AD68F')}
-              >
-                {isLoading ? '⏳' : '💧 Pumpe EIN'}
-              </button>
-              <button
-                onClick={() => sendMockWebhook('off', 'pump')}
-                disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-              >
-                {isLoading ? '⏳' : '💧 Pumpe AUS'}
-              </button>
+          {/* Mock Test Section */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <h4 className="text-sm font-medium text-gray-700">🎮 Test Simulation</h4>
             </div>
-            
-            {/* Hot Water Controls */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => sendMockWebhook('on', 'wwater')}
-                disabled={isLoading}
-                className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-              >
-                {isLoading ? '⏳' : '🚿 Warmwasser EIN'}
-              </button>
-              <button
-                onClick={() => sendMockWebhook('off', 'wwater')}
-                disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-              >
-                {isLoading ? '⏳' : '🚿 Warmwasser AUS'}
-              </button>
-            </div>
-            
-            {/* Heat Controls */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => sendMockWebhook('on', 'heat')}
-                disabled={isLoading}
-                className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-              >
-                {isLoading ? '⏳' : '🌡️ Wärme EIN'}
-              </button>
-              <button
-                onClick={() => sendMockWebhook('off', 'heat')}
-                disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
-              >
-                {isLoading ? '⏳' : '🌡️ Wärme AUS'}
-              </button>
+            <div className="space-y-2">
+              {/* Pump Controls */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendMockWebhook('on', 'pump')}
+                  disabled={isLoading}
+                  className="flex-1 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                  style={{ backgroundColor: '#8AD68F' }}
+                  onMouseEnter={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#7BC87F')}
+                  onMouseLeave={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#8AD68F')}
+                >
+                  {isLoading ? '⏳' : '💧 Pumpe EIN'}
+                </button>
+                <button
+                  onClick={() => sendMockWebhook('off', 'pump')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '💧 Pumpe AUS'}
+                </button>
+              </div>
+              
+              {/* Hot Water Controls */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendMockWebhook('on', 'wwater')}
+                  disabled={isLoading}
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🚿 Warmwasser EIN'}
+                </button>
+                <button
+                  onClick={() => sendMockWebhook('off', 'wwater')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🚿 Warmwasser AUS'}
+                </button>
+              </div>
+              
+              {/* Heat Controls */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendMockWebhook('on', 'heat')}
+                  disabled={isLoading}
+                  className="flex-1 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🌡️ Wärme EIN'}
+                </button>
+                <button
+                  onClick={() => sendMockWebhook('off', 'heat')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🌡️ Wärme AUS'}
+                </button>
+              </div>
             </div>
           </div>
 
-      {/* Response Display */}
-      {lastResponse && (
-        <div className="text-xs bg-gray-50 p-2 rounded border border-gray-200">
-          <div className="text-gray-600 mb-1">Letzte Antwort:</div>
-          <div className="text-green-700">{lastResponse}</div>
-        </div>
-      )}
+          {/* Live Simulation Section */}
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <h4 className="text-sm font-medium text-gray-700">📡 Live Simulation</h4>
+            </div>
+            <div className="space-y-2">
+              {/* Pump Live Simulation */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendLiveSimulation('on', 'pump')}
+                  disabled={isLoading}
+                  className="flex-1 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                  style={{ backgroundColor: '#22C55E' }}
+                  onMouseEnter={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#16A34A')}
+                  onMouseLeave={(e) => !isLoading && ((e.target as HTMLElement).style.backgroundColor = '#22C55E')}
+                >
+                  {isLoading ? '⏳' : '💧 Pumpe Live EIN'}
+                </button>
+                <button
+                  onClick={() => sendLiveSimulation('off', 'pump')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '💧 Pumpe Live AUS'}
+                </button>
+              </div>
+              
+              {/* Hot Water Live Simulation */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendLiveSimulation('on', 'wwater')}
+                  disabled={isLoading}
+                  className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🚿 Warmwasser Live EIN'}
+                </button>
+                <button
+                  onClick={() => sendLiveSimulation('off', 'wwater')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🚿 Warmwasser Live AUS'}
+                </button>
+              </div>
+              
+              {/* Heat Live Simulation */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => sendLiveSimulation('on', 'heat')}
+                  disabled={isLoading}
+                  className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🌡️ Wärme Live EIN'}
+                </button>
+                <button
+                  onClick={() => sendLiveSimulation('off', 'heat')}
+                  disabled={isLoading}
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white py-2 px-2 rounded text-xs font-medium transition-colors"
+                >
+                  {isLoading ? '⏳' : '🌡️ Wärme Live AUS'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Response Display */}
+          {lastResponse && (
+            <div className="text-xs bg-gray-50 p-2 rounded border border-gray-200">
+              <div className="text-gray-600 mb-1">Letzte Antwort:</div>
+              <div className="text-green-700">{lastResponse}</div>
+            </div>
+          )}
 
           {/* Storage Info */}
           <div className="mt-3 pt-3 border-t border-gray-200">
@@ -200,9 +299,14 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
             )}
           </div>
 
-          {/* Info */}
-          <div className="text-xs text-gray-600 mt-2">
-            Test Modus • Daten werden gespeichert
+          {/* Mode Info */}
+          <div className="text-xs text-gray-600 mt-2 space-y-1">
+            <div className="font-medium">📋 Test Panel Funktionen:</div>
+            <div>• 🎮 <span className="font-medium">Mock Test</span>: Buttons für Simulation</div>
+            <div>• 📡 <span className="font-medium">Live Detection</span>: Zeigt echte Shelly Daten</div>
+            <div className="text-xs text-gray-500 mt-1">
+              Beide Modi funktionieren gleichzeitig
+            </div>
           </div>
         </>
       )}

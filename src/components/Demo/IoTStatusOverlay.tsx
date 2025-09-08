@@ -9,6 +9,7 @@ interface IoTDevice {
   status: 'on' | 'off';
   timestamp: string;
   message: string;
+  source?: 'mock' | 'live';
 }
 
 interface IoTStatusOverlayProps {
@@ -28,6 +29,12 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { addLiveDataPoint } = useLiveIoTStore();
+  
+  // Debug function to clear devices
+  const clearDevices = () => {
+    setDevices({});
+    console.log('[IoT] Cleared all device data');
+  };
   
   // Make the panel draggable
   const { position, isDragging, dragRef, dragHandleProps, updatePosition, isInitialized } = useDraggable({
@@ -68,22 +75,31 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
           console.log('[IoT] Received update:', data);
 
           if (data.type === 'device_status') {
+            console.log('[IoT] Processing device status:', {
+              device: data.device,
+              status: data.status,
+              source: data.source,
+              message: data.message
+            });
+            
             setDevices(prev => ({
               ...prev,
               [data.device]: {
                 device: data.device,
                 status: data.status,
                 timestamp: data.timestamp,
-                message: data.message
+                message: data.message,
+                source: data.source || 'live' // Use explicit source field, default to live
               }
             }));
             setLastUpdate(new Date().toLocaleTimeString());
             
-            // Inject live data point for charts
+            // Inject live data point for charts with source information
             addLiveDataPoint({
               timestamp: data.timestamp,
               device: data.device,
-              status: data.status
+              status: data.status,
+              source: data.source || 'live'
             });
           }
         } catch (error) {
@@ -192,7 +208,17 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
                     <div className={`w-3 h-3 rounded-full ${
                       device.status === 'on' ? 'bg-green-500' : 'bg-red-500'
                     }`}></div>
-                    <span className="font-medium capitalize">{device.device}</span>
+                    <div>
+                      <span className="font-medium capitalize">
+                        {device.device === 'pump' ? 'Pumpe' : 
+                         device.device === 'wwater' ? 'Warmwasser' :
+                         device.device === 'heat' ? 'Heizung' : 
+                         device.device}
+                      </span>
+                      <div className="text-xs text-gray-400">
+                        {device.source === 'mock' ? '🎮 Test' : '📡 Live'}
+                      </div>
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className={`text-sm font-semibold ${
@@ -222,15 +248,19 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
               {/* Show expected devices as placeholders */}
               {connectionStatus === 'connected' && (
                 <div className="space-y-1">
-                  {['pump', 'wwater', 'heat'].map((deviceName) => (
-                    <div key={deviceName} className="flex items-center justify-between p-2 bg-gray-50 rounded opacity-50">
+                  {[
+                    { key: 'pump', name: 'Pumpe' },
+                    { key: 'wwater', name: 'Warmwasser' },
+                    { key: 'heat', name: 'Heizung' }
+                  ].map((device) => (
+                    <div key={device.key} className="flex items-center justify-between p-2 bg-gray-50 rounded opacity-50">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-                        <span className="font-medium capitalize text-xs">{deviceName}</span>
+                        <span className="font-medium capitalize text-xs">{device.name}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-gray-400">WAITING</div>
-                        <div className="text-xs text-gray-400">No signal</div>
+                        <div className="text-xs text-gray-400">WARTEN</div>
+                        <div className="text-xs text-gray-400">Kein Signal</div>
                       </div>
                     </div>
                   ))}

@@ -28,6 +28,7 @@ interface LiveIoTDataPoint {
   timestamp: string;
   device: string;
   status: 'on' | 'off';
+  source?: 'mock' | 'live'; // Track data source
   // Simulated consumption values
   electricityWh?: number;
   waterM3?: number;
@@ -51,6 +52,16 @@ export const useLiveIoTStore = create<LiveIoTState>((set, get) => ({
   
   addLiveDataPoint: (data) => {
     set(state => {
+      // Prevent duplicate data points within same second
+      const now = new Date(data.timestamp).getTime();
+      const recentPoint = state.liveDataPoints
+        .filter(p => p.device === data.device)
+        .find(p => Math.abs(new Date(p.timestamp).getTime() - now) < 2000); // Within 2 seconds
+      
+      if (recentPoint) {
+        console.log('[Store] Preventing duplicate data point for', data.device, 'within 2 seconds');
+        return state; // Don't add duplicate
+      }
       // Get current cumulative value for this device
       const currentCumulative = state.cumulativeValues[data.device] || { electricityWh: 0, waterM3: 0, heatWh: 0 };
       

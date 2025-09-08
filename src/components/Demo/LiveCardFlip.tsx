@@ -28,7 +28,9 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
   };
 
   const deviceType = getDeviceForChart(cardType);
-  const isDeviceOn = getLatestDeviceStatus(deviceType)?.status === 'on';
+  const latestDeviceStatus = getLatestDeviceStatus(deviceType);
+  const isDeviceOn = latestDeviceStatus?.status === 'on';
+  const dataSource = latestDeviceStatus?.source || 'live'; // Track data source (mock or live)
 
   // No auto-flip - controlled by global live view toggle
 
@@ -40,8 +42,9 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     }
     
     // Don't clear data when device turns off - keep historical data
+    // Update charts for both MOCK and LIVE data when device is ON
     if (!isDeviceOn) {
-      return; // Keep existing data, don't update
+      return; // Keep existing data, don't update when device is off
     }
 
     const updateLiveData = () => {

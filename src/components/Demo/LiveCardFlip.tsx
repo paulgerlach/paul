@@ -210,9 +210,22 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                 </ResponsiveContainer>
               </div>
               
-              {/* Status Text */}
-              <div className="text-xs text-gray-500 text-center mt-2">
-                Letzte {Math.max(liveData.length * 3, 3)} Sekunden • Live Updates
+              {/* Current Value & Status */}
+              <div className="flex justify-between items-center mt-2 px-2">
+                <div className="text-xs text-gray-500">
+                  Letzte {Math.max(liveData.length * 3, 3)}s
+                </div>
+                <div className="text-sm font-semibold text-gray-700">
+                  {isDeviceOn ? (
+                    <span className="text-green-600">
+                      {cardType === 'heat' 
+                        ? `${getCurrentValue().toFixed(0)}W` 
+                        : `${getCurrentValue().toFixed(3)} m³/3s`}
+                    </span>
+                  ) : (
+                    <span className="text-red-600">0 {getUnit()}</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -21,6 +21,6 @@ export const isDemoMode = (): boolean => {
 
 export const getDemoConfig = () => ({
   isDemo: isDemoMode(),
-  showMockPanel: typeof window !== 'undefined' && window.location.hostname === 'localhost', // Only localhost
-  showIoTOverlay: isDemoMode(), // Show IoT overlay in both localhost and Vercel
+  showMockPanel: isDemoMode(), // Show MockPanel in demo mode (localhost + Vercel demo)
+  showIoTOverlay: isDemoMode(), // Show IoT overlay in demo mode (localhost + Vercel demo)
 });

@@ -208,10 +208,34 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
               ))}
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-500">
-              <div className="text-2xl mb-2">🔌</div>
-              <div className="text-sm">Warte auf Geräteupdates...</div>
-              <div className="text-xs mt-1">Shelly konfigurieren für Live-Daten</div>
+            <div className="space-y-2">
+              {/* Show connection status even without device data */}
+              <div className="text-center py-2 text-gray-500">
+                <div className="text-lg mb-1">🔌</div>
+                <div className="text-xs">
+                  {connectionStatus === 'connected' ? 
+                    'Dashboard bereit für Shelly Updates' : 
+                    'Verbinde zu Live-Stream...'}
+                </div>
+              </div>
+              
+              {/* Show expected devices as placeholders */}
+              {connectionStatus === 'connected' && (
+                <div className="space-y-1">
+                  {['pump', 'wwater', 'heat'].map((deviceName) => (
+                    <div key={deviceName} className="flex items-center justify-between p-2 bg-gray-50 rounded opacity-50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                        <span className="font-medium capitalize text-xs">{deviceName}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-400">WAITING</div>
+                        <div className="text-xs text-gray-400">No signal</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import AdminHeatObjekteItemDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/Admin/AdminHeatObjekteItemDocAccordion";
+import AdminHeatObjekteItemDocAccordion from "../../../../../../../../ObjekteLocalsAccordion/Admin/AdminHeatObjekteItemDocAccordion";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { cost_type_plus } from "@/static/icons";
 import Image from "next/image";

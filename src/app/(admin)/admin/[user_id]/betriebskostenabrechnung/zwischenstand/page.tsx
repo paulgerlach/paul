@@ -1,7 +1,7 @@
 import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import AdminObjekteItemDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/Admin/AdminObjekteItemDocAccordion";
+import AdminObjekteItemDocAccordion from "../../../../../../../ObjekteLocalsAccordion/Admin/AdminObjekteItemDocAccordion";
 import { buildSubRoute } from "@/lib/navigation";
 import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { cost_type_plus } from "@/static/icons";

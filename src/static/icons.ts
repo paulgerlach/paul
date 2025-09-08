@@ -255,6 +255,7 @@ import cost_type_metering_service_costs from "@/asset/cost_type_metering_service
 import cost_type_metering_device_rental from "@/asset/cost_type_metering_device_rental.png";
 import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs.png";
 import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
+import building from "@/asset/building.svg";
 
 export {
   accentro_colored,
@@ -514,4 +515,5 @@ export {
   main_portfolio,
   clock_dark,
   close_white,
+  building
 };

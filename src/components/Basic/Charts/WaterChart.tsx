@@ -246,15 +246,25 @@ export default function WarmwasserChart({
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           {title}
         </h2>
-        <Image
-          width={0}
-          height={0}
-          sizes="100%"
-          loading="lazy"
-          className="max-w-6 max-h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
-          src={chartType === "hot" ? hot_water : cold_water}
-          alt="chart-type"
-        />
+        {chartType === "hot" ? (
+          <Image
+            width={24}
+            height={24}
+            sizes="100vw"
+            loading="lazy"
+            className="w-6 h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+            src={hot_water}
+            alt="chart-type"
+          />
+        ) : <Image
+            width={24}
+            height={24}
+            sizes="100vw"
+            loading="lazy"
+            className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+            src={cold_water}
+            alt="chart-type"
+          />}
       </div>
 
       <div className="flex-1">

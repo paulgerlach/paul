@@ -2,7 +2,12 @@ import { earth } from "@/static/icons";
 import Image from "next/image";
 import { EmptyState } from "@/components/Basic/ui/States";
 import { MeterReadingType } from "@/api";
-import { calculateCO2Savings, formatCO2Savings, getCO2Context } from "@/utils/co2Calculator";
+import {
+  calculateCO2Savings,
+  formatCO2Savings,
+  getCO2Context,
+} from "@/utils/co2Calculator";
+import { useChartStore } from "@/store/useChartStore";
 
 interface EinsparungChartProps {
   isEmpty?: boolean;
@@ -15,26 +20,44 @@ export default function EinsparungChart({
   isEmpty,
   emptyTitle,
   emptyDescription,
-  selectedData
+  selectedData,
 }: EinsparungChartProps) {
-  // Calculate CO₂ savings from the selected data
-  const co2Result = selectedData ? calculateCO2Savings(selectedData) : null;
-  const co2Display = co2Result ? formatCO2Savings(co2Result.totalCO2SavedTons) : "0t CO₂";
-  const co2Context = co2Result ? getCO2Context(co2Result.totalCO2SavedTons) : null;
+  const { meterIds } = useChartStore();
+
+  // Filter selectedData based on meterIds from the store
+  const filteredData =
+    selectedData && meterIds.length > 0
+      ? selectedData.filter((device) => meterIds.includes(device.ID.toString()))
+      : [];
+
+  // Calculate CO₂ savings from the filtered data
+  const co2Result = filteredData ? calculateCO2Savings(filteredData) : null;
+  const co2Display = co2Result
+    ? formatCO2Savings(co2Result.totalCO2SavedTons)
+    : "0t CO₂";
+  const co2Context = co2Result
+    ? getCO2Context(co2Result.totalCO2SavedTons)
+    : null;
 
   // Determine if we should show empty state
-  const shouldShowEmpty = isEmpty || !selectedData || selectedData.length === 0 || co2Result?.totalCO2SavedTons === 0;
+  const shouldShowEmpty =
+    isEmpty ||
+    !filteredData ||
+    filteredData.length === 0 ||
+    co2Result?.totalCO2SavedTons === 0;
 
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">Einsparung</h2>
+        <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">
+          Einsparung
+        </h2>
         <Image
           width={0}
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="max-w-6 max-h-6 max-small:max-w-5 max-small:max-h-5 max-medium:max-w-5 max-medium:max-h-5"
+          className="w-5 h-5 max-small:max-w-5 max-small:max-h-5 max-medium:max-w-5 max-medium:max-h-5"
           src={earth}
           alt="earth"
         />
@@ -43,7 +66,10 @@ export default function EinsparungChart({
         {shouldShowEmpty ? (
           <EmptyState
             title={emptyTitle ?? "Keine Daten verfügbar."}
-            description={emptyDescription ?? "Keine CO₂-Einsparungen im ausgewählten Zeitraum."}
+            description={
+              emptyDescription ??
+              "Keine CO₂-Einsparungen im ausgewählten Zeitraum."
+            }
             imageSrc={earth.src}
             imageAlt="Einsparung"
           />
@@ -57,11 +83,11 @@ export default function EinsparungChart({
                 {co2Context.description}
               </p>
             )}
-            {co2Result && (
+            {/* {co2Result && (
               <div className="mt-2 text-xs text-gray-400">
                 {co2Result.details.deviceCount.heating + co2Result.details.deviceCount.hotWater + co2Result.details.deviceCount.coldWater} Geräte
               </div>
-            )}
+            )} */}
           </div>
         )}
       </div>

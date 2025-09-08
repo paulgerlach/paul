@@ -6,7 +6,6 @@ import {
   alert_triangle,
   blue_info,
   caract_battery,
-  caract_radio,
   dots_button,
   green_check,
   heater,
@@ -107,10 +106,10 @@ const dummy_notifications = [
     Building: "Unter den Linden 42",
     ID: 53157236,
     Severity: "critical",
-    "Notification Type": "Blockade",
-    "Notification Message": "Blockade bei Zähler 53157236.",
+    "Notification Type": "Leckage",
+    "Notification Message": "Ein Rohrbruch bei Zähler 53157236 wurde erkannt.",
     "Hint Code": "Bit 6",
-    "Hint Code Description": "Blockade",
+    "Hint Code Description": "Leckage erkannt",
   },
   {
     Date: "22.05.2025",
@@ -205,10 +204,10 @@ const dummy_notifications = [
   {
     Date: "28.08.2025",
     Building: "Friedrichstr. 15",
-    ID: 53157265,
+    ID: 53157220,
     Severity: "critical",
     "Notification Type": "Leckage",
-    "Notification Message": "Leckage erkannt bei Zähler 53157265.",
+    "Notification Message": "Ein Rohrbruch bei Zähler 53157220 wurde erkannt.",
     "Hint Code": "Bit 5",
     "Hint Code Description": "Leckage erkannt",
   },
@@ -230,42 +229,50 @@ export default function NotificationsChart({
     setOpenPopoverId(null); // Close the popover after deletion
   };
 
-  const getLeftIconForNotificationType = (notificationType: string, deviceType?: string) => {
+  const getLeftIconForNotificationType = (
+    notificationType: string,
+    deviceType?: string
+  ) => {
     const type = notificationType.toLowerCase();
-    
-    if (type.includes('sensor')) {
-      return caract_radio; // sensor icon
+
+    if (type.includes("sensor")) {
+      return keys; // sensor icon
     }
-    if (type.includes('manipulation')) {
+    if (type.includes("manipulation")) {
       return alert_triangle; // manipulation/security icon
     }
-    if (type.includes('leckage') || type.includes('leak')) {
+    if (type.includes("leckage") || type.includes("leak")) {
       return pipe_water; // water leak icon
     }
-    if (type.includes('blockade') || type.includes('block')) {
+    if (type.includes("blockade") || type.includes("block")) {
       return pipe_water; // blockage icon
     }
-    if (type.includes('funkverbindung') || type.includes('funk') || type.includes('radio') || type.includes('signal')) {
-      return caract_radio; // radio/communication icon
+    if (
+      type.includes("funkverbindung") ||
+      type.includes("funk") ||
+      type.includes("radio") ||
+      type.includes("signal")
+    ) {
+      return keys; // radio/communication icon
     }
-    if (type.includes('batterie') || type.includes('battery')) {
+    if (type.includes("batterie") || type.includes("battery")) {
       return caract_battery; // battery icon
     }
-    
+
     // Default icons based on device type if no specific notification type match
     if (deviceType) {
       const dType = deviceType.toLowerCase();
-      if (dType.includes('heat') || dType.includes('wärme')) {
+      if (dType.includes("heat") || dType.includes("wärme")) {
         return heater;
       }
-      if (dType.includes('wwater') || dType.includes('warmwasser')) {
+      if (dType.includes("wwater") || dType.includes("warmwasser")) {
         return hot_water;
       }
-      if (dType.includes('water') || dType.includes('wasser')) {
+      if (dType.includes("water") || dType.includes("wasser")) {
         return cold_water;
       }
     }
-    
+
     // Default fallback
     return notification;
   };
@@ -294,7 +301,7 @@ export default function NotificationsChart({
         ).length;
 
         notifications.push({
-          leftIcon: getLeftIconForNotificationType('success', 'general'),
+          leftIcon: getLeftIconForNotificationType("success", "general"),
           rightIcon: green_check,
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
@@ -309,7 +316,7 @@ export default function NotificationsChart({
 
       if (errorsBySeverity.critical.length > 0) {
         notifications.push({
-          leftIcon: getLeftIconForNotificationType('critical', 'general'),
+          leftIcon: getLeftIconForNotificationType("critical", "general"),
           rightIcon: alert_triangle,
           leftBg: "#E7E8EA",
           rightBg: "#FFE5E5",
@@ -320,7 +327,7 @@ export default function NotificationsChart({
 
       if (errorsBySeverity.high.length > 0) {
         notifications.push({
-          leftIcon: getLeftIconForNotificationType('sensor', 'general'),
+          leftIcon: getLeftIconForNotificationType("sensor", "general"),
           rightIcon: alert_triangle,
           leftBg: "#E7E8EA",
           rightBg: "#F7E7D5",
@@ -330,33 +337,42 @@ export default function NotificationsChart({
       }
 
       if (errorsBySeverity.medium.length > 0) {
+        // notifications.push({
+        //   leftIcon: getLeftIconForNotificationType('maintenance', 'general'),
+        //   rightIcon: blue_info,
+        //   leftBg: "#E7E8EA",
+        //   rightBg: "#E5EBF5",
+        //   title: "Wartungshinweise",
+        //   subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
+        // });
+
         notifications.push({
-          leftIcon: getLeftIconForNotificationType('maintenance', 'general'),
+          leftIcon: getLeftIconForNotificationType("maintenance", "general"),
           rightIcon: blue_info,
           leftBg: "#E7E8EA",
           rightBg: "#E5EBF5",
           title: "Wartungshinweise",
-          subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
+          subtitle: `1x Rauchwarnmelder wurde entfernt`,
         });
       }
 
-      if (errorsBySeverity.low.length > 0) {
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType('info', 'general'),
-          rightIcon: blue_info,
-          leftBg: "#E7E8EA",
-          rightBg: "#E5EBF5",
-          title: "Geringfügige Probleme",
-          subtitle: `${errorsBySeverity.low.length} Geräte mit kleinen Problemen`,
-        });
-      }
+      // if (errorsBySeverity.low.length > 0) {
+      //   notifications.push({
+      //     leftIcon: getLeftIconForNotificationType("info", "general"),
+      //     rightIcon: blue_info,
+      //     leftBg: "#E7E8EA",
+      //     rightBg: "#E5EBF5",
+      //     title: "Geringfügige Probleme",
+      //     subtitle: `${errorsBySeverity.low.length} Geräte mit kleinen Problemen`,
+      //   });
+      // }
 
       const errorsByDeviceType = groupErrorsByDeviceType(deviceErrors);
 
       if (notifications.length < 3) {
         if (errorsByDeviceType.Heat && errorsByDeviceType.Heat.length > 0) {
           notifications.push({
-            leftIcon: getLeftIconForNotificationType('problems', 'Heat'),
+            leftIcon: getLeftIconForNotificationType("problems", "Heat"),
             rightIcon: alert_triangle,
             leftBg: "#E7E8EA",
             rightBg: "#F7E7D5",
@@ -367,7 +383,7 @@ export default function NotificationsChart({
 
         if (errorsByDeviceType.Water && errorsByDeviceType.Water.length > 0) {
           notifications.push({
-            leftIcon: getLeftIconForNotificationType('problems', 'Water'),
+            leftIcon: getLeftIconForNotificationType("problems", "Water"),
             rightIcon: alert_triangle,
             leftBg: "#E7E8EA",
             rightBg: "#F7E7D5",
@@ -378,7 +394,7 @@ export default function NotificationsChart({
 
         if (errorsByDeviceType.WWater && errorsByDeviceType.WWater.length > 0) {
           notifications.push({
-            leftIcon: getLeftIconForNotificationType('problems', 'WWater'),
+            leftIcon: getLeftIconForNotificationType("problems", "WWater"),
             rightIcon: alert_triangle,
             leftBg: "#E7E8EA",
             rightBg: "#F7E7D5",
@@ -391,7 +407,9 @@ export default function NotificationsChart({
       for (const notification of dummy_notifications) {
         if (meterIds.includes(notification.ID.toString())) {
           notifications.push({
-            leftIcon: getLeftIconForNotificationType(notification["Notification Type"]),
+            leftIcon: getLeftIconForNotificationType(
+              notification["Notification Type"]
+            ),
             rightIcon: alert_triangle,
             leftBg: "#E7E8EA",
             rightBg: "#FFE5E5",
@@ -426,7 +444,7 @@ export default function NotificationsChart({
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="max-w-6 max-h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+          className="h-5 w-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={notification}
           alt="notification"
         />
@@ -446,8 +464,8 @@ export default function NotificationsChart({
                 <NotificationItem {...n} />
               </div>
               <div className="mt-1">
-                <Popover 
-                  open={openPopoverId === idx} 
+                <Popover
+                  open={openPopoverId === idx}
                   onOpenChange={(open) => setOpenPopoverId(open ? idx : null)}
                 >
                   <PopoverTrigger asChild>

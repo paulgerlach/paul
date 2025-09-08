@@ -1,0 +1,5 @@
+[33m745839f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/real-time-demo[m[33m, [m[1;31morigin/feature/real-time-demo[m[33m)[m Feature: Professional chart design with unit scaling
+[33m87271ad[m Fix: IoT Status Panel updates + Shelly compatibility
+[33me169712[m Fix: Vercel serverless compatibility for mock panel buttons
+[33m9306eaf[m fix: Enable demo mode on Vercel production environment
+[33m21c4de0[m fix: TypeScript build errors and polling system improvements

@@ -13,8 +13,10 @@ interface LiveCardFlipProps {
 
 export default function LiveCardFlip({ children, cardType, isDemo = false }: LiveCardFlipProps) {
   const [liveData, setLiveData] = useState<number[]>([]);
+  const [accumulatedData, setAccumulatedData] = useState<number[]>([]); // Track accumulated values
   const liveDataPoints = useLiveIoTStore(state => state.liveDataPoints);
   const getLatestDeviceStatus = useLiveIoTStore(state => state.getLatestDeviceStatus);
+  const getCumulativeValue = useLiveIoTStore(state => state.getCumulativeValue);
   const isLiveView = useLiveViewStore(state => state.isLiveView);
 
   // Map chart types to device types
@@ -48,11 +50,52 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     }
 
     const updateLiveData = () => {
-      const now = Date.now();
-      const newValue = generateRealisticConsumption(cardType);
+      // Get real cumulative consumption from store
+      const deviceCumulative = getCumulativeValue(deviceType);
       
+      // Calculate realistic instantaneous consumption rates (per 3-second interval)
+      let currentRate = 0;
+      switch (cardType) {
+        case 'water-cold':
+          // Show realistic flow rate: 0.025 L/3s (0.5 L/min, 30 L/hour)
+          currentRate = 0.025;
+          break;
+        case 'water-hot':
+          // Show realistic hot water flow rate: 0.015 L/3s (0.3 L/min, 18 L/hour)
+          currentRate = 0.015;
+          break;
+        case 'heat':
+          // Show realistic heat output: 1350W constant
+          currentRate = 1350;
+          break;
+      }
+      
+      // Add some realistic variation (±10%)
+      const variation = currentRate * 0.1 * (Math.random() - 0.5) * 2;
+      currentRate = Math.max(0, currentRate + variation);
+      
+      // Update instantaneous rates for chart display
       setLiveData(prev => {
-        const updated = [...prev, newValue].slice(-12); // Keep last 12 readings (1 minute)
+        const updated = [...prev, currentRate].slice(-12); // Keep last 12 readings (1 minute)
+        return updated;
+      });
+
+      // Update accumulated totals from store data
+      let accumulatedValue = 0;
+      switch (cardType) {
+        case 'water-cold':
+        case 'water-hot':
+          // Convert m³ to liters for display
+          accumulatedValue = deviceCumulative.waterM3 * 1000;
+          break;
+        case 'heat':
+          // Convert Wh to kWh for display
+          accumulatedValue = deviceCumulative.heatWh / 1000;
+          break;
+      }
+      
+      setAccumulatedData(prev => {
+        const updated = [...prev, accumulatedValue].slice(-12);
         return updated;
       });
     };
@@ -63,20 +106,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     // Update every 3 seconds
     const interval = setInterval(updateLiveData, 3000);
     return () => clearInterval(interval);
-  }, [isDeviceOn, cardType, isDemo, deviceType]);
-
-  const generateRealisticConsumption = (type: string): number => {
-    const baseValues = {
-      'heat': 1350, // 1350W thermal heat output (realistic space heater)
-      'water-cold': 0.025, // Display as L/3s instead of m³/3s for better chart visibility (25mL per 3s)
-      'water-hot': 0.015, // Display as L/3s instead of m³/3s for better chart visibility (15mL per 3s)
-    };
-    
-    const base = baseValues[type as keyof typeof baseValues] || 0;
-    // Add more dramatic variation for visual appeal (±25%)
-    const variation = base * 0.25 * (Math.random() - 0.5) * 2;
-    return Math.max(0, base + variation);
-  };
+  }, [isDeviceOn, cardType, isDemo, deviceType, getCumulativeValue]);
 
   const getUnit = () => {
     switch (cardType) {
@@ -87,24 +117,29 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     }
   };
 
+  const getAccumulatedUnit = () => {
+    switch (cardType) {
+      case 'heat': return 'kWh';
+      case 'water-cold':
+      case 'water-hot': return 'L';
+      default: return '';
+    }
+  };
+
   const getCurrentValue = () => {
     return liveData.length > 0 ? liveData[liveData.length - 1] : 0;
   };
 
+  const getCurrentAccumulated = () => {
+    return accumulatedData.length > 0 ? accumulatedData[accumulatedData.length - 1] : 0;
+  };
+
   const getChartData = () => {
-    if (cardType === 'heat') {
-      // For heat chart live view, show as time periods (minutes/seconds)
-      return liveData.map((value, index) => ({
-        time: index < 20 ? `${index * 3}s` : `${Math.floor(index * 3 / 60)}m`,
-        value: value
-      }));
-    } else {
-      // For water charts, show as time periods
-      return liveData.map((value, index) => ({
-        time: `${index * 3}s`,
-        value: value
-      }));
-    }
+    // Show accumulated values that always increase (never go down)
+    return accumulatedData.map((value, index) => ({
+      time: index < 20 ? `${index * 3}s` : `${Math.floor(index * 3 / 60)}m`,
+      value: value
+    }));
   };
 
   const getChartColor = () => {
@@ -179,7 +214,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                       axisLine={false} 
                       tickLine={false}
                       tick={{ fontSize: 12, fill: '#6B7280' }}
-                      tickFormatter={(value) => cardType === 'heat' ? `${Math.round(value)}W` : `${value.toFixed(3)}`}
+                      tickFormatter={(value) => cardType === 'heat' ? `${value.toFixed(2)}kWh` : `${value.toFixed(1)}L`}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -189,8 +224,8 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                         fontSize: '12px'
                       }}
                       formatter={(value: number) => [
-                        `${cardType === 'heat' ? Math.round(value) : value.toFixed(3)} ${getUnit()}`, 
-                        getTitle().replace('Live ', '')
+                        `${cardType === 'heat' ? value.toFixed(3) : value.toFixed(1)} ${getAccumulatedUnit()}`, 
+                        `Total ${getTitle().replace('Live ', '')}`
                       ]}
                     />
                     {cardType === 'heat' ? (
@@ -218,15 +253,20 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                 <div className="text-xs text-gray-500">
                   Letzte {Math.max(liveData.length * 3, 3)}s
                 </div>
-                <div className="text-sm font-semibold text-gray-700">
+                <div className="text-sm font-semibold text-gray-700 flex flex-col items-end">
+                  <span className="text-lg font-bold text-green-600">
+                    {cardType === 'heat' 
+                      ? `${getCurrentAccumulated().toFixed(3)} kWh`
+                      : `${getCurrentAccumulated().toFixed(1)} L`}
+                  </span>
                   {isDeviceOn ? (
-                    <span className="text-green-600">
-                      {cardType === 'heat' 
+                    <span className="text-xs text-gray-500">
+                      Rate: {cardType === 'heat' 
                         ? `${Math.round(getCurrentValue())}W` 
                         : `${getCurrentValue().toFixed(3)} L/3s`}
                     </span>
                   ) : (
-                    <span className="text-red-600">0 {getUnit()}</span>
+                    <span className="text-xs text-red-500">Device Off</span>
                   )}
                 </div>
               </div>

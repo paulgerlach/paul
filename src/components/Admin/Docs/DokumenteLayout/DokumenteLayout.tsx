@@ -2,10 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useDocumentService, DocumentMetadata } from "@/hooks/useDocumentService";
-import { 
-  BuildingOfficeIcon
-} from "@heroicons/react/24/outline";
-import { pdf_icon } from "@/static/icons";
+import { pdf_icon, building } from "@/static/icons";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Exo_2 } from "next/font/google";
@@ -147,7 +144,17 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                     : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                 }`}
               >
-                <BuildingOfficeIcon className="h-10 w-10" />
+                <Image
+                  width={40}
+                  height={40}
+                  src={building}
+                  alt="building"
+                  className={`h-10 w-10 transition-all ${
+                    selectedObjekt === objekt.id
+                      ? "filter brightness-0" // Black when selected
+                      : "filter brightness-0 opacity-40" // Gray when not selected
+                  }`}
+                />
                 <span className="text-xs font-light whitespace-nowrap">
                   {getObjektDisplayName(objekt)}
                 </span>

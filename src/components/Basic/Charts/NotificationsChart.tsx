@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ROUTE_HOME } from "@/routes/routes";
 import {
   alert_triangle,
@@ -375,7 +375,9 @@ export default function NotificationsChart({
 
   return (
     <div
-      className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}
+      className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${
+        isEmpty ? "flex flex-col" : ""
+      }`}
     >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
@@ -403,7 +405,7 @@ export default function NotificationsChart({
           notifications.map((n, idx) => <NotificationItem key={idx} {...n} />)
         )}
       </div>
-      <>{notifications.length}</>
+      {/* <>{notifications.length}</> */}
       {hasDeviceErrors && (
         <div className="flex flex-col gap-2">
           <button

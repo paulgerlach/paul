@@ -8,12 +8,10 @@ export default async function AdminPage() {
   const parsedData = await parseCSVs();
 
   return (
-    <div className="py-6 px-9 overflow-scroll">
-      <div className="flex justify-between items-center mb-6">
-        <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-        <ShareButton />
-      </div>
+    <div className="py-6 px-9 space-y-6 overflow-scroll">
+      <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
       <DashboardCharts parsedData={parsedData!} />
+      <ShareButton />
     </div>
   );
 }

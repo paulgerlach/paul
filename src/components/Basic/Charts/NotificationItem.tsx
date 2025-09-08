@@ -20,7 +20,7 @@ export default function NotificationItem({
   return (
     <div className="flex items-center justify-start gap-1.5">
       <span
-        className="flex items-center justify-center w-8 h-8 md:w-7 md:h-7 lg:w-9 lg:h-9 rounded-sm"
+        className="flex items-center justify-center w-[60px] h-[54px] max-md:w-8 max-md:h-8 max-lg:w-10 max-lg:h-10 rounded-sm"
         style={{ backgroundColor: leftBg }}
       >
         <Image
@@ -28,13 +28,13 @@ export default function NotificationItem({
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="w-auto h-4 md:w-3.5 md:h-3.5 lg:w-5 lg:h-5"
+          className="w-7 h-7 max-md:w-5 max-md:h-5 max-lg:w-6 max-lg:h-6"
           src={leftIcon}
           alt=""
         />
       </span>
       <span
-        className="flex items-center justify-center w-8 h-8 md:w-7 md:h-7 lg:w-9 lg:h-9 rounded-sm"
+        className="flex items-center justify-center w-[60px] h-[54px] max-md:w-8 max-md:h-8 max-lg:w-10 max-lg:h-10 rounded-sm"
         style={{ backgroundColor: rightBg }}
       >
         <Image
@@ -42,14 +42,14 @@ export default function NotificationItem({
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="w-3.5 h-3.5 md:w-3 md:h-3 lg:w-4 lg:h-4"
+          className="w-6 h-6 max-md:w-5 max-md:h-5 max-lg:w-4 max-lg:h-4"
           src={rightIcon}
           alt=""
         />
       </span>
       <div>
-        <p className="text-sm md:text-xs lg:text-sm text-black/50">{title}</p>
-        <p className="text-[10px] md:text-[10px] lg:text-xs text-black/50">{subtitle}</p>
+        <p className="text-sm max-md:text-xs text-black/50">{title}</p>
+        <p className="text-xs max-lg:text-[10px] text-black/50">{subtitle}</p>
       </div>
     </div>
   );

@@ -20,16 +20,31 @@ export async function GET(request: NextRequest) {
       
       console.log('[SSE] New client connected to demo stream');
       
+      // Send heartbeat every 8 seconds to prevent timeout
+      const heartbeat = setInterval(() => {
+        try {
+          const heartbeatMessage = {
+            type: 'heartbeat',
+            timestamp: new Date().toISOString()
+          };
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(heartbeatMessage)}\n\n`));
+        } catch (error) {
+          console.warn('[SSE] Heartbeat failed:', error);
+          clearInterval(heartbeat);
+        }
+      }, 8000);
+      
       // Set up cleanup on disconnect
       const cleanup = () => {
         connections.delete(controller);
+        clearInterval(heartbeat);
         console.log('[SSE] Client disconnected from demo stream');
       };
       
       // Handle client disconnect
       request.signal?.addEventListener('abort', cleanup);
       
-      // Auto-cleanup after 45 seconds (before Vercel timeout)
+      // Auto-cleanup after 10 seconds (Vercel serverless limit)
       const timeout = setTimeout(() => {
         cleanup();
         try {
@@ -37,7 +52,7 @@ export async function GET(request: NextRequest) {
         } catch (error) {
           console.warn('Error closing SSE connection:', error);
         }
-      }, 45000);
+      }, 10000);
       
       // Clear timeout if connection closes normally
       request.signal?.addEventListener('abort', () => {

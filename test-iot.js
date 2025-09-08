@@ -6,7 +6,7 @@
 const BASE_URL = 'https://heidisystems-livedemo.vercel.app';
 
 async function testWebhook(status) {
-  const url = `${BASE_URL}/api/demo/webhook?status=${status}&device=pump`;
+  const url = `${BASE_URL}/api/demo/webhook?status=${status}&device=pump&source=mock`;
   
   console.log(`🧪 Testing webhook: ${status.toUpperCase()}`);
   console.log(`📡 URL: ${url}`);

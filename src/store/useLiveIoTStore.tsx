@@ -73,19 +73,19 @@ export const useLiveIoTStore = create<LiveIoTState>((set, get) => ({
       if (data.status === 'on') {
         switch (data.device) {
           case 'pump':
-            incrementalElectricity = 150 * (3/3600); // 150W for 3 seconds (converted to Wh)
-            incrementalWater = 0.25 * (3/3600); // 0.25 m³/hour for 3 seconds (cold water)
-            incrementalHeat = 0; // No heat
+            incrementalElectricity = 150 * (3/3600); // 150W pump motor for 3 seconds (converted to Wh)
+            incrementalWater = 0.015 * (3/3600); // 0.015 m³/hour = 15L/hour = realistic household pump
+            incrementalHeat = 0; // No heat generation
             break;
           case 'wwater':
-            incrementalElectricity = 120 * (3/3600); // 120W for 3 seconds (converted to Wh)
-            incrementalWater = 0.15 * (3/3600); // 0.15 m³/hour for 3 seconds (hot water)
-            incrementalHeat = 0; // No heat
+            incrementalElectricity = 2000 * (3/3600); // 2000W electric water heater for 3 seconds (converted to Wh)
+            incrementalWater = 0.008 * (3/3600); // 0.008 m³/hour = 8L/hour = realistic hot water usage
+            incrementalHeat = 1800 * (3/3600); // 1800W thermal heat output (90% efficiency) for 3 seconds (converted to Wh)
             break;
           case 'heat':
-            incrementalElectricity = 200 * (3/3600); // 200W for 3 seconds (converted to Wh)
-            incrementalWater = 0; // No water consumption
-            incrementalHeat = 300 * (3/3600); // 300W heat for 3 seconds (converted to Wh)
+            incrementalElectricity = 1500 * (3/3600); // 1500W space heater for 3 seconds (converted to Wh)
+            incrementalWater = 0; // No water consumption for electric heating
+            incrementalHeat = 1350 * (3/3600); // 1350W thermal heat output (90% efficiency) for 3 seconds (converted to Wh)
             break;
         }
       }

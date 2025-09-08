@@ -67,14 +67,14 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
 
   const generateRealisticConsumption = (type: string): number => {
     const baseValues = {
-      'heat': 300, // 300W base for heating
-      'water-cold': 0.05, // Increased from 0.01 to 0.05 m³ per 3s (5x more sensitive)
-      'water-hot': 0.04, // Increased from 0.008 to 0.04 m³ per 3s (5x more sensitive)
+      'heat': 1350, // 1350W thermal heat output (realistic space heater)
+      'water-cold': 0.025, // Display as L/3s instead of m³/3s for better chart visibility (25mL per 3s)
+      'water-hot': 0.015, // Display as L/3s instead of m³/3s for better chart visibility (15mL per 3s)
     };
     
     const base = baseValues[type as keyof typeof baseValues] || 0;
-    // Add some realistic variation (±20%)
-    const variation = base * 0.2 * (Math.random() - 0.5) * 2;
+    // Add more dramatic variation for visual appeal (±25%)
+    const variation = base * 0.25 * (Math.random() - 0.5) * 2;
     return Math.max(0, base + variation);
   };
 
@@ -82,7 +82,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
     switch (cardType) {
       case 'heat': return 'W';
       case 'water-cold':
-      case 'water-hot': return 'm³/3s';
+      case 'water-hot': return 'L/3s'; // Changed to liters for better readability
       default: return '';
     }
   };
@@ -179,7 +179,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                       axisLine={false} 
                       tickLine={false}
                       tick={{ fontSize: 12, fill: '#6B7280' }}
-                      tickFormatter={(value) => cardType === 'heat' ? `${value}W` : `${value.toFixed(2)}`}
+                      tickFormatter={(value) => cardType === 'heat' ? `${Math.round(value)}W` : `${value.toFixed(3)}`}
                     />
                     <Tooltip 
                       contentStyle={{ 
@@ -189,7 +189,7 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                         fontSize: '12px'
                       }}
                       formatter={(value: number) => [
-                        `${cardType === 'heat' ? value.toFixed(0) : value.toFixed(3)} ${getUnit()}`, 
+                        `${cardType === 'heat' ? Math.round(value) : value.toFixed(3)} ${getUnit()}`, 
                         getTitle().replace('Live ', '')
                       ]}
                     />
@@ -222,8 +222,8 @@ export default function LiveCardFlip({ children, cardType, isDemo = false }: Liv
                   {isDeviceOn ? (
                     <span className="text-green-600">
                       {cardType === 'heat' 
-                        ? `${getCurrentValue().toFixed(0)}W` 
-                        : `${getCurrentValue().toFixed(3)} m³/3s`}
+                        ? `${Math.round(getCurrentValue())}W` 
+                        : `${getCurrentValue().toFixed(3)} L/3s`}
                     </span>
                   ) : (
                     <span className="text-red-600">0 {getUnit()}</span>

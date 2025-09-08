@@ -72,6 +72,12 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          
+          // Ignore heartbeat messages
+          if (data.type === 'heartbeat') {
+            return;
+          }
+          
           console.log('[IoT] Received update:', data);
 
           if (data.type === 'device_status') {
@@ -111,12 +117,13 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
         console.warn('[IoT] SSE connection error:', error);
         setConnectionStatus('disconnected');
         
-        // Reconnect after 3 seconds
+        // Immediate reconnect for Vercel (handles timeouts)
         setTimeout(() => {
           if (eventSource.readyState === EventSource.CLOSED) {
+            console.log('[IoT] Reconnecting SSE after timeout...');
             connectSSE();
           }
-        }, 3000);
+        }, 1000);
       };
     };
 

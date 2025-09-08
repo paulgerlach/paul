@@ -19,6 +19,21 @@ interface HeatingCostsProps {
   csvText?: MeterReadingType[];
 }
 
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
   const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
@@ -27,7 +42,24 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   return new Date(year, month - 1, day);
 };
 
-// New helper function that returns an array with both date and value
+// Helper function to get unique dates from readings
+const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
+  const uniqueDates = new Set<string>();
+  const dates: Date[] = [];
+
+  readings.forEach((reading) => {
+    const dateString = reading["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+    if (dateString && !uniqueDates.has(dateString)) {
+      uniqueDates.add(dateString);
+      const [day, month, year] = dateString.split(".").map(Number);
+      dates.push(new Date(year, month - 1, day));
+    }
+  });
+
+  return dates.sort((a, b) => a.getTime() - b.getTime());
+};
+
+// Helper function that returns an array with both date and value for monthly historical data
 const getMonthlyEnergyDataWithDates = (
   readings: MeterReadingType[]
 ): { date: Date; value: number }[] => {
@@ -56,6 +88,159 @@ const getMonthlyEnergyDataWithDates = (
   return monthlyData;
 };
 
+// Helper function to check if a reading contains error data
+const isValidReading = (reading: MeterReadingType): boolean => {
+  // Check for error status codes
+  const status = reading.Status;
+  if (status && status !== "00h") {
+    return false; // Status other than 00h indicates error
+  }
+
+  // Check for error flags
+  const errorFlags = reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
+  if (errorFlags && errorFlags !== "0b") {
+    return false; // Non-zero error flags indicate problems
+  }
+
+  // Check for obvious error values in energy reading
+  const currentValue = reading["IV,0,0,0,Wh,E"];
+  let numValue = 0;
+  if (currentValue != null) {
+    numValue = typeof currentValue === "number" ? currentValue : parseFloat(String(currentValue).replace(",", ".") || "0");
+  }
+
+  // Filter out obvious error codes (repeated digits like 77777777, 88888888, 99999999)
+  if (numValue >= 10000000) { // Values above 10 million Wh are likely errors
+    return false;
+  }
+
+  // Check for error patterns in volume
+  const volume = reading["IV,0,0,0,m^3,Vol"];
+  let volumeValue = 0;
+  if (volume != null) {
+    volumeValue = typeof volume === "number" ? volume : parseFloat(String(volume).replace(",", ".") || "0");
+  }
+
+  // Filter out obvious volume error codes (777.777, 888.888, 999.999)
+  if (volumeValue >= 777 && (
+    Math.abs(volumeValue - 777.777) < 0.001 ||
+    Math.abs(volumeValue - 888.888) < 0.001 ||
+    Math.abs(volumeValue - 999.999) < 0.001
+  )) {
+    return false;
+  }
+
+  return true;
+};
+
+// Helper function to aggregate data by actual date ranges
+const aggregateDataByTimeRange = (
+  readings: MeterReadingType[],
+  startDate?: Date,
+  endDate?: Date
+): { label: string; value: number }[] => {
+  if (!readings || readings.length === 0) return [];
+
+  // Filter out invalid readings first
+  const validReadings = readings.filter(isValidReading);
+
+  // Get unique dates from valid readings and sort them
+  const uniqueDates = getUniqueDatesFromReadings(validReadings);
+
+  // Filter by date range if provided
+  let filteredDates = uniqueDates;
+  if (startDate && endDate) {
+    filteredDates = uniqueDates.filter(
+      (date) => date >= startDate && date <= endDate
+    );
+  }
+
+  if (filteredDates.length === 0) return [];
+
+  const oldestDate = filteredDates[0];
+  const newestDate = filteredDates[filteredDates.length - 1];
+  const daysDiff = Math.ceil(
+    (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const monthsDiff = Math.ceil(daysDiff / 30);
+
+  // Aggregate readings by date for current energy values
+  const readingsByDate = new Map<string, number>();
+  validReadings.forEach((reading) => {
+    const dateString = reading["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+    if (!dateString) return;
+
+    const [day, month, year] = dateString.split(".").map(Number);
+    const date = new Date(year, month - 1, day);
+
+    // Check if date is in range
+    if (startDate && endDate && (date < startDate || date > endDate)) return;
+
+    const currentValue = reading["IV,0,0,0,Wh,E"];
+    let numValue = 0;
+    if (currentValue != null) {
+      numValue = typeof currentValue === "number" ? currentValue : parseFloat(String(currentValue).replace(",", ".") || "0");
+    }
+
+    const dateKey = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+    readingsByDate.set(dateKey, (readingsByDate.get(dateKey) || 0) + numValue);
+  });
+
+  // Decide aggregation level based on time range
+  if (daysDiff <= 30) {
+    // Daily data for <= 30 days
+    return Array.from(readingsByDate.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([dateKey, value]) => {
+        const [year, month, day] = dateKey.split("-");
+        return {
+          label: `${day} ${monthNames[parseInt(month) - 1]}`,
+          value,
+        };
+      });
+  } else if (monthsDiff <= 4) {
+    // Monthly data for <= 4 months
+    const monthlyData = new Map<string, number>();
+
+    readingsByDate.forEach((value, dateKey) => {
+      const [year, month] = dateKey.split("-");
+      const monthKey = `${year}-${month}`;
+      monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + value);
+    });
+
+    return Array.from(monthlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([monthKey, value]) => {
+        const [year, month] = monthKey.split("-");
+
+        return {
+          label: `${monthNames[parseInt(month) - 1]}`,
+          value,
+        };
+      });
+  } else {
+    // Quarterly data for > 4 months
+    const quarterlyData = new Map<string, number>();
+
+    readingsByDate.forEach((value, dateKey) => {
+      const [year, month] = dateKey.split("-");
+      const quarter = Math.ceil(parseInt(month) / 3);
+      const quarterKey = `Q${quarter}`;
+      quarterlyData.set(
+        quarterKey,
+        (quarterlyData.get(quarterKey) || 0) + value
+      );
+    });
+
+    return Array.from(quarterlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([quarterKey, value]) => ({
+        label: quarterKey,
+        value,
+      }));
+  }
+};
+
 export default function HeatingCosts({
   csvText,
   isEmpty,
@@ -82,37 +267,12 @@ export default function HeatingCosts({
         ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
         : [];
 
-    // Get all historical data with dates
-    const monthlyDataWithDates = getMonthlyEnergyDataWithDates(filteredDevices);
-
-    // Filter the data based on the date range from the store
-    const filteredData = monthlyDataWithDates.filter(({ date }) => {
-      if (!startDate || !endDate) return true; // No filter if dates are not set
-      return date >= startDate && date <= endDate;
-    });
-
-    // Grouping the filtered data into 3 quarters
-    const numMonths = filteredData.length;
-    const monthsPerQuarter = Math.floor(numMonths / 3);
-    const remainder = numMonths % 3;
-
-    const quarters = [
-      { quarter: "Q1", value: 0 },
-      { quarter: "Q2", value: 0 },
-      { quarter: "Q3", value: 0 },
-    ];
-
-    let startIndex = 0;
-    // Distribute remaining months among quarters
-    for (let i = 0; i < 3; i++) {
-      const monthsInThisQuarter = monthsPerQuarter + (i < remainder ? 1 : 0);
-      quarters[i].value = filteredData
-        .slice(startIndex, startIndex + monthsInThisQuarter)
-        .reduce((sum, { value }) => sum + value, 0);
-      startIndex += monthsInThisQuarter;
-    }
-
-    return quarters;
+    // Use the new aggregation function
+    return aggregateDataByTimeRange(
+      filteredDevices, 
+      startDate || undefined, 
+      endDate || undefined
+    );
   }, [csvText, startDate, endDate, meterIds]);
 
   // Calculate dynamic domain and formatting based on chart data
@@ -179,7 +339,7 @@ export default function HeatingCosts({
             <BarChart data={data}>
               <XAxis
                 orientation="top"
-                dataKey="quarter"
+                dataKey="label"
                 axisLine={false}
                 tickLine={false}
               />

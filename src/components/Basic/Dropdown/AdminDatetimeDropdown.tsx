@@ -1,6 +1,14 @@
 "use client";
 
-import { endOfMonth, format, isSameDay, startOfMonth, subDays, subMonths } from "date-fns";
+import {
+  endOfMonth,
+  format,
+  isSameDay,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+} from "date-fns";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
@@ -15,7 +23,7 @@ export default function AdminDatetimeDropdown({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = useState<DateRange | undefined>({
-    from: startOfMonth(new Date()),
+    from: startOfYear(new Date()),
     to: endOfMonth(new Date()),
   });
   const { setDates, startDate, endDate } = useChartStore();
@@ -28,7 +36,7 @@ export default function AdminDatetimeDropdown({
       return;
     }
 
-    const initialFrom = date?.from ?? startOfMonth(new Date());
+    const initialFrom = date?.from ?? startOfYear(new Date());
     const initialTo = date?.to ?? endOfMonth(new Date());
     setDates(initialFrom, initialTo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,9 +46,11 @@ export default function AdminDatetimeDropdown({
     const today = new Date();
     if (startDate && endDate) {
       // Exact day matches
-      if (isSameDay(startDate, today) && isSameDay(endDate, today)) return "today" as const;
+      if (isSameDay(startDate, today) && isSameDay(endDate, today))
+        return "today" as const;
       const yesterday = subDays(today, 1);
-      if (isSameDay(startDate, yesterday) && isSameDay(endDate, yesterday)) return "yesterday" as const;
+      if (isSameDay(startDate, yesterday) && isSameDay(endDate, yesterday))
+        return "yesterday" as const;
 
       // Rolling windows ending today
       if (isSameDay(endDate, today)) {
@@ -50,12 +60,26 @@ export default function AdminDatetimeDropdown({
       }
 
       // Month presets
-      if (isSameDay(startDate, startOfMonth(today)) && isSameDay(endDate, endOfMonth(today))) {
+      if (
+        isSameDay(startDate, startOfMonth(today)) &&
+        isSameDay(endDate, endOfMonth(today))
+      ) {
         return "thisMonth" as const;
       }
       const prev = subMonths(today, 1);
-      if (isSameDay(startDate, startOfMonth(prev)) && isSameDay(endDate, endOfMonth(prev))) {
+      if (
+        isSameDay(startDate, startOfMonth(prev)) &&
+        isSameDay(endDate, endOfMonth(prev))
+      ) {
         return "lastMonth" as const;
+      }
+
+      // this year
+      if (
+        isSameDay(startDate, startOfYear(today)) &&
+        isSameDay(endDate, endOfMonth(today))
+      ) {
+        return "thisYear" as const;
       }
 
       return "custom" as const;
@@ -65,7 +89,7 @@ export default function AdminDatetimeDropdown({
 
   // Set initial dates in the store when component mounts
   useEffect(() => {
-    const initialFrom = date?.from || startOfMonth(new Date());
+    const initialFrom = date?.from || startOfYear(new Date());
     const initialTo = date?.to || endOfMonth(new Date());
 
     setDates(initialFrom, initialTo);

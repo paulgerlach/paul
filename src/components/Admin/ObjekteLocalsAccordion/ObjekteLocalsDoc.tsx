@@ -1,5 +1,5 @@
 import type { LocalType } from "@/types";
-import ObjekteLocalItemDoc from "../src/components/Admin/ObjekteLocalItem/ObjekteLocalItemDoc";
+import ObjekteLocalItemDoc from "../ObjekteLocalItem/ObjekteLocalItemDoc";
 
 export default function ObjekteLocalsDoc({
   locals,

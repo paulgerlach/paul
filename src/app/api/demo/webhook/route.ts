@@ -46,7 +46,24 @@ export async function GET(request: NextRequest) {
   // Log the webhook call with source information
   console.log(`[WEBHOOK] ${source.toUpperCase()} ${device} status: ${status} at ${timestamp}`);
   
-  // Broadcast to all connected dashboards (SSE)
+  // Store status for polling API
+  try {
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+    
+    await fetch(`${baseUrl}/api/demo/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    console.log('[WEBHOOK] Status stored for polling');
+  } catch (error) {
+    console.warn('[WEBHOOK] Failed to update status API:', error);
+  }
+  
+  // Still broadcast to SSE for localhost development
   await broadcastToConnections(data);
   
   // Return success response

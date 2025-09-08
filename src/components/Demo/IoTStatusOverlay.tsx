@@ -54,84 +54,67 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
   }, [isInitialized, updatePosition]);
 
   useEffect(() => {
-    // Only connect to SSE in demo mode
+    // Only start polling in demo mode
     if (!isDemo) return;
 
-    let eventSource: EventSource;
+    let pollingInterval: NodeJS.Timeout;
 
-    const connectSSE = () => {
+    const startPolling = () => {
       setConnectionStatus('connecting');
-      // Use relative path - works for both localhost and production
-      eventSource = new EventSource('/api/demo/stream');
-
-      eventSource.onopen = () => {
-        setConnectionStatus('connected');
-        console.log('[IoT] Connected to real-time stream');
-      };
-
-      eventSource.onmessage = (event) => {
+      
+      const poll = async () => {
         try {
-          const data = JSON.parse(event.data);
+          const response = await fetch('/api/demo/status');
+          const data = await response.json();
           
-          // Ignore heartbeat messages
-          if (data.type === 'heartbeat') {
-            return;
-          }
-          
-          console.log('[IoT] Received update:', data);
-
-          if (data.type === 'device_status') {
-            console.log('[IoT] Processing device status:', {
-              device: data.device,
-              status: data.status,
-              source: data.source,
-              message: data.message
+          if (data.success && data.devices) {
+            setConnectionStatus('connected');
+            console.log('[IoT] Polling update:', data.devices);
+            
+            // Update devices state
+            const newDevices: Record<string, IoTDevice> = {};
+            data.devices.forEach((device: any) => {
+              newDevices[device.device] = {
+                device: device.device,
+                status: device.status,
+                timestamp: device.timestamp,
+                message: device.message,
+                source: device.source || 'live'
+              };
+              
+              // Inject live data point for charts
+              addLiveDataPoint({
+                timestamp: device.timestamp,
+                device: device.device,
+                status: device.status,
+                source: device.source || 'live'
+              });
             });
             
-            setDevices(prev => ({
-              ...prev,
-              [data.device]: {
-                device: data.device,
-                status: data.status,
-                timestamp: data.timestamp,
-                message: data.message,
-                source: data.source || 'live' // Use explicit source field, default to live
-              }
-            }));
+            setDevices(newDevices);
             setLastUpdate(new Date().toLocaleTimeString());
-            
-            // Inject live data point for charts with source information
-            addLiveDataPoint({
-              timestamp: data.timestamp,
-              device: data.device,
-              status: data.status,
-              source: data.source || 'live'
-            });
           }
         } catch (error) {
-          console.warn('[IoT] Error parsing SSE data:', error);
+          console.warn('[IoT] Polling error:', error);
+          setConnectionStatus('disconnected');
         }
       };
 
-      eventSource.onerror = (error) => {
-        console.warn('[IoT] SSE connection error:', error);
-        setConnectionStatus('disconnected');
-        
-        // Immediate reconnect for Vercel (handles timeouts)
-        setTimeout(() => {
-          if (eventSource.readyState === EventSource.CLOSED) {
-            console.log('[IoT] Reconnecting SSE after timeout...');
-            connectSSE();
-          }
-        }, 1000);
-      };
+      // Initial poll
+      poll();
+      
+      // Poll every 2 seconds
+      pollingInterval = setInterval(poll, 2000);
+      
+      console.log('[IoT] Started polling for device updates');
     };
 
-    connectSSE();
+    startPolling();
 
     return () => {
-      if (eventSource) {
-        eventSource.close();
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        console.log('[IoT] Stopped polling');
       }
     };
   }, [isDemo]);

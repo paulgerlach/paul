@@ -10,12 +10,14 @@ export const isDemoMode = (): boolean => {
     if (window.location.hostname === 'localhost') return true;
     
     // Check if it's the demo Vercel URL
-    if (window.location.hostname.includes('heidisystems-livedemo')) return true;
+    if (window.location.hostname.includes('heidisystems-livedemo') || 
+        window.location.hostname.includes('vercel.app')) return true;
   }
   
   // Server-side: check environment
   return process.env.NODE_ENV === 'development' || 
          process.env.VERCEL_URL?.includes('heidisystems-livedemo') ||
+         process.env.VERCEL_URL?.includes('vercel.app') ||
          false;
 };
 

@@ -28,7 +28,7 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const { addLiveDataPoint } = useLiveIoTStore();
+  const { addLiveDataPoint, liveDataPoints } = useLiveIoTStore();
   
   // Debug function to clear devices
   const clearDevices = () => {
@@ -53,25 +53,68 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
     }
   }, [isInitialized, updatePosition]);
 
+  // Listen for live data points from direct injection (Vercel fix)
   useEffect(() => {
-    // Only start polling in demo mode
+    if (!isDemo || !liveDataPoints.length) return;
+
+    console.log('[IoT] Processing live data points:', liveDataPoints);
+    
+    // Get latest data point for each device
+    const deviceMap: Record<string, IoTDevice> = {};
+    
+    liveDataPoints.forEach(point => {
+      const existing = deviceMap[point.device];
+      const pointTime = new Date(point.timestamp).getTime();
+      const existingTime = existing ? new Date(existing.timestamp).getTime() : 0;
+      
+      // Priority system: Real Shelly data takes precedence over mock data
+      const shouldUpdate = pointTime > existingTime || 
+                          (point.source === 'live' && existing?.source === 'mock');
+      
+      if (shouldUpdate) {
+        deviceMap[point.device] = {
+          device: point.device,
+          status: point.status,
+          timestamp: point.timestamp,
+          message: `${point.source === 'mock' ? 'Mock Test' : 'Shelly Device'}: ${point.device} is now ${point.status}`,
+          source: point.source || 'live'
+        };
+      }
+    });
+
+    if (Object.keys(deviceMap).length > 0) {
+      setDevices(deviceMap);
+      setConnectionStatus('connected');
+      setLastUpdate(new Date().toLocaleTimeString());
+      console.log('[IoT] Updated from live data points:', deviceMap);
+    }
+  }, [isDemo, liveDataPoints]);
+
+  // Backup: Keep polling as fallback for cross-tab sync
+  useEffect(() => {
     if (!isDemo) return;
 
     let pollingInterval: NodeJS.Timeout;
 
     const startPolling = () => {
-      setConnectionStatus('connecting');
-      
       const poll = async () => {
         try {
           const response = await fetch('/api/demo/status');
           const data = await response.json();
           
-          if (data.success && data.devices) {
-            setConnectionStatus('connected');
-            console.log('[IoT] Polling update:', data.devices);
+          if (data.success && data.devices && data.devices.length > 0) {
+            console.log('[IoT] Polling fallback update:', data.devices);
             
-            // Update devices state
+            // Inject polling data into store for immediate updates (especially for real Shelly data)
+            data.devices.forEach((device: any) => {
+              addLiveDataPoint({
+                timestamp: device.timestamp,
+                device: device.device,
+                status: device.status,
+                source: device.source || 'live'
+              });
+            });
+            
             const newDevices: Record<string, IoTDevice> = {};
             data.devices.forEach((device: any) => {
               newDevices[device.device] = {
@@ -81,43 +124,36 @@ export default function IoTStatusOverlay({ isDemo = false, tenantContext }: IoTS
                 message: device.message,
                 source: device.source || 'live'
               };
-              
-              // Inject live data point for charts
-              addLiveDataPoint({
-                timestamp: device.timestamp,
-                device: device.device,
-                status: device.status,
-                source: device.source || 'live'
-              });
             });
             
-            setDevices(newDevices);
-            setLastUpdate(new Date().toLocaleTimeString());
+            // Only update if we don't have recent data from direct injection
+            if (Object.keys(devices).length === 0) {
+              setDevices(newDevices);
+              setConnectionStatus('connected');
+              setLastUpdate(new Date().toLocaleTimeString());
+            }
           }
         } catch (error) {
           console.warn('[IoT] Polling error:', error);
-          setConnectionStatus('disconnected');
         }
       };
 
-      // Initial poll
-      poll();
-      
-      // Poll every 2 seconds
-      pollingInterval = setInterval(poll, 2000);
-      
-      console.log('[IoT] Started polling for device updates');
+      // Poll every 5 seconds (less frequent as backup)
+      pollingInterval = setInterval(poll, 5000);
+      console.log('[IoT] Started backup polling');
     };
 
-    startPolling();
+    // Start polling after a delay to let direct injection work first
+    const timeout = setTimeout(startPolling, 1000);
 
     return () => {
+      clearTimeout(timeout);
       if (pollingInterval) {
         clearInterval(pollingInterval);
-        console.log('[IoT] Stopped polling');
+        console.log('[IoT] Stopped backup polling');
       }
     };
-  }, [isDemo]);
+  }, [isDemo, devices]);
 
   // Don't render if not in demo mode or not client-side yet
   if (!isDemo || !isClient) return null;

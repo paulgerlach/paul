@@ -63,8 +63,12 @@ export async function GET(request: NextRequest) {
     console.warn('[WEBHOOK] Failed to update status API:', error);
   }
   
-  // Still broadcast to SSE for localhost development
+  // Broadcast to SSE for localhost development (legacy)
   await broadcastToConnections(data);
+  
+  // VERCEL FIX: For real Shelly devices, also trigger direct injection via a client-side event
+  // This ensures real Shelly data gets the same immediate update treatment as mock data
+  console.log(`[WEBHOOK] Broadcasting ${source} device update:`, data);
   
   // Return success response
   return NextResponse.json({ 

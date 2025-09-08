@@ -134,11 +134,12 @@ async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseRes
 export const parseCSVs = async () => {
   // Configuration for all CSV files
   const csvFiles = [
-    { url: 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5', name: 'GatewayLatest' },
-    { url: 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy', name: 'Gateway' },
-    { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
-    { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
-    { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' }
+    // { url: 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5', name: 'GatewayLatest' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy', name: 'Gateway' },
+    // { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' },
+    { url: 'https://drive.google.com/uc?export=download&id=1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g', name: 'All Together' },
   ];
 
   try {
@@ -153,6 +154,12 @@ export const parseCSVs = async () => {
 
     // Extract unique meter IDs
     const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
+    const deviceTypesOfTheseMeterIds = meterIds.map(id => {
+      const device = combinedData.find(item => item.ID === id);
+      return device ? { id, device: device['Device Type'] } : null;
+    });
+    // only meterIds for localhost file
+    // const localMeterIds = parseResults[5].data.map(item => item.ID);
 
     return {
       data: combinedData,

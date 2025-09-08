@@ -5,6 +5,8 @@ import { ROUTE_HOME } from "@/routes/routes";
 import {
   alert_triangle,
   blue_info,
+  caract_battery,
+  caract_radio,
   dots_button,
   green_check,
   heater,
@@ -12,6 +14,7 @@ import {
   keys,
   notification,
   pipe_water,
+  cold_water,
 } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
@@ -220,166 +223,190 @@ export default function NotificationsChart({
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const { meterIds } = useChartStore();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 
   const deleteNotification = (index: number) => {
     setNotifications((prev) => prev.filter((_, i) => i !== index));
+    setOpenPopoverId(null); // Close the popover after deletion
   };
 
-  const generateNotifications = (): NotificationItem[] => {
-    const notifications: NotificationItem[] = [];
-
-    if (isEmpty) {
-      return notifications;
+  const getLeftIconForNotificationType = (notificationType: string, deviceType?: string) => {
+    const type = notificationType.toLowerCase();
+    
+    if (type.includes('sensor')) {
+      return caract_radio; // sensor icon
     }
-
-    if (!parsedData?.data || parsedData.data.length === 0) {
-      return notifications;
+    if (type.includes('manipulation')) {
+      return alert_triangle; // manipulation/security icon
     }
-
-    const deviceErrors = getDevicesWithErrors(parsedData);
-
-    if (deviceErrors.length === 0) {
-      const totalDevices = parsedData.data.length;
-      const heatDevices = parsedData.data.filter(
-        (d) => d["Device Type"] === "Heat"
-      ).length;
-      const waterDevices = parsedData.data.filter(
-        (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
-      ).length;
-
-      notifications.push({
-        leftIcon: keys,
-        rightIcon: green_check,
-        leftBg: "#E7E8EA",
-        rightBg: "#E7F2E8",
-        title: "Alle Zähler funktionieren korrekt",
-        subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
-      });
-
-      return notifications;
+    if (type.includes('leckage') || type.includes('leak')) {
+      return pipe_water; // water leak icon
     }
-
-    const errorsBySeverity = groupErrorsBySeverity(deviceErrors);
-
-    if (errorsBySeverity.critical.length > 0) {
-      notifications.push({
-        leftIcon: alert_triangle,
-        rightIcon: alert_triangle,
-        leftBg: "#E7E8EA",
-        rightBg: "#FFE5E5",
-        title: "criticale Zählerfehler",
-        subtitle: `${errorsBySeverity.critical.length} Geräte mit schwerwiegenden Problemen`,
-      });
+    if (type.includes('blockade') || type.includes('block')) {
+      return pipe_water; // blockage icon
     }
-
-    if (errorsBySeverity.high.length > 0) {
-      notifications.push({
-        leftIcon: alert_triangle,
-        rightIcon: alert_triangle,
-        leftBg: "#E7E8EA",
-        rightBg: "#F7E7D5",
-        title: "Wichtige Zählerfehler",
-        subtitle: `${errorsBySeverity.high.length} Geräte mit Sensor- oder Kommunikationsfehlern`,
-      });
+    if (type.includes('funkverbindung') || type.includes('funk') || type.includes('radio') || type.includes('signal')) {
+      return caract_radio; // radio/communication icon
     }
-
-    if (errorsBySeverity.medium.length > 0) {
-      notifications.push({
-        leftIcon: keys,
-        rightIcon: blue_info,
-        leftBg: "#E7E8EA",
-        rightBg: "#E5EBF5",
-        title: "Wartungshinweise",
-        subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
-      });
+    if (type.includes('batterie') || type.includes('battery')) {
+      return caract_battery; // battery icon
     }
-
-    if (errorsBySeverity.low.length > 0) {
-      notifications.push({
-        leftIcon: keys,
-        rightIcon: blue_info,
-        leftBg: "#E7E8EA",
-        rightBg: "#E5EBF5",
-        title: "Geringfügige Probleme",
-        subtitle: `${errorsBySeverity.low.length} Geräte mit kleinen Problemen`,
-      });
-    }
-
-    const errorsByDeviceType = groupErrorsByDeviceType(deviceErrors);
-
-    if (notifications.length < 3) {
-      if (errorsByDeviceType.Heat && errorsByDeviceType.Heat.length > 0) {
-        notifications.push({
-          leftIcon: heater,
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#F7E7D5",
-          title: "Wärmezähler Probleme",
-          subtitle: `${errorsByDeviceType.Heat.length} Wärmezähler melden Fehler`,
-        });
+    
+    // Default icons based on device type if no specific notification type match
+    if (deviceType) {
+      const dType = deviceType.toLowerCase();
+      if (dType.includes('heat') || dType.includes('wärme')) {
+        return heater;
       }
-
-      if (errorsByDeviceType.Water && errorsByDeviceType.Water.length > 0) {
-        notifications.push({
-          leftIcon: pipe_water,
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#F7E7D5",
-          title: "Wasserzähler Probleme",
-          subtitle: `${errorsByDeviceType.Water.length} Wasserzähler melden Fehler`,
-        });
+      if (dType.includes('wwater') || dType.includes('warmwasser')) {
+        return hot_water;
       }
-
-      if (errorsByDeviceType.WWater && errorsByDeviceType.WWater.length > 0) {
-        notifications.push({
-          leftIcon: hot_water,
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#F7E7D5",
-          title: "Warmwasserzähler Probleme",
-          subtitle: `${errorsByDeviceType.WWater.length} Warmwasserzähler melden Fehler`,
-        });
+      if (dType.includes('water') || dType.includes('wasser')) {
+        return cold_water;
       }
     }
-
-    for (const notification of dummy_notifications) {
-      if (meterIds.includes(notification.ID.toString())) {
-        notifications.push({
-          leftIcon: alert_triangle,
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#FFE5E5",
-          title: `${notification["Notification Type"]} - Zähler ${notification.ID}`,
-          subtitle: notification["Notification Message"],
-        });
-      }
-    }
-
-    return notifications.slice(0, 4);
+    
+    // Default fallback
+    return notification;
   };
 
   useEffect(() => {
+    const generateNotifications = (): NotificationItem[] => {
+      const notifications: NotificationItem[] = [];
+
+      if (isEmpty) {
+        return notifications;
+      }
+
+      if (!parsedData?.data || parsedData.data.length === 0) {
+        return notifications;
+      }
+
+      const deviceErrors = getDevicesWithErrors(parsedData);
+
+      if (deviceErrors.length === 0) {
+        const totalDevices = parsedData.data.length;
+        const heatDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Heat"
+        ).length;
+        const waterDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+        ).length;
+
+        notifications.push({
+          leftIcon: getLeftIconForNotificationType('success', 'general'),
+          rightIcon: green_check,
+          leftBg: "#E7E8EA",
+          rightBg: "#E7F2E8",
+          title: "Alle Zähler funktionieren korrekt",
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+        });
+
+        return notifications;
+      }
+
+      const errorsBySeverity = groupErrorsBySeverity(deviceErrors);
+
+      if (errorsBySeverity.critical.length > 0) {
+        notifications.push({
+          leftIcon: getLeftIconForNotificationType('critical', 'general'),
+          rightIcon: alert_triangle,
+          leftBg: "#E7E8EA",
+          rightBg: "#FFE5E5",
+          title: "criticale Zählerfehler",
+          subtitle: `${errorsBySeverity.critical.length} Geräte mit schwerwiegenden Problemen`,
+        });
+      }
+
+      if (errorsBySeverity.high.length > 0) {
+        notifications.push({
+          leftIcon: getLeftIconForNotificationType('sensor', 'general'),
+          rightIcon: alert_triangle,
+          leftBg: "#E7E8EA",
+          rightBg: "#F7E7D5",
+          title: "Wichtige Zählerfehler",
+          subtitle: `${errorsBySeverity.high.length} Geräte mit Sensor- oder Kommunikationsfehlern`,
+        });
+      }
+
+      if (errorsBySeverity.medium.length > 0) {
+        notifications.push({
+          leftIcon: getLeftIconForNotificationType('maintenance', 'general'),
+          rightIcon: blue_info,
+          leftBg: "#E7E8EA",
+          rightBg: "#E5EBF5",
+          title: "Wartungshinweise",
+          subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
+        });
+      }
+
+      if (errorsBySeverity.low.length > 0) {
+        notifications.push({
+          leftIcon: getLeftIconForNotificationType('info', 'general'),
+          rightIcon: blue_info,
+          leftBg: "#E7E8EA",
+          rightBg: "#E5EBF5",
+          title: "Geringfügige Probleme",
+          subtitle: `${errorsBySeverity.low.length} Geräte mit kleinen Problemen`,
+        });
+      }
+
+      const errorsByDeviceType = groupErrorsByDeviceType(deviceErrors);
+
+      if (notifications.length < 3) {
+        if (errorsByDeviceType.Heat && errorsByDeviceType.Heat.length > 0) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType('problems', 'Heat'),
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#F7E7D5",
+            title: "Wärmezähler Probleme",
+            subtitle: `${errorsByDeviceType.Heat.length} Wärmezähler melden Fehler`,
+          });
+        }
+
+        if (errorsByDeviceType.Water && errorsByDeviceType.Water.length > 0) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType('problems', 'Water'),
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#F7E7D5",
+            title: "Wasserzähler Probleme",
+            subtitle: `${errorsByDeviceType.Water.length} Wasserzähler melden Fehler`,
+          });
+        }
+
+        if (errorsByDeviceType.WWater && errorsByDeviceType.WWater.length > 0) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType('problems', 'WWater'),
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#F7E7D5",
+            title: "Warmwasserzähler Probleme",
+            subtitle: `${errorsByDeviceType.WWater.length} Warmwasserzähler melden Fehler`,
+          });
+        }
+      }
+
+      for (const notification of dummy_notifications) {
+        if (meterIds.includes(notification.ID.toString())) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType(notification["Notification Type"]),
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#FFE5E5",
+            title: `${notification["Notification Type"]} - Zähler ${notification.ID}`,
+            subtitle: notification["Notification Message"],
+          });
+        }
+      }
+
+      return notifications.slice(0, 4);
+    };
+
     const generated = generateNotifications();
     setNotifications(generated);
   }, [isEmpty, parsedData, meterIds]);
-
-  // useEffect(() => {
-  //   console.log("meterIds", meterIds);
-  //   for (const notification of dummy_notifications) {
-  //     if (meterIds.includes(notification.ID.toString())) {
-  //       console.log("Adding dummy notification for meter ID", notification.ID);
-  //       // notifications.push({
-  //       //   leftIcon: alert_triangle,
-  //       //   rightIcon: alert_triangle,
-  //       //   leftBg: "#E7E8EA",
-  //       //   rightBg: "#FFE5E5",
-  //       //   title: `${notification["Notification Type"]} - Zähler ${notification.ID}`,
-  //       //   subtitle: notification["Notification Message"],
-  //       // });
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [meterIds]);
 
   const hasDeviceErrors =
     !isEmpty && parsedData?.data && getDevicesWithErrors(parsedData).length > 0;
@@ -404,7 +431,7 @@ export default function NotificationsChart({
           alt="notification"
         />
       </div>
-      <div className="space-y-2 flex-1 overflow-auto pr-1">
+      <div className="space-y-2 flex-1 overflow-auto">
         {isEmpty ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
@@ -414,43 +441,54 @@ export default function NotificationsChart({
           />
         ) : (
           notifications.map((n, idx) => (
-            <div key={idx} className="flex items-start justify-between gap-2">
-              <NotificationItem {...n} />
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
+            <div key={idx} className="flex items-start justify-between w-full">
+              <div className="w-full">
+                <NotificationItem {...n} />
+              </div>
+              <div className="mt-1">
+                <Popover 
+                  open={openPopoverId === idx} 
+                  onOpenChange={(open) => setOpenPopoverId(open ? idx : null)}
+                >
+                  <PopoverTrigger asChild>
+                    <button
+                      className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Image
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        loading="lazy"
+                        className="max-w-4 max-h-4"
+                        src={dots_button}
+                        alt="dots button"
+                      />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Image
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      loading="lazy"
-                      className="max-w-4 max-h-4"
-                      src={dots_button}
-                      alt="dots button"
-                    />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Link
-                    href={"#"}
-                    className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
-                  >
-                    <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> öffnen
-                  </Link>
-                  <button
-                    onClick={() => deleteNotification(idx)}
-                    className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
-                  >
-                    <Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Löschen
-                  </button>
-                </PopoverContent>
-              </Popover>
+                    <Link
+                      href={"#"}
+                      className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+                    >
+                      <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+                      öffnen
+                    </Link>
+                    <button
+                      onClick={() => {
+                        deleteNotification(idx);
+                      }}
+                      className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+                    >
+                      <Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+                      Löschen
+                    </button>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           ))
         )}

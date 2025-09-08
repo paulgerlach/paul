@@ -1,6 +1,12 @@
 "use client";
 
-import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
+import {
+  endOfMonth,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+} from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 
@@ -15,6 +21,7 @@ export type TimePreset =
   | "90d"
   | "thisMonth"
   | "lastMonth"
+  | "thisYear"
   | "custom";
 
 interface TimeFilterPresetsProps {
@@ -78,12 +85,15 @@ export default function TimeFilterPresets({
         from = startOfMonth(today);
         to = endOfMonth(today);
         break;
-      case "lastMonth": {
+      case "lastMonth":
         const prev = subMonths(today, 1);
         from = startOfMonth(prev);
         to = endOfMonth(prev);
         break;
-      }
+      case "thisYear":
+        from = startOfYear(today);
+        to = endOfMonth(today);
+        break;
     }
 
     setActivePreset(preset);
@@ -92,7 +102,12 @@ export default function TimeFilterPresets({
   };
 
   return (
-    <div className={cn("flex bg-white rounded-2xl border border-[#EAEAEA]", className)}>
+    <div
+      className={cn(
+        "flex bg-white rounded-2xl border border-[#EAEAEA]",
+        className
+      )}
+    >
       <div className="min-w-48 border-r border-[#EAEAEA] py-1">
         <ul className="flex flex-col">
           <li>
@@ -176,6 +191,17 @@ export default function TimeFilterPresets({
             <button
               className={cn(
                 "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
+                activePreset === "thisYear" && "bg-[#C3F3C0]"
+              )}
+              onClick={() => applyPreset("thisYear")}
+            >
+              This Year
+            </button>
+          </li>
+          <li>
+            <button
+              className={cn(
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "custom" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("custom")}
@@ -203,5 +229,3 @@ export default function TimeFilterPresets({
     </div>
   );
 }
-
-

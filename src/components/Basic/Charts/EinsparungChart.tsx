@@ -49,7 +49,7 @@ export default function EinsparungChart({
           />
         ) : (
           <div className="text-center">
-            <p className="text-3xl md:text-4xl lg:text-5xl text-black/50 mb-2">
+            <p className="text-4xl md:text-4xl lg:text-5xl text-black/50 mb-2">
               {co2Display}
             </p>
             {co2Context && co2Result && co2Result.totalCO2SavedTons > 0.1 && (

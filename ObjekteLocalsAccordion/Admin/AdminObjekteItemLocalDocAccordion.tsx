@@ -2,7 +2,7 @@
 
 import type { LocalType } from "@/types";
 import { useState } from "react";
-import AdminObjekteItemLocalDocWithHistory from "../../ObjekteLocalItem/Admin/AdminObjekteItemLocalDocWithHistory";
+import AdminObjekteItemLocalDocWithHistory from "../../src/components/Admin/ObjekteLocalItem/Admin/AdminObjekteItemLocalDocWithHistory";
 
 export default function AdminObjekteItemLocalDocAccordion({
   locals,

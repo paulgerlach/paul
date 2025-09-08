@@ -1,7 +1,7 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalsDoc from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsDoc";
+import ObjekteLocalsDoc from "../../../../../../ObjekteLocalsAccordion/ObjekteLocalsDoc";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ObjektDetailsPage({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ROUTE_HOME } from "@/routes/routes";
 import {
   alert_triangle,
@@ -216,6 +216,11 @@ export default function NotificationsChart({
 }: NotificationsChartProps) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const { meterIds } = useChartStore();
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+  const deleteNotification = (index: number) => {
+    setNotifications((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const generateNotifications = (): NotificationItem[] => {
     const notifications: NotificationItem[] = [];
@@ -350,7 +355,10 @@ export default function NotificationsChart({
     return notifications.slice(0, 4);
   };
 
-  const notifications = generateNotifications();
+  useEffect(() => {
+    const generated = generateNotifications();
+    setNotifications(generated);
+  }, [isEmpty, parsedData, meterIds]);
 
   // useEffect(() => {
   //   console.log("meterIds", meterIds);
@@ -402,7 +410,17 @@ export default function NotificationsChart({
             imageAlt="Benachrichtigungen"
           />
         ) : (
-          notifications.map((n, idx) => <NotificationItem key={idx} {...n} />)
+          notifications.map((n, idx) => (
+            <div key={idx} className="flex items-start justify-between gap-2">
+              <NotificationItem {...n} />
+              <button
+                onClick={() => deleteNotification(idx)}
+                className="text-xs cursor-pointer text-red-600 hover:underline"
+              >
+                ✕
+              </button>
+            </div>
+          ))
         )}
       </div>
       {/* <>{notifications.length}</> */}

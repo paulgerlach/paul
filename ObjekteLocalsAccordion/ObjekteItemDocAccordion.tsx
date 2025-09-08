@@ -2,9 +2,9 @@
 
 import type { ObjektType } from "@/types";
 import { useState } from "react";
-import OperatingObjekteItemDocWithHistory from "../ObjekteItem/OperatingObjekteItemDocWithHistory";
+import ObjekteItemDocWithHistory from "../src/components/Admin/ObjekteItem/ObjekteItemDocWithHistory";
 
-export default function OperatingObjekteItemDocAccordion({
+export default function ObjekteItemDocAccordion({
   objekts,
 }: {
   objekts?: ObjektType[];
@@ -18,7 +18,7 @@ export default function OperatingObjekteItemDocAccordion({
   return (
     <div className="overflow-y-auto space-y-4">
       {objekts?.map((objekt, index) => (
-        <OperatingObjekteItemDocWithHistory
+        <ObjekteItemDocWithHistory
           isOpen={openIndex === index}
           onClick={handleClick}
           key={objekt.id}

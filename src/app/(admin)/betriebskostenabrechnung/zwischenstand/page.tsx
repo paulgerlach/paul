@@ -1,7 +1,7 @@
 import { getObjekts } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import OperatingObjekteItemDocAccordion from "../../../../../ObjekteLocalsAccordion/OperatingObjekteItemDocAccordion";
+import OperatingObjekteItemDocAccordion from "../../../../components/Admin/ObjekteLocalsAccordion/OperatingObjekteItemDocAccordion";
 import {
   ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_DASHBOARD,

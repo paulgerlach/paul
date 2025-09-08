@@ -2,7 +2,7 @@
 
 import type { LocalType } from "@/types";
 import { useState } from "react";
-import ObjekteLocalAdminItem from "../src/components/Admin/ObjekteLocalItem/ObjekteLocalAdminItem";
+import ObjekteLocalAdminItem from "../ObjekteLocalItem/ObjekteLocalAdminItem";
 
 export default function ObjekteLocalsAdminAccordion({
   locals,

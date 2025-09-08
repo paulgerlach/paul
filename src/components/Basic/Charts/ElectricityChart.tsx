@@ -186,8 +186,7 @@ export default function ElectricityChart({
 }: ElectricityChartProps) {
   const { startDate, endDate, meterIds } = useChartStore();
 
-  const { data, maxKWh, usedDummy } = useMemo(() => {
-    console.log({ meterIds });
+  const { data, maxKWh } = useMemo(() => {
     const readings = Array.isArray(electricityReadings)
       ? electricityReadings
       : [];
@@ -197,7 +196,6 @@ export default function ElectricityChart({
       return {
         data: [],
         maxKWh: 0,
-        usedDummy: false,
       };
     }
 
@@ -206,6 +204,14 @@ export default function ElectricityChart({
       meterIds && meterIds.length > 0
         ? readings.filter((d) => meterIds.includes(d.ID))
         : [];
+
+    // If no meters are selected, show empty state
+    if (!meterIds || meterIds.length === 0) {
+      return {
+        data: [],
+        maxKWh: 0,
+      };
+    }
 
     const series = getEnergyDataWithDates(filteredByMeter);
 
@@ -328,38 +334,9 @@ export default function ElectricityChart({
       }
     }
 
-    // Only generate dummy data if explicitly requested via environment variable
-    const forceDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === "1";
-    if (forceDummy && rows.length === 0) {
-      const labels = getLabelsForRange(startDate, endDate);
-
-      if (monthsSpan <= 2) {
-        // Daily dummy around ~7 kWh/day (≈210/30)
-        const baseDaily = 7;
-        rows = labels.map((label, idx) => {
-          const jitter = ((idx * 7) % 6) - 3; // +/-3 kWh
-          return { label, kwh: Math.max(1, baseDaily + jitter) };
-        });
-      } else {
-        // Monthly dummy
-        const baseMonthly = 210;
-        rows = labels.map((label, idx) => {
-          const jitter = ((idx * 29) % 80) - 40; // +/-40 kWh
-          return { label, kwh: Math.max(120, baseMonthly + jitter) };
-        });
-      }
-
-      return {
-        data: rows,
-        maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
-        usedDummy: true,
-      };
-    }
-
     return {
       data: rows,
       maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
-      usedDummy: false,
     };
   }, [electricityReadings, startDate, endDate, meterIds]);
 
@@ -367,8 +344,7 @@ export default function ElectricityChart({
   const BENCHMARK_KWH_PER_MONTH = 210;
 
   const showEmpty =
-    (!usedDummy && (isEmpty || (data?.length ?? 0) === 0)) ||
-    electricityReadings?.length === 0;
+    isEmpty || (data?.length ?? 0) === 0 || electricityReadings?.length === 0;
 
   // enrich with moving average and benchmark per row for composed chart
   const chartData = useMemo(() => {

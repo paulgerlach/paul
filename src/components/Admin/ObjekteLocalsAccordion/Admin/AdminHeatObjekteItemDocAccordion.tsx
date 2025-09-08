@@ -1,15 +1,13 @@
 "use client";
 
-import type { LocalType } from "@/types";
+import type { ObjektType } from "@/types";
 import { useState } from "react";
-import ObjekteLocalItem from "../src/components/Admin/ObjekteLocalItem/ObjekteLocalItem";
+import AdminHeatObjekteItemDocWithHistory from "../../ObjekteItem/Admin/AdminHeatObjekteItemDocWithHistory";
 
-export default function ObjekteLocalsAccordion({
-  locals,
-  id,
+export default function AdminHeatObjekteItemDocAccordion({
+  objekts,
 }: {
-  id: string;
-  locals?: LocalType[];
+  objekts?: ObjektType[];
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -19,15 +17,13 @@ export default function ObjekteLocalsAccordion({
 
   return (
     <div className="overflow-y-auto space-y-4">
-      {locals?.map((local, index) => (
-        <ObjekteLocalItem
-          id={id}
-          localID={local.id}
+      {objekts?.map((objekt, index) => (
+        <AdminHeatObjekteItemDocWithHistory
           isOpen={openIndex === index}
           onClick={handleClick}
-          key={local.id}
+          key={objekt.id}
           index={index}
-          item={local}
+          item={objekt}
         />
       ))}
     </div>

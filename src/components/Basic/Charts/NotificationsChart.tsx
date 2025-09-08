@@ -5,6 +5,7 @@ import { ROUTE_HOME } from "@/routes/routes";
 import {
   alert_triangle,
   blue_info,
+  dots_button,
   green_check,
   heater,
   hot_water,
@@ -25,6 +26,8 @@ import {
 } from "@/utils/errorFlagInterpreter";
 import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
+import { Pencil, Trash } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 
 interface NotificationItem {
   leftIcon: StaticImageData;
@@ -413,12 +416,41 @@ export default function NotificationsChart({
           notifications.map((n, idx) => (
             <div key={idx} className="flex items-start justify-between gap-2">
               <NotificationItem {...n} />
-              <button
-                onClick={() => deleteNotification(idx)}
-                className="text-xs cursor-pointer text-red-600 hover:underline"
-              >
-                ✕
-              </button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Image
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      loading="lazy"
+                      className="max-w-4 max-h-4"
+                      src={dots_button}
+                      alt="dots button"
+                    />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Link
+                    href={"#"}
+                    className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+                  >
+                    <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> öffnen
+                  </Link>
+                  <button
+                    onClick={() => deleteNotification(idx)}
+                    className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+                  >
+                    <Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Löschen
+                  </button>
+                </PopoverContent>
+              </Popover>
             </div>
           ))
         )}

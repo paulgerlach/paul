@@ -1,7 +1,7 @@
 import { getObjekts } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteItemDocAccordion from "../../../../../../ObjekteLocalsAccordion/ObjekteItemDocAccordion";
+import ObjekteItemDocAccordion from "../../../../../components/Admin/ObjekteLocalsAccordion/ObjekteItemDocAccordion";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { cost_type_plus } from "@/static/icons";
 import Image from "next/image";

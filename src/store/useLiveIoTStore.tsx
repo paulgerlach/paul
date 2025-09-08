@@ -87,6 +87,11 @@ export const useLiveIoTStore = create<LiveIoTState>((set, get) => ({
             incrementalWater = 0; // No water consumption for electric heating
             incrementalHeat = 1350 * (3/3600); // 1350W thermal heat output (90% efficiency) for 3 seconds (converted to Wh)
             break;
+          case 'electricity':
+            incrementalElectricity = 1000 * (3/3600); // 1000W general electrical load for 3 seconds (converted to Wh)
+            incrementalWater = 0; // No water consumption
+            incrementalHeat = 0; // No heat generation
+            break;
         }
       }
       // When status is 'off', incremental values remain 0 (accumulation holds)

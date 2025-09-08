@@ -16,13 +16,18 @@ export const isDemoMode = (): boolean => {
   
   // Server-side: check environment
   return process.env.NODE_ENV === 'development' || 
+         process.env.NEXT_PUBLIC_VERCEL_URL?.includes('heidisystems-livedemo') ||
          process.env.VERCEL_URL?.includes('heidisystems-livedemo') ||
          process.env.VERCEL_URL?.includes('vercel.app') ||
+         process.env.NEXT_PUBLIC_SITE_URL?.includes('heidisystems-livedemo') ||
          false;
 };
 
-export const getDemoConfig = () => ({
-  isDemo: isDemoMode(),
-  showMockPanel: isDemoMode(), // Show MockPanel in demo mode (localhost + Vercel demo)
-  showIoTOverlay: isDemoMode(), // Show IoT overlay in demo mode (localhost + Vercel demo)
-});
+export const getDemoConfig = () => {
+  const isDemo = isDemoMode();
+  return {
+    isDemo,
+    showMockPanel: isDemo, // Show MockPanel in demo mode (localhost + Vercel demo)
+    showIoTOverlay: isDemo, // Show IoT overlay in demo mode (localhost + Vercel demo)
+  };
+};

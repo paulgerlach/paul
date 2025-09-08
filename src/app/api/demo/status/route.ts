@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// In-memory storage for device status (in production, use Redis or database)
-let deviceStatuses: Record<string, {
-  device: string;
-  status: 'on' | 'off';
-  timestamp: string;
-  message: string;
-  source: 'mock' | 'live';
-}> = {};
+// Global storage for device status - works better with Vercel Edge Runtime
+declare global {
+  var deviceStatuses: Record<string, {
+    device: string;
+    status: 'on' | 'off';
+    timestamp: string;
+    message: string;
+    source: 'mock' | 'live';
+  }> | undefined;
+}
+
+// Initialize global storage
+if (!globalThis.deviceStatuses) {
+  globalThis.deviceStatuses = {};
+}
+
+const deviceStatuses = globalThis.deviceStatuses;
 
 export async function GET() {
   try {

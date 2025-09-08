@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       // Handle client disconnect
       request.signal?.addEventListener('abort', cleanup);
       
-      // Auto-cleanup after 10 seconds (Vercel serverless limit)
+      // Auto-cleanup after 45 seconds (before Vercel timeout)
       const timeout = setTimeout(() => {
         cleanup();
         try {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         } catch (error) {
           console.warn('Error closing SSE connection:', error);
         }
-      }, 10000);
+      }, 45000);
       
       // Clear timeout if connection closes normally
       request.signal?.addEventListener('abort', () => {

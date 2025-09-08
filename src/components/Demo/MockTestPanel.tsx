@@ -53,8 +53,16 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
         message: data.data?.message
       });
       
-      // Data will flow through SSE stream - no direct injection needed
-      // This ensures proper separation between mock and live data sources
+      // VERCEL FIX: Also directly inject data to store as fallback for serverless memory issues
+      if (data.success && data.data) {
+        console.log('[Mock] Directly injecting data as Vercel fallback:', data.data);
+        addLiveDataPoint({
+          timestamp: data.data.timestamp,
+          device: data.data.device,
+          status: data.data.status,
+          source: data.data.source || 'mock'
+        });
+      }
     } catch (error) {
       console.error('Mock webhook error:', error);
       setLastResponse(`Error: ${error}`);
@@ -81,7 +89,16 @@ export default function MockTestPanel({ isDemo = false }: MockTestPanelProps) {
         message: data.data?.message
       });
       
-      // Data will flow through SSE stream - simulates real Shelly device behavior
+      // VERCEL FIX: Also directly inject data to store as fallback for serverless memory issues
+      if (data.success && data.data) {
+        console.log('[Live Sim] Directly injecting data as Vercel fallback:', data.data);
+        addLiveDataPoint({
+          timestamp: data.data.timestamp,
+          device: data.data.device,
+          status: data.data.status,
+          source: data.data.source || 'live'
+        });
+      }
     } catch (error) {
       console.error('Live simulation error:', error);
       setLastResponse(`Error: ${error}`);

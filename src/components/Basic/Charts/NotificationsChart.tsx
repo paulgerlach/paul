@@ -21,7 +21,6 @@ import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
 import { MeterReadingType } from "@/api";
-import metersData from "@/api/meters.json";
 import {
   getDevicesWithErrors,
   groupErrorsBySeverity,

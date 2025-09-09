@@ -48,11 +48,11 @@ export default function ShareDashboardDialog() {
       });
 
       // Create filters from current dashboard state
-      // ALWAYS include current dates and meters to snapshot the exact dashboard state
+      // Only include dates if they're actually set in the dashboard
       const filters: ShareFilters = {
         meterIds: meterIds.length > 0 ? meterIds : undefined,
-        startDate: startDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
-        endDate: endDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
+        startDate: startDate?.toISOString().split("T")[0],
+        endDate: endDate?.toISOString().split("T")[0],
       };
 
       console.log('Filters being sent:', filters);

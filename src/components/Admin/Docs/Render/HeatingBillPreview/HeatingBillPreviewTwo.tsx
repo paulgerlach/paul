@@ -105,7 +105,9 @@ const HeatingBillPreviewTwo = ({
                     <br />
                     260002673166
                   </td>
-                  <td className="py-1 px-2">31.12.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">761.123</td>
                   <td className="py-1 px-2 text-right">124.242,47 €</td>
                 </tr>
@@ -148,12 +150,16 @@ const HeatingBillPreviewTwo = ({
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Verbrauchsabrechnung</td>
-                  <td className="py-1 px-2">31.12.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">7.155,11 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Betriebsstrom</td>
-                  <td className="py-1 px-2">31.12.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">4.128,26 €</td>
                 </tr>
                 <tr>
@@ -233,22 +239,30 @@ const HeatingBillPreviewTwo = ({
               <tbody>
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Heizung/Warmwasser</td>
-                  <td className="py-1 px-2">04.08.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">6.210,80 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Kaltwasser</td>
-                  <td className="py-1 px-2">31.12.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">17.036,69 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Abwasser</td>
-                  <td className="py-1 px-2">31.12.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">20.030,62 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Kaltwasser</td>
-                  <td className="py-1 px-2">04.08.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">2.274,90 €</td>
                 </tr>
                 <tr>
@@ -258,7 +272,9 @@ const HeatingBillPreviewTwo = ({
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Heizung/Warmwasser</td>
-                  <td className="py-1 px-2">04.08.2023</td>
+                  <td className="py-1 px-2">
+                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                  </td>
                   <td className="py-1 px-2 text-right">2.307,77 €</td>
                 </tr>
                 <tr className="font-bold">

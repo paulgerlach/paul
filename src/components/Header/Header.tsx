@@ -29,12 +29,17 @@ export default function Header() {
     <header
       id="header"
       ref={headerRef}
-      className={`fixed w-full mx-auto !px-[72px] max-megalarge:!px-16 max-large:!px-6 max-medium:!px-5 top-2.5 left-1/2 -translate-x-1/2 duration-300 ${scrolled ? "scrolled" : ""
-        }`}>
-      <div className="flex items-center w-full px-5 rounded-full bg-white/30 backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between">
+      className={`fixed w-full mx-auto !px-[72px] max-megalarge:!px-16 max-large:!px-6 max-medium:!px-5 top-2.5 left-1/2 -translate-x-1/2 duration-300 ${
+        scrolled ? "scrolled" : ""
+      }`}
+    >
+      <div
+        className={`flex items-center w-full px-5 rounded-full backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between bg-white/30`}
+      >
         <Link
           href={ROUTE_HOME}
-          className="flex items-center max-w-16 w-full h-5 justify-start gap-3">
+          className="flex items-center max-w-16 w-full h-5 justify-start gap-3"
+        >
           <Image
             width={0}
             height={0}
@@ -53,7 +58,8 @@ export default function Header() {
           <div className="flex items-center justify-end gap-1.5">
             <button
               onClick={() => openDialog("login")}
-              className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text">
+              className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
+            >
               <Image
                 width={16}
                 height={16}
@@ -67,7 +73,8 @@ export default function Header() {
             </button>
             <Link
               href="tel:01759223454"
-              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text">
+              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
+            >
               <Image
                 width={16}
                 height={16}
@@ -81,14 +88,16 @@ export default function Header() {
             </Link>
             <Link
               href={ROUTE_KONTAKT}
-              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-darl_text rounded-halfbase">
+              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-darl_text rounded-halfbase"
+            >
               Demo buchen
             </Link>
           </div>
         </div>
         <Link
           href={ROUTE_FRAGEBOGEN}
-          className="border ml-auto mr-3 hidden max-large:flex border-border_base py-2 px-4 items-center justify-center text-base max-xl:text-sm text-white rounded-halfbase duration-300 hover:opacity-80">
+          className="border ml-auto mr-3 hidden max-large:flex border-border_base py-2 px-4 items-center justify-center text-base max-xl:text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
+        >
           Angebot anfordern
         </Link>
         <HeaderButton />

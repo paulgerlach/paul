@@ -1,7 +1,7 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalsAdminAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAdminAccordion";
+import ObjekteLocalsAdminAccordion from "../../../../../../components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAdminAccordion";
 import { buildSubRoute } from "@/lib/navigation";
 import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 import { create_local } from "@/static/icons";

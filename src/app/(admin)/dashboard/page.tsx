@@ -5,17 +5,13 @@ import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts"
 import ShareButton from "@/app/shared/ShareButton";
 
 export default async function AdminPage() {
-  const parsedData = await parseCSVs();
+  const parsedData: any = await parseCSVs();
 
   return (
-    <div className="py-6 px-9 overflow-scroll">
-      <div className="flex justify-between items-center mb-6">
-        <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-      </div>
+    <div className="py-6 px-9 space-y-6 overflow-scroll">
+      <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
       <DashboardCharts parsedData={parsedData!} />
-      <div className="mt-6 max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl mx-auto px-4">
-        <ShareButton className="animate-in slide-in-from-bottom-4 fade-in duration-500 delay-300" />
-      </div>
+      <ShareButton />
     </div>
   );
 }

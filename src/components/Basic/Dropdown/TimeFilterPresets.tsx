@@ -1,6 +1,12 @@
 "use client";
 
-import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
+import {
+  endOfMonth,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+} from "date-fns";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 
@@ -15,6 +21,7 @@ export type TimePreset =
   | "90d"
   | "thisMonth"
   | "lastMonth"
+  | "thisYear"
   | "custom";
 
 interface TimeFilterPresetsProps {
@@ -78,12 +85,15 @@ export default function TimeFilterPresets({
         from = startOfMonth(today);
         to = endOfMonth(today);
         break;
-      case "lastMonth": {
+      case "lastMonth":
         const prev = subMonths(today, 1);
         from = startOfMonth(prev);
         to = endOfMonth(prev);
         break;
-      }
+      case "thisYear":
+        from = startOfYear(today);
+        to = endOfMonth(today);
+        break;
     }
 
     setActivePreset(preset);
@@ -92,95 +102,111 @@ export default function TimeFilterPresets({
   };
 
   return (
-    <div className={cn("flex bg-white rounded-2xl border border-[#EAEAEA]", className)}>
+    <div
+      className={cn(
+        "flex bg-white rounded-2xl border border-[#EAEAEA]",
+        className
+      )}
+    >
       <div className="min-w-48 border-r border-[#EAEAEA] py-1">
         <ul className="flex flex-col">
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "today" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("today")}
             >
-              Today
+              Heute
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "yesterday" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("yesterday")}
             >
-              Yesterday
+              Gestern
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "7d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("7d")}
             >
-              Last 7 Days
+              Letzte 7 Tage
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "30d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("30d")}
             >
-              Last 30 Days
+              Letzte 30 Tage
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "90d" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("90d")}
             >
-              Last 90 Days
+              Letzte 90 Tage
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "thisMonth" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("thisMonth")}
             >
-              This Month
+              Dieser Monat
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "lastMonth" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("lastMonth")}
             >
-              Last Month
+              Letzter Monat
             </button>
           </li>
           <li>
             <button
               className={cn(
-                "w-full text-left text-sm p-3 hover:bg-[#c3f3c096]",
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
+                activePreset === "thisYear" && "bg-[#C3F3C0]"
+              )}
+              onClick={() => applyPreset("thisYear")}
+            >
+              Dieses Jahr
+            </button>
+          </li>
+          <li>
+            <button
+              className={cn(
+                "w-full text-left text-xs p-3 hover:bg-[#c3f3c096]",
                 activePreset === "custom" && "bg-[#C3F3C0]"
               )}
               onClick={() => applyPreset("custom")}
             >
-              Custom Range
+              Benutzerdefinierter Zeitraum
             </button>
           </li>
         </ul>
@@ -203,5 +229,3 @@ export default function TimeFilterPresets({
     </div>
   );
 }
-
-

@@ -21,7 +21,7 @@ export default function AdminAccoundDropdown() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex items-center gap-4 justify-between bg-transparent border-none cursor-pointer px-2 py-6 max-xl:py-4 h-full">
+        <button className="flex items-center gap-3 justify-between bg-transparent border-none cursor-pointer px-2 py-3 h-full">
           <div className="flex items-center justify-start text-lg max-xl:text-sm whitespace-nowrap gap-3">
             <Image
               width={0}
@@ -32,17 +32,17 @@ export default function AdminAccoundDropdown() {
               alt="main_account"
               src={main_account}
             />
-            Mein Konto
+            <span className="text-sm">Mein Konto</span>
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="max-w-2 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
+              loading="lazy"
+              alt="chevron_admin"
+              src={chevron_admin}
+            />
           </div>
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            className="max-w-2 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
-            loading="lazy"
-            alt="chevron_admin"
-            src={chevron_admin}
-          />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-24 border-none shadow-none p-0">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MeterReadingType } from "@/api";
 import { alert_triangle, heater, pipe_water, keys } from "@/static/icons";
 import Image from "next/image";
@@ -17,6 +17,33 @@ interface ErrorDetailsModalProps {
 }
 
 export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: ErrorDetailsModalProps) {
+  // Handle ESC key press
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent background scrolling when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
+  // Handle click outside modal
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   if (!isOpen || !parsedData) return null;
 
   const getErrorDetails = () => {
@@ -161,7 +188,10 @@ export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: Error
   const errorDetails = getErrorDetails();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={handleBackdropClick}
+    >
       <div className="bg-white rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Detaillierte Fehleranalyse</h2>

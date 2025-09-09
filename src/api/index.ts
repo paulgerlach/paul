@@ -13,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -31,6 +31,8 @@ import type {
   UserType
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
+import { MASTER_DATA, MASTER_DATA_2 } from "./data";
+import { writeFileSync } from "fs";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -110,64 +112,84 @@ export interface ParseResult {
   errors: { row: number; error: string; rawRow: any }[];
 }
 
+// Helper function to fetch and parse a single CSV file
+async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseResult> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${fileName} file: ${response.statusText}`);
+    }
+    const csvData = await response.text();
+
+    // if filename includes .json then parse as json otherwise parse as csv
+    const parseResult = fileName.endsWith('.txt') ? JSON.parse(csvData) : parseCsv(csvData);
+
+    if (parseResult.errors.length > 0) {
+      console.warn(`Parse errors found in ${fileName}:`, parseResult.errors);
+    }
+
+    return parseResult;
+  } catch (error) {
+    console.error(`Error processing ${fileName}:`, error);
+    return { data: [], errors: [{ row: 0, error: `Failed to fetch ${fileName}: ${error}`, rawRow: null }] };
+  }
+}
+
 export const parseCSVs = async () => {
-  const GatewayUrlFileUrl = 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy';
-  const GatewayOneUrlFileUrl = 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl';
-  const HeinWeisCodeFileUrl = 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM';
+  // Configuration for all CSV files
+  const csvFiles = [
+    // { url: 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5', name: 'GatewayLatest' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy', name: 'Gateway' },
+    // { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' },
+    // { url: 'https://drive.google.com/uc?export=download&id=1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g', name: 'All Together' },
+    { url: 'http://localhost:3000/data/data.json', name: 'All Together' },
+  ];
 
   try {
-    // download the Gateway CSV file
-    const gatewayResponse = await fetch(GatewayUrlFileUrl);
-    if (!gatewayResponse.ok) {
-      throw new Error(`Failed to fetch Gateway file: ${gatewayResponse.statusText}`);
-    }
-    const gatewayCsvData = await gatewayResponse.text();
+    // Fetch and parse all CSV files in parallel
+    // const parseResults = await Promise.all(
+    //   csvFiles.map(({ url, name }) => fetchAndParseCsv(url, name))
+    // );
 
-    // download the HeinWeisCode CSV file
-    const heinWeisResponse = await fetch(HeinWeisCodeFileUrl);
-    if (!heinWeisResponse.ok) {
-      throw new Error(`Failed to fetch HeinWeisCode file: ${heinWeisResponse.statusText}`);
-    }
-    const heinWeisCsvData = await heinWeisResponse.text();
+    // fetch directly from localhost for data.json file using native fetch
+    // const parseResults: any = await fetch('http://localhost:3000/data/data.json')
+    //   .then(response => response.json())
+    //   .catch(error => {
+    //     console.error('Error fetching local data:', error);
+    //     return null;
+    //   });
 
-    // download the GatewayOne CSV file
-    const gatewayOneResponse = await fetch(GatewayOneUrlFileUrl);
-    if (!gatewayOneResponse.ok) {
-      throw new Error(`Failed to fetch GatewayOne file: ${gatewayOneResponse.statusText}`);
-    }
-    const gatewayOneCsvData = await gatewayOneResponse.text();
+    // Combine all data and errors
+    const combinedData = [...MASTER_DATA, ...MASTER_DATA_2];
+    const combinedErrors: any = [];
 
-    // Use the new robust parser
-    const parseResultGateway = parseCsv(gatewayCsvData);
-    const parseResultHeinWeis = parseCsv(heinWeisCsvData);
-    const parseResultGatewayOne = parseCsv(gatewayOneCsvData);
+    // Extract unique meter IDs
+    const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
+    const deviceTypesOfTheseMeterIds = meterIds.map(id => {
+      const device = combinedData.find(item => item.ID === id);
+      return device ? { id, device: device['Device Type'] } : null;
+    });
 
-    if (parseResultGateway.errors.length > 0) {
-      console.warn("Parse errors found in Gateway:", parseResultGateway.errors);
-    }
+    const heatMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Heat').map(dt => dt?.id);
+    const coldwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Water').map(dt => dt?.id);
+    const hotwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'WWater').map(dt => dt?.id);
+    const electricityMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Elec').map(dt => dt?.id);
 
-    if (parseResultHeinWeis.errors.length > 0) {
-      console.warn("Parse errors found in HeinWeis:", parseResultHeinWeis.errors);
-    }
+    // save these variables to a file meters.json to current folder
+    writeFileSync('./meters.json', JSON.stringify({ heatMeters, coldwater, hotwater, electricityMeters }, null, 2));
 
-    if (parseResultGatewayOne.errors.length > 0) {
-      console.warn("Parse errors found in GatewayOne:", parseResultGatewayOne.errors);
-    }
+
+    // only meterIds for localhost file
+    // const localMeterIds = parseResults[5].data.map(item => item.ID);
 
     return {
-      data: [
-        ...parseResultGateway.data,
-        ...parseResultHeinWeis.data,
-        ...parseResultGatewayOne.data
-      ],
-      errors: [
-        ...parseResultGateway.errors,
-        ...parseResultHeinWeis.errors,
-        ...parseResultGatewayOne.errors
-      ]
+      data: combinedData,
+      errors: combinedErrors
     };
   } catch (err) {
-    console.log(err);
+    console.error('Unexpected error in parseCSVs:', err);
     return { data: [], errors: [] };
   }
 };
@@ -408,6 +430,46 @@ export async function getContractsWithContractorsByLocalID(
   return Object.values(contractsWithContractors);
 }
 
+export async function getAdminContractsWithContractorsByLocalID(
+  localID?: string,
+  userID?: string,
+): Promise<(ContractType & { contractors: ContractorType[] })[]> {
+  if (!localID || !userID) {
+    throw new Error("Missing localID or userID");
+  }
+
+  const results = await database
+    .select()
+    .from(contracts)
+    .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
+    .where(
+      and(
+        eq(contracts.local_id, localID),
+        eq(contracts.user_id, userID)
+      )
+    );
+
+  const contractsWithContractors: Record<string, ContractType & { contractors: ContractorType[] }> = {};
+
+  for (const row of results) {
+    const contract = row.contracts;
+    const contractor = row.contractors;
+
+    if (!contractsWithContractors[contract.id]) {
+      contractsWithContractors[contract.id] = {
+        ...contract,
+        contractors: [],
+      };
+    }
+
+    if (contractor) {
+      contractsWithContractors[contract.id].contractors.push(contractor);
+    }
+  }
+
+  return Object.values(contractsWithContractors);
+}
+
 export async function getActiveContractByLocalID(
   localID?: string,
 ): Promise<ContractType> {
@@ -504,6 +566,170 @@ export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> 
 
 
   return objekts;
+}
+
+export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[]> {
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, userID));
+
+  if (!objekts || objekts.length === 0) {
+    return [];
+  }
+  const objektsWithLocals = await Promise.all(
+    objekts.map(async (objekt) => {
+      const localsData = await database
+        .select()
+        .from(locals)
+        .where(eq(locals.objekt_id, objekt.id));
+
+      return { ...objekt, locals: localsData || [] };
+    })
+  );
+
+  return objektsWithLocals;
+}
+
+export async function getObjektsWithLocals(): Promise<any[]> {
+  const user = await getAuthenticatedServerUser();
+  const objekts = await database
+    .select()
+    .from(objekte)
+    .where(eq(objekte.user_id, user.id));
+
+  if (!objekts || objekts.length === 0) {
+    return [];
+  }
+  const objektsWithLocals = await Promise.all(
+    objekts.map(async (objekt) => {
+      const localsData = await database
+        .select()
+        .from(locals)
+        .where(eq(locals.objekt_id, objekt.id));
+
+      return { ...objekt, locals: localsData || [] };
+    })
+  );
+
+  return objektsWithLocals;
+}
+
+export async function getDocumentsByUserId(userId: string): Promise<any[]> {
+  const userDocuments = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.user_id, userId))
+    .orderBy(documents.created_at);
+
+  if (!userDocuments || userDocuments.length === 0) {
+    return [];
+  }
+  const heatingBillIds = userDocuments
+    .filter(doc => doc.related_type === "heating_bill")
+    .map(doc => doc.related_id);
+
+  let heatingBillObjekts: Record<string, string> = {};
+  if (heatingBillIds.length > 0) {
+    const heatingBills = await database
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .from(heating_bill_documents)
+      .where(inArray(heating_bill_documents.id, heatingBillIds));
+
+    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+      if (bill.objekt_id) {
+        acc[bill.id] = bill.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  const operatingCostIds = userDocuments
+    .filter(doc => doc.related_type === "operating_costs")
+    .map(doc => doc.related_id);
+
+  let operatingCostObjekts: Record<string, string> = {};
+  if (operatingCostIds.length > 0) {
+    const operatingCosts = await database
+      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .from(operating_cost_documents)
+      .where(inArray(operating_cost_documents.id, operatingCostIds));
+
+    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
+      if (cost.objekt_id) {
+        acc[cost.id] = cost.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  return userDocuments.map(doc => ({
+    ...doc,
+    objekt_id: doc.related_type === "heating_bill"
+      ? heatingBillObjekts[doc.related_id] || null
+      : doc.related_type === "operating_costs"
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
+  }));
+}
+
+export async function getCurrentUserDocuments(): Promise<any[]> {
+  // Get current user
+  const user = await getAuthenticatedServerUser();
+
+  // Get documents for the current user using direct database query
+  const userDocuments = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.user_id, user.id))
+    .orderBy(documents.created_at);
+
+  if (!userDocuments || userDocuments.length === 0) {
+    return [];
+  }
+  const heatingBillIds = userDocuments
+    .filter(doc => doc.related_type === "heating_bill")
+    .map(doc => doc.related_id);
+
+  let heatingBillObjekts: Record<string, string> = {};
+  if (heatingBillIds.length > 0) {
+    const heatingBills = await database
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .from(heating_bill_documents)
+      .where(inArray(heating_bill_documents.id, heatingBillIds));
+
+    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+      if (bill.objekt_id) {
+        acc[bill.id] = bill.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+  const operatingCostIds = userDocuments
+    .filter(doc => doc.related_type === "operating_costs")
+    .map(doc => doc.related_id);
+
+  let operatingCostObjekts: Record<string, string> = {};
+  if (operatingCostIds.length > 0) {
+    const operatingCosts = await database
+      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .from(operating_cost_documents)
+      .where(inArray(operating_cost_documents.id, operatingCostIds));
+
+    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
+      if (cost.objekt_id) {
+        acc[cost.id] = cost.objekt_id;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+
+  return userDocuments.map(doc => ({
+    ...doc,
+    objekt_id: doc.related_type === "heating_bill"
+      ? heatingBillObjekts[doc.related_id] || null
+      : doc.related_type === "operating_costs"
+        ? operatingCostObjekts[doc.related_id] || null
+        : null
+  }));
 }
 
 export async function getUsers(): Promise<UserType[]> {
@@ -692,6 +918,17 @@ export async function getHeatingBillDocumentByID(docId: string): Promise<Heating
   return document;
 }
 
+export async function getAdminHeatingBillDocumentByID(docId: string, userId: string): Promise<HeatingBillDocumentType> {
+
+  const document = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, userId)))
+    .then((res) => res[0]);
+
+  return document;
+}
+
 export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -703,6 +940,16 @@ export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise
   return invoices;
 }
 
+export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<InvoiceDocumentType[]> {
+
+  const invoices = await database
+    .select()
+    .from(invoice_documents)
+    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, userId)));
+
+  return invoices;
+}
+
 export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -710,6 +957,16 @@ export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): 
     .select()
     .from(heating_invoices)
     .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+
+  return invoices;
+}
+
+export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<HeatingInvoiceType[]> {
+
+  const invoices = await database
+    .select()
+    .from(heating_invoices)
+    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
 
   return invoices;
 }

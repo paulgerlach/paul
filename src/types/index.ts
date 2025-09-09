@@ -152,6 +152,7 @@ export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`
   | "login"
   | "register"
+  | "share_dashboard"
   | "forgotPassword"
   | "admin_objekte_image";
 

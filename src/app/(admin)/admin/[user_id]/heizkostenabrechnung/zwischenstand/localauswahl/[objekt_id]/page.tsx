@@ -1,8 +1,8 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import AdminObjekteItemLocalDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/Admin/AdminObjekteItemLocalDocAccordion";
-import ObjekteItemLocalDocAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteItemLocalDocAccordion";
+import AdminObjekteItemLocalDocAccordion from "../../../../../../../../components/Admin/ObjekteLocalsAccordion/Admin/AdminObjekteItemLocalDocAccordion";
+import ObjekteItemLocalDocAccordion from "../../../../../../../../components/Admin/ObjekteLocalsAccordion/ObjekteItemLocalDocAccordion";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { cost_type_plus } from "@/static/icons";
 import Image from "next/image";

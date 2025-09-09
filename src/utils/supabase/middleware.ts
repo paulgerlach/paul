@@ -39,12 +39,30 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+  // 🏠 Step 0: Redirect authenticated users from home page to dashboard
+  if (path === "/" && user) {
+    const { data: userRecord, error } = await supabase
+      .from("users")
+      .select("permission")
+      .eq("id", user.id)
+      .single();
+
+    if (!error && userRecord) {
+      const url = request.nextUrl.clone();
+      if (userRecord.permission === "admin") {
+        url.pathname = "/admin";
+      } else {
+        url.pathname = ROUTE_DASHBOARD;
+      }
+      return NextResponse.redirect(url);
+    }
+  }
 
   // 🔒 Step 1: Auth check for protected routes
   const isProtected = protectedRoutes.some((route) => path.startsWith(route));
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 
@@ -54,7 +72,7 @@ export async function updateSession(request: NextRequest) {
     if (!user) {
       // Not logged in → send to login
       const url = request.nextUrl.clone();
-      url.pathname = "/login";
+      url.pathname = "/";
       return NextResponse.redirect(url);
     }
 

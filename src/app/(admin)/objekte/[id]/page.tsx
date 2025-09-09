@@ -1,7 +1,7 @@
 import { getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import ObjekteLocalsAccordion from "@/components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAccordion";
+import ObjekteLocalsAccordion from "../../../../components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAccordion";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { create_local } from "@/static/icons";
 import Image from "next/image";

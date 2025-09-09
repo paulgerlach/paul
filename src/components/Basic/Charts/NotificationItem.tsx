@@ -18,38 +18,40 @@ export default function NotificationItem({
   subtitle,
 }: NotificationItemProps) {
   return (
-    <div className="flex items-center justify-start gap-1.5">
-      <span
-        className="flex items-center justify-center w-8 h-8 md:w-7 md:h-7 lg:w-9 lg:h-9 rounded-sm"
-        style={{ backgroundColor: leftBg }}
-      >
-        <Image
-          width={0}
-          height={0}
-          sizes="100vw"
-          loading="lazy"
-          className="w-auto h-4 md:w-3.5 md:h-3.5 lg:w-5 lg:h-5"
-          src={leftIcon}
-          alt=""
-        />
-      </span>
-      <span
-        className="flex items-center justify-center w-8 h-8 md:w-7 md:h-7 lg:w-9 lg:h-9 rounded-sm"
-        style={{ backgroundColor: rightBg }}
-      >
-        <Image
-          width={0}
-          height={0}
-          sizes="100vw"
-          loading="lazy"
-          className="w-3.5 h-3.5 md:w-3 md:h-3 lg:w-4 lg:h-4"
-          src={rightIcon}
-          alt=""
-        />
-      </span>
-      <div>
-        <p className="text-sm md:text-xs lg:text-sm text-black/50">{title}</p>
-        <p className="text-[10px] md:text-[10px] lg:text-xs text-black/50">{subtitle}</p>
+    <div className="flex items-start justify-start gap-2 w-full">
+      <div className="flex items-center justify-start gap-2 flex-shrink-0">
+        <span
+          className="flex items-center justify-center w-[50px] h-[44px] max-md:w-8 max-md:h-8 max-lg:w-10 max-lg:h-10 rounded-sm"
+          style={{ backgroundColor: leftBg }}
+        >
+          <Image
+            width={24}
+            height={24}
+            sizes="100vw"
+            loading="lazy"
+            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-6 max-lg:h-6"
+            src={leftIcon}
+            alt=""
+          />
+        </span>
+        <span
+          className="flex items-center justify-center w-[50px] h-[44px] max-md:w-8 max-md:h-8 max-lg:w-10 max-lg:h-10 rounded-sm"
+          style={{ backgroundColor: rightBg }}
+        >
+          <Image
+            width={24}
+            height={24}
+            sizes="100vw"
+            loading="lazy"
+            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-4 max-lg:h-4"
+            src={rightIcon}
+            alt=""
+          />
+        </span>
+      </div>
+      <div className="flex-1 min-w-0">
+        {/* <p className="text-sm max-md:text-xs text-black/50 font-medium leading-tight">{title}</p> */}
+        <p className="text-xs max-lg:text-[10px] text-black/50 leading-tight mt-[-1px]">{subtitle}</p>
       </div>
     </div>
   );

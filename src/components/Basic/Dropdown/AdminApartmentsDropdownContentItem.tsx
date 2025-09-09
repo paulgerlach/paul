@@ -63,22 +63,28 @@ export default function AdminApartmentsDropdownContentItem({
             <input
               type="checkbox"
               onChange={() => {
-                // Find the non-empty meterId from the meter_ids array
-                const meterId = (local?.meter_ids || []).find(
-                  (id) => id && id.trim() !== ""
-                );
+                // Find the non-empty meterIds from the meter_ids array
+                const localMeterIds = (local?.meter_ids || [])
+                  .map((id) => id.trim())
+                  .filter(Boolean);
 
-                if (meterId) {
+                if (localMeterIds?.length) {
                   // If checkbox is being checked (not currently selected)
                   if (!selectedLocalIds.includes(local?.id || "")) {
-                    // Add meterId to the store if it's not already there
-                    if (!meterIds.includes(meterId)) {
-                      setMeterIds([...meterIds, meterId]);
+                    // Add localMeterIds to the store if they're not already there
+                    const newMeterIds = localMeterIds.filter(
+                      (meterId) => !meterIds.includes(meterId)
+                    );
+                    if (newMeterIds.length > 0) {
+                      setMeterIds([...meterIds, ...newMeterIds]);
                     }
                   } else {
                     // If checkbox is being unchecked (currently selected)
-                    // Remove meterId from the store
-                    setMeterIds(meterIds?.filter((id) => id !== meterId) || []);
+                    // Remove localMeterIds from the store
+                    const filteredMeterIds = meterIds.filter(
+                      (meterId) => !localMeterIds.includes(meterId)
+                    );
+                    setMeterIds(filteredMeterIds);
                   }
                 }
 

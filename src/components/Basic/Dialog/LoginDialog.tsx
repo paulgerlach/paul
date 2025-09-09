@@ -98,13 +98,13 @@ export default function LoginDialog() {
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
             method="dialog"
-            className="max-w-xl w-full bg-white py-6 px-8 rounded space-y-6"
+            className="max-w-xl w-full bg-white py-3 px-4 rounded space-y-6"
           >
             <h2 className="text-3xl font-bold text-darkest-text">
               Willkommen zurück
             </h2>
             <p className="text-lg text-light-text mb-5">
-              Melden Sie sich mit Ihrer E-Mail und Ihrem Passwort an
+              Wählen Sie einer der unten aufgeführten Optionen zum einloggen
             </p>
 
             <FormInputField<LoginFormData>
@@ -162,10 +162,10 @@ export default function LoginDialog() {
 
             <Button
               type="submit"
-              className="mt-6 flex w-fit mx-auto px-[104px] py-5 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
+              className="mt-6 flex w-full mx-auto px-[104px] max-xl:px-3.5 max-xl:py-4 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
               disabled={methods.formState.isSubmitting}
             >
-              {methods.formState.isSubmitting ? "Einloggen..." : "Log in"}
+              {methods.formState.isSubmitting ? "Einloggen..." : "Anmelden"}
             </Button>
             <button
               onClick={() => {

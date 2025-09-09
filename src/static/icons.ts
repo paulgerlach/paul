@@ -234,6 +234,7 @@ import receipt_line from "@/asset/receipt_line.png";
 import admin_form_info from "@/asset/admin_form_info.png";
 import cost_type_cleaning from "@/asset/cost_type_cleaning.png";
 import cost_type_fuel_costs from "@/asset/cost_type_fuel_costs.png";
+import cost_type_fuel_costs_direct from "@/asset/cost_type_fuel_costs_direct.png";
 import cost_type_heater from "@/asset/cost_type_heater.png";
 import cost_type_pipe from "@/asset/cost_type_pipe.png";
 import cost_type_water_drop from "@/asset/cost_type_water_drop.png";
@@ -246,9 +247,19 @@ import operating_cost_documents_pending from "@/asset/operating_cost_documents_p
 import admin_objekte from "@/asset/admin_objekte.png";
 import pdf_user from "@/asset/pdf-user.png";
 import pdf_home from "@/asset/pdf-home.png";
+import electricity from "@/asset/electricity.png";
+import close_white from "@/asset/close_white.png";
+import cost_type_operating_current from "@/asset/cost_type_operating_current.png";
+import cost_type_maintenance_costs from "@/asset/cost_type_maintenance_costs.png";
+import cost_type_metering_service_costs from "@/asset/cost_type_metering_service_costs.png";
+import cost_type_metering_device_rental from "@/asset/cost_type_metering_device_rental.png";
+import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs.png";
+import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
+import building from "@/asset/building.svg";
 
 export {
   accentro_colored,
+  electricity,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,
@@ -262,6 +273,13 @@ export {
   admin_logo,
   cost_type_cleaning,
   cost_type_fuel_costs,
+  cost_type_other_operating_costs,
+  cost_type_chimney_sweep_costs,
+  cost_type_metering_device_rental,
+  cost_type_metering_service_costs,
+  cost_type_maintenance_costs,
+  cost_type_operating_current,
+  cost_type_fuel_costs_direct,
   cost_type_heater,
   cost_type_pipe,
   cost_type_water_drop,
@@ -496,4 +514,6 @@ export {
   chevron_admin,
   main_portfolio,
   clock_dark,
+  close_white,
+  building
 };

@@ -139,17 +139,7 @@ export default async function ObjekteLocalItemDocResult({
               alt={"pdf_icon"}
             />
           </Link>
-          <button>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-              src={gmail}
-              alt={"gmail_icon"}
-            />
-          </button>
+
           <PDFDownloadButton
             mainDoc={mainDoc}
             previewLocal={local}
@@ -159,6 +149,17 @@ export default async function ObjekteLocalItemDocResult({
             contracts={contractsWithContractors}
             objekt={objekt}
           />
+          <button>
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
+              src={gmail}
+              alt={"gmail_icon"}
+            />
+          </button>
           <ThreeDotsButton
             dialogAction="operating_costs_delete"
             editLink={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docID}/abrechnungszeitraum`}

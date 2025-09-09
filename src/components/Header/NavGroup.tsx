@@ -23,11 +23,12 @@ export default function NavGroup({
   };
 
   return (
-    <div className="group relative [.scrolled_&]:py-4 py-6 max-medium:py-1 duration-300">
+    <div className="group relative [.scrolled_&]:py-4 py-5 max-medium:py-1 duration-300">
       <Link
         href={route}
         onClick={() => handleBurgerMenu()}
-        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text"
+      >
         {title}
         <Image
           className="colored-to-black"
@@ -44,7 +45,8 @@ export default function NavGroup({
               <li key={link.title} className="nav-link-wrapper">
                 <Link
                   className="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
-                  href={link.link ? link?.link : route}>
+                  href={link.link ? link?.link : route}
+                >
                   <Image
                     width={0}
                     height={0}

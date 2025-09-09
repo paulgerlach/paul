@@ -1,6 +1,6 @@
 "use client";
 
-import { Document, PDFViewer } from "@react-pdf/renderer";
+import { Document } from "@react-pdf/renderer";
 import HeatingBillPreviewFivePDF from "./HeatingBillPreviewFivePDF";
 import HeatingBillPreviewOnePDF from "./HeatingBillPreviewOnePDF";
 import HeatingBillPreviewTwoPDF from "./HeatingBillPreviewTwoPDF";
@@ -12,18 +12,52 @@ import {
   type HeatingBillPreviewProps,
 } from "../HeatingBillPreview/HeatingBillPreview";
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
+import { differenceInMonths, max, min, parse } from "date-fns";
 
 export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
   const {
     mainDoc,
     user,
     objekt,
-    contractors,
-    contract,
+    contracts,
     invoices,
     totalLivingSpace,
     costCategories,
   } = props;
+
+  const periodStart = mainDoc?.start_date
+    ? new Date(mainDoc.start_date)
+    : new Date();
+  const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
+
+  const filteredContracts = contracts.filter((contract) => {
+    if (!contract.rental_start_date || !contract.rental_end_date) return false;
+    const rentalEnd = new Date(contract.rental_end_date);
+    return rentalEnd <= periodEnd;
+  });
+
+  const totalContractsAmount = filteredContracts?.reduce((acc, contract) => {
+    const rentalStart = new Date(contract.rental_start_date!);
+    const rentalEnd = new Date(contract.rental_end_date!);
+
+    const overlapStart = max([rentalStart, periodStart]);
+    const overlapEnd = min([rentalEnd, periodEnd]);
+
+    let overlapMonths = differenceInMonths(overlapEnd, overlapStart) + 1;
+    if (overlapMonths < 0) overlapMonths = 0;
+
+    return acc + overlapMonths * Number(contract.additional_costs ?? 0);
+  }, 0);
+
+  const totalAmount = invoices.reduce(
+    (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
+    0
+  );
+
+  const totalDiff = totalContractsAmount - totalAmount;
+
+  const contractors = contracts.flatMap((contract) => contract.contractors);
+
   const previewData: HeatingBillPreviewData = {
     mainDocDates: {
       created_at: mainDoc?.created_at,
@@ -47,7 +81,9 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
       0
     ),
     totalLivingSpace,
-    contract,
+    contracts,
+    totalDiff,
+    invoices,
     costCategories,
     propertyNumber: generatePropertyNumber(),
     heidiCustomerNumber: generateHeidiCustomerNumber(),
@@ -58,7 +94,7 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     <Document>
       <HeatingBillPreviewOnePDF
         previewData={previewData}
-        contractors={props.contractors}
+        contractors={contractors}
       />
       <HeatingBillPreviewTwoPDF previewData={previewData} />
       <HeatingBillPreviewThreePDF previewData={previewData} />

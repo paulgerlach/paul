@@ -19,6 +19,7 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
   queryKey: [],
   openDialogByType: {
     object_delete: false,
+    share_dashboard: false,
     admin_object_delete: false,
     object_edit: false,
     admin_object_edit: false,

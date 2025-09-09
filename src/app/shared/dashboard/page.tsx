@@ -104,26 +104,30 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     console.log('No meter filtering - showing all data');
   }
 
-  // NOTE: Following main dashboard pattern - no date filtering
-  // The main dashboard shows all available data, so shared dashboard should too
-  // Date filtering is handled by the individual chart components if needed
-  console.log('Following main dashboard pattern - no server-side date filtering applied');
+  // SECURITY: Enforce date range filtering if specified
+  if (filters.startDate && filters.endDate) {
+    filteredData = filteredData?.filter((item: any) => {
+      const itemDate = new Date(item["Date"]);
+      const startDate = new Date(filters.startDate!);
+      const endDate = new Date(filters.endDate!);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+  }
 
   // DEVELOPMENT METRICS: Server-side logging (build time)
   console.log('Share Dashboard Access:', {
     timestamp: new Date().toISOString(),
     meterCount: filters.meterIds?.length || 0,
-    dateRange: filters.startDate && filters.endDate ? `${filters.startDate} to ${filters.endDate} (URL params only)` : 'All dates',
+    dateRange: filters.startDate && filters.endDate ? `${filters.startDate} to ${filters.endDate}` : 'All dates',
     dataPoints: filteredData?.length || 0,
-    expiresAt: expirationInfo.expiryDate?.toISOString(),
-    note: 'Following main dashboard pattern - charts handle their own date filtering'
+    expiresAt: expirationInfo.expiryDate?.toISOString()
   });
 
   // Create header info
   const meterCount = filters.meterIds?.length || 0;
   const headerTitle = meterCount > 0 
-    ? `Mieteransicht (${meterCount} Zähler)`
-    : "Mieteransicht";
+    ? `Shared Dashboard (${meterCount} meter${meterCount === 1 ? '' : 's'})`
+    : "Shared Dashboard (All data)";
 
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">

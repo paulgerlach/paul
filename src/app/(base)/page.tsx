@@ -30,12 +30,14 @@ import {
   wemolo,
 } from "@/static/icons";
 import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
+import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main id="content">
+      <AuthRedirect />
       <HomeHero />
       <div className="mt-28 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 hero max-small:mt-6">
         <h2 className="section-title hero-title hidden max-large:block max-small:text-3xl max-small:leading-9 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">

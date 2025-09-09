@@ -92,7 +92,7 @@ export default function ShareDashboardDialog() {
 
   if (isOpen)
     return (
-      <DialogBase dialogName="share_dashboard">
+      <DialogBase dialogName="share_dashboard" maxHeight={500}>
         <h3 className="text-xl font-bold text-dark_text">Dashbboard teilen</h3>
 
         {/* Description with better styling */}

@@ -21,6 +21,7 @@ import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
 import { MeterReadingType } from "@/api";
+import metersData from "@/api/meters.json";
 import {
   getDevicesWithErrors,
   groupErrorsBySeverity,
@@ -38,6 +39,7 @@ interface NotificationItem {
   rightBg: string;
   title: string;
   subtitle: string;
+  meterId?: number;
 }
 
 interface NotificationsChartProps {
@@ -52,164 +54,52 @@ interface NotificationsChartProps {
 
 const dummy_notifications = [
   {
-    Date: "22.03.2025",
+    Date: "05.09.2025",
     Building: "Friedrichstr. 15",
-    ID: 53157205,
-    Severity: "critical",
-    "Notification Type": "Sensor",
-    "Notification Message": "Sensor defekt bei Zähler 53157205.",
-    "Hint Code": "Bit 10",
-    "Hint Code Description": "Sensor defekt",
-  },
-  {
-    Date: "08.04.2025",
-    Building: "Alte Jakobstr. 1",
-    ID: 13551768,
-    Severity: "critical",
-    "Notification Type": "Manipulation",
-    "Notification Message": "Manipulation erkannt bei Zähler 13551768.",
-    "Hint Code": "Bit 7",
-    "Hint Code Description": "Manipulation erkannt",
-  },
-  {
-    Date: "08.04.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157163,
+    ID: 53157195, // Random cold water meter ID
     Severity: "critical",
     "Notification Type": "Leckage",
-    "Notification Message": "Leckage erkannt bei Zähler 53157163.",
+    "Notification Message":
+      "Leckage erkannt - Rohrbruch bei Kaltwasserzähler 53157195.",
     "Hint Code": "Bit 5",
     "Hint Code Description": "Leckage erkannt",
+    Category: "coldwater",
   },
   {
-    Date: "21.04.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157292,
-    Severity: "critical",
-    "Notification Type": "Manipulation",
-    "Notification Message": "Manipulation erkannt bei Zähler 53157292.",
-    "Hint Code": "Bit 7",
-    "Hint Code Description": "Manipulation erkannt",
-  },
-  {
-    Date: "13.05.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157190,
-    Severity: "critical",
-    "Notification Type": "Leckage",
-    "Notification Message": "Leckage erkannt bei Zähler 53157190.",
-    "Hint Code": "Bit 5",
-    "Hint Code Description": "Leckage erkannt",
-  },
-  {
-    Date: "22.05.2025",
-    Building: "Unter den Linden 42",
-    ID: 53157236,
-    Severity: "critical",
-    "Notification Type": "Leckage",
-    "Notification Message": "Ein Rohrbruch bei Zähler 53157236 wurde erkannt.",
-    "Hint Code": "Bit 6",
-    "Hint Code Description": "Leckage erkannt",
-  },
-  {
-    Date: "22.05.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157283,
-    Severity: "critical",
-    "Notification Type": "Funkverbindung",
-    "Notification Message": "Funkverbindung gestört bei Zähler 53157283.",
-    "Hint Code": "Bit 9",
-    "Hint Code Description": "Funkverbindung gestört",
-  },
-  {
-    Date: "26.05.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157256,
-    Severity: "critical",
-    "Notification Type": "Batteriestand",
-    "Notification Message": "Batteriestand niedrig bei Zähler 53157256.",
-    "Hint Code": "Bit 8",
-    "Hint Code Description": "Batteriestand niedrig",
-  },
-  {
-    Date: "17.06.2025",
-    Building: "Friedrichstr. 15",
-    ID: 53157262,
-    Severity: "critical",
-    "Notification Type": "Funkverbindung",
-    "Notification Message": "Funkverbindung gestört bei Zähler 53157262.",
-    "Hint Code": "Bit 9",
-    "Hint Code Description": "Funkverbindung gestört",
-  },
-  {
-    Date: "27.06.2025",
-    Building: "Unter den Linden 42",
-    ID: 53157221,
-    Severity: "critical",
-    "Notification Type": "Sensor",
-    "Notification Message": "Sensor defekt bei Zähler 53157221.",
-    "Hint Code": "Bit 10",
-    "Hint Code Description": "Sensor defekt",
-  },
-  {
-    Date: "02.07.2025",
+    Date: "06.09.2025",
     Building: "Alte Jakobstr. 1",
-    ID: 53157261,
-    Severity: "critical",
-    "Notification Type": "Sensor",
-    "Notification Message": "Sensor defekt bei Zähler 53157261.",
-    "Hint Code": "Bit 10",
-    "Hint Code Description": "Sensor defekt",
+    ID: 53157166, // Random heat meter ID (used for smoke detector)
+    Severity: "high",
+    "Notification Type": "Rauchwarnmelder",
+    "Notification Message":
+      "Rauchwarnmelder wurde abgenommen bei Heizungsbereich 53157166.",
+    "Hint Code": "Bit 12",
+    "Hint Code Description": "Rauchwarnmelder entfernt",
+    Category: "heatMeters",
   },
   {
-    Date: "15.07.2025",
+    Date: "07.09.2025",
     Building: "Unter den Linden 42",
-    ID: 53157203,
-    Severity: "critical",
-    "Notification Type": "Batteriestand",
-    "Notification Message": "Batteriestand niedrig bei Zähler 53157203.",
-    "Hint Code": "Bit 8",
-    "Hint Code Description": "Batteriestand niedrig",
+    ID: 53157218, // Random hot water meter ID
+    Severity: "medium",
+    "Notification Type": "Verbrauchsanstieg",
+    "Notification Message":
+      "Warmwasserverbrauch ist um 32% angestiegen bei Zähler 53157218.",
+    "Hint Code": "Bit 15",
+    "Hint Code Description": "Ungewöhnlicher Verbrauchsanstieg",
+    Category: "hotwater",
   },
   {
-    Date: "18.07.2025",
-    Building: "Alte Jakobstr. 1",
-    ID: 53157297,
-    Severity: "critical",
-    "Notification Type": "Manipulation",
-    "Notification Message": "Manipulation erkannt bei Zähler 53157297.",
-    "Hint Code": "Bit 7",
-    "Hint Code Description": "Manipulation erkannt",
-  },
-  {
-    Date: "04.08.2025",
-    Building: "Alte Jakobstr. 1",
-    ID: 53157243,
-    Severity: "critical",
-    "Notification Type": "Sensor",
-    "Notification Message": "Sensor defekt bei Zähler 53157243.",
-    "Hint Code": "Bit 10",
-    "Hint Code Description": "Sensor defekt",
-  },
-  {
-    Date: "21.08.2025",
-    Building: "Unter den Linden 42",
-    ID: 53157164,
-    Severity: "critical",
-    "Notification Type": "Blockade",
-    "Notification Message": "Blockade bei Zähler 53157164.",
-    "Hint Code": "Bit 6",
-    "Hint Code Description": "Blockade",
-  },
-  {
-    Date: "28.08.2025",
+    Date: "08.09.2025",
     Building: "Friedrichstr. 15",
-    ID: 53157220,
-    Severity: "critical",
-    "Notification Type": "Leckage",
-    "Notification Message": "Ein Rohrbruch bei Zähler 53157220 wurde erkannt.",
-    "Hint Code": "Bit 5",
-    "Hint Code Description": "Leckage erkannt",
+    ID: 63157201, // Random cold water meter ID (different series)
+    Severity: "medium",
+    "Notification Type": "Verbrauchsanstieg",
+    "Notification Message":
+      "Kaltwasserverbrauch ist um 42% angestiegen bei Zähler 63157201.",
+    "Hint Code": "Bit 15",
+    "Hint Code Description": "Ungewöhnlicher Verbrauchsanstieg",
+    Category: "coldwater",
   },
 ];
 
@@ -242,7 +132,7 @@ export default function NotificationsChart({
       return alert_triangle; // manipulation/security icon
     }
     if (type.includes("leckage") || type.includes("leak")) {
-      return pipe_water; // water leak icon
+      return pipe_water; // water leak icon - perfect for pipe broken
     }
     if (type.includes("blockade") || type.includes("block")) {
       return pipe_water; // blockage icon
@@ -257,6 +147,19 @@ export default function NotificationsChart({
     }
     if (type.includes("batterie") || type.includes("battery")) {
       return caract_battery; // battery icon
+    }
+    if (type.includes("rauchwarnmelder") || type.includes("smoke")) {
+      return alert_triangle; // smoke detector icon - alert triangle is appropriate
+    }
+    if (type.includes("verbrauchsanstieg") || type.includes("consumption")) {
+      // Use water icons based on the type of consumption
+      if (type.includes("warmwasser") || type.includes("warm water")) {
+        return hot_water; // hot water icon for warm water consumption
+      }
+      if (type.includes("kaltwasser") || type.includes("cold water")) {
+        return cold_water; // cold water icon for cold water consumption
+      }
+      return blue_info; // fallback for general consumption
     }
 
     // Default icons based on device type if no specific notification type match
@@ -314,27 +217,27 @@ export default function NotificationsChart({
 
       const errorsBySeverity = groupErrorsBySeverity(deviceErrors);
 
-      if (errorsBySeverity.critical.length > 0) {
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType("critical", "general"),
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#FFE5E5",
-          title: "criticale Zählerfehler",
-          subtitle: `${errorsBySeverity.critical.length} Geräte mit schwerwiegenden Problemen`,
-        });
-      }
+      // if (errorsBySeverity.critical.length > 0) {
+      //   notifications.push({
+      //     leftIcon: getLeftIconForNotificationType("critical", "general"),
+      //     rightIcon: alert_triangle,
+      //     leftBg: "#E7E8EA",
+      //     rightBg: "#FFE5E5",
+      //     title: "criticale Zählerfehler",
+      //     subtitle: `${errorsBySeverity.critical.length} Geräte mit schwerwiegenden Problemen`,
+      //   });
+      // }
 
-      if (errorsBySeverity.high.length > 0) {
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType("sensor", "general"),
-          rightIcon: alert_triangle,
-          leftBg: "#E7E8EA",
-          rightBg: "#F7E7D5",
-          title: "Wichtige Zählerfehler",
-          subtitle: `${errorsBySeverity.high.length} Geräte mit Sensor- oder Kommunikationsfehlern`,
-        });
-      }
+      // if (errorsBySeverity.high.length > 0) {
+      //   notifications.push({
+      //     leftIcon: getLeftIconForNotificationType("sensor", "general"),
+      //     rightIcon: alert_triangle,
+      //     leftBg: "#E7E8EA",
+      //     rightBg: "#F7E7D5",
+      //     title: "Wichtige Zählerfehler",
+      //     subtitle: `${errorsBySeverity.high.length} Geräte mit Sensor- oder Kommunikationsfehlern`,
+      //   });
+      // }
 
       if (errorsBySeverity.medium.length > 0) {
         // notifications.push({
@@ -346,14 +249,14 @@ export default function NotificationsChart({
         //   subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
         // });
 
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType("maintenance", "general"),
-          rightIcon: blue_info,
-          leftBg: "#E7E8EA",
-          rightBg: "#E5EBF5",
-          title: "Wartungshinweise",
-          subtitle: `1x Rauchwarnmelder wurde entfernt`,
-        });
+        // notifications.push({
+        //   leftIcon: getLeftIconForNotificationType("maintenance", "general"),
+        //   rightIcon: blue_info,
+        //   leftBg: "#E7E8EA",
+        //   rightBg: "#E5EBF5",
+        //   title: "Wartungshinweise",
+        //   subtitle: `1x Rauchwarnmelder wurde entfernt`,
+        // });
       }
 
       // if (errorsBySeverity.low.length > 0) {
@@ -371,58 +274,95 @@ export default function NotificationsChart({
 
       if (notifications.length < 3) {
         if (errorsByDeviceType.Heat && errorsByDeviceType.Heat.length > 0) {
-          notifications.push({
-            leftIcon: getLeftIconForNotificationType("problems", "Heat"),
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#F7E7D5",
-            title: "Wärmezähler Probleme",
-            subtitle: `${errorsByDeviceType.Heat.length} Wärmezähler melden Fehler`,
-          });
+          // notifications.push({
+          //   leftIcon: getLeftIconForNotificationType("problems", "Heat"),
+          //   rightIcon: alert_triangle,
+          //   leftBg: "#E7E8EA",
+          //   rightBg: "#F7E7D5",
+          //   title: "Wärmezähler Probleme",
+          //   subtitle: `${errorsByDeviceType.Heat.length} Wärmezähler melden Fehler`,
+          // });
         }
 
         if (errorsByDeviceType.Water && errorsByDeviceType.Water.length > 0) {
-          notifications.push({
-            leftIcon: getLeftIconForNotificationType("problems", "Water"),
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#F7E7D5",
-            title: "Wasserzähler Probleme",
-            subtitle: `${errorsByDeviceType.Water.length} Wasserzähler melden Fehler`,
-          });
+          // notifications.push({
+          //   leftIcon: getLeftIconForNotificationType("problems", "Water"),
+          //   rightIcon: alert_triangle,
+          //   leftBg: "#E7E8EA",
+          //   rightBg: "#F7E7D5",
+          //   title: "Wasserzähler Probleme",
+          //   subtitle: `${errorsByDeviceType.Water.length} Wasserzähler melden Fehler`,
+          // });
         }
 
         if (errorsByDeviceType.WWater && errorsByDeviceType.WWater.length > 0) {
-          notifications.push({
-            leftIcon: getLeftIconForNotificationType("problems", "WWater"),
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#F7E7D5",
-            title: "Warmwasserzähler Probleme",
-            subtitle: `${errorsByDeviceType.WWater.length} Warmwasserzähler melden Fehler`,
-          });
+          // notifications.push({
+          //   leftIcon: getLeftIconForNotificationType("problems", "WWater"),
+          //   rightIcon: alert_triangle,
+          //   leftBg: "#E7E8EA",
+          //   rightBg: "#F7E7D5",
+          //   title: "Warmwasserzähler Probleme",
+          //   subtitle: `${errorsByDeviceType.WWater.length} Warmwasserzähler melden Fehler`,
+          // });
         }
       }
 
+      // Check dummy notifications based on selected meter categories
       for (const notification of dummy_notifications) {
-        if (meterIds.includes(notification.ID.toString())) {
+        const meterId = notification.ID.toString();
+        const category = notification.Category;
+
+        // Check if the notification's meter ID is in the selected meters
+        // OR if any meter from the same category is selected
+        const isMeterSelected = meterIds.includes(meterId);
+        console.log({ meterIds, isMeterSelected, meterId });
+
+        if (isMeterSelected) {
+          const rightIcon =
+            notification.Severity === "critical"
+              ? alert_triangle
+              : notification.Severity === "high"
+                ? alert_triangle
+                : blue_info;
+
+          const rightBg =
+            notification.Severity === "critical"
+              ? "#FFE5E5"
+              : notification.Severity === "high"
+                ? "#F7E7D5"
+                : "#E5EBF5";
+
+          // Pass the full message to get the correct icon for consumption notifications
+          const notificationTypeWithMessage =
+            notification["Notification Type"] +
+            " " +
+            notification["Notification Message"];
+
+          console.log(
+            "notificationTypeWithMessage:",
+            notificationTypeWithMessage
+          );
           notifications.push({
             leftIcon: getLeftIconForNotificationType(
-              notification["Notification Type"]
+              notificationTypeWithMessage
             ),
-            rightIcon: alert_triangle,
+            rightIcon: rightIcon,
             leftBg: "#E7E8EA",
-            rightBg: "#FFE5E5",
+            rightBg: rightBg,
             title: `${notification["Notification Type"]} - Zähler ${notification.ID}`,
             subtitle: notification["Notification Message"],
           });
         }
       }
 
+      console.log("All notifications before slice:", notifications);
+
       return notifications.slice(0, 4);
     };
 
     const generated = generateNotifications();
+    console.log("generated:", generated);
+
     setNotifications(generated);
   }, [isEmpty, parsedData, meterIds]);
 
@@ -450,7 +390,7 @@ export default function NotificationsChart({
         />
       </div>
       <div className="space-y-2 flex-1 overflow-auto">
-        {isEmpty ? (
+        {isEmpty || notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

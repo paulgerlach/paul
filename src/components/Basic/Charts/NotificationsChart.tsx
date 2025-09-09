@@ -111,10 +111,24 @@ export default function NotificationsChart({
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const { meterIds } = useChartStore();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notificationQueue, setNotificationQueue] = useState<NotificationItem[]>([]);
   const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 
   const deleteNotification = (index: number) => {
-    setNotifications((prev) => prev.filter((_, i) => i !== index));
+    setNotifications((prev) => {
+      const newNotifications = prev.filter((_, i) => i !== index);
+      
+      // If we have fewer than 4 notifications and there are items in the queue, add the next one
+      if (newNotifications.length < 4 && notificationQueue.length > 0) {
+        const nextNotification = notificationQueue[0];
+        const updatedQueue = notificationQueue.slice(1);
+        setNotificationQueue(updatedQueue);
+        
+        return [...newNotifications, nextNotification];
+      }
+      
+      return newNotifications;
+    });
     setOpenPopoverId(null); // Close the popover after deletion
   };
 
@@ -180,6 +194,58 @@ export default function NotificationsChart({
   };
 
   useEffect(() => {
+    // NEW: Generate dynamic notifications based on real CSV data and meter selection
+    const generateDynamicNotifications = (): NotificationItem[] => {
+      // Defensive programming - ensure we have data and selected meters
+      if (!parsedData?.data || !meterIds || meterIds.length === 0) {
+        return []; // Graceful fallback
+      }
+      
+      const dynamicNotifications: NotificationItem[] = [];
+      
+      // Find meters with actual errors that are currently selected
+      const selectedMetersWithErrors = parsedData.data.filter(device => {
+        const meterId = device.ID?.toString();
+        const hasErrorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] && 
+                            device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] !== "0b" &&
+                            device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] !== "";
+        
+        // Check if this meter is selected AND has actual errors
+        return meterId && meterIds.includes(meterId) && hasErrorFlag;
+      });
+
+      // Generate notifications for selected meters with errors
+      selectedMetersWithErrors.forEach(device => {
+        const meterId = device.ID?.toString();
+        const deviceType = device["Device Type"];
+        const manufacturer = device.Manufacturer;
+        const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
+        
+        // Determine severity based on error type
+        const severity = errorFlag.includes("1") ? "critical" : "high";
+        const rightIcon = severity === "critical" ? alert_triangle : alert_triangle;
+        const rightBg = severity === "critical" ? "#FFE5E5" : "#F7E7D5";
+        
+        // Get appropriate left icon based on device type
+        const leftIcon = deviceType === "Heat" ? heater : 
+                        deviceType === "WWater" ? hot_water :
+                        deviceType === "Water" ? cold_water : pipe_water;
+        
+        dynamicNotifications.push({
+          leftIcon: leftIcon,
+          rightIcon: rightIcon,
+          leftBg: "#E7E8EA",
+          rightBg: rightBg,
+          title: `Live Fehler - Zähler ${meterId}`,
+          subtitle: `${deviceType} Gerät meldet Fehler (${manufacturer})`,
+          meterId: parseInt(meterId || "0")
+        });
+      });
+
+      // Limit to max 4 dynamic notifications (can fill all slots if needed)
+      return dynamicNotifications.slice(0, 4);
+    };
+
     const generateNotifications = (): NotificationItem[] => {
       const notifications: NotificationItem[] = [];
 
@@ -358,10 +424,117 @@ export default function NotificationsChart({
       return notifications.slice(0, 4);
     };
 
-    const generated = generateNotifications();
-    console.log("generated:", generated);
-
-    setNotifications(generated);
+    // Combine dynamic and existing notifications
+    try {
+      const dynamicNotifs = generateDynamicNotifications();
+      const existingNotifs = generateNotifications();
+      
+      // Combine: Dynamic first (priority), then existing, max 4 total
+      // If we have fewer than 4 dynamic notifications, fill with demo ones
+      const maxDynamic = Math.min(dynamicNotifs.length, 2); // Prefer max 2 dynamic
+      const maxDemo = 4 - maxDynamic; // Fill remaining slots with demo
+      
+      // Create a larger pool of demo notifications for the queue
+      let allDemoNotifications = existingNotifs;
+      if (allDemoNotifications.length === 0) {
+        allDemoNotifications = [
+          {
+            leftIcon: pipe_water,
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#FFE5E5", 
+            title: "Leckage - Zähler 53157195",
+            subtitle: "Leckage erkannt - Rohrbruch bei Kaltwasserzähler 53157195.",
+            meterId: 53157195
+          },
+          {
+            leftIcon: heater,
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA", 
+            rightBg: "#F7E7D5",
+            title: "Rauchwarnmelder - Zähler 53157166", 
+            subtitle: "Rauchwarnmelder wurde abgenommen bei Heizungsbereich 53157166.",
+            meterId: 53157166
+          },
+          {
+            leftIcon: hot_water,
+            rightIcon: blue_info,
+            leftBg: "#E7E8EA",
+            rightBg: "#E5EBF5",
+            title: "Verbrauchsanstieg - Zähler 53157218",
+            subtitle: "Warmwasserverbrauch ist um 32% angestiegen bei Zähler 53157218.",
+            meterId: 53157218
+          },
+          {
+            leftIcon: cold_water,
+            rightIcon: blue_info,
+            leftBg: "#E7E8EA",
+            rightBg: "#E5EBF5", 
+            title: "Verbrauchsanstieg - Zähler 63157201",
+            subtitle: "Kaltwasserverbrauch ist um 42% angestiegen bei Zähler 63157201.",
+            meterId: 63157201
+          },
+          {
+            leftIcon: pipe_water,
+            rightIcon: blue_info,
+            leftBg: "#E7E8EA",
+            rightBg: "#E5EBF5",
+            title: "Wartung fällig - Zähler 53157300",
+            subtitle: "Planmäßige Wartung für Zähler 53157300 ist überfällig.",
+            meterId: 53157300
+          },
+          {
+            leftIcon: heater,
+            rightIcon: blue_info,
+            leftBg: "#E7E8EA",
+            rightBg: "#E5EBF5",
+            title: "Batterie niedrig - Zähler 53157301",
+            subtitle: "Batteriestand bei Heizungszähler 53157301 ist niedrig.",
+            meterId: 53157301
+          },
+          {
+            leftIcon: cold_water,
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#F7E7D5",
+            title: "Kommunikationsfehler - Zähler 53157302",
+            subtitle: "Verbindungsprobleme bei Kaltwasserzähler 53157302.",
+            meterId: 53157302
+          },
+          {
+            leftIcon: hot_water,
+            rightIcon: alert_triangle,
+            leftBg: "#E7E8EA",
+            rightBg: "#F7E7D5",
+            title: "Sensorfehler - Zähler 53157303",
+            subtitle: "Temperatursensor bei Warmwasserzähler 53157303 defekt.",
+            meterId: 53157303
+          }
+        ];
+      }
+      
+      // Create total pool: dynamic + all demo notifications
+      const totalPool = [...dynamicNotifs, ...allDemoNotifications];
+      
+      // Split into displayed (first 4) and queue (rest)
+      const displayed = totalPool.slice(0, 4);
+      const queue = totalPool.slice(4);
+      
+      // Update both displayed notifications and queue
+      setNotificationQueue(queue);
+      
+      console.log("Dynamic notifications:", dynamicNotifs);
+      console.log("All demo notifications:", allDemoNotifications);
+      console.log("Displayed notifications:", displayed);
+      console.log("Queued notifications:", queue);
+      
+      setNotifications(displayed);
+    } catch (error) {
+      // Fallback to existing logic if anything fails
+      console.warn('Dynamic notifications failed, using existing logic:', error);
+      const fallback = generateNotifications();
+      setNotifications(fallback);
+    }
   }, [isEmpty, parsedData, meterIds]);
 
   const hasDeviceErrors =
@@ -374,9 +547,16 @@ export default function NotificationsChart({
       }`}
     >
       <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
-        <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
-          Benachrichtigungen
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
+            Benachrichtigungen
+          </h2>
+          {notificationQueue.length > 0 && (
+            <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+              +{notificationQueue.length}
+            </span>
+          )}
+        </div>
         <Image
           width={0}
           height={0}
@@ -458,12 +638,6 @@ export default function NotificationsChart({
           >
             Detaillierte Fehleranalyse anzeigen
           </button>
-          <Link
-            className="text-xs text-link text-center underline w-full inline-block mt-3"
-            href={ROUTE_HOME}
-          >
-            Weitere Benachrichtigungen anzeigen
-          </Link>
         </div>
       )}
 

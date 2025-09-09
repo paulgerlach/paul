@@ -30,7 +30,7 @@ export default function DialogBase({
     dialogName === "forgotPassword";
 
   return (
-    <div className="fixed inset-0 z-[1000] w-screen h-screen flex items-center justify-center bg-black/20">
+    <div className="fixed inset-0 z-[1000] w-screen h-screen flex items-center justify-center bg-black/20 backdrop-blur-sm">
       <style jsx>{`
         .dialog-scrollable::-webkit-scrollbar {
           width: 8px;

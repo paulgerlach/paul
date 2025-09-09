@@ -4,6 +4,8 @@ import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
 import { useShareStore } from "@/store/useShareStore";
+import { useChartStore } from "@/store/useChartStore";
+import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { Button } from "../ui/Button";
 import { RoundedCheckbox } from "../ui/RoundedCheckbox";
 import { doc_download, gmail, pdf_icon } from "@/static/icons";
@@ -30,14 +32,51 @@ export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
   const isOpen = openDialogByType.share_dashboard;
   const [copied, setCopied] = useState<boolean>(false);
-  const { shareUrl, generateShareUrl } = useShareStore();
+  const { shareUrl, generateShareUrl, setShareUrl } = useShareStore();
   const [createRule, setCreateRule] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      generateShareUrl();
+  const { startDate, endDate, meterIds } = useChartStore();
+
+  const handleShare = async () => {
+    try {
+      // Debug: Log current state
+      console.log('Share Dialog Current State:', {
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+        meterIds: meterIds,
+        meterIdsLength: meterIds.length
+      });
+
+      // Create filters from current dashboard state
+      // ALWAYS include current dates and meters to snapshot the exact dashboard state
+      const filters: ShareFilters = {
+        meterIds: meterIds.length > 0 ? meterIds : undefined,
+        startDate: startDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
+        endDate: endDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
+      };
+
+      console.log('Filters being sent:', filters);
+
+      // Generate secure shareable URL (30 days expiry)
+      const url = createShareableUrl(filters, 720); // 30 days
+      const fullUrl = `${window.location.origin}${url}`;
+
+      console.log('Generated URL:', fullUrl);
+
+      setShareUrl(fullUrl);
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(fullUrl);
+    } catch (error) {
+      console.error("Failed to create share link:", error);
+      alert("Failed to create share link. Please try again.");
     }
-  }, [isOpen, generateShareUrl]);
+  };
+
+  useEffect(() => {
+    handleShare();
+  }, [startDate, endDate, meterIds]); // Regenerate URL when state changes
+
 
   const copyToClipboard = async () => {
     try {
@@ -62,6 +101,106 @@ export default function ShareDashboardDialog() {
   const onSubmit = (data: FormValues) => {
     console.log("Form submitted:", data);
     // send data to API etc.
+  };
+
+  const handlePdfDownload = async () => {
+    try {
+      // Generate PDF of current dashboard state
+      // For now, we'll create a simple text representation
+      const dashboardData = {
+        url: shareUrl,
+        dateRange: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
+        meters: meterIds.length > 0 ? meterIds.join(', ') : 'Alle Zähler',
+        generatedAt: new Date().toLocaleString('de-DE')
+      };
+
+      const pdfContent = `
+Dashboard Übersicht
+===================
+
+URL: ${dashboardData.url}
+Zeitraum: ${dashboardData.dateRange}
+Zähler: ${dashboardData.meters}
+Erstellt am: ${dashboardData.generatedAt}
+      `;
+
+      // Create a simple text file for now (can be enhanced to actual PDF later)
+      const blob = new Blob([pdfContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Dashboard_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('Dashboard als Datei heruntergeladen');
+    } catch (error) {
+      console.error('Fehler beim PDF-Download:', error);
+      alert('Fehler beim Herunterladen der PDF-Datei');
+    }
+  };
+
+  const handleEmailShare = () => {
+    try {
+      const subject = encodeURIComponent('Dashboard Zugang - Verbrauchsdaten');
+      const body = encodeURIComponent(`Hallo,
+
+hier ist der Link zu Ihrem Dashboard mit den aktuellen Verbrauchsdaten:
+
+${shareUrl}
+
+Zeitraum: ${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}
+${meterIds.length > 0 ? `Zähler: ${meterIds.join(', ')}` : 'Alle Zähler verfügbar'}
+
+Der Link ist 30 Tage gültig.
+
+Mit freundlichen Grüßen`);
+
+      const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
+      window.open(mailtoUrl, '_blank');
+      
+      console.log('E-Mail Client geöffnet');
+    } catch (error) {
+      console.error('Fehler beim E-Mail-Versand:', error);
+      alert('Fehler beim Öffnen des E-Mail-Clients');
+    }
+  };
+
+  const handleDocumentDownload = async () => {
+    try {
+      // Create a JSON file with dashboard configuration
+      const dashboardConfig = {
+        shareUrl,
+        filters: {
+          meterIds: meterIds.length > 0 ? meterIds : null,
+          startDate: startDate?.toISOString().split('T')[0],
+          endDate: endDate?.toISOString().split('T')[0],
+        },
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+      };
+
+      const blob = new Blob([JSON.stringify(dashboardConfig, null, 2)], { 
+        type: 'application/json' 
+      });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `dashboard-config_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('Dashboard-Konfiguration heruntergeladen');
+    } catch (error) {
+      console.error('Fehler beim Document-Download:', error);
+      alert('Fehler beim Herunterladen des Dokuments');
+    }
   };
 
   if (isOpen)
@@ -109,33 +248,51 @@ export default function ShareDashboardDialog() {
             <div className="">
               <p className="text-[#757575] mb-1.5 text-sm">An Mieter teilen</p>
               <div className="grid items-center grid-cols-3 gap-4">
-                <Image
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-                  src={pdf_icon}
-                  alt={"pdf_icon"}
-                />
-                <Image
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
-                  src={gmail}
-                  alt={"gmail_icon"}
-                />
-                <Image
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-                  src={doc_download}
-                  alt={"doc_download"}
-                />
+                <button 
+                  onClick={handlePdfDownload}
+                  className="cursor-pointer transition-opacity hover:opacity-80"
+                  title="Als PDF herunterladen"
+                >
+                  <Image
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    loading="lazy"
+                    className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
+                    src={pdf_icon}
+                    alt={"pdf_icon"}
+                  />
+                </button>
+                <button 
+                  onClick={handleEmailShare}
+                  className="cursor-pointer transition-opacity hover:opacity-80"
+                  title="Per E-Mail teilen"
+                >
+                  <Image
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    loading="lazy"
+                    className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
+                    src={gmail}
+                    alt={"gmail_icon"}
+                  />
+                </button>
+                <button 
+                  onClick={handleDocumentDownload}
+                  className="cursor-pointer transition-opacity hover:opacity-80"
+                  title="Dokument herunterladen"
+                >
+                  <Image
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    loading="lazy"
+                    className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
+                    src={doc_download}
+                    alt={"doc_download"}
+                  />
+                </button>
               </div>
             </div>
           )}
@@ -191,7 +348,10 @@ export default function ShareDashboardDialog() {
                 <div className="flex justify-between mt-4">
                   <button
                     type="button"
-                    onClick={() => methods.reset()}
+                    onClick={() => {
+                      methods.reset();
+                      setCreateRule(false);
+                    }}
                     className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm cursor-pointer rounded-md bg-card_light border-none text-dark_green font-medium shadow-xs transition-all duration-300 hover:opacity-80"
                   >
                     Abbrechen

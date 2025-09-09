@@ -48,7 +48,7 @@ export default function EinsparungChart({
 
   return (
     <div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
-      <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
+      <div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-1">
         <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">
           Einsparung
         </h2>
@@ -75,7 +75,7 @@ export default function EinsparungChart({
           />
         ) : (
           <div className="text-center">
-            <p className="text-4xl md:text-4xl lg:text-5xl text-black/50 mb-2">
+            <p className="text-2xl md:text-3xl lg:text-4xl text-black/50 mb-2">
               {co2Display}
             </p>
             {co2Context && co2Result && co2Result.totalCO2SavedTons > 0.1 && (

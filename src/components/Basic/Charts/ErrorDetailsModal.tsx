@@ -189,7 +189,7 @@ export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: Error
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
       <div className="bg-white rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto">

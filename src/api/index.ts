@@ -31,7 +31,8 @@ import type {
   UserType
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
-import { MASTER_DATA } from "./data";
+import { MASTER_DATA, MASTER_DATA_2 } from "./data";
+import { writeFileSync } from "fs";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -161,8 +162,8 @@ export const parseCSVs = async () => {
     //   });
 
     // Combine all data and errors
-    const combinedData = MASTER_DATA;
-    const combinedErrors : any = [];
+    const combinedData = [...MASTER_DATA, ...MASTER_DATA_2];
+    const combinedErrors: any = [];
 
     // Extract unique meter IDs
     const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
@@ -170,6 +171,16 @@ export const parseCSVs = async () => {
       const device = combinedData.find(item => item.ID === id);
       return device ? { id, device: device['Device Type'] } : null;
     });
+
+    const heatMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Heat').map(dt => dt?.id);
+    const coldwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Water').map(dt => dt?.id);
+    const hotwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'WWater').map(dt => dt?.id);
+    const electricityMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Elec').map(dt => dt?.id);
+
+    // save these variables to a file meters.json to current folder
+    writeFileSync('./meters.json', JSON.stringify({ heatMeters, coldwater, hotwater, electricityMeters }, null, 2));
+
+
     // only meterIds for localhost file
     // const localMeterIds = parseResults[5].data.map(item => item.ID);
 

@@ -48,9 +48,14 @@ export default function AdminApartmentsDropdown() {
 
     if (allIds.length > 0) {
       const allMeterIds = allIds.flatMap((id) => {
-        const local = apartmentsToUse?.find((app) => app.locals?.find((local: LocalType) => local.id === id));
-        return local?.locals?.flatMap((local: LocalType) => local.meter_ids) || [];
+        const local = apartmentsToUse?.find((app) =>
+          app.locals?.find((local: LocalType) => local.id === id)
+        );
+        return (
+          local?.locals?.flatMap((local: LocalType) => local.meter_ids) || []
+        );
       });
+
       setMeterIds(allMeterIds);
     } else {
       setMeterIds([]);
@@ -78,7 +83,7 @@ export default function AdminApartmentsDropdown() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usersApartments, apartmentsToUse]);
+  }, [apartments, usersApartments, apartmentsToUse]);
 
   const clearSelection = () => {
     setSelectedLocalIds([]);

@@ -4,7 +4,7 @@ import { parseCSVs } from "@/api";
 import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts";
 
 export default async function AdminDashboardPage() {
-  const parsedData = await parseCSVs();
+  const parsedData: any = await parseCSVs();
 
   return (
     <div className="py-6 px-9 overflow-scroll">

@@ -5,7 +5,7 @@ import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts"
 import ShareButton from "@/app/shared/ShareButton";
 
 export default async function AdminPage() {
-  const parsedData = await parseCSVs();
+  const parsedData: any = await parseCSVs();
 
   return (
     <div className="py-6 px-9 space-y-6 overflow-scroll">

@@ -172,4 +172,6 @@ export type DialogDocumentCostActionType =
 
 export type DialogStoreActionType =
   | DialogDocumentActionType
-  | DialogDocumentCostActionType;
+  | DialogDocumentCostActionType
+  | "shareModal"
+  | "shareExtendedModal";

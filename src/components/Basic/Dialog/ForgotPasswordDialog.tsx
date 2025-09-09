@@ -32,7 +32,9 @@ export default function ForgotPasswordDialog() {
       const { email } = data;
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/reset-password`,
+        redirectTo: `${
+          process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+        }/reset-password`,
       });
 
       if (error) {
@@ -62,7 +64,8 @@ export default function ForgotPasswordDialog() {
               Passwort vergessen?
             </h2>
             <p className="text-lg text-light-text mb-5">
-              Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.
+              Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link
+              zum Zurücksetzen Ihres Passworts.
             </p>
 
             <FormInputField<ForgotPasswordFormData>
@@ -81,10 +84,7 @@ export default function ForgotPasswordDialog() {
               >
                 Abbrechen
               </Button>
-              <Button
-                type="submit"
-                className="flex-1"
-              >
+              <Button type="submit" className="flex-1">
                 E-Mail senden
               </Button>
             </div>

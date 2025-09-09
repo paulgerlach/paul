@@ -134,7 +134,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   return (
     <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
       <div className="flex flex-col gap-3">
-        <div className="h-[312px]">
+        <div className="h-[312px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp">
           <WaterChart
             csvText={coldWaterDevices}
             color="#6083CC"
@@ -145,7 +145,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
           />
         </div>
-        <div className="h-[271px]">
+        <div className="h-[271px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-100">
           <WaterChart
             csvText={hotWaterDevices || []}
             color="#E74B3C"
@@ -159,7 +159,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="h-[265px]">
+        <div className="h-[265px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-200">
           {!shouldShowElectricityChart ? (
             <GaugeChart
               heatReadings={heatDevices}
@@ -178,7 +178,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             />
           )}
         </div>
-        <div className="h-[318px]">
+        <div className="h-[318px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-300">
           <HeatingCosts
             csvText={heatDevices}
             isEmpty={isHeatEmpty}
@@ -189,7 +189,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="h-[360px]">
+        <div className="h-[360px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-400">
           <NotificationsChart
             isEmpty={isAllEmpty}
             emptyTitle="Keine Daten verfügbar."
@@ -197,7 +197,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             parsedData={parsedData}
           />
         </div>
-        <div className="h-[220px]">
+        <div className="h-[220px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-500">
           <EinsparungChart
             selectedData={selectedData}
             isEmpty={isAllEmpty}

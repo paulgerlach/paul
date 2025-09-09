@@ -54,7 +54,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
         
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Kaltwasser */}
-          <div className="h-[280px] max-md:h-[200px] hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden">
+          <div className="h-[280px] max-md:h-[200px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp">
             <WaterChart
               csvText={coldWaterDevices}
               color="#6083CC"
@@ -67,7 +67,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Warmwasser */}
-          <div className="h-[247px] max-md:h-[180px] hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden">
+          <div className="h-[247px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-100">
             <WaterChart
               csvText={hotWaterDevices}
               color="#E74B3C"
@@ -82,7 +82,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
 
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Gesamtkosten */}
-          <div className="h-[242px] max-md:h-[180px] hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden">
+          <div className="h-[242px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-200">
             <GaugeChart
               heatReadings={heatDevices}
               coldWaterReadings={coldWaterDevices}
@@ -94,7 +94,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Heizkosten */}
-          <div className="h-[284px] max-md:h-[200px] hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden">
+          <div className="h-[284px] max-md:h-[200px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-300">
             <HeatingCosts 
               csvText={heatDevices} 
               isEmpty={isHeatEmpty}
@@ -106,7 +106,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
 
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Benachrichtigungen Panel - comfortable height */}
-          <div className="h-[280px] max-md:h-[200px] bg-white rounded-xl shadow p-4 px-5 max-md:p-3 hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden">
+          <div className="h-[280px] max-md:h-[200px] bg-white rounded-xl shadow p-4 px-5 max-md:p-3 hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-400">
             <div className="flex pb-2 max-md:pb-2 border-b border-gray-200 items-center justify-between mb-3 max-md:mb-2">
               <h2 className="text-lg max-md:text-base font-medium text-gray-800">Benachrichtigungen</h2>
               <div className="w-6 h-6 max-md:w-5 max-md:h-5 bg-blue-500 rounded flex items-center justify-center">
@@ -130,7 +130,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Einsparung - comfortable proportion */}
-          <div className="h-[246px] max-md:h-[180px] hover:scale-105 transition-transform duration-300 ease-in-out max-md:hover:scale-100 max-md:w-full overflow-hidden">
+          <div className="h-[246px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full overflow-hidden animate-fadeInUp delay-500">
             <EinsparungChart />
           </div>
         </div>

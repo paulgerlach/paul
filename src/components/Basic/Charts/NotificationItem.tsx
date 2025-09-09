@@ -29,7 +29,7 @@ export default function NotificationItem({
             height={24}
             sizes="100vw"
             loading="lazy"
-            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-6 max-lg:h-6"
+            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-5 max-lg:h-5"
             src={leftIcon}
             alt=""
           />
@@ -43,7 +43,7 @@ export default function NotificationItem({
             height={24}
             sizes="100vw"
             loading="lazy"
-            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-4 max-lg:h-4"
+            className="w-5 h-5 max-md:w-5 max-md:h-5 max-lg:w-5 max-lg:h-5"
             src={rightIcon}
             alt=""
           />

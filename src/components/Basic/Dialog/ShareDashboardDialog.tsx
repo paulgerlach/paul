@@ -39,17 +39,29 @@ export default function ShareDashboardDialog() {
 
   const handleShare = async () => {
     try {
+      // Debug: Log current state
+      console.log('Share Dialog Current State:', {
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+        meterIds: meterIds,
+        meterIdsLength: meterIds.length
+      });
+
       // Create filters from current dashboard state
-      // Don't send meterIds if none selected (share ALL data)
+      // ALWAYS include current dates and meters to snapshot the exact dashboard state
       const filters: ShareFilters = {
         meterIds: meterIds.length > 0 ? meterIds : undefined,
-        startDate: startDate?.toISOString().split("T")[0],
-        endDate: endDate?.toISOString().split("T")[0],
+        startDate: startDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
+        endDate: endDate?.toISOString().split("T")[0] || new Date().toISOString().split("T")[0],
       };
+
+      console.log('Filters being sent:', filters);
 
       // Generate secure shareable URL (30 days expiry)
       const url = createShareableUrl(filters, 720); // 30 days
       const fullUrl = `${window.location.origin}${url}`;
+
+      console.log('Generated URL:', fullUrl);
 
       setShareUrl(fullUrl);
 
@@ -63,7 +75,7 @@ export default function ShareDashboardDialog() {
 
   useEffect(() => {
     handleShare();
-  }, []);
+  }, [startDate, endDate, meterIds]); // Regenerate URL when state changes
 
   const copyToClipboard = async () => {
     try {

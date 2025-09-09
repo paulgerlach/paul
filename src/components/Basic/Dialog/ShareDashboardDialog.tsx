@@ -3,8 +3,7 @@
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
-import { useChartStore } from "@/store/useChartStore";
-import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
+import { useShareStore } from "@/store/useShareStore";
 import { Button } from "../ui/Button";
 import { RoundedCheckbox } from "../ui/RoundedCheckbox";
 import { doc_download, gmail, pdf_icon } from "@/static/icons";
@@ -16,7 +15,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
-import { method } from "lodash";
 
 const formSchema = z.object({
   frequency: z.enum(["Monatlich", "Wöchentlich", "Täglich"], {
@@ -32,7 +30,7 @@ export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
   const isOpen = openDialogByType.share_dashboard;
   const [copied, setCopied] = useState<boolean>(false);
-  const [shareUrl, setShareUrl] = useState<string>("");
+  const { shareUrl, generateShareUrl } = useShareStore();
   const [createRule, setCreateRule] = useState<boolean>(false);
 
   const { startDate, endDate, meterIds } = useChartStore();
@@ -76,6 +74,7 @@ export default function ShareDashboardDialog() {
   useEffect(() => {
     handleShare();
   }, [startDate, endDate, meterIds]); // Regenerate URL when state changes
+
 
   const copyToClipboard = async () => {
     try {

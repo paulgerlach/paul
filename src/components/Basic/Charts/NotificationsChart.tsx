@@ -459,12 +459,6 @@ export default function NotificationsChart({
           >
             Detaillierte Fehleranalyse anzeigen
           </button>
-          <Link
-            className="text-xs text-link text-center underline w-full inline-block mt-3"
-            href={ROUTE_HOME}
-          >
-            Weitere Benachrichtigungen anzeigen
-          </Link>
         </div>
       )}
 

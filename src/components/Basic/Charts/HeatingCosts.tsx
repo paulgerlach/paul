@@ -308,7 +308,7 @@ export default function HeatingCosts({
     <div
       className={`rounded-xl shadow p-4 bg-white h-full flex flex-col ${isEmpty ? "flex flex-col" : ""}`}
     >
-      <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
+      <div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-1">
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           Heizkosten
         </h2>
@@ -317,7 +317,7 @@ export default function HeatingCosts({
           height={24}
           sizes="100%"
           loading="lazy"
-          className="max-w-6 max-h-6 w-auto max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+          className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={heater}
           alt="heater"
         />

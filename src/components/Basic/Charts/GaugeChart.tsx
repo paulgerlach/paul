@@ -229,13 +229,13 @@ export default function GaugeChart({
       aria-label={`Gauge chart showing ${Math.round(value)} percent used`}
       className={`rounded-xl relative shadow p-4 bg-white w-full h-full ${isEmpty ? "flex flex-col" : ""}`}
     >
-      <div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
+      <div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-1">
         <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">Gesamtkosten</h2>
         <Image
           width={0}
           height={0}
           loading="lazy"
-          className="w-6 h-6 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+          className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
           src={cross_arrows}
           alt="Kreuzpfeile Symbol"
         />

@@ -4,6 +4,8 @@ import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
 import { useShareStore } from "@/store/useShareStore";
+import { useChartStore } from "@/store/useChartStore";
+import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { Button } from "../ui/Button";
 import { RoundedCheckbox } from "../ui/RoundedCheckbox";
 import { doc_download, gmail, pdf_icon } from "@/static/icons";
@@ -30,7 +32,7 @@ export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
   const isOpen = openDialogByType.share_dashboard;
   const [copied, setCopied] = useState<boolean>(false);
-  const { shareUrl, generateShareUrl } = useShareStore();
+  const { shareUrl, generateShareUrl, setShareUrl } = useShareStore();
   const [createRule, setCreateRule] = useState<boolean>(false);
 
   const { startDate, endDate, meterIds } = useChartStore();

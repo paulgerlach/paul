@@ -268,7 +268,7 @@ export default function WarmwasserChart({
       </div>
 
       <div className="flex-1">
-        {isEmpty ? (
+        {isEmpty || meterIds.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

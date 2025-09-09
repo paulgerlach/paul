@@ -1,5 +1,6 @@
 import { parseCSVs } from "@/api";
 import { parseSharedUrl, getExpirationInfo, validateShareUrl } from "@/lib/shareUtils";
+import { parseGermanDate } from "@/utils";
 import SharedDashboardWrapper from "./SharedDashboardWrapper";
 
 interface SharedDashboardPageProps {
@@ -107,9 +108,17 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   // SECURITY: Enforce date range filtering if specified
   if (filters.startDate && filters.endDate) {
     filteredData = filteredData?.filter((item: any) => {
-      const itemDate = new Date(item["Date"]);
+      // Use the same date field as main dashboard: IV,0,0,0,,Date/Time
+      const itemDateString = item["IV,0,0,0,,Date/Time"]?.split(" ")[0]; // Extract date part
+      const itemDate = parseGermanDate(itemDateString);
       const startDate = new Date(filters.startDate!);
       const endDate = new Date(filters.endDate!);
+      
+      // Skip invalid dates
+      if (!itemDate || isNaN(itemDate.getTime())) {
+        return false;
+      }
+      
       return itemDate >= startDate && itemDate <= endDate;
     });
   }
@@ -124,10 +133,7 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   });
 
   // Create header info
-  const meterCount = filters.meterIds?.length || 0;
-  const headerTitle = meterCount > 0 
-    ? `Mieteransicht (${meterCount} Zähler)`
-    : "Mieteransicht (Alle Daten)";
+  const headerTitle = "Mieteransicht";
 
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">

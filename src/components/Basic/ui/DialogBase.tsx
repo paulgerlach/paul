@@ -2,7 +2,7 @@
 
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { close_dialog, close_white } from "@/static/icons";
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import type { DialogStoreActionType } from "@/types";
 import Image from "next/image";
 import { PropsWithChildren, useRef } from "react";
@@ -55,7 +55,9 @@ export default function DialogBase({
         <div className="px-9 py-4 flex-shrink-0">
           <button
             onClick={() => closeDialog(dialogName)}
-            className={`cursor-pointer flex items-center justify-center mr-0 ml-auto border-none bg-transparent ${isAuthDialog ? "mb-0" : ""}`}
+            className={`cursor-pointer flex items-center justify-center mr-0 ml-auto border-none bg-transparent ${
+              isAuthDialog ? "mb-0" : ""
+            }`}
           >
             <Image
               width={0}

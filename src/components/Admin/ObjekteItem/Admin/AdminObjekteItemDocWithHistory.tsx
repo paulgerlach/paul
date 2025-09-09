@@ -11,7 +11,7 @@ import {
   objekte_placeholder,
   operating_cost_documents_pending,
 } from "@/static/icons";
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import { type ObjektType } from "@/types";
 import { countLocals, slideDown, slideUp } from "@/utils";
 import { format } from "date-fns";

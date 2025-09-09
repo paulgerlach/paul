@@ -12,7 +12,7 @@ import {
   close_dialog,
   operating_cost_documents_pending,
 } from "@/static/icons";
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import type { LocalType, UnitType } from "@/types";
 import {
   buildLocalName,

@@ -21,7 +21,6 @@ import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
 import { MeterReadingType } from "@/api";
-import metersData from "@/api/meters.json";
 import {
   getDevicesWithErrors,
   groupErrorsBySeverity,
@@ -248,7 +247,6 @@ export default function NotificationsChart({
         //   title: "Wartungshinweise",
         //   subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
         // });
-
         // notifications.push({
         //   leftIcon: getLeftIconForNotificationType("maintenance", "general"),
         //   rightIcon: blue_info,
@@ -322,15 +320,15 @@ export default function NotificationsChart({
             notification.Severity === "critical"
               ? alert_triangle
               : notification.Severity === "high"
-                ? alert_triangle
-                : blue_info;
+              ? alert_triangle
+              : blue_info;
 
           const rightBg =
             notification.Severity === "critical"
               ? "#FFE5E5"
               : notification.Severity === "high"
-                ? "#F7E7D5"
-                : "#E5EBF5";
+              ? "#F7E7D5"
+              : "#E5EBF5";
 
           // Pass the full message to get the correct icon for consumption notifications
           const notificationTypeWithMessage =

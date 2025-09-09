@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import DialogBase from "../../ui/DialogBase";
 import { useState } from "react";
 import Image from "next/image";

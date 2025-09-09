@@ -1,10 +1,9 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
-import { useChartStore } from "@/store/useChartStore";
-import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
+import { useShareStore } from "@/store/useShareStore";
 import { Button } from "../ui/Button";
 import { RoundedCheckbox } from "../ui/RoundedCheckbox";
 import { doc_download, gmail, pdf_icon } from "@/static/icons";
@@ -16,7 +15,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormSelectField from "@/components/Admin/Forms/FormSelectField";
-import { method } from "lodash";
 
 const formSchema = z.object({
   frequency: z.enum(["Monatlich", "Wöchentlich", "Täglich"], {
@@ -32,38 +30,14 @@ export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
   const isOpen = openDialogByType.share_dashboard;
   const [copied, setCopied] = useState<boolean>(false);
-  const [shareUrl, setShareUrl] = useState<string>("");
+  const { shareUrl, generateShareUrl } = useShareStore();
   const [createRule, setCreateRule] = useState<boolean>(false);
 
-  const { startDate, endDate, meterIds } = useChartStore();
-
-  const handleShare = async () => {
-    try {
-      // Create filters from current dashboard state
-      // Don't send meterIds if none selected (share ALL data)
-      const filters: ShareFilters = {
-        meterIds: meterIds.length > 0 ? meterIds : undefined,
-        startDate: startDate?.toISOString().split("T")[0],
-        endDate: endDate?.toISOString().split("T")[0],
-      };
-
-      // Generate secure shareable URL (30 days expiry)
-      const url = createShareableUrl(filters, 720); // 30 days
-      const fullUrl = `${window.location.origin}${url}`;
-
-      setShareUrl(fullUrl);
-
-      // Copy to clipboard
-      await navigator.clipboard.writeText(fullUrl);
-    } catch (error) {
-      console.error("Failed to create share link:", error);
-      alert("Failed to create share link. Please try again.");
-    }
-  };
-
   useEffect(() => {
-    handleShare();
-  }, []);
+    if (isOpen) {
+      generateShareUrl();
+    }
+  }, [isOpen, generateShareUrl]);
 
   const copyToClipboard = async () => {
     try {

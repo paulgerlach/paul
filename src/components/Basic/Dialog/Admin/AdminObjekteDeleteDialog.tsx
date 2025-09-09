@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import { useParams, useRouter } from "next/navigation";
 import DialogBase from "../../ui/DialogBase";
 import { adminDeleteObjekt } from "@/actions/delete/admin/adminDeleteObjekt";

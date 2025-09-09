@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import DialogBase from "../ui/DialogBase";
 import { DialogStoreActionType } from "@/types";
 import { Button } from "../ui/Button";

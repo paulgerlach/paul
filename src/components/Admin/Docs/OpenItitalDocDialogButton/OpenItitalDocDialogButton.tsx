@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/Basic/ui/Button";
-import { useDialogStore } from "@/store/useDIalogStore";
+import { useDialogStore } from "@/store/useDialogStore";
 import type { DialogDocumentActionType } from "@/types";
 
 export default function OpenItitalDocDialogButton({

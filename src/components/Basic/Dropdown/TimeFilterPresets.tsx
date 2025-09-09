@@ -118,7 +118,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("today")}
             >
-              Today
+              Heute
             </button>
           </li>
           <li>
@@ -129,7 +129,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("yesterday")}
             >
-              Yesterday
+              Gestern
             </button>
           </li>
           <li>
@@ -140,7 +140,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("7d")}
             >
-              Last 7 Days
+              Letzte 7 Tage
             </button>
           </li>
           <li>
@@ -151,7 +151,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("30d")}
             >
-              Last 30 Days
+              Letzte 30 Tage
             </button>
           </li>
           <li>
@@ -162,7 +162,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("90d")}
             >
-              Last 90 Days
+              Letzte 90 Tage
             </button>
           </li>
           <li>
@@ -173,7 +173,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("thisMonth")}
             >
-              This Month
+              Dieser Monat
             </button>
           </li>
           <li>
@@ -184,7 +184,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("lastMonth")}
             >
-              Last Month
+              Letzter Monat
             </button>
           </li>
           <li>
@@ -195,7 +195,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("thisYear")}
             >
-              This Year
+              Dieses Jahr
             </button>
           </li>
           <li>
@@ -206,7 +206,7 @@ export default function TimeFilterPresets({
               )}
               onClick={() => applyPreset("custom")}
             >
-              Custom Range
+              Benutzerdefinierter Zeitraum
             </button>
           </li>
         </ul>

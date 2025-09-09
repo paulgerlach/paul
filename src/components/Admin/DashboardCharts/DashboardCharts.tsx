@@ -131,13 +131,6 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const forceElecDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === "1";
   const shouldShowElectricityChart = !isElectricityEmpty;
 
-  console.log({
-    heatDevices,
-    coldWaterDevices,
-    hotWaterDevices,
-    electricityDevices,
-  });
-
   return (
     <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
       <div className="flex flex-col gap-3">

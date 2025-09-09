@@ -15,7 +15,10 @@ export type TheeDotsCostTypeButtonProps = {
 };
 
 export default function TheeDotsCostTypeButton({
-  editDialogAction, deleteDialogAction, itemID, userID
+  editDialogAction,
+  deleteDialogAction,
+  itemID,
+  userID,
 }: TheeDotsCostTypeButtonProps) {
   const { openDialog, setItemID } = useDialogStore();
   const handleOpenEditDialog = () => {
@@ -31,7 +34,8 @@ export default function TheeDotsCostTypeButton({
       <PopoverTrigger asChild>
         <button
           className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
-          onClick={(e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()}
+        >
           <Image
             width={0}
             height={0}
@@ -45,16 +49,20 @@ export default function TheeDotsCostTypeButton({
       </PopoverTrigger>
       <PopoverContent
         className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
-        onClick={(e) => e.stopPropagation()}>
-        <button onClick={() => handleOpenEditDialog()}
-          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={() => handleOpenEditDialog()}
+          className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+        >
           <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Bearbeiten
         </button>
         {!!userID && (
           <button
             disabled={userID === null}
             onClick={() => handleOpenDeleteDialog()}
-            className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md">
+            className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+          >
             <Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Löschen
           </button>
         )}

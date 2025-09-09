@@ -130,7 +130,7 @@ export default function AbrechnungszeitraumForm({
                 <div className="grid grid-cols-2 gap-12 max-xl:gap-8">
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Beginn*"
+                    label="Verbrauchsabhängig*"
                     onChange={(e) => {
                       setValue(
                         "living_space_share",
@@ -141,7 +141,7 @@ export default function AbrechnungszeitraumForm({
                   />
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
-                    label="Ende*"
+                    label="Wohnflächenanteil*"
                     onChange={(e) => {
                       setValue(
                         "consumption_dependent",

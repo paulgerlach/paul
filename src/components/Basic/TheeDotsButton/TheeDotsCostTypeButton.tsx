@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { dots_button } from "@/static/icons";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import type { DialogDocumentActionType } from "@/types";
 import { Pencil, Trash } from "lucide-react";
 

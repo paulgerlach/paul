@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../../ui/DialogBase";
 import { allocationKeys } from "@/types";
 import { Button } from "../../ui/Button";

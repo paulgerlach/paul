@@ -1,6 +1,6 @@
 import TheeDotsCostTypeButton from "@/components/Basic/TheeDotsButton/TheeDotsCostTypeButton";
 import { admin_plus, chevron_admin, pdf_icon } from "@/static/icons";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import {
   type BetriebskostenabrechnungCostType,
   useBetriebskostenabrechnungStore,

@@ -8,7 +8,7 @@ import { supabase } from "@/utils/supabase/client";
 import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 
 const ForgotPasswordSchema = z.object({

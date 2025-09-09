@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import { useParams, useRouter } from "next/navigation";
 import DialogBase from "../../ui/DialogBase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

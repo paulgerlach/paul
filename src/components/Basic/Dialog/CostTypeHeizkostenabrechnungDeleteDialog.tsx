@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import { useRouter } from "next/navigation";
 import DialogBase from "../ui/DialogBase";
 import { deleteCostType } from "@/actions/delete/deleteCostType";

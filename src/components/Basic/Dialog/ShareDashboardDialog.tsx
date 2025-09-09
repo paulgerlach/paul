@@ -1,6 +1,6 @@
 "use client";
 
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
 import { useShareStore } from "@/store/useShareStore";

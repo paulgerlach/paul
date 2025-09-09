@@ -1,5 +1,5 @@
 import { cost_type_plus } from "@/static/icons";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import type { DialogStoreActionType } from "@/types";
 import Image from "next/image";
 

@@ -3,7 +3,7 @@ import type { ContractType } from "@/types";
 import Image from "next/image";
 import { differenceInMonths, format } from "date-fns";
 import Link from "next/link";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import { differenceInCalendarDays } from "date-fns";
 import { useAdminContractorsByContractID } from "@/apiClient";
 import { useParams } from "next/navigation";

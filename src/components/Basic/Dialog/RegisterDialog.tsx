@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
 import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 
 const RegisterSchema = z.object({

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { createCostType } from "@/actions/create/createCostType";
 import { useAutoSnakeCase } from "@/hooks/useAutoSnakeCase";
 import { useRouter } from "next/navigation";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 const addCostTypeDialogSchema = z.object({
   type: z.string().min(1, "Pflichtfeld").nullable(),

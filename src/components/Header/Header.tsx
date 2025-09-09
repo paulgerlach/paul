@@ -7,7 +7,7 @@ import { cellphone, login, logo } from "@/static/icons";
 import { ROUTE_FRAGEBOGEN, ROUTE_HOME, ROUTE_KONTAKT } from "@/routes/routes";
 import Nav from "./Nav";
 import { useEffect, useState, useRef } from "react";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 export default function Header() {
   const { openDialog } = useDialogStore();

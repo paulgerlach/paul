@@ -2,7 +2,7 @@
 
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { close_dialog, close_white } from "@/static/icons";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import type { DialogStoreActionType } from "@/types";
 import Image from "next/image";
 import { PropsWithChildren, useRef } from "react";

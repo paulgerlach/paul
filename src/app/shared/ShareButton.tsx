@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/Basic/ui/Button";
-import { useDialogStore } from "@/store/useDialogStore";
+import { useDialogStore } from "@/store/useDIalogStore";
 import { useShareStore } from "@/store/useShareStore";
 import Link from "next/link";
 import { useEffect } from "react";

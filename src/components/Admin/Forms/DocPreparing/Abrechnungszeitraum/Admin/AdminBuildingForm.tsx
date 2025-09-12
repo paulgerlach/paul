@@ -129,13 +129,13 @@ export default function AdminAbrechnungszeitraumBuildingForm({
                 <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
                   <FormDateInput<AbrechnungszeitraumBuildingFormValues>
                     control={methods.control}
-                    label="Verbrauchabhänig*"
+                    label="Start*"
                     name="start_date"
                   />
                   <span className="mt-8 inline-block">-</span>
                   <FormDateInput<AbrechnungszeitraumBuildingFormValues>
                     control={methods.control}
-                    label="Wohnflächenanteil*"
+                    label="Ende*"
                     name="end_date"
                   />
                 </div>

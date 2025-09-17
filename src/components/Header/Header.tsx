@@ -72,7 +72,7 @@ export default function Header() {
               Einloggen
             </button>
             <Link
-              href="tel:01759223454"
+              href="tel:01759235690"
               className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
             >
               <Image
@@ -84,7 +84,7 @@ export default function Header() {
                 src={cellphone}
                 alt="cellphone"
               />
-              01759223454
+              01759235690
             </Link>
             <Link
               href={ROUTE_KONTAKT}

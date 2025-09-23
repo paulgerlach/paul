@@ -13,9 +13,7 @@ export default function ImpressumPage() {
         <p className="text-lg text-dark_text">Rungestraße 21</p>
         <p className="text-lg text-dark_text">10179 Berlin</p>
         <br />
-        <p className="text-lg text-dark_text">
-          Telefon: <Link href={"tel:+4901759235690"}>+49 (0) 1759235690</Link>
-        </p>
+        <p className="text-lg text-dark_text">Telefon: +49 01759235690</p>
         <p className="text-lg text-dark_text">
           E-Mail:
           <Link href="malto:info@heidisystems.com"></Link>info@heidisystems.com
@@ -78,7 +76,7 @@ export default function ImpressumPage() {
               10117 Berlin
               <br />
               <br />
-              Telefon: <Link href="tel:03027572400">030 27 57 24 00</Link>
+              Telefon: <Link href="tel:03027572400">01759235690</Link>
               <br />
               Telefax: <Link href="tel:030275724069">030 275 72 40 69</Link>
               <br />

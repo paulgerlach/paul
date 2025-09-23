@@ -96,24 +96,11 @@ export default function FragebogenPage() {
 
   const mutation = useMutation({
     mutationFn: async (data: QuestionareFormData) => {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_FRAGEBOGEN_URL as string,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: data.email,
-            first_name: data.first_name,
-            last_name: data.last_name,
-            appartment_number: data.appartment_number,
-            heating_costs: data.heating_costs,
-            heating_available: data.heating_available,
-            central_water_supply: data.central_water_supply,
-            central_heating_system: data.central_heating_system,
-            energy_sources: data.energy_sources,
-          }),
-        }
-      );
+      const response = await fetch("/api/fragebogen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         throw new Error("Fehler beim Senden der Nachricht");

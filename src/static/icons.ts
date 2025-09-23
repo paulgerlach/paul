@@ -67,7 +67,7 @@ import header_logosvg from "@/asset/header_logo.svg";
 import heater_form1 from "@/asset/heater_form1.png";
 import heater_form2 from "@/asset/heater_form2.png";
 import heater_form3 from "@/asset/heater_form3.png";
-import heater from "@/asset/heater.svg";
+import heater from "@/asset/heater.png";
 import hero_counter from "@/asset/hero_counter.png";
 import hero_pointer from "@/asset/hero_pointer.png";
 import hero_process_bg from "@/asset/hero_process_bg.png";
@@ -170,13 +170,164 @@ import yes_icon from "@/asset/yes_icon.png";
 import youtube from "@/asset/youtube.png";
 import youtubesvg from "@/asset/youtube.svg";
 import link from "@/asset/link.svg";
+import domus from "@/asset/domus.png";
+import immoware24 from "@/asset/immoware24.png";
+import matera from "@/asset/matera.png";
+import dashboard from "@/asset/dashboard.png";
+import objekte from "@/asset/objekte_sidebar.png";
+import dokumente from "@/asset/dokumente.png";
+import abrechnung from "@/asset/abrechnung.png";
+import main_account from "@/asset/main_account.png";
+import chevron_admin from "@/asset/chevron_admin.png";
+import main_portfolio from "@/asset/main_portfolio.png";
+import clock_dark from "@/asset/clock_dark.png";
+import cold_water from "@/asset/cold_water.png";
+import hot_water from "@/asset/hot_water.png";
+import cross_arrows from "@/asset/cross_arrows.png";
+import notification from "@/asset/notification.png";
+import earth from "@/asset/earth.png";
+import blue_info from "@/asset/blue_info.png";
+import alert_triangle from "@/asset/alert_triangle.png";
+import green_check from "@/asset/green_check.png";
+import keys from "@/asset/keys.png";
+import commersial_local from "@/asset/commersial_local.png";
+import pipe_water from "@/asset/pipe_water.png";
+import green_check_single from "@/asset/green_check_single.png";
+import breadcrum_arrow from "@/asset/breadcrum_arrow.png";
+import objekte1 from "@/asset/objekte1.png";
+import objekte2 from "@/asset/objekte2.png";
+import objekte3 from "@/asset/objekte3.png";
+import objekte4 from "@/asset/objekte4.png";
+import dots_button from "@/asset/dots_button.png";
+import trend_up from "@/asset/trend_up.png";
+import trend_down from "@/asset/trend_down.png";
+import trend_check from "@/asset/trend_check.png";
+import white_check_green_box from "@/asset/white_check_green_box.png";
+import multi_family from "@/asset/multi_family.png";
+import special_purpose from "@/asset/special_purpose.png";
+import commercial from "@/asset/commercial.png";
+import blue_x from "@/asset/blue_x.png";
+import green_check_circle from "@/asset/green_check_circle.png";
+import small_calendar from "@/asset/small_calendar.png";
+import pencil from "@/asset/pencil.png";
+import trashcan from "@/asset/trashcan.png";
+import create_local from "@/asset/create_local.png";
+import admin_plus from "@/asset/admin_plus.png";
+import pdf_icon from "@/asset/pdf_icon.png";
+import calendar from "@/asset/calendar.png";
 import blog_group_link from "@/asset/blog_group_link.png";
 import blog_dropdown from "@/asset/blog_dropdown.png";
 import login from "@/asset/login.png";
 import cellphone from "@/asset/cellphone.png";
+import parking_lot from "@/asset/parking_lot.png";
+import lamp from "@/asset/lamp.png";
+import big_time_clock from "@/asset/big_time_clock.png";
+import doc_preview_building from "@/asset/doc_preview_building.png";
+import heating_bill_preview from "@/asset/heizkostenabrechnung_preview.png";
+import close_dialog from "@/asset/close_dialog.png";
+import heating_bill_builing from "@/asset/heating_bill_builing.png";
+import heating_bill_condominium from "@/asset/heating_bill_condominium.png";
+import corner_green_check from "@/asset/corner_green_check.png";
+import receipt_building from "@/asset/receipt_building.png";
+import receipt_calendar from "@/asset/receipt_calendar.png";
+import receipt_line from "@/asset/receipt_line.png";
+import admin_form_info from "@/asset/admin_form_info.png";
+import cost_type_cleaning from "@/asset/cost_type_cleaning.png";
+import cost_type_fuel_costs from "@/asset/cost_type_fuel_costs.png";
+import cost_type_fuel_costs_direct from "@/asset/cost_type_fuel_costs_direct.png";
+import cost_type_heater from "@/asset/cost_type_heater.png";
+import cost_type_pipe from "@/asset/cost_type_pipe.png";
+import cost_type_water_drop from "@/asset/cost_type_water_drop.png";
+import admin_logo from "@/asset/admin_logo.png";
+import objekte_placeholder from "@/asset/objekte_placeholder.png";
+import cost_type_plus from "@/asset/cost_type_plus.png";
+import gmail from "@/asset/gmail.png";
+import doc_download from "@/asset/doc_download.png";
+import operating_cost_documents_pending from "@/asset/operating_cost_documents_pending.png";
+import admin_objekte from "@/asset/admin_objekte.png";
+import pdf_user from "@/asset/pdf-user.png";
+import pdf_home from "@/asset/pdf-home.png";
+import electricity from "@/asset/electricity.png";
+import close_white from "@/asset/close_white.png";
+import cost_type_operating_current from "@/asset/cost_type_operating_current.png";
+import cost_type_maintenance_costs from "@/asset/cost_type_maintenance_costs.png";
+import cost_type_metering_service_costs from "@/asset/cost_type_metering_service_costs.png";
+import cost_type_metering_device_rental from "@/asset/cost_type_metering_device_rental.png";
+import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs.png";
+import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
+import building from "@/asset/building.svg";
 
 export {
   accentro_colored,
+  electricity,
+  operating_cost_documents_pending,
+  cold_water,
+  pdf_home,
+  pdf_user,
+  cost_type_plus,
+  admin_objekte,
+  lamp,
+  doc_download,
+  gmail,
+  objekte_placeholder,
+  admin_logo,
+  cost_type_cleaning,
+  cost_type_fuel_costs,
+  cost_type_other_operating_costs,
+  cost_type_chimney_sweep_costs,
+  cost_type_metering_device_rental,
+  cost_type_metering_service_costs,
+  cost_type_maintenance_costs,
+  cost_type_operating_current,
+  cost_type_fuel_costs_direct,
+  cost_type_heater,
+  cost_type_pipe,
+  cost_type_water_drop,
+  close_dialog,
+  receipt_building,
+  receipt_calendar,
+  admin_form_info,
+  receipt_line,
+  big_time_clock,
+  heating_bill_condominium,
+  heating_bill_builing,
+  corner_green_check,
+  doc_preview_building,
+  heating_bill_preview,
+  calendar,
+  parking_lot,
+  pdf_icon,
+  admin_plus,
+  small_calendar,
+  pencil,
+  trashcan,
+  trend_up,
+  blue_x,
+  create_local,
+  green_check_circle,
+  commercial,
+  special_purpose,
+  multi_family,
+  trend_down,
+  white_check_green_box,
+  trend_check,
+  green_check_single,
+  blue_info,
+  objekte4,
+  dots_button,
+  objekte3,
+  objekte2,
+  objekte1,
+  breadcrum_arrow,
+  commersial_local,
+  keys,
+  pipe_water,
+  alert_triangle,
+  green_check,
+  hot_water,
+  earth,
+  notification,
+  cross_arrows,
   accentro,
   cellphone,
   login,
@@ -352,4 +503,17 @@ export {
   youtube,
   youtubesvg,
   link,
+  domus,
+  immoware24,
+  matera,
+  dashboard,
+  objekte,
+  dokumente,
+  abrechnung,
+  main_account,
+  chevron_admin,
+  main_portfolio,
+  clock_dark,
+  close_white,
+  building
 };

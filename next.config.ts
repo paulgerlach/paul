@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.prismic.io",
       },
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+      },
     ],
+    domains: [
+      "gjyzysizrvtqthttctlb.supabase.co",
+    ]
   },
   output: "standalone",
 };

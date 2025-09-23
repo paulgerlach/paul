@@ -23,23 +23,30 @@ export default function NavGroup({
   };
 
   return (
-    <div className="group relative [.scrolled_&]:py-4 py-6 max-medium:py-1 duration-300">
+    <div className="group relative [.scrolled_&]:py-4 py-5 max-medium:py-1 duration-300">
       <Link
         href={route}
         onClick={() => handleBurgerMenu()}
-        className="flex items-center text-sm text-white justify-start gap-2 max-large:text-dark_text">
+        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text"
+      >
         {title}
-        <Image loading="lazy" src={right_arrow} alt="arrow" />
+        <Image
+          className="colored-to-black"
+          loading="lazy"
+          src={right_arrow}
+          alt="arrow"
+        />
       </Link>
-      <div className="absolute bg-white w-[620px] top-[100%] max-large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 max-large:hidden">
+      <div className="absolute bg-white shadow-2xl w-[620px] top-[100%] max-large:grid-cols-1 mx-5 pl-16 pr-8 py-9 rounded-base grid grid-cols-2 left-1/2 -translate-x-1/2 gap-20 -translate-y-[200%] group-hover:translate-y-0 max-large:hidden">
         <div>
           <p className="mb-5 text-xl text-dark_text">{groupTitle}</p>
           <ul>
             {groupLinks.map((link) => (
               <li key={link.title} className="nav-link-wrapper">
                 <Link
-                  className="flex items-center whitespace-nowrap justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
-                  href={route}>
+                  className="flex items-center justify-start gap-4 text-dark_text/50 text-[15px] py-2.5 px-3.5 rounded-base duration-300 hover:bg-link/20 cursor-pointer"
+                  href={link.link ? link?.link : route}
+                >
                   <Image
                     width={0}
                     height={0}
@@ -50,7 +57,7 @@ export default function NavGroup({
                     src={link.icon}
                     alt="modal_icon"
                   />
-                  {link.title}
+                  <span className="line-clamp-2">{link.title}</span>
                 </Link>
               </li>
             ))}

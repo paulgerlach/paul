@@ -31,18 +31,11 @@ export default function ContactForm() {
   const [formMessage, setFormMessage] = useState({ text: "", type: "" });
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_CONTACT_URL as string,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            full_name: data.name,
-            email: data.email,
-            message: data.message,
-          }),
-        }
-      );
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         setFormMessage({
@@ -51,6 +44,7 @@ export default function ContactForm() {
         });
         throw new Error("Fehler beim Senden der Nachricht");
       }
+
       setFormMessage({
         text: "Ihre Nachricht wurde erfolgreich gesendet!",
         type: "success",
@@ -60,7 +54,7 @@ export default function ContactForm() {
     },
   });
   return (
-    <div className="pt-8 max-small:pt-8 px-[100px] max-large:px-20 max-medium:px-10 max-small:px-5">
+    <div className="pt-20 max-small:pt-8 px-[100px] max-large:px-20 max-medium:px-10 max-small:px-5">
       <h1 className="text-[45px] leading-[54px] mb-6 max-medium:text-2xl text-dark_text">
         Kontaktieren Sie uns
       </h1>

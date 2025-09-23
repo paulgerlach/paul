@@ -4,7 +4,7 @@ import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";
 import { counter, google, handyman, star } from "@/static/icons";
 import Link from "next/link";
-import { ROUTE_BLOG_REGULATORIK, ROUTE_FRAGEBOGEN } from "@/routes/routes";
+import { ROUTE_BLOG, ROUTE_FRAGEBOGEN } from "@/routes/routes";
 
 export default function HomeHero() {
   return (
@@ -86,12 +86,12 @@ export default function HomeHero() {
           Jetzt installieren lassen
         </Link>
         <Link
-          href={ROUTE_BLOG_REGULATORIK}
+          href={ROUTE_BLOG}
           className="text-center mx-auto block text-[15px] leading-[18px] text-white">
           Fernablesbare Zähler verpflichtend bis 1. Januar 2027
         </Link>
       </div>
-      <div className="px-[50px] mt-[70px] mb-10 max-medium:flex-col w-fit mx-auto max-medium:pr-0 max-medium:justify-end grid grid-cols-4 gap-2 max-medium:px-0">
+      <div className="px-[72px] mt-[70px] mb-10 max-medium:flex-col w-fit mx-auto max-medium:pr-0 max-medium:justify-end grid grid-cols-4 gap-2 max-medium:px-0">
         <div className="bg-card_bg px-9 rounded-base flex items-center justify-center max-medium:hidden">
           <Image
             width={0}

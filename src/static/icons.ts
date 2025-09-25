@@ -256,6 +256,7 @@ import cost_type_metering_device_rental from "@/asset/cost_type_metering_device_
 import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs.png";
 import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
 import building from "@/asset/building.svg";
+import basement from "@/asset/basement.png";
 
 export {
   accentro_colored,
@@ -307,6 +308,7 @@ export {
   green_check_circle,
   commercial,
   special_purpose,
+  basement,
   multi_family,
   trend_down,
   white_check_green_box,

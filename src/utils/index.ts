@@ -5,6 +5,7 @@ import {
   multi_family,
   parking_lot,
   special_purpose,
+  basement,
   cost_type_water_drop,
   cost_type_pipe,
   cost_type_heater,
@@ -144,6 +145,8 @@ export const handleLocalTypeIcon = (
       return parking_lot;
     case "warehouse":
       return special_purpose;
+    case "basement":
+      return basement;
   }
 };
 

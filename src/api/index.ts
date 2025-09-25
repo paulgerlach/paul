@@ -33,6 +33,7 @@ import type {
 import { parseCsv } from "@/utils/parser";
 import { MASTER_DATA, MASTER_DATA_2 } from "./data";
 import { writeFileSync } from "fs";
+import { CSVParser } from "./parse_csv_to_json";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -52,7 +53,23 @@ export type MeterReadingType = {
   "IV,1,0,0,Wh,E"?: number;
   "IV,1,0,0,m^3,Vol"?: number;
   "IV,1,0,0,m^3,Vol Accumulation abs value only if negative contributions (backward flow)"?: number;
+  "IV,2,0,0,,Date": string;
+  "IV,2,0,0,Wh,E"?: number;
   "IV,3,0,0,Wh,E"?: number;
+  "IV,4,0,0,Wh,E"?: number;
+  "IV,6,0,0,Wh,E"?: number;
+  "IV,8,0,0,Wh,E"?: number;
+  "IV,10,0,0,Wh,E"?: number;
+  "IV,12,0,0,Wh,E"?: number;
+  "IV,14,0,0,Wh,E"?: number;
+  "IV,16,0,0,Wh,E"?: number;
+  "IV,18,0,0,Wh,E"?: number;
+  "IV,20,0,0,Wh,E"?: number;
+  "IV,22,0,0,Wh,E"?: number;
+  "IV,24,0,0,Wh,E"?: number;
+  "IV,26,0,0,Wh,E"?: number;
+  "IV,28,0,0,Wh,E"?: number;
+  "IV,30,0,0,Wh,E"?: number;
   "IV,3,0,0,m^3,Vol"?: number;
   "IV,5,0,0,Wh,E"?: number;
   "IV,5,0,0,m^3,Vol"?: number;
@@ -93,6 +110,7 @@ export type MeterReadingType = {
   "IV,12,0,0,m^3,Vol"?: number;
   "IV,14,0,0,m^3,Vol"?: number;
   "IV,16,0,0,m^3,Vol"?: number;
+
 }
 
 interface DeviceTypeSummary {
@@ -137,55 +155,91 @@ async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseRes
 
 export const parseCSVs = async () => {
   // Configuration for all CSV files
-  const csvFiles = [
-    // { url: 'https://drive.google.com/uc?export=download&id=13ROxd5ZoLGyp1bUaZZuNdaoDN80LWMK5', name: 'GatewayLatest' },
-    // { url: 'https://drive.google.com/uc?export=download&id=1E65xkhxSafujt-ElEYGxrUL7J7U4UTwy', name: 'Gateway' },
-    // { url: 'https://drive.google.com/uc?export=download&id=17iIcdqghLw5n7fpomYK-Fyl41iQqP-Rl', name: 'GatewayOne' },
-    // { url: 'https://drive.google.com/uc?export=download&id=1ZqBC7b7HRQ3s76f5DJycSKQpdXed2iSM', name: 'HeinWeisCode' },
-    // { url: 'https://drive.google.com/uc?export=download&id=1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1', name: 'Electricity' },
-    // { url: 'https://drive.google.com/uc?export=download&id=1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g', name: 'All Together' },
-    { url: 'http://localhost:3000/data/data.json', name: 'All Together' },
-  ];
+  const fileIds = [
+    "1jPhqO6Vl3zqrQiSsi8O-AOj16ciMRBx1",
+    "1-r7FVZj5C0FjjxYY3QizVj4TQg-YOi2g",
+    "1-KwAAGCBS_2ptmMmh0CMYaSb5o253xBF",
+    "1UJh6en4KZiXdwpDw-oUdown5BtHenGDk",
+    "1Ub-txxq0ZKYcFWb6cuo001-WLL52Z35W",
+    "1a86quw3lZPmivK736RgVXvti8ZaiFTHE",
+    "1PpSlumFdwexXOR8w23LyePmN2ox0HoHC",
+    "1_pear10xA3zGMfr073ZCfn-8g9sRh6nJ",
+    "1fB9cV47ZsbHxP3dfjke-_dra0OYG8vLG",
+    "1ACvSc9u2vUAV7z0n-peRlkwyZmenqaOl",
+    "1IVJwENjXwv5XLPs8nFZ7C30Bv-V7Ij6w",
+    "1vuz8LaXhHqNhIKu-fF7ykNwKvdAq_zkU",
+    "1pjW-jAIfOoxvox6hm0Xz1Hmok_JeMao2"
+  ]
+  const constructUrl = (id: string) => `https://drive.google.com/uc?export=download&id=${id}`;
+  const csvFiles = fileIds.map(id => ({ url: constructUrl(id), name: `${id}.csv` }));
 
   try {
     // Fetch and parse all CSV files in parallel
-    // const parseResults = await Promise.all(
-    //   csvFiles.map(({ url, name }) => fetchAndParseCsv(url, name))
-    // );
-
-    // fetch directly from localhost for data.json file using native fetch
-    // const parseResults: any = await fetch('http://localhost:3000/data/data.json')
-    //   .then(response => response.json())
-    //   .catch(error => {
-    //     console.error('Error fetching local data:', error);
-    //     return null;
-    //   });
+    const parseResults = await Promise.all(
+      csvFiles.map(({ url, name }) => CSVParser.parseCSVFromURL(url, name))
+    );
 
     // Combine all data and errors
-    const combinedData = [...MASTER_DATA, ...MASTER_DATA_2];
+    const combinedData = parseResults.flatMap(result => result.parsedData).map(
+      item => {
+        if (item['Device Type'] === 'Elec') {
+          return { ...item, ID: `1EMH00${item.ID}` };
+        }
+        return { ...item, ID: `${item.ID}` };
+      }
+    ) as MeterReadingType[];
     const combinedErrors: any = [];
 
-    // Extract unique meter IDs
-    const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
-    const deviceTypesOfTheseMeterIds = meterIds.map(id => {
-      const device = combinedData.find(item => item.ID === id);
-      return device ? { id, device: device['Device Type'] } : null;
-    });
+    // // Extract unique meter IDs
+    // const meterIds = Array.from(new Set(combinedData.map(item => item.ID)));
+    // const deviceTypesOfTheseMeterIds = meterIds.map(id => {
+    //   const device = combinedData.find(item => item.ID === id);
+    //   return device ? { id, device: device['Device Type'] } : null;
+    // });
 
-    const heatMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Heat').map(dt => dt?.id);
-    const coldwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Water').map(dt => dt?.id);
-    const hotwater = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'WWater').map(dt => dt?.id);
-    const electricityMeters = deviceTypesOfTheseMeterIds.filter(dt => dt?.device === 'Elec').map(dt => dt?.id);
+    const heatMetersReadings = combinedData.filter(dt => dt['Device Type'] === 'Heat');
+    const coldwaterReadings = combinedData.filter(dt => dt['Device Type'] === 'Water');
+    const hotwaterReadings = combinedData.filter(dt => dt['Device Type'] === 'WWater');
+    const electricityMetersReadings = combinedData.filter(dt => dt['Device Type'] === 'Elec');
+
+    const heatMetersWithDateTime = heatMetersReadings.filter(item => item["IV,0,0,0,,Date/Time"]);
+    const coldwaterWithDateTime = coldwaterReadings.filter(item => item["IV,0,0,0,,Date/Time"]);
+    const hotwaterWithDateTime = hotwaterReadings.filter(item => item["IV,0,0,0,,Date/Time"]);
+    const electricityMetersWithDateTime = electricityMetersReadings.filter(item => item["IV,0,0,0,,Date/Time"]);
+
+    const heatMeterReadingsWithoutDateTime = heatMetersReadings.filter(item => !item["IV,0,0,0,,Date/Time"]);
+    const coldwaterReadingsWithoutDateTime = coldwaterReadings.filter(item => !item["IV,0,0,0,,Date/Time"]);
+    const hotwaterReadingsWithoutDateTime = hotwaterReadings.filter(item => !item["IV,0,0,0,,Date/Time"]);
+    const electricityMetersReadingsWithoutDateTime = electricityMetersReadings.filter(item => !item["IV,0,0,0,,Date/Time"]);
+
+    const coldWaterWithValidValues = coldwaterWithDateTime.filter(item => item["IV,0,0,0,Wh,E"] || item["IV,1,0,0,Wh,E"] || item["IV,2,0,0,Wh,E"] || item["IV,5,0,0,Wh,E"] || item["IV,7,0,0,Wh,E"] || item["IV,9,0,0,Wh,E"] || item["IV,11,0,0,Wh,E"] || item["IV,13,0,0,Wh,E"] || item["IV,15,0,0,Wh,E"] || item["IV,17,0,0,Wh,E"] || item["IV,19,0,0,Wh,E"] || item["IV,21,0,0,Wh,E"] || item["IV,23,0,0,Wh,E"] || item["IV,25,0,0,Wh,E"] || item["IV,27,0,0,Wh,E"] || item["IV,29,0,0,Wh,E"] || item["IV,31,0,0,Wh,E"] || item["IV,2,0,0,Wh,E"] || item["IV,4,0,0,Wh,E"] || item["IV,6,0,0,Wh,E"] || item["IV,8,0,0,Wh,E"] || item["IV,10,0,0,Wh,E"] || item["IV,12,0,0,Wh,E"] || item["IV,14,0,0,Wh,E"] || item["IV,16,0,0,Wh,E"] || item["IV,18,0,0,Wh,E"] || item["IV,20,0,0,Wh,E"] || item["IV,22,0,0,Wh,E"] || item["IV,24,0,0,Wh,E"] || item["IV,26,0,0,Wh,E"] || item["IV,28,0,0,Wh,E"] || item["IV,30,0,0,Wh,E"]);
 
     // save these variables to a file meters.json to current folder
-    writeFileSync('./meters.json', JSON.stringify({ heatMeters, coldwater, hotwater, electricityMeters }, null, 2));
+    // writeFileSync('./meters.json', JSON.stringify({ heatMeters, coldwater, hotwater, electricityMeters }, null, 2));
 
 
-    // only meterIds for localhost file
-    // const localMeterIds = parseResults[5].data.map(item => item.ID);
+    const data_with_meters = [
+      ...heatMetersReadings,
+      ...coldwaterReadings,
+      ...hotwaterReadings,
+      ...electricityMetersReadings
+    ].filter(item => item["IV,0,0,0,,Date/Time"]); // Ensure Date/Time exists
+
+    // check if all the items in data_with_meters have a the key "IV,0,0,0,,Date/Time"
+    const allHaveDateTime = data_with_meters.every(item => item["IV,0,0,0,,Date/Time"]);
+
+    if (!allHaveDateTime) {
+      console.warn("Some items in data_with_meters are missing the 'IV,0,0,0,,Date/Time' field.");
+      // print missing
+      data_with_meters.forEach((item, index) => {
+        if (!item["IV,0,0,0,,Date/Time"]) {
+          console.warn(`Item at index ${index} is missing 'IV,0,0,0,,Date/Time':`, item);
+        }
+      });
+    }
 
     return {
-      data: combinedData,
+      data: data_with_meters,
       errors: combinedErrors
     };
   } catch (err) {

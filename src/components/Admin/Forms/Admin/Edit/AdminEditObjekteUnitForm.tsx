@@ -57,6 +57,10 @@ const unitTypeOptions: FormRadioOption<UnitType>[] = [
     type: "warehouse",
     name: "Lager",
   },
+  {
+    type: "basement",
+    name: "Keller",
+  },
 ];
 
 const localSchema = z.object({

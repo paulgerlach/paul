@@ -97,7 +97,7 @@ export type BuildingType =
   | "multi_family"
   | "condominium";
 
-export type UnitType = "residential" | "commercial" | "parking" | "warehouse";
+export type UnitType = "residential" | "commercial" | "parking" | "warehouse" | "basement";
 
 export type ContractType = InferInsertModel<typeof contracts>;
 

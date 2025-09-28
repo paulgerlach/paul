@@ -223,16 +223,20 @@ class DatabaseHelper {
      */
     async insertParsedRecords(records: ParsedRecord[]): Promise<{ insertedCount: number; errors: string[]; meterIdStats: { found: number; notFound: number } }> {
         const errors: string[] = [];
-        let meterIdFound = 0;
-        let meterIdNotFound = 0;
 
-        // Extract all device IDs for batch lookup
+        // Extract unique device IDs for batch lookup
         const deviceIds = records
             .map(record => record['ID']?.toString())
             .filter(id => id) as string[];
+        
+        const uniqueDeviceIds = [...new Set(deviceIds)];
 
         // Batch lookup all meter IDs
-        const { meterIdMap, prefixedMatches } = await this.batchLookupMeterIds(deviceIds);
+        const { meterIdMap, prefixedMatches } = await this.batchLookupMeterIds(uniqueDeviceIds);
+        
+        // Count unique meter IDs found/not found
+        const uniqueMeterIdFound = uniqueDeviceIds.filter(id => meterIdMap.has(id)).length;
+        const uniqueMeterIdNotFound = uniqueDeviceIds.length - uniqueMeterIdFound;
 
         // Prepare all database records
         const dbRecords: DatabaseRecord[] = [];
@@ -251,13 +255,6 @@ class DatabaseHelper {
 
                 // Get local_meter_id from cache
                 const localMeterId = meterIdMap.get(deviceId) || null;
-
-                // Track meter ID statistics
-                if (localMeterId) {
-                    meterIdFound++;
-                } else {
-                    meterIdNotFound++;
-                }
 
                 // For Elec devices, determine if we need to update the device ID
                 let updatedRecord = { ...record };
@@ -314,8 +311,8 @@ class DatabaseHelper {
             insertedCount, 
             errors, 
             meterIdStats: { 
-                found: meterIdFound, 
-                notFound: meterIdNotFound 
+                found: uniqueMeterIdFound, 
+                notFound: uniqueMeterIdNotFound 
             } 
         };
     }
@@ -427,13 +424,21 @@ serve(async (req: Request) => {
         )
 
         console.log(`Successfully parsed ${result.parsedData.length} records`)
+        
+        // Count unique device IDs for logging
+        const uniqueDeviceIds = new Set(
+            result.parsedData
+                .map(record => record['ID']?.toString())
+                .filter(id => id)
+        );
+        console.log(`Found ${uniqueDeviceIds.size} unique device IDs`)
 
         // Insert records into database
         const dbHelper = new DatabaseHelper();
         const { insertedCount, errors, meterIdStats } = await dbHelper.insertParsedRecords(result.parsedData);
 
         console.log(`Inserted ${insertedCount} records into database`)
-        console.log(`Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
+        console.log(`Unique Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
         if (errors.length > 0) {
             console.warn('Database insertion errors:', errors);
         }
@@ -445,6 +450,7 @@ serve(async (req: Request) => {
         // Return successful response with detailed statistics
         const responseBody = {
             recordCount: result.parsedData.length,
+            uniqueDeviceIds: uniqueDeviceIds.size,
             insertedRecords: insertedCount,
             meterIdMatches: {
                 found: meterIdStats.found,

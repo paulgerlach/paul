@@ -184,7 +184,7 @@ export default function ElectricityChart({
   emptyTitle,
   emptyDescription,
 }: ElectricityChartProps) {
-  const { startDate, endDate, meterIds } = useChartStore();
+  const { startDate, endDate } = useChartStore();
 
   const { data, maxKWh } = useMemo(() => {
     const readings = Array.isArray(electricityReadings)
@@ -199,19 +199,8 @@ export default function ElectricityChart({
       };
     }
 
-    // optional filtering by selected meters
-    const filteredByMeter =
-      meterIds && meterIds.length > 0
-        ? readings.filter((d) => meterIds.includes(d.ID))
-        : [];
-
-    // If no meters are selected, show empty state
-    if (!meterIds || meterIds.length === 0) {
-      return {
-        data: [],
-        maxKWh: 0,
-      };
-    }
+    // Data is already filtered by meter IDs at database level
+    const filteredByMeter = readings;
 
     const series = getEnergyDataWithDates(filteredByMeter);
 
@@ -338,7 +327,7 @@ export default function ElectricityChart({
       data: rows,
       maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
     };
-  }, [electricityReadings, startDate, endDate, meterIds]);
+  }, [electricityReadings, startDate, endDate]);
 
   // Medium benchmark per image: 2-person household ≈210 kWh/month
   const BENCHMARK_KWH_PER_MONTH = 210;

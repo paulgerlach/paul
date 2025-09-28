@@ -175,7 +175,7 @@ class CSVParser {
     /**
      * Parse CSV data from Google Drive URL and return JSON data
      */
-    static async parseCSVFromURL(url: string, fileName?: string): Promise<ParseResult> {
+    static async parseCSVFromURL(url: string, fileName: string): Promise<ParseResult> {
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -192,7 +192,7 @@ class CSVParser {
                     recordCount: parsedData.length,
                     processedAt: new Date().toISOString()
                 },
-                parsedData
+                parsedData: parsedData.map(record => ({ ...record, fileName: fileName! }))
             };
         } catch (error) {
             throw new Error(`Error parsing CSV from URL ${url}: ${error instanceof Error ? error.message : String(error)}`);

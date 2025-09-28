@@ -251,7 +251,7 @@ export default function HeatingCosts({
   emptyTitle?: string;
   emptyDescription?: string;
 }) {
-  const { startDate, endDate, meterIds } = useChartStore();
+  const { startDate, endDate } = useChartStore();
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 10000]);
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value.toLocaleString()}`
@@ -262,10 +262,8 @@ export default function HeatingCosts({
       return [];
     }
 
-    const filteredDevices =
-      meterIds && meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : [];
+    // Data is already filtered by meter IDs at database level
+    const filteredDevices = csvText;
 
     // Use the new aggregation function
     return aggregateDataByTimeRange(
@@ -273,7 +271,7 @@ export default function HeatingCosts({
       startDate || undefined, 
       endDate || undefined
     );
-  }, [csvText, startDate, endDate, meterIds]);
+  }, [csvText, startDate, endDate]);
 
   // Calculate dynamic domain and formatting based on chart data
   useEffect(() => {
@@ -323,7 +321,7 @@ export default function HeatingCosts({
         />
       </div>
       <div className="flex-1">
-        {isEmpty || meterIds.length === 0 ? (
+        {isEmpty ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

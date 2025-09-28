@@ -1,12 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import { MeterReadingType } from "@/api";
 import { parseGermanDate } from "@/utils";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+
+// Utility functions for better code organization
+const isValidMeterReading = (item: MeterReadingType): boolean => {
+  return !!(
+    item &&
+    item["Device Type"] !== "Device Type" &&
+    item.ID &&
+    item["IV,0,0,0,,Date/Time"]
+  );
+};
+
+const isDateInRange = (dateString: string, start: Date, end: Date): boolean => {
+  const itemDateString = dateString.split(" ")[0]; // Extract date part
+  const itemDate = parseGermanDate(itemDateString);
+  
+  if (!itemDate || isNaN(itemDate.getTime())) {
+    return false;
+  }
+  
+  return itemDate >= start && itemDate <= end;
+};
 
 const WaterChart = dynamic(
   () => import("@/components/Basic/Charts/WaterChart"),
@@ -56,77 +77,176 @@ const EinsparungChart = dynamic(
   }
 );
 
+interface ParsedDataError {
+  row?: number;
+  error?: string;
+  message?: string;
+  code?: string;
+  details?: unknown;
+  rawRow?: any;
+}
+
 interface DashboardChartsProps {
   parsedData: {
     data: MeterReadingType[];
-    errors?: any[];
+    errors?: ParsedDataError[];
   };
+}
+
+interface DeviceTypeGroups {
+  heat: MeterReadingType[];
+  coldWater: MeterReadingType[];
+  hotWater: MeterReadingType[];
+  electricity: MeterReadingType[];
+}
+
+interface EmptyStates {
+  isColdEmpty: boolean;
+  isHotEmpty: boolean;
+  isHeatEmpty: boolean;
+  isElectricityEmpty: boolean;
+  isAllEmpty: boolean;
 }
 
 export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   const { startDate, endDate } = useChartStore();
 
-  // Use useMemo to recalculate filtered data when dependencies change
+  // Performance monitoring in development
+  const logPerformance = useCallback((label: string, dataLength: number) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`Dashboard ${label}:`, { dataLength, startDate, endDate });
+    }
+  }, [startDate, endDate]);
+
+  // Optimized data filtering with single pass and date range caching
   const selectedData = useMemo(() => {
     if (!parsedData?.data) return [];
 
-    let filtered = parsedData.data
-      .filter((item) => item["Device Type"] !== "Device Type")
-      .filter((item) => item.ID); // Only items with valid IDs
+    // Cache date objects to avoid repeated parsing
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const hasDateRange = start && end;
 
-    // Filter by date range if both dates are set
-    if (startDate && endDate) {
-      filtered = filtered.filter((item) => {
-        const itemDateString = item["IV,0,0,0,,Date/Time"].split(" ")[0]; // Extract date part
-        const itemDate = parseGermanDate(itemDateString);
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+    // Single pass filtering for better performance
+    const filtered = parsedData.data.filter((item) => {
+      // Basic validation using utility function
+      if (!isValidMeterReading(item)) return false;
 
-        // Skip invalid dates
-        if (!itemDate || isNaN(itemDate.getTime())) {
-          return false;
-        }
+      // Date range filtering if specified
+      if (hasDateRange && !isDateInRange(item["IV,0,0,0,,Date/Time"], start, end)) {
+        return false;
+      }
 
-        const isInRange = itemDate >= start && itemDate <= end;
+      return true;
+    });
 
-        return isInRange;
-      });
+    logPerformance('filtered data', filtered.length);
+    return filtered;
+  }, [parsedData?.data, startDate, endDate, logPerformance]);
+
+  // Optimized device type grouping with single pass and error handling
+  const deviceGroups = useMemo((): DeviceTypeGroups => {
+    if (!selectedData || selectedData.length === 0) {
+      return {
+        heat: [],
+        coldWater: [],
+        hotWater: [],
+        electricity: [],
+      };
     }
 
-    return filtered;
-  }, [parsedData?.data, startDate, endDate]);
+    try {
+      return selectedData.reduce<DeviceTypeGroups>(
+        (groups, item) => {
+          const deviceType = item["Device Type"];
+          switch (deviceType) {
+            case "Heat":
+              groups.heat.push(item);
+              break;
+            case "Water":
+              groups.coldWater.push(item);
+              break;
+            case "WWater":
+              groups.hotWater.push(item);
+              break;
+            case "Elec":
+              groups.electricity.push(item);
+              break;
+            default:
+              // Silently ignore unknown device types
+              break;
+          }
+          return groups;
+        },
+        {
+          heat: [],
+          coldWater: [],
+          hotWater: [],
+          electricity: [],
+        }
+      );
+    } catch (error) {
+      console.error("Error grouping device data:", error);
+      return {
+        heat: [],
+        coldWater: [],
+        hotWater: [],
+        electricity: [],
+      };
+    }
+  }, [selectedData]);
 
-  // Filter by device type using useMemo for performance
-  const heatDevices = useMemo(
-    () => selectedData?.filter((item) => item["Device Type"] === "Heat"),
-    [selectedData]
-  );
+  // Extract individual device arrays for backward compatibility
+  const { heat: heatDevices, coldWater: coldWaterDevices, hotWater: hotWaterDevices, electricity: electricityDevices } = deviceGroups;
 
-  const coldWaterDevices = useMemo(
-    () => selectedData?.filter((item) => item["Device Type"] === "Water"),
-    [selectedData]
-  );
+  // Calculate empty states with proper error handling
+  const emptyStates = useMemo((): EmptyStates => {
+    const isColdEmpty = coldWaterDevices.length === 0;
+    const isHotEmpty = hotWaterDevices.length === 0;
+    const isHeatEmpty = heatDevices.length === 0;
+    const isElectricityEmpty = electricityDevices.length === 0;
+    const isAllEmpty = heatDevices.length + coldWaterDevices.length + hotWaterDevices.length === 0;
 
-  const hotWaterDevices = useMemo(
-    () => selectedData?.filter((item) => item["Device Type"] === "WWater"),
-    [selectedData]
-  );
+    return {
+      isColdEmpty,
+      isHotEmpty,
+      isHeatEmpty,
+      isElectricityEmpty,
+      isAllEmpty,
+    };
+  }, [heatDevices.length, coldWaterDevices.length, hotWaterDevices.length, electricityDevices.length]);
 
-  // Heuristic detection for electricity meters: device type matches electricity synonyms
-  const electricityDevices = useMemo(
-    () => selectedData?.filter((item) => item["Device Type"] === "Elec"),
-    [selectedData]
-  );
+  const { isColdEmpty, isHotEmpty, isHeatEmpty, isElectricityEmpty, isAllEmpty } = emptyStates;
 
-  const isColdEmpty = (coldWaterDevices?.length || 0) === 0;
-  const isHotEmpty = (hotWaterDevices?.length || 0) === 0;
-  const isHeatEmpty = (heatDevices?.length || 0) === 0;
-  const isElectricityEmpty = (electricityDevices?.length || 0) === 0;
-  const isAllEmpty =
-    (heatDevices?.length || 0) +
-      (coldWaterDevices?.length || 0) +
-      (hotWaterDevices?.length || 0) ===
-    0;
+  // Create type-safe parsed data for NotificationsChart
+  const notificationsData = useMemo(() => {
+    if (!parsedData) return { data: [], errors: [] };
+    
+    return {
+      data: parsedData.data,
+      errors: parsedData.errors?.map(error => ({
+        row: error.row || 0,
+        error: error.error || error.message || 'Unknown error',
+        rawRow: error.rawRow || error.details || {}
+      })) || []
+    };
+  }, [parsedData]);
+
+  // Handle loading or error states after all hooks
+  if (!parsedData) {
+    return (
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+        <ChartCardSkeleton />
+        <ChartCardSkeleton />
+        <ChartCardSkeleton />
+      </ContentWrapper>
+    );
+  }
+
+  // Handle data errors
+  if (parsedData.errors && parsedData.errors.length > 0) {
+    console.error("Dashboard data errors:", parsedData.errors);
+  }
 
   const forceElecDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === "1";
   const shouldShowElectricityChart = !isElectricityEmpty;
@@ -194,7 +314,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             isEmpty={isAllEmpty}
             emptyTitle="Keine Daten verfügbar."
             emptyDescription="Keine Daten im ausgewählten Zeitraum."
-            parsedData={parsedData}
+            parsedData={notificationsData}
           />
         </div>
         <div className="h-[220px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-500">

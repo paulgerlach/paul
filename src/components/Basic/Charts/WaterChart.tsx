@@ -82,7 +82,7 @@ export default function WarmwasserChart({
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value / 1000}k`
   );
-  const { startDate, endDate, meterIds } = useChartStore(); // Access the state from the store
+  const { startDate, endDate } = useChartStore(); // Access the state from the store
 
   useEffect(() => {
     const getMonthSpanCount = (): number => {
@@ -136,10 +136,8 @@ export default function WarmwasserChart({
 
     const labels = buildLabels();
 
-    const filteredDevices =
-      meterIds.length > 0
-        ? csvText.filter((device) => meterIds.includes(device.ID.toString()))
-        : [];
+    // Data is already filtered by meter IDs at database level
+    const filteredDevices = csvText;
 
     if (filteredDevices.length === 0) {
       const zeroData = labels.map((label) => ({
@@ -236,7 +234,7 @@ export default function WarmwasserChart({
       setYAxisDomain([domainMin, domainMax]);
       setTickFormatter(() => formatter);
     }
-  }, [csvText, startDate, endDate, meterIds]); // Add startDate and endDate to the dependency array
+  }, [csvText, startDate, endDate]); // Data is already filtered at database level
 
   const gradientId = `gradient-${color.replace("#", "")}`;
 
@@ -256,7 +254,8 @@ export default function WarmwasserChart({
             src={hot_water}
             alt="chart-type"
           />
-        ) : <Image
+        ) : (
+          <Image
             width={24}
             height={24}
             sizes="100vw"
@@ -264,11 +263,12 @@ export default function WarmwasserChart({
             className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
             src={cold_water}
             alt="chart-type"
-          />}
+          />
+        )}
       </div>
 
       <div className="flex-1">
-        {isEmpty || meterIds.length === 0 ? (
+        {isEmpty ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

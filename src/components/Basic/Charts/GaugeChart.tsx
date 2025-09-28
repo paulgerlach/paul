@@ -95,7 +95,7 @@ export default function GaugeChart({
   emptyTitle,
   emptyDescription,
 }: GaugeChartProps & { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
-  const { startDate, endDate, meterIds } = useChartStore();
+  const { startDate, endDate } = useChartStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [animatedPercent, setAnimatedPercent] = useState(0);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -116,13 +116,10 @@ export default function GaugeChart({
       hotWaterPerM3EUR: pricing?.hotWaterPerM3EUR ?? 8.0,
     };
 
-    // Filter by selected meterIds if provided
-    const filterByMeterIds = (arr: MeterReadingType[]) =>
-      meterIds && meterIds.length > 0 ? arr.filter((d) => meterIds.includes(d.ID)) : arr;
-
-    const heatFiltered = filterByMeterIds(heat);
-    const coldFiltered = filterByMeterIds(cold);
-    const hotFiltered = filterByMeterIds(hot);
+    // Data is already filtered by meter IDs at database level, no need for client-side filtering
+    const heatFiltered = heat;
+    const coldFiltered = cold;
+    const hotFiltered = hot;
 
     // Build monthly series for all and filtered
     const fullHeatSeries = getMonthlyEnergyDataWithDates(heat);
@@ -163,7 +160,7 @@ export default function GaugeChart({
     const percentValue = allCostEUR > 0 ? Math.min(filteredCostEUR / allCostEUR, 1) : filteredCostEUR > 0 ? 1 : 0;
 
     return { percent: percentValue, euroCost: filteredCostEUR };
-  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, startDate, endDate, meterIds]);
+  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, startDate, endDate]);
 
   useEffect(() => {
     const container = containerRef.current;

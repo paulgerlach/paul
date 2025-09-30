@@ -394,16 +394,16 @@ export default function WaterChart({
           <EmptyState
             title={
               !hasDataInRange && startDate && endDate 
-                ? "No data in selected time range" 
-                : (emptyTitle ?? "No data available.")
+                ? "Keine Daten im gewählten Zeitraum" 
+                : (emptyTitle ?? "Keine Daten verfügbar.")
             }
             description={
               !hasDataInRange && startDate && endDate 
-                ? `No ${chartType} water readings found between ${startDate.toLocaleDateString()} and ${endDate.toLocaleDateString()}` 
-                : (emptyDescription ?? "No data available.")
+                ? `Keine ${chartType === "hot" ? "Warmwasser" : "Kaltwasser"}-Messwerte zwischen ${startDate.toLocaleDateString('de-DE')} und ${endDate.toLocaleDateString('de-DE')} gefunden` 
+                : (emptyDescription ?? "Keine Daten verfügbar.")
             }
             imageSrc={chartType === "hot" ? hot_water.src : cold_water.src}
-            imageAlt={chartType === "hot" ? "Hot water" : "Cold water"}
+            imageAlt={chartType === "hot" ? "Warmwasser" : "Kaltwasser"}
           />
         ) : (
           <ResponsiveContainer width="100%" height="100%">

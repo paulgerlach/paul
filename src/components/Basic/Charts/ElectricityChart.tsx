@@ -34,15 +34,15 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   return new Date(year, month - 1, day);
 };
 
-// Calculate monthly consumption from cumulative readings, with daily estimation capability
-const getEnergyDataWithDates = (
+// Get current energy readings from actual meter data
+const getCurrentEnergyReadings = (
   readings: MeterReadingType[]
-): { date: Date; valueWh: number; isMonthly: boolean }[] => {
+): { date: Date; totalWh: number }[] => {
   if (!readings || readings.length === 0) return [];
 
-  // Group readings by their actual date and get average cumulative reading per day
+  // Group readings by their actual timestamp and sum the energy values
   const dateGroups: {
-    [dateKey: string]: { date: Date; totalWh: number; validCount: number };
+    [dateKey: string]: { date: Date; totalWh: number; meterCount: number };
   } = {};
 
   readings.forEach((reading) => {
@@ -51,7 +51,7 @@ const getEnergyDataWithDates = (
 
     const [day, month, year] = dateString.split(".").map(Number);
     const readingDate = new Date(year, month - 1, day);
-    const dateKey = `${year}-${month - 1}-${day}`; // Use year-month-day as key
+    const dateKey = `${year}-${month - 1}-${day}`;
 
     // Get current energy reading (cumulative)
     const currentReading = reading["IV,0,0,0,Wh,E"];
@@ -67,48 +67,21 @@ const getEnergyDataWithDates = (
     // Filter out invalid readings (error codes like 88888888, 77777777, 99999999)
     if (energyValue > 0 && energyValue < 10000000 && !isNaN(energyValue)) {
       if (!dateGroups[dateKey]) {
-        dateGroups[dateKey] = { date: readingDate, totalWh: 0, validCount: 0 };
+        dateGroups[dateKey] = { date: readingDate, totalWh: 0, meterCount: 0 };
       }
       dateGroups[dateKey].totalWh += energyValue;
-      dateGroups[dateKey].validCount += 1;
+      dateGroups[dateKey].meterCount += 1;
     }
   });
 
   // Convert to array and sort by date
-  const cumulativeData = Object.values(dateGroups)
-    .filter((group) => group.validCount > 0)
+  return Object.values(dateGroups)
+    .filter((group) => group.meterCount > 0)
     .map((group) => ({
       date: group.date,
-      cumulativeWh: group.totalWh / group.validCount, // Average cumulative reading per day
+      totalWh: group.totalWh, // Sum of all meter readings for this date
     }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-
-  // Calculate monthly consumption by taking differences between consecutive cumulative readings
-  const monthlyConsumptionData: {
-    date: Date;
-    valueWh: number;
-    isMonthly: boolean;
-  }[] = [];
-
-  for (let i = 1; i < cumulativeData.length; i++) {
-    const current = cumulativeData[i];
-    const previous = cumulativeData[i - 1];
-
-    // Calculate consumption as difference between cumulative readings
-    const consumption = current.cumulativeWh - previous.cumulativeWh;
-
-    // Only include positive consumption values (filter out meter resets or errors)
-    if (consumption > 0 && consumption < 50000) {
-      // Max 50 kWh per period seems reasonable
-      monthlyConsumptionData.push({
-        date: current.date,
-        valueWh: consumption,
-        isMonthly: true,
-      });
-    }
-  }
-
-  return monthlyConsumptionData;
 };
 
 const MONTHS = [
@@ -199,128 +172,45 @@ export default function ElectricityChart({
       };
     }
 
-    // Data is already filtered by meter IDs at database level
-    const filteredByMeter = readings;
+    // Get current actual readings only
+    const currentReadings = getCurrentEnergyReadings(readings);
 
-    const series = getEnergyDataWithDates(filteredByMeter);
-
-    const filteredByDate = series.filter(({ date }) => {
+    // Filter by date range if specified
+    const filteredByDate = currentReadings.filter(({ date }) => {
       if (!startDate || !endDate) return true;
       return date >= startDate && date <= endDate;
     });
 
-    // Determine if we should show daily or monthly view
-    const monthsSpan =
-      startDate && endDate
-        ? (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-          (endDate.getMonth() - startDate.getMonth()) +
-          1
-        : 12;
+    // Generate labels for the selected time range
+    const labels = getLabelsForRange(startDate, endDate);
 
-    let rows: { label: string; kwh: number }[] = [];
+    // Create chart data showing current readings
+    const rows: { label: string; kwh: number }[] = [];
 
-    if (monthsSpan <= 2) {
-      // Daily view: estimate daily consumption from available monthly data
+    if (filteredByDate.length > 0) {
+      // We have actual data - show the current total consumption
+      const totalCurrentWh = filteredByDate.reduce(
+        (sum, reading) => sum + reading.totalWh,
+        0
+      );
+      const totalCurrentKwh = totalCurrentWh / 1000;
 
-      // Find monthly consumption data that overlaps with our date range
-      const monthlyGroups: {
-        [monthYear: string]: {
-          kwh: number;
-          daysInMonth: number;
-          monthStart: Date;
-        };
-      } = {};
-
-      filteredByDate.forEach(({ date, valueWh, isMonthly }) => {
-        if (!isMonthly) return; // Skip if not monthly consumption data
-
-        const monthYear = `${date.getFullYear()}-${date.getMonth()}`;
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
-        const daysInMonth = new Date(
-          date.getFullYear(),
-          date.getMonth() + 1,
-          0
-        ).getDate();
-
-        if (!monthlyGroups[monthYear]) {
-          monthlyGroups[monthYear] = {
-            kwh: valueWh / 1000,
-            daysInMonth,
-            monthStart,
-          };
-        }
-      });
-
-      // Generate daily labels for the selected range
-      const labels = getLabelsForRange(startDate, endDate);
-
-      // Estimate daily consumption based on available monthly data
-      rows = labels.map((label, index) => {
-        // Parse the label to get the actual date
-        const [day, month] = label.split(".").map(Number);
-        const year = startDate
-          ? startDate.getFullYear()
-          : new Date().getFullYear();
-        const labelDate = new Date(year, month - 1, day);
-
-        // Find the monthly data for this day
-        const monthYear = `${labelDate.getFullYear()}-${labelDate.getMonth()}`;
-        const monthlyData = monthlyGroups[monthYear];
-
-        if (monthlyData) {
-          // Estimate daily consumption from monthly total
-          const avgDailyForMonth = monthlyData.kwh / monthlyData.daysInMonth;
-
-          // Add some realistic variation (weekdays vs weekends, etc.)
-          const dayOfWeek = labelDate.getDay();
-          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-          const variation = isWeekend ? 0.85 : 1.1; // Slightly less on weekends
-          const randomVariation = 0.8 + Math.random() * 0.4; // ±20% random variation
-
-          return {
-            label,
-            kwh: Math.max(0.1, avgDailyForMonth * variation * randomVariation),
-          };
-        } else {
-          // No data for this month, use a reasonable estimate
-          const baseDaily = 7; // ~210 kWh/month ÷ 30 days
-          const variation = 0.8 + Math.random() * 0.4;
-          return {
-            label,
-            kwh: Math.max(0.1, baseDaily * variation),
-          };
-        }
+      // For now, show the current reading as a single point
+      // In a real scenario, you'd distribute this across the time period or show historical data
+      labels.forEach((label, index) => {
+        rows.push({
+          label,
+          kwh: index === labels.length - 1 ? totalCurrentKwh : 0, // Show all consumption in the last period
+        });
       });
     } else {
-      // Monthly view: group by month
-      const monthlyGroups: {
-        [monthYear: string]: { kwh: number; label: string; date: Date };
-      } = {};
-
-      filteredByDate.forEach(({ date, valueWh, isMonthly }) => {
-        // Only use monthly consumption data for monthly view
-        if (!isMonthly) return;
-
-        const monthYear = `${date.getFullYear()}-${date.getMonth()}`;
-        const label = MONTHS[date.getMonth()];
-
-        if (!monthlyGroups[monthYear]) {
-          monthlyGroups[monthYear] = { kwh: valueWh / 1000, label, date };
-        } else {
-          // In case we have multiple readings for the same month, add them
-          monthlyGroups[monthYear].kwh += valueWh / 1000;
-        }
+      // No data available
+      labels.forEach((label) => {
+        rows.push({
+          label,
+          kwh: 0,
+        });
       });
-
-      rows = Object.values(monthlyGroups)
-        .sort((a, b) => a.date.getTime() - b.date.getTime())
-        .map(({ label, kwh }) => ({ label, kwh }));
-
-      // If no real data, use the labels from range
-      if (rows.length === 0) {
-        const labels = getLabelsForRange(startDate, endDate);
-        rows = labels.map((label) => ({ label, kwh: 0 }));
-      }
     }
 
     return {
@@ -328,6 +218,8 @@ export default function ElectricityChart({
       maxKWh: rows.reduce((m, r) => (r.kwh > m ? r.kwh : m), 0),
     };
   }, [electricityReadings, startDate, endDate]);
+
+  console.log("Test data Elec:", data);
 
   // Medium benchmark per image: 2-person household ≈210 kWh/month
   const BENCHMARK_KWH_PER_MONTH = 210;

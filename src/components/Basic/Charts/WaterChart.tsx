@@ -5,7 +5,6 @@ import Image from "next/image";
 import {
   ComposedChart,
   Area,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -13,59 +12,225 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { type MeterReadingType } from "@/api";
-import { useChartStore } from "@/store/useChartStore"; // Import the Zustand store
+import { useChartStore } from "@/store/useChartStore";
 import { EmptyState } from "@/components/Basic/ui/States";
 
-// Helper function to extract the most recent reading date (robust: finds first available)
-const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
-  if (!readings || readings.length === 0) return null;
-  const withDate = readings.find((r) => r["IV,0,0,0,,Date/Time"]);
-  const dateString = withDate?.["IV,0,0,0,,Date/Time"]?.split(" ")[0];
-  if (!dateString) return null;
-
-  const [day, month, year] = dateString.split(".").map(Number);
-
-  return new Date(year, month - 1, day);
-};
-
-// Helper function to get current volume reading with date
-function getCurrentVolumeWithDate(
-  meterReading: MeterReadingType,
-  recentDate: Date
-) {
-  const volume = meterReading["IV,0,0,0,m^3,Vol"];
-  let parsedValue = 0;
-
-  if (typeof volume === "string") {
-    parsedValue = parseFloat((volume as string).replace(",", "."));
-  } else if (typeof volume === "number") {
-    parsedValue = volume;
-  }
-
-  return { date: recentDate, value: parsedValue * 1000 }; // Convert m³ to liters
-}
-
 const ALL_MONTHS = [
-  "JAN",
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DEC",
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
 
-export default function WarmwasserChart({
+interface ProcessedData {
+  date: Date;
+  deviceId: string;
+  volume: number; // in liters
+}
+
+interface ChartDataPoint {
+  label: string;
+  value: number;
+  date: Date;
+}
+
+// Utility functions
+const parseTimestamp = (dateTimeString: string): Date => {
+  try {
+    // Parse format like "29.09.2025 09:57 invalid 1 summer time 0"
+    const parts = dateTimeString.split(" ");
+    if (parts.length >= 2) {
+      const [datePart, timePart] = parts;
+      const [day, month, year] = datePart.split(".").map(Number);
+      const [hour, minute] = timePart.split(":").map(Number);
+      
+      if (day && month && year && !isNaN(hour) && !isNaN(minute)) {
+        return new Date(year, month - 1, day, hour, minute);
+      }
+    }
+  } catch (error) {
+    console.warn("Failed to parse timestamp:", dateTimeString, error);
+  }
+  return new Date();
+};
+
+const parseVolume = (volume: string | number): number => {
+  if (typeof volume === "string") {
+    return parseFloat(volume.replace(",", "."));
+  }
+  return typeof volume === "number" ? volume : 0;
+};
+
+const isWithinDateRange = (date: Date, startDate: Date | null, endDate: Date | null): boolean => {
+  if (!startDate || !endDate) return true;
+  return date >= startDate && date <= endDate;
+};
+
+const formatLabel = (date: Date, granularity: 'hour' | 'day' | 'month'): string => {
+  switch (granularity) {
+    case 'hour':
+      return `${date.getHours().toString().padStart(2, '0')}:00`;
+    case 'day':
+      return `${date.getDate()} ${ALL_MONTHS[date.getMonth()]}`;
+    case 'month':
+      return `${ALL_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+    default:
+      return date.toDateString();
+  }
+};
+
+const determineGranularity = (
+  processedData: ProcessedData[], 
+  startDate: Date | null, 
+  endDate: Date | null
+): 'hour' | 'day' | 'month' => {
+  if (!startDate || !endDate) {
+    // If no date range, determine based on data spread
+    if (processedData.length === 0) return 'day';
+    
+    const dates = processedData.map(d => d.date.toDateString());
+    const uniqueDates = new Set(dates);
+    
+    if (uniqueDates.size === 1) {
+      // Single day - check if we have multiple hours
+      const hours = processedData.map(d => d.date.getHours());
+      const uniqueHours = new Set(hours);
+      return uniqueHours.size > 1 ? 'hour' : 'day';
+    }
+    
+    return uniqueDates.size <= 31 ? 'day' : 'month';
+  }
+  
+  // Calculate range in days (more precise calculation)
+  const rangeInHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+  const rangeInDays = rangeInHours / 24;
+  
+  // For same day or less than 24 hours, use hourly granularity
+  if (rangeInDays <= 1) return 'hour';
+  if (rangeInDays <= 62) return 'day'; // ~2 months
+  return 'month';
+};
+
+const aggregateDataByGranularity = (
+  processedData: ProcessedData[], 
+  granularity: 'hour' | 'day' | 'month'
+): ChartDataPoint[] => {
+  const aggregationMap = new Map<string, { total: number; date: Date }>();
+  
+  processedData.forEach(item => {
+    let key: string;
+    let groupDate: Date;
+    
+    switch (granularity) {
+      case 'hour':
+        // Group by date + hour
+        groupDate = new Date(item.date.getFullYear(), item.date.getMonth(), item.date.getDate(), item.date.getHours());
+        key = `${groupDate.toDateString()}-${groupDate.getHours()}`;
+        break;
+      case 'day':
+        // Group by date only
+        groupDate = new Date(item.date.getFullYear(), item.date.getMonth(), item.date.getDate());
+        key = groupDate.toDateString();
+        break;
+      case 'month':
+        // Group by year + month
+        groupDate = new Date(item.date.getFullYear(), item.date.getMonth(), 1);
+        key = `${groupDate.getFullYear()}-${groupDate.getMonth()}`;
+        break;
+    }
+    
+    if (!aggregationMap.has(key)) {
+      aggregationMap.set(key, { total: 0, date: groupDate });
+    }
+    
+    aggregationMap.get(key)!.total += item.volume;
+  });
+  
+  // Convert to array and sort by date
+  return Array.from(aggregationMap.entries())
+    .map(([_, { total, date }]) => ({
+      label: formatLabel(date, granularity),
+      value: Math.round(total * 1000) / 1000, // Round to 3 decimal places instead of whole numbers
+      date: date
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+};
+
+const generateZeroPaddedData = (
+  aggregatedData: ChartDataPoint[],
+  granularity: 'hour' | 'day' | 'month',
+  startDate: Date | null,
+  endDate: Date | null
+): ChartDataPoint[] => {
+  if (!startDate || !endDate || aggregatedData.length === 0) {
+    return aggregatedData;
+  }
+  
+  const dataMap = new Map<string, ChartDataPoint>();
+  aggregatedData.forEach(item => {
+    const key = item.date.getTime().toString();
+    dataMap.set(key, item);
+  });
+  
+  const result: ChartDataPoint[] = [];
+  const current = new Date(startDate);
+  
+  while (current <= endDate) {
+    let key: string;
+    let displayDate: Date;
+    
+    switch (granularity) {
+      case 'hour':
+        displayDate = new Date(current.getFullYear(), current.getMonth(), current.getDate(), current.getHours());
+        key = displayDate.getTime().toString();
+        
+        const existing = dataMap.get(key);
+        result.push({
+          label: formatLabel(displayDate, granularity),
+          value: existing?.value || 0,
+          date: displayDate
+        });
+        
+        current.setHours(current.getHours() + 1);
+        break;
+        
+      case 'day':
+        displayDate = new Date(current.getFullYear(), current.getMonth(), current.getDate());
+        key = displayDate.getTime().toString();
+        
+        const existingDay = dataMap.get(key);
+        result.push({
+          label: formatLabel(displayDate, granularity),
+          value: existingDay?.value || 0,
+          date: displayDate
+        });
+        
+        current.setDate(current.getDate() + 1);
+        break;
+        
+      case 'month':
+        displayDate = new Date(current.getFullYear(), current.getMonth(), 1);
+        key = displayDate.getTime().toString();
+        
+        const existingMonth = dataMap.get(key);
+        result.push({
+          label: formatLabel(displayDate, granularity),
+          value: existingMonth?.value || 0,
+          date: displayDate
+        });
+        
+        current.setMonth(current.getMonth() + 1);
+        break;
+    }
+  }
+  
+  return result;
+};
+
+export default function WaterChart({
   color,
   title,
   chartType,
-  csvText, // Renamed to meterReadings for clarity
-  isEmpty,
+  csvText,
+  isEmpty = false,
   emptyTitle,
   emptyDescription,
 }: {
@@ -77,164 +242,133 @@ export default function WarmwasserChart({
   emptyTitle?: string;
   emptyDescription?: string;
 }) {
-  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 4000]);
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value / 1000}k`
   );
-  const { startDate, endDate } = useChartStore(); // Access the state from the store
+  const [hasDataInRange, setHasDataInRange] = useState<boolean>(true);
+  
+  const { startDate, endDate } = useChartStore();
 
   useEffect(() => {
-    const getMonthSpanCount = (): number => {
-      if (!startDate || !endDate) return 12;
-      const startY = startDate.getFullYear();
-      const endY = endDate.getFullYear();
-      const startM = startDate.getMonth();
-      const endM = endDate.getMonth();
-      return (endY - startY) * 12 + (endM - startM) + 1; // inclusive
-    };
+    console.log(`${chartType} WaterChart - Processing data:`, {
+      rawDataCount: csvText.length,
+      dateRange: {
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+      },
+      sampleData: csvText.slice(0, 5).map(d => ({
+        ID: d.ID,
+        DeviceType: d["Device Type"],
+        volume: d["IV,0,0,0,m^3,Vol"],
+        timestamp: d["IV,0,0,0,,Date/Time"],
+        allKeys: Object.keys(d).slice(0, 10) // Show first 10 keys to see structure
+      })),
+      totalSample: csvText.length > 0 ? {
+        allKeys: Object.keys(csvText[0]),
+        deviceTypes: [...new Set(csvText.map(d => d["Device Type"]))]
+      } : null
+    });
 
-    // Build label sequence based on selected range; fallback to full year
-    const buildLabels = (): string[] => {
-      if (!startDate || !endDate) {
-        // For water meters, default to last 30 days if no date range selected
-        const labels: string[] = [];
-        const today = new Date();
-        for (let i = 29; i >= 0; i--) {
-          const date = new Date(today);
-          date.setDate(today.getDate() - i);
-          labels.push(`${date.getDate()} ${ALL_MONTHS[date.getMonth()]}`);
-        }
-        return labels;
-      }
-
-      const monthSpan = getMonthSpanCount();
-      // Up to 2 months → show daily labels ("1 SEP", "2 SEP", ..., "1 OCT", ...)
-      if (monthSpan <= 2) {
-        const labels: string[] = [];
-        const cur = new Date(startDate);
-        const end = new Date(endDate);
-        // normalize to midnight
-        cur.setHours(0, 0, 0, 0);
-        end.setHours(0, 0, 0, 0);
-        while (cur <= end) {
-          labels.push(`${cur.getDate()} ${ALL_MONTHS[cur.getMonth()]}`);
-          cur.setDate(cur.getDate() + 1);
-        }
-        return labels;
-      }
-      const start = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-      const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-      const labels: string[] = [];
-      const cursor = new Date(start);
-      while (cursor <= end) {
-        labels.push(ALL_MONTHS[cursor.getMonth()]);
-        cursor.setMonth(cursor.getMonth() + 1);
-      }
-      return labels;
-    };
-
-    const labels = buildLabels();
-
-    // Data is already filtered by meter IDs at database level
-    const filteredDevices = csvText;
-
-    if (filteredDevices.length === 0) {
-      const zeroData = labels.map((label) => ({
-        month: label,
-        actual: 0,
-        lastYear: 0,
-      }));
-      setChartData(zeroData);
+    if (isEmpty || csvText.length === 0) {
+      setChartData([]);
+      setHasDataInRange(false);
       return;
     }
 
-    // Process water meter readings - group by device and calculate daily averages
-    const deviceReadings: { [deviceId: string]: number } = {};
-
-    filteredDevices.forEach((device) => {
-      const volume = device["IV,0,0,0,m^3,Vol"];
-      let parsedValue = 0;
-
-      if (typeof volume === "string") {
-        parsedValue = parseFloat((volume as string).replace(",", "."));
-      } else if (typeof volume === "number") {
-        parsedValue = volume;
-      }
-
-      // Convert m³ to liters
-      const volumeInLiters = parsedValue * 1000;
-
-      if (!deviceReadings[device.ID]) {
-        deviceReadings[device.ID] = 0;
-      }
-      deviceReadings[device.ID] = Math.max(
-        deviceReadings[device.ID],
-        volumeInLiters
-      );
+    // Step 1: Process raw data
+    const processedData: ProcessedData[] = [];
+    
+    csvText.forEach((device) => {
+      const volume = parseVolume(device["IV,0,0,0,m^3,Vol"]);
+      
+      // Convert from cubic meters to liters (1 m³ = 1000 L)
+      // Preserve decimal precision for exact values
+      const volumeInLiters = volume * 1000;
+      
+      // Skip zero or negative volumes
+      if (volumeInLiters <= 0) return;
+      
+      const dateTimeString = device["IV,0,0,0,,Date/Time"];
+      if (!dateTimeString) return;
+      
+      const parsedDate = parseTimestamp(dateTimeString);
+      
+      // Apply date range filter
+      if (!isWithinDateRange(parsedDate, startDate, endDate)) return;
+      
+      processedData.push({
+        date: parsedDate,
+        deviceId: device.ID.toString(),
+        volume: volumeInLiters,
+      });
     });
 
-    // Calculate total volume and distribute across days
-    const totalVolume = Object.values(deviceReadings).reduce(
-      (sum, vol) => sum + vol,
-      0
-    );
-    const avgDailyConsumption = totalVolume / labels.length;
+    // Step 2: Check if we have data
+    const dataInRange = processedData.length > 0;
+    setHasDataInRange(dataInRange);
+    
+    if (!dataInRange) {
+      setChartData([]);
+      return;
+    }
 
-    // Generate sample data for the chart (since we only have current readings)
-    const groupedData: { [key: string]: { actual: number; lastYear: number } } =
-      {};
-
-    labels.forEach((label, index) => {
-      // Simulate daily consumption with some variation
-      const variation = 0.8 + Math.sin(index * 0.5) * 0.2; // Varies between 0.6 and 1.0
-      const dailyConsumption = avgDailyConsumption * variation;
-
-      groupedData[label] = {
-        actual: Math.round(dailyConsumption),
-        lastYear: Math.round(dailyConsumption * (0.85 + Math.random() * 0.3)), // 85-115% of current
-      };
+    // Step 3: Determine appropriate granularity
+    const granularity = determineGranularity(processedData, startDate, endDate);
+    
+    // Step 4: Aggregate data by granularity
+    const aggregatedData = aggregateDataByGranularity(processedData, granularity);
+    
+    // Step 5: Generate zero-padded data for consistent chart display
+    const zeroPaddedData = generateZeroPaddedData(aggregatedData, granularity, startDate, endDate);
+    
+    console.log(`${chartType} WaterChart - Processed:`, {
+      processedDataCount: processedData.length,
+      granularity,
+      aggregatedDataPoints: aggregatedData.length,
+      zeroPaddedDataPoints: zeroPaddedData.length,
+      hasDataInRange: dataInRange,
+      dateRange: {
+        start: startDate?.toISOString(),
+        end: endDate?.toISOString(),
+      },
+      processedDataSample: processedData.slice(0, 3).map(d => ({
+        deviceId: d.deviceId,
+        volume: d.volume,
+        date: d.date.toISOString()
+      })),
+      chartData: zeroPaddedData.map(d => ({
+        label: d.label,
+        value: d.value,
+        date: d.date.toISOString()
+      }))
     });
 
-    // Convert grouped data into an array for the chart
-    const dataForChart = labels.map((label) => ({
-      month: label,
-      actual: groupedData[label].actual,
-      lastYear: groupedData[label].lastYear,
-    }));
-    setChartData(dataForChart);
+    setChartData(zeroPaddedData);
 
-    // Calculate dynamic domain and tick formatter based on chart data
-    if (dataForChart.length > 0) {
-      const allValues = dataForChart.flatMap((item) => [
-        item.actual,
-        item.lastYear,
-      ]);
-      const maxValue = Math.max(...allValues);
-      const minValue = Math.min(...allValues);
-
-      // Add some padding to the domain (10% above max, start from 0 or slightly below min)
-      const domainMax = Math.ceil(maxValue * 1.1);
+    // Step 6: Calculate Y-axis domain and formatter
+    if (zeroPaddedData.length > 0) {
+      const values = zeroPaddedData.map(item => item.value);
+      const maxValue = Math.max(...values);
+      const minValue = Math.min(...values);
+      
+      const domainMax = Math.ceil(maxValue * 1.1) || 100; // Ensure minimum domain
       const domainMin = Math.max(0, Math.floor(minValue * 0.9));
-
-      // Determine appropriate tick formatter based on the scale of values
+      
       let formatter: (value: number) => string;
-
       if (domainMax >= 1000000) {
-        // For millions
         formatter = (value) => `${(value / 1000000).toFixed(1)}M`;
       } else if (domainMax >= 1000) {
-        // For thousands
         formatter = (value) => `${(value / 1000).toFixed(1)}k`;
       } else {
-        // For smaller values
         formatter = (value) => value.toString();
       }
-
+      
       setYAxisDomain([domainMin, domainMax]);
       setTickFormatter(() => formatter);
     }
-  }, [csvText, startDate, endDate]); // Data is already filtered at database level
+  }, [csvText, startDate, endDate, chartType, isEmpty]);
 
   const gradientId = `gradient-${color.replace("#", "")}`;
 
@@ -244,41 +378,37 @@ export default function WarmwasserChart({
         <h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
           {title}
         </h2>
-        {chartType === "hot" ? (
-          <Image
-            width={24}
-            height={24}
-            sizes="100vw"
-            loading="lazy"
-            className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
-            src={hot_water}
-            alt="chart-type"
-          />
-        ) : (
-          <Image
-            width={24}
-            height={24}
-            sizes="100vw"
-            loading="lazy"
-            className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
-            src={cold_water}
-            alt="chart-type"
-          />
-        )}
+        <Image
+          width={24}
+          height={24}
+          sizes="100vw"
+          loading="lazy"
+          className="w-5 h-5 max-small:max-w-4 max-small:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
+          src={chartType === "hot" ? hot_water : cold_water}
+          alt="chart-type"
+        />
       </div>
 
       <div className="flex-1">
-        {isEmpty ? (
+        {isEmpty || !hasDataInRange ? (
           <EmptyState
-            title={emptyTitle ?? "No data available."}
-            description={emptyDescription ?? "No data available."}
+            title={
+              !hasDataInRange && startDate && endDate 
+                ? "No data in selected time range" 
+                : (emptyTitle ?? "No data available.")
+            }
+            description={
+              !hasDataInRange && startDate && endDate 
+                ? `No ${chartType} water readings found between ${startDate.toLocaleDateString()} and ${endDate.toLocaleDateString()}` 
+                : (emptyDescription ?? "No data available.")
+            }
             imageSrc={chartType === "hot" ? hot_water.src : cold_water.src}
             imageAlt={chartType === "hot" ? "Hot water" : "Cold water"}
           />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
-              data={chartData}
+              data={chartData.map(d => ({ month: d.label, actual: d.value }))}
               margin={{ top: 10, right: -30, left: 10, bottom: 0 }}
             >
               <defs>
@@ -304,10 +434,18 @@ export default function WarmwasserChart({
               />
               <Tooltip
                 contentStyle={{ borderRadius: 10, borderColor: color }}
-                formatter={(value: number, name: string) => [
-                  `${value.toLocaleString()} L`,
-                  name === "actual" ? "Aktuell" : "Vorjahr",
-                ]}
+                formatter={(value: number) => {
+                  if (value === 0) {
+                    return [`0 L`, chartType === "hot" ? "Warmwasser" : "Kaltwasser"];
+                  }
+                  return [
+                    `${value.toLocaleString('de-DE', { 
+                      minimumFractionDigits: 0, 
+                      maximumFractionDigits: 3 
+                    })} L`,
+                    chartType === "hot" ? "Warmwasser" : "Kaltwasser"
+                  ];
+                }}
               />
               <Area
                 type="monotone"
@@ -315,14 +453,6 @@ export default function WarmwasserChart({
                 fill={`url(#${gradientId})`}
                 stroke={color}
                 strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="lastYear"
-                stroke={color}
-                strokeDasharray="5 5"
-                strokeWidth={2}
-                dot={false}
               />
             </ComposedChart>
           </ResponsiveContainer>

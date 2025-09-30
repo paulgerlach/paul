@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import { MeterReadingType } from "@/api";
-import { parseGermanDate } from "@/utils";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 
 // Utility functions for better code organization
@@ -16,17 +15,6 @@ const isValidMeterReading = (item: MeterReadingType): boolean => {
     item.ID &&
     item["IV,0,0,0,,Date/Time"]
   );
-};
-
-const isDateInRange = (dateString: string, start: Date, end: Date): boolean => {
-  const itemDateString = dateString.split(" ")[0]; // Extract date part
-  const itemDate = parseGermanDate(itemDateString);
-  
-  if (!itemDate || isNaN(itemDate.getTime())) {
-    return false;
-  }
-  
-  return itemDate >= start && itemDate <= end;
 };
 
 const WaterChart = dynamic(
@@ -77,22 +65,6 @@ const EinsparungChart = dynamic(
   }
 );
 
-interface ParsedDataError {
-  row?: number;
-  error?: string;
-  message?: string;
-  code?: string;
-  details?: unknown;
-  rawRow?: any;
-}
-
-interface DashboardChartsProps {
-  parsedData: {
-    data: MeterReadingType[];
-    errors?: ParsedDataError[];
-  };
-}
-
 interface DeviceTypeGroups {
   heat: MeterReadingType[];
   coldWater: MeterReadingType[];
@@ -108,41 +80,45 @@ interface EmptyStates {
   isAllEmpty: boolean;
 }
 
-export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
-  const { startDate, endDate } = useChartStore();
+export default function DashboardCharts() {
+  const {
+    data,
+    metadata,
+    loading,
+    error,
+    meterIds,
+    startDate,
+    endDate,
+    fetchData,
+    clearError,
+  } = useChartStore();
 
   // Performance monitoring in development
-  const logPerformance = useCallback((label: string, dataLength: number) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.debug(`Dashboard ${label}:`, { dataLength, startDate, endDate });
-    }
-  }, [startDate, endDate]);
-
-  // Optimized data filtering with single pass and date range caching
-  const selectedData = useMemo(() => {
-    if (!parsedData?.data) return [];
-
-    // Cache date objects to avoid repeated parsing
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    const hasDateRange = start && end;
-
-    // Single pass filtering for better performance
-    const filtered = parsedData.data.filter((item) => {
-      // Basic validation using utility function
-      if (!isValidMeterReading(item)) return false;
-
-      // Date range filtering if specified
-      if (hasDateRange && !isDateInRange(item["IV,0,0,0,,Date/Time"], start, end)) {
-        return false;
+  const logPerformance = useCallback(
+    (label: string, dataLength: number) => {
+      if (process.env.NODE_ENV === "development") {
+        console.debug(`Dashboard ${label}:`, {
+          dataLength,
+          startDate,
+          endDate,
+          meterIds: meterIds.length,
+          metadata,
+        });
       }
+    },
+    [startDate, endDate, meterIds, metadata]
+  );
 
-      return true;
-    });
+  // The data is already filtered by the API endpoint based on meterIds and date range
+  const selectedData = useMemo(() => {
+    if (!data || data.length === 0) return [];
 
-    logPerformance('filtered data', filtered.length);
+    // Additional client-side validation if needed
+    const filtered = data.filter(isValidMeterReading);
+
+    logPerformance("chart data", filtered.length);
     return filtered;
-  }, [parsedData?.data, startDate, endDate, logPerformance]);
+  }, [data, logPerformance]);
 
   // Optimized device type grouping with single pass and error handling
   const deviceGroups = useMemo((): DeviceTypeGroups => {
@@ -197,7 +173,12 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
   }, [selectedData]);
 
   // Extract individual device arrays for backward compatibility
-  const { heat: heatDevices, coldWater: coldWaterDevices, hotWater: hotWaterDevices, electricity: electricityDevices } = deviceGroups;
+  const {
+    heat: heatDevices,
+    coldWater: coldWaterDevices,
+    hotWater: hotWaterDevices,
+    electricity: electricityDevices,
+  } = deviceGroups;
 
   // Calculate empty states with proper error handling
   const emptyStates = useMemo((): EmptyStates => {
@@ -205,7 +186,9 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     const isHotEmpty = hotWaterDevices.length === 0;
     const isHeatEmpty = heatDevices.length === 0;
     const isElectricityEmpty = electricityDevices.length === 0;
-    const isAllEmpty = heatDevices.length + coldWaterDevices.length + hotWaterDevices.length === 0;
+    const isAllEmpty =
+      heatDevices.length + coldWaterDevices.length + hotWaterDevices.length ===
+      0;
 
     return {
       isColdEmpty,
@@ -214,26 +197,31 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       isElectricityEmpty,
       isAllEmpty,
     };
-  }, [heatDevices.length, coldWaterDevices.length, hotWaterDevices.length, electricityDevices.length]);
+  }, [
+    heatDevices.length,
+    coldWaterDevices.length,
+    hotWaterDevices.length,
+    electricityDevices.length,
+  ]);
 
-  const { isColdEmpty, isHotEmpty, isHeatEmpty, isElectricityEmpty, isAllEmpty } = emptyStates;
+  const {
+    isColdEmpty,
+    isHotEmpty,
+    isHeatEmpty,
+    isElectricityEmpty,
+    isAllEmpty,
+  } = emptyStates;
 
   // Create type-safe parsed data for NotificationsChart
   const notificationsData = useMemo(() => {
-    if (!parsedData) return { data: [], errors: [] };
-    
     return {
-      data: parsedData.data,
-      errors: parsedData.errors?.map(error => ({
-        row: error.row || 0,
-        error: error.error || error.message || 'Unknown error',
-        rawRow: error.rawRow || error.details || {}
-      })) || []
+      data: selectedData,
+      errors: [], // API errors are handled separately in the store
     };
-  }, [parsedData]);
+  }, [selectedData]);
 
-  // Handle loading or error states after all hooks
-  if (!parsedData) {
+  // Handle loading states
+  if (loading) {
     return (
       <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
         <ChartCardSkeleton />
@@ -243,18 +231,78 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
     );
   }
 
-  // Handle data errors
-  if (parsedData.errors && parsedData.errors.length > 0) {
-    console.error("Dashboard data errors:", parsedData.errors);
+  // Handle error states
+  if (error) {
+    return (
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+        <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Fehler beim Laden der Daten
+          </h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={clearError}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Erneut versuchen
+          </button>
+        </div>
+      </ContentWrapper>
+    );
   }
 
-  const forceElecDummy = process.env.NEXT_PUBLIC_ELEC_DUMMY === "1";
+  // Show message when no meter IDs are selected
+  if (!meterIds.length) {
+    return (
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+        <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
+          <div className="text-gray-400 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Keine Wohnungen ausgewählt
+          </h3>
+          <p className="text-gray-600">
+            Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten anzuzeigen.
+          </p>
+        </div>
+      </ContentWrapper>
+    );
+  }
+
   const shouldShowElectricityChart = !isElectricityEmpty;
 
   return (
     <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
       <div className="flex flex-col gap-3">
-        <div className="h-[312px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp">
+        <div className="h-[312px]">
           <WaterChart
             csvText={coldWaterDevices}
             color="#6083CC"
@@ -265,7 +313,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
           />
         </div>
-        <div className="h-[271px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-100">
+        <div className="h-[271px]">
           <WaterChart
             csvText={hotWaterDevices || []}
             color="#E74B3C"
@@ -279,7 +327,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="h-[265px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-200">
+        <div className="h-[265px]">
           {!shouldShowElectricityChart ? (
             <GaugeChart
               heatReadings={heatDevices}
@@ -298,7 +346,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             />
           )}
         </div>
-        <div className="h-[318px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-300">
+        <div className="h-[318px]">
           <HeatingCosts
             csvText={heatDevices}
             isEmpty={isHeatEmpty}
@@ -309,7 +357,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="h-[360px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-400">
+        <div className="h-[360px]">
           <NotificationsChart
             isEmpty={isAllEmpty}
             emptyTitle="Keine Daten verfügbar."
@@ -317,7 +365,7 @@ export default function DashboardCharts({ parsedData }: DashboardChartsProps) {
             parsedData={notificationsData}
           />
         </div>
-        <div className="h-[220px] hover:scale-[1.03] transition-transform duration-200 ease-out animate-fadeInUp delay-500">
+        <div className="h-[220px]">
           <EinsparungChart
             selectedData={selectedData}
             isEmpty={isAllEmpty}

@@ -65,8 +65,10 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     );
   }
 
-  // Fetch all data (same as admin dashboard)
-  const parsedData = await parseCSVs();
+  // Fetch data with meter ID filtering for better performance
+  const parsedData = await parseCSVs({ 
+    meterIds: filters.meterIds && filters.meterIds.length > 0 ? filters.meterIds : undefined 
+  });
   
   if (!parsedData?.data) {
     return (
@@ -79,31 +81,13 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     );
   }
 
-  // Filter out header rows
+  // Filter out header rows (meter ID filtering now done at database level)
   let filteredData = parsedData?.data?.filter((item: any) => item["Device Type"] !== "Device Type");
   
-  // Debug: Log the data before filtering
-  console.log('Before meter filtering:', {
+  console.log('Data loaded from database:', {
     totalData: filteredData?.length || 0,
-    filterMeterIds: filters.meterIds
+    requestedMeterIds: filters.meterIds?.length || 0
   });
-  
-  // Only filter by meter IDs if they are specified in the URL
-  // If no meter IDs, show ALL data (property owner shared everything)
-  if (filters.meterIds && filters.meterIds.length > 0) {
-    const beforeLength = filteredData?.length || 0;
-    filteredData = filteredData?.filter((item: any) =>
-      filters.meterIds!.includes(item["ID"]) ||
-      filters.meterIds!.includes(item["Access Number"]?.toString())
-    );
-    
-    console.log('After meter filtering:', {
-      beforeLength,
-      afterLength: filteredData?.length || 0
-    });
-  } else {
-    console.log('No meter filtering - showing all data');
-  }
 
   // SECURITY: Enforce date range filtering if specified
   if (filters.startDate && filters.endDate) {

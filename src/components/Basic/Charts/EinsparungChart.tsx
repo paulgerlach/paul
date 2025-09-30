@@ -22,13 +22,8 @@ export default function EinsparungChart({
   emptyDescription,
   selectedData,
 }: EinsparungChartProps) {
-  const { meterIds } = useChartStore();
-
-  // Filter selectedData based on meterIds from the store
-  const filteredData =
-    selectedData && meterIds.length > 0
-      ? selectedData.filter((device) => meterIds.includes(device.ID.toString()))
-      : [];
+  // Data is already filtered by meter IDs at database level
+  const filteredData = selectedData || [];
 
   // Calculate CO₂ savings from the filtered data
   const co2Result = filteredData ? calculateCO2Savings(filteredData) : null;

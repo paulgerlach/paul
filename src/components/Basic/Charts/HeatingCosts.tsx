@@ -97,7 +97,8 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   }
 
   // Check for error flags
-  const errorFlags = reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
+  const errorFlags =
+    reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
   if (errorFlags && errorFlags !== "0b") {
     return false; // Non-zero error flags indicate problems
   }
@@ -106,11 +107,15 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   const currentValue = reading["IV,0,0,0,Wh,E"];
   let numValue = 0;
   if (currentValue != null) {
-    numValue = typeof currentValue === "number" ? currentValue : parseFloat(String(currentValue).replace(",", ".") || "0");
+    numValue =
+      typeof currentValue === "number"
+        ? currentValue
+        : parseFloat(String(currentValue).replace(",", ".") || "0");
   }
 
   // Filter out obvious error codes (repeated digits like 77777777, 88888888, 99999999)
-  if (numValue >= 10000000) { // Values above 10 million Wh are likely errors
+  if (numValue >= 10000000) {
+    // Values above 10 million Wh are likely errors
     return false;
   }
 
@@ -118,15 +123,19 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   const volume = reading["IV,0,0,0,m^3,Vol"];
   let volumeValue = 0;
   if (volume != null) {
-    volumeValue = typeof volume === "number" ? volume : parseFloat(String(volume).replace(",", ".") || "0");
+    volumeValue =
+      typeof volume === "number"
+        ? volume
+        : parseFloat(String(volume).replace(",", ".") || "0");
   }
 
   // Filter out obvious volume error codes (777.777, 888.888, 999.999)
-  if (volumeValue >= 777 && (
-    Math.abs(volumeValue - 777.777) < 0.001 ||
-    Math.abs(volumeValue - 888.888) < 0.001 ||
-    Math.abs(volumeValue - 999.999) < 0.001
-  )) {
+  if (
+    volumeValue >= 777 &&
+    (Math.abs(volumeValue - 777.777) < 0.001 ||
+      Math.abs(volumeValue - 888.888) < 0.001 ||
+      Math.abs(volumeValue - 999.999) < 0.001)
+  ) {
     return false;
   }
 
@@ -179,7 +188,10 @@ const aggregateDataByTimeRange = (
     const currentValue = reading["IV,0,0,0,Wh,E"];
     let numValue = 0;
     if (currentValue != null) {
-      numValue = typeof currentValue === "number" ? currentValue : parseFloat(String(currentValue).replace(",", ".") || "0");
+      numValue =
+        typeof currentValue === "number"
+          ? currentValue
+          : parseFloat(String(currentValue).replace(",", ".") || "0");
     }
 
     const dateKey = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
@@ -267,11 +279,13 @@ export default function HeatingCosts({
 
     // Use the new aggregation function
     return aggregateDataByTimeRange(
-      filteredDevices, 
-      startDate || undefined, 
+      filteredDevices,
+      startDate || undefined,
       endDate || undefined
     );
   }, [csvText, startDate, endDate]);
+
+  console.log("HeatingCosts data:", csvText, data);
 
   // Calculate dynamic domain and formatting based on chart data
   useEffect(() => {

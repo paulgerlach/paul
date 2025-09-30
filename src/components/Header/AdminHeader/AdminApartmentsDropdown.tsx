@@ -27,16 +27,42 @@ export default function AdminApartmentsDropdown() {
 
   const apartmentsToUse = isAdmin ? usersApartments : apartments;
 
-  const toggleSelection = (localId?: string) => {
+  const toggleSelection = async (localId?: string) => {
     if (!localId) return;
-    setSelectedLocalIds((prev) =>
-      prev.includes(localId)
-        ? prev.filter((id) => id !== localId)
-        : [...prev, localId]
-    );
+    
+    const newSelectedIds = selectedLocalIds.includes(localId)
+      ? selectedLocalIds.filter((id) => id !== localId)
+      : [...selectedLocalIds, localId];
+      
+    setSelectedLocalIds(newSelectedIds);
+
+    // Update meter IDs based on new selection
+    if (newSelectedIds.length > 0) {
+      try {
+        const allMeterPromises = newSelectedIds.map(async (localId) => {
+          const response = await fetch(`/api/meters-by-local?localId=${localId}`);
+          if (!response.ok) throw new Error(`Failed to fetch meters for local ${localId}`);
+          const { meters } = await response.json();
+          return meters;
+        });
+        const allMeterResults = await Promise.all(allMeterPromises);
+        
+        const allMeterIds = allMeterResults
+          .flat()
+          .map(meter => meter.id)
+          .filter((id): id is string => Boolean(id));
+
+        setMeterIds(allMeterIds);
+      } catch (error) {
+        console.error('Error fetching meter IDs:', error);
+        setMeterIds([]);
+      }
+    } else {
+      setMeterIds([]);
+    }
   };
 
-  const selectAll = () => {
+  const selectAll = async () => {
     const allIds =
       apartmentsToUse?.flatMap((app) =>
         app.locals
@@ -47,16 +73,28 @@ export default function AdminApartmentsDropdown() {
     setSelectedLocalIds(allIds);
 
     if (allIds.length > 0) {
-      const allMeterIds = allIds.flatMap((id) => {
-        const local = apartmentsToUse?.find((app) =>
-          app.locals?.find((local: LocalType) => local.id === id)
-        );
-        return (
-          local?.locals?.flatMap((local: LocalType) => local.meter_ids) || []
-        );
-      });
+      try {
+        // Get actual meter IDs from local_meters table for each local
+        const allMeterPromises = allIds.map(async (localId) => {
+          const response = await fetch(`/api/meters-by-local?localId=${localId}`);
+          if (!response.ok) throw new Error(`Failed to fetch meters for local ${localId}`);
+          const { meters } = await response.json();
+          return meters;
+        });
+        const allMeterResults = await Promise.all(allMeterPromises);
+        
+        // Extract meter IDs from the results
+        const allMeterIds = allMeterResults
+          .flat()
+          .map(meter => meter.id)
+          .filter((id): id is string => Boolean(id));
 
-      setMeterIds(allMeterIds);
+        console.log('Setting meter IDs from local_meters table:', allMeterIds);
+        setMeterIds(allMeterIds);
+      } catch (error) {
+        console.error('Error fetching meter IDs:', error);
+        setMeterIds([]);
+      }
     } else {
       setMeterIds([]);
     }

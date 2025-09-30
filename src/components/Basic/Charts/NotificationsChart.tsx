@@ -429,102 +429,18 @@ export default function NotificationsChart({
       const dynamicNotifs = generateDynamicNotifications();
       const existingNotifs = generateNotifications();
       
-      // Combine: Dynamic first (priority), then existing, max 4 total
-      // If we have fewer than 4 dynamic notifications, fill with demo ones
-      const maxDynamic = Math.min(dynamicNotifs.length, 2); // Prefer max 2 dynamic
-      const maxDemo = 4 - maxDynamic; // Fill remaining slots with demo
+      // Only show real dynamic notifications based on actual data
+      // No demo/fake notifications - only display what's actually detected
+      const realNotifications = dynamicNotifs;
       
-      // Create a larger pool of demo notifications for the queue
-      let allDemoNotifications = existingNotifs;
-      if (allDemoNotifications.length === 0) {
-        allDemoNotifications = [
-          {
-            leftIcon: pipe_water,
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#FFE5E5", 
-            title: "Leckage - Zähler 53157195",
-            subtitle: "Leckage erkannt - Rohrbruch bei Kaltwasserzähler 53157195.",
-            meterId: 53157195
-          },
-          {
-            leftIcon: heater,
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA", 
-            rightBg: "#F7E7D5",
-            title: "Rauchwarnmelder - Zähler 53157166", 
-            subtitle: "Rauchwarnmelder wurde abgenommen bei Heizungsbereich 53157166.",
-            meterId: 53157166
-          },
-          {
-            leftIcon: hot_water,
-            rightIcon: blue_info,
-            leftBg: "#E7E8EA",
-            rightBg: "#E5EBF5",
-            title: "Verbrauchsanstieg - Zähler 53157218",
-            subtitle: "Warmwasserverbrauch ist um 32% angestiegen bei Zähler 53157218.",
-            meterId: 53157218
-          },
-          {
-            leftIcon: cold_water,
-            rightIcon: blue_info,
-            leftBg: "#E7E8EA",
-            rightBg: "#E5EBF5", 
-            title: "Verbrauchsanstieg - Zähler 63157201",
-            subtitle: "Kaltwasserverbrauch ist um 42% angestiegen bei Zähler 63157201.",
-            meterId: 63157201
-          },
-          {
-            leftIcon: pipe_water,
-            rightIcon: blue_info,
-            leftBg: "#E7E8EA",
-            rightBg: "#E5EBF5",
-            title: "Wartung fällig - Zähler 53157300",
-            subtitle: "Planmäßige Wartung für Zähler 53157300 ist überfällig.",
-            meterId: 53157300
-          },
-          {
-            leftIcon: heater,
-            rightIcon: blue_info,
-            leftBg: "#E7E8EA",
-            rightBg: "#E5EBF5",
-            title: "Batterie niedrig - Zähler 53157301",
-            subtitle: "Batteriestand bei Heizungszähler 53157301 ist niedrig.",
-            meterId: 53157301
-          },
-          {
-            leftIcon: cold_water,
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#F7E7D5",
-            title: "Kommunikationsfehler - Zähler 53157302",
-            subtitle: "Verbindungsprobleme bei Kaltwasserzähler 53157302.",
-            meterId: 53157302
-          },
-          {
-            leftIcon: hot_water,
-            rightIcon: alert_triangle,
-            leftBg: "#E7E8EA",
-            rightBg: "#F7E7D5",
-            title: "Sensorfehler - Zähler 53157303",
-            subtitle: "Temperatursensor bei Warmwasserzähler 53157303 defekt.",
-            meterId: 53157303
-          }
-        ];
-      }
+      // Split into displayed (first 4) and queue (rest) - only real notifications
+      const displayed = realNotifications.slice(0, 4);
+      const queue = realNotifications.slice(4);
       
-      // Create total pool: dynamic + all demo notifications
-      const totalPool = [...dynamicNotifs, ...allDemoNotifications];
-      
-      // Split into displayed (first 4) and queue (rest)
-      const displayed = totalPool.slice(0, 4);
-      const queue = totalPool.slice(4);
-      
-      // Update both displayed notifications and queue
+      // Update both displayed notifications and queue with real data only
       setNotificationQueue(queue);
       
-      console.log("Dynamic notifications:", dynamicNotifs);
-      console.log("All demo notifications:", allDemoNotifications);
+      console.log("Real notifications only:", realNotifications);
       console.log("Displayed notifications:", displayed);
       console.log("Queued notifications:", queue);
       

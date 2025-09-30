@@ -28,62 +28,42 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   return new Date(year, month - 1, day);
 };
 
-// Helper: aggregate heat energy (Wh) per historical month with dates
-const getMonthlyEnergyDataWithDates = (
-  readings: MeterReadingType[]
-): { date: Date; value: number }[] => {
-  const monthlyData: { date: Date; value: number }[] = [];
-  const mostRecentDate = getRecentReadingDate(readings);
-  if (!mostRecentDate) return [];
+// Helper: get current heat energy (Wh) from actual readings
+const getCurrentEnergyData = (readings: MeterReadingType[]): number => {
+  if (!readings || readings.length === 0) return 0;
 
-  for (let i = 0; i <= 30; i += 2) {
-    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
-    const historicalDate = new Date(mostRecentDate);
-    historicalDate.setMonth(mostRecentDate.getMonth() - i / 2);
+  let totalValue = 0;
+  readings.forEach((reading) => {
+    const currentValue = reading["IV,0,0,0,Wh,E"] as number;
+    if (typeof currentValue === "string") {
+      totalValue += parseFloat(
+        (currentValue as string).replace(",", ".") || "0"
+      );
+    } else if (typeof currentValue === "number") {
+      totalValue += currentValue;
+    }
+  });
 
-    let totalValue = 0;
-    readings.forEach((reading) => {
-      const value = reading[key];
-      if (typeof value === "string") {
-        totalValue += parseFloat(value.replace(",", ".") || "0");
-      } else if (typeof value === "number") {
-        totalValue += value;
-      }
-    });
-
-    monthlyData.unshift({ date: historicalDate, value: totalValue });
-  }
-
-  return monthlyData;
+  return totalValue;
 };
 
-// Helper: aggregate water volume (m^3) per historical month with dates
-const getMonthlyVolumeDataWithDates = (
-  readings: MeterReadingType[]
-): { date: Date; value: number }[] => {
-  const monthlyData: { date: Date; value: number }[] = [];
-  const mostRecentDate = getRecentReadingDate(readings);
-  if (!mostRecentDate) return [];
+// Helper: get current water volume (m^3) from actual readings
+const getCurrentVolumeData = (readings: MeterReadingType[]): number => {
+  if (!readings || readings.length === 0) return 0;
 
-  for (let i = 0; i <= 30; i += 2) {
-    const key = `IV,${i},0,0,m^3,Vol` as keyof MeterReadingType;
-    const historicalDate = new Date(mostRecentDate);
-    historicalDate.setMonth(mostRecentDate.getMonth() - i / 2);
+  let totalValue = 0;
+  readings.forEach((reading) => {
+    const currentValue = reading["IV,0,0,0,m^3,Vol"];
+    if (typeof currentValue === "string") {
+      totalValue += parseFloat(
+        (currentValue as string).replace(",", ".") || "0"
+      );
+    } else if (typeof currentValue === "number") {
+      totalValue += currentValue;
+    }
+  });
 
-    let totalValue = 0;
-    readings.forEach((reading) => {
-      const value = reading[key];
-      if (typeof value === "string") {
-        totalValue += parseFloat(value.replace(",", ".") || "0");
-      } else if (typeof value === "number") {
-        totalValue += value;
-      }
-    });
-
-    monthlyData.unshift({ date: historicalDate, value: totalValue });
-  }
-
-  return monthlyData;
+  return totalValue;
 };
 
 export default function GaugeChart({
@@ -94,7 +74,11 @@ export default function GaugeChart({
   isEmpty,
   emptyTitle,
   emptyDescription,
-}: GaugeChartProps & { isEmpty?: boolean; emptyTitle?: string; emptyDescription?: string }) {
+}: GaugeChartProps & {
+  isEmpty?: boolean;
+  emptyTitle?: string;
+  emptyDescription?: string;
+}) {
   const { startDate, endDate } = useChartStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [animatedPercent, setAnimatedPercent] = useState(0);
@@ -116,51 +100,23 @@ export default function GaugeChart({
       hotWaterPerM3EUR: pricing?.hotWaterPerM3EUR ?? 8.0,
     };
 
-    // Data is already filtered by meter IDs at database level, no need for client-side filtering
-    const heatFiltered = heat;
-    const coldFiltered = cold;
-    const hotFiltered = hot;
+    // Get current actual readings only - no simulated historical data
+    const currentHeatWh = getCurrentEnergyData(heat);
+    const currentColdM3 = getCurrentVolumeData(cold);
+    const currentHotM3 = getCurrentVolumeData(hot);
 
-    // Build monthly series for all and filtered
-    const fullHeatSeries = getMonthlyEnergyDataWithDates(heat);
-    const fullColdSeries = getMonthlyVolumeDataWithDates(cold);
-    const fullHotSeries = getMonthlyVolumeDataWithDates(hot);
+    // Calculate total cost based on current readings
+    const totalCostEUR =
+      (currentHeatWh / 1000) * selectedPricing.energyPerKWhEUR +
+      currentColdM3 * selectedPricing.coldWaterPerM3EUR +
+      currentHotM3 * selectedPricing.hotWaterPerM3EUR;
 
-    const filteredHeatSeries = getMonthlyEnergyDataWithDates(heatFiltered);
-    const filteredColdSeries = getMonthlyVolumeDataWithDates(coldFiltered);
-    const filteredHotSeries = getMonthlyVolumeDataWithDates(hotFiltered);
+    // For gauge chart, show 100% since we're displaying current actual usage
+    // In a real scenario with budget data, you'd compare against budget/target
+    const percentValue = totalCostEUR > 0 ? 1 : 0;
 
-    const withinDate = ({ date }: { date: Date }) => {
-      if (!startDate || !endDate) return true;
-      return date >= startDate && date <= endDate;
-    };
-
-    const filteredHeatByDate = filteredHeatSeries.filter(withinDate);
-    const filteredColdByDate = filteredColdSeries.filter(withinDate);
-    const filteredHotByDate = filteredHotSeries.filter(withinDate);
-
-    const totalAllWh = fullHeatSeries.reduce((sum, d) => sum + d.value, 0);
-    const totalAllM3Cold = fullColdSeries.reduce((sum, d) => sum + d.value, 0);
-    const totalAllM3Hot = fullHotSeries.reduce((sum, d) => sum + d.value, 0);
-
-    const totalFilteredWh = filteredHeatByDate.reduce((sum, d) => sum + d.value, 0);
-    const totalFilteredM3Cold = filteredColdByDate.reduce((sum, d) => sum + d.value, 0);
-    const totalFilteredM3Hot = filteredHotByDate.reduce((sum, d) => sum + d.value, 0);
-
-    const allCostEUR =
-      (totalAllWh / 1000) * selectedPricing.energyPerKWhEUR +
-      totalAllM3Cold * selectedPricing.coldWaterPerM3EUR +
-      totalAllM3Hot * selectedPricing.hotWaterPerM3EUR;
-
-    const filteredCostEUR =
-      (totalFilteredWh / 1000) * selectedPricing.energyPerKWhEUR +
-      totalFilteredM3Cold * selectedPricing.coldWaterPerM3EUR +
-      totalFilteredM3Hot * selectedPricing.hotWaterPerM3EUR;
-
-    const percentValue = allCostEUR > 0 ? Math.min(filteredCostEUR / allCostEUR, 1) : filteredCostEUR > 0 ? 1 : 0;
-
-    return { percent: percentValue, euroCost: filteredCostEUR };
-  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, startDate, endDate]);
+    return { percent: percentValue, euroCost: totalCostEUR };
+  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -227,7 +183,9 @@ export default function GaugeChart({
       className={`rounded-xl relative shadow p-4 bg-white w-full h-full ${isEmpty ? "flex flex-col" : ""}`}
     >
       <div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-1">
-        <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">Gesamtkosten</h2>
+        <h2 className="text-lg max-small:text-sm max-medium:text-sm font-medium text-gray-800">
+          Gesamtkosten
+        </h2>
         <Image
           width={0}
           height={0}

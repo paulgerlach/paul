@@ -62,24 +62,35 @@ export default function TimeFilterPresets({
 
     switch (preset) {
       case "today":
-        from = today;
-        to = today;
+        from = new Date(today);
+        from.setHours(0, 0, 0, 0); // Start of today
+        to = new Date(today);
+        to.setHours(23, 59, 59, 999); // End of today
         break;
       case "yesterday":
-        from = subDays(today, 1);
-        to = subDays(today, 1);
+        const yesterday = subDays(today, 1);
+        from = new Date(yesterday);
+        from.setHours(0, 0, 0, 0); // Start of yesterday
+        to = new Date(yesterday);
+        to.setHours(23, 59, 59, 999); // End of yesterday
         break;
       case "7d":
         from = subDays(today, 6);
-        to = today;
+        from.setHours(0, 0, 0, 0); // Start of the first day
+        to = new Date(today);
+        to.setHours(23, 59, 59, 999); // End of today
         break;
       case "30d":
         from = subDays(today, 29);
-        to = today;
+        from.setHours(0, 0, 0, 0); // Start of the first day
+        to = new Date(today);
+        to.setHours(23, 59, 59, 999); // End of today
         break;
       case "90d":
         from = subDays(today, 89);
-        to = today;
+        from.setHours(0, 0, 0, 0); // Start of the first day
+        to = new Date(today);
+        to.setHours(23, 59, 59, 999); // End of today
         break;
       case "thisMonth":
         from = startOfMonth(today);

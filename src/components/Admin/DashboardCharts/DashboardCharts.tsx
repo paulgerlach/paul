@@ -136,16 +136,16 @@ export default function DashboardCharts() {
         (groups, item) => {
           const deviceType = item["Device Type"];
           switch (deviceType) {
-            case "Heat":
+            case 'Heat':
               groups.heat.push(item);
               break;
-            case "Water":
+            case 'Water':
               groups.coldWater.push(item);
               break;
-            case "WWater":
+            case 'WWater':
               groups.hotWater.push(item);
               break;
-            case "Elec":
+            case 'Elec':
               groups.electricity.push(item);
               break;
             default:

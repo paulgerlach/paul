@@ -1,229 +1,183 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
+import { useObjektsWithLocals, useUsersObjektsWithLocals } from "@/apiClient";
+import AdminApartmentsDropdownContent, {
+  ApartmentType,
+} from "@/components/Basic/Dropdown/AdminApartmentsDropdownContent";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/Basic/ui/Popover";
+import { chevron_admin, main_portfolio } from "@/static/icons";
 import { useChartStore } from "@/store/useChartStore";
-import { 
-  useWaterChartData, 
-  useElectricityChartData, 
-  useHeatChartData, 
-  useNotificationsChartData 
-} from "@/hooks/useChartData";
-import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+import { LocalType } from "@/types";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-// Utility functions for better code organization
-const isValidMeterReading = (item: any): boolean => {
-  return !!(
-    item &&
-    item["Device Type"] !== "Device Type" &&
-    item.ID &&
-    item["IV,0,0,0,,Date/Time"]
-  );
-};
+export default function AdminApartmentsDropdown() {
+  const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
+  const { user_id } = useParams();
+  const { data: apartments } = useObjektsWithLocals();
+  const { data: usersApartments } = useUsersObjektsWithLocals(String(user_id));
+  const { setMeterIds } = useChartStore();
 
-const WaterChart = dynamic(
-  () => import("@/components/Basic/Charts/WaterChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+  const isAdmin = !!user_id;
 
-const ElectricityChart = dynamic(
-  () => import("@/components/Basic/Charts/ElectricityChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+  const apartmentsToUse = isAdmin ? usersApartments : apartments;
 
-const GaugeChart = dynamic(
-  () => import("@/components/Basic/Charts/GaugeChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+  const toggleSelection = async (localId?: string) => {
+    if (!localId) return;
+    
+    const newSelectedIds = selectedLocalIds.includes(localId)
+      ? selectedLocalIds.filter((id) => id !== localId)
+      : [...selectedLocalIds, localId];
+      
+    setSelectedLocalIds(newSelectedIds);
 
-const HeatingCosts = dynamic(
-  () => import("@/components/Basic/Charts/HeatingCosts"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+    // Update meter IDs based on new selection
+    if (newSelectedIds.length > 0) {
+      try {
+        const response = await fetch('/api/meters-by-locals', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ localIds: newSelectedIds }),
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch meters');
+        
+        const { meters } = await response.json();
+        const allMeterIds = meters
+          .map((meter: any) => meter.id)
+          .filter((id: string) => Boolean(id));
 
-const NotificationsChart = dynamic(
-  () => import("@/components/Basic/Charts/NotificationsChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+        setMeterIds(allMeterIds);
+      } catch (error) {
+        console.error('Error fetching meter IDs:', error);
+        setMeterIds([]);
+      }
+    } else {
+      setMeterIds([]);
+    }
+  };
 
-const EinsparungChart = dynamic(
-  () => import("@/components/Basic/Charts/EinsparungChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
+  const selectAll = async () => {
+    const allIds =
+      apartmentsToUse?.flatMap((app) =>
+        app.locals
+          ?.filter((local: LocalType) => local && local.id)
+          .map((local: LocalType) => local.id)
+      ) || [];
 
+    setSelectedLocalIds(allIds);
 
+    if (allIds.length > 0) {
+      try {
+        const response = await fetch('/api/meters-by-locals', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ localIds: allIds }),
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch meters');
+        
+        const { meters } = await response.json();
+        const allMeterIds = meters
+          .map((meter: any) => meter.id)
+          .filter((id: string) => Boolean(id));
 
-export default function DashboardCharts() {
-  const { meterIds } = useChartStore();
+        console.log('Setting meter IDs from local_meters table:', allMeterIds);
+        setMeterIds(allMeterIds);
+      } catch (error) {
+        console.error('Error fetching meter IDs:', error);
+        setMeterIds([]);
+      }
+    } else {
+      setMeterIds([]);
+    }
+  };
 
-  // Individual chart data hooks
-  const coldWaterChart = useWaterChartData('cold');
-  const hotWaterChart = useWaterChartData('hot');
-  const electricityChart = useElectricityChartData();
-  const heatChart = useHeatChartData();
-  const notificationsChart = useNotificationsChartData();
+  useEffect(() => {
+    if (apartmentsToUse) {
+      selectAll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apartmentsToUse]);
 
-  // Combine data for GaugeChart (needs coldWater, hotWater, heat)
-  const gaugeChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...heatChart.data];
-  const gaugeChartLoading = coldWaterChart.loading || hotWaterChart.loading || heatChart.loading;
+  // Listen for global reset to select all
+  useEffect(() => {
+    const handler = () => {
+      selectAll();
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("admin-select-all-apartments", handler);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("admin-select-all-apartments", handler);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apartments, usersApartments, apartmentsToUse]);
 
-  // Combine data for EinsparungChart (needs all device types for CO2 calculations)
-  const einsparungChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...electricityChart.data, ...heatChart.data];
-  const einsparungChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
-
-  // Show message when no meter IDs are selected
-  if (!meterIds.length) {
-    return (
-      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
-        <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
-          <div className="text-gray-400 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-              />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Keine Wohnungen ausgewählt
-          </h3>
-          <p className="text-gray-600">
-            Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten anzuzeigen.
-          </p>
-        </div>
-      </ContentWrapper>
-    );
-  }
-
-  // Determine whether to show electricity chart based on data availability
-  const shouldShowElectricityChart = electricityChart.data.length > 0;
+  const clearSelection = () => {
+    setSelectedLocalIds([]);
+    setMeterIds([]);
+  };
 
   return (
-    <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
-      <div className="flex flex-col gap-3">
-        <div className="h-[312px]">
-          {coldWaterChart.loading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <WaterChart
-              csvText={coldWaterChart.data}
-              color="#6083CC"
-              title="Kaltwasser"
-              chartType="cold"
-              isEmpty={coldWaterChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          aria-controls="admin-apartments-dropdown"
+          className="flex w-full items-center gap-2 justify-between bg-transparent border-none cursor-pointer px-2 py-3 h-full"
+        >
+          <div className="flex items-center justify-start whitespace-nowrap gap-3">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="max-w-4 max-h-4 max-xl:max-w-4 max-xl:max-h-4 w-4 h-4"
+              loading="lazy"
+              alt="main_portfolio"
+              src={main_portfolio}
             />
-          )}
-        </div>
-        <div className="h-[271px]">
-          {hotWaterChart.loading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <WaterChart
-              csvText={hotWaterChart.data}
-              color="#E74B3C"
-              title="Warmwasser"
-              chartType="hot"
-              isEmpty={hotWaterChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <div className="h-[265px]">
-          {!shouldShowElectricityChart ? (
-            gaugeChartLoading ? (
-              <ChartCardSkeleton />
-            ) : (
-              <GaugeChart
-                heatReadings={heatChart.data}
-                coldWaterReadings={coldWaterChart.data}
-                hotWaterReadings={hotWaterChart.data}
-                isEmpty={gaugeChartData.length === 0}
-                emptyTitle="Keine Daten verfügbar."
-                emptyDescription="Keine Daten im ausgewählten Zeitraum."
-              />
-            )
-          ) : electricityChart.loading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <ElectricityChart
-              electricityReadings={electricityChart.data}
-              isEmpty={electricityChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
-            />
-          )}
-        </div>
-        <div className="h-[318px]">
-          {heatChart.loading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <HeatingCosts
-              csvText={heatChart.data}
-              isEmpty={heatChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <div className="h-[360px]">
-          {notificationsChart.loading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <NotificationsChart
-              isEmpty={notificationsChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Daten im ausgewählten Zeitraum."
-              parsedData={{ data: notificationsChart.data, errors: [] }}
-            />
-          )}
-        </div>
-        <div className="h-[220px]">
-          {einsparungChartLoading ? (
-            <ChartCardSkeleton />
-          ) : (
-            <EinsparungChart
-              selectedData={einsparungChartData}
-              isEmpty={einsparungChartData.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
-            />
-          )}
-        </div>
-      </div>
-    </ContentWrapper>
+            <div className="flex flex-col items-start justify-center">
+              <span className="font-bold text-sm">Mein Portfolio</span>
+              <span className="text-xs text-black/50">
+                {selectedLocalIds.length} Wohnung ausgewählt
+              </span>
+            </div>
+          </div>
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="max-w-2 max-h-5 transition-all duration-300 [.open_&]:rotate-180"
+            loading="lazy"
+            style={{ width: "100%", height: "auto" }}
+            alt="chevron_admin"
+            src={chevron_admin}
+          />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        id="admin-apartments-dropdown"
+        className="border-none shadow-none p-0"
+      >
+        <AdminApartmentsDropdownContent
+          selectedLocalIds={selectedLocalIds}
+          selectAll={selectAll}
+          clearSelection={clearSelection}
+          toggleSelection={toggleSelection}
+          apartments={apartmentsToUse as ApartmentType[]}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }

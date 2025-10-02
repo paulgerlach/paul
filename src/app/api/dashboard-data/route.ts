@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json();
-    const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam } = body;
+    const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
     
     // Validate parameters
     if (!Array.isArray(localMeterIds) || !localMeterIds.length) {
@@ -47,25 +47,25 @@ export async function POST(request: NextRequest) {
 
     const supabase = await supabaseServer();
 
-    // Query the parsed_data table directly with local_meter_id filtering
-    let query = supabase
-      .from('parsed_data')
-      .select('device_id, device_type, manufacturer, frame_type, version, access_number, status, encryption, parsed_data, local_meter_id');
+    console.log(`Fetching data for ${localMeterIds.length} meter IDs...`);
 
-    // Filter by local_meter_id (these are the IDs passed from the apartment dropdown)
-    if (localMeterIds.length > 0) {
-      query = query.in('local_meter_id', localMeterIds);
-    }
-
-    const { data: parsedData, error } = await query;
+    // Use the database function for optimized data fetching
+    const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
+      p_local_meter_ids: localMeterIds.length > 0 ? localMeterIds : null,
+      p_device_types: requestedDeviceTypes.length > 0 ? requestedDeviceTypes : null,
+      p_start_date: startDate ? startDate.toISOString().split('T')[0] : null,
+      p_end_date: endDate ? endDate.toISOString().split('T')[0] : null
+    });
 
     if (error) {
-      console.error('Error fetching data from database:', error);
+      console.error('Error calling get_dashboard_data function:', error);
       return NextResponse.json(
         { error: 'Database query failed', details: error.message },
         { status: 500 }
       );
     }
+
+    console.log(`Total records fetched from function: ${parsedData?.length || 0}`);
 
     if (!parsedData || parsedData.length === 0) {
       return NextResponse.json({
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Transform database records to match the expected MeterReadingType format
-    const transformedData: MeterReadingType[] = parsedData.map((record: any) => {
+    const transformedData: MeterReadingType[] = parsedData ? parsedData.map((record: any) => {
       const parsedDataJson = record.parsed_data;
 
       return {
@@ -97,33 +97,15 @@ export async function POST(request: NextRequest) {
         'Encryption': record.encryption || parsedDataJson['Encryption'] || 0,
         ...parsedDataJson // Include all the original measurement columns
       } as MeterReadingType;
-    });
+    }) : [];
 
     // Filter by valid device types and ensure DateTime exists
+    // Note: Date filtering is now handled by the database function
     const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
-    let filteredData = transformedData.filter(item =>
+    const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
       item['IV,0,0,0,,Date/Time']
     );
-
-    // Apply date range filtering if provided
-    if (startDate || endDate) {
-      filteredData = filteredData.filter((reading: MeterReadingType) => {
-        const dateTimeString = reading["IV,0,0,0,,Date/Time"];
-        if (!dateTimeString) return false;
-        
-        const dateString = dateTimeString.split(" ")[0];
-        const readingDate = parseGermanDate(dateString);
-        
-        if (!readingDate || isNaN(readingDate.getTime())) return false;
-        
-        // Apply date filters
-        if (startDate && readingDate < startDate) return false;
-        if (endDate && readingDate > endDate) return false;
-        
-        return true;
-      });
-    }
 
     // Group data by device type for metadata
     const deviceTypes = filteredData.reduce((acc, reading) => {
@@ -188,6 +170,7 @@ export interface DashboardDataRequest {
   meterIds: string[];
   startDate?: string | null;
   endDate?: string | null;
+  deviceTypes?: string[];
 }
 
 export interface DashboardDataResponse {

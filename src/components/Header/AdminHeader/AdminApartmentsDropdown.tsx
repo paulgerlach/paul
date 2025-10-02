@@ -39,18 +39,20 @@ export default function AdminApartmentsDropdown() {
     // Update meter IDs based on new selection
     if (newSelectedIds.length > 0) {
       try {
-        const allMeterPromises = newSelectedIds.map(async (localId) => {
-          const response = await fetch(`/api/meters-by-local?localId=${localId}`);
-          if (!response.ok) throw new Error(`Failed to fetch meters for local ${localId}`);
-          const { meters } = await response.json();
-          return meters;
+        const response = await fetch('/api/meters-by-locals', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ localIds: newSelectedIds }),
         });
-        const allMeterResults = await Promise.all(allMeterPromises);
         
-        const allMeterIds = allMeterResults
-          .flat()
-          .map(meter => meter.id)
-          .filter((id): id is string => Boolean(id));
+        if (!response.ok) throw new Error('Failed to fetch meters');
+        
+        const { meters } = await response.json();
+        const allMeterIds = meters
+          .map((meter: any) => meter.id)
+          .filter((id: string) => Boolean(id));
 
         setMeterIds(allMeterIds);
       } catch (error) {
@@ -74,20 +76,20 @@ export default function AdminApartmentsDropdown() {
 
     if (allIds.length > 0) {
       try {
-        // Get actual meter IDs from local_meters table for each local
-        const allMeterPromises = allIds.map(async (localId) => {
-          const response = await fetch(`/api/meters-by-local?localId=${localId}`);
-          if (!response.ok) throw new Error(`Failed to fetch meters for local ${localId}`);
-          const { meters } = await response.json();
-          return meters;
+        const response = await fetch('/api/meters-by-locals', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ localIds: allIds }),
         });
-        const allMeterResults = await Promise.all(allMeterPromises);
         
-        // Extract meter IDs from the results
-        const allMeterIds = allMeterResults
-          .flat()
-          .map(meter => meter.id)
-          .filter((id): id is string => Boolean(id));
+        if (!response.ok) throw new Error('Failed to fetch meters');
+        
+        const { meters } = await response.json();
+        const allMeterIds = meters
+          .map((meter: any) => meter.id)
+          .filter((id: string) => Boolean(id));
 
         console.log('Setting meter IDs from local_meters table:', allMeterIds);
         setMeterIds(allMeterIds);

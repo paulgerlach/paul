@@ -46,14 +46,20 @@ const getCurrentEnergyReadings = (
   } = {};
 
   readings.forEach((reading) => {
-    const dateString = reading["IV,0,0,0,,Date/Time"]?.split(" ")[0];
-    if (!dateString) return;
+    const dateTimeString = reading["IV,0,0,0,,Date/Time"];
+    if (!dateTimeString) return;
+
+    // Extract just the date part and handle the format properly
+    const dateString = dateTimeString.split(" ")[0];
+    if (!dateString || dateString === "00.00.00") return;
 
     const [day, month, year] = dateString.split(".").map(Number);
-    const readingDate = new Date(year, month - 1, day);
-    const dateKey = `${year}-${month - 1}-${day}`;
+    // Handle potential year formatting issues
+    const fullYear = year > 50 ? (year < 100 ? 1900 + year : year) : (year < 100 ? 2000 + year : year);
+    const readingDate = new Date(fullYear, month - 1, day);
+    const dateKey = `${fullYear}-${month - 1}-${day}`;
 
-    // Get current energy reading (cumulative)
+    // Get current energy reading (cumulative) - this is the main reading
     const currentReading = reading["IV,0,0,0,Wh,E"];
     let energyValue = 0;
 
@@ -184,25 +190,58 @@ export default function ElectricityChart({
     // Generate labels for the selected time range
     const labels = getLabelsForRange(startDate, endDate);
 
-    // Create chart data showing current readings
+    // Create chart data showing historical consumption over time
     const rows: { label: string; kwh: number }[] = [];
 
     if (filteredByDate.length > 0) {
-      // We have actual data - show the current total consumption
-      const totalCurrentWh = filteredByDate.reduce(
-        (sum, reading) => sum + reading.totalWh,
-        0
-      );
-      const totalCurrentKwh = totalCurrentWh / 1000;
-
-      // For now, show the current reading as a single point
-      // In a real scenario, you'd distribute this across the time period or show historical data
-      labels.forEach((label, index) => {
-        rows.push({
-          label,
-          kwh: index === labels.length - 1 ? totalCurrentKwh : 0, // Show all consumption in the last period
+      // Sort data by date to ensure proper chronological order
+      const sortedData = filteredByDate.sort((a, b) => a.date.getTime() - b.date.getTime());
+      
+      // If we have date ranges, map actual consumption periods
+      if (startDate && endDate) {
+        const monthsSpan = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                          (endDate.getMonth() - startDate.getMonth()) + 1;
+        
+        if (monthsSpan <= 2) {
+          // Daily granularity - show daily consumption
+          labels.forEach((label, index) => {
+            const dayData = sortedData[index];
+            const kwh = dayData ? dayData.totalWh / 1000 : 0;
+            rows.push({ label, kwh });
+          });
+        } else {
+          // Monthly granularity - aggregate by month
+          const monthlyTotals: { [key: string]: number } = {};
+          
+          sortedData.forEach(dataPoint => {
+            const monthKey = `${dataPoint.date.getMonth()}-${dataPoint.date.getFullYear()}`;
+            if (!monthlyTotals[monthKey]) {
+              monthlyTotals[monthKey] = 0;
+            }
+            monthlyTotals[monthKey] += dataPoint.totalWh / 1000;
+          });
+          
+          labels.forEach((label, index) => {
+            const targetDate = new Date(startDate);
+            targetDate.setMonth(startDate.getMonth() + index);
+            const monthKey = `${targetDate.getMonth()}-${targetDate.getFullYear()}`;
+            const kwh = monthlyTotals[monthKey] || 0;
+            rows.push({ label, kwh });
+          });
+        }
+      } else {
+        // No specific date range - show recent consumption
+        // Distribute the total consumption across available periods as average
+        const totalKwh = sortedData.reduce((sum, d) => sum + d.totalWh, 0) / 1000;
+        const avgKwhPerPeriod = totalKwh / labels.length;
+        
+        labels.forEach((label) => {
+          rows.push({
+            label,
+            kwh: avgKwhPerPeriod,
+          });
         });
-      });
+      }
     } else {
       // No data available
       labels.forEach((label) => {
@@ -219,7 +258,13 @@ export default function ElectricityChart({
     };
   }, [electricityReadings, startDate, endDate]);
 
-  console.log("Test data Elec:", data);
+  console.log("Electricity chart debug:", {
+    rawReadingsCount: electricityReadings?.length || 0,
+    currentReadings: getCurrentEnergyReadings(electricityReadings || []),
+    chartData: data,
+    dateRange: { startDate, endDate },
+    maxKWh
+  });
 
   // Medium benchmark per image: 2-person household ≈210 kWh/month
   const BENCHMARK_KWH_PER_MONTH = 210;

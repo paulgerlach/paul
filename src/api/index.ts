@@ -905,6 +905,19 @@ export async function getMetersByLocalId(localId: string): Promise<LocalMeterTyp
   return meters;
 }
 
+export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMeterType[]> {
+  if (localIds.length === 0) {
+    return [];
+  }
+
+  const meters = await database
+    .select()
+    .from(local_meters)
+    .where(inArray(local_meters.local_id, localIds));
+
+  return meters;
+}
+
 export async function getDocCostCategoryTypes(
   documentType: "betriebskostenabrechnung" | "heizkostenabrechnung" = "betriebskostenabrechnung",
   userIdParam?: string

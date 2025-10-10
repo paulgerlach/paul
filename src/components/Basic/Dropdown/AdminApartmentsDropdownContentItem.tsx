@@ -12,6 +12,7 @@ import {
 import { useEffect, useRef } from "react";
 import { UnitType } from "@/types";
 import { useChartStore } from "@/store/useChartStore";
+import { fetchSingleLocalMeterUUIDs } from "@/utils/meterUtils";
 
 export default function AdminApartmentsDropdownContentItem({
   item,
@@ -62,33 +63,40 @@ export default function AdminApartmentsDropdownContentItem({
           <div className="rounded-md localItem" key={local.id}>
             <input
               type="checkbox"
-              onChange={() => {
-                // Find the non-empty meterIds from the meter_ids array
-                const localMeterIds = (local?.meter_ids || [])
-                  .map((id) => id.trim())
-                  .filter(Boolean);
+              onChange={async () => {
+                if (!local.id) return;
+                
+                const isCurrentlySelected = selectedLocalIds.includes(
+                  local.id
+                );
 
-                if (localMeterIds?.length) {
-                  // If checkbox is being checked (not currently selected)
-                  if (!selectedLocalIds.includes(local?.id || "")) {
-                    // Add localMeterIds to the store if they're not already there
-                    const newMeterIds = localMeterIds.filter(
-                      (meterId) => !meterIds.includes(meterId)
+                // Call toggleSelection immediately for instant UI feedback
+                toggleSelection(local.id);
+
+                // Handle meter IDs asynchronously in the background
+                try {
+                  const localMeterUUIDs = await fetchSingleLocalMeterUUIDs(local.id);
+
+                  if (!isCurrentlySelected) {
+                    // If checkbox was being checked, add meter UUIDs to store
+                    const newMeterIds = localMeterUUIDs.filter(
+                      (meterId: string) => !meterIds.includes(meterId)
                     );
                     if (newMeterIds.length > 0) {
                       setMeterIds([...meterIds, ...newMeterIds]);
                     }
                   } else {
-                    // If checkbox is being unchecked (currently selected)
-                    // Remove localMeterIds from the store
+                    // If checkbox was being unchecked, remove meter UUIDs from store
                     const filteredMeterIds = meterIds.filter(
-                      (meterId) => !localMeterIds.includes(meterId)
+                      (meterId) => !localMeterUUIDs.includes(meterId)
                     );
                     setMeterIds(filteredMeterIds);
                   }
+                } catch (error) {
+                  console.error("Error updating meter IDs:", error);
+                  // Optionally revert the UI state on error
+                  // toggleSelection(local.id);
                 }
-
-                toggleSelection(local.id);
               }}
               id={local.id}
               checked={selectedLocalIds.includes(local?.id || "")}

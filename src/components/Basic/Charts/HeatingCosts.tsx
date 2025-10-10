@@ -285,8 +285,6 @@ export default function HeatingCosts({
     );
   }, [csvText, startDate, endDate]);
 
-  console.log("HeatingCosts data:", csvText, data);
-
   // Calculate dynamic domain and formatting based on chart data
   useEffect(() => {
     if (data.length > 0) {

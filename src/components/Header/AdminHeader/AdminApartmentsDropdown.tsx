@@ -12,6 +12,7 @@ import {
 import { chevron_admin, main_portfolio } from "@/static/icons";
 import { useChartStore } from "@/store/useChartStore";
 import { LocalType } from "@/types";
+import { fetchMeterUUIDs } from "@/utils/meterUtils";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,27 +39,8 @@ export default function AdminApartmentsDropdown() {
 
     // Update meter IDs based on new selection
     if (newSelectedIds.length > 0) {
-      try {
-        const response = await fetch('/api/meters-by-locals', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ localIds: newSelectedIds }),
-        });
-        
-        if (!response.ok) throw new Error('Failed to fetch meters');
-        
-        const { meters } = await response.json();
-        const allMeterIds = meters
-          .map((meter: any) => meter.id)
-          .filter((id: string) => Boolean(id));
-
-        setMeterIds(allMeterIds);
-      } catch (error) {
-        console.error('Error fetching meter IDs:', error);
-        setMeterIds([]);
-      }
+      const allMeterIds = await fetchMeterUUIDs(newSelectedIds);
+      setMeterIds(allMeterIds);
     } else {
       setMeterIds([]);
     }
@@ -75,28 +57,8 @@ export default function AdminApartmentsDropdown() {
     setSelectedLocalIds(allIds);
 
     if (allIds.length > 0) {
-      try {
-        const response = await fetch('/api/meters-by-locals', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ localIds: allIds }),
-        });
-        
-        if (!response.ok) throw new Error('Failed to fetch meters');
-        
-        const { meters } = await response.json();
-        const allMeterIds = meters
-          .map((meter: any) => meter.id)
-          .filter((id: string) => Boolean(id));
-
-        console.log('Setting meter IDs from local_meters table:', allMeterIds);
-        setMeterIds(allMeterIds);
-      } catch (error) {
-        console.error('Error fetching meter IDs:', error);
-        setMeterIds([]);
-      }
+      const allMeterIds = await fetchMeterUUIDs(allIds);
+      setMeterIds(allMeterIds);
     } else {
       setMeterIds([]);
     }

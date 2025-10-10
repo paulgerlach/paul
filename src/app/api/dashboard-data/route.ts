@@ -47,8 +47,6 @@ export async function POST(request: NextRequest) {
 
     const supabase = await supabaseServer();
 
-    console.log(`Fetching data for ${localMeterIds.length} meter IDs...`);
-
     // Use the database function for optimized data fetching
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
       p_local_meter_ids: localMeterIds.length > 0 ? localMeterIds : null,
@@ -64,8 +62,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    console.log(`Total records fetched from function: ${parsedData?.length || 0}`);
 
     if (!parsedData || parsedData.length === 0) {
       return NextResponse.json({

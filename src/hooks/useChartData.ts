@@ -153,8 +153,6 @@ export const useHeatChartData = (): ChartDataHookResult => {
   return { data, loading, error, refetch };
 };
 
-
-
 export const useNotificationsChartData = (): ChartDataHookResult => {
   const { meterIds, startDate, endDate } = useChartStore();
   const [data, setData] = useState<MeterReadingType[]>([]);

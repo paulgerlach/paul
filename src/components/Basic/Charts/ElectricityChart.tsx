@@ -258,14 +258,6 @@ export default function ElectricityChart({
     };
   }, [electricityReadings, startDate, endDate]);
 
-  console.log("Electricity chart debug:", {
-    rawReadingsCount: electricityReadings?.length || 0,
-    currentReadings: getCurrentEnergyReadings(electricityReadings || []),
-    chartData: data,
-    dateRange: { startDate, endDate },
-    maxKWh
-  });
-
   // Medium benchmark per image: 2-person household ≈210 kWh/month
   const BENCHMARK_KWH_PER_MONTH = 210;
 

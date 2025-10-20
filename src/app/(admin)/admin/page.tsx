@@ -2,6 +2,7 @@ import { getUsers } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminUserItem from "@/components/Admin/ObjekteItem/AdminUserItem";
+import RegistrationToggle from "@/components/Admin/RegistrationToggle/RegistrationToggle";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 
 export default async function AdminPage() {
@@ -16,9 +17,16 @@ export default async function AdminPage() {
       />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
         <div className="overflow-y-auto space-y-4">
-          {users.map((user) => (
-            <AdminUserItem key={user.id} item={user} />
-          ))}
+          {/* Registration Control */}
+          <RegistrationToggle />
+          
+          {/* User List */}
+          <div className="pt-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Benutzer</h2>
+            {users.map((user) => (
+              <AdminUserItem key={user.id} item={user} />
+            ))}
+          </div>
         </div>
       </ContentWrapper>
     </div>

@@ -318,3 +318,14 @@ export const heating_invoices = pgTable("heating_invoices", {
 	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Allow users to ALL their own heating bill documents", { as: "permissive", for: "all", to: ["public"] }),
 ]);
+
+export const system_settings = pgTable("system_settings", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	registration_enabled: boolean().default(true).notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	updated_by: uuid(),
+}, (table) => [
+	pgPolicy("Admins can view system settings", { as: "permissive", for: "select", to: ["public"], using: sql`is_admin()` }),
+	pgPolicy("Admins can update system settings", { as: "permissive", for: "update", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
+	pgPolicy("Anyone can view registration status", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
+]);

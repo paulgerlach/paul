@@ -13,8 +13,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
     
-    // Validate parameters
-    if (!Array.isArray(localMeterIds) || !localMeterIds.length) {
+    // Validate parameters - Filter out undefined/null values
+    const validMeterIds = Array.isArray(localMeterIds) 
+      ? localMeterIds.filter(id => id !== undefined && id !== null && id !== '') 
+      : [];
+    
+    if (!validMeterIds.length) {
+      console.warn('[dashboard-data] No valid meter IDs provided:', localMeterIds);
       return NextResponse.json(
         { error: 'No meter IDs provided or invalid format' },
         { status: 400 }
@@ -49,14 +54,15 @@ export async function POST(request: NextRequest) {
 
     // Use the database function for optimized data fetching
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
-      p_local_meter_ids: localMeterIds.length > 0 ? localMeterIds : null,
+      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : null,
       p_device_types: requestedDeviceTypes.length > 0 ? requestedDeviceTypes : null,
       p_start_date: startDate ? startDate.toISOString().split('T')[0] : null,
       p_end_date: endDate ? endDate.toISOString().split('T')[0] : null
     });
 
     if (error) {
-      console.error('Error calling get_dashboard_data function:', error);
+      console.error('[dashboard-data] Database error:', error);
+      console.error('[dashboard-data] Request params:', { validMeterIds, requestedDeviceTypes, startDate, endDate });
       return NextResponse.json(
         { error: 'Database query failed', details: error.message },
         { status: 500 }
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
           deviceTypes: {},
           dateRange: null,
           meterIds: [],
-          requestedMeterIds: localMeterIds
+          requestedMeterIds: validMeterIds
         }
       });
     }
@@ -141,7 +147,7 @@ export async function POST(request: NextRequest) {
         deviceTypes,
         dateRange: actualDateRange,
         meterIds: actualMeterIds,
-        requestedMeterIds: localMeterIds,
+        requestedMeterIds: validMeterIds,
         filters: {
           startDate: startDate?.toISOString() || null,
           endDate: endDate?.toISOString() || null
@@ -150,11 +156,11 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching dashboard data:', error);
+    console.error('[dashboard-data] Unexpected error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
       },
       { status: 500 }
     );

@@ -65,8 +65,14 @@ export default function ShareDashboardDialog() {
 
       setShareUrl(fullUrl);
 
-      // Copy to clipboard
-      await navigator.clipboard.writeText(fullUrl);
+      // Try to copy to clipboard (optional, don't fail if it doesn't work)
+      try {
+        await navigator.clipboard.writeText(fullUrl);
+        console.log('URL copied to clipboard automatically');
+      } catch (clipboardError) {
+        // Clipboard write failed, but that's okay - user can still use the copy button
+        console.log('Auto-copy skipped (requires user interaction)');
+      }
     } catch (error) {
       console.error("Failed to create share link:", error);
       alert("Failed to create share link. Please try again.");

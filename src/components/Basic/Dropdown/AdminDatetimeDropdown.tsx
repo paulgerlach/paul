@@ -31,16 +31,17 @@ export default function AdminDatetimeDropdown({
 
   // Set initial dates in the store when component mounts
   useEffect(() => {
-    if (startDate && endDate) {
+    // Only set dates if they don't exist in the store
+    if (!startDate || !endDate) {
+      const initialFrom = date?.from ?? startOfYear(new Date());
+      const initialTo = date?.to ?? endOfMonth(new Date());
+      setDates(initialFrom, initialTo);
+    } else {
+      // Sync local state with store
       setDate({ from: startDate, to: endDate });
-      return;
     }
-
-    const initialFrom = date?.from ?? startOfYear(new Date());
-    const initialTo = date?.to ?? endOfMonth(new Date());
-    setDates(initialFrom, initialTo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setDates, startDate, endDate]);
+  }, []); // Only run once on mount
 
   const getDefaultPreset = () => {
     const today = new Date();
@@ -86,15 +87,6 @@ export default function AdminDatetimeDropdown({
     }
     return "thisMonth" as const;
   };
-
-  // Set initial dates in the store when component mounts
-  useEffect(() => {
-    const initialFrom = date?.from || startOfYear(new Date());
-    const initialTo = date?.to || endOfMonth(new Date());
-
-    setDates(initialFrom, initialTo);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setDates]);
 
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);

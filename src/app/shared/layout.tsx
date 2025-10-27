@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../(admin)/globals.css";
+import QueryProvider from "../QueryProvider";
 
 export const metadata: Metadata = {
   title: "Shared Dashboard - Heidi Systems",
@@ -11,7 +12,8 @@ export default function SharedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // This layout simply wraps the children and ensures the admin styles are applied.
-  return <>{children}</>;
+  // Provide a separate QueryProvider instance to isolate the shared dashboard's queries
+  // from the admin dashboard's cached data
+  return <QueryProvider>{children}</QueryProvider>;
 }
 

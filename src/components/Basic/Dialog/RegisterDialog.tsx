@@ -15,6 +15,8 @@ import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
+import { useEffect, useState } from "react";
+import { getRegistrationStatus } from "@/actions/system-settings";
 
 const RegisterSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
@@ -28,6 +30,8 @@ type RegisterFormData = z.infer<typeof RegisterSchema>;
 export default function RegisterDialog() {
   const router = useRouter();
   const { openDialogByType, openDialog, closeDialog } = useDialogStore();
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
+  const [checkingStatus, setCheckingStatus] = useState(true);
 
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(RegisterSchema),
@@ -39,7 +43,25 @@ export default function RegisterDialog() {
     },
   });
 
+  // Check registration status on mount
+  useEffect(() => {
+    async function checkStatus() {
+      const { enabled } = await getRegistrationStatus();
+      setRegistrationEnabled(enabled);
+      setCheckingStatus(false);
+    }
+    if (openDialogByType.register) {
+      checkStatus();
+    }
+  }, [openDialogByType.register]);
+
   const onSubmit = async (data: RegisterFormData) => {
+    // Check registration status before proceeding
+    if (!registrationEnabled) {
+      toast.error("Registrierung ist derzeit nicht verfügbar");
+      return;
+    }
+
     const { email, password, first_name, last_name } = data;
 
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
@@ -134,9 +156,23 @@ export default function RegisterDialog() {
             <h2 className="text-3xl font-bold text-darkest-text">
               Konto erstellen
             </h2>
-            <p className="text-lg text-light-text mb-5">
-              Füllen Sie die folgenden Felder aus, um ein Konto zu erstellen
-            </p>
+            
+            {checkingStatus ? (
+              <p className="text-lg text-light-text mb-5">Überprüfung...</p>
+            ) : !registrationEnabled ? (
+              <div className="bg-orange-50 border border-orange-200 rounded-md p-4 mb-4">
+                <p className="text-orange-800 font-medium">
+                  ⚠️ Registrierung ist derzeit nicht verfügbar
+                </p>
+                <p className="text-sm text-orange-700 mt-1">
+                  Bitte kontaktieren Sie den Administrator für weitere Informationen.
+                </p>
+              </div>
+            ) : (
+              <p className="text-lg text-light-text mb-5">
+                Füllen Sie die folgenden Felder aus, um ein Konto zu erstellen
+              </p>
+            )}
 
             <FormInputField<RegisterFormData>
               control={methods.control}
@@ -194,11 +230,13 @@ export default function RegisterDialog() {
 
             <Button
               type="submit"
-              className="mt-6 flex w-full mx-auto px-[104px] max-xl:px-3.5 max-xl:py-4 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"
-              disabled={methods.formState.isSubmitting}
+              className="mt-6 flex w-full mx-auto px-[104px] max-xl:px-3.5 max-xl:py-4 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={methods.formState.isSubmitting || !registrationEnabled || checkingStatus}
             >
               {methods.formState.isSubmitting
                 ? "Registrieren..."
+                : !registrationEnabled
+                ? "Registrierung gesperrt"
                 : "Registrieren"}
             </Button>
 

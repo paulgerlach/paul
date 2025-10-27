@@ -20,13 +20,24 @@ import { useEffect, useState } from "react";
 export default function AdminApartmentsDropdown() {
   const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
   const { user_id } = useParams();
-  const { data: apartments } = useObjektsWithLocals();
-  const { data: usersApartments } = useUsersObjektsWithLocals(String(user_id));
+  const { data: apartments, isLoading: isLoadingApartments, error: apartmentsError } = useObjektsWithLocals();
+  const { data: usersApartments, isLoading: isLoadingUsersApartments, error: usersApartmentsError } = useUsersObjektsWithLocals(String(user_id));
   const { setMeterIds } = useChartStore();
 
   const isAdmin = !!user_id;
 
   const apartmentsToUse = isAdmin ? usersApartments : apartments;
+  const isLoading = isAdmin ? isLoadingUsersApartments : isLoadingApartments;
+  const error = isAdmin ? usersApartmentsError : apartmentsError;
+  
+  // Log apartment data status
+  console.log('[AdminApartmentsDropdown] Status:', {
+    isAdmin,
+    isLoading,
+    error,
+    apartmentsCount: apartmentsToUse?.length || 0,
+    selectedCount: selectedLocalIds.length
+  });
 
   const toggleSelection = async (localId?: string) => {
     if (!localId) return;
@@ -47,6 +58,13 @@ export default function AdminApartmentsDropdown() {
   };
 
   const selectAll = async () => {
+    if (!apartmentsToUse || apartmentsToUse.length === 0) {
+      console.log('[AdminApartmentsDropdown] No apartments available to select');
+      setSelectedLocalIds([]);
+      setMeterIds([]);
+      return;
+    }
+
     const allIds =
       apartmentsToUse?.flatMap((app) =>
         app.locals
@@ -54,10 +72,12 @@ export default function AdminApartmentsDropdown() {
           .map((local: LocalType) => local.id)
       ) || [];
 
+    console.log('[AdminApartmentsDropdown] Selecting all apartments:', allIds.length);
     setSelectedLocalIds(allIds);
 
     if (allIds.length > 0) {
       const allMeterIds = await fetchMeterUUIDs(allIds);
+      console.log('[AdminApartmentsDropdown] Fetched meter IDs:', allMeterIds.length);
       setMeterIds(allMeterIds);
     } else {
       setMeterIds([]);
@@ -65,11 +85,17 @@ export default function AdminApartmentsDropdown() {
   };
 
   useEffect(() => {
-    if (apartmentsToUse) {
+    // Only run selectAll when apartments data is loaded and not empty
+    if (!isLoading && apartmentsToUse && apartmentsToUse.length > 0) {
+      console.log('[AdminApartmentsDropdown] Auto-selecting all apartments on mount');
       selectAll();
+    } else if (!isLoading && (!apartmentsToUse || apartmentsToUse.length === 0)) {
+      console.log('[AdminApartmentsDropdown] No apartments to auto-select');
+      setSelectedLocalIds([]);
+      setMeterIds([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apartmentsToUse]);
+  }, [isLoading, apartmentsToUse]);
 
   // Listen for global reset to select all
   useEffect(() => {

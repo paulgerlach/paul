@@ -30,6 +30,7 @@ import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
+import { useAuthUser } from "@/apiClient";
 
 interface NotificationItem {
   leftIcon: StaticImageData;
@@ -113,6 +114,10 @@ export default function NotificationsChart({
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [notificationQueue, setNotificationQueue] = useState<NotificationItem[]>([]);
   const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
+  const { data: user } = useAuthUser();
+  
+  // Check if current user is the demo account
+  const isDemoAccount = user?.email === "heidi@hausverwaltung.de";
 
   const deleteNotification = (index: number) => {
     setNotifications((prev) => {
@@ -213,6 +218,28 @@ export default function NotificationsChart({
         // Check if this meter is selected AND has actual errors
         return meterId && meterIds.includes(meterId) && hasErrorFlag;
       });
+
+      // If no errors detected, show success notification
+      if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
+        const totalDevices = parsedData.data.length;
+        const heatDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Heat"
+        ).length;
+        const waterDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+        ).length;
+
+        dynamicNotifications.push({
+          leftIcon: notification,
+          rightIcon: green_check,
+          leftBg: "#E7E8EA",
+          rightBg: "#E7F2E8",
+          title: "Alle Zähler funktionieren korrekt",
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+        });
+
+        return dynamicNotifications;
+      }
 
       // Generate notifications for selected meters with errors
       selectedMetersWithErrors.forEach(device => {
@@ -379,7 +406,6 @@ export default function NotificationsChart({
         // Check if the notification's meter ID is in the selected meters
         // OR if any meter from the same category is selected
         const isMeterSelected = meterIds.includes(meterId);
-        console.log({ meterIds, isMeterSelected, meterId });
 
         if (isMeterSelected) {
           const rightIcon =
@@ -402,10 +428,6 @@ export default function NotificationsChart({
             " " +
             notification["Notification Message"];
 
-          console.log(
-            "notificationTypeWithMessage:",
-            notificationTypeWithMessage
-          );
           notifications.push({
             leftIcon: getLeftIconForNotificationType(
               notificationTypeWithMessage
@@ -419,39 +441,39 @@ export default function NotificationsChart({
         }
       }
 
-      console.log("All notifications before slice:", notifications);
-
       return notifications.slice(0, 4);
     };
 
-    // Combine dynamic and existing notifications
+    // Prevent unnecessary re-renders
+    if (!parsedData || isEmpty) {
+      setNotifications([]);
+      setNotificationQueue([]);
+      return;
+    }
+
+    // Combine dynamic and existing notifications based on user type
     try {
-      const dynamicNotifs = generateDynamicNotifications();
-      const existingNotifs = generateNotifications();
+      // Demo account (heidi@hausverwaltung.de) shows dummy notifications
+      // Live users see real error-based notifications
+      const finalNotifications = isDemoAccount 
+        ? generateNotifications()  // Shows dummy_notifications for demo
+        : generateDynamicNotifications();  // Shows real errors for live users
       
-      // Only show real dynamic notifications based on actual data
-      // No demo/fake notifications - only display what's actually detected
-      const realNotifications = dynamicNotifs;
+      // Split into displayed (first 4) and queue (rest)
+      const displayed = finalNotifications.slice(0, 4);
+      const queue = finalNotifications.slice(4);
       
-      // Split into displayed (first 4) and queue (rest) - only real notifications
-      const displayed = realNotifications.slice(0, 4);
-      const queue = realNotifications.slice(4);
-      
-      // Update both displayed notifications and queue with real data only
+      // Update both displayed notifications and queue
       setNotificationQueue(queue);
-      
-      console.log("Real notifications only:", realNotifications);
-      console.log("Displayed notifications:", displayed);
-      console.log("Queued notifications:", queue);
-      
       setNotifications(displayed);
     } catch (error) {
       // Fallback to existing logic if anything fails
-      console.warn('Dynamic notifications failed, using existing logic:', error);
+      console.warn('Notifications generation failed:', error);
       const fallback = generateNotifications();
       setNotifications(fallback);
     }
-  }, [isEmpty, parsedData, meterIds]);
+    // Use stable values in dependencies to prevent infinite loops
+  }, [isEmpty, parsedData?.data?.length, meterIds?.length, isDemoAccount]);
 
   const hasDeviceErrors =
     !isEmpty && parsedData?.data && getDevicesWithErrors(parsedData).length > 0;

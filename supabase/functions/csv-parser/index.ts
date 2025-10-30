@@ -328,16 +328,20 @@ class DatabaseHelper {
                     finalDeviceId = updatedId;
                 }
 
-                // CHECK IF THIS RECORD ALREADY EXISTS (using final device ID)
+                // CHECK IF THIS RECORD ALREADY EXISTS (check both original and final device ID)
                 const datetime = record['IV,0,0,0,,Date/Time']?.toString()
                               || record['Actual Date']?.toString()
                               || record['Raw Date']?.toString();
                 
                 if (datetime) {
-                    const signature = `${finalDeviceId}|${deviceType}|${datetime}`;
-                    if (existingSignatures.has(signature)) {
+                    // Check with final device ID (with prefix if applicable)
+                    const signatureFinal = `${finalDeviceId}|${deviceType}|${datetime}`;
+                    // Also check with original device ID (without prefix)
+                    const signatureOriginal = `${deviceId}|${deviceType}|${datetime}`;
+                    
+                    if (existingSignatures.has(signatureFinal) || existingSignatures.has(signatureOriginal)) {
                         skippedDuplicates++;
-                        console.log(`Skipping duplicate: ${signature}`);
+                        console.log(`Skipping duplicate: ${signatureFinal}`);
                         continue; // Skip this duplicate record
                     }
                 }

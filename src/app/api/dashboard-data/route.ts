@@ -104,7 +104,12 @@ export async function POST(request: NextRequest) {
     // Filter by valid device types and ensure date exists
     // Note: Date filtering is now handled by the database function
     // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date + Actual Time)
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec', 'Stromzähler', 'Warmwasserzähler', 'Kaltwasserzähler'];
+    const validDeviceTypes = [
+      // OLD format device types
+      'Heat', 'Water', 'WWater', 'Elec',
+      // NEW Engelmann format device types
+      'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'
+    ];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
       (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])

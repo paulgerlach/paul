@@ -46,7 +46,10 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deviceType = chartType === 'cold' ? 'Water' : 'WWater';
+  // Support both OLD format ('Water', 'WWater') and NEW format ('Kaltwasserzähler', 'Warmwasserzähler')
+  const deviceTypes = chartType === 'cold' 
+    ? ['Water', 'Kaltwasserzähler'] 
+    : ['WWater', 'Warmwasserzähler'];
 
   const fetchData = useCallback(async () => {
     if (!meterIds.length) {
@@ -58,7 +61,7 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
     setError(null);
 
     try {
-      const chartData = await fetchChartData(meterIds, [deviceType], startDate, endDate);
+      const chartData = await fetchChartData(meterIds, deviceTypes, startDate, endDate);
       setData(chartData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch water data');
@@ -66,7 +69,7 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
     } finally {
       setLoading(false);
     }
-  }, [meterIds, deviceType, startDate, endDate]);
+  }, [meterIds, deviceTypes, startDate, endDate]);
 
   const refetch = useCallback(() => {
     fetchData();
@@ -95,7 +98,8 @@ export const useElectricityChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      const chartData = await fetchChartData(meterIds, ['Elec'], startDate, endDate);
+      // Support both OLD format ('Elec') and NEW format ('Stromzähler')
+      const chartData = await fetchChartData(meterIds, ['Elec', 'Stromzähler'], startDate, endDate);
       setData(chartData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch electricity data');
@@ -132,7 +136,13 @@ export const useHeatChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      const chartData = await fetchChartData(meterIds, ['Heat'], startDate, endDate);
+      // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler')
+      const chartData = await fetchChartData(
+        meterIds, 
+        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler'], 
+        startDate, 
+        endDate
+      );
       setData(chartData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch heat data');
@@ -169,8 +179,16 @@ export const useNotificationsChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      // Notifications chart needs all device types
-      const chartData = await fetchChartData(meterIds, ['Heat', 'Water', 'WWater', 'Elec'], startDate, endDate);
+      // Notifications chart needs all device types (both old and new format names)
+      const chartData = await fetchChartData(
+        meterIds, 
+        [
+          'Heat', 'Water', 'WWater', 'Elec',  // OLD format
+          'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'  // NEW format
+        ], 
+        startDate, 
+        endDate
+      );
       setData(chartData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch notifications data');

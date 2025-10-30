@@ -9,6 +9,7 @@ import { ROUTE_ADMIN } from '@/routes/routes';
 interface UploadResult {
   recordCount?: number;
   insertedRecords?: number;
+  skippedDuplicates?: number;
   uniqueDeviceIds?: string;
   meterIdMatches?: {
     found: number;
@@ -231,6 +232,12 @@ export default function CSVUploadPage() {
                   <div className="text-sm text-gray-600">Records Inserted</div>
                   <div className="text-2xl font-bold text-green-600">
                     {result.insertedRecords}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600">Skipped Duplicates</div>
+                  <div className="text-xl font-bold text-purple-600">
+                    {result.skippedDuplicates || 0}
                   </div>
                 </div>
                 <div>

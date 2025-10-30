@@ -46,11 +46,6 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Support both OLD format ('Water', 'WWater') and NEW format ('Kaltwasserzähler', 'Warmwasserzähler')
-  const deviceTypes = chartType === 'cold' 
-    ? ['Water', 'Kaltwasserzähler'] 
-    : ['WWater', 'Warmwasserzähler'];
-
   const fetchData = useCallback(async () => {
     if (!meterIds.length) {
       setData([]);
@@ -61,6 +56,11 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
     setError(null);
 
     try {
+      // Support both OLD format ('Water', 'WWater') and NEW format ('Kaltwasserzähler', 'Warmwasserzähler')
+      const deviceTypes = chartType === 'cold' 
+        ? ['Water', 'Kaltwasserzähler'] 
+        : ['WWater', 'Warmwasserzähler'];
+      
       const chartData = await fetchChartData(meterIds, deviceTypes, startDate, endDate);
       setData(chartData);
     } catch (err) {
@@ -69,7 +69,7 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
     } finally {
       setLoading(false);
     }
-  }, [meterIds, deviceTypes, startDate, endDate]);
+  }, [meterIds, chartType, startDate, endDate]);
 
   const refetch = useCallback(() => {
     fetchData();

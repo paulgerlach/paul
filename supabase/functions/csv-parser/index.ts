@@ -109,6 +109,7 @@ class Utils {
 
     /**
      * Process CSV content into records
+     * Handles standard CSV format: single header row + multiple data rows
      */
     static processCSVContent(fileContent: string): ParsedRecord[] {
         const lines = fileContent
@@ -116,21 +117,27 @@ class Utils {
             .map(line => line.trim())
             .filter(line => line);
 
+        if (lines.length < 2) {
+            console.log('Not enough lines in CSV (need at least header + 1 data row)');
+            return [];
+        }
+
         const records: ParsedRecord[] = [];
-
-        // Process lines in pairs (header, data)
-        for (let i = 0; i < lines.length; i += 2) {
-            if (i + 1 < lines.length) {
-                const headerLine = lines[i];
-                const dataLine = lines[i + 1];
-
-                if (headerLine && dataLine) {
-                    const record = this.parseRecord(headerLine, dataLine);
-                    records.push(record);
-                }
+        
+        // First line is the header (column names)
+        const headerLine = lines[0];
+        
+        // Process all subsequent lines as data rows
+        for (let i = 1; i < lines.length; i++) {
+            const dataLine = lines[i];
+            
+            if (dataLine) {
+                const record = this.parseRecord(headerLine, dataLine);
+                records.push(record);
             }
         }
 
+        console.log(`Processed ${records.length} records from ${lines.length - 1} data rows`);
         return records;
     }
 }
@@ -219,14 +226,64 @@ class DatabaseHelper {
     }
 
     /**
-     * Insert parsed records into the database with optimized batch operations
+     * Check for existing records to prevent duplicates
      */
-    async insertParsedRecords(records: ParsedRecord[]): Promise<{ insertedCount: number; errors: string[]; meterIdStats: { found: number; notFound: number } }> {
+    async checkForDuplicates(records: ParsedRecord[]): Promise<Set<string>> {
+        try {
+            // Extract device IDs to check
+            const deviceIds = records
+                .map(record => (record['ID'] || record['Number Meter'])?.toString())
+                .filter(id => id) as string[];
+            
+            const uniqueDeviceIds = [...new Set(deviceIds)];
+
+            // Query existing records
+            const { data: existingRecords, error } = await this.supabase
+                .from('parsed_data')
+                .select('device_id, device_type, parsed_data')
+                .in('device_id', uniqueDeviceIds);
+
+            if (error) {
+                console.error('Error checking duplicates:', error);
+                return new Set();
+            }
+
+            // Create a Set of existing record signatures
+            // Signature format: device_id|device_type|datetime
+            const existingSignatures = new Set<string>();
+            
+            for (const existing of existingRecords || []) {
+                const datetime = existing.parsed_data?.['IV,0,0,0,,Date/Time'] 
+                              || existing.parsed_data?.['Actual Date']
+                              || existing.parsed_data?.['Raw Date'];
+                
+                if (datetime) {
+                    const signature = `${existing.device_id}|${existing.device_type}|${datetime}`;
+                    existingSignatures.add(signature);
+                }
+            }
+
+            return existingSignatures;
+        } catch (error) {
+            console.error('Exception in checkForDuplicates:', error);
+            return new Set();
+        }
+    }
+
+    /**
+     * Insert parsed records into the database with optimized batch operations and deduplication
+     */
+    async insertParsedRecords(records: ParsedRecord[]): Promise<{ 
+        insertedCount: number; 
+        errors: string[]; 
+        meterIdStats: { found: number; notFound: number };
+        skippedDuplicates: number;
+    }> {
         const errors: string[] = [];
 
-        // Extract unique device IDs for batch lookup
+        // Extract unique device IDs for batch lookup - support both old and new CSV formats
         const deviceIds = records
-            .map(record => record['ID']?.toString())
+            .map(record => (record['ID'] || record['Number Meter'])?.toString())
             .filter(id => id) as string[];
         
         const uniqueDeviceIds = [...new Set(deviceIds)];
@@ -238,19 +295,37 @@ class DatabaseHelper {
         const uniqueMeterIdFound = uniqueDeviceIds.filter(id => meterIdMap.has(id)).length;
         const uniqueMeterIdNotFound = uniqueDeviceIds.length - uniqueMeterIdFound;
 
+        // CHECK FOR DUPLICATES BEFORE PROCESSING
+        const existingSignatures = await this.checkForDuplicates(records);
+        let skippedDuplicates = 0;
+
         // Prepare all database records
         const dbRecords: DatabaseRecord[] = [];
 
         for (const record of records) {
             try {
-                // Extract core fields
-                const deviceId = record['ID']?.toString() || '';
+                // Extract core fields - support both old and new CSV formats
+                const deviceId = (record['ID'] || record['Number Meter'])?.toString() || '';
                 const deviceType = record['Device Type']?.toString() || '';
-                const manufacturer = record['Manufacturer']?.toString() || '';
+                const manufacturer = (record['Manufacturer'] || record['Telegram Type'])?.toString() || '';
 
                 if (!deviceId || !deviceType || !manufacturer) {
                     errors.push(`Missing required fields for record: ${JSON.stringify(record)}`);
                     continue;
+                }
+
+                // CHECK IF THIS RECORD ALREADY EXISTS
+                const datetime = record['IV,0,0,0,,Date/Time']?.toString()
+                              || record['Actual Date']?.toString()
+                              || record['Raw Date']?.toString();
+                
+                if (datetime) {
+                    const signature = `${deviceId}|${deviceType}|${datetime}`;
+                    if (existingSignatures.has(signature)) {
+                        skippedDuplicates++;
+                        console.log(`Skipping duplicate: ${signature}`);
+                        continue; // Skip this duplicate record
+                    }
                 }
 
                 // Get local_meter_id from cache
@@ -313,7 +388,8 @@ class DatabaseHelper {
             meterIdStats: { 
                 found: uniqueMeterIdFound, 
                 notFound: uniqueMeterIdNotFound 
-            } 
+            },
+            skippedDuplicates 
         };
     }
 }
@@ -435,9 +511,10 @@ serve(async (req: Request) => {
 
         // Insert records into database
         const dbHelper = new DatabaseHelper();
-        const { insertedCount, errors, meterIdStats } = await dbHelper.insertParsedRecords(result.parsedData);
+        const { insertedCount, errors, meterIdStats, skippedDuplicates } = await dbHelper.insertParsedRecords(result.parsedData);
 
         console.log(`Inserted ${insertedCount} records into database`)
+        console.log(`Skipped ${skippedDuplicates} duplicate records`)
         console.log(`Unique Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
         if (errors.length > 0) {
             console.warn('Database insertion errors:', errors);
@@ -452,6 +529,7 @@ serve(async (req: Request) => {
             recordCount: result.parsedData.length,
             uniqueDeviceIds: uniqueDeviceIds.size,
             insertedRecords: insertedCount,
+            skippedDuplicates: skippedDuplicates,
             meterIdMatches: {
                 found: meterIdStats.found,
                 notFound: meterIdStats.notFound

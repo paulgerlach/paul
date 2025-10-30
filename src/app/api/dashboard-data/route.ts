@@ -101,12 +101,13 @@ export async function POST(request: NextRequest) {
       } as MeterReadingType;
     }) : [];
 
-    // Filter by valid device types and ensure DateTime exists
+    // Filter by valid device types and ensure date exists
     // Note: Date filtering is now handled by the database function
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
+    // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date + Actual Time)
+    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec', 'Stromzähler', 'Warmwasserzähler', 'Kaltwasserzähler'];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
-      item['IV,0,0,0,,Date/Time']
+      (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
     );
 
     // Group data by device type for metadata
@@ -119,12 +120,33 @@ export async function POST(request: NextRequest) {
     }, {} as Record<string, number>);
 
     // Determine actual date range from the data
+    // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date or Raw Date)
     const dates = filteredData
       .map((reading) => {
-        const dateTimeString = reading["IV,0,0,0,,Date/Time"];
-        if (!dateTimeString) return null;
-        const dateString = dateTimeString.split(" ")[0];
-        return parseGermanDate(dateString);
+        // Try old format first
+        let dateTimeString = reading["IV,0,0,0,,Date/Time"];
+        if (dateTimeString) {
+          const dateString = dateTimeString.split(" ")[0];
+          return parseGermanDate(dateString);
+        }
+        
+        // Try new Engelmann format (Actual Date)
+        const actualDate = reading["Actual Date"];
+        if (actualDate) {
+          return parseGermanDate(actualDate);
+        }
+        
+        // Try Raw Date format (yyyy-mm-dd)
+        const rawDate = reading["Raw Date"];
+        if (rawDate) {
+          // Raw Date is in format "29-10-2025" or "dd-mm-yyyy"
+          const parts = rawDate.split("-");
+          if (parts.length === 3) {
+            return parseGermanDate(`${parts[0]}.${parts[1]}.${parts[2]}`);
+          }
+        }
+        
+        return null;
       })
       .filter((date): date is Date => date !== null && !isNaN(date.getTime()))
       .sort((a, b) => a.getTime() - b.getTime());

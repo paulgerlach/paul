@@ -249,7 +249,7 @@ export default function NotificationsChart({
         const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
         
         // Determine severity based on error type
-        const severity = errorFlag.includes("1") ? "critical" : "high";
+        const severity = errorFlag?.includes("1") ? "critical" : "high";
         const rightIcon = severity === "critical" ? alert_triangle : alert_triangle;
         const rightBg = severity === "critical" ? "#FFE5E5" : "#F7E7D5";
         

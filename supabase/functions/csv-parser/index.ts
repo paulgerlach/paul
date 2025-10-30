@@ -249,16 +249,18 @@ class DatabaseHelper {
             }
 
             // Create a Set of existing record signatures
-            // Signature format: device_id|device_type|datetime
+            // Signature format: device_id|device_type|dateOnly (DD.MM.YYYY)
             const existingSignatures = new Set<string>();
             
             for (const existing of existingRecords || []) {
-                const datetime = existing.parsed_data?.['IV,0,0,0,,Date/Time'] 
-                              || existing.parsed_data?.['Actual Date']
-                              || existing.parsed_data?.['Raw Date'];
+                let datetime = existing.parsed_data?.['IV,0,0,0,,Date/Time'] 
+                            || existing.parsed_data?.['Actual Date']
+                            || existing.parsed_data?.['Raw Date'];
                 
-                if (datetime) {
-                    const signature = `${existing.device_id}|${existing.device_type}|${datetime}`;
+                if (datetime && typeof datetime === 'string') {
+                    // Normalize to just the date part (first 10 characters: DD.MM.YYYY)
+                    const dateOnly = datetime.substring(0, 10);
+                    const signature = `${existing.device_id}|${existing.device_type}|${dateOnly}`;
                     existingSignatures.add(signature);
                 }
             }
@@ -329,15 +331,19 @@ class DatabaseHelper {
                 }
 
                 // CHECK IF THIS RECORD ALREADY EXISTS (check both original and final device ID)
-                const datetime = record['IV,0,0,0,,Date/Time']?.toString()
-                              || record['Actual Date']?.toString()
-                              || record['Raw Date']?.toString();
+                let datetime = record['IV,0,0,0,,Date/Time']?.toString()
+                            || record['Actual Date']?.toString()
+                            || record['Raw Date']?.toString();
                 
                 if (datetime) {
+                    // Normalize to just the date part (first 10 characters: DD.MM.YYYY)
+                    // This handles both "28.10.2025" and "28.10.2025 09:56 Winterzeit..."
+                    const dateOnly = datetime.substring(0, 10);
+                    
                     // Check with final device ID (with prefix if applicable)
-                    const signatureFinal = `${finalDeviceId}|${deviceType}|${datetime}`;
+                    const signatureFinal = `${finalDeviceId}|${deviceType}|${dateOnly}`;
                     // Also check with original device ID (without prefix)
-                    const signatureOriginal = `${deviceId}|${deviceType}|${datetime}`;
+                    const signatureOriginal = `${deviceId}|${deviceType}|${dateOnly}`;
                     
                     if (existingSignatures.has(signatureFinal) || existingSignatures.has(signatureOriginal)) {
                         skippedDuplicates++;

@@ -46,11 +46,24 @@ const getCurrentEnergyReadings = (
   } = {};
 
   readings.forEach((reading) => {
-    const dateTimeString = reading["IV,0,0,0,,Date/Time"];
-    if (!dateTimeString) return;
-
-    // Extract just the date part and handle the format properly
-    const dateString = dateTimeString.split(" ")[0];
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
+    
+    let dateString: string | null = null;
+    
+    if (oldFormatDate) {
+      // Old format: "29.10.2025 09:56..."
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate) {
+      // New format: "29.10.2025"
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate) {
+      // Raw Date format: "29-10-2025" → convert to "29.10.2025"
+      dateString = newRawDate.replace(/-/g, ".");
+    }
+    
     if (!dateString || dateString === "00.00.00") return;
 
     const [day, month, year] = dateString.split(".").map(Number);
@@ -59,10 +72,15 @@ const getCurrentEnergyReadings = (
     const readingDate = new Date(fullYear, month - 1, day);
     const dateKey = `${fullYear}-${month - 1}-${day}`;
 
-    // Get current energy reading (cumulative) - this is the main reading
-    const currentReading = reading["IV,0,0,0,Wh,E"];
+    // Get current energy reading (cumulative)
+    // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+    const oldFormatReading = reading["IV,0,0,0,Wh,E"];
+    const newFormatReading = reading["Actual Energy / HCA"];
+    
     let energyValue = 0;
 
+    const currentReading = newFormatReading !== undefined ? newFormatReading : oldFormatReading;
+    
     if (typeof currentReading === "number") {
       energyValue = currentReading;
     } else if (typeof currentReading === "string") {

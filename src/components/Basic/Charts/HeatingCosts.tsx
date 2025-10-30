@@ -36,7 +36,23 @@ const monthNames = [
 
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
-  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  
+  // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+  const oldFormatDate = readings[0]["IV,0,0,0,,Date/Time"];
+  const newActualDate = readings[0]["Actual Date"];
+  const newRawDate = readings[0]["Raw Date"];
+  
+  let dateString: string | null = null;
+  
+  if (oldFormatDate) {
+    dateString = oldFormatDate.split(" ")[0];
+  } else if (newActualDate) {
+    dateString = newActualDate.split(" ")[0];
+  } else if (newRawDate) {
+    // Convert "29-10-2025" to "29.10.2025"
+    dateString = newRawDate.replace(/-/g, ".");
+  }
+  
   if (!dateString) return null;
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);
@@ -48,7 +64,21 @@ const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
   const dates: Date[] = [];
 
   readings.forEach((reading) => {
-    const dateString = reading["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
+    
+    let dateString: string | null = null;
+    
+    if (oldFormatDate) {
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate) {
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate) {
+      dateString = newRawDate.replace(/-/g, ".");
+    }
+    
     if (dateString && !uniqueDates.has(dateString)) {
       uniqueDates.add(dateString);
       const [day, month, year] = dateString.split(".").map(Number);
@@ -104,7 +134,11 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   }
 
   // Check for obvious error values in energy reading
-  const currentValue = reading["IV,0,0,0,Wh,E"];
+  // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+  const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
+  const newFormatEnergy = reading["Actual Energy / HCA"];
+  const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+  
   let numValue = 0;
   if (currentValue != null) {
     numValue =
@@ -120,7 +154,11 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   }
 
   // Check for error patterns in volume
-  const volume = reading["IV,0,0,0,m^3,Vol"];
+  // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
+  const oldFormatVolume = reading["IV,0,0,0,m^3,Vol"];
+  const newFormatVolume = reading["Actual Volume"];
+  const volume = newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume;
+  
   let volumeValue = 0;
   if (volume != null) {
     volumeValue =
@@ -176,7 +214,21 @@ const aggregateDataByTimeRange = (
   // Aggregate readings by date for current energy values
   const readingsByDate = new Map<string, number>();
   validReadings.forEach((reading) => {
-    const dateString = reading["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
+    
+    let dateString: string | null = null;
+    
+    if (oldFormatDate) {
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate) {
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate) {
+      dateString = newRawDate.replace(/-/g, ".");
+    }
+    
     if (!dateString) return;
 
     const [day, month, year] = dateString.split(".").map(Number);
@@ -185,7 +237,11 @@ const aggregateDataByTimeRange = (
     // Check if date is in range
     if (startDate && endDate && (date < startDate || date > endDate)) return;
 
-    const currentValue = reading["IV,0,0,0,Wh,E"];
+    // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+    const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
+    const newFormatEnergy = reading["Actual Energy / HCA"];
+    const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+    
     let numValue = 0;
     if (currentValue != null) {
       numValue =

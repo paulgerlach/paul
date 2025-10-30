@@ -298,7 +298,11 @@ export default function WaterChart({
     const processedData: ProcessedData[] = [];
 
     csvText.forEach((device) => {
-      const volume = parseVolume(device["IV,0,0,0,m^3,Vol"]);
+      // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
+      const oldFormatVolume = device["IV,0,0,0,m^3,Vol"];
+      const newFormatVolume = device["Actual Volume"];
+      
+      const volume = parseVolume(newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume);
 
       // Convert from cubic meters to liters (1 m³ = 1000 L)
       // Preserve decimal precision for exact values
@@ -307,7 +311,24 @@ export default function WaterChart({
       // Skip zero or negative volumes
       if (volumeInLiters <= 0) return;
 
-      const dateTimeString = device["IV,0,0,0,,Date/Time"];
+      // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+      const oldFormatDate = device["IV,0,0,0,,Date/Time"];
+      const newActualDate = device["Actual Date"];
+      const newRawDate = device["Raw Date"];
+      
+      let dateTimeString: string | null = null;
+      
+      if (oldFormatDate) {
+        dateTimeString = oldFormatDate;
+      } else if (newActualDate) {
+        // New format may include time: "29.10.2025" or "29.10.2025 09:56..."
+        const actualTime = device["Actual Time"] || "";
+        dateTimeString = actualTime ? `${newActualDate} ${actualTime}` : newActualDate;
+      } else if (newRawDate) {
+        // Raw Date format: "29-10-2025" → convert to "29.10.2025"
+        dateTimeString = newRawDate.replace(/-/g, ".");
+      }
+      
       if (!dateTimeString) return;
 
       const parsedDate = parseTimestamp(dateTimeString);
@@ -315,9 +336,12 @@ export default function WaterChart({
       // Apply date range filter
       if (!isWithinDateRange(parsedDate, startDate, endDate)) return;
 
+      // Support both old "ID" field and new "Number Meter" field
+      const deviceId = device.ID || device["Number Meter"] || "";
+
       processedData.push({
         date: parsedDate,
-        deviceId: device.ID.toString(),
+        deviceId: deviceId.toString(),
         volume: volumeInLiters,
       });
     });

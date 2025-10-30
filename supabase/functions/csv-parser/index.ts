@@ -314,20 +314,6 @@ class DatabaseHelper {
                     continue;
                 }
 
-                // CHECK IF THIS RECORD ALREADY EXISTS
-                const datetime = record['IV,0,0,0,,Date/Time']?.toString()
-                              || record['Actual Date']?.toString()
-                              || record['Raw Date']?.toString();
-                
-                if (datetime) {
-                    const signature = `${deviceId}|${deviceType}|${datetime}`;
-                    if (existingSignatures.has(signature)) {
-                        skippedDuplicates++;
-                        console.log(`Skipping duplicate: ${signature}`);
-                        continue; // Skip this duplicate record
-                    }
-                }
-
                 // Get local_meter_id from cache
                 const localMeterId = meterIdMap.get(deviceId) || null;
 
@@ -340,6 +326,20 @@ class DatabaseHelper {
                     const updatedId = `1EMH00${deviceId}`;
                     updatedRecord['ID'] = updatedId;
                     finalDeviceId = updatedId;
+                }
+
+                // CHECK IF THIS RECORD ALREADY EXISTS (using final device ID)
+                const datetime = record['IV,0,0,0,,Date/Time']?.toString()
+                              || record['Actual Date']?.toString()
+                              || record['Raw Date']?.toString();
+                
+                if (datetime) {
+                    const signature = `${finalDeviceId}|${deviceType}|${datetime}`;
+                    if (existingSignatures.has(signature)) {
+                        skippedDuplicates++;
+                        console.log(`Skipping duplicate: ${signature}`);
+                        continue; // Skip this duplicate record
+                    }
                 }
 
                 // Prepare database record

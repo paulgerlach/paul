@@ -51,10 +51,10 @@ export default function FlipCard({
 
   return (
     <div className={`relative w-full h-full ${className}`}>
-      {/* Flip Button - Always visible on top */}
+      {/* Flip Button - Positioned next to the chart icon */}
       <button
         onClick={handleFlip}
-        className="absolute top-3 right-3 z-50 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 group"
+        className="absolute top-3 right-12 z-50 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 group"
         aria-label="Flip card"
         title="Flip to see alternate view"
       >

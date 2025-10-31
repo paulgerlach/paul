@@ -201,9 +201,21 @@ export default function NotificationsChart({
   useEffect(() => {
     // NEW: Generate dynamic notifications based on real CSV data and meter selection
     const generateDynamicNotifications = (): NotificationItem[] => {
-      // Defensive programming - ensure we have data and selected meters
-      if (!parsedData?.data || !meterIds || meterIds.length === 0) {
+      // If no data at all, return empty (will show "No data uploaded" message)
+      if (!parsedData?.data || parsedData.data.length === 0) {
         return []; // Graceful fallback
+      }
+
+      // If no meters selected, show "Please select meters" notification
+      if (!meterIds || meterIds.length === 0) {
+        return [{
+          leftIcon: notification,
+          rightIcon: blue_info,
+          leftBg: "#E7E8EA",
+          rightBg: "#E5EBF5",
+          title: "Keine Wohnungen ausgewählt",
+          subtitle: "Bitte wählen Sie Wohnungen aus, um Benachrichtigungen anzuzeigen.",
+        }];
       }
       
       const dynamicNotifications: NotificationItem[] = [];
@@ -249,7 +261,7 @@ export default function NotificationsChart({
         const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
         
         // Determine severity based on error type
-        const severity = errorFlag.includes("1") ? "critical" : "high";
+        const severity = errorFlag?.includes("1") ? "critical" : "high";
         const rightIcon = severity === "critical" ? alert_triangle : alert_triangle;
         const rightBg = severity === "critical" ? "#FFE5E5" : "#F7E7D5";
         
@@ -506,7 +518,7 @@ export default function NotificationsChart({
         />
       </div>
       <div className="space-y-2 flex-1 overflow-auto">
-        {isEmpty || notifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

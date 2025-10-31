@@ -47,6 +47,43 @@ interface DatabaseRecord {
     status?: string;
     encryption?: number;
     parsed_data: any;
+    date_only?: string; // YYYY-MM-DD format for DB unique constraint
+}
+
+/**
+ * Helper function to extract and normalize date to YYYY-MM-DD format
+ * Handles multiple date formats: DD.MM.YYYY, DD-MM-YYYY
+ */
+function extractDateOnly(record: any): string | null {
+    // Try different date field names
+    const dateFields = [
+        record['Actual Date'],
+        record['IV,0,0,0,,Date/Time'],
+        record['Raw Date']
+    ];
+
+    for (const dateStr of dateFields) {
+        if (!dateStr || typeof dateStr !== 'string') continue;
+
+        // Extract first 10 characters and trim
+        const normalized = dateStr.substring(0, 10).trim();
+
+        // Match DD.MM.YYYY format
+        const dotMatch = normalized.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        if (dotMatch) {
+            const [_, day, month, year] = dotMatch;
+            return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+        }
+
+        // Match DD-MM-YYYY format
+        const dashMatch = normalized.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        if (dashMatch) {
+            const [_, day, month, year] = dashMatch;
+            return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+        }
+    }
+
+    return null; // No valid date found
 }
 
 /**
@@ -109,6 +146,7 @@ class Utils {
 
     /**
      * Process CSV content into records
+     * Handles standard CSV format: single header row + multiple data rows
      */
     static processCSVContent(fileContent: string): ParsedRecord[] {
         const lines = fileContent
@@ -116,21 +154,27 @@ class Utils {
             .map(line => line.trim())
             .filter(line => line);
 
+        if (lines.length < 2) {
+            console.log('Not enough lines in CSV (need at least header + 1 data row)');
+            return [];
+        }
+
         const records: ParsedRecord[] = [];
 
-        // Process lines in pairs (header, data)
-        for (let i = 0; i < lines.length; i += 2) {
-            if (i + 1 < lines.length) {
-                const headerLine = lines[i];
-                const dataLine = lines[i + 1];
-
-                if (headerLine && dataLine) {
+        // First line is the header (column names)
+        const headerLine = lines[0];
+        
+        // Process all subsequent lines as data rows
+        for (let i = 1; i < lines.length; i++) {
+            const dataLine = lines[i];
+            
+            if (dataLine) {
                     const record = this.parseRecord(headerLine, dataLine);
                     records.push(record);
-                }
             }
         }
 
+        console.log(`Processed ${records.length} records from ${lines.length - 1} data rows`);
         return records;
     }
 }
@@ -219,14 +263,86 @@ class DatabaseHelper {
     }
 
     /**
-     * Insert parsed records into the database with optimized batch operations
+     * Check for existing records to prevent duplicates
      */
-    async insertParsedRecords(records: ParsedRecord[]): Promise<{ insertedCount: number; errors: string[]; meterIdStats: { found: number; notFound: number } }> {
+    async checkForDuplicates(records: ParsedRecord[]): Promise<Set<string>> {
+        try {
+            // Extract device IDs to check
+            const deviceIds = records
+                .map(record => (record['ID'] || record['Number Meter'])?.toString())
+                .filter(id => id) as string[];
+            
+            const uniqueDeviceIds = [...new Set(deviceIds)];
+            console.log(`[DEDUP] Checking ${uniqueDeviceIds.length} unique device IDs:`, uniqueDeviceIds.slice(0, 5));
+
+            // Create potential Elec device IDs with 1EMH00 prefix
+            const elecDeviceIds = uniqueDeviceIds.map(id => `1EMH00${id}`);
+            const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
+            console.log(`[DEDUP] Searching for ${allSearchIds.length} total IDs (including prefixed)`);
+
+            // Query existing records for BOTH original AND prefixed device IDs
+            // Use date_only column for accurate comparison (YYYY-MM-DD format)
+            const { data: existingRecords, error } = await this.supabase
+                .from('parsed_data')
+                .select('device_id, device_type, date_only')
+                .in('device_id', allSearchIds)
+                .not('date_only', 'is', null); // Only get records with dates
+
+            if (error) {
+                console.error('[DEDUP] Error checking duplicates:', error);
+                return new Set();
+            }
+
+            console.log(`[DEDUP] Found ${existingRecords?.length || 0} existing records in database`);
+
+            // Create a Set of existing record signatures
+            // Signature format: device_id|device_type|dateYYYY-MM-DD
+            const existingSignatures = new Set<string>();
+            
+            for (const existing of existingRecords || []) {
+                if (existing.date_only) {
+                    // date_only is already in YYYY-MM-DD format from database
+                    const dateStr = existing.date_only.toString();
+                    const signature = `${existing.device_id}|${existing.device_type}|${dateStr}`;
+                    existingSignatures.add(signature);
+                    
+                    // ALSO add signature without prefix (if it has prefix)
+                    // So "1EMH0050893199" also creates signature for "50893199"
+                    if (existing.device_id.startsWith('1EMH00')) {
+                        const unprefixedId = existing.device_id.substring(6); // Remove "1EMH00"
+                        const unprefixedSignature = `${unprefixedId}|${existing.device_type}|${dateStr}`;
+                        existingSignatures.add(unprefixedSignature);
+                    }
+                }
+            }
+
+            console.log(`[DEDUP] Created ${existingSignatures.size} unique signatures from existing records`);
+            if (existingSignatures.size > 0) {
+                const firstFew = Array.from(existingSignatures).slice(0, 3);
+                console.log(`[DEDUP] Sample signatures (format: device_id|type|YYYY-MM-DD):`, firstFew);
+            }
+
+            return existingSignatures;
+        } catch (error) {
+            console.error('Exception in checkForDuplicates:', error);
+            return new Set();
+        }
+    }
+
+    /**
+     * Insert parsed records into the database with optimized batch operations and deduplication
+     */
+    async insertParsedRecords(records: ParsedRecord[]): Promise<{ 
+        insertedCount: number; 
+        errors: string[]; 
+        meterIdStats: { found: number; notFound: number };
+        skippedDuplicates: number;
+    }> {
         const errors: string[] = [];
 
-        // Extract unique device IDs for batch lookup
+        // Extract unique device IDs for batch lookup - support both old and new CSV formats
         const deviceIds = records
-            .map(record => record['ID']?.toString())
+            .map(record => (record['ID'] || record['Number Meter'])?.toString())
             .filter(id => id) as string[];
         
         const uniqueDeviceIds = [...new Set(deviceIds)];
@@ -238,15 +354,19 @@ class DatabaseHelper {
         const uniqueMeterIdFound = uniqueDeviceIds.filter(id => meterIdMap.has(id)).length;
         const uniqueMeterIdNotFound = uniqueDeviceIds.length - uniqueMeterIdFound;
 
+        // CHECK FOR DUPLICATES BEFORE PROCESSING
+        const existingSignatures = await this.checkForDuplicates(records);
+        let skippedDuplicates = 0;
+
         // Prepare all database records
         const dbRecords: DatabaseRecord[] = [];
 
         for (const record of records) {
             try {
-                // Extract core fields
-                const deviceId = record['ID']?.toString() || '';
+                // Extract core fields - support both old and new CSV formats
+                const deviceId = (record['ID'] || record['Number Meter'])?.toString() || '';
                 const deviceType = record['Device Type']?.toString() || '';
-                const manufacturer = record['Manufacturer']?.toString() || '';
+                const manufacturer = (record['Manufacturer'] || record['Telegram Type'])?.toString() || '';
 
                 if (!deviceId || !deviceType || !manufacturer) {
                     errors.push(`Missing required fields for record: ${JSON.stringify(record)}`);
@@ -267,6 +387,23 @@ class DatabaseHelper {
                     finalDeviceId = updatedId;
                 }
 
+                // Extract date_only for DB unique constraint (YYYY-MM-DD format)
+                const dateOnlyYYYYMMDD = extractDateOnly(record);
+
+                // CHECK IF THIS RECORD ALREADY EXISTS (check both original and final device ID)
+                if (dateOnlyYYYYMMDD) {
+                    // Check with final device ID (with prefix if applicable)
+                    const signatureFinal = `${finalDeviceId}|${deviceType}|${dateOnlyYYYYMMDD}`;
+                    // Also check with original device ID (without prefix)
+                    const signatureOriginal = `${deviceId}|${deviceType}|${dateOnlyYYYYMMDD}`;
+                    
+                    if (existingSignatures.has(signatureFinal) || existingSignatures.has(signatureOriginal)) {
+                        skippedDuplicates++;
+                        console.log(`[DEDUP] Skipping duplicate: ${signatureFinal}`);
+                        continue; // Skip this duplicate record
+                    }
+                }
+
                 // Prepare database record
                 const dbRecord: DatabaseRecord = {
                     local_meter_id: localMeterId || undefined,
@@ -278,7 +415,8 @@ class DatabaseHelper {
                     access_number: typeof record['Access Number'] === 'number' ? record['Access Number'] : undefined,
                     status: record['Status']?.toString(),
                     encryption: typeof record['Encryption'] === 'number' ? record['Encryption'] : undefined,
-                    parsed_data: updatedRecord
+                    parsed_data: updatedRecord,
+                    date_only: dateOnlyYYYYMMDD || undefined
                 };
 
                 dbRecords.push(dbRecord);
@@ -289,6 +427,9 @@ class DatabaseHelper {
         }
 
         // Batch insert all records
+        // Duplicates are prevented by:
+        // 1. App-level: checkForDuplicates() skips known duplicates BEFORE insert
+        // 2. DB-level: Unique index on (device_id, device_type, date_only) blocks any that slip through
         let insertedCount = 0;
         if (dbRecords.length > 0) {
             try {
@@ -298,12 +439,21 @@ class DatabaseHelper {
                     .select('device_id');
 
                 if (error) {
+                    // Unique constraint violations (error code 23505) mean duplicates were blocked by DB
+                    if (error.code === '23505') {
+                        console.log(`DB unique constraint blocked duplicate records (this is normal)`);
+                        insertedCount = 0;
+                    } else {
                     errors.push(`Batch insert error: ${error.message}`);
+                        console.error('Batch insert error details:', error);
+                    }
                 } else {
                     insertedCount = data ? data.length : 0;
+                    console.log(`Successfully inserted ${insertedCount} new records`);
                 }
             } catch (error) {
                 errors.push(`Batch insert exception: ${error instanceof Error ? error.message : String(error)}`);
+                console.error('Batch insert exception:', error);
             }
         }
 
@@ -313,7 +463,8 @@ class DatabaseHelper {
             meterIdStats: { 
                 found: uniqueMeterIdFound, 
                 notFound: uniqueMeterIdNotFound 
-            } 
+            },
+            skippedDuplicates 
         };
     }
 }
@@ -435,9 +586,10 @@ serve(async (req: Request) => {
 
         // Insert records into database
         const dbHelper = new DatabaseHelper();
-        const { insertedCount, errors, meterIdStats } = await dbHelper.insertParsedRecords(result.parsedData);
+        const { insertedCount, errors, meterIdStats, skippedDuplicates } = await dbHelper.insertParsedRecords(result.parsedData);
 
         console.log(`Inserted ${insertedCount} records into database`)
+        console.log(`Skipped ${skippedDuplicates} duplicate records`)
         console.log(`Unique Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
         if (errors.length > 0) {
             console.warn('Database insertion errors:', errors);
@@ -452,6 +604,7 @@ serve(async (req: Request) => {
             recordCount: result.parsedData.length,
             uniqueDeviceIds: uniqueDeviceIds.size,
             insertedRecords: insertedCount,
+            skippedDuplicates: skippedDuplicates,
             meterIdMatches: {
                 found: meterIdStats.found,
                 notFound: meterIdStats.notFound

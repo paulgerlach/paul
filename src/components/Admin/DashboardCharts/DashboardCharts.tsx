@@ -9,7 +9,9 @@ import {
   useHeatChartData, 
   useNotificationsChartData 
 } from "@/hooks/useChartData";
+import { useAdditionalCosts } from "@/hooks/useAdditionalCosts";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+import FlipCard from "@/components/Basic/FlipCard/FlipCard";
 
 const WaterChart = dynamic(
   () => import("@/components/Basic/Charts/WaterChart"),
@@ -61,7 +63,7 @@ const EinsparungChart = dynamic(
 
 
 
-export default function DashboardCharts() {
+export default function DashboardCharts({ viewingUserId }: { viewingUserId?: string }) {
   const { meterIds } = useChartStore();
 
   // Individual chart data hooks
@@ -70,6 +72,10 @@ export default function DashboardCharts() {
   const electricityChart = useElectricityChartData();
   const heatChart = useHeatChartData();
   const notificationsChart = useNotificationsChartData();
+  
+  // Fetch user's monthly advance payment (Nebenkostenvorauszahlung)
+  // Pass viewingUserId if admin is viewing another user's dashboard
+  const { totalAdditionalCosts } = useAdditionalCosts(viewingUserId);
 
   // Combine data for GaugeChart (needs coldWater, hotWater, heat)
   const gaugeChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...heatChart.data];
@@ -150,27 +156,30 @@ export default function DashboardCharts() {
 
       <div className="flex flex-col gap-3">
         <div className="h-[265px]">
-          {!shouldShowElectricityChart ? (
-            gaugeChartLoading ? (
-              <ChartCardSkeleton />
-            ) : (
-              <GaugeChart
-                heatReadings={heatChart.data}
-                coldWaterReadings={coldWaterChart.data}
-                hotWaterReadings={hotWaterChart.data}
-                isEmpty={gaugeChartData.length === 0}
-                emptyTitle="Keine Daten verfügbar."
-                emptyDescription="Keine Daten im ausgewählten Zeitraum."
-              />
-            )
-          ) : electricityChart.loading ? (
+          {gaugeChartLoading || electricityChart.loading ? (
             <ChartCardSkeleton />
           ) : (
-            <ElectricityChart
-              electricityReadings={electricityChart.data}
-              isEmpty={electricityChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+            <FlipCard
+              storageKey="dashboard-gauge-electricity-flip"
+              frontContent={
+                <GaugeChart
+                  heatReadings={heatChart.data}
+                  coldWaterReadings={coldWaterChart.data}
+                  hotWaterReadings={hotWaterChart.data}
+                  monthlyAdvancePayment={totalAdditionalCosts}
+                  isEmpty={gaugeChartData.length === 0}
+                  emptyTitle="Keine Daten verfügbar."
+                  emptyDescription="Keine Daten im ausgewählten Zeitraum."
+                />
+              }
+              backContent={
+                <ElectricityChart
+                  electricityReadings={electricityChart.data}
+                  isEmpty={electricityChart.data.length === 0}
+                  emptyTitle="Keine Daten verfügbar."
+                  emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+                />
+              }
             />
           )}
         </div>

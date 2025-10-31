@@ -45,15 +45,29 @@ export type MeterReadingType = {
   "Access Number": number;
   Status: string;
   Encryption: number;
-  "IV,0,0,0,,Date/Time": string;
-  "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters)
-  "IV,0,0,0,m^3,Vol": number; // Volume in cubic meters
-  "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)": string;
-  "IV,1,0,0,,Date": string;
+  "IV,0,0,0,,Date/Time"?: string; // OLD format - now optional
+  "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
+  "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
+  "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
+  
+  // NEW Engelmann CSV format fields
+  "Number Meter"?: string | number; // NEW format device ID
+  "Actual Date"?: string; // NEW format date (e.g., "29.10.2025")
+  "Raw Date"?: string; // NEW format date alternative (e.g., "29-10-2025")
+  "Actual Time"?: string; // NEW format time (e.g., "09:56 Winterzeit...")
+  "Actual Energy / HCA"?: number | string; // NEW format energy in Wh
+  "Actual Volume"?: number | string; // NEW format volume in m³
+  "Actual Unit"?: string; // NEW format unit (e.g., "Wh", "m³")
+  "Actual Unit Volume"?: string; // NEW format volume unit
+  "Billing Date"?: string; // NEW format billing date
+  "Billing Value"?: number | string; // NEW format billing value
+  "Billing Unit"?: string; // NEW format billing unit
+  "Telegram Type"?: string; // NEW format manufacturer (e.g., "EMH", "EFE_WaterStar M")
+  "IV,1,0,0,,Date"?: string; // OLD format - now optional
   "IV,1,0,0,Wh,E"?: number;
   "IV,1,0,0,m^3,Vol"?: number;
   "IV,1,0,0,m^3,Vol Accumulation abs value only if negative contributions (backward flow)"?: number;
-  "IV,2,0,0,,Date": string;
+  "IV,2,0,0,,Date"?: string; // OLD format - now optional
   "IV,2,0,0,Wh,E"?: number;
   "IV,3,0,0,Wh,E"?: number;
   "IV,4,0,0,Wh,E"?: number;
@@ -99,8 +113,8 @@ export type MeterReadingType = {
   "IV,29,0,0,m^3,Vol"?: number;
   "IV,31,0,0,Wh,E"?: number;
   "IV,31,0,0,m^3,Vol"?: number;
-  "IV,0,0,0,Model/Version": number;
-  "IV,0,0,0,,Parameter set ident": number;
+  "IV,0,0,0,Model/Version"?: number; // OLD format - now optional
+  "IV,0,0,0,,Parameter set ident"?: number; // OLD format - now optional
   // Additional historical volume readings for water meters
   "IV,2,0,0,m^3,Vol"?: number;
   "IV,4,0,0,m^3,Vol"?: number;
@@ -199,10 +213,11 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
     }) as MeterReadingType[];
 
     // Filter by device types (Heat, Water, WWater, Elec) and ensure DateTime exists
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
     const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
-      item['IV,0,0,0,,Date/Time']
+      (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
     );
 
     // Separate by device type for processing
@@ -212,18 +227,21 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
     const electricityMetersReadings = filteredData.filter(dt => dt['Device Type'] === 'Elec');
 
     // Combine all readings for charts (only those with valid DateTime)
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
     const dataSentToGraphsCombiningHeatWaterWWwaterHeat = [
       ...heatMetersReadings,
       ...coldwaterReadings,
       ...hotwaterReadings,
       ...electricityMetersReadings
-    ].filter(item => item["IV,0,0,0,,Date/Time"]);
+    ].filter(item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]);
 
-    // Check if all items have DateTime
-    const allHaveDateTime = dataSentToGraphsCombiningHeatWaterWWwaterHeat.every(item => item["IV,0,0,0,,Date/Time"]);
+    // Check if all items have DateTime (either old or new format)
+    const allHaveDateTime = dataSentToGraphsCombiningHeatWaterWWwaterHeat.every(
+      item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]
+    );
 
     if (!allHaveDateTime) {
-      console.warn("Some items are missing the 'IV,0,0,0,,Date/Time' field.");
+      console.warn("Some items are missing date/time fields (checked: IV,0,0,0,,Date/Time, Actual Date, Raw Date).");
     }
 
     return {

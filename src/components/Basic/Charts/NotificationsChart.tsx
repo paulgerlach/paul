@@ -232,7 +232,7 @@ export default function NotificationsChart({
       });
 
       // If no errors detected, show success notification
-      if (selectedMetersWithErrors.length === 0) {
+      if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
         const totalDevices = parsedData.data.length;
         const heatDevices = parsedData.data.filter(
           (d) => d["Device Type"] === "Heat"
@@ -485,9 +485,7 @@ export default function NotificationsChart({
       setNotifications(fallback);
     }
     // Use stable values in dependencies to prevent infinite loops
-    // Include meterIds array stringified to detect actual meter selection changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEmpty, parsedData?.data?.length, JSON.stringify(meterIds), isDemoAccount]);
+  }, [isEmpty, parsedData?.data?.length, meterIds?.length, isDemoAccount]);
 
   const hasDeviceErrors =
     !isEmpty && parsedData?.data && getDevicesWithErrors(parsedData).length > 0;

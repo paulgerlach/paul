@@ -111,7 +111,6 @@ export default function GaugeChart({
   emptyTitle?: string;
   emptyDescription?: string;
 }) {
-  const { startDate, endDate } = useChartStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [animatedPercent, setAnimatedPercent] = useState(0);
   const [size, setSize] = useState({ width: 0, height: 0 });

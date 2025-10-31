@@ -13,16 +13,6 @@ import { useAdditionalCosts } from "@/hooks/useAdditionalCosts";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import FlipCard from "@/components/Basic/FlipCard/FlipCard";
 
-// Utility functions for better code organization
-const isValidMeterReading = (item: any): boolean => {
-  return !!(
-    item &&
-    item["Device Type"] !== "Device Type" &&
-    item.ID &&
-    item["IV,0,0,0,,Date/Time"]
-  );
-};
-
 const WaterChart = dynamic(
   () => import("@/components/Basic/Charts/WaterChart"),
   {

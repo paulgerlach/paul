@@ -131,51 +131,77 @@ const aggregateDataByGranularity = (
   processedData: ProcessedData[],
   granularity: "hour" | "day" | "month"
 ): ChartDataPoint[] => {
-  const aggregationMap = new Map<string, { total: number; date: Date }>();
-
+  // APPROACH 3: Group by DEVICE first, then calculate consumption between consecutive readings
+  
+  // Step 1: Group all readings by device ID
+  const deviceMap = new Map<string, ProcessedData[]>();
+  
   processedData.forEach((item) => {
-    let key: string;
-    let groupDate: Date;
-
-    switch (granularity) {
-      case "hour":
-        // Group by date + hour
-        groupDate = new Date(
-          item.date.getFullYear(),
-          item.date.getMonth(),
-          item.date.getDate(),
-          item.date.getHours()
-        );
-        key = `${groupDate.toDateString()}-${groupDate.getHours()}`;
-        break;
-      case "day":
-        // Group by date only
-        groupDate = new Date(
-          item.date.getFullYear(),
-          item.date.getMonth(),
-          item.date.getDate()
-        );
-        key = groupDate.toDateString();
-        break;
-      case "month":
-        // Group by year + month
-        groupDate = new Date(item.date.getFullYear(), item.date.getMonth(), 1);
-        key = `${groupDate.getFullYear()}-${groupDate.getMonth()}`;
-        break;
+    if (!deviceMap.has(item.deviceId)) {
+      deviceMap.set(item.deviceId, []);
     }
-
-    if (!aggregationMap.has(key)) {
-      aggregationMap.set(key, { total: 0, date: groupDate });
-    }
-
-    aggregationMap.get(key)!.total += item.volume;
+    deviceMap.get(item.deviceId)!.push(item);
   });
-
-  // Convert to array and sort by date
-  return Array.from(aggregationMap.entries())
-    .map(([_, { total, date }]) => ({
+  
+  // Step 2: For each device, calculate consumption between consecutive readings
+  const consumptionByDate = new Map<string, { consumption: number; date: Date }>();
+  
+  deviceMap.forEach((readings, deviceId) => {
+    // Sort readings chronologically
+    readings.sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+    // Calculate consumption between consecutive readings
+    for (let i = 1; i < readings.length; i++) {
+      const prev = readings[i - 1];
+      const curr = readings[i];
+      
+      // Calculate consumption = current - previous
+      const consumption = curr.volume - prev.volume;
+      
+      // Only add positive consumption (handles meter rollovers/errors)
+      if (consumption >= 0) {
+        // Normalize the current reading's date based on granularity
+        let normalizedDate: Date;
+        let dateKey: string;
+        
+        switch (granularity) {
+          case "hour":
+            normalizedDate = new Date(
+              curr.date.getFullYear(),
+              curr.date.getMonth(),
+              curr.date.getDate(),
+              curr.date.getHours()
+            );
+            dateKey = `${normalizedDate.toDateString()}-${normalizedDate.getHours()}`;
+            break;
+          case "day":
+            normalizedDate = new Date(
+              curr.date.getFullYear(),
+              curr.date.getMonth(),
+              curr.date.getDate()
+            );
+            dateKey = normalizedDate.toDateString();
+            break;
+          case "month":
+            normalizedDate = new Date(curr.date.getFullYear(), curr.date.getMonth(), 1);
+            dateKey = `${normalizedDate.getFullYear()}-${normalizedDate.getMonth()}`;
+            break;
+        }
+        
+        // Sum consumption for this date across all devices
+        if (!consumptionByDate.has(dateKey)) {
+          consumptionByDate.set(dateKey, { consumption: 0, date: normalizedDate });
+        }
+        consumptionByDate.get(dateKey)!.consumption += consumption;
+      }
+    }
+  });
+  
+  // Step 3: Convert to array and sort by date
+  return Array.from(consumptionByDate.entries())
+    .map(([_, { consumption, date }]) => ({
       label: formatLabel(date, granularity),
-      value: Math.round(total * 1000) / 1000, // Round to 3 decimal places instead of whole numbers
+      value: Math.round(consumption * 1000) / 1000, // Round to 3 decimal places
       date: date,
     }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());

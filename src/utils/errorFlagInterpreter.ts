@@ -66,10 +66,13 @@ export interface ErrorInterpretation {
   severity: 'low' | 'medium' | 'high' | 'critical';
 }
 
-function parseBinaryFlag(flagString: string): number {
+function parseBinaryFlag(flagString: string | number): number {
   if (!flagString || flagString === "0b") return 0;
+  
+  // Convert to string if it's a number
+  const flagStr = typeof flagString === "string" ? flagString : String(flagString);
 
-  const cleanFlag = flagString.replace(/^0?b/, '');
+  const cleanFlag = flagStr.replace(/^0?b/, '');
   
   if (cleanFlag === '') return 0;
   
@@ -115,13 +118,13 @@ function getErrorSeverity(errors: string[]): 'low' | 'medium' | 'high' | 'critic
 }
 
 export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretation | null {
-  const errorFlagString = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
+  const errorFlagRaw = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
   
-  if (!errorFlagString || errorFlagString === "0b") {
+  if (!errorFlagRaw || errorFlagRaw === "0b" || errorFlagRaw === 0) {
     return null;
   }
   
-  const errorFlag = parseBinaryFlag(errorFlagString);
+  const errorFlag = parseBinaryFlag(errorFlagRaw);
   
   if (errorFlag === 0) {
     return null;

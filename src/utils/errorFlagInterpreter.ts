@@ -120,7 +120,12 @@ function getErrorSeverity(errors: string[]): 'low' | 'medium' | 'high' | 'critic
 export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretation | null {
   const errorFlagRaw = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
   
-  if (!errorFlagRaw || errorFlagRaw === "0b" || errorFlagRaw === 0) {
+  // Check for null, undefined, empty string, "0b", or number 0
+  if (!errorFlagRaw) {
+    return null;
+  }
+  
+  if ((typeof errorFlagRaw === "string" && errorFlagRaw === "0b") || (typeof errorFlagRaw === "number" && errorFlagRaw === 0)) {
     return null;
   }
   

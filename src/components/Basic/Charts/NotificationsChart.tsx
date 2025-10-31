@@ -520,7 +520,7 @@ export default function NotificationsChart({
         />
       </div>
       <div className="space-y-2 flex-1 overflow-auto">
-        {isEmpty || notifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}

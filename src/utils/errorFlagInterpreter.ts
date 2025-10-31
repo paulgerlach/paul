@@ -156,7 +156,7 @@ export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretati
     deviceId,
     deviceType,
     manufacturer,
-    errorFlag: errorFlagString,
+    errorFlag: String(errorFlagRaw),
     errors,
     severity: getErrorSeverity(errors)
   };

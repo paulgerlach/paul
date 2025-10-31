@@ -31,18 +31,38 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
 };
 
 // Helper: get current heat energy (Wh) from actual readings
+// Supports both OLD format (IV,0,0,0,Wh,E) and NEW Engelmann format (Actual Energy / HCA)
 const getCurrentEnergyData = (readings: MeterReadingType[]): number => {
   if (!readings || readings.length === 0) return 0;
 
   let totalValue = 0;
   readings.forEach((reading) => {
-    const currentValue = reading["IV,0,0,0,Wh,E"] as number;
+    // Try OLD format first
+    let currentValue = reading["IV,0,0,0,Wh,E"];
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (currentValue === undefined || currentValue === null) {
+      currentValue = reading["Actual Energy / HCA"];
+    }
+    
     if (typeof currentValue === "string") {
-      totalValue += parseFloat(
+      const parsedValue = parseFloat(
         (currentValue as string).replace(",", ".") || "0"
       );
+      // Convert MWh to Wh if the value is very small (likely MWh)
+      // Engelmann format uses MWh, old format uses Wh
+      if (parsedValue < 1 && parsedValue > 0) {
+        totalValue += parsedValue * 1000000; // Convert MWh to Wh
+      } else {
+        totalValue += parsedValue;
+      }
     } else if (typeof currentValue === "number") {
-      totalValue += currentValue;
+      // Same conversion logic for numbers
+      if (currentValue < 1 && currentValue > 0) {
+        totalValue += currentValue * 1000000; // Convert MWh to Wh
+      } else {
+        totalValue += currentValue;
+      }
     }
   });
 
@@ -50,12 +70,20 @@ const getCurrentEnergyData = (readings: MeterReadingType[]): number => {
 };
 
 // Helper: get current water volume (m^3) from actual readings
+// Supports both OLD format (IV,0,0,0,m^3,Vol) and NEW Engelmann format (Actual Volume)
 const getCurrentVolumeData = (readings: MeterReadingType[]): number => {
   if (!readings || readings.length === 0) return 0;
 
   let totalValue = 0;
   readings.forEach((reading) => {
-    const currentValue = reading["IV,0,0,0,m^3,Vol"];
+    // Try OLD format first
+    let currentValue = reading["IV,0,0,0,m^3,Vol"];
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (currentValue === undefined || currentValue === null) {
+      currentValue = reading["Actual Volume"];
+    }
+    
     if (typeof currentValue === "string") {
       totalValue += parseFloat(
         (currentValue as string).replace(",", ".") || "0"

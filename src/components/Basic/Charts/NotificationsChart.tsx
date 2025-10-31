@@ -486,6 +486,7 @@ export default function NotificationsChart({
     }
     // Use stable values in dependencies to prevent infinite loops
     // Include meterIds array stringified to detect actual meter selection changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEmpty, parsedData?.data?.length, JSON.stringify(meterIds), isDemoAccount]);
 
   const hasDeviceErrors =

@@ -329,7 +329,7 @@ export default function WaterChart({
         dateTimeString = newRawDate.replace(/-/g, ".");
       }
       
-      if (!dateTimeString) return;
+      if (!dateTimeString || typeof dateTimeString !== "string") return;
 
       const parsedDate = parseTimestamp(dateTimeString);
 

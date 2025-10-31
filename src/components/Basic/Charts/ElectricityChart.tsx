@@ -28,7 +28,9 @@ interface ElectricityChartProps {
 // Get recent reading date from dataset (first row date is enough as dumps are aligned)
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
-  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  const rawDate = readings[0]["IV,0,0,0,,Date/Time"];
+  if (!rawDate || typeof rawDate !== "string") return null;
+  const dateString = rawDate.split(" ")[0];
   if (!dateString) return null;
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);

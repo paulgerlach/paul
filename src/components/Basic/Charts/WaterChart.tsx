@@ -302,7 +302,7 @@ export default function WaterChart({
       const oldFormatVolume = device["IV,0,0,0,m^3,Vol"];
       const newFormatVolume = device["Actual Volume"];
       
-      const volume = parseVolume(newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume);
+      const volume = parseVolume(newFormatVolume !== undefined ? newFormatVolume : (oldFormatVolume ?? 0));
 
       // Convert from cubic meters to liters (1 m³ = 1000 L)
       // Preserve decimal precision for exact values

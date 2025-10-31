@@ -17,6 +17,7 @@ interface GaugeChartProps {
     coldWaterPerM3EUR?: number;
     hotWaterPerM3EUR?: number;
   };
+  monthlyAdvancePayment?: number; // Nebenkostenvorauszahlung
 }
 
 // Helper: get recent reading date from dataset
@@ -101,6 +102,7 @@ export default function GaugeChart({
   coldWaterReadings,
   hotWaterReadings,
   pricing,
+  monthlyAdvancePayment,
   isEmpty,
   emptyTitle,
   emptyDescription,
@@ -141,12 +143,20 @@ export default function GaugeChart({
       currentColdM3 * selectedPricing.coldWaterPerM3EUR +
       currentHotM3 * selectedPricing.hotWaterPerM3EUR;
 
-    // For gauge chart, show 100% since we're displaying current actual usage
-    // In a real scenario with budget data, you'd compare against budget/target
-    const percentValue = totalCostEUR > 0 ? 1 : 0;
+    // Calculate percentage: Gesamtkosten / Nebenkostenvorauszahlung
+    // < 100% = Good (user gets refund)
+    // = 100% = Perfect (no adjustment)
+    // > 100% = Over budget (user owes extra)
+    let percentValue = 0;
+    if (monthlyAdvancePayment && monthlyAdvancePayment > 0) {
+      percentValue = totalCostEUR / monthlyAdvancePayment;
+    } else {
+      // Fallback: if no advance payment data, show 100% when there are costs
+      percentValue = totalCostEUR > 0 ? 1 : 0;
+    }
 
     return { percent: percentValue, euroCost: totalCostEUR };
-  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing]);
+  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, monthlyAdvancePayment]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -204,6 +214,14 @@ export default function GaugeChart({
     style: "currency",
     currency: "EUR",
   }).format(euroCost);
+
+  // Calculate difference (Differenz = Vorauszahlung - Gesamtkosten)
+  const difference = monthlyAdvancePayment ? monthlyAdvancePayment - euroCost : 0;
+  const formattedDifference = new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+    signDisplay: "always",
+  }).format(difference);
 
   return (
     <div
@@ -285,8 +303,22 @@ export default function GaugeChart({
           <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
             {value < 1 && value > 0 ? value.toFixed(2) : Math.round(value)}%
           </div>
-          <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
-            <span>Gesamtkosten: {formattedCost}</span>
+          <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-xs text-[#9CA3AF] font-medium w-full text-center px-4">
+            {monthlyAdvancePayment && monthlyAdvancePayment > 0 ? (
+              <div className="flex flex-col gap-0.5">
+                <span>Gesamtkosten: {formattedCost}</span>
+                <span className={difference > 0 ? "text-green-600" : difference < 0 ? "text-red-600" : "text-gray-600"}>
+                  Differenz: {formattedDifference}
+                </span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-0.5">
+                <span>Gesamtkosten: {formattedCost}</span>
+                <span className="text-orange-500 text-[10px]">
+                  Kein Vertrag mit Nebenkosten
+                </span>
+              </div>
+            )}
           </div>
         </>
       )}

@@ -44,11 +44,11 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   
   let dateString: string | null = null;
   
-  if (oldFormatDate) {
+  if (oldFormatDate && typeof oldFormatDate === "string") {
     dateString = oldFormatDate.split(" ")[0];
-  } else if (newActualDate) {
+  } else if (newActualDate && typeof newActualDate === "string") {
     dateString = newActualDate.split(" ")[0];
-  } else if (newRawDate) {
+  } else if (newRawDate && typeof newRawDate === "string") {
     // Convert "29-10-2025" to "29.10.2025"
     dateString = newRawDate.replace(/-/g, ".");
   }
@@ -71,11 +71,11 @@ const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
     
     let dateString: string | null = null;
     
-    if (oldFormatDate) {
+    if (oldFormatDate && typeof oldFormatDate === "string") {
       dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate) {
+    } else if (newActualDate && typeof newActualDate === "string") {
       dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate) {
+    } else if (newRawDate && typeof newRawDate === "string") {
       dateString = newRawDate.replace(/-/g, ".");
     }
     
@@ -221,11 +221,11 @@ const aggregateDataByTimeRange = (
     
     let dateString: string | null = null;
     
-    if (oldFormatDate) {
+    if (oldFormatDate && typeof oldFormatDate === "string") {
       dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate) {
+    } else if (newActualDate && typeof newActualDate === "string") {
       dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate) {
+    } else if (newRawDate && typeof newRawDate === "string") {
       dateString = newRawDate.replace(/-/g, ".");
     }
     

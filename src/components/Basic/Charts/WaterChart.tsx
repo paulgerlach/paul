@@ -318,13 +318,13 @@ export default function WaterChart({
       
       let dateTimeString: string | null = null;
       
-      if (oldFormatDate) {
+      if (oldFormatDate && typeof oldFormatDate === "string") {
         dateTimeString = oldFormatDate;
-      } else if (newActualDate) {
+      } else if (newActualDate && typeof newActualDate === "string") {
         // New format may include time: "29.10.2025" or "29.10.2025 09:56..."
         const actualTime = device["Actual Time"] || "";
         dateTimeString = actualTime ? `${newActualDate} ${actualTime}` : newActualDate;
-      } else if (newRawDate) {
+      } else if (newRawDate && typeof newRawDate === "string") {
         // Raw Date format: "29-10-2025" → convert to "29.10.2025"
         dateTimeString = newRawDate.replace(/-/g, ".");
       }

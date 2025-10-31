@@ -53,13 +53,13 @@ const getCurrentEnergyReadings = (
     
     let dateString: string | null = null;
     
-    if (oldFormatDate) {
+    if (oldFormatDate && typeof oldFormatDate === "string") {
       // Old format: "29.10.2025 09:56..."
       dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate) {
+    } else if (newActualDate && typeof newActualDate === "string") {
       // New format: "29.10.2025"
       dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate) {
+    } else if (newRawDate && typeof newRawDate === "string") {
       // Raw Date format: "29-10-2025" → convert to "29.10.2025"
       dateString = newRawDate.replace(/-/g, ".");
     }

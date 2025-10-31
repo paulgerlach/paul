@@ -10,6 +10,7 @@ import {
   useNotificationsChartData 
 } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+import FlipCard from "@/components/Basic/FlipCard/FlipCard";
 
 // Utility functions for better code organization
 const isValidMeterReading = (item: any): boolean => {
@@ -160,27 +161,29 @@ export default function DashboardCharts() {
 
       <div className="flex flex-col gap-3">
         <div className="h-[265px]">
-          {!shouldShowElectricityChart ? (
-            gaugeChartLoading ? (
-              <ChartCardSkeleton />
-            ) : (
-              <GaugeChart
-                heatReadings={heatChart.data}
-                coldWaterReadings={coldWaterChart.data}
-                hotWaterReadings={hotWaterChart.data}
-                isEmpty={gaugeChartData.length === 0}
-                emptyTitle="Keine Daten verfügbar."
-                emptyDescription="Keine Daten im ausgewählten Zeitraum."
-              />
-            )
-          ) : electricityChart.loading ? (
+          {gaugeChartLoading || electricityChart.loading ? (
             <ChartCardSkeleton />
           ) : (
-            <ElectricityChart
-              electricityReadings={electricityChart.data}
-              isEmpty={electricityChart.data.length === 0}
-              emptyTitle="Keine Daten verfügbar."
-              emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+            <FlipCard
+              storageKey="dashboard-gauge-electricity-flip"
+              frontContent={
+                <GaugeChart
+                  heatReadings={heatChart.data}
+                  coldWaterReadings={coldWaterChart.data}
+                  hotWaterReadings={hotWaterChart.data}
+                  isEmpty={gaugeChartData.length === 0}
+                  emptyTitle="Keine Daten verfügbar."
+                  emptyDescription="Keine Daten im ausgewählten Zeitraum."
+                />
+              }
+              backContent={
+                <ElectricityChart
+                  electricityReadings={electricityChart.data}
+                  isEmpty={electricityChart.data.length === 0}
+                  emptyTitle="Keine Daten verfügbar."
+                  emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+                />
+              }
             />
           )}
         </div>

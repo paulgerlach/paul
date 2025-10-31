@@ -131,7 +131,9 @@ export async function POST(request: NextRequest) {
         // Try old format first
         let dateTimeString = reading["IV,0,0,0,,Date/Time"];
         if (dateTimeString) {
-          const dateString = dateTimeString.split(" ")[0];
+          // Ensure it's a string before calling split
+          const dateTimeStr = String(dateTimeString);
+          const dateString = dateTimeStr.split(" ")[0];
           return parseGermanDate(dateString);
         }
         

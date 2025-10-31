@@ -304,7 +304,18 @@ export default function CSVUploadPage() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {uploads.map((upload) => (
+                        {uploads
+                          .filter((upload) => {
+                            // Filter out header rows and invalid device IDs
+                            const invalidIds = ['ID', 'Device Type', '', null, undefined];
+                            const invalidTypes = ['Device Type', '', null, undefined];
+                            return (
+                              !invalidIds.includes(upload.device_id) &&
+                              !invalidTypes.includes(upload.device_type) &&
+                              upload.device_id?.trim().length > 0
+                            );
+                          })
+                          .map((upload) => (
                           <tr key={upload.id} className="hover:bg-gray-50">
                             <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
                               {new Date(upload.created_at).toLocaleTimeString()}

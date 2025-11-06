@@ -9,9 +9,7 @@ import {
   useHeatChartData, 
   useNotificationsChartData 
 } from "@/hooks/useChartData";
-import { useAdditionalCosts } from "@/hooks/useAdditionalCosts";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
-import FlipCard from "@/components/Basic/FlipCard/FlipCard";
 
 const WaterChart = dynamic(
   () => import("@/components/Basic/Charts/WaterChart"),
@@ -23,14 +21,6 @@ const WaterChart = dynamic(
 
 const ElectricityChart = dynamic(
   () => import("@/components/Basic/Charts/ElectricityChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
-
-const GaugeChart = dynamic(
-  () => import("@/components/Basic/Charts/GaugeChart"),
   {
     loading: () => <ChartCardSkeleton />,
     ssr: false,
@@ -63,7 +53,7 @@ const EinsparungChart = dynamic(
 
 
 
-export default function DashboardCharts({ viewingUserId }: { viewingUserId?: string }) {
+export default function DashboardCharts() {
   const { meterIds } = useChartStore();
 
   // Individual chart data hooks
@@ -73,14 +63,6 @@ export default function DashboardCharts({ viewingUserId }: { viewingUserId?: str
   const heatChart = useHeatChartData();
   const notificationsChart = useNotificationsChartData();
   
-  // Fetch user's monthly advance payment (Nebenkostenvorauszahlung)
-  // Pass viewingUserId if admin is viewing another user's dashboard
-  const { totalAdditionalCosts } = useAdditionalCosts(viewingUserId);
-
-  // Combine data for GaugeChart (needs coldWater, hotWater, heat)
-  const gaugeChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...heatChart.data];
-  const gaugeChartLoading = coldWaterChart.loading || hotWaterChart.loading || heatChart.loading;
-
   // Combine data for EinsparungChart (needs all device types for CO2 calculations)
   const einsparungChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...electricityChart.data, ...heatChart.data];
   const einsparungChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
@@ -156,30 +138,14 @@ export default function DashboardCharts({ viewingUserId }: { viewingUserId?: str
 
       <div className="flex flex-col gap-3">
         <div className="h-[265px]">
-          {gaugeChartLoading || electricityChart.loading ? (
+          {electricityChart.loading ? (
             <ChartCardSkeleton />
           ) : (
-            <FlipCard
-              storageKey="dashboard-gauge-electricity-flip"
-              frontContent={
-                <GaugeChart
-                  heatReadings={heatChart.data}
-                  coldWaterReadings={coldWaterChart.data}
-                  hotWaterReadings={hotWaterChart.data}
-                  monthlyAdvancePayment={totalAdditionalCosts}
-                  isEmpty={gaugeChartData.length === 0}
-                  emptyTitle="Keine Daten verfügbar."
-                  emptyDescription="Keine Daten im ausgewählten Zeitraum."
-                />
-              }
-              backContent={
-                <ElectricityChart
-                  electricityReadings={electricityChart.data}
-                  isEmpty={electricityChart.data.length === 0}
-                  emptyTitle="Keine Daten verfügbar."
-                  emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
-                />
-              }
+            <ElectricityChart
+              electricityReadings={electricityChart.data}
+              isEmpty={electricityChart.data.length === 0}
+              emptyTitle="Keine Daten verfügbar."
+              emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
             />
           )}
         </div>

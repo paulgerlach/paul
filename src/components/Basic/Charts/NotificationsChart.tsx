@@ -235,10 +235,14 @@ export default function NotificationsChart({
       if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
         const totalDevices = parsedData.data.length;
         const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat"
+          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
         ).length;
         const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
+        ).length;
+        const elecDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
         ).length;
 
         dynamicNotifications.push({
@@ -247,7 +251,7 @@ export default function NotificationsChart({
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
           title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
         });
 
         return dynamicNotifications;
@@ -301,10 +305,14 @@ export default function NotificationsChart({
       if (deviceErrors.length === 0) {
         const totalDevices = parsedData.data.length;
         const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat"
+          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
         ).length;
         const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
+        ).length;
+        const elecDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
         ).length;
 
         notifications.push({
@@ -313,7 +321,7 @@ export default function NotificationsChart({
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
           title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
         });
 
         return notifications;

@@ -72,7 +72,7 @@ export default function Header() {
               Einloggen
             </button>
             <Link
-              href="tel:01759235690"
+              href="tel:+49 172 5181689"
               className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
             >
               <Image
@@ -84,13 +84,13 @@ export default function Header() {
                 src={cellphone}
                 alt="cellphone"
               />
-              01759235690
+              +49 172 5181689
             </Link>
             <Link
-              href={ROUTE_KONTAKT}
+              href={ROUTE_FRAGEBOGEN}
               className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-darl_text rounded-halfbase"
             >
-              Demo buchen
+              Angebot einholen
             </Link>
           </div>
         </div>

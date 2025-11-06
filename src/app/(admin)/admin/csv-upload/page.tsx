@@ -318,27 +318,27 @@ export default function CSVUploadPage() {
                 </div>
 
                 {/* Status Message */}
-                {result.insertedRecords === 0 && result.skippedDuplicates > 0 && (
+                {result.insertedRecords === 0 && (result.skippedDuplicates || 0) > 0 && (
                   <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
                     <div className="text-2xl">💡</div>
                     <div>
                       <div className="font-semibold text-purple-900">This file was already uploaded</div>
                       <div className="text-sm text-purple-700">
-                        All {result.skippedDuplicates} data records were skipped because they already exist in the database.
+                        All {result.skippedDuplicates || 0} data records were skipped because they already exist in the database.
                         {(result.skippedHeaders || 0) > 0 && ` Additionally, ${result.skippedHeaders} header rows were filtered out.`}
                       </div>
                     </div>
                   </div>
                 )}
 
-                {result.insertedRecords > 0 && (
+                {(result.insertedRecords || 0) > 0 && (
                   <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <div className="text-2xl">✨</div>
                     <div>
                       <div className="font-semibold text-green-900">Successfully imported new data</div>
                       <div className="text-sm text-green-700">
-                        {result.insertedRecords} new records were added to the database.
-                        {result.skippedDuplicates > 0 && ` ${result.skippedDuplicates} duplicates were skipped.`}
+                        {result.insertedRecords || 0} new records were added to the database.
+                        {(result.skippedDuplicates || 0) > 0 && ` ${result.skippedDuplicates} duplicates were skipped.`}
                       </div>
                     </div>
                   </div>

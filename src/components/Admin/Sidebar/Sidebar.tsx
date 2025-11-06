@@ -10,8 +10,9 @@ import {
   ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_HEIZKOSTENABRECHNUNG,
   ROUTE_ADMIN,
+  ROUTE_CSV_UPLOAD,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte } from "@/static/icons";
+import { abrechnung, dashboard, dokumente, objekte, caract_files } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -55,6 +56,11 @@ export default function Sidebar() {
       title: "Dokumente",
       icon: dokumente,
       route: withUserPrefix(ROUTE_DOKUMENTE),
+    },
+    {
+      title: "CSV Upload",
+      icon: caract_files,
+      route: withUserPrefix(ROUTE_CSV_UPLOAD),
     },
     {
       title: "Abrechnung",

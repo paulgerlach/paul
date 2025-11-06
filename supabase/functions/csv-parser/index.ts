@@ -490,8 +490,10 @@ class DatabaseHelper {
                 if (error) {
                     // Unique constraint violations (error code 23505) mean duplicates were blocked by DB
                     if (error.code === '23505') {
-                        console.log(`DB unique constraint blocked duplicate records (this is normal)`);
+                        console.log(`[DEDUP] DB unique constraint blocked ${dbRecords.length} duplicate records`);
                         insertedCount = 0;
+                        // Count DB-blocked records as skipped duplicates for accurate reporting
+                        skippedDuplicates += dbRecords.length;
                     } else {
                     errors.push(`Batch insert error: ${error.message}`);
                         console.error('Batch insert error details:', error);

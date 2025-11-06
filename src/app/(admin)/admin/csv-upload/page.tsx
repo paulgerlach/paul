@@ -242,75 +242,57 @@ export default function CSVUploadPage() {
                 <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
                   <div className="text-sm font-semibold text-gray-700 mb-3">📊 UPLOAD SUMMARY</div>
                   
-                  <div className="space-y-3">
-                    {/* Total */}
-                    <div className="flex items-center justify-between pb-2 border-b border-gray-200">
-                      <span className="text-gray-700 font-medium">Total Records in File</span>
-                      <span className="text-xl font-bold">{result.recordCount}</span>
-                    </div>
-
-                    {/* Valid Data Section */}
-                    <div className="pl-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1 h-8 bg-blue-500 rounded"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-700">✅ Valid Data Records</div>
-                          <div className="text-xs text-gray-500">Actual meter readings</div>
-                        </div>
-                        <span className="text-lg font-bold text-blue-600">
-                          {(result.recordCount || 0) - (result.skippedHeaders || 0)}
-                        </span>
+                  <div className="space-y-4">
+                    {/* Simple Math Breakdown at Top */}
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
+                      <div className="flex items-baseline justify-between mb-2">
+                        <span className="text-gray-700 font-medium">📄 Total Rows in CSV File</span>
+                        <span className="text-2xl font-bold text-gray-900">{result.recordCount}</span>
                       </div>
                       
-                      {/* Breakdown */}
-                      <div className="pl-8 space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">├─ New records inserted:</span>
-                          <span className="font-bold text-green-600">{result.insertedRecords || 0}</span>
+                      <div className="text-sm space-y-1 ml-4 pt-2 border-t border-gray-300">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">= Meter readings (data)</span>
+                          <span className="font-bold text-blue-600">{(result.recordCount || 0) - (result.skippedHeaders || 0)}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">└─ Duplicates skipped:</span>
-                          <span className="font-bold text-purple-600">{result.skippedDuplicates || 0}</span>
-                        </div>
+                        {(result.skippedHeaders || 0) > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600">+ Header rows (auto-removed)</span>
+                            <span className="font-bold text-gray-500">{result.skippedHeaders || 0}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Filtered Section */}
-                    {(result.skippedHeaders || 0) > 0 && (
-                      <div className="pl-4 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-1 h-8 bg-gray-400 rounded"></div>
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-gray-700">🗑️ Filtered Out</div>
-                            <div className="text-xs text-gray-500">Invalid/header rows</div>
-                          </div>
-                          <span className="text-lg font-bold text-gray-600">
-                            {result.skippedHeaders || 0}
-                          </span>
+                    {/* What Happened Section */}
+                    <div className="space-y-3">
+                      <div className="text-xs font-semibold text-gray-600 uppercase">What Happened:</div>
+                      
+                      {/* New vs Duplicate */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="text-xs text-green-700 mb-1">✅ New Data Added</div>
+                          <div className="text-2xl font-bold text-green-600">{result.insertedRecords || 0}</div>
                         </div>
-                        <div className="pl-8 text-sm text-gray-600">
-                          └─ Header rows automatically removed
+                        
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                          <div className="text-xs text-purple-700 mb-1">🔄 Duplicates Skipped</div>
+                          <div className="text-2xl font-bold text-purple-600">{result.skippedDuplicates || 0}</div>
                         </div>
                       </div>
-                    )}
 
-                    {/* Meter Linking Section */}
-                    <div className="pl-4 space-y-2 pt-2 border-t border-gray-200">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1 h-8 bg-green-500 rounded"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-700">🔗 Meter Linking</div>
-                          <div className="text-xs text-gray-500">Connected to apartments</div>
-                        </div>
-                      </div>
-                      <div className="pl-8 space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">├─ Linked to apartments:</span>
-                          <span className="font-bold text-blue-600">{result.meterIdMatches?.found || 0}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">└─ Not linked yet:</span>
-                          <span className="font-bold text-orange-600">{result.meterIdMatches?.notFound || 0}</span>
+                      {/* Meter Linking */}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="text-xs text-gray-600 mb-2">🔗 Meter Linking Status:</div>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Linked:</span>
+                            <span className="font-bold text-blue-600">{result.meterIdMatches?.found || 0}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Not linked:</span>
+                            <span className="font-bold text-orange-600">{result.meterIdMatches?.notFound || 0}</span>
+                          </div>
                         </div>
                       </div>
                     </div>

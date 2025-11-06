@@ -134,32 +134,6 @@ export default function LoginDialog() {
               </button>
             </div>
 
-            <div className="flex items-center justify-start gap-8 my-9">
-              <span className="text-base text-light-text whitespace-nowrap">
-                Weitere Wege
-              </span>
-              <span className="w-full block h-px bg-[#e7e7e7]" />
-            </div>
-
-            <div className="grid grid-cols-3 gap-5">
-              {[domus, immoware24, matera].map((icon, idx) => (
-                <div
-                  key={idx}
-                  className="rounded bg-base-bg flex items-center justify-center py-4 px-7"
-                >
-                  <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    loading="lazy"
-                    className="block mx-auto"
-                    src={icon}
-                    alt={`login-option-${idx}`}
-                  />
-                </div>
-              ))}
-            </div>
-
             <Button
               type="submit"
               className="mt-6 flex w-full mx-auto px-[104px] max-xl:px-3.5 max-xl:py-4 text-base text-dark_green rounded-halfbase bg-green hover:opacity-80 transition"

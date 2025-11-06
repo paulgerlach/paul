@@ -16,7 +16,6 @@ import {
   cold_water,
 } from "@/static/icons";
 import Image from "next/image";
-import Link from "next/link";
 import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
@@ -110,6 +109,7 @@ export default function NotificationsChart({
   parsedData,
 }: NotificationsChartProps) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(undefined);
   const { meterIds } = useChartStore();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [notificationQueue, setNotificationQueue] = useState<NotificationItem[]>([]);
@@ -118,6 +118,12 @@ export default function NotificationsChart({
   
   // Check if current user is the demo account
   const isDemoAccount = user?.email === "heidi@hausverwaltung.de";
+
+  const openErrorModal = (meterId?: number) => {
+    setSelectedMeterId(meterId);
+    setIsErrorModalOpen(true);
+    setOpenPopoverId(null); // Close the popover
+  };
 
   const deleteNotification = (index: number) => {
     setNotifications((prev) => {
@@ -564,13 +570,13 @@ export default function NotificationsChart({
                     className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Link
-                      href={"#"}
+                    <button
+                      onClick={() => openErrorModal(n.meterId)}
                       className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
                     >
                       <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
                       öffnen
-                    </Link>
+                    </button>
                     <button
                       onClick={() => {
                         deleteNotification(idx);
@@ -591,7 +597,7 @@ export default function NotificationsChart({
       {hasDeviceErrors && (
         <div className="flex flex-col gap-2">
           <button
-            onClick={() => setIsErrorModalOpen(true)}
+            onClick={() => openErrorModal()}
             className="text-[10px] text-link text-center underline w-full inline-block mt-[1.5vw] hover:text-blue-600"
           >
             Detaillierte Fehleranalyse anzeigen
@@ -601,8 +607,12 @@ export default function NotificationsChart({
 
       <ErrorDetailsModal
         isOpen={isErrorModalOpen}
-        onClose={() => setIsErrorModalOpen(false)}
+        onClose={() => {
+          setIsErrorModalOpen(false);
+          setSelectedMeterId(undefined); // Clear the filter when closing
+        }}
         parsedData={parsedData}
+        filteredMeterId={selectedMeterId}
       />
     </div>
   );

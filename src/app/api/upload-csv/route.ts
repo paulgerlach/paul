@@ -6,6 +6,15 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Extract filename from query params or headers
+    const { searchParams } = new URL(request.url);
+    const fileName = searchParams.get('fileName') || 
+                    searchParams.get('filename') || 
+                    request.headers.get('x-filename') ||
+                    'manual-upload.csv';
+    
+    console.log(`Processing upload for file: ${fileName}`);
+    
     // Read raw CSV content from request body
     const csvContent = await request.text();
     
@@ -19,7 +28,7 @@ export async function POST(request: NextRequest) {
     console.log(`Received CSV upload, size: ${csvContent.length} bytes`);
     
     // Forward to Supabase Edge Function (same function Make.com uses)
-    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser`;
+    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser?filename=${encodeURIComponent(fileName)}`;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!edgeFunctionUrl || !serviceRoleKey) {
@@ -34,7 +43,8 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${serviceRoleKey}`,
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/plain',
+        'x-filename': fileName
       },
       body: csvContent
     });

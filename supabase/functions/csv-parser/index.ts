@@ -51,11 +51,34 @@ interface DatabaseRecord {
 }
 
 /**
+ * Extract date from filename pattern: Worringerestrasse86_YYYYMMDD_YYYYMMDD.csv
+ * Returns the FIRST date (start date) in YYYY-MM-DD format
+ */
+function extractDateFromFilename(fileName: string): string | null {
+    if (!fileName) return null;
+    
+    // Match pattern: anything_YYYYMMDD_YYYYMMDD.csv or anything_YYYYMMDD.csv
+    const filenameMatch = fileName.match(/_(\d{8})(?:_\d{8})?\.csv$/i);
+    if (filenameMatch) {
+        const dateStr = filenameMatch[1]; // e.g., "20251104"
+        const year = dateStr.substring(0, 4);
+        const month = dateStr.substring(4, 6);
+        const day = dateStr.substring(6, 8);
+        const parsedDate = `${year}-${month}-${day}`;
+        console.log(`[FILENAME DATE] Extracted date from filename "${fileName}": ${parsedDate}`);
+        return parsedDate;
+    }
+    
+    return null;
+}
+
+/**
  * Helper function to extract and normalize date to YYYY-MM-DD format
  * Handles multiple date formats: DD.MM.YYYY, DD-MM-YYYY
+ * Falls back to filename date if no date found in CSV content
  */
-function extractDateOnly(record: any): string | null {
-    // Try different date field names
+function extractDateOnly(record: any, fileName?: string): string | null {
+    // Try different date field names from CSV content
     const dateFields = [
         record['Actual Date'],
         record['IV,0,0,0,,Date/Time'],
@@ -80,6 +103,15 @@ function extractDateOnly(record: any): string | null {
         if (dashMatch) {
             const [_, day, month, year] = dashMatch;
             return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+        }
+    }
+
+    // FALLBACK: If no date found in CSV content, try extracting from filename
+    if (fileName) {
+        const filenameDate = extractDateFromFilename(fileName);
+        if (filenameDate) {
+            console.log(`[FILENAME DATE] Using filename date for device ${record['ID'] || record['Number Meter']}: ${filenameDate}`);
+            return filenameDate;
         }
     }
 
@@ -265,7 +297,7 @@ class DatabaseHelper {
     /**
      * Check for existing records to prevent duplicates
      */
-    async checkForDuplicates(records: ParsedRecord[]): Promise<Set<string>> {
+    async checkForDuplicates(records: ParsedRecord[], fileName?: string): Promise<Set<string>> {
         try {
             // Extract device IDs to check
             const deviceIds = records
@@ -275,6 +307,12 @@ class DatabaseHelper {
             const uniqueDeviceIds = [...new Set(deviceIds)];
             console.log(`[DEDUP] Checking ${uniqueDeviceIds.length} unique device IDs:`, uniqueDeviceIds.slice(0, 5));
 
+            // Extract date from filename if available
+            const filenameDate = fileName ? extractDateFromFilename(fileName) : null;
+            if (filenameDate) {
+                console.log(`[DEDUP] Will use filename date ${filenameDate} for records without CSV dates`);
+            }
+
             // Create potential Elec device IDs with 1EMH00 prefix
             const elecDeviceIds = uniqueDeviceIds.map(id => `1EMH00${id}`);
             const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
@@ -282,11 +320,11 @@ class DatabaseHelper {
 
             // Query existing records for BOTH original AND prefixed device IDs
             // Use date_only column for accurate comparison (YYYY-MM-DD format)
+            // NOW INCLUDE RECORDS WITH NULL DATES since we'll apply filename dates
             const { data: existingRecords, error } = await this.supabase
                 .from('parsed_data')
                 .select('device_id, device_type, date_only')
-                .in('device_id', allSearchIds)
-                .not('date_only', 'is', null); // Only get records with dates
+                .in('device_id', allSearchIds);
 
             if (error) {
                 console.error('[DEDUP] Error checking duplicates:', error);
@@ -300,9 +338,10 @@ class DatabaseHelper {
             const existingSignatures = new Set<string>();
             
             for (const existing of existingRecords || []) {
-                if (existing.date_only) {
-                    // date_only is already in YYYY-MM-DD format from database
-                    const dateStr = existing.date_only.toString();
+                // Use existing date_only or filename date as fallback
+                const dateStr = existing.date_only?.toString() || filenameDate;
+                
+                if (dateStr) {
                     const signature = `${existing.device_id}|${existing.device_type}|${dateStr}`;
                     existingSignatures.add(signature);
                     
@@ -332,11 +371,12 @@ class DatabaseHelper {
     /**
      * Insert parsed records into the database with optimized batch operations and deduplication
      */
-    async insertParsedRecords(records: ParsedRecord[]): Promise<{ 
+    async insertParsedRecords(records: ParsedRecord[], fileName?: string): Promise<{ 
         insertedCount: number; 
         errors: string[]; 
         meterIdStats: { found: number; notFound: number };
         skippedDuplicates: number;
+        skippedHeaders: number;
     }> {
         const errors: string[] = [];
 
@@ -355,8 +395,9 @@ class DatabaseHelper {
         const uniqueMeterIdNotFound = uniqueDeviceIds.length - uniqueMeterIdFound;
 
         // CHECK FOR DUPLICATES BEFORE PROCESSING
-        const existingSignatures = await this.checkForDuplicates(records);
+        const existingSignatures = await this.checkForDuplicates(records, fileName);
         let skippedDuplicates = 0;
+        let skippedHeaders = 0;
 
         // Prepare all database records
         const dbRecords: DatabaseRecord[] = [];
@@ -367,6 +408,13 @@ class DatabaseHelper {
                 const deviceId = (record['ID'] || record['Number Meter'])?.toString() || '';
                 const deviceType = record['Device Type']?.toString() || '';
                 const manufacturer = (record['Manufacturer'] || record['Telegram Type'])?.toString() || '';
+
+                // SKIP HEADER ROWS: Check if this is a header row being parsed as data
+                if (deviceId === 'ID' || deviceType === 'Device Type' || deviceId === 'Number Meter') {
+                    skippedHeaders++;
+                    console.log(`[HEADER SKIP] Skipping header row: ID="${deviceId}", Type="${deviceType}"`);
+                    continue;
+                }
 
                 if (!deviceId || !deviceType || !manufacturer) {
                     errors.push(`Missing required fields for record: ${JSON.stringify(record)}`);
@@ -388,7 +436,8 @@ class DatabaseHelper {
                 }
 
                 // Extract date_only for DB unique constraint (YYYY-MM-DD format)
-                const dateOnlyYYYYMMDD = extractDateOnly(record);
+                // Pass fileName to allow fallback to filename date extraction
+                const dateOnlyYYYYMMDD = extractDateOnly(record, fileName);
 
                 // CHECK IF THIS RECORD ALREADY EXISTS (check both original and final device ID)
                 if (dateOnlyYYYYMMDD) {
@@ -464,7 +513,8 @@ class DatabaseHelper {
                 found: uniqueMeterIdFound, 
                 notFound: uniqueMeterIdNotFound 
             },
-            skippedDuplicates 
+            skippedDuplicates,
+            skippedHeaders
         };
     }
 }
@@ -560,6 +610,14 @@ serve(async (req: Request) => {
         console.log('Request content-length:', req.headers.get('content-length'))
         console.log('Request content-type:', req.headers.get('content-type'))
 
+        // Extract filename from headers (sent by email automation) or query params
+        const url = new URL(req.url);
+        const fileName = req.headers.get('x-filename') || 
+                        url.searchParams.get('fileName') || 
+                        url.searchParams.get('filename') ||
+                        'csv-content';
+        console.log('Extracted filename:', fileName);
+
         // First get the raw body text to debug JSON parsing issues
         const rawBody = await req.text()
         console.log('Raw body length:', rawBody.length)
@@ -571,7 +629,7 @@ serve(async (req: Request) => {
         // Parse CSV from content
         result = CSVParser.parseCSVFromContent(
             rawBody as string,
-            'csv-content'
+            fileName
         )
 
         console.log(`Successfully parsed ${result.parsedData.length} records`)
@@ -584,12 +642,13 @@ serve(async (req: Request) => {
         );
         console.log(`Found ${uniqueDeviceIds.size} unique device IDs`)
 
-        // Insert records into database
+        // Insert records into database with filename for date extraction
         const dbHelper = new DatabaseHelper();
-        const { insertedCount, errors, meterIdStats, skippedDuplicates } = await dbHelper.insertParsedRecords(result.parsedData);
+        const { insertedCount, errors, meterIdStats, skippedDuplicates, skippedHeaders } = await dbHelper.insertParsedRecords(result.parsedData, fileName);
 
         console.log(`Inserted ${insertedCount} records into database`)
         console.log(`Skipped ${skippedDuplicates} duplicate records`)
+        console.log(`Skipped ${skippedHeaders} header rows`)
         console.log(`Unique Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
         if (errors.length > 0) {
             console.warn('Database insertion errors:', errors);
@@ -601,10 +660,12 @@ serve(async (req: Request) => {
 
         // Return successful response with detailed statistics
         const responseBody = {
+            fileName: fileName,
             recordCount: result.parsedData.length,
             uniqueDeviceIds: uniqueDeviceIds.size,
             insertedRecords: insertedCount,
             skippedDuplicates: skippedDuplicates,
+            skippedHeaders: skippedHeaders,
             meterIdMatches: {
                 found: meterIdStats.found,
                 notFound: meterIdStats.notFound

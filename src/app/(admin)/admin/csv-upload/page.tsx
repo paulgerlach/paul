@@ -7,9 +7,11 @@ import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
 import { ROUTE_ADMIN } from '@/routes/routes';
 
 interface UploadResult {
+  fileName?: string;
   recordCount?: number;
   insertedRecords?: number;
   skippedDuplicates?: number;
+  skippedHeaders?: number;
   uniqueDeviceIds?: string;
   meterIdMatches?: {
     found: number;
@@ -94,11 +96,12 @@ export default function CSVUploadPage() {
       // Read file content
       const content = await file.text();
       
-      // Upload to API
-      const response = await fetch('/api/upload-csv', {
+      // Upload to API with filename parameter
+      const response = await fetch(`/api/upload-csv?filename=${encodeURIComponent(file.name)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
+          'x-filename': file.name,
         },
         body: content,
       });
@@ -223,33 +226,46 @@ export default function CSVUploadPage() {
             {result.error ? (
               <div className="text-red-700">{result.error}</div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm text-gray-600">Records Processed</div>
-                  <div className="text-2xl font-bold">{result.recordCount}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Records Inserted</div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {result.insertedRecords}
+              <div className="space-y-4">
+                {result.fileName && (
+                  <div className="text-sm text-gray-600 font-mono bg-gray-100 p-2 rounded">
+                    📄 {result.fileName}
                   </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Skipped Duplicates</div>
-                  <div className="text-xl font-bold text-purple-600">
-                    {result.skippedDuplicates || 0}
+                )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm text-gray-600">Records Processed</div>
+                    <div className="text-2xl font-bold">{result.recordCount}</div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Meters Linked</div>
-                  <div className="text-xl font-bold text-blue-600">
-                    {result.meterIdMatches?.found || 0}
+                  <div>
+                    <div className="text-sm text-gray-600">Records Inserted</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {result.insertedRecords}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Meters Not Linked</div>
-                  <div className="text-xl font-bold text-orange-600">
-                    {result.meterIdMatches?.notFound || 0}
+                  <div>
+                    <div className="text-sm text-gray-600">Skipped Duplicates</div>
+                    <div className="text-xl font-bold text-purple-600">
+                      {result.skippedDuplicates || 0}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600">Skipped Headers</div>
+                    <div className="text-xl font-bold text-gray-600">
+                      {result.skippedHeaders || 0}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600">Meters Linked</div>
+                    <div className="text-xl font-bold text-blue-600">
+                      {result.meterIdMatches?.found || 0}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-600">Meters Not Linked</div>
+                    <div className="text-xl font-bold text-orange-600">
+                      {result.meterIdMatches?.notFound || 0}
+                    </div>
                   </div>
                 </div>
               </div>

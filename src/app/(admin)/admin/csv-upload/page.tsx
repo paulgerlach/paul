@@ -223,55 +223,126 @@ export default function CSVUploadPage() {
               ? 'bg-red-50 border-red-200' 
               : 'bg-green-50 border-green-200'
           }`}>
-            <h3 className="font-bold text-lg mb-4">
-              {result.error ? '❌ Upload Failed' : '✅ Upload Complete'}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg">
+                {result.error ? '❌ Upload Failed' : '✅ Upload Complete'}
+              </h3>
+              {result.fileName && !result.error && (
+                <div className="text-sm text-gray-600 font-mono bg-white px-3 py-1 rounded border border-gray-300">
+                  📄 {result.fileName}
+                </div>
+              )}
+            </div>
             
             {result.error ? (
               <div className="text-red-700">{result.error}</div>
             ) : (
               <div className="space-y-4">
-                {result.fileName && (
-                  <div className="text-sm text-gray-600 font-mono bg-gray-100 p-2 rounded">
-                    📄 {result.fileName}
-                  </div>
-                )}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-gray-600">Records Processed</div>
-                    <div className="text-2xl font-bold">{result.recordCount}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Records Inserted</div>
-                    <div className="text-2xl font-bold text-green-600">
-                      {result.insertedRecords}
+                {/* Summary Box */}
+                <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                  <div className="text-sm font-semibold text-gray-700 mb-3">📊 UPLOAD SUMMARY</div>
+                  
+                  <div className="space-y-3">
+                    {/* Total */}
+                    <div className="flex items-center justify-between pb-2 border-b border-gray-200">
+                      <span className="text-gray-700 font-medium">Total Records in File</span>
+                      <span className="text-xl font-bold">{result.recordCount}</span>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Skipped Duplicates</div>
-                    <div className="text-xl font-bold text-purple-600">
-                      {result.skippedDuplicates || 0}
+
+                    {/* Valid Data Section */}
+                    <div className="pl-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-8 bg-blue-500 rounded"></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-700">✅ Valid Data Records</div>
+                          <div className="text-xs text-gray-500">Actual meter readings</div>
+                        </div>
+                        <span className="text-lg font-bold text-blue-600">
+                          {(result.recordCount || 0) - (result.skippedHeaders || 0)}
+                        </span>
+                      </div>
+                      
+                      {/* Breakdown */}
+                      <div className="pl-8 space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">├─ New records inserted:</span>
+                          <span className="font-bold text-green-600">{result.insertedRecords || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">└─ Duplicates skipped:</span>
+                          <span className="font-bold text-purple-600">{result.skippedDuplicates || 0}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Skipped Headers</div>
-                    <div className="text-xl font-bold text-gray-600">
-                      {result.skippedHeaders || 0}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Meters Linked</div>
-                    <div className="text-xl font-bold text-blue-600">
-                      {result.meterIdMatches?.found || 0}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600">Meters Not Linked</div>
-                    <div className="text-xl font-bold text-orange-600">
-                      {result.meterIdMatches?.notFound || 0}
+
+                    {/* Filtered Section */}
+                    {(result.skippedHeaders || 0) > 0 && (
+                      <div className="pl-4 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1 h-8 bg-gray-400 rounded"></div>
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-gray-700">🗑️ Filtered Out</div>
+                            <div className="text-xs text-gray-500">Invalid/header rows</div>
+                          </div>
+                          <span className="text-lg font-bold text-gray-600">
+                            {result.skippedHeaders || 0}
+                          </span>
+                        </div>
+                        <div className="pl-8 text-sm text-gray-600">
+                          └─ Header rows automatically removed
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Meter Linking Section */}
+                    <div className="pl-4 space-y-2 pt-2 border-t border-gray-200">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-8 bg-green-500 rounded"></div>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-700">🔗 Meter Linking</div>
+                          <div className="text-xs text-gray-500">Connected to apartments</div>
+                        </div>
+                      </div>
+                      <div className="pl-8 space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">├─ Linked to apartments:</span>
+                          <span className="font-bold text-blue-600">{result.meterIdMatches?.found || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">└─ Not linked yet:</span>
+                          <span className="font-bold text-orange-600">{result.meterIdMatches?.notFound || 0}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Status Message */}
+                {result.insertedRecords === 0 && result.skippedDuplicates > 0 && (
+                  <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="text-2xl">💡</div>
+                    <div>
+                      <div className="font-semibold text-purple-900">This file was already uploaded</div>
+                      <div className="text-sm text-purple-700">
+                        All {result.skippedDuplicates} data records were skipped because they already exist in the database.
+                        {(result.skippedHeaders || 0) > 0 && ` Additionally, ${result.skippedHeaders} header rows were filtered out.`}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {result.insertedRecords > 0 && (
+                  <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="text-2xl">✨</div>
+                    <div>
+                      <div className="font-semibold text-green-900">Successfully imported new data</div>
+                      <div className="text-sm text-green-700">
+                        {result.insertedRecords} new records were added to the database.
+                        {result.skippedDuplicates > 0 && ` ${result.skippedDuplicates} duplicates were skipped.`}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

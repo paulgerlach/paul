@@ -45,12 +45,16 @@ export default function CSVUploadPage() {
     setLoadingHistory(true);
     try {
       
-      // Get total count
-      const { count } = await supabase
+      // Get total count (without head: true to avoid RLS issues)
+      const { count, error: countError } = await supabase
         .from('parsed_data')
-        .select('*', { count: 'exact', head: true });
+        .select('id', { count: 'exact', head: false });
       
-      setTotalRecords(count || 0);
+      if (countError) {
+        console.error('Error getting count:', countError);
+      } else {
+        setTotalRecords(count || 0);
+      }
 
       // Get recent uploads (last 100 records)
       const { data, error } = await supabase

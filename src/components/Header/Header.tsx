@@ -34,7 +34,9 @@ export default function Header() {
       }`}
     >
       <div
-        className={`flex items-center w-full px-5 rounded-full backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between bg-white/30`}
+        className={`flex items-center w-full px-5 rounded-full backdrop-blur-lg duration-300 max-large:[.scrolled_&]:py-3 max-large:py-4 ease-in-out justify-between ${
+          scrolled ? "bg-white/95 shadow-md" : "bg-white/30"
+        }`}
       >
         <Link
           href={ROUTE_HOME}
@@ -51,14 +53,29 @@ export default function Header() {
             alt="logo"
           />
         </Link>
-        <div className="flex-grow flex items-center justify-end max-large:fixed max-large:flex-col max-large:w-screen max-large:h-screen max-large:bg-card_dark_bg max-large:top-0 max-large:left-0 max-large:p-6 max-large:items-start max-large:justify-start max-large:translate-x-full duration-300 [.active_&]:translate-x-0">
-          <div className="flex-grow flex items-center justify-center max-large:items-start max-large:justify-start">
+        <div className="flex-grow flex items-center justify-end max-large:fixed max-large:flex-col max-large:w-screen max-large:h-screen max-large:bg-card_dark_bg max-large:top-0 max-large:left-0 max-large:p-6 max-large:items-center max-large:justify-start max-large:translate-x-full duration-300 [.active_&]:translate-x-0">
+          <button
+            onClick={() => openDialog("login")}
+            className="hidden max-large:flex w-full mb-2 p-4 items-center cursor-pointer gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-[48px] hover:opacity-80 transition"
+          >
+            <Image
+              width={20}
+              height={20}
+              loading="lazy"
+              className="max-w-5 max-h-5"
+              style={{ width: "100%", height: "auto" }}
+              src={login}
+              alt="login"
+            />
+            Einloggen
+          </button>
+          <div className="flex-grow flex items-center justify-center max-large:flex-grow-0 max-large:items-center max-large:justify-center max-large:w-full">
             <Nav />
           </div>
-          <div className="flex items-center justify-end gap-1.5">
+          <div className="flex items-center justify-end gap-1.5 max-large:flex-col max-large:w-full max-large:justify-center max-large:items-center max-large:mt-12 max-large:gap-4">
             <button
               onClick={() => openDialog("login")}
-              className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
+              className="p-2 flex max-large:hidden items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
             >
               <Image
                 width={16}
@@ -72,8 +89,8 @@ export default function Header() {
               Einloggen
             </button>
             <Link
-              href="tel:01759235690"
-              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
+              href="tel:+49 172 5181689"
+              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text max-large:text-lg"
             >
               <Image
                 width={16}
@@ -84,23 +101,23 @@ export default function Header() {
                 src={cellphone}
                 alt="cellphone"
               />
-              01759235690
+              +49 172 5181689
             </Link>
             <Link
-              href={ROUTE_KONTAKT}
-              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-darl_text rounded-halfbase"
+              href={ROUTE_FRAGEBOGEN}
+              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-dark_text rounded-halfbase max-large:w-full max-large:py-4 max-large:text-lg"
             >
-              Demo buchen
+              Angebot einholen
             </Link>
           </div>
         </div>
         <Link
           href={ROUTE_FRAGEBOGEN}
-          className="border ml-auto mr-3 hidden max-large:flex border-border_base py-2 px-4 items-center justify-center text-base max-xl:text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
+          className="border ml-auto mr-3 hidden max-large:flex border-border_base bg-green py-2 px-4 items-center justify-center text-base max-xl:text-sm text-dark_text rounded-halfbase duration-300 hover:opacity-80"
         >
           Angebot anfordern
         </Link>
-        <HeaderButton />
+        <HeaderButton scrolled={scrolled} />
       </div>
     </header>
   );

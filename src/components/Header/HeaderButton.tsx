@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 
-export default function HeaderButton() {
+export default function HeaderButton({ scrolled }: { scrolled: boolean }) {
 	const burgerRef = useRef<HTMLButtonElement>(null);
 
 	const handleBurgerMenu = () => {
@@ -20,11 +20,13 @@ export default function HeaderButton() {
 		<button
 			ref={burgerRef}
 			onClick={handleBurgerMenu}
-			className="burger size-9 duration-300 hover:opacity-80 rounded-halfbase border border-border_base hidden max-large:flex items-center justify-center flex-col gap-1 z-10"
+			className={`burger size-9 duration-300 hover:opacity-80 rounded-halfbase border hidden max-large:flex items-center justify-center flex-col gap-1 z-10 [.active_&]:max-large:fixed [.active_&]:max-large:top-6 [.active_&]:max-large:right-6 ${
+				scrolled ? "border-dark_text bg-white/50" : "border-border_base"
+			}`}
 		>
-			<span className="burger-line top-line"></span>
-			<span className="burger-line mid-line"></span>
-			<span className="burger-line bot-line"></span>
+			<span className={`burger-line top-line ${scrolled ? "!bg-dark_text" : ""}`}></span>
+			<span className={`burger-line mid-line ${scrolled ? "!bg-dark_text" : ""}`}></span>
+			<span className={`burger-line bot-line ${scrolled ? "!bg-dark_text" : ""}`}></span>
 		</button>
 	);
 }

@@ -29,11 +29,15 @@
 
   --breakpoint-*: initial;
   /* --breakpoint-max-*: initial; */
-  --breakpoint-small: 480px;
-  --breakpoint-medium: 768px;
-  --breakpoint-large: 992px;
-  --breakpoint-megalarge: 1200px;
-  --breakpoint-xl: 1640px;
+  /* Mobile-optimized breakpoints aligned with Tailwind standards */
+  --breakpoint-small: 480px;    /* Small phones */
+  --breakpoint-sm: 640px;       /* Phones (Tailwind standard) */
+  --breakpoint-medium: 768px;   /* Tablets */
+  --breakpoint-md: 768px;       /* Tablets (Tailwind standard) */
+  --breakpoint-large: 992px;    /* Small laptops */
+  --breakpoint-lg: 1024px;      /* Laptops (Tailwind standard) */
+  --breakpoint-megalarge: 1200px; /* Desktops */
+  --breakpoint-xl: 1640px;      /* Large desktops */
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -69,7 +73,7 @@ html {
   background-color: #1e322d;
 }
 .burger.active > .top-line {
-  transform: translateY(1px) rotate(45deg);
+  transform: translateY(6px) rotate(45deg);
   transition: 0.3s all ease;
 }
 .burger.active > .mid-line {
@@ -77,7 +81,7 @@ html {
   transition: 0.3s all ease;
 }
 .burger.active > .bot-line {
-  transform: translateY(-11px) rotate(-45deg);
+  transform: translateY(-6px) rotate(-45deg);
   transition: 0.3s all ease;
 }
 #header {

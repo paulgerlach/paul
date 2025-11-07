@@ -60,7 +60,7 @@ export default function Sidebar() {
     {
       title: "CSV Upload",
       icon: caract_files,
-      route: withUserPrefix(ROUTE_CSV_UPLOAD),
+      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`, // Always /admin/csv-upload (global admin feature)
     },
     {
       title: "Abrechnung",

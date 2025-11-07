@@ -178,7 +178,8 @@ class Utils {
 
     /**
      * Process CSV content into records
-     * Handles standard CSV format: single header row + multiple data rows
+     * Handles VERTICAL CSV format: alternating header-data pairs (Engelmann Gateway format)
+     * Each device type has its own header line followed by its data line
      */
     static processCSVContent(fileContent: string): ParsedRecord[] {
         const lines = fileContent
@@ -193,20 +194,23 @@ class Utils {
 
         const records: ParsedRecord[] = [];
 
-        // First line is the header (column names)
-        const headerLine = lines[0];
-        
-        // Process all subsequent lines as data rows
-        for (let i = 1; i < lines.length; i++) {
-            const dataLine = lines[i];
+        // Process lines in pairs: header line followed by data line
+        // Line 0: Header for device 1
+        // Line 1: Data for device 1
+        // Line 2: Header for device 2  
+        // Line 3: Data for device 2
+        // etc.
+        for (let i = 0; i < lines.length - 1; i += 2) {
+            const headerLine = lines[i];
+            const dataLine = lines[i + 1];
             
-            if (dataLine) {
-                    const record = this.parseRecord(headerLine, dataLine);
-                    records.push(record);
+            if (headerLine && dataLine) {
+                const record = this.parseRecord(headerLine, dataLine);
+                records.push(record);
             }
         }
 
-        console.log(`Processed ${records.length} records from ${lines.length - 1} data rows`);
+        console.log(`[VERTICAL FORMAT] Processed ${records.length} records from ${lines.length / 2} header-data pairs`);
         return records;
     }
 }
@@ -438,6 +442,16 @@ class DatabaseHelper {
                 // Extract date_only for DB unique constraint (YYYY-MM-DD format)
                 // Pass fileName to allow fallback to filename date extraction
                 const dateOnlyYYYYMMDD = extractDateOnly(record, fileName);
+
+                // SURGICAL FIX: Inject filename date into JSONB if it was extracted from filename
+                // This ensures chart filters work correctly by having dates in both places
+                if (dateOnlyYYYYMMDD && !record['Actual Date'] && !record['Raw Date']) {
+                    // Convert YYYY-MM-DD to DD.MM.YYYY for Actual Date
+                    const [year, month, day] = dateOnlyYYYYMMDD.split('-');
+                    updatedRecord['Actual Date'] = `${day}.${month}.${year}`;
+                    updatedRecord['Raw Date'] = `${day}-${month}-${year}`;
+                    console.log(`[JSONB DATE] Injected filename date into JSONB for device ${finalDeviceId}: ${updatedRecord['Actual Date']}`);
+                }
 
                 // CHECK IF THIS RECORD ALREADY EXISTS (check both original and final device ID)
                 if (dateOnlyYYYYMMDD) {

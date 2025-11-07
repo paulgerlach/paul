@@ -78,43 +78,65 @@ function extractDateFromFilename(fileName: string): string | null {
  * Falls back to filename date if no date found in CSV content
  */
 function extractDateOnly(record: any, fileName?: string): string | null {
+    const deviceId = record['ID'] || record['Number Meter'] || 'unknown';
+    const deviceType = record['Device Type'] || 'unknown';
+    
+    // 🔍 DEBUG: Log what we're working with
+    console.log(`[DATE EXTRACT START] Device: ${deviceId}, Type: ${deviceType}, Filename: "${fileName}"`);
+    
     // Try different date field names from CSV content
     const dateFields = [
         record['Actual Date'],
         record['IV,0,0,0,,Date/Time'],
         record['Raw Date']
     ];
+    
+    // 🔍 DEBUG: Log what fields exist
+    console.log(`[DATE FIELDS] Actual Date: "${record['Actual Date']}", DateTime: "${record['IV,0,0,0,,Date/Time']}", Raw Date: "${record['Raw Date']}"`);
 
     for (const dateStr of dateFields) {
-        if (!dateStr || typeof dateStr !== 'string') continue;
+        if (!dateStr || typeof dateStr !== 'string' || dateStr.trim() === '') continue;
 
         // Extract first 10 characters and trim
         const normalized = dateStr.substring(0, 10).trim();
+        
+        console.log(`[DATE TRY CSV] Attempting to parse: "${normalized}"`);
 
         // Match DD.MM.YYYY format
         const dotMatch = normalized.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
         if (dotMatch) {
             const [_, day, month, year] = dotMatch;
-            return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+            const result = `${year}-${month}-${day}`;
+            console.log(`[DATE SUCCESS CSV] Extracted from CSV field: ${result}`);
+            return result; // Convert to YYYY-MM-DD
         }
 
         // Match DD-MM-YYYY format
         const dashMatch = normalized.match(/^(\d{2})-(\d{2})-(\d{4})$/);
         if (dashMatch) {
             const [_, day, month, year] = dashMatch;
-            return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+            const result = `${year}-${month}-${day}`;
+            console.log(`[DATE SUCCESS CSV] Extracted from CSV field: ${result}`);
+            return result; // Convert to YYYY-MM-DD
         }
     }
 
     // FALLBACK: If no date found in CSV content, try extracting from filename
+    console.log(`[DATE FALLBACK] No CSV date found, trying filename: "${fileName}"`);
     if (fileName) {
         const filenameDate = extractDateFromFilename(fileName);
+        console.log(`[DATE FILENAME RESULT] extractDateFromFilename returned: ${filenameDate}`);
         if (filenameDate) {
-            console.log(`[FILENAME DATE] Using filename date for device ${record['ID'] || record['Number Meter']}: ${filenameDate}`);
+            console.log(`[DATE SUCCESS FILENAME] Using filename date for device ${deviceId}: ${filenameDate}`);
             return filenameDate;
+        } else {
+            console.error(`[DATE FAIL FILENAME] extractDateFromFilename returned null for: "${fileName}"`);
         }
+    } else {
+        console.error(`[DATE FAIL] No filename provided, cannot extract date!`);
     }
 
+    console.error(`[DATE FAIL FINAL] No date found for device ${deviceId} (${deviceType})`);
     return null; // No valid date found
 }
 
@@ -443,9 +465,18 @@ class DatabaseHelper {
                 // Pass fileName to allow fallback to filename date extraction
                 const dateOnlyYYYYMMDD = extractDateOnly(record, fileName);
 
+                // 🔥 NEW: REJECT RECORDS WITHOUT DATES (prevents null date bugs)
+                if (!dateOnlyYYYYMMDD) {
+                    console.error(`[SKIP] No date extracted for ${deviceType} device ${deviceId}`);
+                    console.error(`[SKIP DEBUG] Filename: "${fileName}"`);
+                    console.error(`[SKIP DEBUG] Record fields:`, Object.keys(record).slice(0, 10));
+                    errors.push(`Skipped device ${deviceId} (${deviceType}): No date found in CSV or filename`);
+                    continue; // Don't save records without dates!
+                }
+
                 // SURGICAL FIX: Inject filename date into JSONB if it was extracted from filename
                 // This ensures chart filters work correctly by having dates in both places
-                if (dateOnlyYYYYMMDD && !record['Actual Date'] && !record['Raw Date']) {
+                if (!record['Actual Date'] && !record['Raw Date']) {
                     // Convert YYYY-MM-DD to DD.MM.YYYY for Actual Date
                     const [year, month, day] = dateOnlyYYYYMMDD.split('-');
                     updatedRecord['Actual Date'] = `${day}.${month}.${year}`;

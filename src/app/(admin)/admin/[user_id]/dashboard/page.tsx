@@ -12,7 +12,7 @@ export default async function AdminDashboardPage({
   return (
     <div className="py-6 px-9 overflow-scroll">
       <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-      <DashboardCharts viewingUserId={user_id} />
+      <DashboardCharts />
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function NavGroup({
       <Link
         href={route}
         onClick={() => handleBurgerMenu()}
-        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text"
+        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text max-large:text-lg max-large:justify-center"
       >
         {title}
         <Image

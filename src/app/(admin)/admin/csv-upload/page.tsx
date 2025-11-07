@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
 import Breadcrumb from '@/components/Admin/Breadcrumb/Breadcrumb';
 import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
@@ -30,16 +31,53 @@ interface UploadHistory {
 }
 
 export default function CSVUploadPage() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<UploadResult | null>(null);
   const [recentUploads, setRecentUploads] = useState<UploadHistory[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
+  // 🔒 SECURITY: Check if user is admin on mount
+  useEffect(() => {
+    checkAdminPermission();
+  }, []);
+
+  const checkAdminPermission = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push('/');
+        return;
+      }
+
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('permission')
+        .eq('id', user.id)
+        .single();
+
+      if (error || !userData || userData.permission !== 'admin') {
+        console.error('Unauthorized access attempt to CSV Upload');
+        router.push(ROUTE_ADMIN);
+        return;
+      }
+
+      setIsAuthorized(true);
+    } catch (error) {
+      console.error('Error checking admin permission:', error);
+      router.push('/');
+    }
+  };
 
   useEffect(() => {
-    loadUploadHistory();
-  }, []);
+    if (isAuthorized) {
+      loadUploadHistory();
+    }
+  }, [isAuthorized]);
 
   const loadUploadHistory = async () => {
     setLoadingHistory(true);
@@ -134,6 +172,21 @@ export default function CSVUploadPage() {
     return acc;
   }, {} as Record<string, UploadHistory[]>);
 
+  // 🔒 SECURITY: Show loading or redirect if not authorized
+  if (isAuthorized === null) {
+    return (
+      <div className="py-6 px-9 h-[calc(100dvh-77px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Checking authorization...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthorized === false) {
+    return null; // Will redirect via router.push in checkAdminPermission
+  }
+
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] overflow-y-auto">
       <Breadcrumb
@@ -145,7 +198,7 @@ export default function CSVUploadPage() {
       <ContentWrapper className="space-y-6">
         {/* Header */}
         <div>
-          <h2 className="text-2xl font-bold mb-2">Manual CSV Upload</h2>
+          <h2 className="text-2xl font-bold mb-2">Manual CSV Upload (Super Admin Only)</h2>
           <p className="text-gray-600">
             Upload meter reading CSV files from Engelmann Gateway. All data is permanently stored.
           </p>

@@ -1,11 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseServer } from '@/utils/supabase/server';
+import { isAdminUser } from '@/auth';
 
 /**
- * Manual CSV Upload API Route
+ * Manual CSV Upload API Route - SUPER ADMIN ONLY
  * Forwards CSV content to Supabase Edge Function for parsing
  */
 export async function POST(request: NextRequest) {
   try {
+    // 🔒 SECURITY: Verify user is admin
+    const supabase = await supabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please login' },
+        { status: 401 }
+      );
+    }
+
+    const isAdmin = await isAdminUser(user.id);
+    if (!isAdmin) {
+      console.error(`Unauthorized CSV upload attempt by user: ${user.id}`);
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 403 }
+      );
+    }
+
     // Extract filename from query params or headers
     const { searchParams } = new URL(request.url);
     const fileName = searchParams.get('fileName') || 
@@ -13,7 +35,7 @@ export async function POST(request: NextRequest) {
                     request.headers.get('x-filename') ||
                     'manual-upload.csv';
     
-    console.log(`Processing upload for file: ${fileName}`);
+    console.log(`Processing admin upload for file: ${fileName} by user: ${user.email}`);
     
     // Read raw CSV content from request body
     const csvContent = await request.text();

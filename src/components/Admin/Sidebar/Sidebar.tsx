@@ -58,11 +58,6 @@ export default function Sidebar() {
       route: withUserPrefix(ROUTE_DOKUMENTE),
     },
     {
-      title: "CSV Upload",
-      icon: caract_files,
-      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`, // Always /admin/csv-upload (global admin feature)
-    },
-    {
       title: "Abrechnung",
       icon: abrechnung,
       route: withUserPrefix(ROUTE_ABRECHNUNG),
@@ -80,11 +75,19 @@ export default function Sidebar() {
     },
   ];
 
+  // 🔒 SECURITY: Admin-only links
   if (isAdmin) {
     dashboardLinks.unshift({
       title: "User Übersicht",
       icon: dashboard,
       route: ROUTE_ADMIN,
+    });
+    
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(3, 0, {
+      title: "CSV Upload",
+      icon: caract_files,
+      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
     });
   }
 

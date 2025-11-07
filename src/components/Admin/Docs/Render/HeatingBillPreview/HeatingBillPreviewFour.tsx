@@ -407,7 +407,7 @@ const HeatingBillPreviewFour = ({
         Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie sich
         bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder
         Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden Sie
-        unter www.brunata-metrona.de.
+        unter www.heidisystems.com.
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export default function FunktionenHero() {
 	return (
 		<div className="bg-[#FAFAF9] grid items-center grid-cols-2 max-medium:grid-cols-1 gap-7 pt-8 pl-[120px] max-large:pl-20 max-medium:pl-10 max-small:pl-5 pb-4 pr-4">
 			<div>
-				<h1 className="text-[65px] max-megalarge:text-[50px] max-megalarge:leading-[1] max-large:text-4xl max-medium:text-2xl leading-[78px] text-dark_text mb-2">
+				<h1 className="mt-20 max-large:mt-20 max-medium:mt-16 max-small:mt-12 text-[65px] max-megalarge:text-[50px] max-megalarge:leading-[1] max-large:text-4xl max-medium:text-2xl leading-[78px] text-dark_text mb-2">
 					Daten mit höchster <br />
 					Effizienz bearbeiten
 				</h1>

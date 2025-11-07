@@ -248,10 +248,20 @@ export default function ElectricityChart({
         
         if (monthsSpan <= 2) {
           // Daily granularity - show daily consumption
-          labels.forEach((label, index) => {
-            const dayData = sortedData[index];
-            const kwh = dayData ? dayData.totalWh / 1000 : 0;
+          // Create map of date → consumption for fast lookup
+          const dataByDate = new Map<string, number>();
+          sortedData.forEach(dataPoint => {
+            const dateKey = `${dataPoint.date.getDate()}-${dataPoint.date.getMonth()}-${dataPoint.date.getFullYear()}`;
+            dataByDate.set(dateKey, dataPoint.totalWh / 1000);
+          });
+          
+          // Map labels to actual data by matching dates
+          const cur = new Date(startDate);
+          labels.forEach((label) => {
+            const dateKey = `${cur.getDate()}-${cur.getMonth()}-${cur.getFullYear()}`;
+            const kwh = dataByDate.get(dateKey) || 0;
             rows.push({ label, kwh });
+            cur.setDate(cur.getDate() + 1);
           });
         } else {
           // Monthly granularity - aggregate by month

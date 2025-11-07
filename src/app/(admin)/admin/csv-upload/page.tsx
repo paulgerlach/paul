@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
 import Breadcrumb from '@/components/Admin/Breadcrumb/Breadcrumb';
 import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
 import { ROUTE_ADMIN } from '@/routes/routes';
 
 interface UploadResult {
+  fileName?: string;
   recordCount?: number;
   insertedRecords?: number;
   skippedDuplicates?: number;
+  skippedHeaders?: number;
   uniqueDeviceIds?: string;
   meterIdMatches?: {
     found: number;
@@ -28,27 +31,68 @@ interface UploadHistory {
 }
 
 export default function CSVUploadPage() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<UploadResult | null>(null);
   const [recentUploads, setRecentUploads] = useState<UploadHistory[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
+  // 🔒 SECURITY: Check if user is admin on mount
+  useEffect(() => {
+    checkAdminPermission();
+  }, []);
+
+  const checkAdminPermission = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push('/');
+        return;
+      }
+
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('permission')
+        .eq('id', user.id)
+        .single();
+
+      if (error || !userData || userData.permission !== 'admin') {
+        console.error('Unauthorized access attempt to CSV Upload');
+        router.push(ROUTE_ADMIN);
+        return;
+      }
+
+      setIsAuthorized(true);
+    } catch (error) {
+      console.error('Error checking admin permission:', error);
+      router.push('/');
+    }
+  };
 
   useEffect(() => {
-    loadUploadHistory();
-  }, []);
+    if (isAuthorized) {
+      loadUploadHistory();
+    }
+  }, [isAuthorized]);
 
   const loadUploadHistory = async () => {
     setLoadingHistory(true);
     try {
       
-      // Get total count
-      const { count } = await supabase
+      // Get total count (without head: true to avoid RLS issues)
+      const { count, error: countError } = await supabase
         .from('parsed_data')
-        .select('*', { count: 'exact', head: true });
+        .select('id', { count: 'exact', head: false });
       
-      setTotalRecords(count || 0);
+      if (countError) {
+        console.error('Error getting count:', countError);
+      } else {
+        setTotalRecords(count || 0);
+      }
 
       // Get recent uploads (last 100 records)
       const { data, error } = await supabase
@@ -94,11 +138,12 @@ export default function CSVUploadPage() {
       // Read file content
       const content = await file.text();
       
-      // Upload to API
-      const response = await fetch('/api/upload-csv', {
+      // Upload to API with filename parameter
+      const response = await fetch(`/api/upload-csv?filename=${encodeURIComponent(file.name)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain',
+          'x-filename': file.name,
         },
         body: content,
       });
@@ -127,6 +172,21 @@ export default function CSVUploadPage() {
     return acc;
   }, {} as Record<string, UploadHistory[]>);
 
+  // 🔒 SECURITY: Show loading or redirect if not authorized
+  if (isAuthorized === null) {
+    return (
+      <div className="py-6 px-9 h-[calc(100dvh-77px)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Checking authorization...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthorized === false) {
+    return null; // Will redirect via router.push in checkAdminPermission
+  }
+
   return (
     <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] overflow-y-auto">
       <Breadcrumb
@@ -138,7 +198,7 @@ export default function CSVUploadPage() {
       <ContentWrapper className="space-y-6">
         {/* Header */}
         <div>
-          <h2 className="text-2xl font-bold mb-2">Manual CSV Upload</h2>
+          <h2 className="text-2xl font-bold mb-2">Manual CSV Upload (Super Admin Only)</h2>
           <p className="text-gray-600">
             Upload meter reading CSV files from Engelmann Gateway. All data is permanently stored.
           </p>
@@ -216,42 +276,108 @@ export default function CSVUploadPage() {
               ? 'bg-red-50 border-red-200' 
               : 'bg-green-50 border-green-200'
           }`}>
-            <h3 className="font-bold text-lg mb-4">
-              {result.error ? '❌ Upload Failed' : '✅ Upload Complete'}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg">
+                {result.error ? '❌ Upload Failed' : '✅ Upload Complete'}
+              </h3>
+              {result.fileName && !result.error && (
+                <div className="text-sm text-gray-600 font-mono bg-white px-3 py-1 rounded border border-gray-300">
+                  📄 {result.fileName}
+                </div>
+              )}
+            </div>
             
             {result.error ? (
               <div className="text-red-700">{result.error}</div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm text-gray-600">Records Processed</div>
-                  <div className="text-2xl font-bold">{result.recordCount}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Records Inserted</div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {result.insertedRecords}
+              <div className="space-y-4">
+                {/* Summary Box */}
+                <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                  <div className="text-sm font-semibold text-gray-700 mb-3">📊 UPLOAD SUMMARY</div>
+                  
+                  <div className="space-y-4">
+                    {/* Simple Math Breakdown at Top */}
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
+                      <div className="flex items-baseline justify-between mb-2">
+                        <span className="text-gray-700 font-medium">📄 Total Rows in CSV File</span>
+                        <span className="text-2xl font-bold text-gray-900">{result.recordCount}</span>
+                      </div>
+                      
+                      <div className="text-sm space-y-1 ml-4 pt-2 border-t border-gray-300">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">= Meter readings (data)</span>
+                          <span className="font-bold text-blue-600">{(result.recordCount || 0) - (result.skippedHeaders || 0)}</span>
+                        </div>
+                        {(result.skippedHeaders || 0) > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-gray-600">+ Header rows (auto-removed)</span>
+                            <span className="font-bold text-gray-500">{result.skippedHeaders || 0}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* What Happened Section */}
+                    <div className="space-y-3">
+                      <div className="text-xs font-semibold text-gray-600 uppercase">What Happened:</div>
+                      
+                      {/* New vs Duplicate */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                          <div className="text-xs text-green-700 mb-1">✅ New Data Added</div>
+                          <div className="text-2xl font-bold text-green-600">{result.insertedRecords || 0}</div>
+                        </div>
+                        
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                          <div className="text-xs text-purple-700 mb-1">🔄 Duplicates Skipped</div>
+                          <div className="text-2xl font-bold text-purple-600">{result.skippedDuplicates || 0}</div>
+                        </div>
+                      </div>
+
+                      {/* Meter Linking */}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <div className="text-xs text-gray-600 mb-2">🔗 Meter Linking Status:</div>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Linked:</span>
+                            <span className="font-bold text-blue-600">{result.meterIdMatches?.found || 0}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Not linked:</span>
+                            <span className="font-bold text-orange-600">{result.meterIdMatches?.notFound || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="text-sm text-gray-600">Skipped Duplicates</div>
-                  <div className="text-xl font-bold text-purple-600">
-                    {result.skippedDuplicates || 0}
+
+                {/* Status Message */}
+                {result.insertedRecords === 0 && (result.skippedDuplicates || 0) > 0 && (
+                  <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="text-2xl">💡</div>
+                    <div>
+                      <div className="font-semibold text-purple-900">This file was already uploaded</div>
+                      <div className="text-sm text-purple-700">
+                        All {result.skippedDuplicates || 0} data records were skipped because they already exist in the database.
+                        {(result.skippedHeaders || 0) > 0 && ` Additionally, ${result.skippedHeaders} header rows were filtered out.`}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Meters Linked</div>
-                  <div className="text-xl font-bold text-blue-600">
-                    {result.meterIdMatches?.found || 0}
+                )}
+
+                {(result.insertedRecords || 0) > 0 && (
+                  <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="text-2xl">✨</div>
+                    <div>
+                      <div className="font-semibold text-green-900">Successfully imported new data</div>
+                      <div className="text-sm text-green-700">
+                        {result.insertedRecords || 0} new records were added to the database.
+                        {(result.skippedDuplicates || 0) > 0 && ` ${result.skippedDuplicates} duplicates were skipped.`}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-600">Meters Not Linked</div>
-                  <div className="text-xl font-bold text-orange-600">
-                    {result.meterIdMatches?.notFound || 0}
-                  </div>
-                </div>
+                )}
               </div>
             )}
 

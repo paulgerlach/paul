@@ -1,11 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabaseServer } from '@/utils/supabase/server';
+import { isAdminUser } from '@/auth';
 
 /**
- * Manual CSV Upload API Route
+ * Manual CSV Upload API Route - SUPER ADMIN ONLY
  * Forwards CSV content to Supabase Edge Function for parsing
  */
 export async function POST(request: NextRequest) {
   try {
+    // 🔒 SECURITY: Verify user is admin
+    const supabase = await supabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please login' },
+        { status: 401 }
+      );
+    }
+
+    const isAdmin = await isAdminUser(user.id);
+    if (!isAdmin) {
+      console.error(`Unauthorized CSV upload attempt by user: ${user.id}`);
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 403 }
+      );
+    }
+
+    // Extract filename from query params or headers
+    const { searchParams } = new URL(request.url);
+    const fileName = searchParams.get('fileName') || 
+                    searchParams.get('filename') || 
+                    request.headers.get('x-filename') ||
+                    'manual-upload.csv';
+    
+    console.log(`Processing admin upload for file: ${fileName} by user: ${user.email}`);
+    
     // Read raw CSV content from request body
     const csvContent = await request.text();
     
@@ -19,7 +50,7 @@ export async function POST(request: NextRequest) {
     console.log(`Received CSV upload, size: ${csvContent.length} bytes`);
     
     // Forward to Supabase Edge Function (same function Make.com uses)
-    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser`;
+    const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser?filename=${encodeURIComponent(fileName)}`;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!edgeFunctionUrl || !serviceRoleKey) {
@@ -34,7 +65,8 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${serviceRoleKey}`,
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/plain',
+        'x-filename': fileName
       },
       body: csvContent
     });

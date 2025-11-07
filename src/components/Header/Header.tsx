@@ -56,7 +56,7 @@ export default function Header() {
         <div className="flex-grow flex items-center justify-end max-large:fixed max-large:flex-col max-large:w-screen max-large:h-screen max-large:bg-card_dark_bg max-large:top-0 max-large:left-0 max-large:p-6 max-large:items-center max-large:justify-start max-large:translate-x-full duration-300 [.active_&]:translate-x-0">
           <button
             onClick={() => openDialog("login")}
-            className="hidden max-large:flex w-full mb-2 p-4 items-center cursor-pointer gap-2 justify-center text-lg text-white bg-green rounded-halfbase min-h-[48px] hover:opacity-80 transition"
+            className="hidden max-large:flex w-full mb-2 p-4 items-center cursor-pointer gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-[48px] hover:opacity-80 transition"
           >
             <Image
               width={20}
@@ -72,7 +72,7 @@ export default function Header() {
           <div className="flex-grow flex items-center justify-center max-large:flex-grow-0 max-large:items-center max-large:justify-center max-large:w-full">
             <Nav />
           </div>
-          <div className="flex items-center justify-end gap-1.5 max-large:w-full max-large:justify-between max-large:mt-auto">
+          <div className="flex items-center justify-end gap-1.5 max-large:flex-col max-large:w-full max-large:justify-center max-large:items-center max-large:mt-12 max-large:gap-4">
             <button
               onClick={() => openDialog("login")}
               className="p-2 flex max-large:hidden items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text"
@@ -90,7 +90,7 @@ export default function Header() {
             </button>
             <Link
               href="tel:+49 172 5181689"
-              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text max-large:justify-start"
+              className="p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text max-large:text-lg"
             >
               <Image
                 width={16}
@@ -105,7 +105,7 @@ export default function Header() {
             </Link>
             <Link
               href={ROUTE_FRAGEBOGEN}
-              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-dark_text rounded-halfbase"
+              className="border duration-300 hover:opacity-80 border-green bg-green py-2 px-4 flex items-center justify-center text-base max-xl:text-sm text-dark_text rounded-halfbase max-large:w-full max-large:py-4 max-large:text-lg"
             >
               Angebot einholen
             </Link>

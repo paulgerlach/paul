@@ -744,7 +744,7 @@ export default function HeatingBillPreviewFourPDF({
           Gebäudes entnehmen Sie bitte der Gesamtabrechnung. Bitte wenden Sie
           sich bei Fragen zu Ihrer Abrechnung zunächst an Ihren Vermieter oder
           Verwalter. Informationen zur verbrauchsabhängigen Abrechnung finden
-          Sie unter www.brunata-metrona.de.
+          Sie unter www.heidisystems.com.
         </Text>
       </View>
     </Page>

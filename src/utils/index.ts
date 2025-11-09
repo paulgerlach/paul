@@ -97,18 +97,18 @@ export const slideDown = (target: HTMLElement | null, duration = 300) => {
 
 export function formatDate(input?: string): string {
   const months = [
-    "January",
-    "February",
-    "March",
+    "Januar",
+    "Februar",
+    "März",
     "April",
-    "May",
-    "June",
-    "July",
+    "Mai",
+    "Juni",
+    "Juli",
     "August",
     "September",
-    "October",
+    "Oktober",
     "November",
-    "December",
+    "Dezember",
   ];
   if (!input) return "";
 

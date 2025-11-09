@@ -17,30 +17,53 @@ interface GaugeChartProps {
     coldWaterPerM3EUR?: number;
     hotWaterPerM3EUR?: number;
   };
+  monthlyAdvancePayment?: number; // Nebenkostenvorauszahlung
 }
 
 // Helper: get recent reading date from dataset
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
-  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  const rawDate = readings[0]["IV,0,0,0,,Date/Time"];
+  if (!rawDate || typeof rawDate !== "string") return null;
+  const dateString = rawDate.split(" ")[0];
   if (!dateString) return null;
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);
 };
 
 // Helper: get current heat energy (Wh) from actual readings
+// Supports both OLD format (IV,0,0,0,Wh,E) and NEW Engelmann format (Actual Energy / HCA)
 const getCurrentEnergyData = (readings: MeterReadingType[]): number => {
   if (!readings || readings.length === 0) return 0;
 
   let totalValue = 0;
   readings.forEach((reading) => {
-    const currentValue = reading["IV,0,0,0,Wh,E"] as number;
+    // Try OLD format first
+    let currentValue: string | number | undefined = reading["IV,0,0,0,Wh,E"] as number | undefined;
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (currentValue === undefined || currentValue === null) {
+      currentValue = reading["Actual Energy / HCA"] as string | number | undefined;
+    }
+    
     if (typeof currentValue === "string") {
-      totalValue += parseFloat(
-        (currentValue as string).replace(",", ".") || "0"
+      const parsedValue = parseFloat(
+        currentValue.replace(",", ".") || "0"
       );
+      // Convert MWh to Wh if the value is very small (likely MWh)
+      // Engelmann format uses MWh, old format uses Wh
+      if (parsedValue < 1 && parsedValue > 0) {
+        totalValue += parsedValue * 1000000; // Convert MWh to Wh
+      } else {
+        totalValue += parsedValue;
+      }
     } else if (typeof currentValue === "number") {
-      totalValue += currentValue;
+      // Same conversion logic for numbers
+      if (currentValue < 1 && currentValue > 0) {
+        totalValue += currentValue * 1000000; // Convert MWh to Wh
+      } else {
+        totalValue += currentValue;
+      }
     }
   });
 
@@ -48,15 +71,23 @@ const getCurrentEnergyData = (readings: MeterReadingType[]): number => {
 };
 
 // Helper: get current water volume (m^3) from actual readings
+// Supports both OLD format (IV,0,0,0,m^3,Vol) and NEW Engelmann format (Actual Volume)
 const getCurrentVolumeData = (readings: MeterReadingType[]): number => {
   if (!readings || readings.length === 0) return 0;
 
   let totalValue = 0;
   readings.forEach((reading) => {
-    const currentValue = reading["IV,0,0,0,m^3,Vol"];
+    // Try OLD format first
+    let currentValue: string | number | undefined = reading["IV,0,0,0,m^3,Vol"] as number | undefined;
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (currentValue === undefined || currentValue === null) {
+      currentValue = reading["Actual Volume"] as string | number | undefined;
+    }
+    
     if (typeof currentValue === "string") {
       totalValue += parseFloat(
-        (currentValue as string).replace(",", ".") || "0"
+        currentValue.replace(",", ".") || "0"
       );
     } else if (typeof currentValue === "number") {
       totalValue += currentValue;
@@ -71,6 +102,7 @@ export default function GaugeChart({
   coldWaterReadings,
   hotWaterReadings,
   pricing,
+  monthlyAdvancePayment,
   isEmpty,
   emptyTitle,
   emptyDescription,
@@ -110,12 +142,20 @@ export default function GaugeChart({
       currentColdM3 * selectedPricing.coldWaterPerM3EUR +
       currentHotM3 * selectedPricing.hotWaterPerM3EUR;
 
-    // For gauge chart, show 100% since we're displaying current actual usage
-    // In a real scenario with budget data, you'd compare against budget/target
-    const percentValue = totalCostEUR > 0 ? 1 : 0;
+    // Calculate percentage: Gesamtkosten / Nebenkostenvorauszahlung
+    // < 100% = Good (user gets refund)
+    // = 100% = Perfect (no adjustment)
+    // > 100% = Over budget (user owes extra)
+    let percentValue = 0;
+    if (monthlyAdvancePayment && monthlyAdvancePayment > 0) {
+      percentValue = totalCostEUR / monthlyAdvancePayment;
+    } else {
+      // Fallback: if no advance payment data, show 100% when there are costs
+      percentValue = totalCostEUR > 0 ? 1 : 0;
+    }
 
     return { percent: percentValue, euroCost: totalCostEUR };
-  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing]);
+  }, [heatReadings, coldWaterReadings, hotWaterReadings, pricing, monthlyAdvancePayment]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -173,6 +213,14 @@ export default function GaugeChart({
     style: "currency",
     currency: "EUR",
   }).format(euroCost);
+
+  // Calculate difference (Differenz = Vorauszahlung - Gesamtkosten)
+  const difference = monthlyAdvancePayment ? monthlyAdvancePayment - euroCost : 0;
+  const formattedDifference = new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+    signDisplay: "always",
+  }).format(difference);
 
   return (
     <div
@@ -254,8 +302,22 @@ export default function GaugeChart({
           <div className="absolute bottom-[30%] left-1/2 translate-x-[-50%] text-3xl font-semibold text-[#374151]">
             {value < 1 && value > 0 ? value.toFixed(2) : Math.round(value)}%
           </div>
-          <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-sm text-[#9CA3AF] font-medium w-full text-center">
-            <span>Gesamtkosten: {formattedCost}</span>
+          <div className="absolute bottom-[15%] left-1/2 translate-x-[-50%] text-xs text-[#9CA3AF] font-medium w-full text-center px-4">
+            {monthlyAdvancePayment && monthlyAdvancePayment > 0 ? (
+              <div className="flex flex-col gap-0.5">
+                <span>Gesamtkosten: {formattedCost}</span>
+                <span className={difference > 0 ? "text-green-600" : difference < 0 ? "text-red-600" : "text-gray-600"}>
+                  Differenz: {formattedDifference}
+                </span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-0.5">
+                <span>Gesamtkosten: {formattedCost}</span>
+                <span className="text-orange-500 text-[10px]">
+                  Kein Vertrag mit Nebenkosten
+                </span>
+              </div>
+            )}
           </div>
         </>
       )}

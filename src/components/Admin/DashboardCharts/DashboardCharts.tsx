@@ -27,14 +27,6 @@ const ElectricityChart = dynamic(
   }
 );
 
-const GaugeChart = dynamic(
-  () => import("@/components/Basic/Charts/GaugeChart"),
-  {
-    loading: () => <ChartCardSkeleton />,
-    ssr: false,
-  }
-);
-
 const HeatingCosts = dynamic(
   () => import("@/components/Basic/Charts/HeatingCosts"),
   {
@@ -70,17 +62,19 @@ export default function DashboardCharts() {
   const electricityChart = useElectricityChartData();
   const heatChart = useHeatChartData();
   const notificationsChart = useNotificationsChartData();
-
-  // Combine data for GaugeChart (needs coldWater, hotWater, heat)
-  const gaugeChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...heatChart.data];
-  const gaugeChartLoading = coldWaterChart.loading || hotWaterChart.loading || heatChart.loading;
-
+  
   // Combine data for EinsparungChart (needs all device types for CO2 calculations)
   const einsparungChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...electricityChart.data, ...heatChart.data];
   const einsparungChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
 
+  // Debug logging
+  console.log('[DashboardCharts] Render:', { meterIdsCount: meterIds.length, loading: coldWaterChart.loading });
+
   // Show message when no meter IDs are selected
-  if (!meterIds.length) {
+  // Only show if not loading (prevents showing message during initial load)
+  const isAnyChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
+  
+  if (!meterIds.length && !isAnyChartLoading) {
     return (
       <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
         <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
@@ -150,20 +144,7 @@ export default function DashboardCharts() {
 
       <div className="flex flex-col gap-3">
         <div className="h-[265px]">
-          {!shouldShowElectricityChart ? (
-            gaugeChartLoading ? (
-              <ChartCardSkeleton />
-            ) : (
-              <GaugeChart
-                heatReadings={heatChart.data}
-                coldWaterReadings={coldWaterChart.data}
-                hotWaterReadings={hotWaterChart.data}
-                isEmpty={gaugeChartData.length === 0}
-                emptyTitle="Keine Daten verfügbar."
-                emptyDescription="Keine Daten im ausgewählten Zeitraum."
-              />
-            )
-          ) : electricityChart.loading ? (
+          {electricityChart.loading ? (
             <ChartCardSkeleton />
           ) : (
             <ElectricityChart

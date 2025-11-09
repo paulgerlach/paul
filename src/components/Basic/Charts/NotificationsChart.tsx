@@ -16,7 +16,6 @@ import {
   cold_water,
 } from "@/static/icons";
 import Image from "next/image";
-import Link from "next/link";
 import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
@@ -110,6 +109,7 @@ export default function NotificationsChart({
   parsedData,
 }: NotificationsChartProps) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(undefined);
   const { meterIds } = useChartStore();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [notificationQueue, setNotificationQueue] = useState<NotificationItem[]>([]);
@@ -118,6 +118,12 @@ export default function NotificationsChart({
   
   // Check if current user is the demo account
   const isDemoAccount = user?.email === "heidi@hausverwaltung.de";
+
+  const openErrorModal = (meterId?: number) => {
+    setSelectedMeterId(meterId);
+    setIsErrorModalOpen(true);
+    setOpenPopoverId(null); // Close the popover
+  };
 
   const deleteNotification = (index: number) => {
     setNotifications((prev) => {
@@ -201,9 +207,21 @@ export default function NotificationsChart({
   useEffect(() => {
     // NEW: Generate dynamic notifications based on real CSV data and meter selection
     const generateDynamicNotifications = (): NotificationItem[] => {
-      // Defensive programming - ensure we have data and selected meters
-      if (!parsedData?.data || !meterIds || meterIds.length === 0) {
+      // If no data at all, return empty (will show "No data uploaded" message)
+      if (!parsedData?.data || parsedData.data.length === 0) {
         return []; // Graceful fallback
+      }
+
+      // If no meters selected, show "Please select meters" notification
+      if (!meterIds || meterIds.length === 0) {
+        return [{
+          leftIcon: notification,
+          rightIcon: blue_info,
+          leftBg: "#E7E8EA",
+          rightBg: "#E5EBF5",
+          title: "Keine Wohnungen ausgewählt",
+          subtitle: "Bitte wählen Sie Wohnungen aus, um Benachrichtigungen anzuzeigen.",
+        }];
       }
       
       const dynamicNotifications: NotificationItem[] = [];
@@ -223,10 +241,14 @@ export default function NotificationsChart({
       if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
         const totalDevices = parsedData.data.length;
         const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat"
+          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
         ).length;
         const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
+        ).length;
+        const elecDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
         ).length;
 
         dynamicNotifications.push({
@@ -235,7 +257,7 @@ export default function NotificationsChart({
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
           title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
         });
 
         return dynamicNotifications;
@@ -249,7 +271,7 @@ export default function NotificationsChart({
         const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
         
         // Determine severity based on error type
-        const severity = errorFlag.includes("1") ? "critical" : "high";
+        const severity = errorFlag?.includes("1") ? "critical" : "high";
         const rightIcon = severity === "critical" ? alert_triangle : alert_triangle;
         const rightBg = severity === "critical" ? "#FFE5E5" : "#F7E7D5";
         
@@ -289,10 +311,14 @@ export default function NotificationsChart({
       if (deviceErrors.length === 0) {
         const totalDevices = parsedData.data.length;
         const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat"
+          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
         ).length;
         const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater"
+          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
+        ).length;
+        const elecDevices = parsedData.data.filter(
+          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
         ).length;
 
         notifications.push({
@@ -301,7 +327,7 @@ export default function NotificationsChart({
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
           title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser)`,
+          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
         });
 
         return notifications;
@@ -506,7 +532,7 @@ export default function NotificationsChart({
         />
       </div>
       <div className="space-y-2 flex-1 overflow-auto">
-        {isEmpty || notifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}
@@ -544,13 +570,13 @@ export default function NotificationsChart({
                     className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Link
-                      href={"#"}
+                    <button
+                      onClick={() => openErrorModal(n.meterId)}
                       className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
                     >
                       <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
                       öffnen
-                    </Link>
+                    </button>
                     <button
                       onClick={() => {
                         deleteNotification(idx);
@@ -571,7 +597,7 @@ export default function NotificationsChart({
       {hasDeviceErrors && (
         <div className="flex flex-col gap-2">
           <button
-            onClick={() => setIsErrorModalOpen(true)}
+            onClick={() => openErrorModal()}
             className="text-[10px] text-link text-center underline w-full inline-block mt-[1.5vw] hover:text-blue-600"
           >
             Detaillierte Fehleranalyse anzeigen
@@ -581,8 +607,12 @@ export default function NotificationsChart({
 
       <ErrorDetailsModal
         isOpen={isErrorModalOpen}
-        onClose={() => setIsErrorModalOpen(false)}
+        onClose={() => {
+          setIsErrorModalOpen(false);
+          setSelectedMeterId(undefined); // Clear the filter when closing
+        }}
         parsedData={parsedData}
+        filteredMeterId={selectedMeterId}
       />
     </div>
   );

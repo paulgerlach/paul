@@ -28,7 +28,9 @@ interface ElectricityChartProps {
 // Get recent reading date from dataset (first row date is enough as dumps are aligned)
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
-  const dateString = readings[0]["IV,0,0,0,,Date/Time"]?.split(" ")[0];
+  const rawDate = readings[0]["IV,0,0,0,,Date/Time"];
+  if (!rawDate || typeof rawDate !== "string") return null;
+  const dateString = rawDate.split(" ")[0];
   if (!dateString) return null;
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);
@@ -40,29 +42,49 @@ const getCurrentEnergyReadings = (
 ): { date: Date; totalWh: number }[] => {
   if (!readings || readings.length === 0) return [];
 
-  // Group readings by their actual timestamp and sum the energy values
-  const dateGroups: {
-    [dateKey: string]: { date: Date; totalWh: number; meterCount: number };
-  } = {};
+  // APPROACH 3: Group by DEVICE first, then calculate consumption between consecutive readings
+  
+  // Step 1: Group all readings by device ID
+  const deviceMap = new Map<string, { date: Date; energyValue: number }[]>();
 
   readings.forEach((reading) => {
-    const dateTimeString = reading["IV,0,0,0,,Date/Time"];
-    if (!dateTimeString) return;
-
-    // Extract just the date part and handle the format properly
-    const dateString = dateTimeString.split(" ")[0];
+    // Get device ID
+    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
+    
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
+    
+    let dateString: string | null = null;
+    
+    if (oldFormatDate && typeof oldFormatDate === "string") {
+      // Old format: "29.10.2025 09:56..."
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate && typeof newActualDate === "string") {
+      // New format: "29.10.2025"
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate && typeof newRawDate === "string") {
+      // Raw Date format: "29-10-2025" → convert to "29.10.2025"
+      dateString = newRawDate.replace(/-/g, ".");
+    }
+    
     if (!dateString || dateString === "00.00.00") return;
 
     const [day, month, year] = dateString.split(".").map(Number);
     // Handle potential year formatting issues
     const fullYear = year > 50 ? (year < 100 ? 1900 + year : year) : (year < 100 ? 2000 + year : year);
     const readingDate = new Date(fullYear, month - 1, day);
-    const dateKey = `${fullYear}-${month - 1}-${day}`;
 
-    // Get current energy reading (cumulative) - this is the main reading
-    const currentReading = reading["IV,0,0,0,Wh,E"];
+    // Get current energy reading (cumulative)
+    // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+    const oldFormatReading = reading["IV,0,0,0,Wh,E"];
+    const newFormatReading = reading["Actual Energy / HCA"];
+    
     let energyValue = 0;
 
+    const currentReading = newFormatReading !== undefined ? newFormatReading : oldFormatReading;
+    
     if (typeof currentReading === "number") {
       energyValue = currentReading;
     } else if (typeof currentReading === "string") {
@@ -72,21 +94,43 @@ const getCurrentEnergyReadings = (
 
     // Filter out invalid readings (error codes like 88888888, 77777777, 99999999)
     if (energyValue > 0 && energyValue < 10000000 && !isNaN(energyValue)) {
-      if (!dateGroups[dateKey]) {
-        dateGroups[dateKey] = { date: readingDate, totalWh: 0, meterCount: 0 };
+      if (!deviceMap.has(deviceId)) {
+        deviceMap.set(deviceId, []);
       }
-      dateGroups[dateKey].totalWh += energyValue;
-      dateGroups[dateKey].meterCount += 1;
+      deviceMap.get(deviceId)!.push({ date: readingDate, energyValue });
+    }
+  });
+  
+  // Step 2: For each device, calculate consumption between consecutive readings
+  const consumptionByDate = new Map<string, { date: Date; totalWh: number }>();
+  
+  deviceMap.forEach((deviceReadings, deviceId) => {
+    // Sort readings chronologically
+    deviceReadings.sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+    // Calculate consumption between consecutive readings
+    for (let i = 1; i < deviceReadings.length; i++) {
+      const prev = deviceReadings[i - 1];
+      const curr = deviceReadings[i];
+      
+      // Calculate consumption = current - previous
+      const consumption = curr.energyValue - prev.energyValue;
+      
+      // Only add positive consumption (handles meter rollovers/errors)
+      if (consumption >= 0) {
+        const dateKey = `${curr.date.getFullYear()}-${curr.date.getMonth()}-${curr.date.getDate()}`;
+        
+        // Sum consumption for this date across all devices
+        if (!consumptionByDate.has(dateKey)) {
+          consumptionByDate.set(dateKey, { date: curr.date, totalWh: 0 });
+        }
+        consumptionByDate.get(dateKey)!.totalWh += consumption;
+      }
     }
   });
 
-  // Convert to array and sort by date
-  return Object.values(dateGroups)
-    .filter((group) => group.meterCount > 0)
-    .map((group) => ({
-      date: group.date,
-      totalWh: group.totalWh, // Sum of all meter readings for this date
-    }))
+  // Step 3: Convert to array and sort by date
+  return Array.from(consumptionByDate.values())
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 };
 
@@ -204,10 +248,20 @@ export default function ElectricityChart({
         
         if (monthsSpan <= 2) {
           // Daily granularity - show daily consumption
-          labels.forEach((label, index) => {
-            const dayData = sortedData[index];
-            const kwh = dayData ? dayData.totalWh / 1000 : 0;
+          // Create map of date → consumption for fast lookup
+          const dataByDate = new Map<string, number>();
+          sortedData.forEach(dataPoint => {
+            const dateKey = `${dataPoint.date.getDate()}-${dataPoint.date.getMonth()}-${dataPoint.date.getFullYear()}`;
+            dataByDate.set(dateKey, dataPoint.totalWh / 1000);
+          });
+          
+          // Map labels to actual data by matching dates
+          const cur = new Date(startDate);
+          labels.forEach((label) => {
+            const dateKey = `${cur.getDate()}-${cur.getMonth()}-${cur.getFullYear()}`;
+            const kwh = dataByDate.get(dateKey) || 0;
             rows.push({ label, kwh });
+            cur.setDate(cur.getDate() + 1);
           });
         } else {
           // Monthly granularity - aggregate by month

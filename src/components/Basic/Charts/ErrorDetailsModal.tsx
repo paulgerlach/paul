@@ -14,9 +14,10 @@ interface ErrorDetailsModalProps {
     data: MeterReadingType[];
     errors?: { row: number; error: string; rawRow: any }[];
   };
+  filteredMeterId?: number; // Optional: Show only errors for this specific meter
 }
 
-export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: ErrorDetailsModalProps) {
+export default function ErrorDetailsModal({ isOpen, onClose, parsedData, filteredMeterId }: ErrorDetailsModalProps) {
   // Handle ESC key press
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -61,7 +62,14 @@ export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: Error
     }> = [];
 
     // Get devices with error flags
-    const deviceErrors = getDevicesWithErrors(parsedData);
+    let deviceErrors = getDevicesWithErrors(parsedData);
+    
+    // Filter by specific meter ID if provided
+    if (filteredMeterId !== undefined) {
+      deviceErrors = deviceErrors.filter(error => 
+        error.deviceId === filteredMeterId.toString()
+      );
+    }
     
     if (deviceErrors.length === 0) {
       return details; // No errors to display
@@ -194,7 +202,11 @@ export default function ErrorDetailsModal({ isOpen, onClose, parsedData }: Error
     >
       <div className="bg-white rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Detaillierte Fehleranalyse</h2>
+          <h2 className="text-xl font-semibold">
+            {filteredMeterId !== undefined 
+              ? `Fehleranalyse - Gerät ${filteredMeterId}` 
+              : 'Detaillierte Fehleranalyse'}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 text-2xl"

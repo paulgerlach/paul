@@ -67,8 +67,14 @@ export default function DashboardCharts() {
   const einsparungChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...electricityChart.data, ...heatChart.data];
   const einsparungChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
 
+  // Debug logging
+  console.log('[DashboardCharts] Render:', { meterIdsCount: meterIds.length, loading: coldWaterChart.loading });
+
   // Show message when no meter IDs are selected
-  if (!meterIds.length) {
+  // Only show if not loading (prevents showing message during initial load)
+  const isAnyChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
+  
+  if (!meterIds.length && !isAnyChartLoading) {
     return (
       <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
         <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">

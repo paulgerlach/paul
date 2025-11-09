@@ -136,10 +136,10 @@ export const useHeatChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler')
+      // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler')
       const chartData = await fetchChartData(
         meterIds, 
-        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler'], 
+        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'], 
         startDate, 
         endDate
       );

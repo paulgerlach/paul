@@ -146,7 +146,8 @@ export type DocumentType =
   | "admin_cost_type_betriebskostenabrechnung"
   | "admin_cost_type_heizkostenabrechnung"
   | "operating_costs"
-  | "admin_operating_costs";
+  | "admin_operating_costs"
+  | "document";
 
 export type DialogDocumentActionType =
   | `${DocumentType}_${DialogActionType}`

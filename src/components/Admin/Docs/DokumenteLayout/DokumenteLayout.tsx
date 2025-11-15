@@ -6,6 +6,8 @@ import { pdf_icon, building } from "@/static/icons";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Exo_2 } from "next/font/google";
+import { useDialogStore } from "@/store/useDIalogStore";
+import { Trash2 } from "lucide-react";
 
 const exo2 = Exo_2({ subsets: ["latin"] });
 
@@ -51,6 +53,13 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
     getDocumentFileSize,
     getDownloadUrl,
   } = useDocumentService();
+  
+  const { setItemID, openDialog } = useDialogStore();
+
+  const handleDeleteClick = (documentId: string) => {
+    setItemID(documentId);
+    openDialog("document_delete");
+  };
   
   const documents = serverDocuments;
   const documentsLoading = false;
@@ -190,6 +199,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                 <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                   Größe
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                  Aktionen
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white">
@@ -219,6 +231,15 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {fileSizes[document.id] || '--'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleDeleteClick(document.id)}
+                      className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
+                      title="Dokument löschen"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

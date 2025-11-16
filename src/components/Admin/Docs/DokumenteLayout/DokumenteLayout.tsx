@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { Exo_2 } from "next/font/google";
 import { useDialogStore } from "@/store/useDIalogStore";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 
 const exo2 = Exo_2({ subsets: ["latin"] });
 
@@ -52,6 +52,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   const {
     getDocumentFileSize,
     getDownloadUrl,
+    getViewUrl,
   } = useDocumentService();
   
   const { setItemID, openDialog } = useDialogStore();
@@ -59,6 +60,15 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   const handleDeleteClick = (documentId: string) => {
     setItemID(documentId);
     openDialog("document_delete");
+  };
+
+  const handleViewClick = async (document: DocumentMetadata) => {
+    const viewUrl = await getViewUrl(document.document_url);
+    if (viewUrl) {
+      window.open(viewUrl, '_blank');
+    } else {
+      toast.error("Fehler beim Öffnen des Dokuments");
+    }
   };
   
   const documents = serverDocuments;
@@ -233,13 +243,22 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                     {fileSizes[document.id] || '--'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleDeleteClick(document.id)}
-                      className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
-                      title="Dokument löschen"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewClick(document)}
+                        className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
+                        title="Dokument anzeigen"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(document.id)}
+                        className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
+                        title="Dokument löschen"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

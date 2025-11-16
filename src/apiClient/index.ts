@@ -229,6 +229,18 @@ export const getDocumentDownloadUrl = async (documentPath: string): Promise<stri
   return data.data.signedUrl;
 };
 
+export const getDocumentViewUrl = async (documentPath: string): Promise<string> => {
+  const data = await supabase.storage
+    .from("documents")
+    .createSignedUrl(documentPath, 60 * 60);
+
+    if (data.error) {
+      throw new Error(`Failed to fetch document view URL: ${data.error.message}`);
+    }
+
+  return data.data.signedUrl;
+};
+
 export const fetchStreetsByZip = async (zip: string): Promise<string[]> => {
   const res = await fetch(
     `https://openplzapi.org/de/Streets?postalCode=${zip}`

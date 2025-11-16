@@ -6,6 +6,7 @@ import Sidebar from "@/components/Admin/Sidebar/Sidebar";
 import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
 import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog";
+import DocumentDeleteDialog from "@/components/Basic/Dialog/DocumentDeleteDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
 import HeatingBillCreateDialog from "@/components/Basic/Dialog/HeatingBillCreateDialog";
 import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
@@ -71,6 +72,7 @@ export default function AdminLayout({
       <CostTypeBetriebskostenabrechnungDeleteDialog />
       <OperatingCostDocumentDeleteDialog />
       <AdminOperatingCostDocumentDeleteDialog />
+      <DocumentDeleteDialog />
       <AdminAddDocBetriebskostenabrechnungDialog />
       <ShareDashboardDialog />
       <Toaster />

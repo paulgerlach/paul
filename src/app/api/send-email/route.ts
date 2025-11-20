@@ -1,26 +1,20 @@
 import { NextResponse } from "next/server";
+import { sendNewsletterEvent } from "@/utils/webhooks";
 
 export async function POST(req: Request) {
     const { email } = await req.json();
 
     try {
-        const url = process.env.MAKE_EMAIL_URL as string;
-
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-        });
-
-        if (!response.ok) {
-            return NextResponse.json(
-                { error: "Fehler beim Senden der E-Mail." },
-                { status: 500 }
-            );
-        }
+        // ✅ NEW: Use unified webhook with event_type
+        await sendNewsletterEvent(email);
+        
+        // 🚫 DEPRECATED: Old MAKE_EMAIL_URL webhook removed
+        // Now using unified webhook: https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1
+        console.log(`[NEWSLETTER] Sent newsletter signup event for ${email}`);
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error('[NEWSLETTER] Error sending webhook:', error);
         return NextResponse.json({ error: "Server error" }, { status: 500 });
     }
 }

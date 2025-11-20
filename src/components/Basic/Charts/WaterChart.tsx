@@ -376,7 +376,16 @@ export default function WaterChart({
     const dataInRange = processedData.length > 0;
     setHasDataInRange(dataInRange);
 
+    // 🔍 DEBUG: Log date range filtering
+    console.log(`[WaterChart ${chartType}] Date Range:`, {
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+      processedDataCount: processedData.length,
+      sampleDates: processedData.slice(0, 3).map(d => d.date.toISOString())
+    });
+
     if (!dataInRange) {
+      console.warn(`[WaterChart ${chartType}] No data in range!`);
       setChartData([]);
       return;
     }

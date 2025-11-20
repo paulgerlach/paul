@@ -231,6 +231,15 @@ export default function ElectricityChart({
       return date >= startDate && date <= endDate;
     });
 
+    // 🔍 DEBUG: Log date range filtering
+    console.log('[ElectricityChart] Date Range:', {
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+      totalReadings: currentReadings.length,
+      filteredCount: filteredByDate.length,
+      sampleDates: filteredByDate.slice(0, 3).map(d => d.date.toISOString())
+    });
+
     // Generate labels for the selected time range
     const labels = getLabelsForRange(startDate, endDate);
 

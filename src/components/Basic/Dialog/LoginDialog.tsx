@@ -15,6 +15,7 @@ import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
+import { sendLoginEvent } from "@/utils/webhooks";
 
 const LoginSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresseq  ein."),
@@ -81,6 +82,9 @@ export default function LoginDialog() {
         } else {
           router.push(ROUTE_DASHBOARD);
         }
+
+        // Send login event to Make.com webhook
+        sendLoginEvent(session.user.email || email);
 
         toast.success("Login erfolgreich");
         closeDialog("login");

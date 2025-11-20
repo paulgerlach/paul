@@ -10,6 +10,7 @@ import { Button } from "@/components/Basic/ui/Button";
 import FormInputField from "@/components/Admin/Forms/FormInputField";
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
+import { sendPasswordRecoveryEvent } from "@/utils/webhooks";
 
 const ForgotPasswordSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
@@ -42,6 +43,9 @@ export default function ForgotPasswordDialog() {
         console.error("Password reset error:", error.message);
         return;
       }
+
+      // Send password recovery event to Make.com webhook
+      sendPasswordRecoveryEvent(email);
 
       toast.success("E-Mail zum Zurücksetzen des Passworts wurde gesendet");
       closeDialog("forgotPassword");

@@ -84,6 +84,23 @@ function extractDateOnly(record: any, fileName?: string): string | null {
     // 🔍 DEBUG: Log what we're working with
     console.log(`[DATE EXTRACT START] Device: ${deviceId}, Type: ${deviceType}, Filename: "${fileName}"`);
     
+    // 🔥 NEW: For Electricity, ALWAYS use filename (CSV has no date field)
+    if (deviceType === 'Elec' || deviceType === 'Stromzähler') {
+        console.log(`[ELECTRICITY PRIORITY] Using filename for Electricity device`);
+        if (fileName) {
+            const filenameDate = extractDateFromFilename(fileName);
+            if (filenameDate) {
+                console.log(`[DATE SUCCESS FILENAME] Electricity using filename date: ${filenameDate}`);
+                return filenameDate;
+            } else {
+                console.error(`[DATE FAIL FILENAME] Filename doesn't match pattern: "${fileName}"`);
+            }
+        } else {
+            console.error(`[DATE FAIL] No filename provided for Electricity!`);
+        }
+        // If filename fails, fall through to try CSV dates (unlikely to exist but worth trying)
+    }
+    
     // Try different date field names from CSV content
     const dateFields = [
         record['Actual Date'],

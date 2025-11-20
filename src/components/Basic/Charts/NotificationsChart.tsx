@@ -239,17 +239,34 @@ export default function NotificationsChart({
 
       // If no errors detected, show success notification
       if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
-        const totalDevices = parsedData.data.length;
-        const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
-        ).length;
-        const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
-                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
-        ).length;
-        const elecDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
-        ).length;
+        // Count UNIQUE devices by device ID, not total data rows
+        const uniqueDeviceIds = new Set(parsedData.data.map(d => d.ID?.toString() || d["Number Meter"]?.toString()).filter(Boolean));
+        const totalDevices = uniqueDeviceIds.size;
+        
+        const uniqueHeatIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const heatDevices = uniqueHeatIds.size;
+        
+        const uniqueWaterIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                   d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const waterDevices = uniqueWaterIds.size;
+        
+        const uniqueElecIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const elecDevices = uniqueElecIds.size;
 
         dynamicNotifications.push({
           leftIcon: notification,
@@ -309,17 +326,34 @@ export default function NotificationsChart({
       const deviceErrors = getDevicesWithErrors(parsedData);
 
       if (deviceErrors.length === 0) {
-        const totalDevices = parsedData.data.length;
-        const heatDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler"
-        ).length;
-        const waterDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
-                 d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler"
-        ).length;
-        const elecDevices = parsedData.data.filter(
-          (d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler"
-        ).length;
+        // Count UNIQUE devices by device ID, not total data rows
+        const uniqueDeviceIds = new Set(parsedData.data.map(d => d.ID?.toString() || d["Number Meter"]?.toString()).filter(Boolean));
+        const totalDevices = uniqueDeviceIds.size;
+        
+        const uniqueHeatIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Heat" || d["Device Type"] === "WMZ Rücklauf" || d["Device Type"] === "Heizkostenverteiler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const heatDevices = uniqueHeatIds.size;
+        
+        const uniqueWaterIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
+                   d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const waterDevices = uniqueWaterIds.size;
+        
+        const uniqueElecIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "Elec" || d["Device Type"] === "Stromzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const elecDevices = uniqueElecIds.size;
 
         notifications.push({
           leftIcon: getLeftIconForNotificationType("success", "general"),

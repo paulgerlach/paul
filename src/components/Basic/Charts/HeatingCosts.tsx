@@ -194,13 +194,9 @@ const aggregateDataByTimeRange = (
   // Get unique dates from valid readings and sort them
   const uniqueDates = getUniqueDatesFromReadings(validReadings);
 
-  // Filter by date range if provided
+  // Don't filter dates here - we need extra days before startDate for consumption calculation
+  // The filtering to display range happens later in the chart rendering
   let filteredDates = uniqueDates;
-  if (startDate && endDate) {
-    filteredDates = uniqueDates.filter(
-      (date) => date >= startDate && date <= endDate
-    );
-  }
 
   if (filteredDates.length === 0) return [];
 
@@ -234,8 +230,8 @@ const aggregateDataByTimeRange = (
     const [day, month, year] = dateString.split(".").map(Number);
     const date = new Date(year, month - 1, day);
 
-    // Check if date is in range
-    if (startDate && endDate && (date < startDate || date > endDate)) return;
+    // Don't filter by date range here - we need extra days for consumption calculation
+    // The filtering to display range happens later in the chart rendering
 
     // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
     const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
@@ -257,7 +253,14 @@ const aggregateDataByTimeRange = (
   // Decide aggregation level based on time range
   if (daysDiff <= 30) {
     // Daily data for <= 30 days
+    // Filter to only show dates within the selected range (not the extra 7 days for calculation)
     return Array.from(readingsByDate.entries())
+      .filter(([dateKey]) => {
+        if (!startDate || !endDate) return true;
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return date >= startDate && date <= endDate;
+      })
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([dateKey, value]) => {
         const [year, month, day] = dateKey.split("-");
@@ -270,7 +273,14 @@ const aggregateDataByTimeRange = (
     // Monthly data for <= 4 months
     const monthlyData = new Map<string, number>();
 
+    // Only aggregate dates within the selected range
     readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
       const [year, month] = dateKey.split("-");
       const monthKey = `${year}-${month}`;
       monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + value);
@@ -290,7 +300,14 @@ const aggregateDataByTimeRange = (
     // Quarterly data for > 4 months
     const quarterlyData = new Map<string, number>();
 
+    // Only aggregate dates within the selected range
     readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
       const [year, month] = dateKey.split("-");
       const quarter = Math.ceil(parseInt(month) / 3);
       const quarterKey = `Q${quarter}`;

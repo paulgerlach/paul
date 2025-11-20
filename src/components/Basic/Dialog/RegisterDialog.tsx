@@ -17,6 +17,7 @@ import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
 import { useEffect, useState } from "react";
 import { getRegistrationStatus } from "@/actions/system-settings";
+import { sendRegistrationEvent } from "@/utils/webhooks";
 
 const RegisterSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
@@ -138,6 +139,9 @@ export default function RegisterDialog() {
     if (defaultsInsertError) {
       console.error("Failed to insert default categories", defaultsInsertError);
     }
+
+    // Send registration event to Make.com webhook
+    sendRegistrationEvent(email);
 
     toast.success("Registrierung erfolgreich!");
     await router.push(ROUTE_DASHBOARD);

@@ -253,7 +253,14 @@ const aggregateDataByTimeRange = (
   // Decide aggregation level based on time range
   if (daysDiff <= 30) {
     // Daily data for <= 30 days
+    // Filter to only show dates within the selected range (not the extra 7 days for calculation)
     return Array.from(readingsByDate.entries())
+      .filter(([dateKey]) => {
+        if (!startDate || !endDate) return true;
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return date >= startDate && date <= endDate;
+      })
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([dateKey, value]) => {
         const [year, month, day] = dateKey.split("-");
@@ -266,7 +273,14 @@ const aggregateDataByTimeRange = (
     // Monthly data for <= 4 months
     const monthlyData = new Map<string, number>();
 
+    // Only aggregate dates within the selected range
     readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
       const [year, month] = dateKey.split("-");
       const monthKey = `${year}-${month}`;
       monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + value);
@@ -286,7 +300,14 @@ const aggregateDataByTimeRange = (
     // Quarterly data for > 4 months
     const quarterlyData = new Map<string, number>();
 
+    // Only aggregate dates within the selected range
     readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
       const [year, month] = dateKey.split("-");
       const quarter = Math.ceil(parseInt(month) / 3);
       const quarterKey = `Q${quarter}`;

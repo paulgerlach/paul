@@ -194,13 +194,9 @@ const aggregateDataByTimeRange = (
   // Get unique dates from valid readings and sort them
   const uniqueDates = getUniqueDatesFromReadings(validReadings);
 
-  // Filter by date range if provided
+  // Don't filter dates here - we need extra days before startDate for consumption calculation
+  // The filtering to display range happens later in the chart rendering
   let filteredDates = uniqueDates;
-  if (startDate && endDate) {
-    filteredDates = uniqueDates.filter(
-      (date) => date >= startDate && date <= endDate
-    );
-  }
 
   if (filteredDates.length === 0) return [];
 
@@ -234,8 +230,8 @@ const aggregateDataByTimeRange = (
     const [day, month, year] = dateString.split(".").map(Number);
     const date = new Date(year, month - 1, day);
 
-    // Check if date is in range
-    if (startDate && endDate && (date < startDate || date > endDate)) return;
+    // Don't filter by date range here - we need extra days for consumption calculation
+    // The filtering to display range happens later in the chart rendering
 
     // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
     const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];

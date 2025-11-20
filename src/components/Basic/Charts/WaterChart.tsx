@@ -359,8 +359,8 @@ export default function WaterChart({
 
       const parsedDate = parseTimestamp(dateTimeString);
 
-      // Apply date range filter
-      if (!isWithinDateRange(parsedDate, startDate, endDate)) return;
+      // Don't filter by date range here - we need extra days for consumption calculation
+      // The filtering will happen after aggregation in generateZeroPaddedData()
 
       // Support both old "ID" field and new "Number Meter" field
       const deviceId = device.ID || device["Number Meter"] || "";

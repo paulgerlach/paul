@@ -89,7 +89,7 @@ export default function FragebogenPage() {
       heating_available: null,
       central_water_supply: null,
       central_heating_system: null,
-      energy_sources: "",
+      energy_sources: "Fernwärme",
       form_confirm: false,
     },
   });

@@ -7,7 +7,8 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { Exo_2 } from "next/font/google";
 import { useDialogStore } from "@/store/useDIalogStore";
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, FolderOpen } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 
 const exo2 = Exo_2({ subsets: ["latin"] });
 
@@ -56,6 +57,62 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   } = useDocumentService();
   
   const { setItemID, openDialog } = useDialogStore();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Detect if we're in admin context
+  const isAdmin = pathname.startsWith('/admin');
+  const adminUserId = isAdmin ? pathname.split('/')[2] : null;
+
+  // Route mapping for different document types
+  const DOCUMENT_SOURCE_ROUTES: Record<
+    string,
+    (doc: DocumentMetadata) => string | null
+  > = {
+    heating_bill: (doc) => {
+      if (!doc.objekt_id || !doc.related_id) return null;
+      
+      const baseRoute = isAdmin 
+        ? `/admin/${adminUserId}/heizkostenabrechnung` 
+        : `/heizkostenabrechnung`;
+      
+      // If has local_id → apartment-level (localauswahl)
+      if (doc.local_id) {
+        return `${baseRoute}/localauswahl/${doc.objekt_id}/${doc.local_id}/${doc.related_id}/results`;
+      }
+      
+      // No local_id → building-level (objektauswahl)
+      return `${baseRoute}/objektauswahl/${doc.objekt_id}/${doc.related_id}/results`;
+    },
+    
+    operating_costs: (doc) => {
+      if (!doc.objekt_id || !doc.related_id) return null;
+      
+      const baseRoute = isAdmin 
+        ? `/admin/${adminUserId}/betriebskostenabrechnung` 
+        : `/betriebskostenabrechnung`;
+      
+      return `${baseRoute}/objektauswahl/${doc.objekt_id}/${doc.related_id}/results`;
+    },
+  };
+
+  const handleGoToSource = (document: DocumentMetadata) => {
+    const routeBuilder = DOCUMENT_SOURCE_ROUTES[document.related_type];
+    
+    if (!routeBuilder) {
+      toast.info("Kein Quelldokument verfügbar");
+      return;
+    }
+    
+    const url = routeBuilder(document);
+    
+    if (!url) {
+      toast.error("Unvollständige Dokumentdaten");
+      return;
+    }
+    
+    router.push(url);
+  };
 
   const handleDeleteClick = (documentId: string) => {
     setItemID(documentId);
@@ -244,6 +301,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleGoToSource(document)}
+                        className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Zur Quelle gehen"
+                        disabled={!DOCUMENT_SOURCE_ROUTES[document.related_type]}
+                      >
+                        <FolderOpen className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleViewClick(document)}
                         className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"

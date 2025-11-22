@@ -20,6 +20,7 @@ export interface DocumentMetadata {
   created_at: string;
   user_id: string;
   objekt_id?: string | null;
+  local_id?: string | null;
 }
 
 export class DocumentService {
@@ -52,20 +53,20 @@ export class DocumentService {
         .filter(doc => doc.related_type === "heating_bill")
         .map(doc => doc.related_id);
 
-      let heatingBillObjekts: Record<string, string> = {};
+      let heatingBillData: Record<string, { objekt_id: string; local_id: string | null }> = {};
       if (heatingBillIds.length > 0) {
         const { data: heatingBills, error: heatingError } = await supabase
           .from("heating_bill_documents")
-          .select("id, objekt_id")
+          .select("id, objekt_id, local_id")
           .in("id", heatingBillIds);
 
         if (!heatingError && heatingBills) {
-          heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+          heatingBillData = heatingBills.reduce((acc, bill) => {
             if (bill.objekt_id) {
-              acc[bill.id] = bill.objekt_id;
+              acc[bill.id] = { objekt_id: bill.objekt_id, local_id: bill.local_id };
             }
             return acc;
-          }, {} as Record<string, string>);
+          }, {} as Record<string, { objekt_id: string; local_id: string | null }>);
         }
       }
 
@@ -95,9 +96,12 @@ export class DocumentService {
       return documents.map(doc => ({
         ...doc,
         objekt_id: doc.related_type === "heating_bill" 
-          ? heatingBillObjekts[doc.related_id] || null
+          ? heatingBillData[doc.related_id]?.objekt_id || null
           : doc.related_type === "operating_costs"
           ? operatingCostObjekts[doc.related_id] || null
+          : null,
+        local_id: doc.related_type === "heating_bill"
+          ? heatingBillData[doc.related_id]?.local_id || null
           : null
       }));
     } catch (error) {
@@ -163,20 +167,20 @@ export class DocumentService {
         .filter(doc => doc.related_type === "heating_bill")
         .map(doc => doc.related_id);
 
-      let heatingBillObjekts: Record<string, string> = {};
+      let heatingBillData: Record<string, { objekt_id: string; local_id: string | null }> = {};
       if (heatingBillIds.length > 0) {
         const { data: heatingBills, error: heatingError } = await supabase
           .from("heating_bill_documents")
-          .select("id, objekt_id")
+          .select("id, objekt_id, local_id")
           .in("id", heatingBillIds);
 
         if (!heatingError && heatingBills) {
-          heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+          heatingBillData = heatingBills.reduce((acc, bill) => {
             if (bill.objekt_id) {
-              acc[bill.id] = bill.objekt_id;
+              acc[bill.id] = { objekt_id: bill.objekt_id, local_id: bill.local_id };
             }
             return acc;
-          }, {} as Record<string, string>);
+          }, {} as Record<string, { objekt_id: string; local_id: string | null }>);
         }
       }
 
@@ -204,9 +208,12 @@ export class DocumentService {
       return documents.map(doc => ({
         ...doc,
         objekt_id: doc.related_type === "heating_bill" 
-          ? heatingBillObjekts[doc.related_id] || null
+          ? heatingBillData[doc.related_id]?.objekt_id || null
           : doc.related_type === "operating_costs"
           ? operatingCostObjekts[doc.related_id] || null
+          : null,
+        local_id: doc.related_type === "heating_bill"
+          ? heatingBillData[doc.related_id]?.local_id || null
           : null
       }));
     } catch (error) {

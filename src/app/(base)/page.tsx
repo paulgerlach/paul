@@ -35,8 +35,119 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://heidisystems.com/#organization",
+        name: "Heidi Systems",
+        url: "https://heidisystems.com",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://heidisystems.com/admin_logo.png",
+        },
+        description:
+          "Digitale Erfassung aller Verbrauchsdaten im Gebäude. Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+49-30-555-12345",
+          contactType: "customer service",
+          availableLanguage: ["de", "en"],
+        },
+        sameAs: [],
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://heidisystems.com/#localbusiness",
+        name: "Heidi Systems",
+        image: "https://heidisystems.com/admin_logo.png",
+        description:
+          "Modernste Funkzähler-Technologie für digitale Erfassung von Warm-, Kaltwasser- und Heizungsverbrauch. Kostenlose Installation und automatisierte Betriebskostenabrechnung.",
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "DE",
+          addressLocality: "Deutschland",
+        },
+        priceRange: "$$",
+        url: "https://heidisystems.com",
+        telephone: "+49-30-555-12345",
+        openingHoursSpecification: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+          ],
+          opens: "09:00",
+          closes: "18:00",
+        },
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://heidisystems.com/#website",
+        url: "https://heidisystems.com",
+        name: "Heidi Systems",
+        description:
+          "Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
+        publisher: {
+          "@id": "https://heidisystems.com/#organization",
+        },
+        inLanguage: "de-DE",
+      },
+      {
+        "@type": "Service",
+        "@id": "https://heidisystems.com/#service",
+        serviceType: "Energiemanagement und Verbrauchserfassung",
+        provider: {
+          "@id": "https://heidisystems.com/#organization",
+        },
+        areaServed: "DE",
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Heidi Systems Services",
+          itemListElement: [
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Kostenfreie Installation von Funkzählern",
+                description:
+                  "Umrüstung auf fernablesbare Funkzähler für Warmwasser, Kaltwasser und Heizung - komplett kostenfrei",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Automatisierte Betriebskostenabrechnung",
+                description:
+                  "Digitale Erfassung und automatische Verarbeitung aller Verbrauchsdaten für präzise Nebenkostenabrechnungen",
+              },
+            },
+            {
+              "@type": "Offer",
+              itemOffered: {
+                "@type": "Service",
+                name: "Echtzeit-Dashboard und Verbrauchsanalyse",
+                description:
+                  "Übersichtliches Dashboard zur Überwachung aller Energiedaten in Echtzeit",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  };
+
   return (
     <main id="content">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <AuthRedirect />
       <HomeHero />
       <div className="mt-28 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 hero max-small:mt-6">

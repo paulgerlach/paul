@@ -7,9 +7,51 @@ const exo_2Sans = Exo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Heidi Systems",
+  metadataBase: new URL('https://heidisystems.com'),
+  title: "Heidi Systems | Fernablesbare Funkzähler für Warmwasser, Kaltwasser & Heizung",
   description:
-    "Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
+    "Digitale Erfassung aller Verbrauchsdaten im Gebäude. Kostenlose Installation fernablesbarer Funkzähler für Warmwasser, Kaltwasser und Heizung. Automatisierte Betriebskostenabrechnung in Deutschland.",
+  keywords: [
+    'Fernablesbare Zähler',
+    'Funkzähler',
+    'Warmwasserzähler',
+    'Kaltwasserzähler',
+    'Heizkostenabrechnung',
+    'Betriebskostenabrechnung',
+    'Energiemanagement',
+    'Verbrauchserfassung',
+    'Digitale Zähler',
+    'Deutschland',
+    'Kostenlose Installation',
+  ],
+  alternates: {
+    canonical: '/',
+    languages: {
+      'de-DE': '/',
+    },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'de_DE',
+    url: 'https://heidisystems.com',
+    title: 'Heidi Systems | Fernablesbare Funkzähler für Deutschland',
+    description: 'Kostenlose Installation fernablesbarer Funkzähler für Warmwasser, Kaltwasser und Heizung. Automatisierte Betriebskostenabrechnung in Deutschland.',
+    siteName: 'Heidi Systems',
+  },
+  verification: {
+    google: 'your-google-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -18,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body className={`${exo_2Sans.variable}`}>
           {children}
       </body>

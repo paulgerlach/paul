@@ -41,6 +41,7 @@ export default function ForgotPasswordDialog() {
       if (error) {
         toast.error("Fehler beim Senden der E-Mail");
         console.error("Password reset error:", error.message);
+        console.error("Full error object:", error);
         return;
       }
 

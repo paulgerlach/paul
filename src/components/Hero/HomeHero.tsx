@@ -20,10 +20,9 @@ export default function HomeHero() {
         <div className="flex items-center justify-center mx-auto w-fit border border-white/20 max-small:flex-col rounded-[40px] py-2.5 px-4 max-medium:hidden gap-3 mb-10">
           <span className="flex items-center justify-start gap-2">
             <Image
-              width={80}
-              height={24}
-              priority
-              sizes="80px"
+              width={0}
+              height={0}
+              sizes="100vw"
               src={google}
               alt="google"
             />

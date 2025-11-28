@@ -5,8 +5,19 @@ import Image from "next/image";
 import { counter, google, handyman, star } from "@/static/icons";
 import Link from "next/link";
 import { ROUTE_BLOG, ROUTE_FRAGEBOGEN } from "@/routes/routes";
+"use client";
+
+import { useState, useEffect } from "react";
 
 export default function HomeHero() {
+  const [showAnimation, setShowAnimation] = useState(false);
+
+  useEffect(() => {
+    // Defer Lottie animation to avoid blocking LCP
+    const timer = setTimeout(() => setShowAnimation(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="pt-[1px] bg-dark_green">
       <div className="px-4">
@@ -102,11 +113,15 @@ export default function HomeHero() {
             alt="counter"
           />
         </div>
-        <LazyLottie
-          animationData={animation2}
-          id="animation2hero"
-          wrapperClassName="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
-        />
+        {showAnimation ? (
+          <LazyLottie
+            animationData={animation2}
+            id="animation2hero"
+            wrapperClassName="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
+          />
+        ) : (
+          <div className="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden" />
+        )}
         <div className="small:w-full max-h-[324px] overflow-hidden rounded-base w-full max-medium:hidden">
           <Image
             width={324}

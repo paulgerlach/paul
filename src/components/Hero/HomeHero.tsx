@@ -20,54 +20,54 @@ export default function HomeHero() {
         <div className="flex items-center justify-center mx-auto w-fit border border-white/20 max-small:flex-col rounded-[40px] py-2.5 px-4 max-medium:hidden gap-3 mb-10">
           <span className="flex items-center justify-start gap-2">
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={80}
+              height={24}
+              priority
+              sizes="80px"
               src={google}
               alt="google"
             />
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={16}
+              height={16}
+              priority
+              sizes="16px"
               className="size-4 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={16}
+              height={16}
+              priority
+              sizes="16px"
               className="size-4 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={16}
+              height={16}
+              priority
+              sizes="16px"
               className="size-4 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={16}
+              height={16}
+              priority
+              sizes="16px"
               className="size-4 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
+              width={16}
+              height={16}
+              priority
+              sizes="16px"
               className="size-4 colored-to-white opacity-80"
               src={star}
               alt="rate star"
@@ -94,10 +94,10 @@ export default function HomeHero() {
       <div className="px-[72px] mt-[70px] mb-10 max-medium:flex-col w-fit mx-auto max-medium:pr-0 max-medium:justify-end grid grid-cols-4 gap-2 max-medium:px-0">
         <div className="bg-card_bg px-9 rounded-base flex items-center justify-center max-medium:hidden">
           <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
+            width={324}
+            height={324}
+            priority
+            sizes="(max-width: 768px) 0px, 324px"
             src={counter}
             alt="counter"
           />
@@ -109,10 +109,10 @@ export default function HomeHero() {
         />
         <div className="small:w-full max-h-[324px] overflow-hidden rounded-base w-full max-medium:hidden">
           <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
+            width={324}
+            height={324}
+            priority
+            sizes="(max-width: 768px) 0px, 324px"
             className="w-full rounded-base object-contain"
             src={handyman}
             alt="handyman"

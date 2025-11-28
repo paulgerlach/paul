@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { animation2 } from "@/static/lottieAnimations";
 import HeroTicker from "../Basic/Ticker/HeroTicker";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
@@ -5,9 +8,6 @@ import Image from "next/image";
 import { counter, google, handyman, star } from "@/static/icons";
 import Link from "next/link";
 import { ROUTE_BLOG, ROUTE_FRAGEBOGEN } from "@/routes/routes";
-"use client";
-
-import { useState, useEffect } from "react";
 
 export default function HomeHero() {
   const [showAnimation, setShowAnimation] = useState(false);

@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import animation2 from "@/animations/Animation_2.json";
 import HeroTicker from "../Basic/Ticker/HeroTicker";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
@@ -10,14 +7,6 @@ import Link from "next/link";
 import { ROUTE_BLOG, ROUTE_FRAGEBOGEN } from "@/routes/routes";
 
 export default function HomeHero() {
-  const [showAnimation, setShowAnimation] = useState(false);
-
-  useEffect(() => {
-    // Show animation after brief delay to prioritize text content
-    const timer = setTimeout(() => setShowAnimation(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="pt-[1px] bg-dark_green">
       <div className="px-4">
@@ -113,15 +102,11 @@ export default function HomeHero() {
             alt="counter"
           />
         </div>
-        {showAnimation ? (
-          <LazyLottie
-            animationData={animation2}
-            id="animation2hero"
-            wrapperClassName="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
-          />
-        ) : (
-          <div className="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden" />
-        )}
+        <LazyLottie
+          animationData={animation2}
+          id="animation2hero"
+          wrapperClassName="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
+        />
         <div className="small:w-full max-h-[324px] overflow-hidden rounded-base w-full max-medium:hidden">
           <Image
             width={324}

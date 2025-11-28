@@ -180,7 +180,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   }, [selectedFolder, documentFolders]);
 
   // Folder navigation handlers
-  const handleFolderDoubleClick = (folderType: string) => {
+  const handleFolderClick = (folderType: string) => {
     setSelectedFolder(folderType);
   };
 
@@ -345,7 +345,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   {documentFolders.map(folder => (
                     <div
                       key={folder.type}
-                      onDoubleClick={() => handleFolderDoubleClick(folder.type)}
+                      onClick={() => handleFolderClick(folder.type)}
                       className="bg-white p-6 max-medium:p-4 rounded-lg border-2 border-gray-200 hover:border-green hover:shadow-lg transition-all duration-300 cursor-pointer group w-full"
                     >
                       <div className="flex items-center gap-4">

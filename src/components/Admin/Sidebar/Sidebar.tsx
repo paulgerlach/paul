@@ -95,7 +95,7 @@ export default function Sidebar() {
     isAdmin ? pathname === route : pathname?.startsWith(route);
 
   return (
-    <div className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[200px] h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 max-medium:px-5 max-medium:py-2 flex flex-col justify-between">
+    <div className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[200px] max-large:hidden h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 flex flex-col justify-between">
       <div className="flex flex-col gap-0.5">
         {dashboardLinks.map((link: SidebarLinkType) =>
           link.type === "button" ? (

@@ -41,7 +41,7 @@ export default async function UserObjektsPage({
   const createLink = await buildSubRoute("create");
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 flex-1 overflow-y-auto grid grid-rows-[auto_1fr]">
       <Breadcrumb backTitle="Users" link={ROUTE_ADMIN} title="User Übersicht" />
       <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
         <div className="space-y-4">
@@ -51,11 +51,11 @@ export default async function UserObjektsPage({
           />
           <div className="overflow-y-auto space-y-4">
             {objekts.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center">
-                <p className="text-dark_green/50 text-lg">
+              <div className="bg-white rounded-2xl p-8 max-medium:p-4 text-center">
+                <p className="text-dark_green/50 text-lg max-medium:text-base">
                   Keine Ergebnisse gefunden
                 </p>
-                <p className="text-dark_green/30 text-sm mt-2">
+                <p className="text-dark_green/30 text-sm max-medium:text-xs mt-2">
                   Versuchen Sie einen anderen Suchbegriff
                 </p>
               </div>
@@ -68,14 +68,14 @@ export default async function UserObjektsPage({
         </div>
         <Link
           href={createLink}
-          className="border-dashed w-full max-xl:text-base flex p-5 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl"
+          className="border-dashed w-full max-xl:text-base max-medium:text-sm flex p-5 max-medium:p-3 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl max-medium:rounded-xl"
         >
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-7 opacity-50 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+            className="max-w-7 opacity-50 max-h-7 max-xl:max-w-5 max-xl:max-h-5 max-medium:max-w-4 max-medium:max-h-4"
             src={objekte}
             alt="objekte"
           />

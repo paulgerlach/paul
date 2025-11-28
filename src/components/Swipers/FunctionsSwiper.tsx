@@ -7,7 +7,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import type { FunctionsSlideType } from "@/types";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
-import { animation4, animation5, animation6 } from "@/static/lottieAnimations";
+import animation4 from "@/animations/Animation_4.json";
+import animation5 from "@/animations/Animation_5.json";
+import animation6 from "@/animations/Animation_6.json";
 
 export const functionsSwiper: FunctionsSlideType[] = [
 	{

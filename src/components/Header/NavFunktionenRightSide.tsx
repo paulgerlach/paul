@@ -5,7 +5,7 @@ import { arrow } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
-import { animation10 } from "@/static/lottieAnimations";
+import animation10 from "@/animations/Animation_10.json";
 
 export default function NavFunktionenRightSide() {
 	return (

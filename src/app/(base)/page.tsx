@@ -29,7 +29,9 @@ import {
   weight,
   wemolo,
 } from "@/static/icons";
-import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
+import animation1 from "@/animations/Animation_1.json";
+import animation2 from "@/animations/Animation_2.json";
+import animation3 from "@/animations/Animation_3.json";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
@@ -158,10 +160,10 @@ export default function Home() {
           <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
             <span className="circleIcon inline-block">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
                 className="size-[25px]"
                 src={weight}
                 alt="weight"
@@ -187,10 +189,10 @@ export default function Home() {
           <div className="max-medium:flex space-y-4 max-medium:flex-col max-medium:items-center max-medium:justify-start">
             <span className="circleIcon inline-block">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
                 className="size-[25px]"
                 src={clock}
                 alt="clock"
@@ -215,10 +217,10 @@ export default function Home() {
           <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
             <span className="circleIcon inline-block">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
                 className="size-[25px]"
                 src={instruments}
                 alt="instruments"
@@ -242,10 +244,10 @@ export default function Home() {
           <div className="space-y-4 max-medium:hidden max-medium:flex-col max-medium:items-center max-medium:justify-start">
             <span className="circleIcon inline-block">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
                 className="size-[25px]"
                 src={doc}
                 alt="doc"
@@ -291,10 +293,10 @@ export default function Home() {
               </Link>
               <div className="bg-white/90 flex items-center justify-center pt-[60px] px-[116px] max-megalarge:px-20 rounded-t-[20px]">
                 <Image
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  loading="lazy"
+                  width={300}
+                  height={400}
+                  priority
+                  sizes="(max-width: 768px) 100vw, 300px"
                   src={counter}
                   alt="counter"
                 />
@@ -315,10 +317,10 @@ export default function Home() {
                 mehr erfahren
               </Link>
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
+                width={400}
+                height={300}
+                priority
+                sizes="(max-width: 768px) 100vw, 400px"
                 src={doc_phone}
                 alt="screenshot"
               />

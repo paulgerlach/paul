@@ -4,6 +4,9 @@ import { Exo_2 } from "next/font/google";
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 export const metadata: Metadata = {

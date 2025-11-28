@@ -16,7 +16,7 @@ import {
 	lock,
 	vitolos,
 } from "@/static/icons";
-import { animation10 } from "@/static/lottieAnimations";
+import animation10 from "@/animations/Animation_10.json";
 import Image from "next/image";
 import Link from "next/link";
 

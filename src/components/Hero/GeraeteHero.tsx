@@ -1,7 +1,7 @@
 import { hero_counter, hero_small_counter } from "@/static/icons";
 import Image from "next/image";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import { animation1 } from "@/static/lottieAnimations";
+import animation1 from "@/animations/Animation_1.json";
 import { ROUTE_FRAGEBOGEN } from "@/routes/routes";
 import Link from "next/link";
 

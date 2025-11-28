@@ -1,4 +1,6 @@
-import { animation7, animation8, animation9 } from "@/static/lottieAnimations";
+import animation7 from "@/animations/Animation_7.json";
+import animation8 from "@/animations/Animation_8.json";
+import animation9 from "@/animations/Animation_9.json";
 import { LazyLottie } from "../Lottie/LazyLottie";
 
 export default function AnimationsSection() {

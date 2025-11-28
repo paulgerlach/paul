@@ -29,7 +29,9 @@ import {
   weight,
   wemolo,
 } from "@/static/icons";
-import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
+import animation1 from "@/animations/Animation_1.json";
+import animation2 from "@/animations/Animation_2.json";
+import animation3 from "@/animations/Animation_3.json";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";

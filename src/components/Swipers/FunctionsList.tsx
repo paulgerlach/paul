@@ -2,7 +2,9 @@ import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";
 import { article1 } from "@/static/icons";
 import type { FunctionsSlideType } from "@/types";
-import { animation4, animation5, animation6 } from "@/static/lottieAnimations";
+import animation4 from "@/animations/Animation_4.json";
+import animation5 from "@/animations/Animation_5.json";
+import animation6 from "@/animations/Animation_6.json";
 
 export const functionsSwiper: FunctionsSlideType[] = [
 	{

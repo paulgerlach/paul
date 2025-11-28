@@ -1,7 +1,8 @@
 import { chart1, chart2, chart3, chart5 } from "@/static/icons";
 import Image from "next/image";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import { animation12, animation13 } from "@/static/lottieAnimations";
+import animation12 from "@/animations/Animation_12.json";
+import animation13 from "@/animations/Animation_13.json";
 
 export default function FunktionenGrid() {
 	return (

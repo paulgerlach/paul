@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { animation2 } from "@/static/lottieAnimations";
+import animation2 from "@/animations/Animation_2.json";
 import HeroTicker from "../Basic/Ticker/HeroTicker";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";

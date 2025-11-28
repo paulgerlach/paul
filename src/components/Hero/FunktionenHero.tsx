@@ -2,7 +2,7 @@ import { ROUTE_FRAGEBOGEN } from "@/routes/routes";
 import Image from "next/image";
 import Link from "next/link";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import { animation11 } from "@/static/lottieAnimations";
+import animation11 from "@/animations/Animation_11.json";
 import { hero_process_bg, hero_process_small } from "@/static/icons";
 
 export default function FunktionenHero() {

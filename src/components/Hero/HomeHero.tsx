@@ -13,8 +13,8 @@ export default function HomeHero() {
   const [showAnimation, setShowAnimation] = useState(false);
 
   useEffect(() => {
-    // Defer Lottie animation to avoid blocking LCP
-    const timer = setTimeout(() => setShowAnimation(true), 500);
+    // Defer Lottie animation until after LCP is measured (~2s)
+    const timer = setTimeout(() => setShowAnimation(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 

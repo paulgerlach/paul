@@ -157,14 +157,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
       {
         type: 'heating_bill',
         name: 'Heizkostenabrechnungen',
-        icon: '🔥',
+        icon: '/folder_icon.svg',
         documents: grouped['heating_bill'] || [],
         count: (grouped['heating_bill'] || []).length
       },
       {
         type: 'operating_costs',
         name: 'Betriebskostenabrechnungen',
-        icon: '🏢',
+        icon: '/folder_icon.svg',
         documents: grouped['operating_costs'] || [],
         count: (grouped['operating_costs'] || []).length
       }
@@ -180,7 +180,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   }, [selectedFolder, documentFolders]);
 
   // Folder navigation handlers
-  const handleFolderDoubleClick = (folderType: string) => {
+  const handleFolderClick = (folderType: string) => {
     setSelectedFolder(folderType);
   };
 
@@ -250,8 +250,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
       {/* Main Content */}
       <div className="bg-white rounded-lg flex-1 flex flex-col">
         {/* Property Navigation */}
-        <div className="px-6 py-4">
-          <div className="flex gap-3 overflow-x-auto">
+        <div className="py-4 max-medium:px-3 max-medium:py-3">
+          {/* Desktop/Tablet: horizontal scroll | Mobile: vertical stack */}
+          <div className="flex gap-3 overflow-x-auto pb-2 px-6 max-medium:hidden">
             {objektsToUse?.map((objekt) => (
               <button
                 key={objekt.id}
@@ -261,9 +262,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   } else {
                     setSelectedObjekt(objekt.id || null);
                   }
-                  setSelectedFolder(null); // Reset folder view when changing building
+                  setSelectedFolder(null);
                 }}
-                className={`flex flex-col items-start gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all flex-shrink-0 ${
                   selectedObjekt === objekt.id
                     ? "border-green bg-green-50 text-green-800"
                     : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
@@ -276,8 +277,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   alt="building"
                   className={`h-10 w-10 transition-all ${
                     selectedObjekt === objekt.id
-                      ? "filter brightness-0" // Black when selected
-                      : "filter brightness-0 opacity-40" // Gray when not selected
+                      ? "filter brightness-0"
+                      : "filter brightness-0 opacity-40"
                   }`}
                 />
                 <span className="text-xs font-light whitespace-nowrap">
@@ -286,14 +287,50 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               </button>
             ))}
           </div>
+          {/* Mobile: vertical stack */}
+          <div className="hidden max-medium:flex flex-col gap-2">
+            {objektsToUse?.map((objekt) => (
+              <button
+                key={objekt.id}
+                onClick={() => {
+                  if (selectedObjekt === objekt.id) {
+                    setSelectedObjekt(null);
+                  } else {
+                    setSelectedObjekt(objekt.id || null);
+                  }
+                  setSelectedFolder(null);
+                }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all w-full ${
+                  selectedObjekt === objekt.id
+                    ? "border-green bg-green-50 text-green-800"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Image
+                  width={32}
+                  height={32}
+                  src={building}
+                  alt="building"
+                  className={`h-8 w-8 transition-all ${
+                    selectedObjekt === objekt.id
+                      ? "filter brightness-0"
+                      : "filter brightness-0 opacity-40"
+                  }`}
+                />
+                <span className="text-sm font-light">
+                  {getObjektDisplayName(objekt)}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto px-6 py-4">
+        <div className="flex-1 overflow-auto px-6 py-4 max-medium:px-3 max-medium:py-3">
           {!selectedFolder ? (
             // FOLDER VIEW
             <div>
-              <h2 className="text-2xl font-light text-gray-900 mb-6">
+              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
                 {selectedObjekt === null 
                   ? "Dokumente"
                   : (() => {
@@ -304,22 +341,28 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               </h2>
               
               {documentFolders.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex flex-col gap-4 w-full">
                   {documentFolders.map(folder => (
                     <div
                       key={folder.type}
-                      onDoubleClick={() => handleFolderDoubleClick(folder.type)}
-                      className="bg-white p-6 rounded-lg border-2 border-gray-200 hover:border-green hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      onClick={() => handleFolderClick(folder.type)}
+                      className="bg-white p-6 max-medium:p-4 rounded-lg border-2 border-gray-200 hover:border-green hover:shadow-lg transition-all duration-300 cursor-pointer group w-full"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="text-5xl group-hover:scale-110 transition-transform">
-                          {folder.icon}
+                        <div className="group-hover:scale-110 transition-transform flex-shrink-0">
+                          <Image
+                            src={folder.icon}
+                            alt={folder.name}
+                            width={56}
+                            height={56}
+                            className="w-14 h-14 max-medium:w-10 max-medium:h-10"
+                          />
                         </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-dark_green group-hover:text-green">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg max-medium:text-base font-semibold text-dark_green group-hover:text-green truncate">
                             {folder.name}
                           </h3>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-gray-600 text-sm max-medium:text-xs">
                             {folder.count} {folder.count === 1 ? 'Dokument' : 'Dokumente'}
                           </p>
                         </div>
@@ -358,9 +401,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               </button>
 
               {/* Folder Header */}
-              <h2 className="text-2xl font-light text-gray-900 mb-6">
+              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
                 {documentFolders.find(f => f.type === selectedFolder)?.name}
-                <span className="text-gray-500 ml-2 text-lg">
+                <span className="text-gray-500 ml-2 text-lg max-medium:text-base">
                   ({currentFolderDocuments.length} {currentFolderDocuments.length === 1 ? 'Dokument' : 'Dokumente'})
                 </span>
               </h2>
@@ -370,16 +413,16 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Geändert
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Größe
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Aktionen
                       </th>
                     </tr>
@@ -387,32 +430,32 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   <tbody className="bg-white">
                     {currentFolderDocuments.map((document: DocumentMetadata) => (
                       <tr key={document.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 max-medium:px-3 max-medium:py-3 whitespace-nowrap">
                           <div className="flex items-center">
                             <Image
                               width={0}
                               height={0}
                               sizes="100vw"
                               loading="lazy"
-                              className="max-w-6 max-h-6 mr-3"
+                              className="max-w-6 max-h-6 max-medium:max-w-5 max-medium:max-h-5 mr-3 max-medium:mr-2"
                               src={pdf_icon}
                               alt="pdf_icon"
                             />
                             <button
                               onClick={() => handleDownload(document)}
-                              className="text-sm font-light text-gray-900 hover:text-green-600 hover:underline cursor-pointer"
+                              className="text-sm max-medium:text-xs font-light text-gray-900 hover:text-green-600 hover:underline cursor-pointer"
                             >
                               {document.document_name}
                             </button>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 max-medium:hidden whitespace-nowrap text-sm text-gray-500">
                           {formatDate(document.created_at)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 max-medium:hidden whitespace-nowrap text-sm text-gray-500">
                           {fileSizes[document.id] || '--'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 max-medium:px-3 max-medium:py-3 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleGoToSource(document)}
@@ -449,12 +492,23 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
       </div>
 
-      {/* Add Documents Button - Pinned at Bottom of Page */}
-      <div className="flex justify-center mt-6">
-        <button className="px-6 py-3 border-2 border-dashed border-blue-400 text-blue-600 rounded-lg hover:border-blue-500 hover:text-blue-700 transition-colors">
-          Unterlagen hinzufügen
-        </button>
-      </div>
+      {/* Add Documents Button - Only show when inside a folder */}
+      {selectedFolder && (
+        <div className="mt-6 max-medium:mt-4 px-6 max-medium:px-3">
+          <button 
+            onClick={() => {
+              if (selectedFolder === 'heating_bill') {
+                openDialog(isAdmin ? 'admin_cost_type_heizkostenabrechnung_create' : 'cost_type_heizkostenabrechnung_create');
+              } else if (selectedFolder === 'operating_costs') {
+                openDialog(isAdmin ? 'admin_cost_type_betriebskostenabrechnung_create' : 'cost_type_betriebskostenabrechnung_create');
+              }
+            }}
+            className="w-full py-4 max-medium:py-3 border-2 border-dashed border-blue-300 text-blue-500 rounded-lg hover:border-blue-400 hover:text-blue-600 transition-colors text-base max-medium:text-sm"
+          >
+            Unterlagen hinzufügen
+          </button>
+        </div>
+      )}
     </div>
   );
 }

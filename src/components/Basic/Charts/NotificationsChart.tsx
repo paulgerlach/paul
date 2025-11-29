@@ -421,16 +421,20 @@ export default function NotificationsChart({
         );
         const elecDevices = uniqueElecIds.size;
 
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType("success", "general"),
-          rightIcon: green_check,
-          leftBg: "#E7E8EA",
-          rightBg: "#E7F2E8",
-          title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
-        });
+        // For demo account, skip success message and show dummy notifications instead
+        if (!isDemoAccount) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType("success", "general"),
+            rightIcon: green_check,
+            leftBg: "#E7E8EA",
+            rightBg: "#E7F2E8",
+            title: "Alle Zähler funktionieren korrekt",
+            subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
+          });
 
-        return notifications;
+          return notifications;
+        }
+        // Demo account continues to dummy notifications below
       }
 
       const errorsBySeverity = groupErrorsBySeverity(deviceErrors);

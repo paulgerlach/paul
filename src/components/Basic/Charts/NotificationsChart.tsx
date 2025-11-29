@@ -120,7 +120,7 @@ export default function NotificationsChart({
   const { data: user } = useAuthUser();
   
   // Check if current user is the demo account
-  const isDemoAccount = user?.email === "heidi@hausverwaltung.de";
+  const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
   const openErrorModal = (meterId?: number) => {
     setSelectedMeterId(meterId);

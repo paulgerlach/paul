@@ -525,15 +525,16 @@ export default function NotificationsChart({
       }
 
       // Check dummy notifications based on selected meter categories
+      // For demo account, always show dummy notifications regardless of meter selection
       for (const notification of dummy_notifications) {
         const meterId = notification.ID.toString();
         const category = notification.Category;
 
-        // Check if the notification's meter ID is in the selected meters
-        // OR if any meter from the same category is selected
-        const isMeterSelected = meterIds.includes(meterId);
+        // Demo account always shows dummy notifications
+        // Live users would need matching meter IDs (but they use generateDynamicNotifications instead)
+        const shouldShowDummy = isDemoAccount || meterIds.includes(meterId);
 
-        if (isMeterSelected) {
+        if (shouldShowDummy) {
           const rightIcon =
             notification.Severity === "critical"
               ? alert_triangle

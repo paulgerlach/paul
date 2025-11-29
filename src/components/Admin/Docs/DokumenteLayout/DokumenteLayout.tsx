@@ -157,14 +157,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
       {
         type: 'heating_bill',
         name: 'Heizkostenabrechnungen',
-        icon: '🔥',
+        icon: '/folder_icon.svg',
         documents: grouped['heating_bill'] || [],
         count: (grouped['heating_bill'] || []).length
       },
       {
         type: 'operating_costs',
         name: 'Betriebskostenabrechnungen',
-        icon: '🏢',
+        icon: '/folder_icon.svg',
         documents: grouped['operating_costs'] || [],
         count: (grouped['operating_costs'] || []).length
       }
@@ -349,8 +349,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                       className="bg-white p-6 max-medium:p-4 rounded-lg border-2 border-gray-200 hover:border-green hover:shadow-lg transition-all duration-300 cursor-pointer group w-full"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="text-5xl max-medium:text-4xl group-hover:scale-110 transition-transform flex-shrink-0">
-                          {folder.icon}
+                        <div className="group-hover:scale-110 transition-transform flex-shrink-0">
+                          <Image
+                            src={folder.icon}
+                            alt={folder.name}
+                            width={56}
+                            height={56}
+                            className="w-14 h-14 max-medium:w-10 max-medium:h-10"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg max-medium:text-base font-semibold text-dark_green group-hover:text-green truncate">
@@ -486,12 +492,23 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
       </div>
 
-      {/* Add Documents Button - Pinned at Bottom of Page */}
-      <div className="flex justify-center mt-6 max-medium:mt-4">
-        <button className="px-6 py-3 max-medium:px-4 max-medium:py-2 max-medium:text-sm border-2 border-dashed border-blue-400 text-blue-600 rounded-lg hover:border-blue-500 hover:text-blue-700 transition-colors">
-          Unterlagen hinzufügen
-        </button>
-      </div>
+      {/* Add Documents Button - Only show when inside a folder */}
+      {selectedFolder && (
+        <div className="mt-6 max-medium:mt-4 px-6 max-medium:px-3">
+          <button 
+            onClick={() => {
+              if (selectedFolder === 'heating_bill') {
+                openDialog(isAdmin ? 'admin_cost_type_heizkostenabrechnung_create' : 'cost_type_heizkostenabrechnung_create');
+              } else if (selectedFolder === 'operating_costs') {
+                openDialog(isAdmin ? 'admin_cost_type_betriebskostenabrechnung_create' : 'cost_type_betriebskostenabrechnung_create');
+              }
+            }}
+            className="w-full py-4 max-medium:py-3 border-2 border-dashed border-blue-300 text-blue-500 rounded-lg hover:border-blue-400 hover:text-blue-600 transition-colors text-base max-medium:text-sm"
+          >
+            Unterlagen hinzufügen
+          </button>
+        </div>
+      )}
     </div>
   );
 }

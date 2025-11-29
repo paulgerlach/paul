@@ -3,6 +3,7 @@ import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import AdminHeader from "@/components/Header/AdminHeader/AdminHeader";
 import Sidebar from "@/components/Admin/Sidebar/Sidebar";
+import MobileSidebar from "@/components/Admin/Sidebar/MobileSidebar";
 import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
 import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog";
@@ -43,10 +44,11 @@ export default function AdminLayout({
 }>) {
   return (
     <QueryProvider>
-      <div className="h-screen grid grid-rows-[auto_1fr] bg-base-bg">
+      <div className="h-screen flex flex-col bg-base-bg overflow-hidden">
         <AdminHeader />
-        <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] overflow-hidden w-full bg-base-bg">
+        <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden w-full bg-base-bg">
           <Sidebar />
+          <MobileSidebar />
           {children}
         </div>
       </div>

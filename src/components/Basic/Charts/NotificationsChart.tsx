@@ -132,8 +132,8 @@ export default function NotificationsChart({
     setNotifications((prev) => {
       const newNotifications = prev.filter((_, i) => i !== index);
       
-      // If we have fewer than 4 notifications and there are items in the queue, add the next one
-      if (newNotifications.length < 4 && notificationQueue.length > 0) {
+      // If we have fewer than 10 notifications and there are items in the queue, add the next one
+      if (newNotifications.length < 10 && notificationQueue.length > 0) {
         const nextNotification = notificationQueue[0];
         const updatedQueue = notificationQueue.slice(1);
         setNotificationQueue(updatedQueue);
@@ -375,7 +375,7 @@ export default function NotificationsChart({
       });
 
       // Limit to max 4 dynamic notifications (highest severity first)
-      return dynamicNotifications.slice(0, 4);
+      return dynamicNotifications.slice(0, 10);
     };
 
     const generateNotifications = (): NotificationItem[] => {
@@ -572,7 +572,7 @@ export default function NotificationsChart({
         }
       }
 
-      return notifications.slice(0, 4);
+      return notifications.slice(0, 10);
     };
 
     // Prevent unnecessary re-renders
@@ -590,9 +590,9 @@ export default function NotificationsChart({
         ? generateNotifications()  // Shows dummy_notifications for demo
         : generateDynamicNotifications();  // Shows real errors for live users
       
-      // Split into displayed (first 4) and queue (rest)
-      const displayed = finalNotifications.slice(0, 4);
-      const queue = finalNotifications.slice(4);
+      // Split into displayed (first 10, scrollable) and queue (rest)
+      const displayed = finalNotifications.slice(0, 10);
+      const queue = finalNotifications.slice(10);
       
       // Update both displayed notifications and queue
       setNotificationQueue(queue);
@@ -636,7 +636,7 @@ export default function NotificationsChart({
           alt="notification"
         />
       </div>
-      <div className="space-y-2 flex-1 overflow-auto">
+      <div className="space-y-2 flex-1 overflow-y-auto max-h-[280px] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         {notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}

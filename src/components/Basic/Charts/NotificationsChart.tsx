@@ -25,6 +25,9 @@ import {
   groupErrorsBySeverity,
   groupErrorsByDeviceType,
 } from "@/utils/errorFlagInterpreter";
+import { interpretHintCode } from "@/utils/hintCodeInterpreter";
+import { checkRSSI } from "@/utils/rssiChecker";
+import { analyzeConsumption } from "@/utils/consumptionAnalyzer";
 import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
@@ -117,7 +120,7 @@ export default function NotificationsChart({
   const { data: user } = useAuthUser();
   
   // Check if current user is the demo account
-  const isDemoAccount = user?.email === "heidi@hausverwaltung.de";
+  const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
   const openErrorModal = (meterId?: number) => {
     setSelectedMeterId(meterId);
@@ -129,8 +132,8 @@ export default function NotificationsChart({
     setNotifications((prev) => {
       const newNotifications = prev.filter((_, i) => i !== index);
       
-      // If we have fewer than 4 notifications and there are items in the queue, add the next one
-      if (newNotifications.length < 4 && notificationQueue.length > 0) {
+      // If we have fewer than 10 notifications and there are items in the queue, add the next one
+      if (newNotifications.length < 10 && notificationQueue.length > 0) {
         const nextNotification = notificationQueue[0];
         const updatedQueue = notificationQueue.slice(1);
         setNotificationQueue(updatedQueue);
@@ -226,19 +229,50 @@ export default function NotificationsChart({
       
       const dynamicNotifications: NotificationItem[] = [];
       
-      // Find meters with actual errors that are currently selected
-      const selectedMetersWithErrors = parsedData.data.filter(device => {
-        const meterId = device.ID?.toString();
+      // Filter to only selected meters
+      const selectedMeters = parsedData.data.filter(device => {
+        const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
+        return meterId && meterIds.includes(meterId);
+      });
+      
+      // GROUP 1: Check for error flags
+      const selectedMetersWithErrors = selectedMeters.filter(device => {
         const hasErrorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] && 
                             device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] !== "0b" &&
                             device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"] !== "";
-        
-        // Check if this meter is selected AND has actual errors
-        return meterId && meterIds.includes(meterId) && hasErrorFlag;
+        return hasErrorFlag;
       });
+      
+      // GROUP 2: Check for hint codes
+      const selectedMetersWithHintCodes = selectedMeters.filter(device => {
+        const hintCode = device["Hint Code"];
+        return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
+      });
+      
+      // GROUP 2: Check for RSSI warnings
+      const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
+        const rssiValue = device["RSSI Value"];
+        if (!rssiValue) return false;
+        const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
+        return !isNaN(rssi) && rssi < -90; // Weak signal threshold
+      });
+      
+      // GROUP 3: Check for consumption anomalies
+      const selectedMetersWithConsumptionIssues = selectedMeters.filter(device => {
+        // Check if device has monthly data
+        const value1 = device["Monthly Value 1"];
+        const value2 = device["Monthly Value 2"];
+        return value1 !== undefined && value2 !== undefined;
+      });
+      
+      // Count total issues
+      const totalIssues = selectedMetersWithErrors.length + 
+                         selectedMetersWithHintCodes.length + 
+                         selectedMetersWithRSSIWarnings.length + 
+                         selectedMetersWithConsumptionIssues.length;
 
-      // If no errors detected, show success notification
-      if (selectedMetersWithErrors.length === 0 && parsedData.data.length > 0) {
+      // If no issues detected, show success notification
+      if (totalIssues === 0 && parsedData.data.length > 0) {
         // Count UNIQUE devices by device ID, not total data rows
         const uniqueDeviceIds = new Set(parsedData.data.map(d => d.ID?.toString() || d["Number Meter"]?.toString()).filter(Boolean));
         const totalDevices = uniqueDeviceIds.size;
@@ -280,9 +314,9 @@ export default function NotificationsChart({
         return dynamicNotifications;
       }
 
-      // Generate notifications for selected meters with errors
+      // GROUP 1: Generate notifications for error flags
       selectedMetersWithErrors.forEach(device => {
-        const meterId = device.ID?.toString();
+        const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
         const deviceType = device["Device Type"];
         const manufacturer = device.Manufacturer;
         const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
@@ -302,14 +336,46 @@ export default function NotificationsChart({
           rightIcon: rightIcon,
           leftBg: "#E7E8EA",
           rightBg: rightBg,
-          title: `Live Fehler - Zähler ${meterId}`,
-          subtitle: `${deviceType} Gerät meldet Fehler (${manufacturer})`,
+          title: `Gerätefehler - Zähler ${meterId}`,
+          subtitle: `${deviceType} Gerät meldet technischen Fehler (${manufacturer})`,
           meterId: parseInt(meterId || "0")
         });
       });
+      
+      // GROUP 2: Generate notifications for hint codes
+      selectedMetersWithHintCodes.forEach(device => {
+        const hintNotification = interpretHintCode(device);
+        if (hintNotification) {
+          dynamicNotifications.push(hintNotification);
+        }
+      });
+      
+      // GROUP 2: Generate notifications for RSSI warnings
+      selectedMetersWithRSSIWarnings.forEach(device => {
+        const rssiNotification = checkRSSI(device);
+        if (rssiNotification) {
+          dynamicNotifications.push(rssiNotification);
+        }
+      });
+      
+      // GROUP 3: Generate notifications for consumption issues
+      selectedMetersWithConsumptionIssues.forEach(device => {
+        const consumptionNotifications = analyzeConsumption(device);
+        if (consumptionNotifications && consumptionNotifications.length > 0) {
+          dynamicNotifications.push(...consumptionNotifications);
+        }
+      });
 
-      // Limit to max 4 dynamic notifications (can fill all slots if needed)
-      return dynamicNotifications.slice(0, 4);
+      // Sort by severity (critical > high > medium > low)
+      const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      dynamicNotifications.sort((a, b) => {
+        const aSeverity = 'severity' in a ? (a as any).severity : 'medium';
+        const bSeverity = 'severity' in b ? (b as any).severity : 'medium';
+        return (severityOrder[aSeverity as keyof typeof severityOrder] || 2) - (severityOrder[bSeverity as keyof typeof severityOrder] || 2);
+      });
+
+      // Limit to max 4 dynamic notifications (highest severity first)
+      return dynamicNotifications.slice(0, 10);
     };
 
     const generateNotifications = (): NotificationItem[] => {
@@ -355,16 +421,20 @@ export default function NotificationsChart({
         );
         const elecDevices = uniqueElecIds.size;
 
-        notifications.push({
-          leftIcon: getLeftIconForNotificationType("success", "general"),
-          rightIcon: green_check,
-          leftBg: "#E7E8EA",
-          rightBg: "#E7F2E8",
-          title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
-        });
+        // For demo account, skip success message and show dummy notifications instead
+        if (!isDemoAccount) {
+          notifications.push({
+            leftIcon: getLeftIconForNotificationType("success", "general"),
+            rightIcon: green_check,
+            leftBg: "#E7E8EA",
+            rightBg: "#E7F2E8",
+            title: "Alle Zähler funktionieren korrekt",
+            subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
+          });
 
-        return notifications;
+          return notifications;
+        }
+        // Demo account continues to dummy notifications below
       }
 
       const errorsBySeverity = groupErrorsBySeverity(deviceErrors);
@@ -459,15 +529,16 @@ export default function NotificationsChart({
       }
 
       // Check dummy notifications based on selected meter categories
+      // For demo account, always show dummy notifications regardless of meter selection
       for (const notification of dummy_notifications) {
         const meterId = notification.ID.toString();
         const category = notification.Category;
 
-        // Check if the notification's meter ID is in the selected meters
-        // OR if any meter from the same category is selected
-        const isMeterSelected = meterIds.includes(meterId);
+        // Demo account always shows dummy notifications
+        // Live users would need matching meter IDs (but they use generateDynamicNotifications instead)
+        const shouldShowDummy = isDemoAccount || meterIds.includes(meterId);
 
-        if (isMeterSelected) {
+        if (shouldShowDummy) {
           const rightIcon =
             notification.Severity === "critical"
               ? alert_triangle
@@ -501,7 +572,7 @@ export default function NotificationsChart({
         }
       }
 
-      return notifications.slice(0, 4);
+      return notifications.slice(0, 10);
     };
 
     // Prevent unnecessary re-renders
@@ -519,9 +590,9 @@ export default function NotificationsChart({
         ? generateNotifications()  // Shows dummy_notifications for demo
         : generateDynamicNotifications();  // Shows real errors for live users
       
-      // Split into displayed (first 4) and queue (rest)
-      const displayed = finalNotifications.slice(0, 4);
-      const queue = finalNotifications.slice(4);
+      // Split into displayed (first 10, scrollable) and queue (rest)
+      const displayed = finalNotifications.slice(0, 10);
+      const queue = finalNotifications.slice(10);
       
       // Update both displayed notifications and queue
       setNotificationQueue(queue);
@@ -565,7 +636,7 @@ export default function NotificationsChart({
           alt="notification"
         />
       </div>
-      <div className="space-y-2 flex-1 overflow-auto">
+      <div className="space-y-2 flex-1 overflow-y-auto max-h-[280px] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         {notifications.length === 0 ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
@@ -575,11 +646,11 @@ export default function NotificationsChart({
           />
         ) : (
           notifications.map((n, idx) => (
-            <div key={idx} className="flex items-start justify-between w-full">
-              <div className="w-full">
+            <div key={idx} className="flex items-center justify-between w-full gap-2 overflow-hidden">
+              <div className="flex-1 min-w-0">
                 <NotificationItem {...n} />
               </div>
-              <div className="mt-1">
+              <div className="flex items-center flex-shrink-0 ml-1">
                 <Popover
                   open={openPopoverId === idx}
                   onOpenChange={(open) => setOpenPopoverId(open ? idx : null)}

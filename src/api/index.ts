@@ -63,6 +63,51 @@ export type MeterReadingType = {
   "Billing Value"?: number | string; // NEW format billing value
   "Billing Unit"?: string; // NEW format billing unit
   "Telegram Type"?: string; // NEW format manufacturer (e.g., "EMH", "EFE_WaterStar M")
+  
+  // GROUP 2: Hint Code and RSSI fields
+  "Hint Code"?: string | number; // Hint code (e.g., "5" for leakage, "12" for smoke detector)
+  "Hint Code Description"?: string; // Human-readable hint description
+  "RSSI Value"?: string | number; // Signal strength (e.g., "-85" dBm)
+  "Status Byte"?: string; // Device status byte (e.g., "0x01")
+  
+  // GROUP 3: Monthly consumption data for trend analysis
+  "Monthly Date 1"?: string;
+  "Monthly Value 1"?: string | number;
+  "Monthly Unit 1"?: string;
+  "Monthly Date 2"?: string;
+  "Monthly Value 2"?: string | number;
+  "Monthly Unit 2"?: string;
+  "Monthly Date 3"?: string;
+  "Monthly Value 3"?: string | number;
+  "Monthly Unit 3"?: string;
+  "Monthly Date 4"?: string;
+  "Monthly Value 4"?: string | number;
+  "Monthly Unit 4"?: string;
+  "Monthly Date 5"?: string;
+  "Monthly Value 5"?: string | number;
+  "Monthly Unit 5"?: string;
+  "Monthly Date 6"?: string;
+  "Monthly Value 6"?: string | number;
+  "Monthly Unit 6"?: string;
+  "Monthly Date 7"?: string;
+  "Monthly Value 7"?: string | number;
+  "Monthly Unit 7"?: string;
+  "Monthly Date 8"?: string;
+  "Monthly Value 8"?: string | number;
+  "Monthly Unit 8"?: string;
+  "Monthly Date 9"?: string;
+  "Monthly Value 9"?: string | number;
+  "Monthly Unit 9"?: string;
+  "Monthly Date 10"?: string;
+  "Monthly Value 10"?: string | number;
+  "Monthly Unit 10"?: string;
+  "Monthly Date 11"?: string;
+  "Monthly Value 11"?: string | number;
+  "Monthly Unit 11"?: string;
+  "Monthly Date 12"?: string;
+  "Monthly Value 12"?: string | number;
+  "Monthly Unit 12"?: string;
+  
   "IV,1,0,0,,Date"?: string; // OLD format - now optional
   "IV,1,0,0,Wh,E"?: number;
   "IV,1,0,0,m^3,Vol"?: number;

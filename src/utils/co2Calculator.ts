@@ -74,10 +74,20 @@ export function calculateCO2Savings(
     }
   }
 
-  // Separate devices by type
-  const heatDevices = selectedData.filter(item => item['Device Type'] === 'Heat')
-  const hotWaterDevices = selectedData.filter(item => item['Device Type'] === 'WWater')
-  const coldWaterDevices = selectedData.filter(item => item['Device Type'] === 'Water')
+  // Separate devices by type - support both OLD and NEW Engelmann formats
+  const heatDevices = selectedData.filter(item => 
+    item['Device Type'] === 'Heat' || 
+    item['Device Type'] === 'WMZ Rücklauf' ||
+    item['Device Type'] === 'Heizkostenverteiler'
+  )
+  const hotWaterDevices = selectedData.filter(item => 
+    item['Device Type'] === 'WWater' || 
+    item['Device Type'] === 'Warmwasserzähler'
+  )
+  const coldWaterDevices = selectedData.filter(item => 
+    item['Device Type'] === 'Water' || 
+    item['Device Type'] === 'Kaltwasserzähler'
+  )
 
   // Calculate heating energy savings
   const heatingEnergySaved = calculateHeatingEnergySavings(heatDevices, baselineMultiplier)
@@ -143,8 +153,32 @@ function calculateHeatingEnergySavings(heatDevices: MeterReadingType[], baseline
   let totalBaselineEnergy = 0
 
   heatDevices.forEach(device => {
-    // Get the latest energy reading (IV,0,0,0,Wh,E)
-    const currentEnergy = Number(device['IV,0,0,0,Wh,E']) || 0
+    // Get the latest energy reading - support both OLD format (IV,0,0,0,Wh,E) and NEW Engelmann format (Actual Energy / HCA)
+    let energyReading: string | number | undefined = device['IV,0,0,0,Wh,E'] as number | undefined
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (energyReading === undefined || energyReading === null) {
+      energyReading = device['Actual Energy / HCA'] as string | number | undefined
+    }
+    
+    let currentEnergy = 0
+    if (typeof energyReading === 'number') {
+      currentEnergy = energyReading
+      // Convert MWh to Wh if value is very small (likely MWh from Engelmann format)
+      if (currentEnergy < 1 && currentEnergy > 0) {
+        currentEnergy = currentEnergy * 1000000 // Convert MWh to Wh
+      }
+    } else if (typeof energyReading === 'string') {
+      const parsed = parseFloat(energyReading.replace(',', '.'))
+      if (!isNaN(parsed)) {
+        currentEnergy = parsed
+        // Convert MWh to Wh if value is very small
+        if (currentEnergy < 1 && currentEnergy > 0) {
+          currentEnergy = currentEnergy * 1000000
+        }
+      }
+    }
+    
     const baselineEnergy = currentEnergy * baselineMultiplier
 
     // Only add if values are valid numbers
@@ -173,8 +207,24 @@ function calculateWaterVolumeSavings(waterDevices: MeterReadingType[], baselineM
   let totalBaselineVolume = 0
 
   waterDevices.forEach(device => {
-    // Get the latest volume reading (IV,0,0,0,m^3,Vol)
-    const currentVolume = Number(device['IV,0,0,0,m^3,Vol']) || 0
+    // Get the latest volume reading - support both OLD format (IV,0,0,0,m^3,Vol) and NEW Engelmann format (Actual Volume)
+    let volumeReading: string | number | undefined = device['IV,0,0,0,m^3,Vol'] as number | undefined
+    
+    // If OLD format doesn't exist, try NEW Engelmann format
+    if (volumeReading === undefined || volumeReading === null) {
+      volumeReading = device['Actual Volume'] as string | number | undefined
+    }
+    
+    let currentVolume = 0
+    if (typeof volumeReading === 'number') {
+      currentVolume = volumeReading
+    } else if (typeof volumeReading === 'string') {
+      const parsed = parseFloat(volumeReading.replace(',', '.'))
+      if (!isNaN(parsed)) {
+        currentVolume = parsed
+      }
+    }
+    
     const baselineVolume = currentVolume * baselineMultiplier
 
     // Only add if values are valid numbers

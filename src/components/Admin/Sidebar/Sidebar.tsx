@@ -10,8 +10,9 @@ import {
   ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_HEIZKOSTENABRECHNUNG,
   ROUTE_ADMIN,
+  ROUTE_CSV_UPLOAD,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte } from "@/static/icons";
+import { abrechnung, dashboard, dokumente, objekte, caract_files } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -74,11 +75,19 @@ export default function Sidebar() {
     },
   ];
 
+  // 🔒 SECURITY: Admin-only links
   if (isAdmin) {
     dashboardLinks.unshift({
       title: "User Übersicht",
       icon: dashboard,
       route: ROUTE_ADMIN,
+    });
+    
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(3, 0, {
+      title: "CSV Upload",
+      icon: caract_files,
+      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
     });
   }
 

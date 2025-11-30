@@ -131,51 +131,77 @@ const aggregateDataByGranularity = (
   processedData: ProcessedData[],
   granularity: "hour" | "day" | "month"
 ): ChartDataPoint[] => {
-  const aggregationMap = new Map<string, { total: number; date: Date }>();
-
+  // APPROACH 3: Group by DEVICE first, then calculate consumption between consecutive readings
+  
+  // Step 1: Group all readings by device ID
+  const deviceMap = new Map<string, ProcessedData[]>();
+  
   processedData.forEach((item) => {
-    let key: string;
-    let groupDate: Date;
-
-    switch (granularity) {
-      case "hour":
-        // Group by date + hour
-        groupDate = new Date(
-          item.date.getFullYear(),
-          item.date.getMonth(),
-          item.date.getDate(),
-          item.date.getHours()
-        );
-        key = `${groupDate.toDateString()}-${groupDate.getHours()}`;
-        break;
-      case "day":
-        // Group by date only
-        groupDate = new Date(
-          item.date.getFullYear(),
-          item.date.getMonth(),
-          item.date.getDate()
-        );
-        key = groupDate.toDateString();
-        break;
-      case "month":
-        // Group by year + month
-        groupDate = new Date(item.date.getFullYear(), item.date.getMonth(), 1);
-        key = `${groupDate.getFullYear()}-${groupDate.getMonth()}`;
-        break;
+    if (!deviceMap.has(item.deviceId)) {
+      deviceMap.set(item.deviceId, []);
     }
-
-    if (!aggregationMap.has(key)) {
-      aggregationMap.set(key, { total: 0, date: groupDate });
-    }
-
-    aggregationMap.get(key)!.total += item.volume;
+    deviceMap.get(item.deviceId)!.push(item);
   });
-
-  // Convert to array and sort by date
-  return Array.from(aggregationMap.entries())
-    .map(([_, { total, date }]) => ({
+  
+  // Step 2: For each device, calculate consumption between consecutive readings
+  const consumptionByDate = new Map<string, { consumption: number; date: Date }>();
+  
+  deviceMap.forEach((readings, deviceId) => {
+    // Sort readings chronologically
+    readings.sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+    // Calculate consumption between consecutive readings
+    for (let i = 1; i < readings.length; i++) {
+      const prev = readings[i - 1];
+      const curr = readings[i];
+      
+      // Calculate consumption = current - previous
+      const consumption = curr.volume - prev.volume;
+      
+      // Only add positive consumption (handles meter rollovers/errors)
+      if (consumption >= 0) {
+        // Normalize the current reading's date based on granularity
+        let normalizedDate: Date;
+        let dateKey: string;
+        
+        switch (granularity) {
+          case "hour":
+            normalizedDate = new Date(
+              curr.date.getFullYear(),
+              curr.date.getMonth(),
+              curr.date.getDate(),
+              curr.date.getHours()
+            );
+            dateKey = `${normalizedDate.toDateString()}-${normalizedDate.getHours()}`;
+            break;
+          case "day":
+            normalizedDate = new Date(
+              curr.date.getFullYear(),
+              curr.date.getMonth(),
+              curr.date.getDate()
+            );
+            dateKey = normalizedDate.toDateString();
+            break;
+          case "month":
+            normalizedDate = new Date(curr.date.getFullYear(), curr.date.getMonth(), 1);
+            dateKey = `${normalizedDate.getFullYear()}-${normalizedDate.getMonth()}`;
+            break;
+        }
+        
+        // Sum consumption for this date across all devices
+        if (!consumptionByDate.has(dateKey)) {
+          consumptionByDate.set(dateKey, { consumption: 0, date: normalizedDate });
+        }
+        consumptionByDate.get(dateKey)!.consumption += consumption;
+      }
+    }
+  });
+  
+  // Step 3: Convert to array and sort by date
+  return Array.from(consumptionByDate.entries())
+    .map(([_, { consumption, date }]) => ({
       label: formatLabel(date, granularity),
-      value: Math.round(total * 1000) / 1000, // Round to 3 decimal places instead of whole numbers
+      value: Math.round(consumption * 1000) / 1000, // Round to 3 decimal places
       date: date,
     }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -298,7 +324,11 @@ export default function WaterChart({
     const processedData: ProcessedData[] = [];
 
     csvText.forEach((device) => {
-      const volume = parseVolume(device["IV,0,0,0,m^3,Vol"]);
+      // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
+      const oldFormatVolume = device["IV,0,0,0,m^3,Vol"];
+      const newFormatVolume = device["Actual Volume"];
+      
+      const volume = parseVolume(newFormatVolume !== undefined ? newFormatVolume : (oldFormatVolume ?? 0));
 
       // Convert from cubic meters to liters (1 m³ = 1000 L)
       // Preserve decimal precision for exact values
@@ -307,17 +337,37 @@ export default function WaterChart({
       // Skip zero or negative volumes
       if (volumeInLiters <= 0) return;
 
-      const dateTimeString = device["IV,0,0,0,,Date/Time"];
-      if (!dateTimeString) return;
+      // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+      const oldFormatDate = device["IV,0,0,0,,Date/Time"];
+      const newActualDate = device["Actual Date"];
+      const newRawDate = device["Raw Date"];
+      
+      let dateTimeString: string | null = null;
+      
+      if (oldFormatDate && typeof oldFormatDate === "string") {
+        dateTimeString = oldFormatDate;
+      } else if (newActualDate && typeof newActualDate === "string") {
+        // New format may include time: "29.10.2025" or "29.10.2025 09:56..."
+        const actualTime = device["Actual Time"] || "";
+        dateTimeString = actualTime ? `${newActualDate} ${actualTime}` : newActualDate;
+      } else if (newRawDate && typeof newRawDate === "string") {
+        // Raw Date format: "29-10-2025" → convert to "29.10.2025"
+        dateTimeString = newRawDate.replace(/-/g, ".");
+      }
+      
+      if (!dateTimeString || typeof dateTimeString !== "string") return;
 
       const parsedDate = parseTimestamp(dateTimeString);
 
       // Apply date range filter
       if (!isWithinDateRange(parsedDate, startDate, endDate)) return;
 
+      // Support both old "ID" field and new "Number Meter" field
+      const deviceId = device.ID || device["Number Meter"] || "";
+
       processedData.push({
         date: parsedDate,
-        deviceId: device.ID.toString(),
+        deviceId: deviceId.toString(),
         volume: volumeInLiters,
       });
     });

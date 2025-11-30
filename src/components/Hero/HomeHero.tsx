@@ -10,7 +10,7 @@ export default function HomeHero() {
   return (
     <div className="pt-[1px] bg-dark_green">
       <div className="px-4">
-        <h1 className="mt-28 max-large:mt-12 text-white text-[65px] max-medium:text-3xl leading-[78px] text-center mb-2">
+        <h1 className="mt-28 max-large:mt-28 max-medium:mt-24 max-small:mt-20 text-white text-[65px] max-medium:text-5xl leading-[78px] max-medium:leading-tight text-center mb-2">
           Fernablesung mit Funkgeräten
         </h1>
         <p className="text-2xl leading-[28px] max-medium:text-sm max-medium:leading-4 max-medium:text-white/60 text-white text-center max-w-3xl mx-auto my-6">

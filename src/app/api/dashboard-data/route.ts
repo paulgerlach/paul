@@ -13,8 +13,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
     
-    // Validate parameters
-    if (!Array.isArray(localMeterIds) || !localMeterIds.length) {
+    // Validate parameters - Filter out undefined/null values
+    const validMeterIds = Array.isArray(localMeterIds) 
+      ? localMeterIds.filter(id => id !== undefined && id !== null && id !== '') 
+      : [];
+    
+    if (!validMeterIds.length) {
+      console.warn('[dashboard-data] No valid meter IDs provided:', localMeterIds);
       return NextResponse.json(
         { error: 'No meter IDs provided or invalid format' },
         { status: 400 }
@@ -49,14 +54,15 @@ export async function POST(request: NextRequest) {
 
     // Use the database function for optimized data fetching
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
-      p_local_meter_ids: localMeterIds.length > 0 ? localMeterIds : null,
+      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : null,
       p_device_types: requestedDeviceTypes.length > 0 ? requestedDeviceTypes : null,
       p_start_date: startDate ? startDate.toISOString().split('T')[0] : null,
       p_end_date: endDate ? endDate.toISOString().split('T')[0] : null
     });
 
     if (error) {
-      console.error('Error calling get_dashboard_data function:', error);
+      console.error('[dashboard-data] Database error:', error);
+      console.error('[dashboard-data] Request params:', { validMeterIds, requestedDeviceTypes, startDate, endDate });
       return NextResponse.json(
         { error: 'Database query failed', details: error.message },
         { status: 500 }
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
           deviceTypes: {},
           dateRange: null,
           meterIds: [],
-          requestedMeterIds: localMeterIds
+          requestedMeterIds: validMeterIds
         }
       });
     }
@@ -95,12 +101,18 @@ export async function POST(request: NextRequest) {
       } as MeterReadingType;
     }) : [];
 
-    // Filter by valid device types and ensure DateTime exists
+    // Filter by valid device types and ensure date exists
     // Note: Date filtering is now handled by the database function
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
+    // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date + Actual Time)
+    const validDeviceTypes = [
+      // OLD format device types
+      'Heat', 'Water', 'WWater', 'Elec',
+      // NEW Engelmann format device types
+      'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'
+    ];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
-      item['IV,0,0,0,,Date/Time']
+      (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
     );
 
     // Group data by device type for metadata
@@ -113,12 +125,35 @@ export async function POST(request: NextRequest) {
     }, {} as Record<string, number>);
 
     // Determine actual date range from the data
+    // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date or Raw Date)
     const dates = filteredData
       .map((reading) => {
-        const dateTimeString = reading["IV,0,0,0,,Date/Time"];
-        if (!dateTimeString) return null;
-        const dateString = dateTimeString.split(" ")[0];
-        return parseGermanDate(dateString);
+        // Try old format first
+        let dateTimeString = reading["IV,0,0,0,,Date/Time"];
+        if (dateTimeString) {
+          // Ensure it's a string before calling split
+          const dateTimeStr = String(dateTimeString);
+          const dateString = dateTimeStr.split(" ")[0];
+          return parseGermanDate(dateString);
+        }
+        
+        // Try new Engelmann format (Actual Date)
+        const actualDate = reading["Actual Date"];
+        if (actualDate) {
+          return parseGermanDate(actualDate);
+        }
+        
+        // Try Raw Date format (yyyy-mm-dd)
+        const rawDate = reading["Raw Date"];
+        if (rawDate) {
+          // Raw Date is in format "29-10-2025" or "dd-mm-yyyy"
+          const parts = rawDate.split("-");
+          if (parts.length === 3) {
+            return parseGermanDate(`${parts[0]}.${parts[1]}.${parts[2]}`);
+          }
+        }
+        
+        return null;
       })
       .filter((date): date is Date => date !== null && !isNaN(date.getTime()))
       .sort((a, b) => a.getTime() - b.getTime());
@@ -141,7 +176,7 @@ export async function POST(request: NextRequest) {
         deviceTypes,
         dateRange: actualDateRange,
         meterIds: actualMeterIds,
-        requestedMeterIds: localMeterIds,
+        requestedMeterIds: validMeterIds,
         filters: {
           startDate: startDate?.toISOString() || null,
           endDate: endDate?.toISOString() || null
@@ -150,11 +185,11 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching dashboard data:', error);
+    console.error('[dashboard-data] Unexpected error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error : undefined
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
       },
       { status: 500 }
     );

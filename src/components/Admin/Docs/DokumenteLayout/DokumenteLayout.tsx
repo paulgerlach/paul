@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useDocumentService, DocumentMetadata } from "@/hooks/useDocumentService";
 import { pdf_icon, building } from "@/static/icons";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Exo_2 } from "next/font/google";
 import { useDialogStore } from "@/store/useDIalogStore";
-import { Trash2, Eye, FolderOpen } from "lucide-react";
+import { Trash2, Eye, FolderOpen, X } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import { useDropzone } from "react-dropzone";
+import { useUploadDocuments } from "@/apiClient";
 
 const exo2 = Exo_2({ subsets: ["latin"] });
 
@@ -46,10 +48,14 @@ interface DokumenteLayoutProps {
   documents: any[]; 
 }
 
+type FileWithPreview = File & { preview: string };
+
 export default function DokumenteLayout({ userId, objektsWithLocals, documents: serverDocuments }: DokumenteLayoutProps) {
   const [fileSizes, setFileSizes] = useState<Record<string, string>>({});
   const [selectedObjekt, setSelectedObjekt] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<FileWithPreview[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   
   const {
     getDocumentFileSize,
@@ -60,6 +66,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   const { setItemID, openDialog } = useDialogStore();
   const router = useRouter();
   const pathname = usePathname();
+  const uploadDocuments = useUploadDocuments();
 
   // Detect if we're in admin context
   const isAdmin = pathname.startsWith('/admin');
@@ -214,6 +221,54 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
       toast.error("Fehler beim Öffnen des Dokuments");
     }
   };
+
+  // Dropzone file handling
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const filesWithPreview = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      ) as FileWithPreview[];
+      
+      setPendingFiles((prev) => [...prev, ...filesWithPreview]);
+      
+      // Immediately upload files
+      if (filesWithPreview.length > 0 && selectedFolder) {
+        setIsUploading(true);
+        try {
+          await uploadDocuments.mutateAsync({
+            files: filesWithPreview,
+            relatedId: selectedObjekt || 'general',
+            relatedType: selectedFolder as 'heating_bill' | 'operating_costs',
+          });
+          toast.success("Dokumente erfolgreich hochgeladen");
+          setPendingFiles([]);
+          router.refresh();
+        } catch (error) {
+          toast.error("Fehler beim Hochladen der Dokumente");
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    },
+    [selectedFolder, selectedObjekt, uploadDocuments, router]
+  );
+
+  const removeFile = (index: number) => {
+    setPendingFiles((prev) => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "application/pdf": [".pdf"] },
+    multiple: true,
+    disabled: isUploading,
+  });
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -492,21 +547,54 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
       </div>
 
-      {/* Add Documents Button - Only show when inside a folder */}
+      {/* Add Documents Dropzone - Only show when inside a folder */}
       {selectedFolder && (
         <div className="mt-6 max-medium:mt-4 px-6 max-medium:px-3">
-          <button 
-            onClick={() => {
-              if (selectedFolder === 'heating_bill') {
-                openDialog(isAdmin ? 'admin_cost_type_heizkostenabrechnung_create' : 'cost_type_heizkostenabrechnung_create');
-              } else if (selectedFolder === 'operating_costs') {
-                openDialog(isAdmin ? 'admin_cost_type_betriebskostenabrechnung_create' : 'cost_type_betriebskostenabrechnung_create');
-              }
-            }}
-            className="w-full py-4 max-medium:py-3 border-2 border-dashed border-blue-300 text-blue-500 rounded-lg hover:border-blue-400 hover:text-blue-600 transition-colors text-base max-medium:text-sm"
+          {/* Pending files list */}
+          {pendingFiles.length > 0 && (
+            <ul className="mb-4 space-y-2">
+              {pendingFiles.map((file, idx) => (
+                <li key={idx} className="flex justify-between items-center px-4 py-2 bg-gray-50 rounded-lg">
+                  <span className="text-sm flex items-center gap-3 truncate text-gray-700">
+                    <Image
+                      width={20}
+                      height={20}
+                      src={pdf_icon}
+                      alt="pdf_icon"
+                    />
+                    {file.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(idx)}
+                    disabled={isUploading}
+                    className="text-gray-500 hover:text-red-600 disabled:opacity-50"
+                  >
+                    <X size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          
+          {/* Dropzone */}
+          <div
+            {...getRootProps()}
+            className={`w-full py-4 max-medium:py-3 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors text-base max-medium:text-sm ${
+              isDragActive 
+                ? "border-green bg-green/10 text-green" 
+                : "border-blue-300 text-blue-500 hover:border-blue-400 hover:text-blue-600"
+            } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Unterlagen hinzufügen
-          </button>
+            <input {...getInputProps()} />
+            {isUploading ? (
+              <p>Wird hochgeladen...</p>
+            ) : isDragActive ? (
+              <p>Dateien hier ablegen...</p>
+            ) : (
+              <p>Unterlagen hinzufügen</p>
+            )}
+          </div>
         </div>
       )}
     </div>

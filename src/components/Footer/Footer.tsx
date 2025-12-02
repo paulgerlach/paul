@@ -435,7 +435,7 @@ export default function Footer() {
       </div>
       <div className="pt-8 flex items-start justify-between max-large:flex-wrap max-medium:flex-col-reverse max-medium:items-center max-large:justify-start max-large:gap-3 max-medium:gap-8">
         <p className="text-dark_text text-xs leading-[14px] max-w-4xl">
-          “Die Heidi Systems GmbH erbringt Messdienstleistungen sowie digitale
+          Die Heidi Systems GmbH erbringt Messdienstleistungen sowie digitale
           Verbrauchserfassungs- und Abrechnungslösungen nach Maßgabe der jeweils
           geltenden gesetzlichen Bestimmungen. Alle auf dieser Website
           bereitgestellten Inhalte dienen ausschließlich der allgemeinen
@@ -449,7 +449,7 @@ export default function Footer() {
           unterliegen dem Urheberrecht und dürfen nur mit schriftlicher
           Zustimmung verwendet werden. Verbindliche Aussagen zu Leistungen,
           Preisen oder technischen Spezifikationen erfolgen ausschließlich im
-          Rahmen eines individuellen Vertragsverhältnisses.”
+          Rahmen eines individuellen Vertragsverhältnisses.
         </p>
         <div className="flex items-center justify-end gap-3">
           <Link href="https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q">

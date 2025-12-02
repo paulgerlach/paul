@@ -1,12 +1,9 @@
 "use client";
 
-import { Pagination } from "swiper/modules";
+import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image, { type StaticImageData } from "next/image";
 import {
-  play,
-  vitolos,
-  vonovia_person,
   personSlide1,
   personSlide2,
   personSlide3,
@@ -83,7 +80,8 @@ export default function PersonSwiper() {
         pagination={{ type: "bullets", clickable: true }}
         loop={true}
         slidesPerView={1}
-        modules={[Pagination]}
+        navigation
+        modules={[Pagination, Navigation]}
         className="swiper-wrapper"
       >
         {personSwiperSlides.map((slide, index) => (

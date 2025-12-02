@@ -276,7 +276,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
+              className="inline-block mx-auto max-w-28 h-10"
               src={deutscheWonhenUpd}
               alt="deutscheWonhenUpd"
             />
@@ -285,7 +285,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
+              className="inline-block mx-auto w-44 h-8"
               src={buderusUpd}
               alt="buderusUpd"
             />
@@ -294,7 +294,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-7"
+              className="inline-block mx-auto w-40 h-8"
               src={accentroUpd}
               alt="accentroUpd"
             />
@@ -303,7 +303,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-8"
+              className="inline-block mx-auto w-56 h-8"
               src={viessmannUpd}
               alt="viessmannUpd"
             />
@@ -312,7 +312,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-8"
+              className="inline-block mx-auto max-w-40 h-6"
               src={vonoviaUpd}
               alt="vonoviaUpd"
             />
@@ -321,7 +321,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
+              className="inline-block mx-auto max-w-28 h-9"
               src={techemUpd}
               alt="techemUpd"
             />
@@ -330,7 +330,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-12"
+              className="inline-block mx-auto max-w-36 h-9"
               src={wattsUpd}
               alt="wattsUpd"
             />
@@ -339,7 +339,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
+              className="inline-block mx-auto max-w-36 h-7"
               src={dehoustUpd}
               alt="dehoustUpd"
             />

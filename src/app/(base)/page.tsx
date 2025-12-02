@@ -7,7 +7,7 @@ import FunctionsSwiper from "@/components/Swipers/FunctionsSwiper";
 import NewsList from "@/components/Swipers/NewsList";
 import NewsSwiper from "@/components/Swipers/NewsSwiper";
 import PersonSwiper from "@/components/Swipers/PersonSwiper";
-import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_FRAGEBOGEN } from "@/routes/routes";
+import { ROUTE_FRAGEBOGEN, ROUTE_FUNKTIONEN } from "@/routes/routes";
 import {
   checkmarks3,
   clock,
@@ -16,18 +16,18 @@ import {
   doc_phone,
   eu_gdpr,
   eu_lock,
-  fewocare,
-  flyla,
-  haus_hirst,
+  wattsUpd,
+  dehoustUpd,
+  techemUpd,
   instruments,
-  ki_akademie,
+  vonoviaUpd,
   list2,
-  parkdepot,
+  viessmannUpd,
   right_arrow,
-  sameday,
-  vitolos,
+  accentroUpd,
+  buderusUpd,
   weight,
-  wemolo,
+  deutscheWonhenUpd,
 } from "@/static/icons";
 import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
@@ -141,9 +141,7 @@ export default function Home() {
               />
             </span>
             <p className="text-xl text-dark_text font-bold max-medium:text-center">
-              Betriebskosten-
-              <br />
-              abrechnung erstellen
+              Heizkostenabrechnung erstellen
             </p>
             <p className="text-[15px] leading-[18px] text-dark_text max-medium:text-center">
               Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
@@ -198,7 +196,7 @@ export default function Home() {
                 direkt für die Betriebskostenabrechnung zur Verfügung.
               </p>
               <Link
-                href={ROUTE_DATENSCHUTZHINWEISE}
+                href={ROUTE_FUNKTIONEN}
                 className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
@@ -214,7 +212,7 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-3 max-medium:grid-cols-1 mb-20 gap-[18px]">
-            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-start">
               <p className="text-[25px] relative z-[2] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
                 Dashboard
               </p>
@@ -225,7 +223,7 @@ export default function Home() {
               <LazyLottie
                 animationData={animation3}
                 id="animation3"
-                wrapperClassName="overflow-hidden relative mt-[-150px] z-[0]"
+                wrapperClassName="overflow-hidden relative z-[0]"
               />
             </div>
             <div className="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
@@ -237,7 +235,7 @@ export default function Home() {
                 ohne manuelles Ablesen oder Vor-Ort-Termine.
               </p>
               <Link
-                href={ROUTE_DATENSCHUTZHINWEISE}
+                href={ROUTE_FUNKTIONEN}
                 className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
@@ -250,7 +248,7 @@ export default function Home() {
             </div>
             <div className="px-[25px] pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
               <p className="text-[25px] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                Betriebskostenabrechnung
+                Heizkostenabrechnung
               </p>
               <p className="text-center text-dark_text text-base leading-[19.2px]">
                 Erstellen Sie Ihre Betriebskostenabrechnung schnell, einfach und
@@ -270,7 +268,7 @@ export default function Home() {
         </div>
         <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
           <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
-            Trusted by innovators and industry leaders
+            Die Wahl führender Innovatoren und Branchenführer
           </p>
           <div className="grid col-span-2 items-center justify-center grid-cols-4 max-medium:col-span-1 max-medium:grid-cols-3 gap-x-10 gap-y-8">
             <Image
@@ -279,8 +277,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-10"
-              src={flyla}
-              alt="flyla"
+              src={deutscheWonhenUpd}
+              alt="deutscheWonhenUpd"
             />
             <Image
               width={0}
@@ -288,8 +286,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-10"
-              src={sameday}
-              alt="sameday"
+              src={buderusUpd}
+              alt="buderusUpd"
             />
             <Image
               width={0}
@@ -297,8 +295,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-7"
-              src={wemolo}
-              alt="wemolo"
+              src={accentroUpd}
+              alt="accentroUpd"
             />
             <Image
               width={0}
@@ -306,8 +304,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-8"
-              src={parkdepot}
-              alt="parkdepot"
+              src={viessmannUpd}
+              alt="viessmannUpd"
             />
             <Image
               width={0}
@@ -315,8 +313,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-8"
-              src={vitolos}
-              alt="vitolos"
+              src={vonoviaUpd}
+              alt="vonoviaUpd"
             />
             <Image
               width={0}
@@ -324,8 +322,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-10"
-              src={ki_akademie}
-              alt="ki_akademie"
+              src={techemUpd}
+              alt="techemUpd"
             />
             <Image
               width={0}
@@ -333,8 +331,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-12"
-              src={fewocare}
-              alt="fewocare"
+              src={wattsUpd}
+              alt="wattsUpd"
             />
             <Image
               width={0}
@@ -342,8 +340,8 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto h-10"
-              src={haus_hirst}
-              alt="haus_hirst"
+              src={dehoustUpd}
+              alt="dehoustUpd"
             />
           </div>
         </div>

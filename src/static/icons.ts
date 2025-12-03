@@ -281,9 +281,31 @@ import personSlidePerson2 from "@/asset/person_slide_person_2.png";
 import personSlidePerson3 from "@/asset/person_slide_person_3.png";
 import personSlidePerson4 from "@/asset/person_slide_person_4.png";
 import personSlidePerson5 from "@/asset/person_slide_person_5.png";
+import berlinBear from "@/asset/berlin_bear.png";
+import dumax from "@/asset/dumax.png";
+import harte from "@/asset/harte.png";
+import hsp from "@/asset/hsp.png";
+import idgim from "@/asset/idgim.png";
+import quarterback from "@/asset/quarterback.png";
+import raum from "@/asset/raum.png";
+import silverton from "@/asset/silverton.png";
+import vitec from "@/asset/vitec.png";
+import wagner from "@/asset/wagner.png";
+import winfried from "@/asset/winfried.png";
 
 export {
   accentro_colored,
+  berlinBear,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  raum,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
   electricity,
   dehoustUpd,
   vdiv_footer,

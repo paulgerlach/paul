@@ -16,18 +16,21 @@ import {
   doc_phone,
   eu_gdpr,
   eu_lock,
-  wattsUpd,
-  dehoustUpd,
-  techemUpd,
   instruments,
-  vonoviaUpd,
   list2,
-  viessmannUpd,
   right_arrow,
-  accentroUpd,
-  buderusUpd,
   weight,
-  deutscheWonhenUpd,
+  berlinBear,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  raum,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
 } from "@/static/icons";
 import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
@@ -276,72 +279,99 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
+              className="inline-block mx-auto max-w-32 h-16"
+              src={berlinBear}
+              alt="berlinBear"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-32 h-10"
+              src={dumax}
+              alt="dumax"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-32 h-10"
+              src={harte}
+              alt="harte"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-28 h-11"
+              src={hsp}
+              alt="hsp"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-28 h-6"
+              src={idgim}
+              alt="idgim"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-40 h-12"
+              src={quarterback}
+              alt="quarterback"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
               className="inline-block mx-auto max-w-28 h-10"
-              src={deutscheWonhenUpd}
-              alt="deutscheWonhenUpd"
+              src={raum}
+              alt="raum"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-44 h-8"
-              src={buderusUpd}
-              alt="buderusUpd"
+              className="inline-block mx-auto max-w-36 h-14"
+              src={silverton}
+              alt="silverton"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-40 h-8"
-              src={accentroUpd}
-              alt="accentroUpd"
+              className="inline-block mx-auto max-w-16 h-16"
+              src={vitec}
+              alt="vitec"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-56 h-8"
-              src={viessmannUpd}
-              alt="viessmannUpd"
+              className="inline-block mx-auto max-w-40 h-10"
+              src={wagner}
+              alt="wagner"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-40 h-6"
-              src={vonoviaUpd}
-              alt="vonoviaUpd"
-            />
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="inline-block mx-auto max-w-28 h-9"
-              src={techemUpd}
-              alt="techemUpd"
-            />
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="inline-block mx-auto max-w-36 h-9"
-              src={wattsUpd}
-              alt="wattsUpd"
-            />
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="inline-block mx-auto max-w-36 h-7"
-              src={dehoustUpd}
-              alt="dehoustUpd"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={winfried}
+              alt="winfried"
             />
           </div>
         </div>

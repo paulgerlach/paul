@@ -103,7 +103,7 @@ export default function AdminEditObjekteForm({
     <Form {...methods}>
       <form
         id="objekte-form"
-        className="w-10/12"
+        className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             await adminiEditObjekt(objekteID, data);
@@ -117,13 +117,13 @@ export default function AdminEditObjekteForm({
         })}
       >
         <FormTagsInput<AdminEditObjekteFormValues> control={methods.control} />
-        <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-5 max-medium:space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Angaben zum Objekt</h2>
           <FormField
             control={methods.control}
             name="objekt_type"
             render={({ field }) => (
-              <div className="grid grid-cols-4 gap-6">
+              <div className="grid grid-cols-4 max-medium:grid-cols-2 gap-6 max-medium:gap-3">
                 {objektTypeOptions.map((option) => (
                   <div key={option.type}>
                     <input
@@ -136,7 +136,7 @@ export default function AdminEditObjekteForm({
                       onChange={field.onChange}
                     />
                     <label
-                      className="cursor-pointer flex min-h-32 rounded bg-white flex-col shadow-md py-5 px-7 items-center border-4 border-transparent justify-center gap-5 text-sm transition-all duration-300 font-medium peer-checked:border-green peer-checked:[&_.objektTypeCheckmark]:opacity-100 relative"
+                      className="cursor-pointer flex min-h-32 max-medium:min-h-24 rounded bg-white flex-col shadow-md py-5 px-7 max-medium:py-3 max-medium:px-3 items-center border-4 border-transparent justify-center gap-5 max-medium:gap-2 text-sm max-medium:text-xs transition-all duration-300 font-medium peer-checked:border-green peer-checked:[&_.objektTypeCheckmark]:opacity-100 relative"
                       htmlFor={option.type}
                     >
                       <Image
@@ -144,17 +144,17 @@ export default function AdminEditObjekteForm({
                         height={0}
                         sizes="100vw"
                         loading="lazy"
-                        className="max-w-9 max-h-9"
+                        className="max-w-9 max-h-9 max-medium:max-w-6 max-medium:max-h-6"
                         src={handleObjektTypeIcon(option.type) || ""}
                         alt="option image"
                       />
-                      {option.name}
+                      <span className="max-medium:text-center max-medium:leading-tight">{option.name}</span>
                       <Image
                         width={0}
                         height={0}
                         sizes="100vw"
                         loading="lazy"
-                        className="max-w-6 opacity-0 transition-all duration-300 objektTypeCheckmark absolute -top-[1px] -right-[1px] max-h-6"
+                        className="max-w-6 opacity-0 transition-all duration-300 objektTypeCheckmark absolute -top-[1px] -right-[1px] max-h-6 max-medium:max-w-5 max-medium:max-h-5"
                         src={white_check_green_box}
                         alt="white_check_green_box"
                       />
@@ -178,19 +178,20 @@ export default function AdminEditObjekteForm({
           name="image_url"
           objektId={objekteID}
         />
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Objektdaten</h2>
-          <div className="grid grid-cols-9 gap-4">
+          <div className="grid grid-cols-9 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
             <FormZipField<AdminEditObjekteFormValues>
               methods={methods}
               name="zip"
+              className="max-medium:col-span-1"
             />
             <FormInputField<AdminEditObjekteFormValues>
               control={methods.control}
               name="street"
               label="Straßenname*"
               placeholder="Straßenname"
-              className="col-span-5"
+              className="col-span-5 max-medium:col-span-1"
             />
             <FormInputField<AdminEditObjekteFormValues>
               control={methods.control}
@@ -198,7 +199,7 @@ export default function AdminEditObjekteForm({
               label="Wohnfläche"
               type="number"
               placeholder="Quadratmeter"
-              className="col-span-3"
+              className="col-span-3 max-medium:col-span-1"
             />
             <FormInputField<AdminEditObjekteFormValues>
               control={methods.control}
@@ -206,7 +207,7 @@ export default function AdminEditObjekteForm({
               label="Nutzfläche"
               type="number"
               placeholder="Quadratmeter"
-              className="col-span-3"
+              className="col-span-3 max-medium:col-span-1"
             />
             <FormInputField<AdminEditObjekteFormValues>
               control={methods.control}
@@ -214,7 +215,7 @@ export default function AdminEditObjekteForm({
               label="Grundstücksfläche"
               type="number"
               placeholder="Quadratmeter"
-              className="col-span-3"
+              className="col-span-3 max-medium:col-span-1"
             />
             <FormInputField<AdminEditObjekteFormValues>
               control={methods.control}
@@ -222,7 +223,7 @@ export default function AdminEditObjekteForm({
               label="Baujahr"
               type="number"
               placeholder="Jahr"
-              className="col-span-3"
+              className="col-span-3 max-medium:col-span-1"
             />
           </div>
           <FormRoundedCheckbox<AdminEditObjekteFormValues>
@@ -237,7 +238,7 @@ export default function AdminEditObjekteForm({
         <Button
           disabled={methods.formState.isSubmitting}
           type="submit"
-          className="mt-6 ml-auto mr-0 block"
+          className="mt-6 max-medium:mt-4 ml-auto mr-0 block max-medium:w-full"
         >
           Speichern
         </Button>

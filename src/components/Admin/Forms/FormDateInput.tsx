@@ -48,7 +48,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                 <button
                   disabled={disabled}
                   className={
-                    "w-full flex items-center justify-between text-left px-6 py-[7px] rounded-md border max-xl:text-sm max-xl:min-h-10 min-h-14 border-black/20 shadow-xs font-normal"
+                    "w-full flex items-center justify-between text-left px-6 max-medium:px-3 py-[7px] rounded-md border max-xl:text-sm max-medium:text-xs max-xl:min-h-10 max-medium:min-h-9 min-h-14 border-black/20 shadow-xs font-normal gap-2"
                   }
                 >
                   {field.value ? (
@@ -61,7 +61,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                     height={0}
                     sizes="100vw"
                     loading="lazy"
-                    className="max-w-5 max-h-5"
+                    className="max-w-5 max-h-5 max-medium:max-w-4 max-medium:max-h-4 flex-shrink-0"
                     src={calendar}
                     alt="calendar"
                   />

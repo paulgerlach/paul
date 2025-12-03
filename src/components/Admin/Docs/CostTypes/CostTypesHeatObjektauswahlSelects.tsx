@@ -8,8 +8,8 @@ export default function CostTypesHeatObjektauswahlSelects() {
 
   return (
     <div className="overflow-y-auto space-y-4">
-      {documentGroups?.map((type) => (
-        <CostTypeSelectItem key={type.type} type={type} />
+      {documentGroups?.map((type, index) => (
+        <CostTypeSelectItem key={`${type.type}-${index}`} type={type} />
       ))}
     </div>
   );

@@ -42,7 +42,7 @@ export default function FormRadioOptions<
                 onValueChange={field.onChange}
                 value={field.value}
                 disabled={disabled}
-                className="flex items-center gap-2.5 mt-2">
+                className="flex items-center flex-wrap gap-2.5 max-medium:gap-2 mt-2">
                 {options.map((option) => (
                   <FormItem
                     key={option.type}

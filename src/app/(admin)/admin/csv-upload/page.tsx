@@ -175,9 +175,9 @@ export default function CSVUploadPage() {
   // 🔒 SECURITY: Show loading or redirect if not authorized
   if (isAuthorized === null) {
     return (
-      <div className="py-6 px-9 h-[calc(100dvh-77px)] flex items-center justify-center">
+      <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg text-gray-600">Checking authorization...</div>
+          <div className="text-lg max-medium:text-base text-gray-600">Checking authorization...</div>
         </div>
       </div>
     );
@@ -188,44 +188,44 @@ export default function CSVUploadPage() {
   }
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] overflow-y-auto">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-medium:h-auto max-medium:max-h-none overflow-y-auto">
       <Breadcrumb
         backTitle="Admin"
         link={ROUTE_ADMIN}
         title="CSV Upload"
       />
       
-      <ContentWrapper className="space-y-6">
+      <ContentWrapper className="space-y-6 max-medium:space-y-4">
         {/* Header */}
         <div>
-          <h2 className="text-2xl font-bold mb-2">Manual CSV Upload (Super Admin Only)</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl max-medium:text-xl font-bold mb-2">Manual CSV Upload (Super Admin Only)</h2>
+          <p className="text-gray-600 max-medium:text-sm">
             Upload meter reading CSV files from Engelmann Gateway. All data is permanently stored.
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="text-sm text-blue-600 font-medium">Total Records</div>
-            <div className="text-2xl font-bold text-blue-900">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-medium:gap-3">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-medium:p-3">
+            <div className="text-sm max-medium:text-xs text-blue-600 font-medium">Total Records</div>
+            <div className="text-2xl max-medium:text-xl font-bold text-blue-900">
               {totalRecords.toLocaleString()}
             </div>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="text-sm text-green-600 font-medium">Parser Status</div>
-            <div className="text-lg font-bold text-green-900">✅ Fixed & Deployed</div>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-medium:p-3">
+            <div className="text-sm max-medium:text-xs text-green-600 font-medium">Parser Status</div>
+            <div className="text-lg max-medium:text-base font-bold text-green-900">✅ Fixed & Deployed</div>
           </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <div className="text-sm text-purple-600 font-medium">Recent Uploads</div>
-            <div className="text-2xl font-bold text-purple-900">
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 max-medium:p-3">
+            <div className="text-sm max-medium:text-xs text-purple-600 font-medium">Recent Uploads</div>
+            <div className="text-2xl max-medium:text-xl font-bold text-purple-900">
               {Object.keys(uploadsByDate).length} days
             </div>
           </div>
         </div>
 
         {/* Upload Area */}
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 max-medium:p-4 bg-gray-50">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -246,20 +246,20 @@ export default function CSVUploadPage() {
             </div>
 
             {file && (
-              <div className="p-4 bg-white border border-gray-200 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-gray-900">{file.name}</div>
-                    <div className="text-sm text-gray-600">
+              <div className="p-4 max-medium:p-3 bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center justify-between max-medium:flex-col max-medium:items-stretch max-medium:gap-3">
+                  <div className="min-w-0">
+                    <div className="font-medium text-gray-900 max-medium:text-sm truncate">{file.name}</div>
+                    <div className="text-sm max-medium:text-xs text-gray-600">
                       {(file.size / 1024).toFixed(2)} KB
                     </div>
                   </div>
                   <button
                     onClick={handleUpload}
                     disabled={uploading}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg 
+                    className="px-6 py-2 max-medium:px-4 max-medium:py-2 bg-blue-600 text-white rounded-lg 
                       hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
-                      font-medium transition-colors"
+                      font-medium max-medium:text-sm transition-colors max-medium:w-full"
                   >
                     {uploading ? 'Uploading...' : 'Upload CSV'}
                   </button>
@@ -271,17 +271,17 @@ export default function CSVUploadPage() {
 
         {/* Results */}
         {result && (
-          <div className={`p-6 rounded-lg border-2 ${
+          <div className={`p-6 max-medium:p-4 rounded-lg border-2 ${
             result.error 
               ? 'bg-red-50 border-red-200' 
               : 'bg-green-50 border-green-200'
           }`}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-lg">
+            <div className="flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-2 mb-4">
+              <h3 className="font-bold text-lg max-medium:text-base">
                 {result.error ? '❌ Upload Failed' : '✅ Upload Complete'}
               </h3>
               {result.fileName && !result.error && (
-                <div className="text-sm text-gray-600 font-mono bg-white px-3 py-1 rounded border border-gray-300">
+                <div className="text-sm max-medium:text-xs text-gray-600 font-mono bg-white px-3 py-1 rounded border border-gray-300 truncate max-w-full">
                   📄 {result.fileName}
                 </div>
               )}
@@ -292,18 +292,18 @@ export default function CSVUploadPage() {
             ) : (
               <div className="space-y-4">
                 {/* Summary Box */}
-                <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-                  <div className="text-sm font-semibold text-gray-700 mb-3">📊 UPLOAD SUMMARY</div>
+                <div className="bg-white border-2 border-gray-200 rounded-lg p-4 max-medium:p-3">
+                  <div className="text-sm max-medium:text-xs font-semibold text-gray-700 mb-3">📊 UPLOAD SUMMARY</div>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-medium:space-y-3">
                     {/* Simple Math Breakdown at Top */}
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
-                      <div className="flex items-baseline justify-between mb-2">
-                        <span className="text-gray-700 font-medium">📄 Total Rows in CSV File</span>
-                        <span className="text-2xl font-bold text-gray-900">{result.recordCount}</span>
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 max-medium:p-3">
+                      <div className="flex items-baseline justify-between mb-2 max-medium:flex-col max-medium:items-start max-medium:gap-1">
+                        <span className="text-gray-700 font-medium max-medium:text-sm">📄 Total Rows in CSV File</span>
+                        <span className="text-2xl max-medium:text-xl font-bold text-gray-900">{result.recordCount}</span>
                       </div>
                       
-                      <div className="text-sm space-y-1 ml-4 pt-2 border-t border-gray-300">
+                      <div className="text-sm max-medium:text-xs space-y-1 ml-4 max-medium:ml-0 pt-2 border-t border-gray-300">
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">= Meter readings (data)</span>
                           <span className="font-bold text-blue-600">{(result.recordCount || 0) - (result.skippedHeaders || 0)}</span>
@@ -322,22 +322,22 @@ export default function CSVUploadPage() {
                       <div className="text-xs font-semibold text-gray-600 uppercase">What Happened:</div>
                       
                       {/* New vs Duplicate */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="grid grid-cols-2 gap-3 max-medium:gap-2">
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 max-medium:p-2">
                           <div className="text-xs text-green-700 mb-1">✅ New Data Added</div>
-                          <div className="text-2xl font-bold text-green-600">{result.insertedRecords || 0}</div>
+                          <div className="text-2xl max-medium:text-xl font-bold text-green-600">{result.insertedRecords || 0}</div>
                         </div>
                         
-                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 max-medium:p-2">
                           <div className="text-xs text-purple-700 mb-1">🔄 Duplicates Skipped</div>
-                          <div className="text-2xl font-bold text-purple-600">{result.skippedDuplicates || 0}</div>
+                          <div className="text-2xl max-medium:text-xl font-bold text-purple-600">{result.skippedDuplicates || 0}</div>
                         </div>
                       </div>
 
                       {/* Meter Linking */}
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 max-medium:p-2">
                         <div className="text-xs text-gray-600 mb-2">🔗 Meter Linking Status:</div>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="grid grid-cols-2 gap-2 text-sm max-medium:text-xs">
                           <div className="flex justify-between">
                             <span className="text-gray-600">Linked:</span>
                             <span className="font-bold text-blue-600">{result.meterIdMatches?.found || 0}</span>
@@ -354,11 +354,11 @@ export default function CSVUploadPage() {
 
                 {/* Status Message */}
                 {result.insertedRecords === 0 && (result.skippedDuplicates || 0) > 0 && (
-                  <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                    <div className="text-2xl">💡</div>
+                  <div className="flex items-start gap-3 max-medium:gap-2 p-4 max-medium:p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="text-2xl max-medium:text-xl flex-shrink-0">💡</div>
                     <div>
-                      <div className="font-semibold text-purple-900">This file was already uploaded</div>
-                      <div className="text-sm text-purple-700">
+                      <div className="font-semibold text-purple-900 max-medium:text-sm">This file was already uploaded</div>
+                      <div className="text-sm max-medium:text-xs text-purple-700">
                         All {result.skippedDuplicates || 0} data records were skipped because they already exist in the database.
                         {(result.skippedHeaders || 0) > 0 && ` Additionally, ${result.skippedHeaders} header rows were filtered out.`}
                       </div>
@@ -367,11 +367,11 @@ export default function CSVUploadPage() {
                 )}
 
                 {(result.insertedRecords || 0) > 0 && (
-                  <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="text-2xl">✨</div>
+                  <div className="flex items-start gap-3 max-medium:gap-2 p-4 max-medium:p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="text-2xl max-medium:text-xl flex-shrink-0">✨</div>
                     <div>
-                      <div className="font-semibold text-green-900">Successfully imported new data</div>
-                      <div className="text-sm text-green-700">
+                      <div className="font-semibold text-green-900 max-medium:text-sm">Successfully imported new data</div>
+                      <div className="text-sm max-medium:text-xs text-green-700">
                         {result.insertedRecords || 0} new records were added to the database.
                         {(result.skippedDuplicates || 0) > 0 && ` ${result.skippedDuplicates} duplicates were skipped.`}
                       </div>
@@ -399,32 +399,32 @@ export default function CSVUploadPage() {
         )}
 
         {/* Upload History */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 max-medium:p-4">
+          <h2 className="text-xl max-medium:text-lg font-bold mb-4 max-medium:mb-3">
             Recent Uploads History ({totalRecords.toLocaleString()} total records)
           </h2>
           
           {loadingHistory ? (
-            <div className="text-center py-8 text-gray-500">Loading history...</div>
+            <div className="text-center py-8 max-medium:py-4 text-gray-500 max-medium:text-sm">Loading history...</div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 max-medium:space-y-4">
               {Object.entries(uploadsByDate).map(([date, uploads]) => (
                 <div key={date}>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">{date}</h3>
+                  <h3 className="text-lg max-medium:text-base font-semibold text-gray-700 mb-2">{date}</h3>
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
+                    <table className="w-full divide-y divide-gray-200 max-medium:text-[10px]">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-2 max-medium:px-1 py-2 text-left text-xs max-medium:text-[10px] font-medium text-gray-500 uppercase">
                             Time
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                            Device ID
+                          <th className="px-2 max-medium:px-1 py-2 text-left text-xs max-medium:text-[10px] font-medium text-gray-500 uppercase">
+                            ID
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-2 max-medium:px-1 py-2 text-left text-xs max-medium:text-[10px] font-medium text-gray-500 uppercase">
                             Type
                           </th>
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-2 max-medium:px-1 py-2 text-center text-xs max-medium:text-[10px] font-medium text-gray-500 uppercase">
                             Linked
                           </th>
                         </tr>
@@ -443,20 +443,20 @@ export default function CSVUploadPage() {
                           })
                           .map((upload) => (
                           <tr key={upload.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                              {new Date(upload.created_at).toLocaleTimeString()}
+                            <td className="px-2 max-medium:px-1 py-2 whitespace-nowrap text-sm max-medium:text-[10px] text-gray-900">
+                              {new Date(upload.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
                             </td>
-                            <td className="px-4 py-2 whitespace-nowrap text-sm font-mono text-gray-900">
+                            <td className="px-2 max-medium:px-1 py-2 whitespace-nowrap text-sm max-medium:text-[10px] font-mono text-gray-900">
                               {upload.device_id}
                             </td>
-                            <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                            <td className="px-2 max-medium:px-1 py-2 whitespace-nowrap text-sm max-medium:text-[10px] text-gray-900">
                               {upload.device_type}
                             </td>
-                            <td className="px-4 py-2 whitespace-nowrap text-sm">
+                            <td className="px-2 max-medium:px-1 py-2 whitespace-nowrap text-sm max-medium:text-[10px] text-center">
                               {upload.local_meter_id ? (
-                                <span className="text-green-600 font-medium">✅ Yes</span>
+                                <span className="text-green-600">✅</span>
                               ) : (
-                                <span className="text-orange-600 font-medium">⚠️ No</span>
+                                <span className="text-orange-600">⚠️</span>
                               )}
                             </td>
                           </tr>

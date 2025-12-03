@@ -41,15 +41,15 @@ export default async function UserObjektsPage({
   const createLink = await buildSubRoute("create");
 
   return (
-    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 flex-1 overflow-y-auto grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-[calc(100dvh-53px)] max-medium:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb backTitle="Users" link={ROUTE_ADMIN} title="User Übersicht" />
-      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        <div className="space-y-4">
+      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto] overflow-hidden">
+        <div className="space-y-4 overflow-hidden flex flex-col">
           <SearchControls
             totalResults={totalObjekts}
             currentResults={objekts.length}
           />
-          <div className="overflow-y-auto space-y-4">
+          <div className="overflow-y-auto space-y-4 flex-1">
             {objekts.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 max-medium:p-4 text-center">
                 <p className="text-dark_green/50 text-lg max-medium:text-base">
@@ -68,7 +68,7 @@ export default async function UserObjektsPage({
         </div>
         <Link
           href={createLink}
-          className="border-dashed w-full max-xl:text-base max-medium:text-sm flex p-5 max-medium:p-3 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl max-medium:rounded-xl"
+          className="border-dashed w-full max-xl:text-base max-medium:text-sm flex p-5 max-medium:p-3 flex-col items-center justify-center text-xl text-dark_green/50 border border-dark_green rounded-2xl max-medium:rounded-xl flex-shrink-0"
         >
           <Image
             width={0}

@@ -25,14 +25,14 @@ export default async function EditContractPage({
   const documentFilesUrls = await getSignedUrlsForObject(contract_id);
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Wohneinheiten"
         link={`${ROUTE_OBJEKTE}/${local_id}`}
         title="Objekte"
       />
       <ContentWrapper className="space-y-4">
-        <div className="px-10 py-9 rounded-2xl space-y-5 bg-[#FDFDFC]">
+        <div className="px-10 py-9 max-medium:px-4 max-medium:py-4 rounded-2xl max-medium:rounded-xl space-y-5 bg-[#FDFDFC]">
           <EditContractForm
             id={id}
             contractID={contract_id}

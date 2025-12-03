@@ -465,19 +465,19 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
               {/* Documents Table */}
               <div className="overflow-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-2 max-medium:py-2 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Name
                       </th>
-                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Geändert
                       </th>
-                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:hidden text-left text-xs font-light text-gray-500 uppercase tracking-wider">
                         Größe
                       </th>
-                      <th className="px-6 py-3 max-medium:px-3 max-medium:py-2 text-left text-xs font-light text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 max-medium:px-2 max-medium:py-2 text-right max-medium:text-right text-xs font-light text-gray-500 uppercase tracking-wider">
                         Aktionen
                       </th>
                     </tr>
@@ -485,20 +485,20 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   <tbody className="bg-white">
                     {currentFolderDocuments.map((document: DocumentMetadata) => (
                       <tr key={document.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 max-medium:px-3 max-medium:py-3 whitespace-nowrap">
-                          <div className="flex items-center">
+                        <td className="px-6 py-4 max-medium:px-2 max-medium:py-3">
+                          <div className="flex items-center min-w-0">
                             <Image
                               width={0}
                               height={0}
                               sizes="100vw"
                               loading="lazy"
-                              className="max-w-6 max-h-6 max-medium:max-w-5 max-medium:max-h-5 mr-3 max-medium:mr-2"
+                              className="max-w-6 max-h-6 max-medium:max-w-5 max-medium:max-h-5 mr-3 max-medium:mr-2 flex-shrink-0"
                               src={pdf_icon}
                               alt="pdf_icon"
                             />
                             <button
                               onClick={() => handleDownload(document)}
-                              className="text-sm max-medium:text-xs font-light text-gray-900 hover:text-green-600 hover:underline cursor-pointer"
+                              className="text-sm max-medium:text-xs font-light text-gray-900 hover:text-green-600 hover:underline cursor-pointer truncate max-medium:max-w-[140px]"
                             >
                               {document.document_name}
                             </button>
@@ -510,29 +510,29 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                         <td className="px-6 py-4 max-medium:hidden whitespace-nowrap text-sm text-gray-500">
                           {fileSizes[document.id] || '--'}
                         </td>
-                        <td className="px-6 py-4 max-medium:px-3 max-medium:py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
+                        <td className="px-6 py-4 max-medium:px-2 max-medium:py-3 whitespace-nowrap text-right">
+                          <div className="flex items-center justify-end gap-2 max-medium:gap-1">
                             <button
                               onClick={() => handleGoToSource(document)}
-                              className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-1.5 max-medium:p-1 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Zur Quelle gehen"
                               disabled={!DOCUMENT_SOURCE_ROUTES[document.related_type]}
                             >
-                              <FolderOpen className="w-4 h-4" />
+                              <FolderOpen className="w-4 h-4 max-medium:w-4 max-medium:h-4" />
                             </button>
                             <button
                               onClick={() => handleViewClick(document)}
-                              className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
+                              className="p-1.5 max-medium:p-1 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
                               title="Dokument anzeigen"
                             >
-                              <Eye className="w-4 h-4" />
+                              <Eye className="w-4 h-4 max-medium:w-4 max-medium:h-4" />
                             </button>
                             <button
                               onClick={() => handleDeleteClick(document.id)}
-                              className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
+                              className="p-1.5 max-medium:p-1 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md"
                               title="Dokument löschen"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 max-medium:w-4 max-medium:h-4" />
                             </button>
                           </div>
                         </td>

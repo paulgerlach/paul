@@ -18,6 +18,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AdminApartmentsDropdown() {
+  const [open, setOpen] = useState(false);
   const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
   const { user_id } = useParams();
   const { data: apartments, isLoading: isLoadingApartments, error: apartmentsError } = useObjektsWithLocals();
@@ -119,7 +120,7 @@ export default function AdminApartmentsDropdown() {
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           aria-controls="admin-apartments-dropdown"
@@ -156,7 +157,9 @@ export default function AdminApartmentsDropdown() {
       </PopoverTrigger>
       <PopoverContent
         id="admin-apartments-dropdown"
-        className="border-none shadow-none p-0"
+        className="border-none shadow-none p-0 w-[320px] max-medium:w-[calc(100vw-32px)]"
+        align="start"
+        sideOffset={8}
       >
         <AdminApartmentsDropdownContent
           selectedLocalIds={selectedLocalIds}
@@ -164,6 +167,7 @@ export default function AdminApartmentsDropdown() {
           clearSelection={clearSelection}
           toggleSelection={toggleSelection}
           apartments={apartmentsToUse as ApartmentType[]}
+          onClose={() => setOpen(false)}
         />
       </PopoverContent>
     </Popover>

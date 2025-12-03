@@ -128,7 +128,7 @@ export default function AdminEditContractForm({
     <Form {...methods}>
       <form
         id="contract-form"
-        className="w-10/12"
+        className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data: EditContractFormValues) => {
           try {
             await adminEditContract(contractID, localID, userID, data);
@@ -158,9 +158,9 @@ export default function AdminEditContractForm({
           }
         })}
       >
-        <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
-          <div className="flex items-center justify-start gap-4">
-            <h1 className="text-2xl text-dark_green">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-5 max-medium:space-y-3 border-dark_green/10">
+          <div className="flex items-center justify-start gap-4 max-medium:flex-col max-medium:items-start max-medium:gap-2">
+            <h1 className="text-2xl max-medium:text-lg text-dark_green">
               {watchContractors.length > 1 ? "Mieter -" : "Mieter -"}{" "}
               {watchContractors
                 .map((c) => `${c.first_name} ${c.last_name}`)
@@ -173,15 +173,15 @@ export default function AdminEditContractForm({
               className="!mt-0"
             />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 max-medium:space-y-3">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
-            <div className="items-center gap-7 grid grid-cols-[1fr_auto_1fr] w-full">
+            <div className="items-center gap-7 max-medium:gap-3 grid grid-cols-[1fr_auto_1fr] max-medium:grid-cols-1 w-full">
               <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
               />
-              <span className="mt-8 inline-block">-</span>
+              <span className="mt-8 inline-block max-medium:hidden">-</span>
               <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietende"
@@ -201,7 +201,7 @@ export default function AdminEditContractForm({
           <button
             type="button"
             onClick={addContractor}
-            className="flex items-center w-fit justify-center gap-2 px-6 py-5 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50"
+            className="flex items-center w-fit max-medium:w-full justify-center gap-2 px-6 py-5 max-medium:px-4 max-medium:py-3 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50"
           >
             <Image
               width={16}
@@ -214,9 +214,9 @@ export default function AdminEditContractForm({
             Weiteren Mieter hinzufügen
           </button>
         </div>
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Monatliche Gesamtmiete</h2>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
             <FormMoneyInput<EditContractFormValues>
               control={methods.control}
               name="cold_rent"
@@ -229,9 +229,9 @@ export default function AdminEditContractForm({
             />
           </div>
         </div>
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Mietkaution</h2>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
             <FormMoneyInput<EditContractFormValues>
               control={methods.control}
               name="deposit"
@@ -257,7 +257,7 @@ export default function AdminEditContractForm({
         <Button
           disabled={methods.formState.isSubmitting}
           type="submit"
-          className="mt-6 ml-auto mr-0 block"
+          className="mt-6 max-medium:mt-4 ml-auto mr-0 block max-medium:w-full"
         >
           {methods.formState.isSubmitting || uploadDocuments.isPending
             ? "Lädt..."

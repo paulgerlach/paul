@@ -35,26 +35,26 @@ export default async function ZwischenstandPage({
   });
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Dashboard"
         link={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}`}
         title="Dokumentenübersicht"
         subtitle="Für welche Immobilie wollen Sie eine Heizkostenabrechnung erstellen lassen?"
       />
-      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        <div className="space-y-4">
+      <ContentWrapper className="space-y-4 max-medium:space-y-3 grid grid-rows-[1fr_auto]">
+        <div className="space-y-4 max-medium:space-y-3">
           <SearchControls
             totalResults={totalObjekts}
             currentResults={objekts.length}
           />
-          <div className="overflow-y-auto space-y-4">
+          <div className="overflow-y-auto space-y-4 max-medium:space-y-3">
             {objekts.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center">
-                <p className="text-dark_green/50 text-lg">
+              <div className="bg-white rounded-2xl max-medium:rounded-xl p-8 max-medium:p-4 text-center">
+                <p className="text-dark_green/50 text-lg max-medium:text-base">
                   Keine Ergebnisse gefunden
                 </p>
-                <p className="text-dark_green/30 text-sm mt-2">
+                <p className="text-dark_green/30 text-sm max-medium:text-xs mt-2">
                   Versuchen Sie einen anderen Suchbegriff
                 </p>
               </div>

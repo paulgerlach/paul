@@ -14,6 +14,7 @@ export type AdminApartmentsDropdownContentProps = {
   clearSelection: () => void;
   selectAll: () => void;
   selectedLocalIds: string[];
+  onClose?: () => void;
 };
 
 export default function AdminApartmentsDropdownContent({
@@ -22,6 +23,7 @@ export default function AdminApartmentsDropdownContent({
   clearSelection,
   selectAll,
   selectedLocalIds,
+  onClose,
 }: AdminApartmentsDropdownContentProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,17 +37,17 @@ export default function AdminApartmentsDropdownContent({
   };
 
   return (
-    <div className="w-full bg-white rounded-base shadow-sm px-2.5 py-4 space-y-3 z-10">
+    <div className="w-full min-w-[280px] bg-white rounded-base shadow-lg border border-gray-200 px-2.5 py-4 space-y-3 z-10 max-medium:max-h-[50vh] max-medium:overflow-hidden max-medium:flex max-medium:flex-col">
       <input
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="rounded-md w-full border border-dark_green/10 py-1 px-6 text-sm placeholder:text-sm"
+        className="rounded-md w-full border border-dark_green/10 py-2 px-4 text-sm placeholder:text-sm max-medium:flex-shrink-0"
         placeholder="Objekt suchen"
         type="text"
       />
-      <div className="space-y-3 px-4">
+      <div className="space-y-3 px-2 max-medium:overflow-y-auto max-medium:flex-1">
         {filteredApartments?.length === 0 ? (
-          <div className="text-sm text-gray-500">Keine Ergebnisse gefunden</div>
+          <div className="text-sm text-gray-500 py-2">Keine Ergebnisse gefunden</div>
         ) : (
           filteredApartments?.map((apartment, index) => (
             <AdminApartmentsDropdownContentItem
@@ -60,20 +62,22 @@ export default function AdminApartmentsDropdownContent({
           ))
         )}
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-medium:flex-shrink-0 pt-2 border-t border-gray-100">
         <button
           onClick={() => {
             selectAll();
+            onClose?.();
           }}
-          className="px-5 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 border-rounded"
+          className="px-4 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 rounded-md"
         >
           Alle auswählen
         </button>
         <button
           onClick={() => {
             clearSelection();
+            onClose?.();
           }}
-          className="px-5 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 border-rounded"
+          className="px-4 py-2 text-xs text-black/50 cursor-pointer border-transparent bg-transparent hover:bg-gray-100 rounded-md"
         >
           Auswahl entfernen
         </button>

@@ -32,6 +32,7 @@ interface TimeFilterPresetsProps {
   onCommitRange: (from: Date, to: Date) => void;
   className?: string;
   defaultPreset?: TimePreset;
+  onClose?: () => void;
 }
 
 export default function TimeFilterPresets({
@@ -42,6 +43,7 @@ export default function TimeFilterPresets({
   onCommitRange,
   className,
   defaultPreset = "thisMonth",
+  onClose,
 }: TimeFilterPresetsProps) {
   const [activePreset, setActivePreset] = useState<TimePreset>(defaultPreset);
 
@@ -110,16 +112,17 @@ export default function TimeFilterPresets({
     setActivePreset(preset);
     setDate({ from, to });
     onCommitRange(from, to);
+    onClose?.();
   };
 
   return (
     <div
       className={cn(
-        "flex bg-white rounded-2xl border border-[#EAEAEA]",
+        "flex max-medium:flex-col bg-white rounded-2xl border border-[#EAEAEA] max-medium:max-h-[50vh] max-medium:overflow-auto",
         className
       )}
     >
-      <div className="min-w-48 border-r border-[#EAEAEA] py-1">
+      <div className="min-w-48 max-medium:min-w-0 max-medium:w-full border-r max-medium:border-r-0 max-medium:border-b border-[#EAEAEA] py-1">
         <ul className="flex flex-col">
           <li>
             <button

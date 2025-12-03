@@ -33,9 +33,9 @@ export default function FormTechnicalEquipment<
   T extends FieldValues = FieldValues
 >({ control, disabled }: FormTechnicalEquipmentProps<T>) {
   return (
-    <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
+    <div className="w-full border-b py-5 max-medium:py-3 space-y-5 max-medium:space-y-3 border-dark_green/10">
       <h2 className="text-sm font-bold">Technische Ausstattung</h2>
-      <div className="grid grid-cols-2 items-start gap-5">
+      <div className="grid grid-cols-2 max-medium:grid-cols-1 items-start gap-5 max-medium:gap-3">
         <FormField
           control={control}
           name={"heating_systems" as Path<T>}

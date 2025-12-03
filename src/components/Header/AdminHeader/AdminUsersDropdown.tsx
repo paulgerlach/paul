@@ -11,15 +11,17 @@ import { chevron_admin, main_portfolio } from "@/static/icons";
 import type { UserType } from "@/types";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function AdminUsersDropdown({ user }: { user?: UserType }) {
+  const [open, setOpen] = useState(false);
   const { user_id } = useParams();
   const { data: users } = useBasicUsers();
 
   const currentUser = users?.find((user) => user.id === user_id);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           aria-controls="admin-users-dropdown"
@@ -56,8 +58,13 @@ export default function AdminUsersDropdown({ user }: { user?: UserType }) {
           />
         </button>
       </PopoverTrigger>
-      <PopoverContent id="admin-users-dropdown" className="border-none shadow-none p-0">
-        <AdminUsersDropdownContent users={users} />
+      <PopoverContent 
+        id="admin-users-dropdown" 
+        className="border-none shadow-none p-0 w-[280px] max-medium:w-[calc(100vw-32px)]"
+        align="start"
+        sideOffset={8}
+      >
+        <AdminUsersDropdownContent users={users} onSelect={() => setOpen(false)} />
       </PopoverContent>
     </Popover>
   );

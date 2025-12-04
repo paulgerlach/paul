@@ -5,7 +5,6 @@ import {
   hsp,
   idgim,
   quarterback,
-  raum,
   silverton,
   vitec,
   wagner,
@@ -83,16 +82,6 @@ export default function HeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            src={raum}
-            alt="raum"
-          />
-        </div>
-        <div className="ticker__item">
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
             src={silverton}
             alt="silverton"
           />
@@ -193,16 +182,6 @@ export default function HeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            src={raum}
-            alt="raum"
-          />
-        </div>
-        <div className="ticker__item">
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
             src={silverton}
             alt="silverton"
           />
@@ -295,16 +274,6 @@ export default function HeroTicker() {
             loading="lazy"
             src={quarterback}
             alt="quarterback"
-          />
-        </div>
-        <div className="ticker__item">
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            src={raum}
-            alt="raum"
           />
         </div>
         <div className="ticker__item">

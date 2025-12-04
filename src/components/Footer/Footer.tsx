@@ -318,7 +318,7 @@ export default function Footer() {
           <div className="space-y-9">
             <div className="space-y-2.5">
               <Link
-                className="text-lg leading-[21px] font-bold text-dark_text"
+                className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
                 href={gerateLinksGroup.mainUrl}
               >
                 {gerateLinksGroup.title}
@@ -329,7 +329,7 @@ export default function Footer() {
             </div>
             <div className="space-y-2.5">
               <Link
-                className="text-lg leading-[21px] font-bold text-dark_text"
+                className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
                 href={DienstleistungenLinksGroup.mainUrl}
               >
                 {DienstleistungenLinksGroup.title}
@@ -341,7 +341,7 @@ export default function Footer() {
           </div>
           <div className="space-y-2.5">
             <Link
-              className="text-lg leading-[21px] font-bold text-dark_text"
+              className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
               href={standorteLinksGroup.mainUrl}
             >
               {standorteLinksGroup.title}
@@ -352,7 +352,7 @@ export default function Footer() {
           </div>
           <div className="space-y-2.5">
             <Link
-              className="text-lg leading-[21px] font-bold text-dark_text"
+              className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
               href={rechtlichesLinksGroup.mainUrl}
             >
               {rechtlichesLinksGroup.title}
@@ -364,7 +364,7 @@ export default function Footer() {
           <div className="space-y-9 flex flex-col justify-between">
             <div className="space-y-2.5">
               <Link
-                className="text-lg leading-[21px] font-bold text-dark_text"
+                className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
                 href={kundenLinksGroup.mainUrl}
               >
                 {kundenLinksGroup.title}
@@ -375,7 +375,7 @@ export default function Footer() {
             </div>
             <div className="space-y-2.5">
               <Link
-                className="text-lg leading-[21px] font-bold text-dark_text"
+                className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
                 href={datenschutzLinksGroup.mainUrl}
               >
                 {datenschutzLinksGroup.title}
@@ -388,7 +388,7 @@ export default function Footer() {
           <div className="flex flex-col justify-between">
             <div className="space-y-2.5">
               <Link
-                className="text-lg leading-[21px] font-bold text-dark_text"
+                className="text-lg leading-[21px] mb-3.5 font-bold text-dark_text inline-block"
                 href={newsInfoLinksGroup.mainUrl}
               >
                 {newsInfoLinksGroup.title}
@@ -398,16 +398,21 @@ export default function Footer() {
               ))}
             </div>
             <div className="flex items-start justify-center flex-col">
-              <p className="text-xs text-dark_text">Kooperationspartner:</p>
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="block mb-2 max-h-[92px] max-w-[150px]"
-                src={vdiv_footer}
-                alt="footer logo"
-              />
+              <Link
+                target="_blank"
+                href="https://vdiv.de/partneruebersicht/heidi-systems"
+              >
+                <p className="text-xs text-dark_text">Kooperationspartner:</p>
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  loading="lazy"
+                  className="block mb-2 max-h-[92px] max-w-[150px]"
+                  src={vdiv_footer}
+                  alt="footer logo"
+                />
+              </Link>
             </div>
           </div>
         </div>
@@ -454,8 +459,8 @@ export default function Footer() {
         <div className="flex items-center justify-end gap-3">
           <Link href="https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q">
             <Image
-              width={0}
-              height={0}
+              width={20}
+              height={20}
               sizes="100vw"
               loading="lazy"
               src={youtube}
@@ -464,8 +469,8 @@ export default function Footer() {
           </Link>
           <Link href="https://x.com/Heidisystems">
             <Image
-              width={0}
-              height={0}
+              width={20}
+              height={20}
               sizes="100vw"
               loading="lazy"
               src={xIcon}
@@ -474,8 +479,8 @@ export default function Footer() {
           </Link>
           <Link href="https://www.linkedin.com/company/heidisystems/">
             <Image
-              width={0}
-              height={0}
+              width={20}
+              height={20}
               sizes="100vw"
               loading="lazy"
               src={linkedin}
@@ -484,8 +489,8 @@ export default function Footer() {
           </Link>
           <Link href="https://www.instagram.com/heidisystems/">
             <Image
-              width={0}
-              height={0}
+              width={20}
+              height={20}
               sizes="100vw"
               loading="lazy"
               src={insta}

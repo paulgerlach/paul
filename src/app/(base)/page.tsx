@@ -279,7 +279,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-32 h-16"
+              className="inline-block mx-auto max-w-24 h-12"
               src={berlinBear}
               alt="berlinBear"
             />
@@ -288,7 +288,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-32 h-10"
+              className="inline-block mx-auto w-24 h-8"
               src={dumax}
               alt="dumax"
             />
@@ -297,7 +297,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-32 h-10"
+              className="inline-block mx-auto w-24 h-8"
               src={harte}
               alt="harte"
             />
@@ -306,7 +306,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto w-28 h-11"
+              className="inline-block mx-auto w-20 h-8"
               src={hsp}
               alt="hsp"
             />
@@ -315,7 +315,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-28 h-6"
+              className="inline-block mx-auto max-w-20 h-4"
               src={idgim}
               alt="idgim"
             />
@@ -324,7 +324,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-40 h-12"
+              className="inline-block mx-auto max-w-28 h-9"
               src={quarterback}
               alt="quarterback"
             />
@@ -333,7 +333,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-28 h-10"
+              className="inline-block mx-auto max-w-20 h-8"
               src={raum}
               alt="raum"
             />
@@ -342,7 +342,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-36 h-14"
+              className="inline-block mx-auto max-w-28 h-10"
               src={silverton}
               alt="silverton"
             />
@@ -351,7 +351,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-16 h-16"
+              className="inline-block mx-auto max-w-12 h-12"
               src={vitec}
               alt="vitec"
             />
@@ -360,7 +360,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-40 h-10"
+              className="inline-block mx-auto max-w-28 h-8"
               src={wagner}
               alt="wagner"
             />
@@ -369,7 +369,7 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-24 h-8"
+              className="inline-block mx-auto max-w-20 h-6"
               src={winfried}
               alt="winfried"
             />
@@ -401,9 +401,9 @@ export default function Home() {
                   Ihren Anforderungen entspricht. Effizient, zuverlässig,
                   unkompliziert.
                 </p>
-                <a
+                <Link
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -415,7 +415,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="large:flex max-large:items-center max-large:justify-center">
@@ -438,9 +438,9 @@ export default function Home() {
                   kostenfrei. Genießen Sie den Komfort der automatisierten
                   Fernablesung und verabschieden Sie sich von Vor-Ort-Terminen.
                 </p>
-                <a
-                  className="mt-10 text-link group text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                <Link
+                  className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -452,7 +452,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill">
@@ -479,9 +479,9 @@ export default function Home() {
                   Echtzeit und ermöglichen präzise Betriebskostenabrechnungen
                   mit nur wenigen Klicks.
                 </p>
-                <a
+                <Link
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -493,7 +493,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="large:flex max-large:items-center max-large:justify-center">
@@ -521,7 +521,7 @@ export default function Home() {
         />
         <Link
           className="my-10 group mx-auto text-link text-base leading-[19.2px] flex items-center justify-center gap-2"
-          href="/datenschutzhinweise"
+          href={ROUTE_FUNKTIONEN}
         >
           Erfahren Sie mehr
           <Image

@@ -1,260 +1,322 @@
 import {
-	fewocare,
-	flyla,
-	haus_hirst,
-	ki_akademie,
-	parkdepot,
-	sameday,
-	vitolos,
-	wemolo,
+  berlinBear,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
 } from "@/static/icons";
 import Image from "next/image";
 
 export default function HeroTicker() {
-	return (
-		<div className="ticker-wrap max-medium:hidden pb-5">
-			<div className="ticker">
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={fewocare}
-						alt="fewocare"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={parkdepot}
-						alt="parkdepot"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={sameday}
-						alt="sameday"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={flyla}
-						alt="flyla"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={vitolos}
-						alt="vitolos"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={ki_akademie}
-						alt="ki_akademie"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={wemolo}
-						alt="wemolo"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={haus_hirst}
-						alt="haus_hirst"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={fewocare}
-						alt="fewocare"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={parkdepot}
-						alt="parkdepot"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={sameday}
-						alt="sameday"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={flyla}
-						alt="flyla"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={vitolos}
-						alt="vitolos"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={ki_akademie}
-						alt="ki_akademie"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={wemolo}
-						alt="wemolo"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={haus_hirst}
-						alt="haus_hirst"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={fewocare}
-						alt="fewocare"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={parkdepot}
-						alt="parkdepot"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={sameday}
-						alt="sameday"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={flyla}
-						alt="flyla"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={vitolos}
-						alt="vitolos"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={ki_akademie}
-						alt="ki_akademie"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={wemolo}
-						alt="wemolo"
-					/>
-				</div>
-				<div className="ticker__item">
-					<Image
-						width={0}
-						height={0}
-						sizes="100vw"
-						loading="lazy"
-						src={haus_hirst}
-						alt="haus_hirst"
-					/>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="ticker-wrap max-medium:hidden pb-5">
+      <div className="ticker">
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={berlinBear}
+            alt="berlinBear"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={dumax}
+            alt="dumax"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={harte}
+            alt="harte"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={hsp}
+            alt="hsp"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={idgim}
+            alt="idgim"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={quarterback}
+            alt="quarterback"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={silverton}
+            alt="silverton"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={vitec}
+            alt="vitec"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={wagner}
+            alt="wagner"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={winfried}
+            alt="winfried"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={berlinBear}
+            alt="berlinBear"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={dumax}
+            alt="dumax"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={harte}
+            alt="harte"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={hsp}
+            alt="hsp"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={idgim}
+            alt="idgim"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={quarterback}
+            alt="quarterback"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={silverton}
+            alt="silverton"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={vitec}
+            alt="vitec"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={wagner}
+            alt="wagner"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={winfried}
+            alt="winfried"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={berlinBear}
+            alt="berlinBear"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={dumax}
+            alt="dumax"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={harte}
+            alt="harte"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={hsp}
+            alt="hsp"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={idgim}
+            alt="idgim"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={quarterback}
+            alt="quarterback"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={silverton}
+            alt="silverton"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={vitec}
+            alt="vitec"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={wagner}
+            alt="wagner"
+          />
+        </div>
+        <div className="ticker__item">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            loading="lazy"
+            src={winfried}
+            alt="winfried"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

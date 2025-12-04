@@ -82,12 +82,14 @@ export default function HomeHero() {
         </div>
         <Link
           href={ROUTE_FRAGEBOGEN}
-          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg text-dark_text bg-green rounded-halfbase mb-4">
+          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg text-dark_text bg-green rounded-halfbase mb-4"
+        >
           Jetzt installieren lassen
         </Link>
         <Link
           href={ROUTE_BLOG}
-          className="text-center mx-auto block text-[15px] leading-[18px] text-white">
+          className="text-center mx-auto block text-[15px] leading-[18px] text-white"
+        >
           Fernablesbare Zähler verpflichtend bis 1. Januar 2027
         </Link>
       </div>

@@ -7,7 +7,7 @@ import FunctionsSwiper from "@/components/Swipers/FunctionsSwiper";
 import NewsList from "@/components/Swipers/NewsList";
 import NewsSwiper from "@/components/Swipers/NewsSwiper";
 import PersonSwiper from "@/components/Swipers/PersonSwiper";
-import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_FRAGEBOGEN } from "@/routes/routes";
+import { ROUTE_FRAGEBOGEN, ROUTE_FUNKTIONEN } from "@/routes/routes";
 import {
   checkmarks3,
   clock,
@@ -16,18 +16,21 @@ import {
   doc_phone,
   eu_gdpr,
   eu_lock,
-  fewocare,
-  flyla,
-  haus_hirst,
   instruments,
-  ki_akademie,
   list2,
-  parkdepot,
   right_arrow,
-  sameday,
-  vitolos,
   weight,
-  wemolo,
+  berlinBear,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  raum,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
 } from "@/static/icons";
 import { animation1, animation2, animation3 } from "@/static/lottieAnimations";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
@@ -141,9 +144,7 @@ export default function Home() {
               />
             </span>
             <p className="text-xl text-dark_text font-bold max-medium:text-center">
-              Betriebskosten-
-              <br />
-              abrechnung erstellen
+              Heizkostenabrechnung erstellen
             </p>
             <p className="text-[15px] leading-[18px] text-dark_text max-medium:text-center">
               Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
@@ -198,7 +199,7 @@ export default function Home() {
                 direkt für die Betriebskostenabrechnung zur Verfügung.
               </p>
               <Link
-                href={ROUTE_DATENSCHUTZHINWEISE}
+                href={ROUTE_FUNKTIONEN}
                 className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
@@ -214,7 +215,7 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-3 max-medium:grid-cols-1 mb-20 gap-[18px]">
-            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-start">
               <p className="text-[25px] relative z-[2] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
                 Dashboard
               </p>
@@ -225,7 +226,7 @@ export default function Home() {
               <LazyLottie
                 animationData={animation3}
                 id="animation3"
-                wrapperClassName="overflow-hidden relative mt-[-150px] z-[0]"
+                wrapperClassName="overflow-hidden relative z-[0]"
               />
             </div>
             <div className="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
@@ -237,7 +238,7 @@ export default function Home() {
                 ohne manuelles Ablesen oder Vor-Ort-Termine.
               </p>
               <Link
-                href={ROUTE_DATENSCHUTZHINWEISE}
+                href={ROUTE_FUNKTIONEN}
                 className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
               >
                 mehr erfahren
@@ -250,7 +251,7 @@ export default function Home() {
             </div>
             <div className="px-[25px] pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
               <p className="text-[25px] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                Betriebskostenabrechnung
+                Heizkostenabrechnung
               </p>
               <p className="text-center text-dark_text text-base leading-[19.2px]">
                 Erstellen Sie Ihre Betriebskostenabrechnung schnell, einfach und
@@ -270,7 +271,7 @@ export default function Home() {
         </div>
         <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
           <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
-            Trusted by innovators and industry leaders
+            Die Wahl führender Innovatoren und Branchenführer
           </p>
           <div className="grid col-span-2 items-center justify-center grid-cols-4 max-medium:col-span-1 max-medium:grid-cols-3 gap-x-10 gap-y-8">
             <Image
@@ -278,72 +279,99 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
-              src={flyla}
-              alt="flyla"
+              className="inline-block mx-auto max-w-24 h-12"
+              src={berlinBear}
+              alt="berlinBear"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
-              src={sameday}
-              alt="sameday"
+              className="inline-block mx-auto w-24 h-8"
+              src={dumax}
+              alt="dumax"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-7"
-              src={wemolo}
-              alt="wemolo"
+              className="inline-block mx-auto w-24 h-8"
+              src={harte}
+              alt="harte"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-8"
-              src={parkdepot}
-              alt="parkdepot"
+              className="inline-block mx-auto w-20 h-8"
+              src={hsp}
+              alt="hsp"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-8"
-              src={vitolos}
-              alt="vitolos"
+              className="inline-block mx-auto max-w-20 h-4"
+              src={idgim}
+              alt="idgim"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
-              src={ki_akademie}
-              alt="ki_akademie"
+              className="inline-block mx-auto max-w-28 h-9"
+              src={quarterback}
+              alt="quarterback"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-12"
-              src={fewocare}
-              alt="fewocare"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={raum}
+              alt="raum"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto h-10"
-              src={haus_hirst}
-              alt="haus_hirst"
+              className="inline-block mx-auto max-w-28 h-10"
+              src={silverton}
+              alt="silverton"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-12 h-12"
+              src={vitec}
+              alt="vitec"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-28 h-8"
+              src={wagner}
+              alt="wagner"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-6"
+              src={winfried}
+              alt="winfried"
             />
           </div>
         </div>
@@ -373,9 +401,9 @@ export default function Home() {
                   Ihren Anforderungen entspricht. Effizient, zuverlässig,
                   unkompliziert.
                 </p>
-                <a
+                <Link
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -387,7 +415,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="large:flex max-large:items-center max-large:justify-center">
@@ -410,9 +438,9 @@ export default function Home() {
                   kostenfrei. Genießen Sie den Komfort der automatisierten
                   Fernablesung und verabschieden Sie sich von Vor-Ort-Terminen.
                 </p>
-                <a
-                  className="mt-10 text-link group text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                <Link
+                  className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -424,7 +452,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill">
@@ -451,9 +479,9 @@ export default function Home() {
                   Echtzeit und ermöglichen präzise Betriebskostenabrechnungen
                   mit nur wenigen Klicks.
                 </p>
-                <a
+                <Link
                   className="mt-10 group text-link text-base leading-[19.2px] flex items-center justify-start gap-2"
-                  href="/datenschutzhinweise"
+                  href={ROUTE_FUNKTIONEN}
                 >
                   Erfahren Sie mehr
                   <Image
@@ -465,7 +493,7 @@ export default function Home() {
                     src={right_arrow}
                     alt="chevron"
                   />
-                </a>
+                </Link>
               </div>
             </div>
             <div className="large:flex max-large:items-center max-large:justify-center">
@@ -493,7 +521,7 @@ export default function Home() {
         />
         <Link
           className="my-10 group mx-auto text-link text-base leading-[19.2px] flex items-center justify-center gap-2"
-          href="/datenschutzhinweise"
+          href={ROUTE_FUNKTIONEN}
         >
           Erfahren Sie mehr
           <Image

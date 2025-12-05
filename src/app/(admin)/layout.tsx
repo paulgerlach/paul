@@ -44,9 +44,9 @@ export default function AdminLayout({
 }>) {
   return (
     <QueryProvider>
-      <div className="h-screen flex flex-col bg-base-bg overflow-hidden">
+      <div className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
         <AdminHeader />
-        <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden w-full bg-base-bg">
+        <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
           <Sidebar />
           <MobileSidebar />
           {children}

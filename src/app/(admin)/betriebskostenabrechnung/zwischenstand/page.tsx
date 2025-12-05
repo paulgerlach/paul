@@ -13,18 +13,20 @@ import Link from "next/link";
 export default async function ZwischenstandPage() {
   const objekts = await getObjekts();
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-[calc(100dvh-53px)] max-medium:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Dashboard"
         link={ROUTE_DASHBOARD}
         title="Dokumentenübersicht"
         subtitle="Für welche Immobilie wollen Sie eine Betriebskostenabrechnung erstellen lassen?"
       />
-      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        <OperatingObjekteItemDocAccordion objekts={objekts} />
+      <ContentWrapper className="space-y-4 max-medium:space-y-3 grid grid-rows-[1fr_auto] overflow-hidden">
+        <div className="overflow-y-auto">
+          <OperatingObjekteItemDocAccordion objekts={objekts} />
+        </div>
         <Link
           href={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl`}
-          className="border-dashed w-full max-xl:text-base flex p-5 items-center justify-center text-xl gap-8 text-dark_green/50 border border-dark_green rounded-2xl"
+          className="border-dashed w-full max-xl:text-base max-medium:text-sm flex p-5 max-medium:p-3 items-center justify-center text-xl gap-8 max-medium:gap-4 text-dark_green/50 border border-dark_green rounded-2xl max-medium:rounded-xl flex-shrink-0"
         >
           <Image
             width={0}

@@ -62,13 +62,13 @@ export default function SearchControls({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 flex items-center gap-4 flex-wrap">
+    <div className="bg-white rounded-2xl max-medium:rounded-xl p-4 max-medium:p-3 flex items-center gap-4 max-medium:gap-2 flex-wrap">
       {/* Search Input */}
-      <div className="flex-1 min-w-[200px]">
+      <div className="flex-1 min-w-[200px] max-medium:min-w-full max-medium:order-1">
         <input
           type="text"
           placeholder="Suchen..."
-          className="w-full px-4 py-2 border border-dark_green/20 rounded-md text-dark_green placeholder:text-dark_green/50 focus:outline-none focus:border-green transition-colors"
+          className="w-full px-4 py-2 max-medium:px-3 max-medium:py-2 max-medium:text-sm border border-dark_green/20 rounded-md text-dark_green placeholder:text-dark_green/50 focus:outline-none focus:border-green transition-colors"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -77,18 +77,18 @@ export default function SearchControls({
       {/* Sort Toggle Button */}
       <button
         onClick={handleSortToggle}
-        className="px-4 py-2 bg-green text-white rounded-md hover:bg-green/90 transition-all duration-300 flex items-center gap-2"
+        className="px-4 py-2 max-medium:px-3 max-medium:py-1.5 bg-green text-white rounded-md hover:bg-green/90 transition-all duration-300 flex items-center gap-2 max-medium:order-2"
         title={
           sortOrder === "asc" ? "Sortierung: A → Z" : "Sortierung: Z → A"
         }
       >
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium whitespace-nowrap">
           {sortOrder === "asc" ? "A → Z" : "Z → A"}
         </span>
       </button>
 
       {/* Results Count */}
-      <div className="text-sm text-dark_green/70">
+      <div className="text-sm max-medium:text-xs text-dark_green/70 max-medium:order-3">
         {currentResults} von {totalResults} Ergebnissen
       </div>
     </div>

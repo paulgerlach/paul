@@ -57,19 +57,19 @@ export default function RegistrationToggle() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+    <div className="bg-white rounded-lg p-6 max-medium:p-4 shadow-sm border border-gray-200">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg max-medium:text-base font-semibold text-gray-900 mb-1">
             Neue Registrierungen
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm max-medium:text-xs text-gray-600">
             {enabled
               ? "Neue Benutzer können sich registrieren"
               : "Registrierung ist gesperrt"}
           </p>
         </div>
-        <div className="ml-4">
+        <div className="ml-4 max-medium:ml-2 flex-shrink-0">
           <Switch
             checked={enabled}
             onCheckedChange={handleToggle}
@@ -79,8 +79,8 @@ export default function RegistrationToggle() {
         </div>
       </div>
       {!enabled && (
-        <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
-          <p className="text-sm text-orange-800">
+        <div className="mt-4 max-medium:mt-3 p-3 max-medium:p-2 bg-orange-50 border border-orange-200 rounded-md">
+          <p className="text-sm max-medium:text-xs text-orange-800">
             ⚠️ Neue Benutzer können sich derzeit nicht registrieren
           </p>
         </div>

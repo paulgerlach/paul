@@ -132,7 +132,7 @@ export default function AdminCreateObjekteUnitForm({
     <Form {...methods}>
       <form
         id="local-form"
-        className="w-10/12"
+        className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data) => {
           try {
             const newLocal = await createLocal(data, objekteID);
@@ -155,8 +155,8 @@ export default function AdminCreateObjekteUnitForm({
         })}
       >
         <FormTagsInput<CreateObjekteUnitFormValues> control={methods.control} />
-        <div className="w-full border-b py-5 space-y-5 border-dark_green/10">
-          <h1 className="text-2xl mb-5 text-dark_green">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-5 max-medium:space-y-3 border-dark_green/10">
+          <h1 className="text-2xl max-medium:text-xl mb-5 max-medium:mb-3 text-dark_green">
             {buildLocalName({
               floor,
               house_location,
@@ -171,7 +171,7 @@ export default function AdminCreateObjekteUnitForm({
             name="usage_type"
           />
           <h2 className="text-sm font-bold">Wohnungsdetails</h2>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
             <FormSelectField<CreateObjekteUnitFormValues>
               control={methods.control}
               name="floor"
@@ -208,9 +208,9 @@ export default function AdminCreateObjekteUnitForm({
             />
           </div>
         </div>
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
             <FormInputField<CreateObjekteUnitFormValues>
               control={methods.control}
               label="Zimmeranzahl"
@@ -240,7 +240,7 @@ export default function AdminCreateObjekteUnitForm({
         <FormTechnicalEquipment<CreateObjekteUnitFormValues>
           control={methods.control}
         />
-        <div className="w-full border-b py-5 space-y-3 border-dark_green/10">
+        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
           <h2 className="text-sm font-bold">
             Verwaltungstechnische Informationen
           </h2>
@@ -269,7 +269,7 @@ export default function AdminCreateObjekteUnitForm({
         <Button
           disabled={methods.formState.isSubmitting}
           type="submit"
-          className="mt-6 ml-auto mr-0 block"
+          className="mt-6 max-medium:mt-4 ml-auto mr-0 block max-medium:w-full"
         >
           Speichern
         </Button>

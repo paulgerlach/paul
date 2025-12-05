@@ -18,7 +18,7 @@ export default function ObjekteLocalsAccordion({
   };
 
   return (
-    <div className="overflow-y-auto space-y-4">
+    <div className="overflow-y-auto space-y-4 max-medium:space-y-3">
       {locals?.map((local, index) => (
         <ObjekteLocalItem
           id={id}

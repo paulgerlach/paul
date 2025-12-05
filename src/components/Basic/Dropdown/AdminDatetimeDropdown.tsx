@@ -149,8 +149,9 @@ export default function AdminDatetimeDropdown({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 border-none shadow-none"
+          className="w-auto p-0 border-none shadow-none max-medium:w-[calc(100vw-32px)] max-medium:max-h-[60vh] max-medium:overflow-auto"
           align="start"
+          sideOffset={8}
         >
           <TimeFilterPresets
             date={date}
@@ -159,6 +160,7 @@ export default function AdminDatetimeDropdown({
             endDate={endDate}
             onCommitRange={(from, to) => setDates(from, to)}
             defaultPreset={getDefaultPreset()}
+            onClose={() => setOpen(false)}
           />
         </PopoverContent>
       </Popover>

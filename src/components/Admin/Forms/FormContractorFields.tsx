@@ -52,7 +52,7 @@ export default function FormContractorField<
           </button>
         )
       )}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
         <FormInputField<T>
           control={control}
           disabled={disabled}

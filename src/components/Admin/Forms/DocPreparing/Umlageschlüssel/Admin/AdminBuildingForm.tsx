@@ -25,7 +25,7 @@ export default function AdminUmlageschlüsselBuildingForm({
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">
       <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8">
         <AdminCostTypesBuildingSelects />
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-6 max-medium:mt-4">
           <Link
             aria-label="Zurück zu Gesamtkosten"
             href={backLink}

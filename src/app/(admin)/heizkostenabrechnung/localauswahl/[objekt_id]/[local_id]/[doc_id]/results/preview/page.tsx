@@ -46,14 +46,14 @@ export default async function ResultLocalPreview({
     }, 0) || 0;
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Objekte"
         link={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekt_id}/${local_id}/${doc_id}/results`}
         title="Detailansicht"
         subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />
-      <ContentWrapper className="space-y-4">
+      <ContentWrapper className="space-y-4 max-medium:space-y-3">
         <HeatingBillPreview
           mainDoc={mainDoc}
           local={local}

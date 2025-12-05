@@ -30,11 +30,11 @@ export default function HeatingBillCreateDialog() {
   if (isOpen)
     return (
       <DialogBase size={768} dialogName="heating_bill_create">
-        <div className="py-6">
-          <h2 className="text-center mb-4 font-bold text-admin_dark_text text-lg">
+        <div className="py-6 max-medium:py-3">
+          <h2 className="text-center mb-4 max-medium:mb-2 font-bold text-admin_dark_text text-lg max-medium:text-base">
             Auswahl der Objektart
           </h2>
-          <p className="text-center text-admin_dark_text text-sm">
+          <p className="text-center text-admin_dark_text text-sm max-medium:text-xs">
             Für welches Einheit möchten Sie die Heizkostenabrechnung erstellen?
             Bei einem Gebäude mit mehreren Einheiten oder einem Einfamilienhaus
             werden automatisch Ihre Vertrags- und Rechnungsdaten übernommen. Bei
@@ -43,7 +43,7 @@ export default function HeatingBillCreateDialog() {
             stellen.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 max-medium:grid-cols-1 gap-6 max-medium:gap-4">
           <div>
             <input
               className="sr-only peer"
@@ -55,7 +55,7 @@ export default function HeatingBillCreateDialog() {
             />
             <label
               htmlFor="objektauswahl"
-              className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
+              className="block px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
             >
               <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
@@ -129,7 +129,7 @@ export default function HeatingBillCreateDialog() {
             />
             <label
               htmlFor="localauswahl"
-              className="block px-6 pb-6 pt-11 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
+              className="block px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
             >
               <div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
                 <Image
@@ -193,14 +193,14 @@ export default function HeatingBillCreateDialog() {
             </label>
           </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between max-medium:flex-col max-medium:gap-3">
           <button
             onClick={() => closeDialog("heating_bill_create")}
-            className="py-2 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300"
+            className="py-2 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:w-full max-medium:order-2 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300"
           >
             Zurück
           </button>
-          <Button onClick={() => handleNavigate(docFor)}>Loslegen</Button>
+          <Button onClick={() => handleNavigate(docFor)} className="max-medium:w-full max-medium:order-1">Loslegen</Button>
         </div>
       </DialogBase>
     );

@@ -13,11 +13,13 @@ import { useEffect } from "react";
 export type FormZipFieldProps<T extends FieldValues = FieldValues> = {
   methods: UseFormReturn<T>;
   name: Path<T>;
+  className?: string;
 };
 
 export default function FormZipField<T extends FieldValues = FieldValues>({
   methods,
   name,
+  className,
 }: FormZipFieldProps<T>) {
   const {
     streetOptions,
@@ -35,7 +37,7 @@ export default function FormZipField<T extends FieldValues = FieldValues>({
   }, [methods.watch, fetchStreets, methods]);
 
   return (
-    <div className="relative col-span-3">
+    <div className={`relative col-span-3 ${className || ""}`}>
       <Popover
         onOpenChange={() => setShowSuggestions(false)}
         open={showSuggestions && streetOptions.length > 0}>

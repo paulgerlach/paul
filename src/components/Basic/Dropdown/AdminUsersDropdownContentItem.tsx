@@ -9,14 +9,17 @@ import { useParams } from "next/navigation";
 
 export default function AdminUsersDropdownContentItem({
   item,
+  onSelect,
 }: {
   item: UserType;
+  onSelect?: () => void;
 }) {
   const { user_id } = useParams();
   return (
     <Link
       href={`${ROUTE_ADMIN}/${item.id}${ROUTE_DASHBOARD}`}
       className="rounded-md localItem"
+      onClick={onSelect}
     >
       <input
         type="checkbox"

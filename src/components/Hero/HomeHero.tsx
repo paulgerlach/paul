@@ -10,19 +10,20 @@ export default function HomeHero() {
   return (
     <div className="pt-[1px] bg-dark_green">
       <div className="px-4">
-        <h1 className="mt-28 max-large:mt-28 max-medium:mt-24 max-small:mt-20 text-white text-[65px] max-medium:text-5xl leading-[78px] max-medium:leading-tight text-center mb-2">
+        <h1 className="mt-28 max-large:mt-28 max-medium:mt-28 max-small:mt-24 text-white text-[65px] max-medium:text-5xl max-small:text-3xl leading-[78px] max-medium:leading-tight text-center mb-2">
           Fernablesung mit Funkgeräten
         </h1>
-        <p className="text-2xl leading-[28px] max-medium:text-sm max-medium:leading-4 max-medium:text-white/60 text-white text-center max-w-3xl mx-auto my-6">
+        <p className="text-2xl leading-[28px] max-medium:text-base max-small:text-sm max-medium:leading-5 max-medium:text-white/60 text-white text-center max-w-3xl mx-auto my-6">
           Effiziente Fernablesung für Warmwasser, Kaltwasser und Heizung – mit
           fortschrittlicher Funktechnologie
         </p>
-        <div className="flex items-center justify-center mx-auto w-fit border border-white/20 max-small:flex-col rounded-[40px] py-2.5 px-4 max-medium:hidden gap-3 mb-10">
-          <span className="flex items-center justify-start gap-2">
+        <div className="flex items-center justify-center mx-auto w-fit border border-white/20 rounded-[40px] py-2.5 px-4 max-small:py-2 max-small:px-3 gap-3 max-small:gap-2 mb-10 max-small:mb-6">
+          <span className="flex items-center justify-start gap-2 max-small:gap-1">
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
+              width={60}
+              height={20}
+              sizes="(max-width: 480px) 30px, 60px"
+              className="max-small:w-[30px] h-auto"
               src={google}
               alt="google"
             />
@@ -31,7 +32,7 @@ export default function HomeHero() {
               height={16}
               priority
               sizes="16px"
-              className="size-4 colored-to-white opacity-80"
+              className="size-4 max-small:size-3 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
@@ -40,7 +41,7 @@ export default function HomeHero() {
               height={16}
               priority
               sizes="16px"
-              className="size-4 colored-to-white opacity-80"
+              className="size-4 max-small:size-3 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
@@ -49,7 +50,7 @@ export default function HomeHero() {
               height={16}
               priority
               sizes="16px"
-              className="size-4 colored-to-white opacity-80"
+              className="size-4 max-small:size-3 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
@@ -58,7 +59,7 @@ export default function HomeHero() {
               height={16}
               priority
               sizes="16px"
-              className="size-4 colored-to-white opacity-80"
+              className="size-4 max-small:size-3 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
@@ -67,26 +68,26 @@ export default function HomeHero() {
               height={16}
               priority
               sizes="16px"
-              className="size-4 colored-to-white opacity-80"
+              className="size-4 max-small:size-3 colored-to-white opacity-80"
               src={star}
               alt="rate star"
             />
           </span>
-          <span className="text-[15px] leading-[18px] text-white text-center">
+          <span className="text-[15px] max-small:text-xs leading-[18px] text-white text-center whitespace-nowrap">
             4.8 Rating
           </span>
-          <span className="text-[15px] leading-[18px] text-white/70 text-center">
+          <span className="text-[15px] max-small:text-xs leading-[18px] text-white/70 text-center whitespace-nowrap">
             1.850+ Bewertungen
           </span>
         </div>
         <Link
           href={ROUTE_FRAGEBOGEN}
-          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg text-dark_text bg-green rounded-halfbase mb-4">
+          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg max-small:text-base text-dark_text bg-green rounded-halfbase mb-4">
           Jetzt installieren lassen
         </Link>
         <Link
           href={ROUTE_BLOG}
-          className="text-center mx-auto block text-[15px] leading-[18px] text-white">
+          className="text-center mx-auto block text-[15px] max-small:text-xs leading-[18px] text-white">
           Fernablesbare Zähler verpflichtend bis 1. Januar 2027
         </Link>
       </div>

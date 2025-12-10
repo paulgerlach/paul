@@ -351,11 +351,32 @@ export default function HeatingCosts({
     const filteredDevices = csvText;
 
     // Use the new aggregation function
-    return aggregateDataByTimeRange(
+    const aggregatedData = aggregateDataByTimeRange(
       filteredDevices,
       startDate || undefined,
       endDate || undefined
     );
+
+    // If we have raw device data but no readings for the selected date range,
+    // show 0 value for each day in the range instead of "no data available"
+    // This provides better UX - users see "0 consumption" rather than ambiguous "no data"
+    if (aggregatedData.length === 0 && filteredDevices.length > 0 && startDate && endDate) {
+      const result: { label: string; value: number }[] = [];
+      const currentDate = new Date(startDate);
+      const end = new Date(endDate);
+      
+      while (currentDate <= end) {
+        result.push({
+          label: `${currentDate.getDate()} ${monthNames[currentDate.getMonth()]}`,
+          value: 0,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      return result;
+    }
+
+    return aggregatedData;
   }, [csvText, startDate, endDate]);
 
   // Calculate dynamic domain and formatting based on chart data

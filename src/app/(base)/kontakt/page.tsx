@@ -20,11 +20,11 @@ export default function KontaktPage() {
   return (
     <main id="content">
       <div className="grid grid-cols-2 max-medium:grid-cols-1 min-h-screen">
-        <div className="bg-green/10 pt-4 pb-28 max-medium:py-16 max-small:pb-8 max-small:pt-20 flex flex-col items-center justify-center gap-11">
-          <p className="text-[35px] text-dark_text text-center">
+        <div className="bg-green/10 pt-4 pb-28 max-medium:py-16 max-small:pb-8 max-small:pt-20 flex flex-col items-center justify-center gap-11 max-small:gap-6 max-small:px-4">
+          <p className="text-[35px] max-medium:text-2xl max-small:text-xl text-dark_text text-center">
             +1.000 Kunden vertrauen uns
           </p>
-          <div className="flex items-center justify-around w-full">
+          <div className="flex items-center justify-around w-full max-small:flex-col max-small:gap-6">
             <div className="space-y-7">
               <div className="flex items-center justify-center gap-1">
                 <Image
@@ -73,7 +73,7 @@ export default function KontaktPage() {
                   alt="star"
                 />
               </div>
-              <p className="text-dark_text text-lg">5/5 Google Bewertungen</p>
+              <p className="text-dark_text text-lg max-small:text-base">5/5 Google Bewertungen</p>
             </div>
             <div className="space-y-7">
               <div className="flex items-center justify-center gap-1">
@@ -123,7 +123,7 @@ export default function KontaktPage() {
                   alt="star"
                 />
               </div>
-              <p className="text-dark_text text-lg">4.8 / 5 Trustpilot</p>
+              <p className="text-dark_text text-lg max-small:text-base">4.8 / 5 Trustpilot</p>
             </div>
           </div>
           <div className="grid max-w-md grid-cols-3 max-medium:grid-cols-2 gap-9 items-center">

@@ -38,8 +38,8 @@ export default function FunktionenPage() {
 							alt="chess_shield"
 						/>
 						<div>
-							<p className="text-dark_text text-[15px]">Gesetzeskonform</p>
-							<p className="text-dark_text/50 text-[15px]">§ 229 Artikel 3</p>
+							<p className="text-dark_text text-[15px] max-small:text-xs">Gesetzeskonform</p>
+							<p className="text-dark_text/50 text-[15px] max-small:text-xs">§ 229 Artikel 3</p>
 						</div>
 					</div>
 					<div className="flex items-center justify-start max-medium:justify-center gap-5 max-small:justify-start">
@@ -52,8 +52,8 @@ export default function FunktionenPage() {
 							alt="checkmark_shield"
 						/>
 						<div>
-							<p className="text-dark_text text-[15px]">Datenschutzkonform</p>
-							<p className="text-dark_text/50 text-[15px]">Nach DSGVO</p>
+							<p className="text-dark_text text-[15px] max-small:text-xs">Datenschutzkonform</p>
+							<p className="text-dark_text/50 text-[15px] max-small:text-xs">Nach DSGVO</p>
 						</div>
 					</div>
 					<div className="flex items-center justify-start max-medium:justify-center gap-5 max-small:justify-start">
@@ -66,8 +66,8 @@ export default function FunktionenPage() {
 							alt="lock"
 						/>
 						<div>
-							<p className="text-dark_text text-[15px]">SSL Verschlüsselung</p>
-							<p className="text-dark_text/50 text-[15px]">
+							<p className="text-dark_text text-[15px] max-small:text-xs">SSL Verschlüsselung</p>
+							<p className="text-dark_text/50 text-[15px] max-small:text-xs">
 								Zertifiziert und Sicher
 							</p>
 						</div>
@@ -82,21 +82,21 @@ export default function FunktionenPage() {
 							alt="eu_elipse"
 						/>
 						<div>
-							<p className="text-dark_text text-[15px]">Server in Europa</p>
-							<p className="text-dark_text/50 text-[15px]">EU Datenschutz</p>
+							<p className="text-dark_text text-[15px] max-small:text-xs">Server in Europa</p>
+							<p className="text-dark_text/50 text-[15px] max-small:text-xs">EU Datenschutz</p>
 						</div>
 					</div>
 				</div>
 			</div>
 			<AnimationsSection />
 			<div className="px-20 space-y-12 max-large:px-16 max-medium:px-10 max-small:px-5 my-16 max-small:my-8">
-				<h5 className="max-w-2xl mx-auto text-center text-dark_text text-[30px]">
+				<h5 className="max-w-2xl mx-auto text-center text-dark_text text-[30px] max-small:text-xl">
 					„Dank Heidi erfüllen wir alle gesetzlichen Vorgaben zur
 					Verbrauchserfassung und sparen gleichzeitig wertvolle Zeit. Die
 					automatische Datenerfassung und digitale Abrechnung machen unsere
-					Prozesse effizienter und zuverlässiger.“
+					Prozesse effizienter und zuverlässiger."
 				</h5>
-				<p className="text-center text-lg text-dark_text">
+				<p className="text-center text-lg max-small:text-base text-dark_text">
 					<b>Fabian Höhne</b>, Vitolus
 				</p>
 				<Image
@@ -111,15 +111,15 @@ export default function FunktionenPage() {
 			</div>
 
 			<div className="px-20 space-y-2.5 max-large:px-16 max-medium:px-10 max-small:px-5 my-16 max-small:my-8">
-				<h5 className="max-w-3xl mx-auto text-center text-dark_text text-[50px] leading-[60px] max-medium:text-[30px] max-medium:leading-9">
+				<h5 className="max-w-3xl mx-auto text-center text-dark_text text-[50px] leading-[60px] max-medium:text-2xl max-small:text-xl max-medium:leading-7">
 					Alle Verbräuche einer Wohnung als Übersicht
 				</h5>
-				<p className="text-center mx-auto max-w-xl text-lg text-dark_text">
+				<p className="text-center mx-auto max-w-xl text-lg max-small:text-sm text-dark_text">
 					Etablierte Branchengrößen vertrauen den Systemen von Heidi und setzten
 					damit auf Innovation des 21. Jahrhunderts
 				</p>
 				<Link
-					className="flex items-center justify-center w-fit !mb-12 mx-auto px-10 py-5 duration-300 hover:opacity-80 rounded-halfbase bg-green text-dark_text text-lg"
+					className="flex items-center justify-center w-fit !mb-12 mx-auto px-10 py-5 duration-300 hover:opacity-80 rounded-halfbase bg-green text-dark_text text-lg max-small:text-base"
 					href={ROUTE_FRAGEBOGEN}
 				>
 					Zugang sichern

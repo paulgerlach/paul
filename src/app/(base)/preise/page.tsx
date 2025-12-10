@@ -32,12 +32,12 @@ export default function PreisePage() {
 					src={vitolos}
 					alt="vitolos"
 				/>
-				<h5 className="max-w-6xl mx-auto text-center text-dark_text text-[30px] max-small:text-xl">
-					"Dank Heidi erfüllen wir alle gesetzlichen Vorgaben zur
-					Verbrauchserfassung und sparen gleichzeitig wertvolle Zeit. Die
-					automatische Datenerfassung und digitale Abrechnung machen unsere
-					Prozesse effizienter und zuverlässiger."
-				</h5>
+			<h5 className="max-w-6xl mx-auto text-center text-dark_text text-[30px] max-small:text-xl">
+				&ldquo;Dank Heidi erfüllen wir alle gesetzlichen Vorgaben zur
+				Verbrauchserfassung und sparen gleichzeitig wertvolle Zeit. Die
+				automatische Datenerfassung und digitale Abrechnung machen unsere
+				Prozesse effizienter und zuverlässiger.&rdquo;
+			</h5>
 				<p className="text-center text-lg max-small:text-base text-dark_text">
 					<b>Fabian Höhne</b> Vitolus
 				</p>

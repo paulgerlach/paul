@@ -157,121 +157,121 @@ export default function Home() {
           Jetzt Vorteile sichern
         </h2>
         <div className="grid mb-32 hero-1 grid-cols-4 gap-20 max-large:gap-8 items-stretch max-medium:grid-cols-2 max-medium:gap-16 justify-center max-small:grid-cols-1 max-small:gap-14">
-          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={weight}
-                  alt="weight"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
+          <div className="flex gap-2.5 max-medium:flex-col max-medium:items-center">
+            <span className="circleIcon inline-block shrink-0 size-[50px] max-small:!size-9 mt-0.5">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={weight}
+                alt="weight"
+              />
+            </span>
+            <div className="space-y-3">
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center min-h-[52px] max-medium:min-h-0">
                 EU-Vorschriften einhalten
               </p>
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
+                Mit unseren fernablesbaren Zählern erfüllen Sie alle gesetzlichen
+                Vorgaben und profitieren gleichzeitig von höherer Effizienz und
+                Transparenz. Modernste Energiemanagement- Technologie sorgt für
+                eine zukunftssichere Lösung.
+              </p>
+              <a
+                href="/datenschutzhinweise"
+                className="hidden max-medium:block text-link underline text-sm leading-4"
+              >
+                mehr erfahren
+              </a>
             </div>
-            <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
-              Mit unseren fernablesbaren Zählern erfüllen Sie alle gesetzlichen
-              Vorgaben und profitieren gleichzeitig von höherer Effizienz und
-              Transparenz. Modernste Energiemanagement- Technologie sorgt für
-              eine zukunftssichere Lösung.
-            </p>
-            <a
-              href="/datenschutzhinweise"
-              className="hidden max-medium:block text-link underline text-sm leading-4"
-            >
-              mehr erfahren
-            </a>
           </div>
-          <div className="max-medium:flex space-y-4 max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={clock}
-                  alt="clock"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
+          <div className="flex gap-2.5 max-medium:flex-col max-medium:items-center">
+            <span className="circleIcon inline-block shrink-0 size-[50px] max-small:!size-9 mt-0.5">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={clock}
+                alt="clock"
+              />
+            </span>
+            <div className="space-y-3">
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center min-h-[52px] max-medium:min-h-0">
                 Zeit- und Kostenersparnis
               </p>
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
+                Reduzieren Sie manuelle Aufwände und sparen Sie wertvolle Zeit.
+                Unsere automatisierten Prozesse übernehmen die Verbrauchserfassung
+                effizient und zuverlässig.
+              </p>
+              <a
+                href="#"
+                className="border hidden max-medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80"
+              >
+                Kosteneinsparung berechnen
+              </a>
             </div>
-            <p className="text-[15px] max-small:text-sm max-large:!mt-7 max-medium:!mt-0 leading-[18px] text-dark_text max-medium:text-center">
-              Reduzieren Sie manuelle Aufwände und sparen Sie wertvolle Zeit.
-              Unsere automatisierten Prozesse übernehmen die Verbrauchserfassung
-              effizient und zuverlässig.
-            </p>
-            <a
-              href="#"
-              className="border hidden max-medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80"
-            >
-              Kosteneinsparung berechnen
-            </a>
           </div>
-          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={instruments}
-                  alt="instruments"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
+          <div className="flex gap-2.5 max-medium:flex-col max-medium:items-center">
+            <span className="circleIcon inline-block shrink-0 size-[50px] max-small:!size-9 mt-0.5">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={instruments}
+                alt="instruments"
+              />
+            </span>
+            <div className="space-y-3">
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center min-h-[52px] max-medium:min-h-0">
                 Kostenfreie Installation
               </p>
-            </div>
-            <p className="text-[15px] max-small:text-sm max-large:!mt-7 max-medium:!mt-0 leading-[18px] text-dark_text max-medium:text-center">
-              Steigen Sie ohne Mehrkosten auf unsere innovative Technologie um.
-              Die Umrüstung erfolgt für Sie völlig kostenlos und ohne Aufwand.
-            </p>
-            <Link
-              href="/fragebogen"
-              className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
-            >
-              Jetzt installieren lassen
-            </Link>
-          </div>
-          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={doc}
-                  alt="doc"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
-                Betriebskostenabrechnung <br className="hidden max-small:inline" />erstellen
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
+                Steigen Sie ohne Mehrkosten auf unsere innovative Technologie um.
+                Die Umrüstung erfolgt für Sie völlig kostenlos und ohne Aufwand.
               </p>
+              <Link
+                href="/fragebogen"
+                className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
+              >
+                Jetzt installieren lassen
+              </Link>
             </div>
-            <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
-              Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
-              automatisch und bereiten sie für eine präzise und effiziente
-              Nebenkostenabrechnung auf.
-            </p>
-            <a
-              href="/datenschutzhinweise"
-              className="hidden max-medium:block text-link underline text-sm leading-4"
-            >
-              mehr erfahren
-            </a>
+          </div>
+          <div className="flex gap-2.5 max-medium:flex-col max-medium:items-center">
+            <span className="circleIcon inline-block shrink-0 size-[50px] max-small:!size-9 mt-0.5">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={doc}
+                alt="doc"
+              />
+            </span>
+            <div className="space-y-3">
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center min-h-[52px] max-medium:min-h-0">
+                Betriebskostenabrechnung erstellen
+              </p>
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
+                Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
+                automatisch und bereiten sie für eine präzise und effiziente
+                Nebenkostenabrechnung auf.
+              </p>
+              <a
+                href="/datenschutzhinweise"
+                className="hidden max-medium:block text-link underline text-sm leading-4"
+              >
+                mehr erfahren
+              </a>
+            </div>
           </div>
         </div>
         <div className="hero-2 max-medium:px-4">

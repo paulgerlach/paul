@@ -21,6 +21,13 @@ export default function AdminUsersDropdownContent({
       user.last_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Sort alphabetically by first name, then last name
+  const sortedUsers = filteredUsers?.sort((a, b) => {
+    const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+    const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
   return (
     <div className="w-full min-w-[250px] bg-white rounded-base shadow-lg border border-gray-200 px-2.5 py-4 space-y-3 max-medium:max-h-[50vh] max-medium:overflow-hidden max-medium:flex max-medium:flex-col">
       <input
@@ -31,10 +38,10 @@ export default function AdminUsersDropdownContent({
         type="text"
       />
       <div className="space-y-2 px-2 max-medium:overflow-y-auto max-medium:flex-1">
-        {filteredUsers?.length === 0 ? (
+        {sortedUsers?.length === 0 ? (
           <div className="text-sm text-gray-500 py-2">Keine Ergebnisse gefunden</div>
         ) : (
-          filteredUsers?.map((user) => (
+          sortedUsers?.map((user) => (
             <AdminUsersDropdownContentItem key={user.id} item={user} onSelect={onSelect} />
           ))
         )}

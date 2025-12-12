@@ -2,7 +2,7 @@ import animation2 from "@/animations/Animation_2.json";
 import HeroTicker from "../Basic/Ticker/HeroTicker";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";
-import { counter, google, handyman, star } from "@/static/icons";
+import { counter, googlesvg, handyman, star } from "@/static/icons";
 import Link from "next/link";
 import { ROUTE_BLOG, ROUTE_FRAGEBOGEN } from "@/routes/routes";
 
@@ -20,11 +20,11 @@ export default function HomeHero() {
         <div className="flex items-center justify-center mx-auto w-fit border border-white/20 rounded-[40px] py-2.5 px-4 max-small:py-2 max-small:px-3 gap-3 max-small:gap-2 mb-10 max-small:mb-6">
           <span className="flex items-center justify-start gap-2 max-small:gap-1">
             <Image
-              width={60}
-              height={20}
-              sizes="(max-width: 480px) 30px, 60px"
-              className="max-small:w-[30px] h-auto"
-              src={google}
+              width={28}
+              height={28}
+              sizes="(max-width: 480px) 20px, 28px"
+              className="size-7 max-small:size-5 object-contain"
+              src={googlesvg}
               alt="google"
             />
             <Image

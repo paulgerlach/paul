@@ -16,17 +16,19 @@ export default async function ObjektDetailsPage({
   const objekts = await getObjektsByUserID(user_id);
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-[calc(100dvh-53px)] max-medium:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Objekte"
         link={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}`}
         title={`Wohneinheiten`}
       />
-      <ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
-        <AdminHeatObjekteItemDocAccordion objekts={objekts} />
+      <ContentWrapper className="space-y-4 max-medium:space-y-3 grid grid-rows-[1fr_auto] overflow-hidden">
+        <div className="overflow-y-auto">
+          <AdminHeatObjekteItemDocAccordion objekts={objekts} />
+        </div>
         <Link
           href={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`}
-          className="border-dashed w-full max-xl:text-base flex p-5 items-center justify-center text-xl gap-8 text-dark_green/50 border border-dark_green rounded-2xl"
+          className="border-dashed w-full max-xl:text-base max-medium:text-sm flex p-5 max-medium:p-3 items-center justify-center text-xl gap-8 max-medium:gap-2 text-dark_green/50 border border-dark_green rounded-2xl max-medium:rounded-xl flex-shrink-0"
         >
           <Image
             width={0}

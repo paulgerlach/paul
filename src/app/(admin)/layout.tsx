@@ -3,9 +3,11 @@ import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import AdminHeader from "@/components/Header/AdminHeader/AdminHeader";
 import Sidebar from "@/components/Admin/Sidebar/Sidebar";
+import MobileSidebar from "@/components/Admin/Sidebar/MobileSidebar";
 import ObjekteDeleteDialog from "@/components/Basic/Dialog/ObjekteDeleteDialog";
 import LocalDeleteDialog from "@/components/Basic/Dialog/LocalDeleteDialog";
 import ContractDeleteDialog from "@/components/Basic/Dialog/ContractDeleteDialog";
+import DocumentDeleteDialog from "@/components/Basic/Dialog/DocumentDeleteDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
 import HeatingBillCreateDialog from "@/components/Basic/Dialog/HeatingBillCreateDialog";
 import AddDocHeizkostenabrechnungDialog from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
@@ -42,10 +44,11 @@ export default function AdminLayout({
 }>) {
   return (
     <QueryProvider>
-      <div className="h-screen grid grid-rows-[auto_1fr] bg-base-bg">
+      <div className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
         <AdminHeader />
-        <div className="grid grid-cols-[auto_1fr] gap-0 h-[calc(100dvh-61px)] overflow-hidden w-full bg-base-bg">
+        <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
           <Sidebar />
+          <MobileSidebar />
           {children}
         </div>
       </div>
@@ -71,6 +74,7 @@ export default function AdminLayout({
       <CostTypeBetriebskostenabrechnungDeleteDialog />
       <OperatingCostDocumentDeleteDialog />
       <AdminOperatingCostDocumentDeleteDialog />
+      <DocumentDeleteDialog />
       <AdminAddDocBetriebskostenabrechnungDialog />
       <ShareDashboardDialog />
       <Toaster />

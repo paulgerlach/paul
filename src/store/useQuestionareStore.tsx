@@ -30,7 +30,7 @@ export const useQuestionareStore = create<QuestionareStoreType>((set, get) => ({
 		email: "",
 		first_name: "",
 		last_name: "",
-		energy_sources: "",
+		energy_sources: "Fernwärme",
 		heating_costs: null,
 		central_water_supply: null,
 		heating_available: null,

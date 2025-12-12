@@ -36,12 +36,16 @@ export default function AdminDatetimeDropdown({
       const initialFrom = date?.from ?? startOfYear(new Date());
       const initialTo = date?.to ?? endOfMonth(new Date());
       setDates(initialFrom, initialTo);
-    } else {
-      // Sync local state with store
-      setDate({ from: startDate, to: endDate });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
+
+  // Sync local display state with store when store dates change
+  useEffect(() => {
+    if (startDate && endDate) {
+      setDate({ from: startDate, to: endDate });
+    }
+  }, [startDate, endDate]); // Re-sync whenever store dates change
 
   const getDefaultPreset = () => {
     const today = new Date();
@@ -145,8 +149,9 @@ export default function AdminDatetimeDropdown({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 border-none shadow-none"
+          className="w-auto p-0 border-none shadow-none max-medium:w-[calc(100vw-32px)] max-medium:max-h-[60vh] max-medium:overflow-auto"
           align="start"
+          sideOffset={8}
         >
           <TimeFilterPresets
             date={date}
@@ -155,6 +160,7 @@ export default function AdminDatetimeDropdown({
             endDate={endDate}
             onCommitRange={(from, to) => setDates(from, to)}
             defaultPreset={getDefaultPreset()}
+            onClose={() => setOpen(false)}
           />
         </PopoverContent>
       </Popover>

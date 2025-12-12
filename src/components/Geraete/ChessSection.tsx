@@ -1,7 +1,7 @@
 import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_FRAGEBOGEN } from "@/routes/routes";
 import Link from "next/link";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import { animation1 } from "@/static/lottieAnimations";
+import animation1 from "@/animations/Animation_1.json";
 import Image from "next/image";
 import { box_brands, daten, payment, right_arrow } from "@/static/icons";
 

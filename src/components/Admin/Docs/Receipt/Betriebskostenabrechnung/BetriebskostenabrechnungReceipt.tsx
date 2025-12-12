@@ -40,48 +40,48 @@ export default function BetriebskostenabrechnungReceipt({
   });
 
   return (
-    <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs w-fit rounded-2xl px-4 py-5 flex items-start justify-center">
-      <div className="bg-white py-4 px-[18px] rounded w-full shadow-sm space-y-8 max-xl:space-y-4">
-        <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text max-xl:text-sm">
+    <div className="bg-[#EFEEEC] h-fit min-w-sm max-xl:min-w-xs max-medium:min-w-0 max-medium:w-full w-fit rounded-2xl max-medium:rounded-xl px-4 max-medium:px-3 py-5 max-medium:py-3 flex items-start justify-center">
+      <div className="bg-white py-4 max-medium:py-3 px-[18px] max-medium:px-3 rounded w-full shadow-sm space-y-8 max-xl:space-y-4 max-medium:space-y-3">
+        <p className="flex items-center justify-start gap-2 font-medium text-admin_dark_text max-xl:text-sm max-medium:text-xs">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4"
+            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
             src={receipt_building}
             alt="receipt_building"
           />
           {title}
         </p>
-        <p className="flex items-centerjustify-start gap-2 text-admin_dark_text max-xl:text-sm">
+        <p className="flex items-center justify-start gap-2 text-admin_dark_text max-xl:text-sm max-medium:text-xs">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4"
+            className="max-w-7 max-h-7 max-xl:max-w-4 max-xl:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
             src={receipt_calendar}
             alt="receipt_calendar"
           />
           {start_date} - {end_date}
         </p>
         <div className="flex flex-col items-center justify-center">
-          <p className="text-admin_dark_text">Differenzbetrag</p>
+          <p className="text-admin_dark_text max-medium:text-sm">Differenzbetrag</p>
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-[260px] max-h-3"
+            className="max-w-[260px] max-medium:max-w-[200px] max-h-3"
             src={receipt_line}
             alt="receipt_line"
           />
-          <span className="text-3xl text-admin_dark_text">
+          <span className="text-3xl max-medium:text-2xl text-admin_dark_text">
             {formatEuro(totalDiff)}
           </span>
         </div>
-        <div className="max-xl:text-sm">
+        <div className="max-xl:text-sm max-medium:text-xs">
           <div className="pb-4 border-b border-[#e0e0e0] space-y-4">
             <div className="flex items-center justify-between text-admin_dark_text">
               Kosten für das gesamte Gebäude

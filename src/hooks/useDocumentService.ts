@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { DocumentService, DocumentMetadata } from "@/services/documentService";
-import { getDocumentDownloadUrl } from "@/apiClient";
+import { getDocumentDownloadUrl, getDocumentViewUrl } from "@/apiClient";
 import { toast } from "sonner";
 
 export type { DocumentMetadata } from "@/services/documentService";
@@ -59,6 +59,15 @@ export const useDocumentService = () => {
     }
   }, []);
 
+  const getViewUrl = useCallback(async (documentPath: string): Promise<string | null> => {
+    try {
+      return await getDocumentViewUrl(documentPath);
+    } catch (error) {
+      console.error("Error getting view URL:", error);
+      return null;
+    }
+  }, []);
+
   const getDocumentFileSize = useCallback(async (documentPath: string): Promise<string> => {
     try {
       return await DocumentService.getDocumentFileSize(documentPath);
@@ -75,6 +84,7 @@ export const useDocumentService = () => {
     fetchDocumentsByType,
     refreshDocuments,
     getDownloadUrl,
+    getViewUrl,
     getDocumentFileSize,
   };
 };

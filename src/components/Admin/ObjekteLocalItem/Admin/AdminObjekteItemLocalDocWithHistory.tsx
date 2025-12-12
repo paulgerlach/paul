@@ -88,12 +88,12 @@ export default function AdminObjekteItemLocalDocWithHistory({
       />
       <div
         ref={contentRef}
-        className="[.active_&]:pt-6 [.active_&]:pb-2 space-y-6 px-24 [.active_&]:h-auto h-0"
+        className="[.active_&]:pt-6 [.active_&]:pb-2 max-medium:[.active_&]:pt-4 space-y-6 max-medium:space-y-3 px-24 max-medium:px-4 [.active_&]:h-auto h-0"
       >
         {relatedOpenedDocuments?.map((doc) => (
-          <div className="flex items-center justify-between" key={doc.id}>
+          <div className="flex items-center justify-between max-medium:gap-2" key={doc.id}>
             <Link
-              className="flex items-center justify-start gap-8"
+              className="flex items-center justify-start gap-8 max-medium:gap-3 max-medium:text-sm"
               href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
             >
               <Image
@@ -101,7 +101,7 @@ export default function AdminObjekteItemLocalDocWithHistory({
                 height={0}
                 sizes="100vw"
                 loading="lazy"
-                className="max-w-6 max-h-6 max-xl:max-w-4 max-xl:max-h-4"
+                className="max-w-6 max-h-6 max-xl:max-w-4 max-xl:max-h-4 max-medium:max-w-4 max-medium:max-h-4"
                 src={operating_cost_documents_pending}
                 alt="operating_cost_documents_pending"
               />

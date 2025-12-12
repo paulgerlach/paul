@@ -59,10 +59,10 @@ export default function CostTypeBuildingItem({
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>
       <div
-        className={`bg-white py-3 px-6 flex items-center justify-between border border-[#E7E9ED] rounded-md`}
+        className={`bg-white py-3 max-medium:py-2 px-6 max-medium:px-3 flex items-center justify-between border border-[#E7E9ED] rounded-md`}
       >
         <div
-          className="flex cursor-pointer items-center justify-start gap-5 w-full"
+          className="flex cursor-pointer items-center justify-start gap-5 max-medium:gap-3 flex-1 min-w-0"
           onClick={() => onClick(index)}
         >
           <Image
@@ -70,25 +70,25 @@ export default function CostTypeBuildingItem({
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="max-w-5 max-h-4 max-xl:max-w-3 max-xl:max-h-3 [.active_&]:-rotate-90 transition-all duration-300"
+            className="max-w-5 max-h-4 max-xl:max-w-3 max-xl:max-h-3 max-medium:max-w-2.5 max-medium:max-h-2.5 [.active_&]:-rotate-90 transition-all duration-300 flex-shrink-0"
             src={chevron_admin}
             alt="chevron"
           />
-          <div className="size-14 max-w-14 max-h-14 min-w-14 min-h-14 max-xl:size-10 max-xl:max-w-10 max-xl:max-h-10 max-xl:min-h-10 max-xl:min-w-10 flex items-center justify-center bg-[#E7F2E8] rounded-full">
+          <div className="size-14 max-w-14 max-h-14 min-w-14 min-h-14 max-xl:size-10 max-xl:max-w-10 max-xl:max-h-10 max-xl:min-h-10 max-xl:min-w-10 max-medium:size-9 max-medium:max-w-9 max-medium:max-h-9 max-medium:min-h-9 max-medium:min-w-9 flex items-center justify-center bg-[#E7F2E8] rounded-full flex-shrink-0">
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5"
+              className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5 max-medium:max-w-4 max-medium:max-h-4"
               src={getCostTypeIconByKey(type.type || "")}
               alt="chevron"
             />
           </div>
-          <p className="font-semibold text-dark_green">{type.name}</p>
+          <p className="font-semibold max-medium:text-xs text-dark_green truncate">{type.name}</p>
         </div>
-        <div className="flex items-center whitespace-nowrap justify-end gap-7">
-          <span>{totalAmount} €</span>
+        <div className="flex items-center whitespace-nowrap justify-end gap-7 max-medium:gap-2 flex-shrink-0 ml-2">
+          <span className="font-medium text-dark_green max-medium:text-sm bg-gray-100 px-2 py-1 rounded">{totalAmount} €</span>
           <TheeDotsCostTypeButton
             editDialogAction="cost_type_betriebskostenabrechnung_edit"
             itemID={type.id ?? ""}

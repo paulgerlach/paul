@@ -1,30 +1,22 @@
 import { NextResponse } from "next/server";
+import { sendWebhookEvent } from "@/utils/webhooks";
 
 export async function POST(req: Request) {
     try {
         const { name, email, message } = await req.json();
 
-        const url = process.env.MAKE_CONTACT_URL as string;
-
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                full_name: name,
-                email,
-                message,
-            }),
+        // ✅ NEW: Use unified webhook with event_type 'contactform'
+        // Send contact form data to Denis's Make.com workflow
+        await sendWebhookEvent('contactform' as any, email, {
+            first_name: name,
+            message: message,
         });
 
-        if (!response.ok) {
-            return NextResponse.json(
-                { error: "Fehler beim Senden der Nachricht." },
-                { status: 500 }
-            );
-        }
+        console.log(`[CONTACT] Sent contact form event for ${email}`);
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error('[CONTACT] Error sending webhook:', error);
         return NextResponse.json(
             { error: "Serverfehler. Bitte erneut versuchen." },
             { status: 500 }

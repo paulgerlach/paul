@@ -359,8 +359,11 @@ export default function WaterChart({
 
       const parsedDate = parseTimestamp(dateTimeString);
 
-      // Apply date range filter
-      if (!isWithinDateRange(parsedDate, startDate, endDate)) return;
+      // Don't filter by date range here - we need extra days for consumption calculation
+      // The filtering will happen after aggregation in generateZeroPaddedData()
+
+      // Support both old "ID" field and new "Number Meter" field
+      const deviceId = device.ID || device["Number Meter"] || "";
 
       // Support both old "ID" field and new "Number Meter" field
       const deviceId = device.ID || device["Number Meter"] || "";
@@ -376,7 +379,16 @@ export default function WaterChart({
     const dataInRange = processedData.length > 0;
     setHasDataInRange(dataInRange);
 
+    // 🔍 DEBUG: Log date range filtering
+    console.log(`[WaterChart ${chartType}] Date Range:`, {
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+      processedDataCount: processedData.length,
+      sampleDates: processedData.slice(0, 3).map(d => d.date.toISOString())
+    });
+
     if (!dataInRange) {
+      console.warn(`[WaterChart ${chartType}] No data in range!`);
       setChartData([]);
       return;
     }

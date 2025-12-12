@@ -19,6 +19,17 @@ const fetchChartData = async (
     return [];
   }
 
+  // For consumption calculations (electricity, water, heat), we need the previous reading before startDate
+  // Fetch extra data to ensure we have baseline readings for consumption calculation
+  // This is crucial because consumption = current reading - previous reading
+  let adjustedStartDate = startDate;
+  if (startDate) {
+    // Subtract 7 days to ensure we have previous readings available
+    // This extra data is filtered out after consumption is calculated
+    adjustedStartDate = new Date(startDate);
+    adjustedStartDate.setDate(adjustedStartDate.getDate() - 7);
+  }
+
   const response = await fetch('/api/dashboard-data', {
     method: 'POST',
     headers: {
@@ -27,7 +38,7 @@ const fetchChartData = async (
     body: JSON.stringify({
       meterIds,
       deviceTypes,
-      startDate: startDate?.toISOString() || null,
+      startDate: adjustedStartDate?.toISOString() || null,
       endDate: endDate?.toISOString() || null,
     }),
   });

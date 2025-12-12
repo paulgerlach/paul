@@ -1,59 +1,63 @@
 import { MeterReadingType } from "@/api";
 
 const ERROR_FLAG_MAPPINGS: Record<string, Record<number, string>> = {
+  // Generic Water meter fallback
   standard: {
-    0: "Battery low",
-    1: "Communication error",
-    2: "Flow sensor error", 
-    3: "Temperature sensor error",
-    4: "Memory error",
-    5: "Calibration error",
-    6: "Clock error",
-    7: "General device error"
+    0: "Sensorfehler",
+    1: "Gerät Reset",
+    2: "Software-Fehler", 
+    3: "Manipulationserkennung",
+    4: "Batteriefehler",
+    5: "Rückfluss/Blockade",
+    6: "Leckage erkannt",
+    7: "Überlasthinweis"
   },
+  // Generic Heat meter fallback
   heat: {
-    0: "Battery low",
-    1: "Communication error", 
-    2: "Temperature sensor error",
-    3: "Flow sensor error",
-    4: "Memory error",
-    5: "Calibration error",
-    6: "Clock error",
-    7: "General device error"
+    0: "Temperatursensor Fehler",
+    1: "Temperatursensor Kurzschluss", 
+    2: "Temperatursensor 2 Fehler",
+    3: "Temperatursensor 2 Kurzschluss",
+    4: "Durchflussmessung Fehler",
+    5: "Elektronik defekt",
+    6: "Gerät Reset",
+    7: "Schwache Batterie"
   },
   default: {
-    0: "Device error bit 0",
-    1: "Device error bit 1", 
-    2: "Device error bit 2",
-    3: "Device error bit 3",
-    4: "Device error bit 4",
-    5: "Device error bit 5",
-    6: "Device error bit 6",
-    7: "Device error bit 7"
+    0: "Gerätefehler Bit 0",
+    1: "Gerätefehler Bit 1", 
+    2: "Gerätefehler Bit 2",
+    3: "Gerätefehler Bit 3",
+    4: "Gerätefehler Bit 4",
+    5: "Gerätefehler Bit 5",
+    6: "Gerätefehler Bit 6",
+    7: "Gerätefehler Bit 7"
   }
 };
 
 const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
+  // Engelmann SensoStar S3/S3C Heat Meters (EFE)
   EFE: {
-    0: "Battery low",
-    1: "Communication failure",
-    2: "Temperature sensor fault",
-    3: "Flow sensor fault", 
-    4: "Memory corruption",
-    5: "Calibration drift",
-    6: "Real-time clock error",
-    7: "Hardware malfunction"
+    0: "Temperatursensor Kabelbruch",           // Temperature sensor cable break
+    1: "Temperatursensor Kurzschluss",          // Temperature sensor short circuit
+    2: "Temperatursensor 2 Kabelbruch",         // Temperature sensor 2 cable break
+    3: "Temperatursensor 2 Kurzschluss",        // Temperature sensor 2 short circuit
+    4: "Durchflussmesssystem Fehler",           // Flow measurement system error
+    5: "Elektronik defekt",                     // Electronics defect
+    6: "Gerät Reset",                           // Device reset
+    7: "Schwache Batterie"                      // Weak battery
   },
   
+  // Engelmann WaterStar M Water Meters (DWZ)
   DWZ: {
-    0: "Battery low",
-    1: "Communication failure", 
-    2: "Flow sensor fault",
-    3: "Temperature sensor fault",
-    4: "Memory corruption",
-    5: "Calibration drift",
-    6: "Real-time clock error", 
-    7: "Hardware malfunction"
+    0: "Sensorfehler",                          // Sensor error
+    1: "Gerät Reset",                           // Device reset
+    2: "Software-Fehler",                       // Software error
+    3: "Manipulationserkennung",                // Manipulation/tampering detected
+    4: "Batteriespannungsfehler",               // Battery voltage error
+    5: "Rückfluss oder Blockade",               // Backflow or blockage
+    6: "Leckage erkannt",                       // Leakage detected
+    7: "Überlasthinweis"                        // Overload warning
   }
 };
 

@@ -222,13 +222,33 @@ export default function ElectricityChart({
       };
     }
 
-    // Get current actual readings only
+    // Get current actual readings (this calculates consumption from consecutive readings)
+    // IMPORTANT: Pass ALL readings to getCurrentEnergyReadings first, 
+    // then filter AFTER consumption is calculated
+    // Otherwise we lose the "previous reading" needed for consumption calculation
     const currentReadings = getCurrentEnergyReadings(readings);
 
-    // Filter by date range if specified
+    // 🔍 DEBUG: Log before filtering
+    console.log('[ElectricityChart] Before filtering:', {
+      totalConsumptionPoints: currentReadings.length,
+      dateRange: currentReadings.length > 0 ? {
+        first: currentReadings[0].date.toISOString(),
+        last: currentReadings[currentReadings.length - 1].date.toISOString()
+      } : null
+    });
+
+    // Filter by date range AFTER calculating consumption
     const filteredByDate = currentReadings.filter(({ date }) => {
       if (!startDate || !endDate) return true;
       return date >= startDate && date <= endDate;
+    });
+
+    // 🔍 DEBUG: Log after filtering
+    console.log('[ElectricityChart] After filtering:', {
+      startDate: startDate?.toISOString(),
+      endDate: endDate?.toISOString(),
+      filteredCount: filteredByDate.length,
+      sampleDates: filteredByDate.slice(0, 3).map(d => d.date.toISOString())
     });
 
     // Generate labels for the selected time range

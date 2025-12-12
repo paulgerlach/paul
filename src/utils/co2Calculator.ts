@@ -109,6 +109,24 @@ export function calculateCO2Savings(
   const safeTotalCO2Saved = isNaN(totalCO2Saved) ? 0 : totalCO2Saved
   const safeTotalCO2SavedTons = isNaN(totalCO2SavedTons) ? 0 : totalCO2SavedTons
 
+  // Count UNIQUE devices by device ID (not total data rows)
+  // selectedData may contain multiple readings per device (one per date)
+  const uniqueHeatIds = new Set(
+    heatDevices
+      .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+      .filter(Boolean)
+  )
+  const uniqueHotWaterIds = new Set(
+    hotWaterDevices
+      .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+      .filter(Boolean)
+  )
+  const uniqueColdWaterIds = new Set(
+    coldWaterDevices
+      .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+      .filter(Boolean)
+  )
+
   return {
     totalCO2Saved: safeTotalCO2Saved,
     totalCO2SavedTons: safeTotalCO2SavedTons,
@@ -129,14 +147,14 @@ export function calculateCO2Savings(
     },
     details: {
       deviceCount: {
-        heating: heatDevices.length,
-        hotWater: hotWaterDevices.length,
-        coldWater: coldWaterDevices.length,
+        heating: uniqueHeatIds.size,
+        hotWater: uniqueHotWaterIds.size,
+        coldWater: uniqueColdWaterIds.size,
       },
       averageSavings: {
-        heatingPerDevice: heatDevices.length > 0 && !isNaN(heatingEnergySaved) ? heatingEnergySaved / heatDevices.length : 0,
-        hotWaterPerDevice: hotWaterDevices.length > 0 && !isNaN(hotWaterVolumeSaved) ? hotWaterVolumeSaved / hotWaterDevices.length : 0,
-        coldWaterPerDevice: coldWaterDevices.length > 0 && !isNaN(coldWaterVolumeSaved) ? coldWaterVolumeSaved / coldWaterDevices.length : 0,
+        heatingPerDevice: uniqueHeatIds.size > 0 && !isNaN(heatingEnergySaved) ? heatingEnergySaved / uniqueHeatIds.size : 0,
+        hotWaterPerDevice: uniqueHotWaterIds.size > 0 && !isNaN(hotWaterVolumeSaved) ? hotWaterVolumeSaved / uniqueHotWaterIds.size : 0,
+        coldWaterPerDevice: uniqueColdWaterIds.size > 0 && !isNaN(coldWaterVolumeSaved) ? coldWaterVolumeSaved / uniqueColdWaterIds.size : 0,
       },
     },
   }

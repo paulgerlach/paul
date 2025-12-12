@@ -56,7 +56,7 @@ interface DatabaseRecord {
  */
 function extractDateFromFilename(fileName: string): string | null {
     if (!fileName) return null;
-    
+
     // Match pattern: anything_YYYYMMDD_YYYYMMDD.csv or anything_YYYYMMDD.csv
     const filenameMatch = fileName.match(/_(\d{8})(?:_\d{8})?\.csv$/i);
     if (filenameMatch) {
@@ -68,7 +68,7 @@ function extractDateFromFilename(fileName: string): string | null {
         console.log(`[FILENAME DATE] Extracted date from filename "${fileName}": ${parsedDate}`);
         return parsedDate;
     }
-    
+
     return null;
 }
 
@@ -80,17 +80,34 @@ function extractDateFromFilename(fileName: string): string | null {
 function extractDateOnly(record: any, fileName?: string): string | null {
     const deviceId = record['ID'] || record['Number Meter'] || 'unknown';
     const deviceType = record['Device Type'] || 'unknown';
-    
+
     // 🔍 DEBUG: Log what we're working with
     console.log(`[DATE EXTRACT START] Device: ${deviceId}, Type: ${deviceType}, Filename: "${fileName}"`);
-    
+
+    // 🔥 NEW: For Electricity, ALWAYS use filename (CSV has no date field)
+    if (deviceType === 'Elec' || deviceType === 'Stromzähler') {
+        console.log(`[ELECTRICITY PRIORITY] Using filename for Electricity device`);
+        if (fileName) {
+            const filenameDate = extractDateFromFilename(fileName);
+            if (filenameDate) {
+                console.log(`[DATE SUCCESS FILENAME] Electricity using filename date: ${filenameDate}`);
+                return filenameDate;
+            } else {
+                console.error(`[DATE FAIL FILENAME] Filename doesn't match pattern: "${fileName}"`);
+            }
+        } else {
+            console.error(`[DATE FAIL] No filename provided for Electricity!`);
+        }
+        // If filename fails, fall through to try CSV dates (unlikely to exist but worth trying)
+    }
+
     // Try different date field names from CSV content
     const dateFields = [
         record['Actual Date'],
         record['IV,0,0,0,,Date/Time'],
         record['Raw Date']
     ];
-    
+
     // 🔍 DEBUG: Log what fields exist
     console.log(`[DATE FIELDS] Actual Date: "${record['Actual Date']}", DateTime: "${record['IV,0,0,0,,Date/Time']}", Raw Date: "${record['Raw Date']}"`);
 
@@ -99,7 +116,7 @@ function extractDateOnly(record: any, fileName?: string): string | null {
 
         // Extract first 10 characters and trim
         const normalized = dateStr.substring(0, 10).trim();
-        
+
         console.log(`[DATE TRY CSV] Attempting to parse: "${normalized}"`);
 
         // Match DD.MM.YYYY format
@@ -225,7 +242,7 @@ class Utils {
         for (let i = 0; i < lines.length - 1; i += 2) {
             const headerLine = lines[i];
             const dataLine = lines[i + 1];
-            
+
             if (headerLine && dataLine) {
                 const record = this.parseRecord(headerLine, dataLine);
                 records.push(record);
@@ -246,7 +263,7 @@ class DatabaseHelper {
     constructor() {
         // Get auth token from request or use service role key for local testing
         const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-        
+
         this.supabase = createClient(
             Deno.env.get('SUPABASE_URL') ?? '',
             serviceRoleKey,
@@ -271,13 +288,13 @@ class DatabaseHelper {
     async batchLookupMeterIds(deviceIds: string[]): Promise<{ meterIdMap: Map<string, string>; prefixedMatches: Set<string> }> {
         const meterIdMap = new Map<string, string>();
         const prefixedMatches = new Set<string>();
-        
+
         if (deviceIds.length === 0) return { meterIdMap, prefixedMatches };
 
         try {
             // Get all unique device IDs
             const uniqueDeviceIds = [...new Set(deviceIds)];
-            
+
             // Create potential Elec device IDs with 1EMH00 prefix
             const elecDeviceIds = uniqueDeviceIds.map(id => `1EMH00${id}`);
             const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
@@ -329,7 +346,7 @@ class DatabaseHelper {
             const deviceIds = records
                 .map(record => (record['ID'] || record['Number Meter'])?.toString())
                 .filter(id => id) as string[];
-            
+
             const uniqueDeviceIds = [...new Set(deviceIds)];
             console.log(`[DEDUP] Checking ${uniqueDeviceIds.length} unique device IDs:`, uniqueDeviceIds.slice(0, 5));
 
@@ -362,15 +379,15 @@ class DatabaseHelper {
             // Create a Set of existing record signatures
             // Signature format: device_id|device_type|dateYYYY-MM-DD
             const existingSignatures = new Set<string>();
-            
+
             for (const existing of existingRecords || []) {
                 // Use existing date_only or filename date as fallback
                 const dateStr = existing.date_only?.toString() || filenameDate;
-                
+
                 if (dateStr) {
                     const signature = `${existing.device_id}|${existing.device_type}|${dateStr}`;
                     existingSignatures.add(signature);
-                    
+
                     // ALSO add signature without prefix (if it has prefix)
                     // So "1EMH0050893199" also creates signature for "50893199"
                     if (existing.device_id.startsWith('1EMH00')) {
@@ -397,9 +414,9 @@ class DatabaseHelper {
     /**
      * Insert parsed records into the database with optimized batch operations and deduplication
      */
-    async insertParsedRecords(records: ParsedRecord[], fileName?: string): Promise<{ 
-        insertedCount: number; 
-        errors: string[]; 
+    async insertParsedRecords(records: ParsedRecord[], fileName?: string): Promise<{
+        insertedCount: number;
+        errors: string[];
         meterIdStats: { found: number; notFound: number };
         skippedDuplicates: number;
         skippedHeaders: number;
@@ -410,12 +427,12 @@ class DatabaseHelper {
         const deviceIds = records
             .map(record => (record['ID'] || record['Number Meter'])?.toString())
             .filter(id => id) as string[];
-        
+
         const uniqueDeviceIds = [...new Set(deviceIds)];
 
         // Batch lookup all meter IDs
         const { meterIdMap, prefixedMatches } = await this.batchLookupMeterIds(uniqueDeviceIds);
-        
+
         // Count unique meter IDs found/not found
         const uniqueMeterIdFound = uniqueDeviceIds.filter(id => meterIdMap.has(id)).length;
         const uniqueMeterIdNotFound = uniqueDeviceIds.length - uniqueMeterIdFound;
@@ -453,7 +470,7 @@ class DatabaseHelper {
                 // For Elec devices, determine if we need to update the device ID
                 let updatedRecord = { ...record };
                 let finalDeviceId = deviceId;
-                
+
                 if (deviceType === 'Elec' && localMeterId && prefixedMatches.has(deviceId)) {
                     // This match was found with prefix, so update the device ID
                     const updatedId = `1EMH00${deviceId}`;
@@ -490,7 +507,7 @@ class DatabaseHelper {
                     const signatureFinal = `${finalDeviceId}|${deviceType}|${dateOnlyYYYYMMDD}`;
                     // Also check with original device ID (without prefix)
                     const signatureOriginal = `${deviceId}|${deviceType}|${dateOnlyYYYYMMDD}`;
-                    
+
                     if (existingSignatures.has(signatureFinal) || existingSignatures.has(signatureOriginal)) {
                         skippedDuplicates++;
                         console.log(`[DEDUP] Skipping duplicate: ${signatureFinal}`);
@@ -540,7 +557,7 @@ class DatabaseHelper {
                         // Count DB-blocked records as skipped duplicates for accurate reporting
                         skippedDuplicates += dbRecords.length;
                     } else {
-                    errors.push(`Batch insert error: ${error.message}`);
+                        errors.push(`Batch insert error: ${error.message}`);
                         console.error('Batch insert error details:', error);
                     }
                 } else {
@@ -553,12 +570,12 @@ class DatabaseHelper {
             }
         }
 
-        return { 
-            insertedCount, 
-            errors, 
-            meterIdStats: { 
-                found: uniqueMeterIdFound, 
-                notFound: uniqueMeterIdNotFound 
+        return {
+            insertedCount,
+            errors,
+            meterIdStats: {
+                found: uniqueMeterIdFound,
+                notFound: uniqueMeterIdNotFound
             },
             skippedDuplicates,
             skippedHeaders
@@ -659,10 +676,10 @@ serve(async (req: Request) => {
 
         // Extract filename from headers (sent by email automation) or query params
         const url = new URL(req.url);
-        const fileName = req.headers.get('x-filename') || 
-                        url.searchParams.get('fileName') || 
-                        url.searchParams.get('filename') ||
-                        'csv-content';
+        const fileName = req.headers.get('x-filename') ||
+            url.searchParams.get('fileName') ||
+            url.searchParams.get('filename') ||
+            'csv-content';
         console.log('Extracted filename:', fileName);
 
         // First get the raw body text to debug JSON parsing issues
@@ -680,7 +697,7 @@ serve(async (req: Request) => {
         )
 
         console.log(`Successfully parsed ${result.parsedData.length} records`)
-        
+
         // Count unique device IDs for logging
         const uniqueDeviceIds = new Set(
             result.parsedData

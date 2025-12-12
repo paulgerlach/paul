@@ -14,7 +14,7 @@ export default async function ObjektDetailsPage({
   const relatedLocals = await getRelatedLocalsByObjektId(objekt_id);
 
   return (
-    <div className="py-6 px-9 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">
+    <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Objekte"
         link={`${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl`}

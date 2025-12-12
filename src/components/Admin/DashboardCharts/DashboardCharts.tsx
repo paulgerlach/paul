@@ -76,7 +76,7 @@ export default function DashboardCharts() {
   
   if (!meterIds.length && !isAnyChartLoading) {
     return (
-      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-large:grid-cols-2 max-medium:grid-cols-1">
         <div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
           <div className="text-gray-400 mb-4">
             <svg
@@ -108,7 +108,8 @@ export default function DashboardCharts() {
   const shouldShowElectricityChart = electricityChart.data.length > 0;
 
   return (
-    <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+    <ContentWrapper className="grid gap-3 grid-cols-3 max-large:grid-cols-2 max-medium:grid-cols-1">
+      {/* Column 1: Kaltwasser + Warmwasser */}
       <div className="flex flex-col gap-3">
         <div className="h-[312px]">
           {coldWaterChart.loading ? (
@@ -142,6 +143,7 @@ export default function DashboardCharts() {
         </div>
       </div>
 
+      {/* Column 2: Stromverbrauch + Heizkosten */}
       <div className="flex flex-col gap-3">
         <div className="h-[265px]">
           {electricityChart.loading ? (
@@ -169,8 +171,9 @@ export default function DashboardCharts() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <div className="h-[360px]">
+      {/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
+      <div className="flex flex-col gap-3 max-large:col-span-2 max-large:grid max-large:grid-cols-2 max-large:gap-3 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:flex max-medium:flex-col">
+        <div className="h-[360px] max-large:h-[300px]">
           {notificationsChart.loading ? (
             <ChartCardSkeleton />
           ) : (
@@ -182,7 +185,7 @@ export default function DashboardCharts() {
             />
           )}
         </div>
-        <div className="h-[220px]">
+        <div className="h-[220px] max-large:h-[300px]">
           {einsparungChartLoading ? (
             <ChartCardSkeleton />
           ) : (

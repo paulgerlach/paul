@@ -20,10 +20,10 @@ export default function HomeHero() {
         <div className="flex items-center justify-center mx-auto w-fit border border-white/20 rounded-[40px] py-2.5 px-4 max-small:py-2 max-small:px-3 gap-3 max-small:gap-2 mb-10 max-small:mb-6">
           <span className="flex items-center justify-start gap-2 max-small:gap-1">
             <Image
-              width={60}
+              width={20}
               height={20}
-              sizes="(max-width: 480px) 30px, 60px"
-              className="max-small:w-[30px] h-auto"
+              sizes="(max-width: 480px) 30px, 20px"
+              className="max-small:w-[20px] h-auto"
               src={google}
               alt="google"
             />
@@ -82,12 +82,14 @@ export default function HomeHero() {
         </div>
         <Link
           href={ROUTE_FRAGEBOGEN}
-          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg max-small:text-base text-dark_text bg-green rounded-halfbase mb-4">
+          className="block text-center mx-auto max-medium:w-full w-fit py-5 max-medium:py-3 px-10 text-lg text-dark_text bg-green rounded-halfbase mb-4"
+        >
           Jetzt installieren lassen
         </Link>
         <Link
           href={ROUTE_BLOG}
-          className="text-center mx-auto block text-[15px] max-small:text-xs leading-[18px] text-white">
+          className="text-center mx-auto block text-[15px] leading-[18px] text-white"
+        >
           Fernablesbare Zähler verpflichtend bis 1. Januar 2027
         </Link>
       </div>

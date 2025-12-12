@@ -132,38 +132,41 @@ const aggregateDataByGranularity = (
   granularity: "hour" | "day" | "month"
 ): ChartDataPoint[] => {
   // APPROACH 3: Group by DEVICE first, then calculate consumption between consecutive readings
-  
+
   // Step 1: Group all readings by device ID
   const deviceMap = new Map<string, ProcessedData[]>();
-  
+
   processedData.forEach((item) => {
     if (!deviceMap.has(item.deviceId)) {
       deviceMap.set(item.deviceId, []);
     }
     deviceMap.get(item.deviceId)!.push(item);
   });
-  
+
   // Step 2: For each device, calculate consumption between consecutive readings
-  const consumptionByDate = new Map<string, { consumption: number; date: Date }>();
-  
+  const consumptionByDate = new Map<
+    string,
+    { consumption: number; date: Date }
+  >();
+
   deviceMap.forEach((readings, deviceId) => {
     // Sort readings chronologically
     readings.sort((a, b) => a.date.getTime() - b.date.getTime());
-    
+
     // Calculate consumption between consecutive readings
     for (let i = 1; i < readings.length; i++) {
       const prev = readings[i - 1];
       const curr = readings[i];
-      
+
       // Calculate consumption = current - previous
       const consumption = curr.volume - prev.volume;
-      
+
       // Only add positive consumption (handles meter rollovers/errors)
       if (consumption >= 0) {
         // Normalize the current reading's date based on granularity
         let normalizedDate: Date;
         let dateKey: string;
-        
+
         switch (granularity) {
           case "hour":
             normalizedDate = new Date(
@@ -183,20 +186,27 @@ const aggregateDataByGranularity = (
             dateKey = normalizedDate.toDateString();
             break;
           case "month":
-            normalizedDate = new Date(curr.date.getFullYear(), curr.date.getMonth(), 1);
+            normalizedDate = new Date(
+              curr.date.getFullYear(),
+              curr.date.getMonth(),
+              1
+            );
             dateKey = `${normalizedDate.getFullYear()}-${normalizedDate.getMonth()}`;
             break;
         }
-        
+
         // Sum consumption for this date across all devices
         if (!consumptionByDate.has(dateKey)) {
-          consumptionByDate.set(dateKey, { consumption: 0, date: normalizedDate });
+          consumptionByDate.set(dateKey, {
+            consumption: 0,
+            date: normalizedDate,
+          });
         }
         consumptionByDate.get(dateKey)!.consumption += consumption;
       }
     }
   });
-  
+
   // Step 3: Convert to array and sort by date
   return Array.from(consumptionByDate.entries())
     .map(([_, { consumption, date }]) => ({
@@ -327,8 +337,10 @@ export default function WaterChart({
       // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
       const oldFormatVolume = device["IV,0,0,0,m^3,Vol"];
       const newFormatVolume = device["Actual Volume"];
-      
-      const volume = parseVolume(newFormatVolume !== undefined ? newFormatVolume : (oldFormatVolume ?? 0));
+
+      const volume = parseVolume(
+        newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume ?? 0
+      );
 
       // Convert from cubic meters to liters (1 m³ = 1000 L)
       // Preserve decimal precision for exact values
@@ -341,20 +353,22 @@ export default function WaterChart({
       const oldFormatDate = device["IV,0,0,0,,Date/Time"];
       const newActualDate = device["Actual Date"];
       const newRawDate = device["Raw Date"];
-      
+
       let dateTimeString: string | null = null;
-      
+
       if (oldFormatDate && typeof oldFormatDate === "string") {
         dateTimeString = oldFormatDate;
       } else if (newActualDate && typeof newActualDate === "string") {
         // New format may include time: "29.10.2025" or "29.10.2025 09:56..."
         const actualTime = device["Actual Time"] || "";
-        dateTimeString = actualTime ? `${newActualDate} ${actualTime}` : newActualDate;
+        dateTimeString = actualTime
+          ? `${newActualDate} ${actualTime}`
+          : newActualDate;
       } else if (newRawDate && typeof newRawDate === "string") {
         // Raw Date format: "29-10-2025" → convert to "29.10.2025"
         dateTimeString = newRawDate.replace(/-/g, ".");
       }
-      
+
       if (!dateTimeString || typeof dateTimeString !== "string") return;
 
       const parsedDate = parseTimestamp(dateTimeString);
@@ -381,7 +395,7 @@ export default function WaterChart({
       startDate: startDate?.toISOString(),
       endDate: endDate?.toISOString(),
       processedDataCount: processedData.length,
-      sampleDates: processedData.slice(0, 3).map(d => d.date.toISOString())
+      sampleDates: processedData.slice(0, 3).map((d) => d.date.toISOString()),
     });
 
     if (!dataInRange) {
@@ -457,12 +471,16 @@ export default function WaterChart({
             title={
               !hasDataInRange && startDate && endDate
                 ? "Keine Daten im gewählten Zeitraum"
-                : (emptyTitle ?? "Keine Daten verfügbar.")
+                : emptyTitle ?? "Keine Daten verfügbar."
             }
             description={
               !hasDataInRange && startDate && endDate
-                ? `Keine ${chartType === "hot" ? "Warmwasser" : "Kaltwasser"}-Messwerte zwischen ${startDate.toLocaleDateString("de-DE")} und ${endDate.toLocaleDateString("de-DE")} gefunden`
-                : (emptyDescription ?? "Keine Daten verfügbar.")
+                ? `Keine ${
+                    chartType === "hot" ? "Warmwasser" : "Kaltwasser"
+                  }-Messwerte zwischen ${startDate.toLocaleDateString(
+                    "de-DE"
+                  )} und ${endDate.toLocaleDateString("de-DE")} gefunden`
+                : emptyDescription ?? "Keine Daten verfügbar."
             }
             imageSrc={chartType === "hot" ? hot_water.src : cold_water.src}
             imageAlt={chartType === "hot" ? "Warmwasser" : "Kaltwasser"}

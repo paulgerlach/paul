@@ -1,15 +1,18 @@
 import {
-  fewocare,
-  flyla,
   google,
-  haus_hirst,
-  ki_akademie,
-  parkdepot,
   right_arrow,
-  sameday,
   star,
-  vitolos,
-  wemolo,
+  berlinBear,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  raum,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
 } from "@/static/icons";
 import Image from "next/image";
 
@@ -94,8 +97,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={fewocare}
-              alt="fewocare"
+              src={berlinBear}
+              alt="berlinBear"
             />
           </div>
           <div className="ticker__item">
@@ -104,8 +107,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={parkdepot}
-              alt="parkdepot"
+              src={dumax}
+              alt="dumax"
             />
           </div>
           <div className="ticker__item">
@@ -114,8 +117,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={sameday}
-              alt="sameday"
+              src={harte}
+              alt="harte"
             />
           </div>
           <div className="ticker__item">
@@ -124,8 +127,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={flyla}
-              alt="flyla"
+              src={hsp}
+              alt="hsp"
             />
           </div>
           <div className="ticker__item">
@@ -134,8 +137,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={vitolos}
-              alt="vitolos"
+              src={idgim}
+              alt="idgim"
             />
           </div>
           <div className="ticker__item">
@@ -144,8 +147,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={ki_akademie}
-              alt="ki_akademie"
+              src={quarterback}
+              alt="quarterback"
             />
           </div>
           <div className="ticker__item">
@@ -154,8 +157,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={wemolo}
-              alt="wemolo"
+              src={raum}
+              alt="raum"
             />
           </div>
           <div className="ticker__item">
@@ -164,8 +167,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={haus_hirst}
-              alt="haus_hirst"
+              src={silverton}
+              alt="silverton"
             />
           </div>
           <div className="ticker__item">
@@ -174,8 +177,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={fewocare}
-              alt="fewocare"
+              src={vitec}
+              alt="vitec"
             />
           </div>
           <div className="ticker__item">
@@ -184,8 +187,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={parkdepot}
-              alt="parkdepot"
+              src={wagner}
+              alt="wagner"
             />
           </div>
           <div className="ticker__item">
@@ -194,8 +197,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={sameday}
-              alt="sameday"
+              src={winfried}
+              alt="winfried"
             />
           </div>
           <div className="ticker__item">
@@ -204,8 +207,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={flyla}
-              alt="flyla"
+              src={berlinBear}
+              alt="berlinBear"
             />
           </div>
           <div className="ticker__item">
@@ -214,8 +217,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={vitolos}
-              alt="vitolos"
+              src={dumax}
+              alt="dumax"
             />
           </div>
           <div className="ticker__item">
@@ -224,8 +227,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={ki_akademie}
-              alt="ki_akademie"
+              src={harte}
+              alt="harte"
             />
           </div>
           <div className="ticker__item">
@@ -234,8 +237,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={wemolo}
-              alt="wemolo"
+              src={hsp}
+              alt="hsp"
             />
           </div>
           <div className="ticker__item">
@@ -244,8 +247,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={haus_hirst}
-              alt="haus_hirst"
+              src={idgim}
+              alt="idgim"
             />
           </div>
           <div className="ticker__item">
@@ -254,8 +257,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={fewocare}
-              alt="fewocare"
+              src={quarterback}
+              alt="quarterback"
             />
           </div>
           <div className="ticker__item">
@@ -264,8 +267,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={parkdepot}
-              alt="parkdepot"
+              src={raum}
+              alt="raum"
             />
           </div>
           <div className="ticker__item">
@@ -274,8 +277,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={sameday}
-              alt="sameday"
+              src={silverton}
+              alt="silverton"
             />
           </div>
           <div className="ticker__item">
@@ -284,8 +287,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={flyla}
-              alt="flyla"
+              src={vitec}
+              alt="vitec"
             />
           </div>
           <div className="ticker__item">
@@ -294,8 +297,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={vitolos}
-              alt="vitolos"
+              src={wagner}
+              alt="wagner"
             />
           </div>
           <div className="ticker__item">
@@ -304,8 +307,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={ki_akademie}
-              alt="ki_akademie"
+              src={winfried}
+              alt="winfried"
             />
           </div>
           <div className="ticker__item">
@@ -314,8 +317,8 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={wemolo}
-              alt="wemolo"
+              src={berlinBear}
+              alt="berlinBear"
             />
           </div>
           <div className="ticker__item">
@@ -324,8 +327,98 @@ export default function GeraeteHeroTicker() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              src={haus_hirst}
-              alt="haus_hirst"
+              src={dumax}
+              alt="dumax"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={harte}
+              alt="harte"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={hsp}
+              alt="hsp"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={idgim}
+              alt="idgim"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={quarterback}
+              alt="quarterback"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={raum}
+              alt="raum"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={silverton}
+              alt="silverton"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={vitec}
+              alt="vitec"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={wagner}
+              alt="wagner"
+            />
+          </div>
+          <div className="ticker__item">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              src={winfried}
+              alt="winfried"
             />
           </div>
         </div>

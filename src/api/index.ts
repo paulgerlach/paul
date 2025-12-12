@@ -49,7 +49,7 @@ export type MeterReadingType = {
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
   "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
   "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
-  
+
   // NEW Engelmann CSV format fields
   "Number Meter"?: string | number; // NEW format device ID
   "Actual Date"?: string; // NEW format date (e.g., "29.10.2025")
@@ -63,13 +63,13 @@ export type MeterReadingType = {
   "Billing Value"?: number | string; // NEW format billing value
   "Billing Unit"?: string; // NEW format billing unit
   "Telegram Type"?: string; // NEW format manufacturer (e.g., "EMH", "EFE_WaterStar M")
-  
+
   // GROUP 2: Hint Code and RSSI fields
   "Hint Code"?: string | number; // Hint code (e.g., "5" for leakage, "12" for smoke detector)
   "Hint Code Description"?: string; // Human-readable hint description
   "RSSI Value"?: string | number; // Signal strength (e.g., "-85" dBm)
   "Status Byte"?: string; // Device status byte (e.g., "0x01")
-  
+
   // GROUP 3: Monthly consumption data for trend analysis
   "Monthly Date 1"?: string;
   "Monthly Value 1"?: string | number;
@@ -107,7 +107,7 @@ export type MeterReadingType = {
   "Monthly Date 12"?: string;
   "Monthly Value 12"?: string | number;
   "Monthly Unit 12"?: string;
-  
+
   "IV,1,0,0,,Date"?: string; // OLD format - now optional
   "IV,1,0,0,Wh,E"?: number;
   "IV,1,0,0,m^3,Vol"?: number;

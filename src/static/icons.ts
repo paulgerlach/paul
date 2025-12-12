@@ -257,10 +257,108 @@ import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs
 import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
 import building from "@/asset/building.svg";
 import basement from "@/asset/basement.png";
+import deutscheWonhenUpd from "@/asset/deutsche_wohnen_upd.png";
+import buderusUpd from "@/asset/buderus_upd.png";
+import accentroUpd from "@/asset/accentro_upd.png";
+import vonoviaUpd from "@/asset/vonovia_upd.png";
+import viessmannUpd from "@/asset/viessmann_upd.png";
+import techemUpd from "@/asset/techem_upd.png";
+import wattsUpd from "@/asset/watts_upd.png";
+import dehoustUpd from "@/asset/dehoust_upd.png";
+import vdiv_footer from "@/asset/vdiv_footer.png";
+import personSlide1 from "@/asset/person_slide_1.png";
+import personSlide2 from "@/asset/person_slide_2.png";
+import personSlide3 from "@/asset/person_slide_3.png";
+import personSlide4 from "@/asset/person_slide_4.png";
+import personSlide5 from "@/asset/person_slide_5.png";
+import personSlideIcon1 from "@/asset/person_slide_icon_1.png";
+import personSlideIcon2 from "@/asset/person_slide_icon_2.png";
+import personSlideIcon3 from "@/asset/person_slide_icon_3.png";
+import personSlideIcon4 from "@/asset/person_slide_icon_4.png";
+import personSlideIcon5 from "@/asset/person_slide_icon_5.png";
+import personSlidePerson1 from "@/asset/person_slide_person_1.png";
+import personSlidePerson2 from "@/asset/person_slide_person_2.png";
+import personSlidePerson3 from "@/asset/person_slide_person_3.png";
+import personSlidePerson4 from "@/asset/person_slide_person_4.png";
+import personSlidePerson5 from "@/asset/person_slide_person_5.png";
+import berlinBear from "@/asset/berlin_bear.png";
+import dumax from "@/asset/dumax.png";
+import harte from "@/asset/harte.png";
+import hsp from "@/asset/hsp.png";
+import idgim from "@/asset/idgim.png";
+import quarterback from "@/asset/quarterback.png";
+import raum from "@/asset/raum.png";
+import silverton from "@/asset/silverton.png";
+import vitec from "@/asset/vitec.png";
+import wagner from "@/asset/wagner.png";
+import winfried from "@/asset/winfried.png";
+import werne_green from "@/asset/werne_green.png";
+import wagner_green from "@/asset/wagner_green.png";
+import vitec_green from "@/asset/vitec_green.png";
+import schleicher_green from "@/asset/schleicher_green.png";
+import raum_green from "@/asset/raum_green.png";
+import quarterback_green from "@/asset/quarterback_green.png";
+import progera_green from "@/asset/progera_green.png";
+import niesen_green from "@/asset/niesen_green.png";
+import neckar_green from "@/asset/neckar_green.png";
+import idgim_green from "@/asset/idgim_green.png";
+import hsp_green from "@/asset/hsp_green.png";
+import harte_green from "@/asset/harte_green.png";
+import dumax_green from "@/asset/dumax_green.png";
+import berlin_bear_green from "@/asset/berlin_bear_green.png";
 
 export {
   accentro_colored,
+  berlinBear,
+  werne_green,
+  wagner_green,
+  vitec_green,
+  schleicher_green,
+  raum_green,
+  quarterback_green,
+  progera_green,
+  niesen_green,
+  neckar_green,
+  idgim_green,
+  hsp_green,
+  harte_green,
+  dumax_green,
+  berlin_bear_green,
+  dumax,
+  harte,
+  hsp,
+  idgim,
+  quarterback,
+  raum,
+  silverton,
+  vitec,
+  wagner,
+  winfried,
   electricity,
+  dehoustUpd,
+  vdiv_footer,
+  personSlide1,
+  personSlide2,
+  personSlide3,
+  personSlide4,
+  personSlide5,
+  personSlideIcon1,
+  personSlideIcon2,
+  personSlideIcon3,
+  personSlideIcon4,
+  personSlideIcon5,
+  personSlidePerson1,
+  personSlidePerson2,
+  personSlidePerson3,
+  personSlidePerson4,
+  personSlidePerson5,
+  deutscheWonhenUpd,
+  buderusUpd,
+  accentroUpd,
+  vonoviaUpd,
+  viessmannUpd,
+  techemUpd,
+  wattsUpd,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,
@@ -517,5 +615,5 @@ export {
   main_portfolio,
   clock_dark,
   close_white,
-  building
+  building,
 };

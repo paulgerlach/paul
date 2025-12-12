@@ -3,11 +3,11 @@
 import dynamic from "next/dynamic";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
-import { 
-  useWaterChartData, 
-  useElectricityChartData, 
-  useHeatChartData, 
-  useNotificationsChartData 
+import {
+  useWaterChartData,
+  useElectricityChartData,
+  useHeatChartData,
+  useNotificationsChartData,
 } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 
@@ -51,29 +51,43 @@ const EinsparungChart = dynamic(
   }
 );
 
-
-
 export default function DashboardCharts() {
   const { meterIds } = useChartStore();
 
   // Individual chart data hooks
-  const coldWaterChart = useWaterChartData('cold');
-  const hotWaterChart = useWaterChartData('hot');
+  const coldWaterChart = useWaterChartData("cold");
+  const hotWaterChart = useWaterChartData("hot");
   const electricityChart = useElectricityChartData();
   const heatChart = useHeatChartData();
   const notificationsChart = useNotificationsChartData();
-  
+
   // Combine data for EinsparungChart (needs all device types for CO2 calculations)
-  const einsparungChartData = [...coldWaterChart.data, ...hotWaterChart.data, ...electricityChart.data, ...heatChart.data];
-  const einsparungChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
+  const einsparungChartData = [
+    ...coldWaterChart.data,
+    ...hotWaterChart.data,
+    ...electricityChart.data,
+    ...heatChart.data,
+  ];
+  const einsparungChartLoading =
+    coldWaterChart.loading ||
+    hotWaterChart.loading ||
+    electricityChart.loading ||
+    heatChart.loading;
 
   // Debug logging
-  console.log('[DashboardCharts] Render:', { meterIdsCount: meterIds.length, loading: coldWaterChart.loading });
+  console.log("[DashboardCharts] Render:", {
+    meterIdsCount: meterIds.length,
+    loading: coldWaterChart.loading,
+  });
 
   // Show message when no meter IDs are selected
   // Only show if not loading (prevents showing message during initial load)
-  const isAnyChartLoading = coldWaterChart.loading || hotWaterChart.loading || electricityChart.loading || heatChart.loading;
-  
+  const isAnyChartLoading =
+    coldWaterChart.loading ||
+    hotWaterChart.loading ||
+    electricityChart.loading ||
+    heatChart.loading;
+
   if (!meterIds.length && !isAnyChartLoading) {
     return (
       <ContentWrapper className="grid gap-3 grid-cols-3 max-large:grid-cols-2 max-medium:grid-cols-1">

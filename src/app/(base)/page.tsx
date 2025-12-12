@@ -20,17 +20,20 @@ import {
   list2,
   right_arrow,
   weight,
-  berlinBear,
-  dumax,
-  harte,
-  hsp,
-  idgim,
-  quarterback,
-  raum,
-  silverton,
-  vitec,
-  wagner,
-  winfried,
+  werne_green,
+  wagner_green,
+  vitec_green,
+  schleicher_green,
+  raum_green,
+  quarterback_green,
+  progera_green,
+  niesen_green,
+  neckar_green,
+  idgim_green,
+  hsp_green,
+  harte_green,
+  dumax_green,
+  berlin_bear_green,
 } from "@/static/icons";
 import animation1 from "@/animations/Animation_1.json";
 import animation2 from "@/animations/Animation_2.json";
@@ -395,8 +398,8 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-24 h-12"
-              src={berlinBear}
+              className="inline-block mx-auto max-w-24 h-10"
+              src={berlin_bear_green}
               alt="berlinBear"
             />
             <Image
@@ -405,7 +408,7 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto w-24 h-8"
-              src={dumax}
+              src={dumax_green}
               alt="dumax"
             />
             <Image
@@ -414,7 +417,7 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto w-24 h-8"
-              src={harte}
+              src={harte_green}
               alt="harte"
             />
             <Image
@@ -423,7 +426,7 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto w-20 h-8"
-              src={hsp}
+              src={hsp_green}
               alt="hsp"
             />
             <Image
@@ -432,7 +435,7 @@ export default function Home() {
               sizes="100vw"
               loading="lazy"
               className="inline-block mx-auto max-w-20 h-4"
-              src={idgim}
+              src={idgim_green}
               alt="idgim"
             />
             <Image
@@ -440,8 +443,8 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-28 h-9"
-              src={quarterback}
+              className="inline-block col-span-2 mx-auto h-9"
+              src={quarterback_green}
               alt="quarterback"
             />
             <Image
@@ -449,8 +452,8 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-20 h-8"
-              src={raum}
+              className="inline-block mx-auto max-w-24 h-8"
+              src={raum_green}
               alt="raum"
             />
             <Image
@@ -458,17 +461,17 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-28 h-10"
-              src={silverton}
-              alt="silverton"
+              className="inline-block mx-auto max-w-28 h-14"
+              src={schleicher_green}
+              alt="schleicher_green"
             />
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-12 h-12"
-              src={vitec}
+              className="inline-block mx-auto max-w-20 h-8"
+              src={vitec_green}
               alt="vitec"
             />
             <Image
@@ -476,8 +479,8 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-28 h-8"
-              src={wagner}
+              className="inline-block mx-auto max-w-32 h-8"
+              src={wagner_green}
               alt="wagner"
             />
             <Image
@@ -485,9 +488,36 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block mx-auto max-w-20 h-6"
-              src={winfried}
-              alt="winfried"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={werne_green}
+              alt="werne_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={neckar_green}
+              alt="neckar_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={niesen_green}
+              alt="niesen_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={progera_green}
+              alt="progera_green"
             />
           </div>
         </div>

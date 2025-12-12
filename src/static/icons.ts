@@ -292,10 +292,38 @@ import silverton from "@/asset/silverton.png";
 import vitec from "@/asset/vitec.png";
 import wagner from "@/asset/wagner.png";
 import winfried from "@/asset/winfried.png";
+import werne_green from "@/asset/werne_green.png";
+import wagner_green from "@/asset/wagner_green.png";
+import vitec_green from "@/asset/vitec_green.png";
+import schleicher_green from "@/asset/schleicher_green.png";
+import raum_green from "@/asset/raum_green.png";
+import quarterback_green from "@/asset/quarterback_green.png";
+import progera_green from "@/asset/progera_green.png";
+import niesen_green from "@/asset/niesen_green.png";
+import neckar_green from "@/asset/neckar_green.png";
+import idgim_green from "@/asset/idgim_green.png";
+import hsp_green from "@/asset/hsp_green.png";
+import harte_green from "@/asset/harte_green.png";
+import dumax_green from "@/asset/dumax_green.png";
+import berlin_bear_green from "@/asset/berlin_bear_green.png";
 
 export {
   accentro_colored,
   berlinBear,
+  werne_green,
+  wagner_green,
+  vitec_green,
+  schleicher_green,
+  raum_green,
+  quarterback_green,
+  progera_green,
+  niesen_green,
+  neckar_green,
+  idgim_green,
+  hsp_green,
+  harte_green,
+  dumax_green,
+  berlin_bear_green,
   dumax,
   harte,
   hsp,

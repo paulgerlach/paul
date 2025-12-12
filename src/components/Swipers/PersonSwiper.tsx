@@ -40,9 +40,9 @@ const personSwiperSlides: PersonSwiperSlideDataType[] = [
     personIcon: personSlidePerson1,
   },
   {
-    text: "Heidi hat uns gezeigt, wie einfach es sein kann, selbst in komplexen Gewerbeeinheiten Wasser- und Heizkosten präzise zu erfassen – ein echter Fortschritt für unser Portfolio.",
-    personName: "Magarethe Jennen,",
-    personRole: "Senior Property Managerin, DGIM",
+    text: "Dank Heidi ist es egal, ob ich in Düsseldorf, München oder Berlin bin – ich habe jederzeitdie volle Transparenz über die Verbräuche.",
+    personName: "Erik Brandenburg, CEO &",
+    personRole: "Geschäftsführer, Carter Benson Group",
     image: personSlide2,
     icon: personSlideIcon2,
     personIcon: personSlidePerson2,

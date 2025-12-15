@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MessageCircle, Sparkles } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);

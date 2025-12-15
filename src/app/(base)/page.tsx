@@ -158,23 +158,21 @@ export default function Home() {
         </h2>
         <div className="grid mb-32 hero-1 grid-cols-4 gap-20 max-large:gap-8 items-stretch max-medium:grid-cols-2 max-medium:gap-16 justify-center max-small:grid-cols-1 max-small:gap-14">
           <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={weight}
-                  alt="weight"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
-                EU-Vorschriften einhalten
-              </p>
-            </div>
-            <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
+            <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={weight}
+                alt="weight"
+              />
+            </span>
+            <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
+              EU-Vorschriften<br className="max-medium:hidden" /> einhalten
+            </p>
+            <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Mit unseren fernablesbaren Zählern erfüllen Sie alle gesetzlichen
               Vorgaben und profitieren gleichzeitig von höherer Effizienz und
               Transparenz. Modernste Energiemanagement- Technologie sorgt für
@@ -187,24 +185,22 @@ export default function Home() {
               mehr erfahren
             </a>
           </div>
-          <div className="max-medium:flex space-y-4 max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={clock}
-                  alt="clock"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
-                Zeit- und Kostenersparnis
-              </p>
-            </div>
-            <p className="text-[15px] max-small:text-sm max-large:!mt-7 max-medium:!mt-0 leading-[18px] text-dark_text max-medium:text-center">
+          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={clock}
+                alt="clock"
+              />
+            </span>
+            <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
+              Zeit- und<br className="max-medium:hidden" /> Kostenersparnis
+            </p>
+            <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Reduzieren Sie manuelle Aufwände und sparen Sie wertvolle Zeit.
               Unsere automatisierten Prozesse übernehmen die Verbrauchserfassung
               effizient und zuverlässig.
@@ -217,23 +213,21 @@ export default function Home() {
             </a>
           </div>
           <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <div className="flex items-center gap-3 max-medium:justify-center">
-              <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
-                <Image
-                  width={25}
-                  height={25}
-                  priority
-                  sizes="25px"
-                  className="size-[25px] max-small:size-[18px]"
-                  src={instruments}
-                  alt="instruments"
-                />
-              </span>
-              <p className="text-xl max-small:text-lg text-dark_text font-bold max-small:text-center">
-                Kostenfreie Installation
-              </p>
-            </div>
-            <p className="text-[15px] max-small:text-sm max-large:!mt-7 max-medium:!mt-0 leading-[18px] text-dark_text max-medium:text-center">
+            <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
+              <Image
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
+                src={instruments}
+                alt="instruments"
+              />
+            </span>
+            <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
+              Kostenfreie<br className="max-medium:hidden" /> Installation
+            </p>
+            <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Steigen Sie ohne Mehrkosten auf unsere innovative Technologie um.
               Die Umrüstung erfolgt für Sie völlig kostenlos und ohne Aufwand.
             </p>
@@ -244,22 +238,22 @@ export default function Home() {
               Jetzt installieren lassen
             </Link>
           </div>
-          <div className="space-y-4 max-medium:hidden max-medium:flex-col max-medium:items-center max-medium:justify-start">
-            <span className="circleIcon inline-block">
+          <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="size-[25px]"
+                width={25}
+                height={25}
+                priority
+                sizes="25px"
+                className="size-[25px] max-small:size-[18px]"
                 src={doc}
                 alt="doc"
               />
             </span>
-            <p className="text-xl text-dark_text font-bold max-medium:text-center">
-              Heizkostenabrechnung erstellen
+            <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
+              Heizkostenabrechnung<br className="max-medium:hidden" /> erstellen
             </p>
-            <p className="text-[15px] leading-[18px] text-dark_text max-medium:text-center">
+            <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
               automatisch und bereiten sie für eine präzise und effiziente
               Nebenkostenabrechnung auf.

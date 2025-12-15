@@ -26,7 +26,13 @@ export class ExternalAuthError extends Error {
  * - Authorization: Bearer <token>
  * - X-API-Key: <token>
  */
-export async function requireExternalAuth(request: Request) {
+export type TokenRecord = typeof bved_api_tokens.$inferSelect;
+
+/**
+ * External auth guard. Returns the validated token record so callers
+ * can scope data (e.g., filter by tokenRecord.user_id).
+ */
+export async function requireExternalAuth(request: Request): Promise<TokenRecord | null> {
   const authHeader = request.headers.get("authorization");
   const apiKeyHeader = request.headers.get("x-api-key");
 
@@ -61,7 +67,7 @@ export async function requireExternalAuth(request: Request) {
       .limit(10); // Limit to prevent excessive queries
 
     // Verify token against all matching records (handle hash collisions)
-    let tokenRecord = null;
+    let tokenRecord: TokenRecord | null = null;
     for (const record of tokenRecords) {
       if (verifyToken(providedToken, record.access_token_hash)) {
         tokenRecord = record;
@@ -83,7 +89,7 @@ export async function requireExternalAuth(request: Request) {
         .where(eq(bved_api_tokens.id, tokenRecord.id))
         .catch(() => {}); // Don't fail if update fails
 
-      return; // Token is valid
+        return tokenRecord; // Token is valid, return record for scoping
     }
   } catch (error) {
     // If it's an ExternalAuthError, re-throw it
@@ -93,7 +99,7 @@ export async function requireExternalAuth(request: Request) {
     // Otherwise, fall through to env var check
   }
 
-  // Fallback: Check environment variables (backward compatibility)
+   // NOTE: Env tokens have no user context; with Option B (scoped by user_id), they cannot be used.
   const bearerEnv = process.env.BVED_EXTERNAL_BEARER_TOKEN;
   const apiKeyEnv = process.env.BVED_EXTERNAL_API_KEY;
   const allowedTokens = [bearerEnv, apiKeyEnv].filter(Boolean);
@@ -101,6 +107,8 @@ export async function requireExternalAuth(request: Request) {
   if (!allowedTokens.includes(providedToken)) {
     throw new ExternalAuthError("Invalid authentication token", 401, "UNAUTHORIZED");
   }
+   // Env tokens are not allowed for scoped access (no user_id available)
+   throw new ExternalAuthError("Token does not include user context", 401, "UNAUTHORIZED");
 }
 
 export function formatError(error: unknown) {
@@ -122,5 +130,3 @@ export function formatError(error: unknown) {
     { status: 500 }
   );
 }
-
-

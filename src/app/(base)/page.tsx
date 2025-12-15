@@ -41,7 +41,7 @@ import animation3 from "@/animations/Animation_3.json";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
-import ChatBot from "@/components/ChatBot";
+import ChatBotContainer from "@/components/ChatBot";
 
 export default function Home() {
   const structuredData = {
@@ -171,7 +171,8 @@ export default function Home() {
               />
             </span>
             <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-              EU-Vorschriften<br className="max-medium:hidden" /> einhalten
+              EU-Vorschriften
+              <br className="max-medium:hidden" /> einhalten
             </p>
             <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Mit unseren fernablesbaren Zählern erfüllen Sie alle gesetzlichen
@@ -199,7 +200,8 @@ export default function Home() {
               />
             </span>
             <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-              Zeit- und<br className="max-medium:hidden" /> Kostenersparnis
+              Zeit- und
+              <br className="max-medium:hidden" /> Kostenersparnis
             </p>
             <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Reduzieren Sie manuelle Aufwände und sparen Sie wertvolle Zeit.
@@ -226,7 +228,8 @@ export default function Home() {
               />
             </span>
             <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-              Kostenfreie<br className="max-medium:hidden" /> Installation
+              Kostenfreie
+              <br className="max-medium:hidden" /> Installation
             </p>
             <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Steigen Sie ohne Mehrkosten auf unsere innovative Technologie um.
@@ -252,7 +255,8 @@ export default function Home() {
               />
             </span>
             <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-              Heizkostenabrechnung<br className="max-medium:hidden" /> erstellen
+              Heizkostenabrechnung
+              <br className="max-medium:hidden" /> erstellen
             </p>
             <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
               Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
@@ -720,7 +724,7 @@ export default function Home() {
       </div>
       <Subscription />
       <div className="fixed bottom-8 right-8">
-        <ChatBot/>
+        <ChatBotContainer />
       </div>
     </main>
   );

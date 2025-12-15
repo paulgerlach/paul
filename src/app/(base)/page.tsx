@@ -41,6 +41,7 @@ import animation3 from "@/animations/Animation_3.json";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
+import ChatBot from "@/components/ChatBot";
 
 export default function Home() {
   const structuredData = {
@@ -718,6 +719,9 @@ export default function Home() {
         </div>
       </div>
       <Subscription />
+      <div className="fixed bottom-8 right-8">
+        <ChatBot/>
+      </div>
     </main>
   );
 }

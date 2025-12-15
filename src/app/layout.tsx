@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Exo_2 } from "next/font/google";
 
 const exo_2Sans = Exo_2({
@@ -8,6 +8,13 @@ const exo_2Sans = Exo_2({
   preload: true,
   fallback: ['system-ui', 'arial'],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#ffffff",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://heidisystems.com'),

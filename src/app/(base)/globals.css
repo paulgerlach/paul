@@ -54,8 +54,10 @@
 * {
   font-family: "Exo 2", sans-serif;
 }
-html {
+html,
+body {
   overflow-x: hidden;
+  max-width: 100vw;
   scroll-behavior: smooth;
 }
 

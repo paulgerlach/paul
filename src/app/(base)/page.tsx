@@ -209,7 +209,7 @@ export default function Home() {
             </p>
             <a
               href="#"
-              className="border hidden max-medium:flex border-green bg-transparent py-2 px-4 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80"
+              className="border hidden max-medium:flex border-green bg-transparent py-3 px-6 items-center justify-center text-sm text-green rounded-halfbase duration-300 hover:opacity-80 min-h-[44px]"
             >
               Kosteneinsparung berechnen
             </a>
@@ -236,7 +236,7 @@ export default function Home() {
             </p>
             <Link
               href="/fragebogen"
-              className="border hidden max-medium:flex border-green bg-green py-2 px-4 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80"
+              className="border hidden max-medium:flex border-green bg-green py-3 px-6 items-center justify-center text-sm text-white rounded-halfbase duration-300 hover:opacity-80 min-h-[44px]"
             >
               Jetzt installieren lassen
             </Link>

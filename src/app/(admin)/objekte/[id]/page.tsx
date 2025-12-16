@@ -4,6 +4,7 @@ import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteLocalsAccordion from "../../../../components/Admin/ObjekteLocalsAccordion/ObjekteLocalsAccordion";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { create_local } from "@/static/icons";
+import { buildLocalName } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,6 +16,13 @@ export default async function ObjektDetailsPage({
   const { id } = await params;
 
   const relatedLocals = await getRelatedLocalsByObjektId(id);
+
+  // Sort alphabetically by local name
+  relatedLocals.sort((a, b) => {
+    const nameA = buildLocalName(a).toLowerCase();
+    const nameB = buildLocalName(b).toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-[calc(100dvh-53px)] max-medium:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">

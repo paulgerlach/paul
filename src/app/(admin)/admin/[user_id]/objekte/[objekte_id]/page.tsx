@@ -5,6 +5,7 @@ import ObjekteLocalsAdminAccordion from "../../../../../../components/Admin/Obje
 import { buildSubRoute } from "@/lib/navigation";
 import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 import { create_local } from "@/static/icons";
+import { buildLocalName } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,6 +17,13 @@ export default async function AdminObjektDetailsPage({
   const { objekte_id, user_id } = await params;
 
   const relatedLocals = await getRelatedLocalsByObjektId(objekte_id);
+
+  // Sort alphabetically by local name
+  relatedLocals.sort((a, b) => {
+    const nameA = buildLocalName(a).toLowerCase();
+    const nameB = buildLocalName(b).toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
 
   const createUnitLink = await buildSubRoute("create-unit");
 

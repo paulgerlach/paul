@@ -186,6 +186,24 @@ html {
     }
 }
 
+@keyframes growFromTopRight {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-grow-tr {
+    transform-origin: bottom right;
+    /* Anchor point: top-right corner */
+    animation: growFromTopRight 0.5s ease-out forwards;
+}
+
 .section-title:before {
     width: 21px;
     height: 21px;

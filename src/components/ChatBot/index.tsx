@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { MessageCircle } from "lucide-react";
+import AIChatBot from './AIChatBot';
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
@@ -9,8 +10,8 @@ export default function ChatBotContainer() {
   return (
     <div className='relative'>
       {showChatBot && (
-        <div className="absolute w-80 md:w-96 bg-red-500 rounded-lg shadow-2xl border border-gray-200 flex flex-col">
-          <p>The Chat</p>
+        <div className='z-10 absolute right-8 bottom-8'>
+          <AIChatBot/>
         </div>
       )}
         <MessageCircle

@@ -37,22 +37,34 @@ export default function ShareDashboardDialog() {
 
   const { startDate, endDate, meterIds } = useChartStore();
 
+  // Helper to format date as YYYY-MM-DD in local timezone (not UTC)
+  const formatLocalDate = (date: Date | null): string | undefined => {
+    if (!date) return undefined;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleShare = async () => {
     try {
       // Debug: Log current state
       console.log('Share Dialog Current State:', {
         startDate: startDate?.toISOString(),
         endDate: endDate?.toISOString(),
+        startDateLocal: formatLocalDate(startDate),
+        endDateLocal: formatLocalDate(endDate),
         meterIds: meterIds,
         meterIdsLength: meterIds.length
       });
 
       // Create filters from current dashboard state
       // Only include dates if they're actually set in the dashboard
+      // Use local date formatting to avoid timezone issues
       const filters: ShareFilters = {
         meterIds: meterIds.length > 0 ? meterIds : undefined,
-        startDate: startDate?.toISOString().split("T")[0],
-        endDate: endDate?.toISOString().split("T")[0],
+        startDate: formatLocalDate(startDate),
+        endDate: formatLocalDate(endDate),
       };
 
       console.log('Filters being sent:', filters);

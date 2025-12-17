@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiChatbot } from "react-icons/si";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
+import { FaRegWindowMinimize } from "react-icons/fa";
 
 interface AIChatbotInterface {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
@@ -14,6 +15,7 @@ interface AIChatbotInterface {
   stop: () => void;
   input: string;
   setInput: (input: string) => void;
+  setShowChatBot: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AIChatBot({
@@ -23,14 +25,23 @@ export default function AIChatBot({
   stop,
   input,
   setInput,
+  setShowChatBot,
 }: AIChatbotInterface) {
   const { setIsChatActive, isChatActive } = useAIMessagesStore();
 
   const toggleChat = () => {
-    setIsChatActive(true)
+    setIsChatActive(true);
+  };
+
+  const handleMinimizeChat = () => {
+    setShowChatBot(false);
   }
   return (
-    <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[60vh] max-w-full">
+    <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[60vh] max-w-full relative">
+      <FaRegWindowMinimize
+        onClick={handleMinimizeChat}
+        className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
+      />
       {/* Header */}
       <div className="pb-4 flex justify-center">
         <div className="flex flex-row gap-1 items-center justify-center animate-from-left shadow-md w-auto px-4 py-2 rounded-full bg-white">
@@ -75,7 +86,7 @@ export default function AIChatBot({
           {/* Loading/Streaming indicator */}
           {(status === "submitted" || status === "streaming") && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white flex items-center gap-2">
+              <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
                 <p className="text-green-900 animate-pulse">Denken...</p>
               </div>
             </div>
@@ -90,25 +101,25 @@ export default function AIChatBot({
           if (input.trim()) {
             sendMessage({ text: input });
             setInput("");
-            setIsChatActive(true); // Activate chat on first send
+            setIsChatActive(true); 
           }
         }}
         className="flex gap-2 mt-4"
       >
-        {/* Input field or placeholder */}
         {isChatActive ? (
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={status !== "ready"}
             placeholder="Nachricht eingeben..."
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-100 disabled:opacity-50"
           />
         ) : (
-            <button
-              title="start-chat"
-              onClick={toggleChat}
-              className="flex-1 flex items-center justify-center font-semibold text-white text-sm bg-black hover:bg-slate-900 hover:-translate-y-2 transition ease-in-out rounded-lg py-2 cursor-pointer ">
+          <button
+            title="start-chat"
+            onClick={toggleChat}
+            className="flex-1 flex items-center justify-center font-semibold text-white text-sm bg-black hover:bg-slate-900 hover:-translate-y-2 transition ease-in-out rounded-lg py-2 cursor-pointer "
+          >
             <p>Let&apos;s chat</p>
           </button>
         )}
@@ -128,11 +139,11 @@ export default function AIChatBot({
             title="Send message"
             type="submit"
             disabled={
-              !isChatActive || // ← NEW: disabled before chat starts
+              !isChatActive ||
               status !== "ready" ||
               !input.trim()
             }
-            className="bg-green-600 text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+            className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             <SendHorizonal size={18} />
           </button>
@@ -184,7 +195,7 @@ function Message({
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${
           isUser
-            ? "bg-green text-white rounded-br-sm"
+            ? "bg-black text-white rounded-br-sm"
             : "bg-white text-gray-700 rounded-bl-sm"
         }`}
       >

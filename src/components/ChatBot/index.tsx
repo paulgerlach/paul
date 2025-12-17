@@ -10,6 +10,7 @@ import { DefaultChatTransport } from 'ai';
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const storedMessages = useAIMessagesStore((state) => state.storedMessages);
   const setStoredMessages = useAIMessagesStore(
@@ -29,6 +30,14 @@ export default function ChatBotContainer() {
   useEffect(() => {
     setStoredMessages(messages);
   }, [messages, setStoredMessages]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(true);
+    }, 20000); // 1 minute
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -64,11 +73,12 @@ export default function ChatBotContainer() {
             messages={messages}
             input={input}
             setInput={setInput}
+            setShowChatBot={setShowChatBot}
           />
         </div>
       )}
 
-      {!showChatBot && (
+      {!showChatBot && showPopup && (
         <div className="chat-popup animate-from-right">
           Hallo, schrieben Sie uns gern bei Fragen.
         </div>

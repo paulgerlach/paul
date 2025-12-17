@@ -1,24 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MessageCircle } from "lucide-react";
+import { BotMessageSquare } from "lucide-react";
 import AIChatBot from './AIChatBot';
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
 
   return (
-    <div className='relative'>
+    <div className="relative">
       {showChatBot && (
-        <div className='z-10 absolute right-8 bottom-8'>
-          <AIChatBot/>
+        <div className="z-10 absolute right-8 bottom-8">
+          <AIChatBot />
         </div>
       )}
-        <MessageCircle
-          onClick={() => setShowChatBot(!showChatBot)}
-          className="w-16 h-16 bg-green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-3"
-          color="#FFFFFF"
-        />
+      <BotMessageSquare
+        onClick={() => setShowChatBot(!showChatBot)}
+        className="w-auto h-auto bg-green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-3"
+        color="#757575"
+        size={40}
+      />
     </div>
   );
 }

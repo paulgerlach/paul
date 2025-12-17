@@ -32,7 +32,7 @@ import AdminAddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialo
 import ShareDashboardDialog from "@/components/Basic/Dialog/ShareDashboardDialog";
 import { Suspense } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
-import SlackbotChatContainer from "@/components/Admin/SlackbotChatContainer";
+import SlackBotChatContainer from "@/components/Admin/SlackbotChatContainer";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -82,7 +82,7 @@ export default function AdminLayout({
         <AdminAddDocBetriebskostenabrechnungDialog />
         <ShareDashboardDialog />
         <Toaster />
-        <SlackbotChatContainer  />
+        <SlackBotChatContainer />
       </QueryProvider>
     </Suspense>
   );

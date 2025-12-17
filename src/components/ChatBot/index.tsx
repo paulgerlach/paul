@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { BotMessageSquare } from "lucide-react";
+import { PiChatCircleDotsFill } from "react-icons/pi";
 import AIChatBot from './AIChatBot';
 import "./AIChatBot.css";
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
@@ -57,14 +57,28 @@ export default function ChatBotContainer() {
     <div className="fixed bottom-8 right-8 z-10">
       {showChatBot && (
         <div ref={chatContainerRef} className="chat-window">
-          <AIChatBot sendMessage={sendMessage} status={status} stop={stop} messages={messages} input={input} setInput={setInput} />
+          <AIChatBot
+            sendMessage={sendMessage}
+            status={status}
+            stop={stop}
+            messages={messages}
+            input={input}
+            setInput={setInput}
+          />
         </div>
       )}
-      <BotMessageSquare
+
+      {!showChatBot && (
+        <div className="chat-popup animate-from-right">
+          Hallo, schrieben Sie uns gern bei Fragen.
+        </div>
+      )}
+
+      <PiChatCircleDotsFill
         onClick={toggleChatBot}
-        className="w-auto h-auto bg-green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-3"
-        color="#757575"
-        size={40}
+        className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+        color="#FFFFFF"
+        size={28}
       />
     </div>
   );

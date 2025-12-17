@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { ChatStatus, DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
 import { useEffect, useState } from "react";
 import Spinner from "../Basic/Spinner/Spinner";
-import {Square} from "lucide-react"
+import {SendHorizonal, Square} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
@@ -43,10 +43,8 @@ export default function AIChatBot({ messages, sendMessage, status, stop, input, 
       {/* Loading/Streaming indicator */}
       {(status === "submitted" || status === "streaming") && (
         <div className="flex justify-start mb-4 animate-from-left ">
-          <div className="max-w-[85%] rounded-2xl">
-            <div className="flex items-center gap-2">
-              <div className="text-gray-600">Denken...</div>
-            </div>
+          <div className="max-w-[85%] rounded-2xl flex items-center gap-2">
+            <div className="text-green-900 animate-pulse">Denken...</div>
           </div>
         </div>
       )}
@@ -70,19 +68,20 @@ export default function AIChatBot({ messages, sendMessage, status, stop, input, 
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green disabled:opacity-50"
         />
         {status === "submitted" || status === "streaming" ? (
-          <div className="bg-green flex flex-col justify-center items-center text-white rounded-full p-2 hover:bg-green cursor-pointer transition-colors shadow-md">
+          <div className="bg-white flex flex-col justify-center items-center text-white rounded-full px-3 py-2 cursor-pointer transition-colors shadow-lg">
             <Square
               onClick={() => stop()}
-              className="text-sm text-white cursor-pointer"
+              className="text-sm bg-green text-green cursor-pointer rounded-xs"
+              size={18}
             />
           </div>
         ) : (
           <button
             type="submit"
             disabled={status !== "ready" || !input.trim()}
-            className="bg-green rounded-full px-4 py-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="bg-green rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Senden
+            {<SendHorizonal />}
           </button>
         )}
       </form>

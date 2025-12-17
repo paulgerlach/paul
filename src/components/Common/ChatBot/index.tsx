@@ -2,11 +2,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { BotMessageSquare } from "lucide-react";
-import AIChatBot from './AIChatBot';
 import "./AIChatBot.css";
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import AIChatBot from './AIChatBot';
+
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
@@ -24,7 +25,6 @@ export default function ChatBotContainer() {
     initialMessages: storedMessages,
   });
   const [input, setInput] = useState("");
-
 
   useEffect(() => {
     setStoredMessages(messages);
@@ -57,7 +57,14 @@ export default function ChatBotContainer() {
     <div className="fixed bottom-8 right-8 z-10">
       {showChatBot && (
         <div ref={chatContainerRef} className="chat-window">
-          <AIChatBot sendMessage={sendMessage} status={status} stop={stop} messages={messages} input={input} setInput={setInput} />
+          <AIChatBot
+            sendMessage={sendMessage}
+            status={status}
+            stop={stop}
+            messages={messages}
+            input={input}
+            setInput={setInput}
+          />
         </div>
       )}
       <BotMessageSquare

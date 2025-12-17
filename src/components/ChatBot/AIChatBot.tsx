@@ -2,31 +2,41 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../Basic/Spinner/Spinner";
 import {Square} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 
 export default function AIChatBot() {
+  const storedMessages = useAIMessagesStore((state) => state.storedMessages);
+  const setStoredMessages = useAIMessagesStore((state) => state.setStoredMessages);
   const { messages, sendMessage, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
+    // @ts-ignore
+    // To surpress type errors - this will still work correctly at runtime
+    initialMessages: storedMessages,
   });
-  const [input, setInput] = useState("");
 
+  const [input, setInput] = useState("");
+  
+    useEffect(() => {
+      setStoredMessages(messages);
+    }, [messages, setStoredMessages]);
 
   
   return (
-    <div className="flex flex-col bg-white p-4 rounded-md animate-grow-tr w-auto min-w-72 text-gray-600 ">
+    <div className=" flex flex-col bg-white p-4 rounded-md animate-grow-tr w-full text-gray-600 shadow-lg">
       <div className="border-b-2 pb-2">
         <p>Heidi-Bot</p>
       </div>
-      <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px]">
+      <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px] bg-green-50 p-2 rounded-sm">
         {messages.length === 0 && (
           <div className="flex justify-start">
-            <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-gray-100 text-gray-600 rounded-bl-sm animate-from-left">
+            <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-gray-100 text-gray-600">
               Hallo! Wie kann ich Ihnen heute helfen?
             </div>
           </div>
@@ -40,11 +50,10 @@ export default function AIChatBot() {
 
       {/* Loading/Streaming indicator */}
       {(status === "submitted" || status === "streaming") && (
-        <div className="flex justify-start mb-4">
-          <div className="max-w-[85%] max-h-[100%] rounded-2xl rounded-bl-sm px-4 py-3 bg-gray-100 animate-from-left">
+        <div className="flex justify-start mb-4 animate-from-left ">
+          <div className="max-w-[85%] rounded-2xl">
             <div className="flex items-center gap-2">
-              {status === "submitted" && <Spinner />}
-              <span className="text-gray-600">Thinking...</span>
+              <div className="text-gray-600">Denken...</div>
             </div>
           </div>
         </div>

@@ -1,0 +1,21 @@
+.chat-window {
+  position: absolute;
+  right: 0.25rem;
+  bottom: 2rem;
+  z-index: 10;
+  width: 90vw;
+}
+
+@media (min-width: 1024px) {
+
+  .chat-window {
+    right: 2rem;
+    width: 40vw;
+  }
+}
+
+@media (min-width: 768px) {
+  .chat-window {
+    width: 40vw;
+  }
+}

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BotMessageSquare } from "lucide-react";
 import AIChatBot from './AIChatBot';
+import "./AIChatBot.css";
 
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
@@ -32,12 +33,9 @@ export default function ChatBotContainer() {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-10">
+    <div className="fixed bottom-8 right-8">
       {showChatBot && (
-        <div
-          ref={chatContainerRef}
-          className="absolute right-4 lg:right-8 bottom-8 z-10"
-        >
+        <div ref={chatContainerRef} className="chat-window">
           <AIChatBot />
         </div>
       )}

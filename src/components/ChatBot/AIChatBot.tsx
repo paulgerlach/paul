@@ -5,6 +5,7 @@ import { SendHorizonal, Square } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiChatbot } from "react-icons/si";
+import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 
 interface AIChatbotInterface {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
@@ -23,6 +24,11 @@ export default function AIChatBot({
   input,
   setInput,
 }: AIChatbotInterface) {
+  const { setIsChatActive, isChatActive } = useAIMessagesStore();
+
+  const toggleChat = () => {
+    setIsChatActive(true)
+  }
   return (
     <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[60vh] max-w-full">
       {/* Header */}
@@ -36,24 +42,23 @@ export default function AIChatBot({
               size={40}
             />
           </div>
-          <div className="text-center text-lg font-semibold ">
+          <div className="text-center text-lg font-semibold">
             <p className="text-md">Text-Support</p>
             <p className="text-xs text-gray-400">Ai Assistant</p>
           </div>
         </div>
       </div>
 
-      {/* Messages Area - Takes all available space */}
+      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto pb-4 min-h-0">
         <div className="flex flex-col gap-3">
           {messages.length === 0 && (
             <div className="flex justify-start items-center gap-2">
-              
-                <SiChatbot
-                  color="#FFFFFF"
-                  className="bg-black rounded-full p-2"
-                  size={40}
-                />
+              <SiChatbot
+                color="#FFFFFF"
+                className="bg-black rounded-full p-2"
+                size={40}
+              />
               <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
                 Hallo! Wie kann ich Ihnen heute helfen?
               </div>
@@ -78,42 +83,61 @@ export default function AIChatBot({
         </div>
       </div>
 
-      {/* Input Form - Fixed at the bottom */}
+      {/* Input Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           if (input.trim()) {
             sendMessage({ text: input });
             setInput("");
+            setIsChatActive(true); // Activate chat on first send
           }
         }}
         className="flex gap-2 mt-4"
       >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={status !== "ready"}
-          placeholder="Nachricht eingeben..."
-          className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-        />
+        {/* Input field or placeholder */}
+        {isChatActive ? (
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={status !== "ready"}
+            placeholder="Nachricht eingeben..."
+            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+          />
+        ) : (
+            <button
+              title="start-chat"
+              onClick={toggleChat}
+              className="flex-1 flex items-center justify-center font-semibold text-white text-sm bg-black hover:bg-slate-900 hover:-translate-y-2 transition ease-in-out rounded-lg py-2 cursor-pointer ">
+            <p>Let&apos;s chat</p>
+          </button>
+        )}
+
+        {/* Send / Stop button */}
         {status === "submitted" || status === "streaming" ? (
           <button
-            title="stop-chat-button"
+            title="Stop generation"
             type="button"
             onClick={() => stop()}
             className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 transition-colors"
           >
             <Square className="text-green-600" size={18} />
           </button>
-        ) : (
+        ) : isChatActive ? (
           <button
-            title="submit-chat-button"
+            title="Send message"
             type="submit"
-            disabled={status !== "ready" || !input.trim()}
+            disabled={
+              !isChatActive || // ← NEW: disabled before chat starts
+              status !== "ready" ||
+              !input.trim()
+            }
             className="bg-green-600 text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             <SendHorizonal size={18} />
           </button>
+        ) : (
+          <></>
         )}
       </form>
     </div>
@@ -149,12 +173,14 @@ function Message({
   };
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      {!isUser && <SiChatbot
-        color="#FFFFFF"
-        className="bg-black rounded-full p-2"
-        size={40}
-      />}
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}>
+      {!isUser && (
+        <SiChatbot
+          color="#FFFFFF"
+          className="bg-black rounded-full p-2"
+          size={40}
+        />
+      )}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${
           isUser

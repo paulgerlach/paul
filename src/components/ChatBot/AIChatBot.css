@@ -10,13 +10,13 @@
 
   .chat-window {
     right: 2rem;
-    width: 25vw;
+    width: 30vw;
   }
 }
 
 @media (min-width: 768px) {
   .chat-window {
-    width: 25vw;
+    width: 30vw;
   }
 }
 

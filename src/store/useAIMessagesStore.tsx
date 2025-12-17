@@ -3,7 +3,9 @@ import { create } from "zustand";
 
 interface AIMessagesStoreState {
   storedMessages: UIMessage<unknown, UIDataTypes, UITools>[];
-  setStoredMessages: (messages: UIMessage<unknown, UIDataTypes, UITools>[]) => void;
+  setStoredMessages: (
+    messages: UIMessage<unknown, UIDataTypes, UITools>[]
+  ) => void;
 }
 
 export const useAIMessagesStore = create<AIMessagesStoreState>((set, get) => ({

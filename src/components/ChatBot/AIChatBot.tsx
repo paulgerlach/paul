@@ -54,8 +54,8 @@ export default function AIChatBot({
             />
           </div>
           <div className="text-center text-lg font-semibold">
-            <p className="text-md">Text-Support</p>
-            <p className="text-xs text-gray-400">Ai Assistant</p>
+            <p className="text-md">Text Support</p>
+            <p className="text-xs text-gray-400">AI Assistant</p>
           </div>
         </div>
       </div>

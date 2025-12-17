@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
+import { ChatStatus, DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
 import { useEffect, useState } from "react";
 import Spinner from "../Basic/Spinner/Spinner";
 import {Square} from "lucide-react"
@@ -9,24 +9,16 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 
-export default function AIChatBot() {
-  const storedMessages = useAIMessagesStore((state) => state.storedMessages);
-  const setStoredMessages = useAIMessagesStore((state) => state.setStoredMessages);
-  const { messages, sendMessage, status, stop } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-    // @ts-ignore
-    // To surpress type errors - this will still work correctly at runtime
-    initialMessages: storedMessages,
-  });
+interface AIChatbotInterface {
+  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  sendMessage: (message: { text: string }) => void;
+  status: ChatStatus;
+  stop: () => void;
+  input: string;
+  setInput: (input: string) => void;
+}
 
-  const [input, setInput] = useState("");
-  
-    useEffect(() => {
-      setStoredMessages(messages);
-    }, [messages, setStoredMessages]);
-
+export default function AIChatBot({ messages, sendMessage, status, stop, input, setInput }: AIChatbotInterface) {
   
   return (
     <div className=" flex flex-col bg-white p-4 rounded-md animate-grow-tr w-full text-gray-600 shadow-lg">

@@ -10,7 +10,7 @@ export default function ChatBotContainer() {
   return (
     <div className="relative">
       {showChatBot && (
-        <div className="z-10 absolute right-8 bottom-8">
+        <div className="!z-[9999] absolute right-4 lg:right-8 bottom-8">
           <AIChatBot />
         </div>
       )}

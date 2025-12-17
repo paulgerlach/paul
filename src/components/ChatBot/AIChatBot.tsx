@@ -7,6 +7,7 @@ import Spinner from "../Basic/Spinner/Spinner";
 import {Square} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import './chat.css';
 
 export default function AIChatBot() {
   const { messages, sendMessage, status, stop } = useChat({
@@ -17,7 +18,7 @@ export default function AIChatBot() {
   const [input, setInput] = useState("");
   
   return (
-    <div className="flex flex-col bg-white p-4 rounded-md  text-gray-600 z-[999] shadow-lg w-[85vw] !md:w-[45vw] !lg:w-[30vw]">
+    <div className="chat-container">
       <div className="border-b-2 pb-2">
         <p>Heidi-Bot</p>
       </div>

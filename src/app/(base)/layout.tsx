@@ -8,6 +8,7 @@ import LoginDialog from "@/components/Basic/Dialog/LoginDialog";
 import RegisterDialog from "@/components/Basic/Dialog/RegisterDialog";
 import ForgotPasswordDialog from "@/components/Basic/Dialog/ForgotPasswordDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
+import ChatBotContainer from "@/components/ChatBot";
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
           <RegisterDialog />
           <ForgotPasswordDialog />
           <Toaster />
+            <ChatBotContainer />
         </QueryProvider>
       </body>
     </html>

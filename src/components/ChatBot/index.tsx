@@ -8,9 +8,9 @@ export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="fixed bottom-8 right-8">
       {showChatBot && (
-        <div className="!z-[9999] absolute right-4 lg:right-8 bottom-8">
+        <div className="absolute right-4 lg:right-8 bottom-8">
           <AIChatBot />
         </div>
       )}

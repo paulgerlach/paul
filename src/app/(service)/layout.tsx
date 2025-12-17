@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import FragebogenHeader from "@/components/Header/FragebogenHeader";
+import ChatBotContainer from "@/components/ChatBot";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -18,6 +19,8 @@ export default function FragebogenLayout({
     <QueryProvider>
       <FragebogenHeader />
       {children}
+      <ChatBotContainer />
+      
     </QueryProvider>
   );
 }

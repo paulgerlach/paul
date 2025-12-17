@@ -1,32 +1,34 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
-import { useState } from "react";
+import { ChatStatus, DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
+import { useEffect, useState } from "react";
 import Spinner from "../Basic/Spinner/Spinner";
-import {Square} from "lucide-react"
+import {SendHorizonal, Square} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 
-export default function AIChatBot() {
-  const { messages, sendMessage, status, stop } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-  });
-  const [input, setInput] = useState("");
+interface AIChatbotInterface {
+  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  sendMessage: (message: { text: string }) => void;
+  status: ChatStatus;
+  stop: () => void;
+  input: string;
+  setInput: (input: string) => void;
+}
 
-
+export default function AIChatBot({ messages, sendMessage, status, stop, input, setInput }: AIChatbotInterface) {
   
   return (
-    <div className="flex flex-col bg-white p-4 rounded-md animate-grow-tr w-auto min-w-72 text-gray-600 ">
+    <div className=" flex flex-col bg-white p-4 rounded-md animate-grow-tr w-full text-gray-600 shadow-lg">
       <div className="border-b-2 pb-2">
-        <p>Heidi-Bot</p>
+        <p className="text-lg font-semibold animate-from-left ">Heidi-Bot</p>
       </div>
-      <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px]">
+      <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px] bg-green-50 p-2 rounded-sm">
         {messages.length === 0 && (
           <div className="flex justify-start">
-            <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-gray-100 text-gray-600 rounded-bl-sm animate-from-left">
+            <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-gray-100 text-gray-600">
               Hallo! Wie kann ich Ihnen heute helfen?
             </div>
           </div>
@@ -40,12 +42,11 @@ export default function AIChatBot() {
 
       {/* Loading/Streaming indicator */}
       {(status === "submitted" || status === "streaming") && (
-        <div className="flex justify-start mb-4">
-          <div className="max-w-[85%] max-h-[100%] rounded-2xl rounded-bl-sm px-4 py-3 bg-gray-100 animate-from-left">
-            <div className="flex items-center gap-2">
-              {status === "submitted" && <Spinner />}
-              <span className="text-gray-600">Thinking...</span>
-            </div>
+        <div className="flex justify-start mb-4 animate-from-left ">
+          <div className="max-w-[85%] rounded-2xl flex items-center gap-2">
+            <p className="text-green-900 animate-pulse animate-from-left ">
+              Denken...
+            </p>
           </div>
         </div>
       )}
@@ -69,19 +70,20 @@ export default function AIChatBot() {
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green disabled:opacity-50"
         />
         {status === "submitted" || status === "streaming" ? (
-          <div className="bg-green flex flex-col justify-center items-center text-white rounded-full p-2 hover:bg-green cursor-pointer transition-colors shadow-md">
+          <div className="bg-white flex flex-col justify-center items-center text-white rounded-full px-3 py-2 cursor-pointer transition-colors shadow-lg">
             <Square
               onClick={() => stop()}
-              className="text-sm text-white cursor-pointer"
+              className="text-sm bg-green text-green cursor-pointer rounded-xs"
+              size={18}
             />
           </div>
         ) : (
           <button
             type="submit"
             disabled={status !== "ready" || !input.trim()}
-            className="bg-green rounded-full px-4 py-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="bg-green rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Senden
+            {<SendHorizonal />}
           </button>
         )}
       </form>

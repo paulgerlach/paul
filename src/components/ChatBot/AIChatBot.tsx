@@ -23,7 +23,7 @@ export default function AIChatBot({ messages, sendMessage, status, stop, input, 
   return (
     <div className=" flex flex-col bg-white p-4 rounded-md animate-grow-tr w-full text-gray-600 shadow-lg">
       <div className="border-b-2 pb-2">
-        <p>Heidi-Bot</p>
+        <p className="text-lg font-semibold">Heidi-Bot</p>
       </div>
       <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px] bg-green-50 p-2 rounded-sm">
         {messages.length === 0 && (

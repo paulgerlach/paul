@@ -23,7 +23,7 @@ export default function AIChatBot({ messages, sendMessage, status, stop, input, 
   return (
     <div className=" flex flex-col bg-white p-4 rounded-md animate-grow-tr w-full text-gray-600 shadow-lg">
       <div className="border-b-2 pb-2">
-        <p className="text-lg font-semibold">Heidi-Bot</p>
+        <p className="text-lg font-semibold animate-from-left ">Heidi-Bot</p>
       </div>
       <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px] bg-green-50 p-2 rounded-sm">
         {messages.length === 0 && (
@@ -44,7 +44,9 @@ export default function AIChatBot({ messages, sendMessage, status, stop, input, 
       {(status === "submitted" || status === "streaming") && (
         <div className="flex justify-start mb-4 animate-from-left ">
           <div className="max-w-[85%] rounded-2xl flex items-center gap-2">
-            <div className="text-green-900 animate-pulse">Denken...</div>
+            <p className="text-green-900 animate-pulse animate-from-left ">
+              Denken...
+            </p>
           </div>
         </div>
       )}

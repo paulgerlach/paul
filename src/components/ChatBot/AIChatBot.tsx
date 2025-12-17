@@ -19,7 +19,7 @@ export default function AIChatBot() {
   return (
     <div className="flex flex-col bg-white p-4 rounded-md animate-grow-tr w-auto min-w-72 text-gray-600 ">
       <div className="border-b-2 pb-2">
-        <p>Heidi Bot</p>
+        <p>Heidi-Bot</p>
       </div>
       <div className="flex flex-col gap-3 my-4 overflow-y-auto max-h-[400px]">
         {messages.length === 0 && (

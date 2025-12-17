@@ -15,11 +15,17 @@ export default function AdminUsersDropdownContent({
 }: AdminApartmentsDropdownContentProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredUsers = users?.filter(
-    (user) =>
-      user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.last_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = users
+    ?.filter(
+      (user) =>
+        user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.last_name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+      const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
 
   return (
     <div className="w-full min-w-[250px] bg-white rounded-base shadow-lg border border-gray-200 px-2.5 py-4 space-y-3 max-medium:max-h-[50vh] max-medium:overflow-hidden max-medium:flex max-medium:flex-col">

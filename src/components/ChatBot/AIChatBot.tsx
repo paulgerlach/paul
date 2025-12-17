@@ -5,6 +5,8 @@ import { DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
 import { useState } from "react";
 import Spinner from "../Basic/Spinner/Spinner";
 import {Square} from "lucide-react"
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function AIChatBot() {
   const { messages, sendMessage, status, stop } = useChat({
@@ -13,11 +15,9 @@ export default function AIChatBot() {
     }),
   });
   const [input, setInput] = useState("");
-
-
   
   return (
-    <div className="flex flex-col bg-white p-4 rounded-md animate-grow-tr w-auto min-w-72 text-gray-600 ">
+    <div className="flex flex-col bg-white p-4 rounded-md  text-gray-600 z-[999] shadow-lg w-[85vw] !md:w-[45vw] !lg:w-[30vw]">
       <div className="border-b-2 pb-2">
         <p>Heidi-Bot</p>
       </div>
@@ -67,10 +67,10 @@ export default function AIChatBot() {
           className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green disabled:opacity-50"
         />
         {status === "submitted" || status === "streaming" ? (
-          <div className="bg-green flex flex-col justify-center items-center text-white rounded-full p-2 hover:bg-green cursor-pointer transition-colors shadow-md">
+          <div className="bg-white w-full flex flex-col justify-center items-center text-white rounded-full p-2 hover:bg-green cursor-pointer transition-colors shadow-md">
             <Square
               onClick={() => stop()}
-              className="text-sm text-white cursor-pointer"
+              className="text-sm cursor-pointer text-green"
             />
           </div>
         ) : (
@@ -94,7 +94,32 @@ function Message({
 }: {
   message: UIMessage<unknown, UIDataTypes, UITools>;
   isUser: boolean;
-}) {
+  }) {
+  
+  const components = {
+    a: (props: any) => (
+      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline" />
+    ), 
+    strong: (props: any) => (
+      <strong {...props} className="font-bold" />
+    ),
+    ul: (props: any) => (
+      <ul {...props} className="list-disc list-inside" />
+    ),
+    ol: (props: any) => (
+      <ol {...props} className="list-decimal list-inside" />
+    ),
+    h1: (props: any) => (
+      <h1 {...props} className="text-lg font-bold" />
+    ),
+    h2: (props: any) => (
+      <h2 {...props} className="text-base font-bold" />
+    ),
+    h3: (props: any) => (
+      <h3 {...props} className="text-sm font-bold" />
+    ),
+  }; 
+
   return (
     <div
       key={message.id}
@@ -109,9 +134,11 @@ function Message({
       >
         {message.parts.map((part, index) =>
           part.type === "text" ? (
-            <span key={index} className="break-words">
-              {part.text}
-            </span>
+            <div key={index} className="break-words">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+                {part.text}
+              </ReactMarkdown>
+            </div>
           ) : null
         )}
       </div>

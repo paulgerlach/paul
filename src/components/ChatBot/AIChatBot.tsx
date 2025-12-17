@@ -100,13 +100,13 @@ export default function AIChatBot({
         }}
         className="flex gap-2 mt-4"
       >
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={status !== "ready"}
-            placeholder="Write a message..."
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-100 disabled:opacity-50"
-          />
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          disabled={status !== "ready"}
+          placeholder="Nachricht schreiben..."
+          className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-100 disabled:opacity-50"
+        />
 
         {/* Send / Stop button */}
         {status === "submitted" || status === "streaming" ? (
@@ -122,10 +122,7 @@ export default function AIChatBot({
           <button
             title="Send message"
             type="submit"
-            disabled={
-              status !== "ready" ||
-              !input.trim()
-            }
+            disabled={status !== "ready" || !input.trim()}
             className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             <SendHorizonal size={18} />

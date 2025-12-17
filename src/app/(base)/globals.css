@@ -198,6 +198,69 @@ html {
     }
 }
 
+/* Add these animation styles */
+@keyframes expandHorizontal {
+    from {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fromLeft {
+    from {
+        transform: translateX(-10px) scaleX(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fromRight {
+    from {
+        transform: translateX(10px) scaleX(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scaleX(1);
+        opacity: 1;
+    }
+}
+
+.animate-expand-horizontal {
+    animation: expandHorizontal 0.2s ease-out forwards;
+    transform-origin: bottom;
+}
+
+.animate-from-left {
+    animation: fromLeft 0.3s ease-out forwards;
+    transform-origin: left bottom;
+}
+
+.animate-from-right {
+    animation: fromRight 0.3s ease-out forwards;
+    transform-origin: right bottom;
+}
+
+/* Optional: Add smooth transitions for message bubbles */
+.max-w-\[85\%\] {
+    transition: max-width 0.3s ease;
+}
+
+/* Ensure messages don't overflow */
+.break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
 .animate-grow-tr {
     transform-origin: bottom right;
     /* Anchor point: top-right corner */

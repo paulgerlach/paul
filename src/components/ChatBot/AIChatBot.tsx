@@ -1,13 +1,9 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { ChatStatus, DefaultChatTransport, UIDataTypes, UIMessage, UITools } from "ai";
-import { useEffect, useState } from "react";
-import Spinner from "../Basic/Spinner/Spinner";
+import { ChatStatus, UIDataTypes, UIMessage, UITools } from "ai";
 import {SendHorizonal, Square} from "lucide-react"
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 
 interface AIChatbotInterface {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];

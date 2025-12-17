@@ -63,8 +63,8 @@ export default function ChatBotContainer() {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-10">
-      {showChatBot && (
+    <div className="fixed bottom-8 right-8 z-[999]">
+      {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window">
           <AIChatBot
             sendMessage={sendMessage}
@@ -75,8 +75,14 @@ export default function ChatBotContainer() {
             setInput={setInput}
             setShowChatBot={setShowChatBot}
           />
-        </div>
-      )}
+        </div>) :
+        (<PiChatCircleDotsFill
+          onClick={toggleChatBot}
+          className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+          color="#FFFFFF"
+          size={28}
+        />)
+      }
 
       {!showChatBot && showPopup && (
         <div className="chat-popup animate-from-right">
@@ -84,12 +90,6 @@ export default function ChatBotContainer() {
         </div>
       )}
 
-      <PiChatCircleDotsFill
-        onClick={toggleChatBot}
-        className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
-        color="#FFFFFF"
-        size={28}
-      />
     </div>
   );
 }

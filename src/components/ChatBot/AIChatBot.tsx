@@ -27,17 +27,12 @@ export default function AIChatBot({
   setInput,
   setShowChatBot,
 }: AIChatbotInterface) {
-  const { setIsChatActive, isChatActive } = useAIMessagesStore();
-
-  const toggleChat = () => {
-    setIsChatActive(true);
-  };
 
   const handleMinimizeChat = () => {
     setShowChatBot(false);
   }
   return (
-    <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[60vh] max-w-full relative">
+    <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
       <FaRegWindowMinimize
         onClick={handleMinimizeChat}
         className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
@@ -101,28 +96,17 @@ export default function AIChatBot({
           if (input.trim()) {
             sendMessage({ text: input });
             setInput("");
-            setIsChatActive(true); 
           }
         }}
         className="flex gap-2 mt-4"
       >
-        {isChatActive ? (
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={status !== "ready"}
-            placeholder="Nachricht eingeben..."
+            placeholder="Write a message..."
             className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-100 disabled:opacity-50"
           />
-        ) : (
-          <button
-            title="start-chat"
-            onClick={toggleChat}
-            className="flex-1 flex items-center justify-center font-semibold text-white text-sm bg-black hover:bg-slate-900 hover:-translate-y-2 transition ease-in-out rounded-lg py-2 cursor-pointer "
-          >
-            <p>Let&apos;s chat</p>
-          </button>
-        )}
 
         {/* Send / Stop button */}
         {status === "submitted" || status === "streaming" ? (
@@ -130,16 +114,15 @@ export default function AIChatBot({
             title="Stop generation"
             type="button"
             onClick={() => stop()}
-            className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 transition-colors"
+            className="bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <Square className="text-green-600" size={18} />
           </button>
-        ) : isChatActive ? (
+        ) : (
           <button
             title="Send message"
             type="submit"
             disabled={
-              !isChatActive ||
               status !== "ready" ||
               !input.trim()
             }
@@ -147,8 +130,6 @@ export default function AIChatBot({
           >
             <SendHorizonal size={18} />
           </button>
-        ) : (
-          <></>
         )}
       </form>
     </div>

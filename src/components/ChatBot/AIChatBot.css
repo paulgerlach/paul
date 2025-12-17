@@ -1,7 +1,7 @@
 .chat-window {
   position: absolute;
   right: 0.25rem;
-  bottom: 2rem;
+  bottom: -2rem;
   z-index: 10;
   width: 90vw;
 }
@@ -9,7 +9,7 @@
 @media (min-width: 1024px) {
 
   .chat-window {
-    right: 2rem;
+    right: -2rem;
     width: 30vw;
   }
 }

@@ -43,7 +43,7 @@ export default function AiMessagesContainer({
   }, [aiMessages, setStoredMessages]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="flex flex-col flex-1 min-h-0 animate-from-right">
       {" "}
       <div className="flex-1 overflow-y-auto pb-4">
         <div className="flex flex-col gap-3">
@@ -76,9 +76,7 @@ export default function AiMessagesContainer({
           )}
         </div>
       </div>
-      
-      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-t border-gray-200">
-        {" "}
+      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
         {isExistingClient && (
           <button
             title="Send message"

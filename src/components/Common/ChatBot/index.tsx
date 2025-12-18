@@ -53,7 +53,6 @@ export default function ChatBotContainer({ isExistingClient }:ChatBotContainerPr
     setIsSlackChat((prev) => !prev);
   };
 
-
   return (
     <div className="fixed bottom-8 right-8 z-[999]">
       {showChatBot ? (

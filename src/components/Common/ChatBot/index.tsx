@@ -3,13 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PiChatCircleDotsFill } from "react-icons/pi";
 import "./AIChatBot.css";
-import { useAIMessagesStore } from '@/store/useAIMessagesStore';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { FaRegWindowMinimize } from 'react-icons/fa';
 import ChatHeader from './ChatHeader';
-import ChatInput from './ChatInput';
-import { MdOutlineSupportAgent } from 'react-icons/md';
 import AiMessagesContainer from './Messages/AiMessagesContainer';
 import SlackMessagesContainer from './Messages/SlackMessagesContainer';
 
@@ -22,23 +17,6 @@ export default function ChatBotContainer({ isExistingClient }:ChatBotContainerPr
   const [showPopup, setShowPopup] = useState(false);
   const [isSlackChat, setIsSlackChat] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const storedMessages = useAIMessagesStore((state) => state.storedMessages);
-  const setStoredMessages = useAIMessagesStore(
-    (state) => state.setStoredMessages
-  );
-  const { messages:aiMessages, sendMessage, status, stop } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-    // @ts-ignore
-    // To surpress type errors - this will still work correctly at runtime
-    initialMessages: storedMessages,
-  });
-  const [input, setInput] = useState("");
-
-  useEffect(() => {
-    setStoredMessages(aiMessages);
-  }, [aiMessages, setStoredMessages]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -91,30 +69,13 @@ export default function ChatBotContainer({ isExistingClient }:ChatBotContainerPr
               subHeaderText={isSlackChat ? "Chat Assistant" : "AI Assistant"}
             />
             {isSlackChat ? (
-              <SlackMessagesContainer />
+              <SlackMessagesContainer toggleChatType={toggleChatType} />
             ) : (
-              <AiMessagesContainer messages={aiMessages} status={status} />
-            )}
-
-            <div className="flex flex-col items-start justify-center w-full gap-3">
-              {isExistingClient && (
-                <button
-                  title="Send message"
-                  onClick={toggleChatType}
-                  className="bg-black text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
-                >
-                  <MdOutlineSupportAgent color="#FFFFFF" size={30} />
-                </button>
-              )}
-
-              <ChatInput
-                sendMessage={sendMessage}
-                input={input}
-                setInput={setInput}
-                status={status}
-                stop={stop}
+              <AiMessagesContainer
+                isExistingClient={isExistingClient}
+                toggleChatType={toggleChatType}
               />
-            </div>
+            )}
           </div>
         </div>
       ) : (

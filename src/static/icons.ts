@@ -185,6 +185,7 @@ import cold_water from "@/asset/cold_water.png";
 import hot_water from "@/asset/hot_water.png";
 import cross_arrows from "@/asset/cross_arrows.png";
 import notification from "@/asset/notification.png";
+import smoke_detector from "@/asset/smoke_detector.png";
 import earth from "@/asset/earth.png";
 import blue_info from "@/asset/blue_info.png";
 import alert_triangle from "@/asset/alert_triangle.png";
@@ -427,6 +428,7 @@ export {
   hot_water,
   earth,
   notification,
+  smoke_detector,
   cross_arrows,
   accentro,
   cellphone,

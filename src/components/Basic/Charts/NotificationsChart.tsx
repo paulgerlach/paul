@@ -14,6 +14,7 @@ import {
   notification,
   pipe_water,
   cold_water,
+  smoke_detector,
 } from "@/static/icons";
 import Image from "next/image";
 import NotificationItem from "./NotificationItem";
@@ -179,7 +180,7 @@ export default function NotificationsChart({
       return caract_battery; // battery icon
     }
     if (type.includes("rauchwarnmelder") || type.includes("smoke")) {
-      return alert_triangle; // smoke detector icon - alert triangle is appropriate
+      return smoke_detector; // smoke detector icon
     }
     if (type.includes("verbrauchsanstieg") || type.includes("consumption")) {
       // Use water icons based on the type of consumption
@@ -288,14 +289,21 @@ export default function NotificationsChart({
         );
         const heatDevices = uniqueHeatIds.size;
         
-        const uniqueWaterIds = new Set(
+        const uniqueColdWaterIds = new Set(
           parsedData.data
-            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
-                   d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler")
+            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "Kaltwasserzähler")
             .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
             .filter(Boolean)
         );
-        const waterDevices = uniqueWaterIds.size;
+        const coldWaterDevices = uniqueColdWaterIds.size;
+        
+        const uniqueHotWaterIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "WWater" || d["Device Type"] === "Warmwasserzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const hotWaterDevices = uniqueHotWaterIds.size;
         
         const uniqueElecIds = new Set(
           parsedData.data
@@ -305,13 +313,20 @@ export default function NotificationsChart({
         );
         const elecDevices = uniqueElecIds.size;
 
+        // Build subtitle with all 4 categories
+        const parts = [];
+        if (heatDevices > 0) parts.push(`${heatDevices} Wärme`);
+        if (coldWaterDevices > 0) parts.push(`${coldWaterDevices} Kaltwasser`);
+        if (hotWaterDevices > 0) parts.push(`${hotWaterDevices} Warmwasser`);
+        if (elecDevices > 0) parts.push(`${elecDevices} Strom`);
+
         dynamicNotifications.push({
           leftIcon: notification,
           rightIcon: green_check,
           leftBg: "#E7E8EA",
           rightBg: "#E7F2E8",
           title: "Alle Zähler funktionieren korrekt",
-          subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
+          subtitle: `${totalDevices} Geräte ohne Fehler (${parts.join(', ')})`,
         });
 
         return dynamicNotifications;
@@ -407,14 +422,21 @@ export default function NotificationsChart({
         );
         const heatDevices = uniqueHeatIds.size;
         
-        const uniqueWaterIds = new Set(
+        const uniqueColdWaterIds = new Set(
           parsedData.data
-            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "WWater" || 
-                   d["Device Type"] === "Kaltwasserzähler" || d["Device Type"] === "Warmwasserzähler")
+            .filter((d) => d["Device Type"] === "Water" || d["Device Type"] === "Kaltwasserzähler")
             .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
             .filter(Boolean)
         );
-        const waterDevices = uniqueWaterIds.size;
+        const coldWaterDevices = uniqueColdWaterIds.size;
+        
+        const uniqueHotWaterIds = new Set(
+          parsedData.data
+            .filter((d) => d["Device Type"] === "WWater" || d["Device Type"] === "Warmwasserzähler")
+            .map(d => d.ID?.toString() || d["Number Meter"]?.toString())
+            .filter(Boolean)
+        );
+        const hotWaterDevices = uniqueHotWaterIds.size;
         
         const uniqueElecIds = new Set(
           parsedData.data
@@ -424,6 +446,13 @@ export default function NotificationsChart({
         );
         const elecDevices = uniqueElecIds.size;
 
+        // Build subtitle with all 4 categories
+        const categoryParts = [];
+        if (heatDevices > 0) categoryParts.push(`${heatDevices} Wärme`);
+        if (coldWaterDevices > 0) categoryParts.push(`${coldWaterDevices} Kaltwasser`);
+        if (hotWaterDevices > 0) categoryParts.push(`${hotWaterDevices} Warmwasser`);
+        if (elecDevices > 0) categoryParts.push(`${elecDevices} Strom`);
+
         // For demo account, skip success message and show dummy notifications instead
         if (!isDemoAccount) {
           notifications.push({
@@ -432,7 +461,7 @@ export default function NotificationsChart({
             leftBg: "#E7E8EA",
             rightBg: "#E7F2E8",
             title: "Alle Zähler funktionieren korrekt",
-            subtitle: `${totalDevices} Geräte ohne Fehler (${heatDevices} Wärme, ${waterDevices} Wasser${elecDevices > 0 ? `, ${elecDevices} Strom` : ''})`,
+            subtitle: `${totalDevices} Geräte ohne Fehler (${categoryParts.join(', ')})`,
           });
 
           return notifications;

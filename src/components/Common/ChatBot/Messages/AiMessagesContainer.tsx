@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { SiChatbot } from 'react-icons/si';
 import Message from './Message';
-import { UIMessage, UIDataTypes, UITools, ChatStatus, DefaultChatTransport } from 'ai';
-import ChatInput from '../ChatInput';
+import {  DefaultChatTransport } from 'ai';
 import { MdOutlineSupportAgent } from 'react-icons/md';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { useChat } from '@ai-sdk/react';
+import AIChatInput from '../AIChatInput';
 
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
@@ -86,7 +86,7 @@ export default function AiMessagesContainer({
             <MdOutlineSupportAgent color="#FFFFFF" size={30} />
           </button>
         )}
-        <ChatInput
+        <AIChatInput
           sendMessage={sendMessage}
           input={input}
           setInput={setInput}

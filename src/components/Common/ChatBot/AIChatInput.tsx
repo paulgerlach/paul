@@ -10,7 +10,7 @@ interface ChatInputProps {
   stop: () => void;
 }
 
-export default function ChatInput({ sendMessage, input, setInput, status, stop }: ChatInputProps) {
+export default function AIChatInput({ sendMessage, input, setInput, status, stop }: ChatInputProps) {
   return (
     <form
       onSubmit={(e) => {

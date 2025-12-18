@@ -32,8 +32,8 @@ import AdminAddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialo
 import ShareDashboardDialog from "@/components/Basic/Dialog/ShareDashboardDialog";
 import { Suspense } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
-import SlackBotChatContainer from "@/components/Admin/SlackbotChatContainer";
 import ChatBotContainer from "@/components/Common/ChatBot";
+import { supabaseServer } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -41,11 +41,17 @@ export const metadata: Metadata = {
     "Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await supabaseServer();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const isExistingClient = !!session; 
 
   return (
     <Suspense fallback={<Loading />}>
@@ -84,8 +90,7 @@ export default function AdminLayout({
         <AdminAddDocBetriebskostenabrechnungDialog />
         <ShareDashboardDialog />
         <Toaster />
-        {/* <SlackBotChatContainer /> */}
-        <ChatBotContainer isExistingClient={true} />
+        <ChatBotContainer isExistingClient={isExistingClient} />
       </QueryProvider>
     </Suspense>
   );

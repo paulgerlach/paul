@@ -1,11 +1,11 @@
 import React from 'react';
 import { SiChatbot } from 'react-icons/si';
 import Message from './Message';
-import { UIMessage, UIDataTypes, UITools } from 'ai';
+import { UIMessage, UIDataTypes, UITools, ChatStatus } from 'ai';
 
 interface MessagesContainerProps {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
-  status: string;
+  status: ChatStatus;
 }
 
 export default function MessagesContainer({ messages, status }: MessagesContainerProps) {

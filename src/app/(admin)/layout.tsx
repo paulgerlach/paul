@@ -30,6 +30,9 @@ import AdminObjekteDeleteDialog from "@/components/Basic/Dialog/Admin/AdminObjek
 import AdminEditHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminEditHeizkostenabrechnungCostTypeDialog";
 import AdminAddHeizkostenabrechnungCostTypeDialog from "@/components/Basic/Dialog/Admin/AdminAddHeizkostenabrechnungCostTypeDialog";
 import ShareDashboardDialog from "@/components/Basic/Dialog/ShareDashboardDialog";
+import { Suspense } from "react";
+import Loading from "@/components/Basic/Loading/Loading";
+import SlackBotChatContainer from "@/components/Admin/SlackbotChatContainer";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -43,41 +46,44 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <QueryProvider>
-      <div className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
-        <AdminHeader />
-        <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
-          <Sidebar />
-          <MobileSidebar />
-          {children}
-        </div>
-      </div>
-      <ObjekteDeleteDialog />
-      <AdminObjekteDeleteDialog />
-      <LocalDeleteDialog />
-      <AdminLocalDeleteDialog />
-      <ContractDeleteDialog />
-      <AdminContractDeleteDialog />
-      <HeatingBillCreateDialog />
-      <AdminHeatingBillCreateDialog />
-      <AddDocHeizkostenabrechnungDialog />
-      <AddHeizkostenabrechnungCostTypeDialog />
-      <AdminAddHeizkostenabrechnungCostTypeDialog />
-      <AddDocBetriebskostenabrechnungDialog />
-      <AddBetriebskostenabrechnungCostTypeDialog />
-      <AdminAddBetriebskostenabrechnungCostTypeDialog />
-      <EditBetriebskostenabrechnungCostTypeDialog />
-      <AdminEditBetriebskostenabrechnungCostTypeDialog />
-      <EditHeizkostenabrechnungCostTypeDialog />
-      <AdminEditHeizkostenabrechnungCostTypeDialog />
-      <CostTypeHeizkostenabrechnungDeleteDialog />
-      <CostTypeBetriebskostenabrechnungDeleteDialog />
-      <OperatingCostDocumentDeleteDialog />
-      <AdminOperatingCostDocumentDeleteDialog />
-      <DocumentDeleteDialog />
-      <AdminAddDocBetriebskostenabrechnungDialog />
-      <ShareDashboardDialog />
-      <Toaster />
-    </QueryProvider>
+    <Suspense fallback={<Loading />}>
+      <QueryProvider>
+        <main className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
+          <AdminHeader />
+          <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
+            <Sidebar />
+            <MobileSidebar />
+            {children}
+          </div>
+        </main>
+        <ObjekteDeleteDialog />
+        <AdminObjekteDeleteDialog />
+        <LocalDeleteDialog />
+        <AdminLocalDeleteDialog />
+        <ContractDeleteDialog />
+        <AdminContractDeleteDialog />
+        <HeatingBillCreateDialog />
+        <AdminHeatingBillCreateDialog />
+        <AddDocHeizkostenabrechnungDialog />
+        <AddHeizkostenabrechnungCostTypeDialog />
+        <AdminAddHeizkostenabrechnungCostTypeDialog />
+        <AddDocBetriebskostenabrechnungDialog />
+        <AddBetriebskostenabrechnungCostTypeDialog />
+        <AdminAddBetriebskostenabrechnungCostTypeDialog />
+        <EditBetriebskostenabrechnungCostTypeDialog />
+        <AdminEditBetriebskostenabrechnungCostTypeDialog />
+        <EditHeizkostenabrechnungCostTypeDialog />
+        <AdminEditHeizkostenabrechnungCostTypeDialog />
+        <CostTypeHeizkostenabrechnungDeleteDialog />
+        <CostTypeBetriebskostenabrechnungDeleteDialog />
+        <OperatingCostDocumentDeleteDialog />
+        <AdminOperatingCostDocumentDeleteDialog />
+        <DocumentDeleteDialog />
+        <AdminAddDocBetriebskostenabrechnungDialog />
+        <ShareDashboardDialog />
+        <Toaster />
+        <SlackBotChatContainer />
+      </QueryProvider>
+    </Suspense>
   );
 }

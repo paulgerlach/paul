@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import QueryProvider from "../QueryProvider";
 import FragebogenHeader from "@/components/Header/FragebogenHeader";
-import ChatBotContainer from "@/components/ChatBot";
+import ChatBotContainer from "@/components/Common/ChatBot";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",

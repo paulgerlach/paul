@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { SiChatbot } from "react-icons/si";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import { FaRegWindowMinimize } from "react-icons/fa";
+import ChatHeader from "./ChatHeader";
 
 interface AIChatbotInterface {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
@@ -30,30 +31,16 @@ export default function AIChatBot({
 
   const handleMinimizeChat = () => {
     setShowChatBot(false);
-  }
+  };
+  
   return (
     <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
       <FaRegWindowMinimize
         onClick={handleMinimizeChat}
         className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
       />
-      {/* Header */}
-      <div className="pb-4 flex justify-center">
-        <div className="flex flex-row gap-1 items-center justify-center animate-from-left shadow-md w-auto px-4 py-2 rounded-full bg-white">
-          <div className="relative">
-            <div className="bg-green-700 rounded-full w-4 h-4 absolute right-0" />
-            <SiChatbot
-              color="#FFFFFF"
-              className="bg-black rounded-full p-2"
-              size={40}
-            />
-          </div>
-          <div className="text-center text-lg font-semibold">
-            <p className="text-md">Text Support</p>
-            <p className="text-xs text-gray-400">AI Assistant</p>
-          </div>
-        </div>
-      </div>
+      
+      <ChatHeader headerText='Text Support' subHeaderText='AI Assistant'/>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto pb-4 min-h-0">

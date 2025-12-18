@@ -8,6 +8,7 @@ import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 
+
 export default function ChatBotContainer() {
   const [showChatBot, setShowChatBot] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -25,7 +26,6 @@ export default function ChatBotContainer() {
     initialMessages: storedMessages,
   });
   const [input, setInput] = useState("");
-
 
   useEffect(() => {
     setStoredMessages(messages);

@@ -20,7 +20,7 @@ export default function ChatInput({ sendMessage, input, setInput, status, stop }
           setInput("");
         }
       }}
-      className="flex gap-2 mt-4"
+      className="flex gap-2 w-full"
     >
       <input
         value={input}

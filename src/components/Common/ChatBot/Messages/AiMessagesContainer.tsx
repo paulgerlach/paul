@@ -3,12 +3,12 @@ import { SiChatbot } from 'react-icons/si';
 import Message from './Message';
 import { UIMessage, UIDataTypes, UITools, ChatStatus } from 'ai';
 
-interface MessagesContainerProps {
+interface AiMessagesContainerProps {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   status: ChatStatus;
 }
 
-export default function MessagesContainer({ messages, status }: MessagesContainerProps) {
+export default function AiMessagesContainer({ messages, status }: AiMessagesContainerProps) {
   return (
     <div className="flex-1 overflow-y-auto pb-4 min-h-0">
       <div className="flex flex-col gap-3">

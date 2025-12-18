@@ -1,24 +1,26 @@
-import { useState, useEffect } from "react"
-import { supabase } from '@/utils/supabase/client';
-import { sendSlackMessage, getSlackThreadMessages } from '@/actions/slackChat';
+import { useState, useEffect } from "react";
+import { supabase } from "@/utils/supabase/client";
+import { sendSlackMessage, getSlackThreadMessages } from "@/actions/slackChat";
 
 interface SlackMessage {
-  id: string
-  role: 'user' | 'assistant'
-  text: string
-  timestamp: Date
+  id: string;
+  role: "user" | "assistant" | "human_reply";
+  text: string;
+  timestamp: Date;
 }
 
 export const useSlackChat = () => {
-  const [messages, setMessages] = useState<SlackMessage[]>([])
-  const [status, setStatus] = useState<'ready' | 'sending' | 'connecting'>('connecting')
-  const [input, setInput] = useState('')
-  const [userId, setUserId] = useState<string | null>(null)
+  const [messages, setMessages] = useState<SlackMessage[]>([]);
+  const [status, setStatus] = useState<
+    "ready" | "sending" | "waiting_for_human" | "connecting"
+  >("connecting");
+  const [input, setInput] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const [threadTs, setThreadTs] = useState<string | null>(null);
+  const [lastSentTs, setLastSentTs] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === 'ready')
-      return;
+    if (status === "ready") return;
     const initializeConnection = async () => {
       try {
         console.log("Initialize Slack Connection");
@@ -32,7 +34,6 @@ export const useSlackChat = () => {
     initializeConnection();
   }, []);
 
-
   useEffect(() => {
     const getUserSlackThread = async () => {
       const {
@@ -40,7 +41,6 @@ export const useSlackChat = () => {
       } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
-        //Adjust this to pesrist thread to database
         const stored = localStorage.getItem(`slack_thread_${user.id}`);
         if (stored) setThreadTs(stored);
       }
@@ -50,60 +50,91 @@ export const useSlackChat = () => {
 
   useEffect(() => {
     if (!threadTs) return;
+    let pollInterval = 5000;
+    if (status === "waiting_for_human") pollInterval = 2000;
+
     const interval = setInterval(async () => {
       try {
         const newMessages = await getSlackThreadMessages(threadTs);
-        setMessages(prev => {
-          const existingIds = new Set(prev.map(m => m.id));
-          const toAdd = newMessages.filter(m => !existingIds.has(m.id));
+        setMessages((prev) => {
+          const existingIds = new Set(prev.map((m) => m.id));
+          const toAdd = newMessages.filter((m) => !existingIds.has(m.id));
           return [...prev, ...toAdd];
         });
+
+        if (status === "waiting_for_human") {
+          const hasHumanReply = newMessages.some(
+            (m) =>
+              m.role === "human_reply" &&
+              new Date(m.timestamp).getTime() >
+                (lastSentTs ? Number(lastSentTs) * 1000 : 0)
+          );
+          if (hasHumanReply) {
+            setStatus("ready");
+          }
+        }
       } catch (error) {
-        console.error('Error fetching Slack messages:', error);
+        console.error("Error fetching Slack messages:", error);
       }
-    }, 5000);
+    }, pollInterval);
+
     return () => clearInterval(interval);
-  }, [threadTs]);
+  }, [threadTs, status, lastSentTs]);
 
   const sendMessage = async (text: string) => {
-    if (!text.trim() || !userId) return
+    if (!text.trim() || !userId) return;
+
+    const formattedText = threadTs
+      ? text.trim()
+      : `Support request from user ${userId}: ${text.trim()}`; // Add context for new threads
 
     const userMessage: SlackMessage = {
       id: Date.now().toString(),
-      role: 'user',
-      text: text.trim(),
-      timestamp: new Date()
-    }
+      role: "user",
+      text: formattedText,
+      timestamp: new Date(),
+    };
 
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
-    setStatus('sending')
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setStatus("sending");
 
     try {
-      const newThreadTs = await sendSlackMessage(text.trim(), threadTs);
+      const newThreadTs = await sendSlackMessage(formattedText, threadTs);
+      setLastSentTs(newThreadTs);
       if (!threadTs) {
         setThreadTs(newThreadTs);
         localStorage.setItem(`slack_thread_${userId}`, newThreadTs);
       }
-      // Fetch any new messages immediately
-      const newMessages = await getSlackThreadMessages(newThreadTs);
-      setMessages(prev => {
-        const existingIds = new Set(prev.map(m => m.id));
-        const toAdd = newMessages.filter(m => !existingIds.has(m.id));
+
+      const initialMessages = await getSlackThreadMessages(
+        newThreadTs || threadTs!
+      );
+      setMessages((prev) => {
+        const existingIds = new Set(prev.map((m) => m.id));
+        const toAdd = initialMessages.filter((m) => !existingIds.has(m.id));
         return [...prev, ...toAdd];
       });
+
+      setStatus("waiting_for_human");
+
+      setTimeout(() => {
+        if (status === "waiting_for_human") {
+          setStatus("ready");
+          console.log("Timeout: No human reply detected.");
+        }
+      }, 300000);
     } catch (error) {
-      console.error('Error sending Slack message:', error);
-    } finally {
-      setStatus('ready')
+      console.error("Error sending Slack message:", error);
+      setStatus("ready");
     }
-  }
+  };
 
   return {
     messages,
     sendMessage,
     status,
     input,
-    setInput
-  }
-}
+    setInput,
+  };
+};

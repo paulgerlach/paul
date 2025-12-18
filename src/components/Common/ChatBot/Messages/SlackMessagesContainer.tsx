@@ -17,7 +17,7 @@ export default function SlackMessagesContainer({ toggleChatType }: SlackChatBotP
   return (
     <div className="flex flex-col flex-1 min-h-0 animate-from-right">
       {" "}
-      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-t border-gray-200 h-full">
+      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200 h-full">
         {messages.map((message) => {
           const isUser = message.role === "user";
           return (
@@ -81,17 +81,13 @@ export default function SlackMessagesContainer({ toggleChatType }: SlackChatBotP
             </div>
           );
         })}
-
-        {/* Loading indicator */}
-        {status === "sending" && (
-          <div className="flex justify-start">
-            <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
-              <p className="text-green-900 animate-pulse">Sending...</p>
-            </div>
-          </div>
-        )}
       </div>
       <div className="flex flex-col items-start justify-center gap-3 pt-4 border-gray-200 w-full">
+        <div className="flex justify-end w-full">
+          <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
+            <p className="text-black-400 animate-pulse text-sm">Slack connection status : {status }</p>
+          </div>
+        </div>
         <button
           title="Send message"
           onClick={toggleChatType}

@@ -11,7 +11,7 @@ interface SlackMessage {
 
 export const useSlackChat = () => {
   const [messages, setMessages] = useState<SlackMessage[]>([])
-  const [status, setStatus] = useState<'ready' | 'sending'>('ready')
+  const [status, setStatus] = useState<'ready' | 'sending' | 'connecting'>('ready')
   const [input, setInput] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
   const [threadTs, setThreadTs] = useState<string | null>(null)

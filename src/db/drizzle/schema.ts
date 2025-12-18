@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -328,4 +328,95 @@ export const system_settings = pgTable("system_settings", {
 	pgPolicy("Admins can view system settings", { as: "permissive", for: "select", to: ["public"], using: sql`is_admin()` }),
 	pgPolicy("Admins can update system settings", { as: "permissive", for: "update", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
 	pgPolicy("Anyone can view registration status", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
+]);
+
+export const bved_api_tokens = pgTable("bved_api_tokens", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	user_id: uuid().notNull(),
+	client_name: text().notNull(),
+	access_token_prefix: varchar({ length: 20 }).notNull(), // First 8 chars for lookup
+	access_token_hash: text().notNull(), // Argon2id hash of full token
+	refresh_token_prefix: varchar({ length: 20 }).notNull(), // First 8 chars for lookup
+	refresh_token_hash: text().notNull(), // Argon2id hash of full token
+	access_token_expires_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	refresh_token_expires_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	last_used_at: timestamp({ withTimezone: true, mode: 'string' }),
+	revoked: boolean().default(false).notNull(),
+	metadata: jsonb(),
+}, (table) => [
+	foreignKey({
+		columns: [table.user_id],
+		foreignColumns: [users.id],
+		name: "bved_api_tokens_user_id_fkey"
+	}).onDelete("cascade"),
+	index("bved_api_tokens_access_token_prefix_idx").on(table.access_token_prefix),
+	pgPolicy("Users can access their own tokens or admins can access all", { 
+		as: "permissive", 
+		for: "all", 
+		to: ["public"], 
+		using: sql`(user_id = auth.uid() OR is_admin())`, 
+		withCheck: sql`(user_id = auth.uid() OR is_admin())` 
+	}),
+	pgPolicy("Service role can read tokens for auth validation", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
+]);
+
+export const bved_platform_credentials = pgTable("bved_platform_credentials", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	platform_type: text().notNull(), // e.g., "kalo", "other_bved_provider"
+	property_id: uuid().notNull(), // Reference to objekte.id
+	credentials: jsonb().notNull(), // Encrypted credentials (client_id, client_secret, etc.) - See migration comments for encryption method
+	token_expires_at: timestamp({ withTimezone: true, mode: 'string' }), // When the stored token expires
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	foreignKey({
+		columns: [table.property_id],
+		foreignColumns: [objekte.id],
+		name: "bved_platform_credentials_property_id_fkey"
+	}).onDelete("cascade"),
+	pgPolicy("Users can access credentials for their properties", { 
+		as: "permissive", 
+		for: "all", 
+		to: ["public"], 
+		using: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`,
+		withCheck: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`
+	}),
+	pgPolicy("Admins can manage all credentials", { 
+		as: "permissive", 
+		for: "all", 
+		to: ["public"], 
+		using: sql`is_admin()`, 
+		withCheck: sql`is_admin()` 
+	}),
+]);
+
+export const bved_cost_categories_cache = pgTable("bved_cost_categories_cache", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	property_id: uuid().notNull(), // Reference to objekte.id
+	cache_key: text().notNull(), // Unique key for cache lookup (e.g., property_id + period)
+	cached_data: jsonb().notNull(), // Cached cost category data
+	expires_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(), // 24hr TTL from created_at
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	foreignKey({
+		columns: [table.property_id],
+		foreignColumns: [objekte.id],
+		name: "bved_cost_categories_cache_property_id_fkey"
+	}).onDelete("cascade"),
+	unique("bved_cost_categories_cache_cache_key_key").on(table.cache_key),
+	pgPolicy("Users can access cache for their properties", { 
+		as: "permissive", 
+		for: "all", 
+		to: ["public"], 
+		using: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`,
+		withCheck: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`
+	}),
+	pgPolicy("Admins can manage all cache", { 
+		as: "permissive", 
+		for: "all", 
+		to: ["public"], 
+		using: sql`is_admin()`, 
+		withCheck: sql`is_admin()` 
+	}),
 ]);

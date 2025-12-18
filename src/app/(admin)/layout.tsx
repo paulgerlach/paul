@@ -33,6 +33,7 @@ import ShareDashboardDialog from "@/components/Basic/Dialog/ShareDashboardDialog
 import { Suspense } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
 import SlackBotChatContainer from "@/components/Admin/SlackbotChatContainer";
+import ChatBotContainer from "@/components/Common/ChatBot";
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -45,6 +46,7 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <Suspense fallback={<Loading />}>
       <QueryProvider>
@@ -82,7 +84,8 @@ export default function AdminLayout({
         <AdminAddDocBetriebskostenabrechnungDialog />
         <ShareDashboardDialog />
         <Toaster />
-        <SlackBotChatContainer />
+        {/* <SlackBotChatContainer /> */}
+        <ChatBotContainer isExistingClient={true} />
       </QueryProvider>
     </Suspense>
   );

@@ -7,11 +7,17 @@ import "./AIChatBot.css";
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { fa } from 'zod/v4/locales';
+import SlackChatBot from './SlackChatBot';
 
+interface ChatBotContainerProps {
+  isExistingClient: boolean;
+}
 
-export default function ChatBotContainer() {
+export default function ChatBotContainer({ isExistingClient }:ChatBotContainerProps) {
   const [showChatBot, setShowChatBot] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [isSlackChat, setIsSlackChat] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const storedMessages = useAIMessagesStore((state) => state.storedMessages);
   const setStoredMessages = useAIMessagesStore(
@@ -66,30 +72,38 @@ export default function ChatBotContainer() {
     <div className="fixed bottom-8 right-8 z-[999]">
       {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window">
-          <AIChatBot
-            sendMessage={sendMessage}
-            status={status}
-            stop={stop}
-            messages={messages}
-            input={input}
-            setInput={setInput}
-            setShowChatBot={setShowChatBot}
-          />
-        </div>) :
-        (<PiChatCircleDotsFill
+          <>
+            {isSlackChat ? (
+              <SlackChatBot setIsSlackChat={setIsSlackChat} />
+            ) : (
+              <AIChatBot
+                sendMessage={sendMessage}
+                status={status}
+                stop={stop}
+                messages={messages}
+                input={input}
+                setInput={setInput}
+                setShowChatBot={setShowChatBot}
+                isExistingClient={isExistingClient}
+                setIsSlackChat={setIsSlackChat}
+              />
+            )}
+          </>
+        </div>
+      ) : (
+        <PiChatCircleDotsFill
           onClick={toggleChatBot}
           className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
           color="#FFFFFF"
           size={28}
-        />)
-      }
+        />
+      )}
 
       {!showChatBot && showPopup && (
         <div className="chat-popup animate-from-right">
           Hallo, schrieben Sie uns gern bei Fragen.
         </div>
       )}
-
     </div>
   );
 }

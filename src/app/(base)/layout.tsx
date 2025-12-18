@@ -37,7 +37,7 @@ export default function RootLayout({
           <RegisterDialog />
           <ForgotPasswordDialog />
           <Toaster />
-          <ChatBotContainer />
+          <ChatBotContainer isExistingClient={false} />
         </QueryProvider>
       </body>
     </html>

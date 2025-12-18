@@ -2,12 +2,11 @@
 
 import { ChatStatus, UIDataTypes, UIMessage, UITools } from "ai";
 import { SendHorizonal, Square } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { SiChatbot } from "react-icons/si";
-import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import { FaRegWindowMinimize } from "react-icons/fa";
 import ChatHeader from "./ChatHeader";
+import Message from "./Messages/Message";
+import MessagesContainer from "./Messages/MessagesContainer";
 
 interface AIChatbotInterface {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
@@ -17,6 +16,8 @@ interface AIChatbotInterface {
   input: string;
   setInput: (input: string) => void;
   setShowChatBot: React.Dispatch<React.SetStateAction<boolean>>;
+  isExistingClient: boolean;
+  setIsSlackChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function AIChatBot({
@@ -27,54 +28,23 @@ export default function AIChatBot({
   input,
   setInput,
   setShowChatBot,
+  isExistingClient,
+  setIsSlackChat,
 }: AIChatbotInterface) {
-
   const handleMinimizeChat = () => {
     setShowChatBot(false);
   };
-  
+
   return (
     <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
       <FaRegWindowMinimize
         onClick={handleMinimizeChat}
         className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
       />
-      
-      <ChatHeader headerText='Text Support' subHeaderText='AI Assistant'/>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto pb-4 min-h-0">
-        <div className="flex flex-col gap-3">
-          {messages.length === 0 && (
-            <div className="flex justify-start items-center gap-2">
-              <SiChatbot
-                color="#FFFFFF"
-                className="bg-black rounded-full p-2"
-                size={40}
-              />
-              <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-                Hallo! Wie kann ich Ihnen heute helfen?
-              </div>
-            </div>
-          )}
+      <ChatHeader headerText="Text Support" subHeaderText="AI Assistant" />
 
-          {messages.map((message) => {
-            const isUser = message.role === "user";
-            return (
-              <Message key={message.id} message={message} isUser={isUser} />
-            );
-          })}
-
-          {/* Loading/Streaming indicator */}
-          {(status === "submitted" || status === "streaming") && (
-            <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
-                <p className="text-green-900 animate-pulse">Denken...</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <MessagesContainer messages={messages} status={status} />
 
       {/* Input Form */}
       <form
@@ -116,67 +86,6 @@ export default function AIChatBot({
           </button>
         )}
       </form>
-    </div>
-  );
-}
-
-function Message({
-  message,
-  isUser,
-}: {
-  message: UIMessage<unknown, UIDataTypes, UITools>;
-  isUser: boolean;
-}) {
-  const components = {
-    a: (props: any) => (
-      <a
-        {...props}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 underline"
-      />
-    ),
-    strong: (props: any) => <strong {...props} className="font-bold" />,
-    ul: (props: any) => (
-      <ul {...props} className="list-disc list-inside ml-4" />
-    ),
-    ol: (props: any) => (
-      <ol {...props} className="list-decimal list-inside ml-4" />
-    ),
-    h1: (props: any) => <h1 {...props} className="text-lg font-bold mt-3" />,
-    h2: (props: any) => <h2 {...props} className="text-base font-bold mt-2" />,
-    h3: (props: any) => <h3 {...props} className="text-sm font-bold mt-2" />,
-  };
-
-  return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}>
-      {!isUser && (
-        <SiChatbot
-          color="#FFFFFF"
-          className="bg-black rounded-full p-2"
-          size={40}
-        />
-      )}
-      <div
-        className={`max-w-[85%] rounded-2xl px-4 py-2 ${
-          isUser
-            ? "bg-black text-white rounded-br-sm"
-            : "bg-white text-gray-700 rounded-bl-sm"
-        }`}
-      >
-        {message.parts.map((part, index) =>
-          part.type === "text" ? (
-            <div key={index} className="break-words">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={components}
-              >
-                {part.text}
-              </ReactMarkdown>
-            </div>
-          ) : null
-        )}
-      </div>
     </div>
   );
 }

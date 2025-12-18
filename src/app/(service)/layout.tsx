@@ -19,8 +19,7 @@ export default function FragebogenLayout({
     <QueryProvider>
       <FragebogenHeader />
       {children}
-      <ChatBotContainer />
-      
+      <ChatBotContainer isExistingClient={true} />
     </QueryProvider>
   );
 }

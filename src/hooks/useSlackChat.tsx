@@ -11,21 +11,41 @@ interface SlackMessage {
 
 export const useSlackChat = () => {
   const [messages, setMessages] = useState<SlackMessage[]>([])
-  const [status, setStatus] = useState<'ready' | 'sending' | 'connecting'>('ready')
+  const [status, setStatus] = useState<'ready' | 'sending' | 'connecting'>('connecting')
   const [input, setInput] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
-  const [threadTs, setThreadTs] = useState<string | null>(null)
+  const [threadTs, setThreadTs] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    if (status === 'ready')
+      return;
+    const initializeConnection = async () => {
+      try {
+        console.log("Initialize Slack Connection");
+      } catch (error) {
+        console.error(
+          "Error initializing connection to Slack Connection:",
+          error
+        );
+      }
+    };
+    initializeConnection();
+  }, []);
+
+
+  useEffect(() => {
+    const getUserSlackThread = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
+        //Adjust this to pesrist thread to database
         const stored = localStorage.getItem(`slack_thread_${user.id}`);
         if (stored) setThreadTs(stored);
       }
     };
-    getUser();
+    getUserSlackThread();
   }, []);
 
   useEffect(() => {

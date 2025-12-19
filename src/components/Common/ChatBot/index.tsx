@@ -10,9 +10,13 @@ import SlackMessagesContainer from './Messages/SlackMessagesContainer';
 
 interface ChatBotContainerProps {
   isExistingClient: boolean;
+  userId?: string;
 }
 
-export default function ChatBotContainer({ isExistingClient }:ChatBotContainerProps) {
+export default function ChatBotContainer({
+  isExistingClient,
+  userId,
+}: ChatBotContainerProps) {
   const [showChatBot, setShowChatBot] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [isSlackChat, setIsSlackChat] = useState(false);
@@ -68,7 +72,10 @@ export default function ChatBotContainer({ isExistingClient }:ChatBotContainerPr
               subHeaderText={isSlackChat ? "Chat Assistant" : "AI Assistant"}
             />
             {isSlackChat ? (
-              <SlackMessagesContainer toggleChatType={toggleChatType} />
+              <SlackMessagesContainer
+                toggleChatType={toggleChatType}
+                userId={userId}
+              />
             ) : (
               <AiMessagesContainer
                 isExistingClient={isExistingClient}

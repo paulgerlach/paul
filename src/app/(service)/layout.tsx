@@ -24,13 +24,17 @@ export default async function FragebogenLayout({
     data: { session },
   } = await supabase.auth.getSession();
   const isExistingClient = !!session; 
+  const userId = session?.user.id; 
 
   return (
     <Suspense fallback={<Loading />}>
       <QueryProvider>
         <FragebogenHeader />
         {children}
-        <ChatBotContainer isExistingClient={isExistingClient} />
+        <ChatBotContainer
+          isExistingClient={isExistingClient}
+          userId={userId}
+        />
       </QueryProvider>
     </Suspense>
   );

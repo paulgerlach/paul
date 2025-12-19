@@ -5,10 +5,11 @@ import { SendHorizonal } from 'lucide-react';
 import React from 'react';
 
 interface SlackChatInputProps {
+  userId?:string
 }
 
-export default function SlackChatInput({  }: SlackChatInputProps) {
-  const { sendMessage, status, input, setInput } = useSlackChat();
+export default function SlackChatInput({ userId }: SlackChatInputProps) {
+  const { sendMessage, status, input, setInput } = useSlackChat(userId);
   return (
     <form
       onSubmit={(e) => {

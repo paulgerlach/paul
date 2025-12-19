@@ -9,26 +9,41 @@ import SlackChatInput from '../SlackChatInput';
 import { LuBrainCircuit } from "react-icons/lu";
 
 interface SlackChatBotProps {
-  toggleChatType:()=> void
+  toggleChatType: () => void;
+  userId?: string;
 }
 
-export default function SlackMessagesContainer({ toggleChatType }: SlackChatBotProps) {
-  const { messages, status } = useSlackChat();
+export default function SlackMessagesContainer({
+  toggleChatType,
+  userId,
+}: SlackChatBotProps) {
+  const { messages, status } = useSlackChat(userId);
 
-  
   return (
-    <div className="flex flex-col flex-1 min-h-0 animate-from-right">
+    <div className="flex flex-col flex-1 min-h-0 animate-from-right  w-full">
       {" "}
-      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200 h-full">
+      <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 h-full">
+        {messages.length === 0 && (
+          <div className="flex justify-end items-center gap-2">
+            <SiChatbot
+              color="#FFFFFF"
+              className="bg-black rounded-full p-2"
+              size={40}
+            />
+            <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
+              Hallo! Wie kann ich Ihnen heute helfen?
+            </div>
+          </div>
+        )}
         {messages.map((message) => {
-          const isUser = message.role === "user";
+          const isUser = message.role === "assistant";
           // return (<p>{ JSON.stringify(message)}</p>)
           return (
             <div
               key={message.id}
               className={`flex ${
                 isUser ? "justify-end" : "justify-start"
-              } gap-2`}
+              } gap-2 w-full`}
             >
               {!isUser && (
                 <SiChatbot
@@ -93,7 +108,7 @@ export default function SlackMessagesContainer({ toggleChatType }: SlackChatBotP
         >
           <LuBrainCircuit color="#FFFFFF" size={30} />
         </button>
-        <SlackChatInput />
+        <SlackChatInput userId={userId} />
       </div>
     </div>
   );

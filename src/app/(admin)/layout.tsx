@@ -135,6 +135,7 @@ export default async function AdminLayout({
     data: { session },
   } = await supabase.auth.getSession();
   const isExistingClient = !!session;
+  const userId = session?.user.id; 
 
   return (
     <Suspense fallback={<Loading />}>
@@ -223,7 +224,7 @@ export default async function AdminLayout({
           <LazyShareDashboardDialog />
         </Suspense>
         <Toaster />
-        <ChatBotContainer isExistingClient={isExistingClient} />
+        <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
       </QueryProvider>
     </Suspense>
   );

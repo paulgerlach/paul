@@ -35,7 +35,7 @@ export default function SlackBotChatContainer() {
     <div className="fixed bottom-8 right-8  z-[999]">
       {showSlackChat ? (
         <div ref={chatContainerRef} className="chat-window">
-          <ChatContainer setShowSlackChat={setShowSlackChat} />
+          <ChatContainer setShowSlackChat={setShowSlackChat} userId={""} />
         </div>
       ) : (
         <PiChatCircleDotsFill

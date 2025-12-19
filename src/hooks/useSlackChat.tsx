@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase/client";
 import { sendSlackMessage, getSlackThreadMessages } from "@/actions/slackChat";
 
 interface SlackMessage {
@@ -9,29 +8,24 @@ interface SlackMessage {
   timestamp: Date;
 }
 
-export const useSlackChat = () => {
+export const useSlackChat = (userId: string | undefined) => {
   const [messages, setMessages] = useState<SlackMessage[]>([]);
   const [status, setStatus] = useState<
     "ready" | "sending" | "waiting_for_human" | "connecting"
   >("connecting");
   const [input, setInput] = useState("");
-  const [userId, setUserId] = useState<string | null>(null);
   const [threadTs, setThreadTs] = useState<string | null>(null);
   const [lastSentTs, setLastSentTs] = useState<string | null>(null);
 
   useEffect(() => {
     const getUserSlackThread = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-        const stored = localStorage.getItem(`slack_thread_${user.id}`);
+      if (userId) {
+        const stored = localStorage.getItem(`slack_thread_${userId}`);
         if (stored) setThreadTs(stored);
       }
     };
     getUserSlackThread();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!threadTs) return;
@@ -68,6 +62,8 @@ export const useSlackChat = () => {
   }, [threadTs, status, lastSentTs]);
 
   const sendMessage = async (text: string) => {
+    console.log('USER ID', userId)
+    console.log("MESSAGE", text);
     if (!text.trim() || !userId) return;
 
 

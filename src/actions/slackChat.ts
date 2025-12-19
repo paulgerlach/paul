@@ -21,8 +21,6 @@ export async function sendSlackMessage(
 export async function getSlackThreadMessages(
   threadTs: string
 ): Promise<SlackMessage[]> {
-  
-    console.log('THREAD UNIQUE ID', threadTs);
     
   if (!threadTs) return [];
 

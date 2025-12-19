@@ -22,6 +22,7 @@ export default function ChatBotContainer({
   const [isSlackChat, setIsSlackChat] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPopup(true);
@@ -76,7 +77,7 @@ export default function ChatBotContainer({
                 toggleChatType={toggleChatType}
                 userId={userId}
               />
-            ) : (
+            ) : (  
               <AiMessagesContainer
                 isExistingClient={isExistingClient}
                 toggleChatType={toggleChatType}

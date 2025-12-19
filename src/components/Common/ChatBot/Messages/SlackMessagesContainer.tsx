@@ -3,8 +3,6 @@
 import { useSlackChat } from '@/hooks/useSlackChat';
 import React, { useEffect, useState } from 'react';
 import { SiChatbot } from 'react-icons/si';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import SlackChatInput from '../SlackChatInput';
 import { LuBrainCircuit } from "react-icons/lu";
 import {Triangle} from 'react-loader-spinner'
@@ -59,7 +57,9 @@ export default function SlackMessagesContainer({
               wrapperClass=""
             />
             <>
-              {status === "sending" ? "Sending message" : "Loading messages..."}
+              {status === "sending"
+                ? "Nachricht senden"
+                : "Nachrichten laden..."}
             </>
           </div>
         )}

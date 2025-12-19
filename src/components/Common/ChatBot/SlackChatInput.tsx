@@ -1,14 +1,16 @@
 'use client';
 
 import { useSlackChat } from '@/hooks/useSlackChat';
+import { SlackMessage } from '@/types/Chat';
 import { SendHorizonal } from 'lucide-react';
-import React from 'react';
+import React, { Dispatch } from 'react';
 
 interface SlackChatInputProps {
-  userId?:string
+  userId?: string;
+  setLocalMessages : Dispatch<React.SetStateAction<SlackMessage[]>>
 }
 
-export default function SlackChatInput({ userId }: SlackChatInputProps) {
+export default function SlackChatInput({ userId, setLocalMessages }: SlackChatInputProps) {
   const { sendMessage, status, input, setInput } = useSlackChat(userId);
   return (
     <form
@@ -16,6 +18,16 @@ export default function SlackChatInput({ userId }: SlackChatInputProps) {
         e.preventDefault();
         if (input.trim()) {
           sendMessage(input);
+          
+
+        setLocalMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",//value for user as it comes from the bot
+            text: input,
+            timestamp: new Date(),
+          },
+        ]);
         }
       }}
       className="flex gap-2 w-full"

@@ -1,5 +1,5 @@
 export type SlackMessage = {
-  id: string;
+  id?: string;
   role: 'user' | 'assistant' | 'human_reply';
   text: string;
   timestamp: Date;

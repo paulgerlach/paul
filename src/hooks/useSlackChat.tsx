@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 import { sendSlackMessage, getSlackThreadMessages } from "@/actions/slackChat";
-
-interface SlackMessage {
-  id: string;
-  role: "user" | "assistant" | "human_reply";
-  text: string;
-  timestamp: Date;
-}
+import { SlackMessage } from "@/types/Chat";
 
 export const useSlackChat = (userId: string | undefined) => {
   const [messages, setMessages] = useState<SlackMessage[]>([]);

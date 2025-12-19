@@ -144,7 +144,7 @@ export default function AiMessagesContainer({
 
   return (
     <div className="flex flex-col flex-1 min-h-0 animate-from-right">
-      <div className="flex-1 overflow-y-auto pb-4">
+      <div className="flex-1 overflow-y-auto pb-4 overflow-scroll max-h-full h-full">
         <div className="flex flex-col gap-3">
           {/* Optional: Show current email in chat header */}
           {isChatStarted && anonymousUserEmail && !isExistingClient && (

@@ -22,7 +22,6 @@ export default function SlackChatInput({  }: SlackChatInputProps) {
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        disabled={status !== "ready"}
         placeholder="Nachricht schreiben..."
         className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-100 disabled:opacity-50"
       />
@@ -31,7 +30,7 @@ export default function SlackChatInput({  }: SlackChatInputProps) {
       <button
         title="Send message"
         type="submit"
-        disabled={status !== "ready" || !input.trim()}
+        disabled={!input.trim()}
         className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
       >
         <SendHorizonal size={18} />

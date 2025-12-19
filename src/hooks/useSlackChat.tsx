@@ -20,21 +20,6 @@ export const useSlackChat = () => {
   const [lastSentTs, setLastSentTs] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "ready") return;
-    const initializeConnection = async () => {
-      try {
-        console.log("Initialize Slack Connection");
-      } catch (error) {
-        console.error(
-          "Error initializing connection to Slack Connection:",
-          error
-        );
-      }
-    };
-    initializeConnection();
-  }, []);
-
-  useEffect(() => {
     const getUserSlackThread = async () => {
       const {
         data: { user },
@@ -84,14 +69,11 @@ export const useSlackChat = () => {
   const sendMessage = async (text: string) => {
     if (!text.trim() || !userId) return;
 
-    const formattedText = threadTs
-      ? text.trim()
-      : `Support request from user ${userId}: ${text.trim()}`; // Add context for new threads
 
     const userMessage: SlackMessage = {
       id: Date.now().toString(),
       role: "user",
-      text: formattedText,
+      text: text,
       timestamp: new Date(),
     };
 
@@ -100,7 +82,7 @@ export const useSlackChat = () => {
     setStatus("sending");
 
     try {
-      const newThreadTs = await sendSlackMessage(formattedText, threadTs);
+      const newThreadTs = await sendSlackMessage(text, threadTs);
       setLastSentTs(newThreadTs);
       if (!threadTs) {
         setThreadTs(newThreadTs);

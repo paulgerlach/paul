@@ -26,7 +26,7 @@ export const useSlackChat = () => {
       } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
-        const stored = localStorage.getItem(`slack_thread_${user.id}`);
+        const stored = localStorage.getItem(`slack_thread_${user.email}`);
         if (stored) setThreadTs(stored);
       }
     };
@@ -41,6 +41,7 @@ export const useSlackChat = () => {
     const interval = setInterval(async () => {
       try {
         const newMessages = await getSlackThreadMessages(threadTs);
+        console.log(newMessages);
         setMessages((prev) => {
           const existingIds = new Set(prev.map((m) => m.id));
           const toAdd = newMessages.filter((m) => !existingIds.has(m.id));

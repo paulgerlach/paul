@@ -26,13 +26,19 @@ export async function POST(req: NextRequest) {
 }
 
 const sendSlackMessage = async (formattedMessage: string, threadTs: string | null): Promise<string> => {
+
   try {
     const res = await slackHttp.post("/chat.postMessage", {
       channel: process.env.SLACK_CHANNEL_ID,
       text: formattedMessage,
       thread_ts: threadTs || undefined,
       unfurl_links: false,
-    });
+    },
+    {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+      });
 
     if (!res.data?.ok) {
       console.error("Slack error:", res.data);

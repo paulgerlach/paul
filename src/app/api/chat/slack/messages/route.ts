@@ -24,7 +24,13 @@ const getSlackThreadMessages = async (threadTs:string) : Promise<SlackMessage[]>
       channel: process.env.SLACK_CHANNEL_ID,
       ts: threadTs,
       inclusive: true,
-    });
+    },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    }
+    );
 
     if (!res.data?.ok) {
       console.error("Slack error:", res.data);

@@ -11,8 +11,7 @@ export async function sendSlackMessage(
       threadTs,
     });
 
-    // API should return { threadTs: string }
-    return res.data.threadTs;
+    return res.data.ts;
   } catch (error) {
     console.error("Error sending Slack message:", error);
     throw error;
@@ -22,6 +21,9 @@ export async function sendSlackMessage(
 export async function getSlackThreadMessages(
   threadTs: string
 ): Promise<SlackMessage[]> {
+  
+    console.log('THREAD UNIQUE ID', threadTs);
+    
   if (!threadTs) return [];
 
   try {
@@ -29,8 +31,7 @@ export async function getSlackThreadMessages(
       threadTs,
     });
 
-    // API should return { messages: SlackMessage[] }
-    return res.data.messages ?? [];
+    return res.data.messages;
   } catch (error) {
     console.error("Error fetching Slack thread:", error);
     return [];

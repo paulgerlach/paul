@@ -11,8 +11,8 @@ interface SlackMessage {
 export const useSlackChat = (userId: string | undefined) => {
   const [messages, setMessages] = useState<SlackMessage[]>([]);
   const [status, setStatus] = useState<
-    "ready" | "sending" | "waiting_for_human" | "connecting"
-  >("connecting");
+    "ready" | "sending" | "waiting_for_human" | "fetching_messages"
+  >("ready");
   const [input, setInput] = useState("");
   const [threadTs, setThreadTs] = useState<string | null>(null);
   const [lastSentTs, setLastSentTs] = useState<string | null>(null);
@@ -29,11 +29,29 @@ export const useSlackChat = (userId: string | undefined) => {
 
   useEffect(() => {
     if (!threadTs) return;
+    const loadInitialMessages = async () => {
+      setStatus("fetching_messages");
+      try {
+        const initialMessages = await getSlackThreadMessages(threadTs);
+        setMessages(initialMessages);
+        setStatus("ready");
+      } catch (error) {
+        console.error("Error loading initial messages:", error);
+        setStatus("ready");
+      }
+    };
+    loadInitialMessages();
+  }, [threadTs]);
+
+  useEffect(() => {
+    if (!threadTs) return;
     let pollInterval = 5000;
     if (status === "waiting_for_human") pollInterval = 2000;
 
     const interval = setInterval(async () => {
+    setStatus("fetching_messages");
       try {
+        
         const newMessages = await getSlackThreadMessages(threadTs);
         
         setMessages((prev) => {
@@ -52,7 +70,10 @@ export const useSlackChat = (userId: string | undefined) => {
           if (hasHumanReply) {
             setStatus("ready");
           }
+        } else {
+          setStatus("ready");
         }
+
       } catch (error) {
         console.error("Error fetching Slack messages:", error);
       }

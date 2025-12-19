@@ -23,7 +23,7 @@ export default function SlackMessagesContainer({
     <div className="flex flex-col flex-1 min-h-0 animate-from-right  w-full">
       {" "}
       <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 h-full">
-        {messages.length === 0 && (
+        {messages.length === 0 && status === "ready" && (
           <div className="flex justify-end items-center gap-2">
             <SiChatbot
               color="#FFFFFF"
@@ -36,8 +36,8 @@ export default function SlackMessagesContainer({
           </div>
         )}
         {messages.map((message) => {
+          //Messages from the web platform are technically sent by the Bot
           const isUser = message.role === "assistant";
-          // return (<p>{ JSON.stringify(message)}</p>)
           return (
             <div
               key={message.id}
@@ -99,6 +99,7 @@ export default function SlackMessagesContainer({
             </div>
           );
         })}
+        {status !== "ready" && <p>Loading messages...</p>}
       </div>
       <div className="flex flex-col items-start justify-center gap-3 pt-4 border-gray-200 w-full">
         <button

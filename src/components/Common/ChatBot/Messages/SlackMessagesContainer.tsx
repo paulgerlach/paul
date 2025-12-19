@@ -14,10 +14,13 @@ interface SlackChatBotProps {
 
 export default function SlackMessagesContainer({ toggleChatType }: SlackChatBotProps) {
   const { messages, status } = useSlackChat();
+
+  
   return (
     <div className="flex flex-col flex-1 min-h-0 animate-from-right">
       {" "}
       <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200 h-full">
+        <p>{JSON.stringify(messages) }</p>
         {messages.map((message) => {
           const isUser = message.role === "user";
           // return (<p>{ JSON.stringify(message)}</p>)

@@ -15,7 +15,7 @@ export default function SlackMessageContainer({ message }: SlackMessageContainer
     <div
       className={`flex ${
         isUser ? "justify-end" : "justify-start"
-      } gap-2 w-full `}
+      } gap-2 w-full`}
     >
       {!isUser && (
         <SiChatbot
@@ -74,7 +74,6 @@ export default function SlackMessageContainer({ message }: SlackMessageContainer
             wrapperStyle={{}}
             wrapperClass=""
           />
-          <p>Sending...</p>
         </div>
       )}
     </div>

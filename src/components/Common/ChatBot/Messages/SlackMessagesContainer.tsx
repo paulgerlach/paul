@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import SlackChatInput from '../SlackChatInput';
 import { LuBrainCircuit } from "react-icons/lu";
+import {Triangle} from 'react-loader-spinner'
 
 interface SlackChatBotProps {
   toggleChatType: () => void;
@@ -99,7 +100,20 @@ export default function SlackMessagesContainer({
             </div>
           );
         })}
-        {status !== "ready" && <p>Loading messages...</p>}
+        {status !== "ready" && (
+          <div className="flex flex-row items-center justify-center">
+            <Triangle
+              visible={true}
+              height="28"
+              width="28"
+              color="#4fa94d"
+              ariaLabel="triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+            <>{status === 'sending' ? 'Sending message' : 'Loading messages...'}</>
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-start justify-center gap-3 pt-4 border-gray-200 w-full">
         <button

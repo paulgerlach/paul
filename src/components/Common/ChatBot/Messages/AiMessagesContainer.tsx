@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { SiChatbot } from "react-icons/si";
 import Message from "./Message";
-import { ChatRequestOptions, ChatStatus, DefaultChatTransport, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
+import { ChatRequestOptions, ChatStatus, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
-import { useChat } from "@ai-sdk/react";
 import AIChatInput from "../AIChatInput";
 
 interface AiMessagesContainerProps {
@@ -51,7 +50,6 @@ export default function AiMessagesContainer({
   status,
   stop,
 }: AiMessagesContainerProps) {
-  // Check session storage on initial load
   const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
     if (typeof window !== "undefined") {
       return sessionStorage.getItem("anonymousUserEmail") || "";
@@ -79,7 +77,6 @@ export default function AiMessagesContainer({
     setStoredMessages(aiMessages);
   }, [aiMessages, setStoredMessages]);
 
-  // Email validation function
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -89,12 +86,10 @@ export default function AiMessagesContainer({
     const email = e.target.value;
     setAnonymousUserEmail(email);
 
-    // Clear error when user starts typing
     if (emailError) {
       setEmailError("");
     }
 
-    // Validate email in real-time
     if (email === "") {
       setIsEmailValid(false);
     } else {
@@ -105,7 +100,6 @@ export default function AiMessagesContainer({
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate email on submit
     if (!anonymousUserEmail.trim()) {
       setEmailError("Bitte geben Sie eine E-Mail-Adresse ein.");
       return;
@@ -116,20 +110,16 @@ export default function AiMessagesContainer({
       return;
     }
 
-    // Save email to session storage
     if (typeof window !== "undefined") {
       sessionStorage.setItem("anonymousUserEmail", anonymousUserEmail);
     }
 
-    // Start the chat
     setIsChatStarted(true);
     setEmailError("");
 
-    // Optional: You might want to send the email to your backend here
     console.log("Chat started with email:", anonymousUserEmail);
   };
 
-  // Function to clear session storage (optional - can be used for logout/reset)
   const clearSessionEmail = () => {
     if (typeof window !== "undefined") {
       sessionStorage.removeItem("anonymousUserEmail");
@@ -138,9 +128,6 @@ export default function AiMessagesContainer({
       setIsEmailValid(false);
     }
   };
-
-  // Optional: Add a logout/clear button in the chat interface
-  // You can integrate this into your UI if needed
 
   return (
     <div className="flex flex-col flex-1 min-h-0 animate-from-right">

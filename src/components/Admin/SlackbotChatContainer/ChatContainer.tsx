@@ -4,7 +4,7 @@ import ChatHeader from '@/components/Common/ChatBot/ChatHeader';
 import React from 'react'
 import { FaRegWindowMinimize } from 'react-icons/fa';
 import { SiChatbot } from 'react-icons/si';
-import { SendHorizonal, Square } from 'lucide-react';
+import { SendHorizonal } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSlackChat } from '@/hooks/useSlackChat';

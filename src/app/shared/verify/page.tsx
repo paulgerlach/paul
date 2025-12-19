@@ -1,10 +1,23 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createVerifiedToken } from "@/lib/shareUtils";
 
-export default function VerifyPinPage() {
+// Loading component for Suspense fallback
+function VerifyPageLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
+        <div className="text-4xl mb-4 animate-pulse">🔐</div>
+        <p className="text-gray-600">Laden...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main verify component (uses useSearchParams)
+function VerifyPinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -239,3 +252,11 @@ export default function VerifyPinPage() {
   );
 }
 
+// Page component with Suspense wrapper (required for useSearchParams in Next.js 15)
+export default function VerifyPinPage() {
+  return (
+    <Suspense fallback={<VerifyPageLoading />}>
+      <VerifyPinContent />
+    </Suspense>
+  );
+}

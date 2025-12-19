@@ -26,9 +26,9 @@ export default function SlackMessagesContainer({
   }, [messages]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 animate-from-right w-full overflow-scroll">
+    <div className="flex flex-col flex-1 min-h-0 animate-from-right w-full ">
       {" "}
-      <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 h-full">
+      <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 overflow-scroll max-h-full h-full">
         {localMessages.length === 0 && status === "ready" && (
           <div className="flex justify-end items-center gap-2">
             <SiChatbot

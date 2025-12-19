@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { SiChatbot } from "react-icons/si";
 import Message from "./Message";
-import { DefaultChatTransport } from "ai";
+import { ChatRequestOptions, ChatStatus, DefaultChatTransport, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import { useChat } from "@ai-sdk/react";
@@ -12,11 +12,44 @@ import AIChatInput from "../AIChatInput";
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
   toggleChatType: () => void;
+  aiMessages: UIMessage<unknown, UIDataTypes, UITools>[];
+  sendMessage: (
+    message?:
+      | (Omit<UIMessage<unknown, UIDataTypes, UITools>, "id" | "role"> & {
+          id?: string | undefined;
+          role?: "user" | "system" | "assistant" | undefined;
+        } & {
+          text?: never;
+          files?: never;
+          messageId?: string;
+        })
+      | {
+          text: string;
+          files?: FileList | FileUIPart[];
+          metadata?: unknown;
+          parts?: never;
+          messageId?: string;
+        }
+      | {
+          files: FileList | FileUIPart[];
+          metadata?: unknown;
+          parts?: never;
+          messageId?: string;
+        }
+      | undefined,
+    options?: ChatRequestOptions
+  ) => Promise<void>;
+  status: ChatStatus;
+  stop: () => Promise<void>;
 }
 
 export default function AiMessagesContainer({
   isExistingClient,
   toggleChatType,
+  aiMessages,
+  sendMessage,
+  status,
+  stop,
 }: AiMessagesContainerProps) {
   // Check session storage on initial load
   const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
@@ -36,23 +69,10 @@ export default function AiMessagesContainer({
   const [emailError, setEmailError] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
 
-  const storedMessages = useAIMessagesStore((state) => state.storedMessages);
   const setStoredMessages = useAIMessagesStore(
     (state) => state.setStoredMessages
   );
 
-  const {
-    messages: aiMessages,
-    sendMessage,
-    status,
-    stop,
-  } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-    // @ts-ignore
-    initialMessages: storedMessages,
-  });
   const [input, setInput] = useState("");
 
   useEffect(() => {
@@ -211,7 +231,6 @@ export default function AiMessagesContainer({
                 `}
                 value={anonymousUserEmail}
                 onChange={handleEmailChange}
-                aria-invalid={!!emailError}
                 aria-describedby={emailError ? "email-error" : undefined}
               />
               {emailError && (

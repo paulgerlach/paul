@@ -7,6 +7,9 @@ import { FaRegWindowMinimize } from 'react-icons/fa';
 import ChatHeader from './ChatHeader';
 import AiMessagesContainer from './Messages/AiMessagesContainer';
 import SlackMessagesContainer from './Messages/SlackMessagesContainer';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 
 interface ChatBotContainerProps {
   isExistingClient: boolean;
@@ -22,6 +25,19 @@ export default function ChatBotContainer({
   const [isSlackChat, setIsSlackChat] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const {storedMessages} = useAIMessagesStore();
+  const {
+    messages: aiMessages,
+    sendMessage,
+    status,
+    stop,
+  } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+    // @ts-ignore
+    initialMessages: storedMessages,
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -81,6 +97,10 @@ export default function ChatBotContainer({
               <AiMessagesContainer
                 isExistingClient={isExistingClient}
                 toggleChatType={toggleChatType}
+                aiMessages={aiMessages}
+                sendMessage={sendMessage}
+                status={status}
+                stop={stop}
               />
             )}
           </div>

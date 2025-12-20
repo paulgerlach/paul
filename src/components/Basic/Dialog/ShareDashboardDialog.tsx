@@ -7,33 +7,16 @@ import { useShareStore } from "@/store/useShareStore";
 import { useChartStore } from "@/store/useChartStore";
 import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { Button } from "../ui/Button";
-import { RoundedCheckbox } from "../ui/RoundedCheckbox";
-import { doc_download, gmail, pdf_icon } from "@/static/icons";
-import Image from "next/image";
-import { Form } from "../ui/Form";
-import FormInputField from "@/components/Admin/Forms/FormInputField";
-
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import FormSelectField from "@/components/Admin/Forms/FormSelectField";
-
-const formSchema = z.object({
-  frequency: z.enum(["Monatlich", "Wöchentlich", "Täglich"], {
-    required_error: "Bitte Frequenz auswählen",
-  }),
-  emailTitle: z.string().min(1, "Titel darf nicht leer sein"),
-  message: z.string().min(1, "Nachricht darf nicht leer sein"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
   const isOpen = openDialogByType.share_dashboard;
   const [copied, setCopied] = useState<boolean>(false);
   const { shareUrl, generateShareUrl, setShareUrl } = useShareStore();
-  const [createRule, setCreateRule] = useState<boolean>(false);
+  const [tenantEmail, setTenantEmail] = useState<string>("");
+  const [sendingCode, setSendingCode] = useState<boolean>(false);
+  const [codeSent, setCodeSent] = useState<boolean>(false);
+  const [generatedPin, setGeneratedPin] = useState<string>("");
 
   const { startDate, endDate, meterIds } = useChartStore();
 
@@ -44,6 +27,19 @@ export default function ShareDashboardDialog() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  // Helper to format date for German users (dd.MM.yyyy, HH:mm Uhr)
+  const formatGermanDateTime = (isoDateString: string): string => {
+    const date = new Date(isoDateString);
+    return date.toLocaleString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Berlin'
+    }) + ' Uhr';
   };
 
   const handleShare = async () => {
@@ -107,123 +103,105 @@ export default function ShareDashboardDialog() {
     }
   };
 
-  const methods = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      frequency: "Monatlich",
-      emailTitle: "",
-      message: "",
-    },
-  });
-
-  const onSubmit = (data: FormValues) => {
-    console.log("Form submitted:", data);
-    // send data to API etc.
-  };
-
-  const handlePdfDownload = async () => {
-    try {
-      // Generate PDF of current dashboard state
-      // For now, we'll create a simple text representation
-      const dashboardData = {
-        url: shareUrl,
-        dateRange: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
-        meters: meterIds.length > 0 ? meterIds.join(', ') : 'Alle Zähler',
-        generatedAt: new Date().toLocaleString('de-DE')
-      };
-
-      const pdfContent = `
-Dashboard Übersicht
-===================
-
-URL: ${dashboardData.url}
-Zeitraum: ${dashboardData.dateRange}
-Zähler: ${dashboardData.meters}
-Erstellt am: ${dashboardData.generatedAt}
-      `;
-
-      // Create a simple text file for now (can be enhanced to actual PDF later)
-      const blob = new Blob([pdfContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Dashboard_${new Date().toISOString().split('T')[0]}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      console.log('Dashboard als Datei heruntergeladen');
-    } catch (error) {
-      console.error('Fehler beim PDF-Download:', error);
-      alert('Fehler beim Herunterladen der PDF-Datei');
+  // Handle sending access code to tenant
+  const handleSendAccessCode = async () => {
+    if (!tenantEmail || !tenantEmail.includes('@')) {
+      alert('Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      return;
     }
-  };
 
-  const handleEmailShare = () => {
+    setSendingCode(true);
+    
     try {
-      const subject = encodeURIComponent('Dashboard Zugang - Verbrauchsdaten');
-      const body = encodeURIComponent(`Hallo,
-
-hier ist der Link zu Ihrem Dashboard mit den aktuellen Verbrauchsdaten:
-
-${shareUrl}
-
-Zeitraum: ${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}
-${meterIds.length > 0 ? `Zähler: ${meterIds.join(', ')}` : 'Alle Zähler verfügbar'}
-
-Der Link ist 30 Tage gültig.
-
-Mit freundlichen Grüßen`);
-
-      const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
-      window.open(mailtoUrl, '_blank');
+      // Extract link params from shareUrl
+      const urlObj = new URL(shareUrl);
+      const linkParams = urlObj.search.substring(1); // Remove leading '?'
       
-      console.log('E-Mail Client geöffnet');
-    } catch (error) {
-      console.error('Fehler beim E-Mail-Versand:', error);
-      alert('Fehler beim Öffnen des E-Mail-Clients');
-    }
-  };
+      // Get expiry from URL params
+      const expParam = urlObj.searchParams.get('exp');
+      const expiresAt = expParam ? new Date(parseInt(expParam)).toISOString() : undefined;
 
-  const handleDocumentDownload = async () => {
-    try {
-      // Create a JSON file with dashboard configuration
-      const dashboardConfig = {
-        shareUrl,
-        filters: {
-          meterIds: meterIds.length > 0 ? meterIds : null,
-          startDate: startDate?.toISOString().split('T')[0],
-          endDate: endDate?.toISOString().split('T')[0],
-        },
-        createdAt: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
-      };
-
-      const blob = new Blob([JSON.stringify(dashboardConfig, null, 2)], { 
-        type: 'application/json' 
+      // Call API to generate PIN
+      const response = await fetch('/api/share-pin/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: tenantEmail,
+          linkParams: linkParams,
+          expiresAt: expiresAt,
+        }),
       });
-      const url = URL.createObjectURL(blob);
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to generate PIN');
+      }
+
+      setGeneratedPin(result.pin);
+      setCodeSent(true);
       
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `dashboard-config_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      console.log('[share-pin] Access code generated for:', tenantEmail);
+      console.log('[share-pin] PIN:', result.pin);
+      console.log('[share-pin] Share token:', result.shareToken);
+      console.log('[share-pin] Expires:', result.expiresAt);
       
-      console.log('Dashboard-Konfiguration heruntergeladen');
+      // Build SHORT URL using share token (instead of long URL with all meters)
+      const shortShareUrl = `${window.location.origin}/shared/verify?token=${result.shareToken}`;
+      console.log('[share-pin] Short URL:', shortShareUrl);
+      
+      // Trigger Make.com webhook to send email to tenant
+      try {
+        // Format expiry for display (German format)
+        const formattedExpiry = formatGermanDateTime(result.expiresAt);
+        
+        const webhookPayload = {
+          email: tenantEmail,
+          pin: result.pin,
+          shareUrl: shortShareUrl, // Short URL with token
+          expiresAt: result.expiresAt, // ISO format (keeps Make.com happy)
+          expiresAtDisplay: formattedExpiry, // German format for email display
+        };
+        
+        console.log('[share-pin] 📤 Sending webhook payload:', webhookPayload);
+        
+        const webhookResponse = await fetch('https://hook.eu2.make.com/0nabn3y343aq32nnvi2m1sd8u5k2k7yn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(webhookPayload),
+        });
+        
+        console.log('[share-pin] 📥 Webhook response status:', webhookResponse.status);
+        console.log('[share-pin] 📥 Webhook response ok:', webhookResponse.ok);
+        
+        if (!webhookResponse.ok) {
+          console.error('[share-pin] ❌ Webhook returned error status:', webhookResponse.status);
+        } else {
+          console.log('[share-pin] ✅ Email webhook triggered successfully for:', tenantEmail);
+        }
+      } catch (webhookError) {
+        // Don't fail the whole process if email fails
+        console.error('[share-pin] ❌ Email webhook failed:', webhookError);
+      }
+      
     } catch (error) {
-      console.error('Fehler beim Document-Download:', error);
-      alert('Fehler beim Herunterladen des Dokuments');
+      console.error('Fehler beim Senden des Zugangscodes:', error);
+      alert('Fehler beim Senden des Zugangscodes. Bitte versuchen Sie es erneut.');
+    } finally {
+      setSendingCode(false);
     }
+  };
+
+  // Reset the code sent state when dialog closes or email changes
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTenantEmail(e.target.value);
+    setCodeSent(false);
+    setGeneratedPin("");
   };
 
   if (isOpen)
     return (
-      <DialogBase dialogName="share_dashboard" maxHeight={500}>
+      <DialogBase dialogName="share_dashboard" maxHeight={850}>
         <h3 className="text-xl font-bold text-dark_text">Dashbboard teilen</h3>
 
         {/* Description with better styling */}
@@ -261,125 +239,72 @@ Mit freundlichen Grüßen`);
             </Button>
           </div>
         </div>
-        <div className="flex flex-col items-start space-y-2">
-          {!createRule && (
-            <div className="">
-              <p className="text-[#757575] mb-1.5 text-sm">An Mieter teilen</p>
-              <div className="grid items-center grid-cols-3 gap-4">
-                <button 
-                  onClick={handlePdfDownload}
-                  className="cursor-pointer transition-opacity hover:opacity-80"
-                  title="Als PDF herunterladen"
+
+        {/* NEW: Send Access Code Section */}
+        <div className="mb-6 p-4 bg-green/10 rounded-lg border border-green/20">
+          <p className="text-sm font-medium text-dark_text mb-3">
+            🔐 Zugangscode per E-Mail senden
+          </p>
+          
+          {!codeSent ? (
+            <>
+              <div className="mb-3">
+                <label
+                  htmlFor="tenant_email"
+                  className="text-[#757575] mb-1.5 text-sm block"
                 >
-                  <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    loading="lazy"
-                    className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-                    src={pdf_icon}
-                    alt={"pdf_icon"}
-                  />
-                </button>
-                <button 
-                  onClick={handleEmailShare}
-                  className="cursor-pointer transition-opacity hover:opacity-80"
-                  title="Per E-Mail teilen"
-                >
-                  <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    loading="lazy"
-                    className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6"
-                    src={gmail}
-                    alt={"gmail_icon"}
-                  />
-                </button>
-                <button 
-                  onClick={handleDocumentDownload}
-                  className="cursor-pointer transition-opacity hover:opacity-80"
-                  title="Dokument herunterladen"
-                >
-                  <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    loading="lazy"
-                    className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6"
-                    src={doc_download}
-                    alt={"doc_download"}
-                  />
-                </button>
+                  E-Mail-Adresse des Mieters
+                </label>
+                <input
+                  type="email"
+                  id="tenant_email"
+                  name="tenant_email"
+                  value={tenantEmail}
+                  onChange={handleEmailChange}
+                  placeholder="mieter@beispiel.de"
+                  className="w-full focus:outline-none p-3 border border-black/20 rounded text-sm"
+                />
               </div>
-            </div>
-          )}
-          <label
-            htmlFor="create_rule"
-            className="flex border-[#c4c4c4] transition-all duration-300 border w-fit rounded-full px-2.5 items-center gap-2 form-rounded-checkbox mt-4 py-2 cursor-pointer"
-          >
-            <RoundedCheckbox
-              className="border border-[#c4c4c4]"
-              name="create_rule"
-              id="create_rule"
-              onCheckedChange={(checked) => setCreateRule(!!checked)}
-              checked={createRule}
-            />
-            Regel erstellen
-          </label>
-          {createRule && (
-            <Form {...methods}>
-              <form
-                onSubmit={methods.handleSubmit(onSubmit)}
-                className="mt-4 flex flex-col space-y-4 w-full"
+              <Button
+                onClick={handleSendAccessCode}
+                disabled={sendingCode || !tenantEmail}
+                className="w-full text-white disabled:opacity-50"
               >
-                <FormSelectField<FormValues>
-                  label="Frequenz"
-                  name="frequency"
-                  options={["Monatlich", "Wöchentlich", "Täglich"]}
-                  placeholder="Frequenz auswählen"
-                  control={methods.control}
-                />
-
-                {/* Email Titel */}
-
-                <FormInputField<FormValues>
-                  name="emailTitle"
-                  control={methods.control}
-                  label="Email Titel"
-                  placeholder="Geben Sie den Email Titel ein"
-                />
-
-                {/* Nachricht */}
-                <div>
-                  <label className="block text-sm text-[#757575] mb-1">
-                    Nachricht an Mieter
-                  </label>
-                  <textarea
-                    rows={4}
-                    {...methods.register("message")}
-                    className="w-full border border-black/20 rounded p-2"
-                  />
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-between mt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      methods.reset();
-                      setCreateRule(false);
-                    }}
-                    className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm cursor-pointer rounded-md bg-card_light border-none text-dark_green font-medium shadow-xs transition-all duration-300 hover:opacity-80"
-                  >
-                    Abbrechen
-                  </button>
-                  <Button type="submit" className="text-white">
-                    Speichern
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                {sendingCode ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="animate-spin">⏳</span> Wird gesendet...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    📧 Zugangscode senden
+                  </span>
+                )}
+              </Button>
+            </>
+          ) : (
+            <div className="text-center py-2">
+              <div className="text-green font-medium text-lg mb-2">✅ Zugangscode gesendet!</div>
+              <p className="text-sm text-dark_text/80 mb-2">
+                E-Mail: <strong>{tenantEmail}</strong>
+              </p>
+              <p className="text-sm text-dark_text/80 mb-3">
+                Code: <strong className="font-mono text-lg">{generatedPin}</strong>
+                <span className="text-xs text-gray-500 ml-2">(Für Ihre Referenz)</span>
+              </p>
+              <p className="text-xs text-gray-500">
+                Der Mieter erhält eine E-Mail mit dem Zugangscode und dem Link zum Dashboard.
+              </p>
+              <button
+                onClick={() => {
+                  setCodeSent(false);
+                  setTenantEmail("");
+                  setGeneratedPin("");
+                }}
+                className="mt-3 text-sm text-green underline hover:no-underline"
+              >
+                Weiteren Code senden
+              </button>
+            </div>
           )}
         </div>
       </DialogBase>

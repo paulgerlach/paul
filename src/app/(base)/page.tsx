@@ -25,8 +25,6 @@ import {
   vitec_green,
   schleicher_green,
   raum_green,
-  quarterback_green,
-  progera_green,
   niesen_green,
   neckar_green,
   idgim_green,
@@ -437,15 +435,6 @@ export default function Home() {
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="inline-block col-span-2 mx-auto h-9"
-              src={quarterback_green}
-              alt="quarterback"
-            />
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
               className="inline-block mx-auto max-w-24 h-8"
               src={raum_green}
               alt="raum"
@@ -503,15 +492,6 @@ export default function Home() {
               className="inline-block mx-auto max-w-20 h-8"
               src={niesen_green}
               alt="niesen_green"
-            />
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="inline-block mx-auto max-w-24 h-8"
-              src={progera_green}
-              alt="progera_green"
             />
           </div>
         </div>

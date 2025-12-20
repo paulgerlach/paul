@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import database from "@/db";
+import { bved_api_tokens } from "@/db/drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import { extractTokenPrefix, verifyToken } from "./token-hash";
 
 export class ExternalAuthError extends Error {
   status: number;
@@ -13,8 +17,11 @@ export class ExternalAuthError extends Error {
 
 /**
  * External auth guard for BVED outbound APIs.
- * Simple static token check (env-based).
- *
+ * 
+ * Supports:
+ * 1. Database tokens (hashed, with expiration) - primary method
+ * 2. Environment variable tokens (backward compatibility)
+ * 
  * Headers:
  * - Authorization: Bearer <token>
  * - X-API-Key: <token>
@@ -29,12 +36,69 @@ export async function requireExternalAuth(request: Request) {
       ? authHeader.replace(/^Bearer\s+/i, "")
       : null);
 
-  // Env-based static tokens
+  if (!providedToken) {
+    throw new ExternalAuthError("Missing authentication token", 401, "UNAUTHORIZED");
+  }
+
+  // First, check database tokens (hashed, with expiration)
+  // NOTE: This query uses a direct database connection (DATABASE_URL) which should
+  // use service role credentials that bypass RLS. If using Supabase connection pooling,
+  // ensure it's configured with service role key to bypass RLS for token validation.
+  try {
+    const tokenPrefix = extractTokenPrefix(providedToken);
+
+    // Look up by prefix first (fast lookup)
+    // Security: This query bypasses RLS via service role connection
+    const tokenRecords = await database
+      .select()
+      .from(bved_api_tokens)
+      .where(
+        and(
+          eq(bved_api_tokens.access_token_prefix, tokenPrefix),
+          eq(bved_api_tokens.revoked, false)
+        )
+      )
+      .limit(10); // Limit to prevent excessive queries
+
+    // Verify token against all matching records (handle hash collisions)
+    let tokenRecord = null;
+    for (const record of tokenRecords) {
+      if (verifyToken(providedToken, record.access_token_hash)) {
+        tokenRecord = record;
+        break;
+      }
+    }
+
+    if (tokenRecord) {
+      // Check if token is expired
+      const expiresAt = new Date(tokenRecord.access_token_expires_at);
+      if (expiresAt < new Date()) {
+        throw new ExternalAuthError("Token has expired", 401, "TOKEN_EXPIRED");
+      }
+
+      // Update last_used_at (non-blocking)
+      database
+        .update(bved_api_tokens)
+        .set({ last_used_at: new Date().toISOString() })
+        .where(eq(bved_api_tokens.id, tokenRecord.id))
+        .catch(() => {}); // Don't fail if update fails
+
+      return; // Token is valid
+    }
+  } catch (error) {
+    // If it's an ExternalAuthError, re-throw it
+    if (error instanceof ExternalAuthError) {
+      throw error;
+    }
+    // Otherwise, fall through to env var check
+  }
+
+  // Fallback: Check environment variables (backward compatibility)
   const bearerEnv = process.env.BVED_EXTERNAL_BEARER_TOKEN;
   const apiKeyEnv = process.env.BVED_EXTERNAL_API_KEY;
   const allowedTokens = [bearerEnv, apiKeyEnv].filter(Boolean);
 
-  if (!providedToken || !allowedTokens.includes(providedToken)) {
+  if (!allowedTokens.includes(providedToken)) {
     throw new ExternalAuthError("Invalid authentication token", 401, "UNAUTHORIZED");
   }
 }

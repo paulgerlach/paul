@@ -9,7 +9,7 @@ import { requireExternalAuth, formatError } from "../_lib/auth";
  */
 export async function GET(request: Request) {
   try {
-    // requireExternalAuth(request);
+    requireExternalAuth(request);
 
     await database.execute(sql`SELECT 1`);
 

@@ -56,15 +56,16 @@ DROP POLICY IF EXISTS "Users can create their own tokens" ON "bved_api_tokens";
 DROP POLICY IF EXISTS "Users can revoke their own tokens" ON "bved_api_tokens";
 DROP POLICY IF EXISTS "Admins can manage all tokens" ON "bved_api_tokens";
 DROP POLICY IF EXISTS "Users can access their own tokens or admins can access all" ON "bved_api_tokens";
+DROP POLICY IF EXISTS "Service role can read tokens for auth validation" ON "bved_api_tokens";
 --> statement-breakpoint
 CREATE POLICY "Users can access their own tokens or admins can access all" ON "bved_api_tokens" 
 AS PERMISSIVE FOR ALL TO public 
 USING ((user_id = auth.uid() OR is_admin())) 
 WITH CHECK ((user_id = auth.uid() OR is_admin()));
 --> statement-breakpoint
-CREATE POLICY "Service role can read tokens for auth validation" ON "bved_api_tokens" 
-AS PERMISSIVE FOR SELECT TO public 
-USING (true);
+-- CREATE POLICY "Service role can read tokens for auth validation" ON "bved_api_tokens" 
+-- AS PERMISSIVE FOR SELECT TO public 
+-- USING (true);
 --> statement-breakpoint
 
 -- bved_platform_credentials policies

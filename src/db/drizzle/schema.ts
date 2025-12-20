@@ -358,7 +358,8 @@ export const bved_api_tokens = pgTable("bved_api_tokens", {
 		using: sql`(user_id = auth.uid() OR is_admin())`, 
 		withCheck: sql`(user_id = auth.uid() OR is_admin())` 
 	}),
-	pgPolicy("Service role can read tokens for auth validation", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
+	// Note: Token validation in requireExternalAuth() uses service role connection
+	// which bypasses RLS. No policy needed for service role access.
 ]);
 
 export const bved_platform_credentials = pgTable("bved_platform_credentials", {

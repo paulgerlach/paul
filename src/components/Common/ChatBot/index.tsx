@@ -84,12 +84,10 @@ export default function ChatBotContainer({
   };
 
   return (
-    <div
-      className={`fixed bottom-8 right-8 z-[999] ${exo_2Sans.variable} opacity-90`}
-    >
+    <div className={`fixed bottom-8 right-8 z-[999] ${exo_2Sans.variable}`}>
       {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window">
-          <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
+          <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right opacity-90">
             <FaRegWindowMinimize
               onClick={toggleChatBot}
               className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
@@ -97,7 +95,7 @@ export default function ChatBotContainer({
 
             <ChatHeader
               headerText="Kundenservice"
-              subHeaderText={isSlackChat ? "Chat Assistant" : "Max Sommerfeld"}
+              subHeaderText={isSlackChat ? "Max Sommerfeld" : "Max Sommerfeld"}
             />
             {isSlackChat ? (
               <SlackMessagesContainer

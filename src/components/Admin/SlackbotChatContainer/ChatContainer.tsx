@@ -30,7 +30,7 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
         className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
       />
       {/* Header */}
-      <ChatHeader headerText="Slack Support" subHeaderText="Chat Assistant" />
+      <ChatHeader headerText="Slack Support" subHeaderText="Max Sommerfeld" />
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto pb-4 min-h-0">
@@ -44,7 +44,8 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
                 height={40}
               />
               <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-                Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung.
+                Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei
+                Fragen rund um digitale Verbrauchserfassung und Abrechnung.
               </div>
             </div>
           )}

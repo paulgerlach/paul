@@ -34,8 +34,18 @@ export default function Message({
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}>
-      {!isUser && <Image alt="chat avatar" src={max_chat_avatar.src}
-width={40} height={40} className="rounded-full" />}
+      {!isUser && (
+        <div>
+          {" "}
+          <Image
+            alt="chat avatar"
+            src={max_chat_avatar.src}
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
+      )}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${
           isUser

@@ -168,7 +168,7 @@ export default function AiMessagesContainer({
                   ? `Hallo! Wie kann ich Ihnen heute helfen, ${
                       anonymousUserEmail.split("@")[0]
                     }?`
-                  : "Hallo! Wie kann ich Ihnen heute helfen?"}
+                  : "Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung."}
               </div>
             </div>
           )}

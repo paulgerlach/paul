@@ -36,7 +36,7 @@ export default function SlackMessagesContainer({
 src={max_chat_avatar.src}
 width={40} height={40} className="rounded-full" />
             <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-              Hallo! Wie kann ich Ihnen heute helfen?
+              Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung.
             </div>
           </div>
         )}

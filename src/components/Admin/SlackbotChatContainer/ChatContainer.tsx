@@ -37,9 +37,14 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
         <div className="flex flex-col gap-3">
           {messages.length === 0 && (
             <div className="flex justify-start items-center gap-2">
-              <Image alt="chat avatar" src={max_chat_avatar.src}/>
+              <Image
+                alt="chat avatar"
+                src={max_chat_avatar.src}
+                width={40}
+                height={40}
+              />
               <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-                Hallo! Wie kann ich Ihnen heute helfen?
+                Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung.
               </div>
             </div>
           )}
@@ -54,9 +59,13 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
                 } gap-2`}
               >
                 {!isUser && (
-                  <Image alt="chat avatar"
-src={max_chat_avatar.src}
-width={40} height={40} className="rounded-full" />
+                  <Image
+                    alt="chat avatar"
+                    src={max_chat_avatar.src}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
                 )}
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-2 ${

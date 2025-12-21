@@ -28,16 +28,21 @@ export default function SlackMessagesContainer({
   }, [messages]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 animate-from-right w-full ">
+    <div className="flex flex-col flex-1 min-h-0 animate-from-right w-full">
       {" "}
       <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 overflow-scroll max-h-full h-full">
         {localMessages.length === 0 && status === "ready" && (
           <div className="flex justify-end items-center gap-2">
-            <Image alt="chat avatar"
-src={max_chat_avatar.src}
-width={40} height={40} className="rounded-full" />
+            <Image
+              alt="chat avatar"
+              src={max_chat_avatar.src}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
             <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-              Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung.
+              Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei
+              Fragen rund um digitale Verbrauchserfassung und Abrechnung.
             </div>
           </div>
         )}

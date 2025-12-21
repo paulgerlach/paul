@@ -86,8 +86,8 @@ export default function ChatBotContainer({
   return (
     <div className={`fixed bottom-8 right-8 z-[999] ${exo_2Sans.variable}`}>
       {showChatBot ? (
-        <div ref={chatContainerRef} className="chat-window">
-          <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right opacity-90">
+        <div ref={chatContainerRef} className="chat-window !opacity-90">
+          <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
             <FaRegWindowMinimize
               onClick={toggleChatBot}
               className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"

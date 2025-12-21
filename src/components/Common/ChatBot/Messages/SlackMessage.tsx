@@ -19,9 +19,15 @@ export default function SlackMessageContainer({ message }: SlackMessageContainer
       } gap-2 w-full`}
     >
       {!isUser && (
-        <Image alt="chat avatar"
-src={max_chat_avatar.src}
-width={40} height={40} className="rounded-full" />
+        <div>
+          <Image
+            alt="chat avatar"
+            src={max_chat_avatar.src}
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
       )}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${

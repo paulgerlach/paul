@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { SiChatbot } from "react-icons/si";
 import Message from "./Message";
 import { ChatRequestOptions, ChatStatus, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import AIChatInput from "../AIChatInput";
+import Image from "next/image";
+import { max_chat_avatar } from "@/static/icons";
 
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
@@ -153,11 +154,15 @@ export default function AiMessagesContainer({
 
           {aiMessages.length === 0 && (
             <div className="flex justify-start items-center gap-2">
-              <SiChatbot
-                color="#FFFFFF"
-                className="bg-black rounded-full p-2"
-                size={40}
-              />
+              <div>
+                <Image
+                  alt="chat avatar"
+                  src={max_chat_avatar.src}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              </div>
               <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
                 {isChatStarted && anonymousUserEmail
                   ? `Hallo! Wie kann ich Ihnen heute helfen, ${
@@ -178,7 +183,7 @@ export default function AiMessagesContainer({
           {(status === "submitted" || status === "streaming") && (
             <div className="flex justify-start">
               <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
-                <p className="text-green-900 animate-pulse">Denken...</p>
+                <p className="text-green-900 animate-pulse">tippt...</p>
               </div>
             </div>
           )}
@@ -232,7 +237,7 @@ export default function AiMessagesContainer({
               disabled={!isEmailValid}
               className={`
                 rounded-xl
-                bg-black
+                bg-dark_green
                 px-5 py-2.5
                 text-sm
                 font-semibold
@@ -240,7 +245,7 @@ export default function AiMessagesContainer({
                 shadow-md
                 transition-all
                 hover:scale-[1.02]
-                hover:bg-black/90
+                hover:bg-dark_green/90
                 active:scale-[0.98]
                 disabled:opacity-50
                 disabled:cursor-not-allowed
@@ -270,7 +275,7 @@ export default function AiMessagesContainer({
             <button
               title="Send message"
               onClick={toggleChatType}
-              className="bg-black text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
+              className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
             >
               <MdOutlineSupportAgent color="#FFFFFF" size={30} />
             </button>

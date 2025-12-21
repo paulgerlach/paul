@@ -306,6 +306,7 @@ import hsp_green from "@/asset/hsp_green.png";
 import harte_green from "@/asset/harte_green.png";
 import dumax_green from "@/asset/dumax_green.png";
 import berlin_bear_green from "@/asset/berlin_bear_green.png";
+import max_chat_avatar from "@/asset/max_chat_avatar.png";
 
 export {
   accentro_colored,
@@ -616,4 +617,5 @@ export {
   clock_dark,
   close_white,
   building,
+  max_chat_avatar
 };

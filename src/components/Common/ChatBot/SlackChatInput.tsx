@@ -18,16 +18,15 @@ export default function SlackChatInput({ userId, setLocalMessages }: SlackChatIn
         e.preventDefault();
         if (input.trim()) {
           sendMessage(input);
-          
 
-        setLocalMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",//value for user as it comes from the bot
-            text: input,
-            timestamp: new Date(),
-          },
-        ]);
+          setLocalMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant", //value for user as it comes from the bot
+              text: input,
+              timestamp: new Date(),
+            },
+          ]);
         }
       }}
       className="flex gap-2 w-full"
@@ -44,7 +43,7 @@ export default function SlackChatInput({ userId, setLocalMessages }: SlackChatIn
         title="Send message"
         type="submit"
         disabled={!input.trim()}
-        className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+        className="bg-dark_green text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
       >
         <SendHorizonal size={18} />
       </button>

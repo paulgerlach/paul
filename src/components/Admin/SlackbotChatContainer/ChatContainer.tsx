@@ -3,11 +3,12 @@
 import ChatHeader from '@/components/Common/ChatBot/ChatHeader';
 import React from 'react'
 import { FaRegWindowMinimize } from 'react-icons/fa';
-import { SiChatbot } from 'react-icons/si';
 import { SendHorizonal } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSlackChat } from '@/hooks/useSlackChat';
+import Image from 'next/image';
+import { max_chat_avatar } from '@/static/icons';
 
 interface ChatContainerProps {
   setShowSlackChat: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,11 +37,7 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
         <div className="flex flex-col gap-3">
           {messages.length === 0 && (
             <div className="flex justify-start items-center gap-2">
-              <SiChatbot
-                color="#FFFFFF"
-                className="bg-black rounded-full p-2"
-                size={40}
-              />
+              <Image alt="chat avatar" src={max_chat_avatar.src}/>
               <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
                 Hallo! Wie kann ich Ihnen heute helfen?
               </div>
@@ -57,16 +54,14 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
                 } gap-2`}
               >
                 {!isUser && (
-                  <SiChatbot
-                    color="#FFFFFF"
-                    className="bg-black rounded-full p-2"
-                    size={40}
-                  />
+                  <Image alt="chat avatar"
+src={max_chat_avatar.src}
+width={40} height={40} className="rounded-full" />
                 )}
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-2 ${
                     isUser
-                      ? "bg-black text-white rounded-br-sm"
+                      ? "dark_green text-white rounded-br-sm"
                       : "bg-white text-gray-700 rounded-bl-sm"
                   }`}
                 >
@@ -145,7 +140,7 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
           title="Send message"
           type="submit"
           disabled={status !== "ready" || !input.trim()}
-          className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+          className="bg-dark_green text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
         >
           <SendHorizonal size={18} />
         </button>

@@ -45,7 +45,7 @@ export default function AIChatInput({ sendMessage, input, setInput, status, stop
           title="Send message"
           type="submit"
           disabled={status !== "ready" || !input.trim()}
-          className="bg-black text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+          className="bg-dark_green text-white rounded-full p-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
         >
           <SendHorizonal size={18} />
         </button>

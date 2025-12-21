@@ -2,12 +2,13 @@
 
 import { useSlackChat } from '@/hooks/useSlackChat';
 import React, { useEffect, useState } from 'react';
-import { SiChatbot } from 'react-icons/si';
 import SlackChatInput from '../SlackChatInput';
 import { LuBrainCircuit } from "react-icons/lu";
 import {Triangle} from 'react-loader-spinner'
 import { SlackMessage } from '@/types/Chat';
 import SlackMessageContainer from './SlackMessage';
+import Image from 'next/image';
+import { max_chat_avatar } from '@/static/icons';
 
 interface SlackChatBotProps {
   toggleChatType: () => void;
@@ -31,11 +32,9 @@ export default function SlackMessagesContainer({
       <div className="flex flex-col items-start justify-start w-full gap-3 pt-4 border-gray-200 overflow-scroll max-h-full h-full">
         {localMessages.length === 0 && status === "ready" && (
           <div className="flex justify-end items-center gap-2">
-            <SiChatbot
-              color="#FFFFFF"
-              className="bg-black rounded-full p-2"
-              size={40}
-            />
+            <Image alt="chat avatar"
+src={max_chat_avatar.src}
+width={40} height={40} className="rounded-full" />
             <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
               Hallo! Wie kann ich Ihnen heute helfen?
             </div>
@@ -68,7 +67,7 @@ export default function SlackMessagesContainer({
         <button
           title="Send message"
           onClick={toggleChatType}
-          className="bg-black text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
+          className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
         >
           <LuBrainCircuit color="#FFFFFF" size={30} />
         </button>

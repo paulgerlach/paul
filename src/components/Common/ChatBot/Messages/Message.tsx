@@ -1,7 +1,7 @@
 import { UIMessage, UIDataTypes, UITools } from "ai";
-import { SiChatbot } from "react-icons/si";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Image from "next/image";
 
 export default function Message({
   message,
@@ -33,17 +33,13 @@ export default function Message({
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}>
-      {!isUser && (
-        <SiChatbot
-          color="#FFFFFF"
-          className="bg-black rounded-full p-2"
-          size={40}
-        />
-      )}
+      {!isUser && <Image alt="chat avatar"
+src={max_chat_avatar.src}
+width={40} height={40} className="rounded-full" />}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${
           isUser
-            ? "bg-black text-white rounded-br-sm"
+            ? "bg-dark_green text-white rounded-br-sm"
             : "bg-white text-gray-700 rounded-bl-sm"
         }`}
       >

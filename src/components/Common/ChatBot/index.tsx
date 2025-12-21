@@ -10,6 +10,15 @@ import SlackMessagesContainer from './Messages/SlackMessagesContainer';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
+import { Exo_2 } from "next/font/google";
+
+const exo_2Sans = Exo_2({
+  variable: "--font-exo_2-sans",
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+});
 
 interface ChatBotContainerProps {
   isExistingClient: boolean;
@@ -75,7 +84,9 @@ export default function ChatBotContainer({
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-[999]">
+    <div
+      className={`fixed bottom-8 right-8 z-[999] ${exo_2Sans.variable} opacity-90`}
+    >
       {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window">
           <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
@@ -85,15 +96,15 @@ export default function ChatBotContainer({
             />
 
             <ChatHeader
-              headerText="Text Support"
-              subHeaderText={isSlackChat ? "Chat Assistant" : "AI Assistant"}
+              headerText="Kundenservice"
+              subHeaderText={isSlackChat ? "Chat Assistant" : "Max Sommerfeld"}
             />
             {isSlackChat ? (
               <SlackMessagesContainer
                 toggleChatType={toggleChatType}
                 userId={userId}
               />
-            ) : (  
+            ) : (
               <AiMessagesContainer
                 isExistingClient={isExistingClient}
                 toggleChatType={toggleChatType}
@@ -108,7 +119,7 @@ export default function ChatBotContainer({
       ) : (
         <PiChatCircleDotsFill
           onClick={toggleChatBot}
-          className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+          className="w-auto h-auto bg-dark_green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
           color="#FFFFFF"
           size={28}
         />

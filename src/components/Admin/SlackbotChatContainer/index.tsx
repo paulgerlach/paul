@@ -40,7 +40,7 @@ export default function SlackBotChatContainer() {
       ) : (
         <PiChatCircleDotsFill
           onClick={toggleChat}
-          className="w-auto h-auto bg-black cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+          className="w-auto h-auto bg-dark_green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
           color="#FFFFFF"
           size={28}
         />

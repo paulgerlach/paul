@@ -1,6 +1,7 @@
+import { max_chat_avatar } from '@/static/icons';
 import { SlackMessage } from '@/types/Chat';
+import Image from 'next/image';
 import React from 'react'
-import { SiChatbot } from 'react-icons/si';
 import { Triangle } from 'react-loader-spinner';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -18,16 +19,14 @@ export default function SlackMessageContainer({ message }: SlackMessageContainer
       } gap-2 w-full`}
     >
       {!isUser && (
-        <SiChatbot
-          color="#FFFFFF"
-          className="bg-black rounded-full p-2"
-          size={40}
-        />
+        <Image alt="chat avatar"
+src={max_chat_avatar.src}
+width={40} height={40} className="rounded-full" />
       )}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${
           isUser
-            ? "bg-black text-white rounded-br-sm"
+            ? "bg-dark_green text-white rounded-br-sm"
             : "bg-white text-gray-700 rounded-bl-sm"
         }`}
       >

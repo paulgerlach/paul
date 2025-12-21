@@ -2,6 +2,7 @@ import { UIMessage, UIDataTypes, UITools } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
+import { max_chat_avatar } from "@/static/icons";
 
 export default function Message({
   message,
@@ -33,8 +34,7 @@ export default function Message({
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} gap-2`}>
-      {!isUser && <Image alt="chat avatar"
-src={max_chat_avatar.src}
+      {!isUser && <Image alt="chat avatar" src={max_chat_avatar.src}
 width={40} height={40} className="rounded-full" />}
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-2 ${

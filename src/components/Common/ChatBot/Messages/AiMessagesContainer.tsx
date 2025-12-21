@@ -8,7 +8,7 @@ import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import AIChatInput from "../AIChatInput";
 import Image from "next/image";
 import { max_chat_avatar } from "@/static/icons";
-
+import axios from "axios";
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
   toggleChatType: () => void;
@@ -98,7 +98,16 @@ export default function AiMessagesContainer({
     }
   };
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const saveLead = async (email: string) => {
+    try {
+      await axios.post(`/api/leads`, { email, source:'Heidi Website' });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const handleEmailSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
 
     if (!anonymousUserEmail.trim()) {
@@ -110,6 +119,8 @@ export default function AiMessagesContainer({
       setEmailError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
       return;
     }
+
+    await saveLead(anonymousUserEmail);
 
     if (typeof window !== "undefined") {
       sessionStorage.setItem("anonymousUserEmail", anonymousUserEmail);
@@ -256,7 +267,6 @@ export default function AiMessagesContainer({
             </button>
           </form>
 
-          {/* Optional: Show validation status */}
           {anonymousUserEmail && !emailError && (
             <p
               className={`text-xs mt-1 ${

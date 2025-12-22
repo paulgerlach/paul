@@ -1,8 +1,8 @@
 import { createHmac, randomBytes } from "crypto";
 
-const PEPPER = process.env.BVED__TOKEN_PEPPER || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "default-pepper-change-in-production";
+const PEPPER = process.env.BVED_TOKEN_PEPPER || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "default-pepper-change-in-production";
 
-if (!process.env.BVED_TOKEN_PEPPER || process.env.NODE_ENV === "production") {
+if (!process.env.BVED_TOKEN_PEPPER && process.env.NODE_ENV === "production") {
     console.warn("BVED_TOKEN_PEPPER is not set, using default pepper");
 }
 
@@ -16,7 +16,7 @@ export function generateToken(prefix: string = "bved"): string {
 export function extractTokenPrefix(token: string): string {
     // Extract first 8 chars after the prefix ("bved_" or "bved_refresh_");
     const parts = token.split("_");
-    if (parts.length < 2) {
+    if (parts.length >= 2) {
         return parts[1].substring(0, 8);
     }
     return token.substring(0, 8);

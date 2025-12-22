@@ -335,9 +335,9 @@ export const bved_api_tokens = pgTable("bved_api_tokens", {
 	user_id: uuid().notNull(),
 	client_name: text().notNull(),
 	access_token_prefix: varchar({ length: 20 }).notNull(), // First 8 chars for lookup
-	access_token_hash: text().notNull(), // Argon2id hash of full token
+	access_token_hash: text().notNull(), // HMAC-SHA256 hash of full token
 	refresh_token_prefix: varchar({ length: 20 }).notNull(), // First 8 chars for lookup
-	refresh_token_hash: text().notNull(), // Argon2id hash of full token
+	refresh_token_hash: text().notNull(), // HMAC-SHA256 hash of full token
 	access_token_expires_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 	refresh_token_expires_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),

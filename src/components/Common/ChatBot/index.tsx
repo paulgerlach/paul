@@ -125,7 +125,7 @@ export default function ChatBotContainer({
 
       {!showChatBot && showPopup && (
         <div className="chat-popup animate-from-right">
-          Hallo, schrieben Sie uns gern bei Fragen.
+          Hallo, schreiben Sie uns gern bei Fragen.
         </div>
       )}
     </div>

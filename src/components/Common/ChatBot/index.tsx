@@ -96,6 +96,7 @@ export default function ChatBotContainer({
             <ChatHeader
               headerText="Kundenservice"
               subHeaderText={isSlackChat ? "Max Sommerfeld" : "Max Sommerfeld"}
+              userId={userId}
             />
             {isSlackChat ? (
               <SlackMessagesContainer

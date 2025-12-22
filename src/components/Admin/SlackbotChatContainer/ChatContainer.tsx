@@ -30,7 +30,11 @@ export default function ChatContainer({ setShowSlackChat, userId }: ChatContaine
         className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
       />
       {/* Header */}
-      <ChatHeader headerText="Slack Support" subHeaderText="Max Sommerfeld" />
+      <ChatHeader
+        headerText="Slack Support"
+        subHeaderText="Max Sommerfeld"
+        userId={userId}
+      />
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto pb-4 min-h-0">

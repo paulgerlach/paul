@@ -48,7 +48,7 @@ export default function SlackMessagesContainer({
         )}
         {localMessages.map((message, idx) => {
           //Messages from the web platform are technically sent by the Bot
-          return <SlackMessageContainer key={idx} message={message} />;
+          return <SlackMessageContainer key={idx} message={message} userId={userId} />;
         })}
         {status !== "ready" && (
           <div className="flex flex-row items-center justify-center">

@@ -1,3 +1,4 @@
+import { useSlackChat } from '@/hooks/useSlackChat';
 import { max_chat_avatar } from '@/static/icons';
 import { SlackMessage } from '@/types/Chat';
 import Image from 'next/image';
@@ -5,12 +6,18 @@ import React from 'react'
 import { Triangle } from 'react-loader-spinner';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { MdOutlineSupportAgent } from "react-icons/md";
 
-interface SlackMessageContainerProps{
-  message:SlackMessage
+interface SlackMessageContainerProps {
+  message: SlackMessage;
+  userId?:string
 }
 
-export default function SlackMessageContainer({ message }: SlackMessageContainerProps) {
+export default function SlackMessageContainer({
+  message,
+  userId,
+}: SlackMessageContainerProps) {
+  const {isOutOfOffice} = useSlackChat(userId);
   const isUser = message.role === "assistant";
   return (
     <div
@@ -20,13 +27,16 @@ export default function SlackMessageContainer({ message }: SlackMessageContainer
     >
       {!isUser && (
         <div>
-          <Image
-            alt="chat avatar"
-            src={max_chat_avatar.src}
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
+          {isOutOfOffice ?
+            <MdOutlineSupportAgent color="#FFFFFF" size={30} /> :
+            <Image
+              alt="chat avatar"
+              src={max_chat_avatar.src}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          }
         </div>
       )}
       <div

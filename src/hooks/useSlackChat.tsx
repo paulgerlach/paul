@@ -176,5 +176,6 @@ export const useSlackChat = (userId: string | undefined) => {
     status,
     input,
     setInput,
+    isOutOfOffice,
   };
 };

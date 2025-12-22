@@ -329,3 +329,24 @@ export const system_settings = pgTable("system_settings", {
 	pgPolicy("Admins can update system settings", { as: "permissive", for: "update", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
 	pgPolicy("Anyone can view registration status", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
 ]);
+
+
+export const leads = pgTable("leads", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	email: text().notNull(),
+	source: text(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Enable insert for anonymous users", {
+		as: "permissive",
+		for: "insert",
+		to: ["anon", "public"],
+		using: sql`true`
+	}),
+	pgPolicy("Enable read for admin users only", {
+		as: "restrictive",
+		for: "select",
+		to: ["authenticated"],
+		using: sql`auth.role() = 'admin'`
+	}),
+])

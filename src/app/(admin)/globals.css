@@ -1055,3 +1055,36 @@ input[type="number"] {
 [data-radix-popper-content-wrapper] {
     z-index: 1050 !important;
 }
+
+@keyframes fromLeft {
+    from {
+        transform: translateX(-10px) scaleX(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fromRight {
+    from {
+        transform: translateX(10px) scaleX(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scaleX(1);
+        opacity: 1;
+    }
+}
+.animate-from-left {
+    animation: fromLeft 0.3s ease-out forwards;
+    transform-origin: left bottom;
+}
+
+.animate-from-right {
+    animation: fromRight 0.3s ease-out forwards;
+    transform-origin: right bottom;
+}

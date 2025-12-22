@@ -1,7 +1,7 @@
-import { parseCSVs } from "@/api";
-import { parseSharedUrl, getExpirationInfo, validateShareUrl } from "@/lib/shareUtils";
-import { parseGermanDate } from "@/utils";
+import { parseSharedUrl, getExpirationInfo, validateShareUrl, validateVerifiedToken } from "@/lib/shareUtils";
+import { fetchSharedDashboardData } from "@/lib/sharedDashboardData";
 import SharedDashboardWrapper from "./SharedDashboardWrapper";
+import { redirect } from "next/navigation";
 
 interface SharedDashboardPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -29,6 +29,29 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
         </div>
       </div>
     );
+  }
+
+  // SECURITY: Check for valid verified token (PIN verification)
+  const verifiedToken = urlSearchParams.get('vt');
+  const isVerified = validateVerifiedToken(urlSearchParams, verifiedToken);
+  
+  if (!isVerified) {
+    // Redirect to PIN entry page - preserve original params exactly
+    // Only include params that exist (don't add empty ones)
+    const verifyParams = new URLSearchParams();
+    const meters = urlSearchParams.get('meters');
+    const start = urlSearchParams.get('start');
+    const end = urlSearchParams.get('end');
+    const exp = urlSearchParams.get('exp');
+    const c = urlSearchParams.get('c');
+    
+    if (meters) verifyParams.set('meters', meters);
+    if (start) verifyParams.set('start', start);
+    if (end) verifyParams.set('end', end);
+    if (exp) verifyParams.set('exp', exp);
+    if (c) verifyParams.set('c', c);
+    
+    redirect(`/shared/verify?${verifyParams.toString()}`);
   }
 
   // SECURITY: Parse and validate shared URL parameters
@@ -65,17 +88,24 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     );
   }
 
-  // Fetch data with meter ID filtering for better performance
-  const parsedData = await parseCSVs({ 
-    meterIds: filters.meterIds && filters.meterIds.length > 0 ? filters.meterIds : undefined 
-  });
+  // Fetch data using service role key (bypasses RLS)
+  // This allows unauthenticated customers to view shared dashboard data
+  // SECURITY: Only fetches meters specified in the validated share link
+  const parsedData = await fetchSharedDashboardData(
+    filters.meterIds || [],
+    filters.startDate,
+    filters.endDate
+  );
   
-  if (!parsedData?.data) {
+  if (!parsedData?.data || parsedData.data.length === 0) {
     return (
       <div className="py-6 px-9 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Data Unavailable</h1>
           <p className="text-gray-600">Unable to load dashboard data at this time.</p>
+          {parsedData.errors.length > 0 && (
+            <p className="text-sm text-gray-400 mt-2">Error: {parsedData.errors[0]}</p>
+          )}
         </div>
       </div>
     );
@@ -89,23 +119,12 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     requestedMeterIds: filters.meterIds?.length || 0
   });
 
-  // SECURITY: Enforce date range filtering if specified
-  if (filters.startDate && filters.endDate) {
-    filteredData = filteredData?.filter((item: any) => {
-      // Use the same date field as main dashboard: IV,0,0,0,,Date/Time
-      const itemDateString = item["IV,0,0,0,,Date/Time"]?.split(" ")[0]; // Extract date part
-      const itemDate = parseGermanDate(itemDateString);
-      const startDate = new Date(filters.startDate!);
-      const endDate = new Date(filters.endDate!);
-      
-      // Skip invalid dates
-      if (!itemDate || isNaN(itemDate.getTime())) {
-        return false;
-      }
-      
-      return itemDate >= startDate && itemDate <= endDate;
-    });
-  }
+  // Note: Date range filtering is handled by the chart components themselves
+  // The charts (WaterChart, HeatingCosts, etc.) filter data based on the dates
+  // passed via useChartStore. We don't filter here to avoid double-filtering
+  // or filtering out data with different date field formats.
+  // The filters.startDate and filters.endDate are passed to SharedDashboardWrapper
+  // which sets them in useChartStore for the charts to use.
 
   // DEVELOPMENT METRICS: Server-side logging (build time)
   console.log('Share Dashboard Access:', {

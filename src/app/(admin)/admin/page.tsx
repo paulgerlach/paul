@@ -9,6 +9,13 @@ import Link from "next/link";
 export default async function AdminPage() {
   const users = await getUsers();
 
+  // Sort alphabetically by email
+  users.sort((a, b) => {
+    const emailA = a.email?.toLowerCase() || '';
+    const emailB = b.email?.toLowerCase() || '';
+    return emailA.localeCompare(emailB);
+  });
+
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
       <Breadcrumb

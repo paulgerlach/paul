@@ -25,8 +25,6 @@ import {
   vitec_green,
   schleicher_green,
   raum_green,
-  quarterback_green,
-  progera_green,
   niesen_green,
   neckar_green,
   idgim_green,
@@ -34,6 +32,8 @@ import {
   harte_green,
   dumax_green,
   berlin_bear_green,
+  quarterback_green,
+  progera_green,
 } from "@/static/icons";
 import animation1 from "@/animations/Animation_1.json";
 import animation2 from "@/animations/Animation_2.json";

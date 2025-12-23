@@ -27,6 +27,14 @@ export async function GET(request: Request) {
   try {
     const token = await requireExternalAuth(request);
 
+    // Scoped access - require user_id from token
+    if (!token || !token.user_id) {
+      return NextResponse.json(
+        { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
+        { status: 401 }
+      );
+    }
+
     // Parse query parameters
     const url = new URL(request.url);
     const format = url.searchParams.get("format") || "internal";
@@ -230,5 +238,3 @@ export async function GET(request: Request) {
     return formatError(error);
   }
 }
-
-

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import database from "@/db";
 import { locals, objekte } from "@/db/drizzle/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, inArray } from "drizzle-orm";
 import { requireExternalAuth, formatError } from "../_lib/auth";
 import { transformPropertyToBVED, type InternalProperty } from "../_lib/transform";
 
@@ -16,6 +16,13 @@ import { transformPropertyToBVED, type InternalProperty } from "../_lib/transfor
 export async function GET(request: Request) {
   try {
     const token = await requireExternalAuth(request);
+
+    if (!token || !token.user_id) {
+      return NextResponse.json(
+        { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
+        { status: 401 }
+      );
+    }
 
     // Parse query parameters
     const url = new URL(request.url);
@@ -43,14 +50,18 @@ export async function GET(request: Request) {
       .from(objekte)
       .where(eq(objekte.user_id, token.user_id));
 
-    // Fetch locals per property to provide counts (single query, avoid N+1)
-    const unitsCountRows = await database
-      .select({
-        property_id: locals.objekt_id,
-        count: sql<number>`count(*)`,
-      })
-      .from(locals)
-      .groupBy(locals.objekt_id);
+    // Scope to user's properties only
+    const propertyIds = properties.map(p => p.id);
+    const unitsCountRows = propertyIds.length > 0
+      ? await database
+          .select({
+            property_id: locals.objekt_id,
+            count: sql<number>`count(*)`,
+          })
+          .from(locals)
+          .where(inArray(locals.objekt_id, propertyIds))
+          .groupBy(locals.objekt_id)
+      : [];
 
     const localsByProperty: Record<string, number> = {};
     for (const row of unitsCountRows) {
@@ -101,5 +112,3 @@ export async function GET(request: Request) {
     return formatError(error);
   }
 }
-
-

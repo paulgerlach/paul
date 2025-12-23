@@ -2,12 +2,22 @@ import { loadConfig, GATEWAY_PROFILES } from './config.js';
 import { MqttClient } from './mqtt-client.js';
 
 class MockComStarGateway {
-  constructor(configOverride = {}) { 
+  constructor(configOverride = {}) {
     // Load configuration
     this.config = loadConfig(configOverride);
     this.mqtt = new MqttClient(this.config);
   }
 
+
+  async start() {
+    try {
+      // Connect to MQTT broker
+      await this.mqtt.connect();
+    } catch (error) {
+      console.error(`❌ Failed to start gateway:`, error.message);
+      process.exit(1);
+    }
+  }
 }
 
 async function main() {
@@ -32,7 +42,7 @@ async function main() {
   
   // Start single gateway
   const gateway = new MockComStarGateway(configOverride);
-  // await gateway.start();
+  await gateway.start();
   
   // Export for testing
   // global.gateway = gateway;

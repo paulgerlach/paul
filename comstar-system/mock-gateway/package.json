@@ -1,0 +1,21 @@
+{
+  "name": "comstar-mock-gateway",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:single": "node src/index.js --gateway=test-gateway-1",
+    "start:multi": "node src/index.js --all",
+    "dev": "nodemon src/index.js",
+    "test": "node test/test-mqtt.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.0.0",
+    "cbor": "^9.0.0",
+    "cron-parser": "^4.9.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

@@ -57,9 +57,9 @@ export class MqttClient {
       this.client.on('connect', () => this.onConnect(resolve));
       this.client.on('message', (topic, message) => this.onMessage(topic, message));
       this.client.on('error', (err) => this.onError(err, reject));
-      // this.client.on('close', () => this.onClose());
-      // this.client.on('offline', () => this.onOffline());
-      // this.client.on('reconnect', () => this.onReconnect());
+      this.client.on('close', () => this.onClose());
+      this.client.on('offline', () => this.onOffline());
+      this.client.on('reconnect', () => this.onReconnect());
       
       // Set connection timeout
       setTimeout(() => {
@@ -88,6 +88,73 @@ export class MqttClient {
     this.processMessageQueue();
 
     resolve(this);
+  }
+
+  
+  onOffline() {
+    console.log(`[${this.config.name}] ⚠️ Broker connection lost`);
+  }
+  
+  onError(err, reject) {
+    console.error(`[${this.config.name}] ❌ MQTT error:`, err.message);
+    if (reject && !this.isConnected) {
+      reject(err);
+    }
+  }
+
+
+  // Event emitter simulation
+  eventListeners = {};
+  
+  on(event, callback) {
+    if (!this.eventListeners[event]) {
+      this.eventListeners[event] = [];
+    }
+    this.eventListeners[event].push(callback);
+  }
+
+  async onMessage(topic, message) {
+    this.stats.downlinksReceived++;
+    this.stats.lastMessageTime = new Date();
+    
+    console.log(`[${this.config.name}] 📥 Received downlink on ${topic}`);
+
+
+    try {
+      // Try to decode as CBOR first
+      let decoded;
+      try {
+        decoded = await cbor.decodeFirst(message);
+        console.log('Decoded ==>> ', decoded);
+      } catch (cborError) {
+        // Fall back to JSON
+        decoded = JSON.parse(message.toString());
+      }
+
+      // Emit event for gateway to handle
+      this.emit('downlink', {
+        topic,
+        message: decoded,
+        raw: message
+      });
+
+      // Log the downlink
+      this.logDownlink(topic, decoded);      
+
+    } catch (error) {
+      console.error(`[${this.config.name}] ❌ Failed to process downlink:`, error.message);
+      console.log('Raw message:', message.toString('hex').substring(0, 100) + '...');
+    }
+  }
+
+  onReconnect() {
+    this.reconnectAttempts++;
+    console.log(`[${this.config.name}] 🔄 Reconnecting (attempt ${this.reconnectAttempts})...`);
+    
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error(`[${this.config.name}] ❌ Max reconnection attempts reached`);
+      this.client.end();
+    }
   }
 
 
@@ -137,58 +204,6 @@ export class MqttClient {
     });
   }
 
-
-  async onMessage(topic, message) {
-    this.stats.downlinksReceived++;
-    this.stats.lastMessageTime = new Date();
-    
-    console.log(`[${this.config.name}] 📥 Received downlink on ${topic}`);
-
-
-    try {
-      // Try to decode as CBOR first
-      let decoded;
-      try {
-        decoded = await cbor.decodeFirst(message);
-        console.log('Decoded ==>> ', decoded);
-      } catch (cborError) {
-        // Fall back to JSON
-        decoded = JSON.parse(message.toString());
-      }
-
-      // Emit event for gateway to handle
-      this.emit('downlink', {
-        topic,
-        message: decoded,
-        raw: message
-      });
-
-      // Log the downlink
-      this.logDownlink(topic, decoded);      
-
-    } catch (error) {
-      console.error(`[${this.config.name}] ❌ Failed to process downlink:`, error.message);
-      console.log('Raw message:', message.toString('hex').substring(0, 100) + '...');
-    }
-  }
-  
-  onError(err, reject) {
-    console.error(`[${this.config.name}] ❌ MQTT error:`, err.message);
-    if (reject && !this.isConnected) {
-      reject(err);
-    }
-  }
-
-
-  // Event emitter simulation
-  eventListeners = {};
-  
-  on(event, callback) {
-    if (!this.eventListeners[event]) {
-      this.eventListeners[event] = [];
-    }
-    this.eventListeners[event].push(callback);
-  }
   
   emit(event, data) {
     const listeners = this.eventListeners[event] || [];
@@ -222,5 +237,10 @@ export class MqttClient {
     }
     
     return sanitized;
+  }
+
+  onClose() {
+    this.isConnected = false;
+    console.log(`[${this.config.name}] 🔌 Disconnected from broker`);
   }
 }

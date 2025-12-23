@@ -157,6 +157,11 @@ export class MqttClient {
     }
   }
 
+  onClose() {
+    this.isConnected = false;
+    console.log(`[${this.config.name}] 🔌 Disconnected from broker`);
+  }
+
 
   subscribeToDownlinks() {
     const topics = [
@@ -239,8 +244,10 @@ export class MqttClient {
     return sanitized;
   }
 
-  onClose() {
-    this.isConnected = false;
-    console.log(`[${this.config.name}] 🔌 Disconnected from broker`);
+  writeToLogFile(entry) {
+    const fs = require('fs').promises;
+    const logFile = `logs/downlinks-${this.config.devEui}.log`;
+    
+    fs.appendFile(logFile, JSON.stringify(entry) + '\n').catch(console.error);
   }
 }

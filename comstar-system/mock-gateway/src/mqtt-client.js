@@ -56,7 +56,7 @@ export class MqttClient {
       // Event handlers
       this.client.on('connect', () => this.onConnect(resolve));
       this.client.on('message', (topic, message) => this.onMessage(topic, message));
-      // this.client.on('error', (err) => this.onError(err, reject));
+      this.client.on('error', (err) => this.onError(err, reject));
       // this.client.on('close', () => this.onClose());
       // this.client.on('offline', () => this.onOffline());
       // this.client.on('reconnect', () => this.onReconnect());
@@ -169,6 +169,13 @@ export class MqttClient {
     } catch (error) {
       console.error(`[${this.config.name}] ❌ Failed to process downlink:`, error.message);
       console.log('Raw message:', message.toString('hex').substring(0, 100) + '...');
+    }
+  }
+  
+  onError(err, reject) {
+    console.error(`[${this.config.name}] ❌ MQTT error:`, err.message);
+    if (reject && !this.isConnected) {
+      reject(err);
     }
   }
 

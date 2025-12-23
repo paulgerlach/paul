@@ -38,12 +38,10 @@ export class MqttClient {
         }
       };
       
-        this.client = mqtt.connect(this.config.brokerUrl, options);
-        
-      console.log(`🚀[${this.config.name}] Connected to ${this.config.brokerUrl}...`);
+      this.client = mqtt.connect(this.config.brokerUrl, options);
       
       // Event handlers
-      // this.client.on('connect', () => this.onConnect(resolve));
+      this.client.on('connect', () => this.onConnect(resolve));
       // this.client.on('message', (topic, message) => this.onMessage(topic, message));
       // this.client.on('error', (err) => this.onError(err, reject));
       // this.client.on('close', () => this.onClose());
@@ -61,5 +59,35 @@ export class MqttClient {
       console.error(`❌ Failed to connect to broker:`, error.message);
       process.exit(1);
     }
+  }
+
+  onConnect(resolve) {
+    // this.isConnected = true;
+    // this.reconnectAttempts = 0;
+    // this.stats.connectionTime = new Date();
+    
+    console.log(`[${this.config.name}] ✅ Connected to MQTT broker`);
+    
+    // Subscribe to downlink topics
+    this.subscribeToDownlinks();
+
+    resolve(this);
+  }
+
+
+  subscribeToDownlinks() {
+    const topics = [
+      `LOB/${this.config.devEui}/down/+`,
+      `LOB/${this.config.devEui}/down/#`
+    ];
+
+    console.log(`BROKER TOPICS [${topics}] `);
+    this.client.subscribe(topics, { qos: 1 }, (err) => {
+      if (err) {
+        console.error(`[${this.config.name}] ❌ Subscription error:`, err.message);
+      } else {
+        console.log(`[${this.config.name}] ✅ Subscribed to downlink topics`);
+      }
+    });
   }
 }

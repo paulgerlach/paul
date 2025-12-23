@@ -13,6 +13,14 @@ export async function GET(request: Request) {
   try {
     const token = await requireExternalAuth(request);
 
+    // Option B: Scoped access - require user_id from token
+    if (!token || !token.user_id) {
+      return NextResponse.json(
+        { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
+        { status: 401 }
+      );
+    }
+
     const unitRows = await database
       .select({
         id: locals.id,

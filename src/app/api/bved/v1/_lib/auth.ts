@@ -32,7 +32,7 @@ export type TokenRecord = typeof bved_api_tokens.$inferSelect;
  * External auth guard. Returns the validated token record so callers
  * can scope data (e.g., filter by tokenRecord.user_id).
  */
-export async function requireExternalAuth(request: Request): Promise<TokenRecord> {
+export async function requireExternalAuth(request: Request): Promise<TokenRecord | null> {
   const authHeader = request.headers.get("authorization");
   const apiKeyHeader = request.headers.get("x-api-key");
 

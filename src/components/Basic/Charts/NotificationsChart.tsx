@@ -28,7 +28,7 @@ import {
 } from "@/utils/errorFlagInterpreter";
 import { interpretHintCode } from "@/utils/hintCodeInterpreter";
 import { checkRSSI } from "@/utils/rssiChecker";
-import { analyzeConsumption } from "@/utils/consumptionAnalyzer";
+import { analyzeConsumption, getConsumptionNotifications } from "@/utils/consumptionAnalyzer";
 import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
@@ -262,11 +262,19 @@ export default function NotificationsChart({
       });
       
       // GROUP 3: Check for consumption anomalies
+      // IMPROVED: Include devices with Monthly Values OR cumulative readings
       const selectedMetersWithConsumptionIssues = selectedMeters.filter(device => {
         // Check if device has monthly data
         const value1 = device["Monthly Value 1"];
         const value2 = device["Monthly Value 2"];
-        return value1 !== undefined && value2 !== undefined;
+        const hasMonthlyData = value1 !== undefined && value2 !== undefined;
+        
+        // Also check for cumulative energy/volume readings (for calculating consumption from raw data)
+        const hasCumulativeEnergy = device["IV,0,0,0,Wh,E"] !== undefined || device["Actual Energy / HCA"] !== undefined;
+        const hasCumulativeVolume = device["IV,0,0,0,m^3,Vol"] !== undefined || device["Actual Volume"] !== undefined;
+        const hasDate = device["IV,0,0,0,,Date/Time"] !== undefined || device["Actual Date"] !== undefined || device["Raw Date"] !== undefined;
+        
+        return hasMonthlyData || ((hasCumulativeEnergy || hasCumulativeVolume) && hasDate);
       });
       
       // Count total issues
@@ -377,12 +385,16 @@ export default function NotificationsChart({
       });
       
       // GROUP 3: Generate notifications for consumption issues
-      selectedMetersWithConsumptionIssues.forEach(device => {
-        const consumptionNotifications = analyzeConsumption(device);
+      // IMPROVED: Use getConsumptionNotifications which handles both Monthly Values
+      // and calculates from raw cumulative readings when Monthly Values unavailable
+      if (selectedMetersWithConsumptionIssues.length > 0) {
+        const consumptionNotifications = getConsumptionNotifications({ 
+          data: selectedMetersWithConsumptionIssues 
+        });
         if (consumptionNotifications && consumptionNotifications.length > 0) {
           dynamicNotifications.push(...consumptionNotifications);
         }
-      });
+      }
 
       // Sort by severity (critical > high > medium > low)
       const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };

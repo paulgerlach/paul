@@ -102,19 +102,39 @@ function getErrorMessages(bitPosition: number, deviceType: string, manufacturer:
 }
 
 function getErrorSeverity(errors: string[]): 'low' | 'medium' | 'high' | 'critical' {
-  const criticalErrors = ['Hardware malfunction', 'Memory corruption', 'Calibration drift'];
-  const highErrors = ['Communication failure', 'Flow sensor fault', 'Temperature sensor fault'];
-  const mediumErrors = ['Battery low', 'Real-time clock error'];
+  // German error strings matching the actual error messages
+  const criticalErrors = [
+    'Elektronik defekt',           // Electronics defect
+    'Kabelbruch',                  // Cable break
+    'Kurzschluss',                 // Short circuit
+    'Leckage erkannt',             // Leakage detected
+    'Sensorfehler'                 // Sensor error
+  ];
+  const highErrors = [
+    'Temperatursensor',            // Temperature sensor issues
+    'Durchflussmessung',           // Flow measurement issues
+    'Durchflussmesssystem',        // Flow measurement system
+    'Manipulationserkennung',      // Tampering detected
+    'Rückfluss',                   // Backflow
+    'Blockade'                     // Blockage
+  ];
+  const mediumErrors = [
+    'Schwache Batterie',           // Weak battery
+    'Batterie',                    // Battery related
+    'Gerät Reset',                 // Device reset
+    'Software-Fehler',             // Software error
+    'Überlasthinweis'              // Overload warning
+  ];
   
-  if (errors.some(error => criticalErrors.some(critical => error.includes(critical)))) {
+  if (errors.some(error => criticalErrors.some(critical => error.toLowerCase().includes(critical.toLowerCase())))) {
     return 'critical';
   }
   
-  if (errors.some(error => highErrors.some(high => error.includes(high)))) {
+  if (errors.some(error => highErrors.some(high => error.toLowerCase().includes(high.toLowerCase())))) {
     return 'high';
   }
   
-  if (errors.some(error => mediumErrors.some(medium => error.includes(medium)))) {
+  if (errors.some(error => mediumErrors.some(medium => error.toLowerCase().includes(medium.toLowerCase())))) {
     return 'medium';
   }
   

@@ -75,7 +75,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
         
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Kaltwasser */}
-          <div className="h-[280px] max-md:h-[200px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp">
+          <div className="h-[280px] max-md:h-[200px] max-md:w-full max-md:overflow-hidden animate-fadeInUp">
             <WaterChart
               csvText={coldWaterDevices}
               color="#6083CC"
@@ -88,7 +88,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Warmwasser */}
-          <div className="h-[247px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-100">
+          <div className="h-[247px] max-md:h-[180px] max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-100">
             <WaterChart
               csvText={hotWaterDevices}
               color="#E74B3C"
@@ -103,7 +103,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
 
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Stromverbrauch - matches main dashboard */}
-          <div className="h-[265px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-200">
+          <div className="h-[265px] max-md:h-[180px] max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-200">
             <ElectricityChart
               electricityReadings={electricityDevices}
               isEmpty={isElecEmpty}
@@ -113,7 +113,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Heizkosten */}
-          <div className="h-[318px] max-md:h-[200px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-300">
+          <div className="h-[318px] max-md:h-[200px] max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-300">
             <HeatingCosts 
               csvText={heatDevices} 
               isEmpty={isHeatEmpty}
@@ -125,7 +125,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
 
         <div className="flex flex-col gap-3 max-md:gap-2 max-md:w-full">
           {/* Benachrichtigungen - uses real NotificationsChart like main dashboard */}
-          <div className="h-[360px] max-md:h-[250px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-400">
+          <div className="h-[360px] max-md:h-[250px] max-md:w-full max-md:overflow-hidden animate-fadeInUp delay-400">
             <NotificationsChart
               isEmpty={filteredData.length === 0}
               emptyTitle="Keine Daten verfügbar."
@@ -135,7 +135,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           </div>
 
           {/* Einsparung - passes data like main dashboard */}
-          <div className="h-[220px] max-md:h-[180px] hover:scale-[1.04] transition-transform duration-200 ease-out max-md:hover:scale-100 max-md:w-full overflow-hidden animate-fadeInUp delay-500">
+          <div className="h-[220px] max-md:h-[180px] max-md:w-full overflow-hidden animate-fadeInUp delay-500">
             <EinsparungChart
               selectedData={einsparungChartData}
               isEmpty={isEinsparungEmpty}

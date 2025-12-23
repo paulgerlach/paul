@@ -6,7 +6,7 @@ import { requireExternalAuth, formatError } from "../_lib/auth";
 
 export async function GET(request: Request) {
   try {
-    await requireExternalAuth(request);
+    const token = await requireExternalAuth(request);
 
     const properties = await database
       .select({
@@ -26,7 +26,8 @@ export async function GET(request: Request) {
         created_at: objekte.created_at,
         user_id: objekte.user_id,
       })
-      .from(objekte);
+      .from(objekte)
+      .where(eq(objekte.user_id, token.user_id));
 
     // Fetch locals per property to provide counts (single query, avoid N+1)
     const unitsCountRows = await database

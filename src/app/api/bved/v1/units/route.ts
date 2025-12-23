@@ -11,7 +11,7 @@ import { requireExternalAuth, formatError } from "../_lib/auth";
 
 export async function GET(request: Request) {
   try {
-    await requireExternalAuth(request);
+    const token = await requireExternalAuth(request);
 
     const unitRows = await database
       .select({
@@ -30,7 +30,8 @@ export async function GET(request: Request) {
         property_zip: objekte.zip,
       })
       .from(locals)
-      .leftJoin(objekte, eq(locals.objekt_id, objekte.id));
+      .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
+      .where(eq(objekte.user_id, token.user_id));
 
     const localIds = unitRows.map((u) => u.id);
     let contractRows: typeof contracts.$inferSelect[] = [];

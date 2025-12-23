@@ -25,7 +25,7 @@ import {
  */
 export async function GET(request: Request) {
   try {
-    await requireExternalAuth(request);
+    const token = await requireExternalAuth(request);
 
     // Parse query parameters
     const url = new URL(request.url);
@@ -62,7 +62,8 @@ export async function GET(request: Request) {
         property_user_id: objekte.user_id,
       })
       .from(locals)
-      .leftJoin(objekte, eq(locals.objekt_id, objekte.id));
+      .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
+      .where(eq(objekte.user_id, token.user_id));
 
     const localIds = unitRows.map((u) => u.id);
     let contractRows: typeof contracts.$inferSelect[] = [];

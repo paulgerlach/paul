@@ -15,7 +15,7 @@ import { transformPropertyToBVED, type InternalProperty } from "../_lib/transfor
  */
 export async function GET(request: Request) {
   try {
-    await requireExternalAuth(request);
+    const token = await requireExternalAuth(request);
 
     // Parse query parameters
     const url = new URL(request.url);
@@ -40,7 +40,8 @@ export async function GET(request: Request) {
         user_id: objekte.user_id,
         image_url: objekte.image_url,
       })
-      .from(objekte);
+      .from(objekte)
+      .where(eq(objekte.user_id, token.user_id));
 
     // Fetch locals per property to provide counts (single query, avoid N+1)
     const unitsCountRows = await database

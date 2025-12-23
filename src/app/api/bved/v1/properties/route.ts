@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import database from "@/db";
 import { locals, objekte } from "@/db/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { requireExternalAuth, formatError } from "../_lib/auth";
 
 export async function GET(request: Request) {
@@ -28,14 +28,20 @@ export async function GET(request: Request) {
       })
       .from(objekte);
 
-    // Fetch locals per property to provide counts
+    // Fetch locals per property to provide counts (single query, avoid N+1)
+    const unitsCountRows = await database
+      .select({
+        property_id: locals.objekt_id,
+        count: sql<number>`count(*)`,
+      })
+      .from(locals)
+      .groupBy(locals.objekt_id);
+
     const localsByProperty: Record<string, number> = {};
-    for (const property of properties) {
-      const units = await database
-        .select({ id: locals.id })
-        .from(locals)
-        .where(eq(locals.objekt_id, property.id));
-      localsByProperty[property.id] = units.length;
+    for (const row of unitsCountRows) {
+      if (row.property_id) {
+        localsByProperty[row.property_id] = Number(row.count) || 0;
+      }
     }
 
     const response = properties.map((p) => ({

@@ -1,16 +1,11 @@
 import { loadConfig, GATEWAY_PROFILES } from './config.js';
-// import { MqttClient } from './mqtt-client.js';
+import { MqttClient } from './mqtt-client.js';
 
 class MockComStarGateway {
   constructor(configOverride = {}) { 
     // Load configuration
     this.config = loadConfig(configOverride);
-
-    // this.mqtt = new MqttClient(this.config);
-    console.log(`🎯 Mock ComStar Gateway: ${this.config.name}`);
-    console.log(`   DevEUI: ${this.config.devEui}`);
-    console.log(`   Broker: ${this.config.brokerUrl}`);
-    console.log(`   Schedule: ${this.config.listenCron}`)
+    this.mqtt = new MqttClient(this.config);
   }
 
 }

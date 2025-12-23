@@ -3,6 +3,19 @@ import mqtt from 'mqtt';
 export class MqttClient {
   constructor(config) { 
     this.config = config;
+    this.client = null;
+    this.isConnected = false;
+    this.messageQueue = [];
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 10;
+    
+    // Statistics
+    this.stats = {
+      uplinksSent: 0,
+      downlinksReceived: 0,
+      connectionTime: null,
+      lastMessageTime: null
+    };
     console.log('MqttClient')
     console.log(`🎯 Mock ComStar Gateway: ${this.config.name}`);
     console.log(`   DevEUI: ${this.config.devEui}`);
@@ -62,14 +75,17 @@ export class MqttClient {
   }
 
   onConnect(resolve) {
-    // this.isConnected = true;
-    // this.reconnectAttempts = 0;
-    // this.stats.connectionTime = new Date();
+    this.isConnected = true;
+    this.reconnectAttempts = 0;
+    this.stats.connectionTime = new Date();
     
     console.log(`[${this.config.name}] ✅ Connected to MQTT broker`);
     
     // Subscribe to downlink topics
     this.subscribeToDownlinks();
+
+    // Process queued messages
+    this.processMessageQueue();
 
     resolve(this);
   }
@@ -87,6 +103,36 @@ export class MqttClient {
         console.error(`[${this.config.name}] ❌ Subscription error:`, err.message);
       } else {
         console.log(`[${this.config.name}] ✅ Subscribed to downlink topics`);
+      }
+    });
+  }
+
+
+  processMessageQueue() {
+    if (!this.isConnected) {
+      console.log(`[${this.config.name}] Not connected`);
+      return
+    };
+
+    if (this.messageQueue.length === 0) {
+      console.log(`[${this.config.name}] Did not Process ${this.messageQueue.length} queued messages: No Messages`);
+      return
+    };
+    
+    console.log(`[${this.config.name}] Processing ${this.messageQueue.length} queued messages...`);
+    
+    const queueCopy = [...this.messageQueue];
+    this.messageQueue = [];
+    
+    queueCopy.forEach(async (msg) => {
+      try {
+        await this.publish(msg.topic, msg.data, msg.options);
+      } catch (error) {
+        console.error(`[${this.config.name}] ❌ Failed to send queued message:`, error.message);
+        // Requeue if it's a connection error
+        if (error.message.includes('Not connected')) {
+          this.messageQueue.push(msg);
+        }
       }
     });
   }

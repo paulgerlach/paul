@@ -235,9 +235,9 @@ const extractHistoricalConsumptionFromDevice = (
 ): { date: Date; consumption: number }[] => {
   const consumptionData: { date: Date; consumption: number }[] = [];
   
-  // Heat meters use IV,0, IV,2, IV,4, IV,6... for Wh,E (even numbers represent months back)
-  // IV,0 = current, IV,2 = 1 month ago, IV,4 = 2 months ago, etc.
-  const indices = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+  // Heat meters use IV,0, IV,1, IV,3, IV,5, IV,7... for Wh,E (ODD numbers after 0 and 1)
+  // Based on parser.ts: IV,0,0,0,Wh,E, IV,1,0,0,Wh,E, IV,3,0,0,Wh,E, IV,5,0,0,Wh,E, etc.
+  const indices = [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
   const values: { index: number; value: number }[] = [];
   
   for (const i of indices) {
@@ -262,22 +262,22 @@ const extractHistoricalConsumptionFromDevice = (
   // Need at least 2 values to calculate consumption
   if (values.length < 2) return [];
   
-  // Sort by index (0 = current, 2 = 1 month ago, etc.)
+  // Sort by index (lower index = more recent data)
   values.sort((a, b) => a.index - b.index);
   
   // Calculate consumption between consecutive readings
-  // consumption[i] = values[i].value - values[i+1].value
+  // Each pair of readings represents one month's consumption
+  // Position 0 in array = current month, position 1 = previous month, etc.
   for (let i = 0; i < values.length - 1; i++) {
     const current = values[i];
     const previous = values[i + 1];
     const consumption = current.value - previous.value;
     
-    // Only include positive consumption
+    // Only include positive consumption (cumulative values should decrease going back)
     if (consumption >= 0) {
       // Calculate the date for this consumption period
-      // IV,0 -> IV,2 = current month (date = mostRecentDate)
-      // IV,2 -> IV,4 = previous month (date = mostRecentDate - 1 month)
-      const monthsBack = current.index / 2;
+      // Position i in the sorted array represents i months back from most recent date
+      const monthsBack = i;
       const consumptionDate = new Date(mostRecentDate);
       consumptionDate.setMonth(mostRecentDate.getMonth() - monthsBack);
       

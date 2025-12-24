@@ -37,6 +37,13 @@ export class UplinkScheduler {
     await this.delay(100);
     console.log(`[${this.gateway.config.name}] Sending config uplink...`);
     await this.gateway.mqtt.publish('up/config', this.generateConfigData());
+
+    // 3. Initial STATUS uplink
+    await this.delay(100);
+    console.log(`[${this.gateway.config.name}] Sending initial status...`);
+    await this.gateway.mqtt.publish('up/status', this.generateStatusData());
+    
+    console.log(`[${this.gateway.config.name}] ✅ Initial uplinks sent`);
   }
 
   generateDeviceData() {
@@ -75,6 +82,33 @@ export class UplinkScheduler {
       RndDelay: this.config.rndDelay,
       LostReboot: 7,
       etag: this.state.lastSyncEtag || `config-${Date.now().toString(16)}`
+    };
+  }
+
+  generateStatusData() {
+    const now = Math.floor(Date.now() / 1000);
+    
+    return {
+      monitor: `connected:1, reg:5, tac:D71E, ci:019C1307, psm:00000001, tau:00111111, RSRP:${55 + Math.floor(Math.random() * 20)}(3/4), RSRQ:${15 + Math.floor(Math.random() * 10)}(3/4), SNR:${30 + Math.floor(Math.random() * 20)}(4/4)`,
+      time: now,
+      syncTo: now - 3600,
+      syncFrom: now - 3598,
+      syncTicks: 14978800 + Math.floor(Math.random() * 1000),
+      ci: "019C1307",
+      tac: "D71E",
+      rsrp: 55 + Math.floor(Math.random() * 20),
+      rsrq: 15 + Math.floor(Math.random() * 10),
+      snr: 30 + Math.floor(Math.random() * 20),
+      operator: "26201",
+      band: 8,
+      apn: "internet.example.com",
+      vbat: this.config.simulateLowBattery 
+        ? 3500 + Math.floor(Math.random() * 200)  // Low battery
+        : 3800 + Math.floor(Math.random() * 200), // Normal battery
+      temperature: 200 + Math.floor(Math.random() * 100),
+      collected: this.collectionActive,
+      telegram: this.state.collectedTelegrams,
+      uploading: this.collectionActive ? this.config.mockTelegramCount : 0
     };
   }
 

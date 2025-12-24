@@ -20,7 +20,6 @@ export class TelegramGenerator {
     };
 
     this.mockMeters = this.generateMockMeters();
-    console.log('MOCK METERS', this.mockMeters);
   }
 
   generateMockMeters() {

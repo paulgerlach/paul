@@ -1,5 +1,6 @@
 import { loadConfig, GATEWAY_PROFILES } from './config.js';
 import { MqttClient } from './mqtt-client.js';
+import { UplinkScheduler } from './uplink-scheduler.js';
 import { TelegramGenerator } from './telegram-generator.js';
 
 class MockComStarGateway {
@@ -9,7 +10,7 @@ class MockComStarGateway {
     this.mqtt = new MqttClient(this.config);
 
     this.telegramGenerator = new TelegramGenerator(this.config);
-
+    this.uplinkScheduler = new UplinkScheduler(this);
 
   }
 

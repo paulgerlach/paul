@@ -273,7 +273,7 @@ export default function ShareDashboardDialog() {
                     <span className="animate-spin">⏳</span> Wird gesendet...
                   </span>
                 ) : (
-                  <span className="flex items-center justify-center">
+<span className="flex items-center justify-center">
                     Zugangscode senden
                   </span>
                 )}

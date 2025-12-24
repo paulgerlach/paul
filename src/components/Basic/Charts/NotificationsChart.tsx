@@ -28,7 +28,7 @@ import {
 } from "@/utils/errorFlagInterpreter";
 import { interpretHintCode } from "@/utils/hintCodeInterpreter";
 import { checkRSSI } from "@/utils/rssiChecker";
-import { analyzeConsumption } from "@/utils/consumptionAnalyzer";
+import { analyzeConsumption, getConsumptionNotifications } from "@/utils/consumptionAnalyzer";
 import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
@@ -247,33 +247,46 @@ export default function NotificationsChart({
         return hasErrorFlag;
       });
       
-      // GROUP 2: Check for hint codes
-      const selectedMetersWithHintCodes = selectedMeters.filter(device => {
-        const hintCode = device["Hint Code"];
-        return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI checking - These fields don't exist in CSV
+      // The Engelmann gateway CSV format doesn't output "Hint Code" or "RSSI Value"
+      // Keeping code commented for future if data format changes
+      // =========================================================================
       
-      // GROUP 2: Check for RSSI warnings
-      const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
-        const rssiValue = device["RSSI Value"];
-        if (!rssiValue) return false;
-        const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
-        return !isNaN(rssi) && rssi < -90; // Weak signal threshold
-      });
+      // GROUP 2: Hint codes - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithHintCodes = selectedMeters.filter(device => {
+      //   const hintCode = device["Hint Code"];
+      //   return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
+      // });
+      const selectedMetersWithHintCodes: typeof selectedMeters = []; // Empty - no hint codes in data
       
-      // GROUP 3: Check for consumption anomalies
-      const selectedMetersWithConsumptionIssues = selectedMeters.filter(device => {
-        // Check if device has monthly data
-        const value1 = device["Monthly Value 1"];
-        const value2 = device["Monthly Value 2"];
-        return value1 !== undefined && value2 !== undefined;
-      });
+      // GROUP 2: RSSI warnings - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
+      //   const rssiValue = device["RSSI Value"];
+      //   if (!rssiValue) return false;
+      //   const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
+      //   return !isNaN(rssi) && rssi < -90;
+      // });
+      const selectedMetersWithRSSIWarnings: typeof selectedMeters = []; // Empty - no RSSI in data
       
-      // Count total issues
+      // GROUP 3: Consumption anomalies are now handled below (before success check)
+      // The consumption analyzer groups readings by device and calculates spikes
+      
+      // FIRST: Generate consumption notifications (must happen before success check!)
+      // This analyzes whether there are actual consumption spikes, not just whether data exists
+      let consumptionNotificationsGenerated: NotificationItem[] = [];
+      if (selectedMeters.length > 0) {
+        // Pass ALL selected meters to consumption analyzer - it will group by device
+        consumptionNotificationsGenerated = getConsumptionNotifications({ 
+          data: selectedMeters 
+        });
+      }
+
+      // Count total ACTUAL issues (including consumption notifications that were generated)
       const totalIssues = selectedMetersWithErrors.length + 
                          selectedMetersWithHintCodes.length + 
                          selectedMetersWithRSSIWarnings.length + 
-                         selectedMetersWithConsumptionIssues.length;
+                         consumptionNotificationsGenerated.length;
 
       // If no issues detected, show success notification
       if (totalIssues === 0 && parsedData.data.length > 0) {
@@ -360,29 +373,31 @@ export default function NotificationsChart({
         });
       });
       
-      // GROUP 2: Generate notifications for hint codes
-      selectedMetersWithHintCodes.forEach(device => {
-        const hintNotification = interpretHintCode(device);
-        if (hintNotification) {
-          dynamicNotifications.push(hintNotification);
-        }
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI notification generation
+      // These arrays are always empty because the fields don't exist in CSV data
+      // =========================================================================
       
-      // GROUP 2: Generate notifications for RSSI warnings
-      selectedMetersWithRSSIWarnings.forEach(device => {
-        const rssiNotification = checkRSSI(device);
-        if (rssiNotification) {
-          dynamicNotifications.push(rssiNotification);
-        }
-      });
+      // GROUP 2: Generate notifications for hint codes - DISABLED
+      // selectedMetersWithHintCodes.forEach(device => {
+      //   const hintNotification = interpretHintCode(device);
+      //   if (hintNotification) {
+      //     dynamicNotifications.push(hintNotification);
+      //   }
+      // });
       
-      // GROUP 3: Generate notifications for consumption issues
-      selectedMetersWithConsumptionIssues.forEach(device => {
-        const consumptionNotifications = analyzeConsumption(device);
-        if (consumptionNotifications && consumptionNotifications.length > 0) {
-          dynamicNotifications.push(...consumptionNotifications);
-        }
-      });
+      // GROUP 2: Generate notifications for RSSI warnings - DISABLED
+      // selectedMetersWithRSSIWarnings.forEach(device => {
+      //   const rssiNotification = checkRSSI(device);
+      //   if (rssiNotification) {
+      //     dynamicNotifications.push(rssiNotification);
+      //   }
+      // });
+      
+      // GROUP 3: Add consumption notifications (already generated above before success check)
+      if (consumptionNotificationsGenerated.length > 0) {
+        dynamicNotifications.push(...consumptionNotificationsGenerated);
+      }
 
       // Sort by severity (critical > high > medium > low)
       const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };

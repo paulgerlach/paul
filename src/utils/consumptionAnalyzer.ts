@@ -83,25 +83,48 @@ function getDeviceIcon(deviceType: string): StaticImageData {
 
 /**
  * Calculate consumption change percentage between two periods
+ * Uses IV columns from Engelmann CSV format:
+ * - IV,0,0,0,Wh,E = current cumulative reading
+ * - IV,1,0,0,Wh,E = end of last month snapshot  
+ * - IV,3,0,0,Wh,E = end of 2 months ago snapshot (index varies by CSV version)
  */
 export function calculateConsumptionChange(device: MeterReadingType): {
   percentageChange: number;
   currentValue: number;
   previousValue: number;
 } | null {
-  // Get the two most recent monthly values
-  const value1 = parseGermanNumber(device["Monthly Value 1"]); // Current month
-  const value2 = parseGermanNumber(device["Monthly Value 2"]); // Previous month
+  // Get values from actual IV columns (Engelmann CSV format)
+  const currentCumulative = parseGermanNumber(device["IV,0,0,0,Wh,E"]);
+  const lastMonthEnd = parseGermanNumber(device["IV,1,0,0,Wh,E"]);
   
-  if (value1 === null || value2 === null) return null;
-  if (value2 === 0) return null; // Avoid division by zero
+  // Try both IV,2 and IV,3 for 2-months-ago value (CSV format varies)
+  const twoMonthsAgoEnd = parseGermanNumber(device["IV,3,0,0,Wh,E"]) 
+                        ?? parseGermanNumber(device["IV,2,0,0,Wh,E"]);
   
-  const change = ((value1 - value2) / value2) * 100;
+  // Need at least current and last month values
+  if (currentCumulative === null || lastMonthEnd === null) return null;
+  
+  // Calculate actual consumption (delta between cumulative values)
+  const currentMonthConsumption = currentCumulative - lastMonthEnd;
+  
+  // If we have 2-months-ago data, calculate previous month consumption
+  let previousMonthConsumption: number;
+  if (twoMonthsAgoEnd !== null && lastMonthEnd > twoMonthsAgoEnd) {
+    previousMonthConsumption = lastMonthEnd - twoMonthsAgoEnd;
+  } else {
+    // Fallback: can't calculate change without previous month data
+    return null;
+  }
+  
+  // Avoid division by zero
+  if (previousMonthConsumption === 0) return null;
+  
+  const change = ((currentMonthConsumption - previousMonthConsumption) / previousMonthConsumption) * 100;
   
   return {
     percentageChange: change,
-    currentValue: value1,
-    previousValue: value2
+    currentValue: currentMonthConsumption,
+    previousValue: previousMonthConsumption
   };
 }
 
@@ -116,7 +139,9 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
   const absChange = Math.abs(change.percentageChange);
   const meterId = device.ID || device["Number Meter"];
   const deviceType = device["Device Type"];
-  const unit = device["Monthly Unit 1"] || "MWh";
+  
+  // Unit is Wh for heat meters (from IV columns)
+  const unit = deviceType === "Heat" ? "Wh" : "m³";
   
   // Only alert if change is >= 30%
   if (absChange < 30) return null;
@@ -127,6 +152,14 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
                          deviceType === "Heat" ? "Wärme" :
                          deviceType;
   
+  // Format values appropriately (kWh for heat, m³ for water)
+  const formatValue = (val: number) => {
+    if (deviceType === "Heat") {
+      return val >= 1000 ? `${(val / 1000).toFixed(1)} kWh` : `${val.toFixed(0)} Wh`;
+    }
+    return `${val.toFixed(3)} ${unit}`;
+  };
+  
   if (isIncrease) {
     return {
       leftIcon: getDeviceIcon(deviceType),
@@ -134,7 +167,7 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       leftBg: "#E7E8EA",
       rightBg: "#F7E7D5",
       title: `Verbrauchsanstieg - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% angestiegen (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
+      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% angestiegen (von ${formatValue(change.previousValue)} auf ${formatValue(change.currentValue)})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
       severity: absChange >= 50 ? "high" : "medium"
     };
@@ -145,7 +178,7 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       leftBg: "#E7E8EA",
       rightBg: "#E5EBF5",
       title: `Verbrauchsrückgang - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% gesunken (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
+      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% gesunken (von ${formatValue(change.previousValue)} auf ${formatValue(change.currentValue)})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
       severity: absChange >= 50 ? "medium" : "low"
     };
@@ -154,17 +187,29 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
 
 /**
  * Detect zero consumption (3+ months with no usage)
+ * Uses IV columns from Engelmann CSV format
  */
 export function detectZeroConsumption(device: MeterReadingType): ConsumptionNotification | null {
-  // Check last 3 months
-  const value1 = parseGermanNumber(device["Monthly Value 1"]);
-  const value2 = parseGermanNumber(device["Monthly Value 2"]);
-  const value3 = parseGermanNumber(device["Monthly Value 3"]);
+  // Get cumulative values from IV columns
+  const current = parseGermanNumber(device["IV,0,0,0,Wh,E"]);
+  const month1End = parseGermanNumber(device["IV,1,0,0,Wh,E"]);
+  const month2End = parseGermanNumber(device["IV,3,0,0,Wh,E"]) 
+                  ?? parseGermanNumber(device["IV,2,0,0,Wh,E"]);
+  const month3End = parseGermanNumber(device["IV,5,0,0,Wh,E"]) 
+                  ?? parseGermanNumber(device["IV,4,0,0,Wh,E"]);
   
-  if (value1 === null || value2 === null || value3 === null) return null;
+  // Need at least 3 months of data
+  if (current === null || month1End === null || month2End === null || month3End === null) {
+    return null;
+  }
+  
+  // Calculate consumption for each month
+  const consumption1 = current - month1End;      // Current month
+  const consumption2 = month1End - month2End;    // Last month
+  const consumption3 = month2End - month3End;    // 2 months ago
   
   // All three months have zero consumption
-  if (value1 === 0 && value2 === 0 && value3 === 0) {
+  if (consumption1 === 0 && consumption2 === 0 && consumption3 === 0) {
     const meterId = device.ID || device["Number Meter"];
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :

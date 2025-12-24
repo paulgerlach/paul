@@ -10,6 +10,7 @@
     "test:performance": "node test/performance.js"
   },
   "dependencies": {
+    "cbor": "^10.0.11",
     "dotenv": "^17.2.3",
     "mqtt": "^5.14.1",
     "pino": "^10.1.0"

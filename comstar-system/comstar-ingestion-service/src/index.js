@@ -28,12 +28,19 @@ class IngestionService {
 
       // Setup graceful shutdown
       this.setupShutdownHandlers();
+      
+      // Start health monitoring
+      this.startHealthMonitoring();
+
+      // Start stats logging
+      this.startStatsLogging();
+      
     } catch (error) {
       console.error({ error }, '❌ Failed to start ingestion service');
       throw { error }, '❌ Failed to start ingestion service';
     }
   }
-  
+
    setupShutdownHandlers() {
     const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
     
@@ -65,12 +72,41 @@ class IngestionService {
       console.error({ reason, promise }, 'Unhandled promise rejection');
     });
    }
+  
+  startHealthMonitoring() {
+    // Monitor response times
+    setInterval(() => {
+      const stats = this.mqttHandler.getStats();
+      
+      if (stats.responseStats.slowResponses > 0) {
+        console.error({
+          slowResponses: stats.responseStats.slowResponses,
+          avgDuration: stats.responseStats.averageDuration.toFixed(2)
+        }, 'Slow responses detected');
+      }
+    }, 30000); // Every 30 seconds
+  }
+
+  startStatsLogging() {
+    setInterval(() => {
+      const uptime = Date.now() - this.stats.startTime.getTime();
+      const mqttStats = this.mqttHandler.getStats();
+      
+      console.log({
+        uptime: Math.floor(uptime / 1000),
+        messagesProcessed: this.stats.messagesProcessed,
+        errors: this.stats.errors,
+        mqtt: {
+          connected: mqttStats.connected,
+          responseStats: mqttStats.responseStats
+        }
+      }, 'Service statistics');
+    }, 60000); // Every minute
+  }
 
   async delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-  
-
 }
 
 

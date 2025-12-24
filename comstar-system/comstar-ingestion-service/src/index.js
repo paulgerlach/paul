@@ -26,12 +26,50 @@ class IngestionService {
     try {
       await this.mqttHandler.connect();
 
+      // Setup graceful shutdown
+      this.setupShutdownHandlers();
     } catch (error) {
       console.error({ error }, '❌ Failed to start ingestion service');
-      process.exit(1);
+      throw { error }, '❌ Failed to start ingestion service';
     }
-
   }
+  
+   setupShutdownHandlers() {
+    const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+    
+    signals.forEach(signal => {
+      process.on(signal, async () => {
+        if (this.shuttingDown) return;
+        
+        this.shuttingDown = true;
+        console.log(`Received ${signal}, shutting down gracefully...`);
+        
+        // Give some time for in-flight messages
+        await this.delay(2000);
+        
+        // Disconnect from MQTT
+        this.mqttHandler.disconnect();
+        
+        console.log('✅ Ingestion service shutdown complete');
+        process.exit(0);
+      });
+    });
+    
+    // Handle uncaught errors
+    process.on('uncaughtException', (error) => {
+      console.error({ error }, 'Uncaught exception');
+      process.exit(1);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error({ reason, promise }, 'Unhandled promise rejection');
+    });
+   }
+
+  async delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
 
 }
 

@@ -67,6 +67,13 @@ class MqttHandler {
     });
   }
 
+  disconnect() {
+    if (this.client) {
+      this.client.end();
+      console.log('MQTT client disconnected');
+    }
+  }
+
 }
 
 export default MqttHandler;

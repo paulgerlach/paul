@@ -18,16 +18,16 @@ import { EmptyState } from "@/components/Basic/ui/States";
 const ALL_MONTHS = [
   "JAN",
   "FEB",
-  "MAR",
+  "MÄR",
   "APR",
-  "MAY",
+  "MAI",
   "JUN",
   "JUL",
   "AUG",
   "SEP",
-  "OCT",
+  "OKT",
   "NOV",
-  "DEC",
+  "DEZ",
 ];
 
 interface ProcessedData {

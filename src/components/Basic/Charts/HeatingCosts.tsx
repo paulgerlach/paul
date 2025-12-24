@@ -22,16 +22,16 @@ interface HeatingCostsProps {
 const monthNames = [
   "Jan",
   "Feb",
-  "Mar",
+  "Mär",
   "Apr",
-  "May",
+  "Mai",
   "Jun",
   "Jul",
   "Aug",
   "Sep",
-  "Oct",
+  "Okt",
   "Nov",
-  "Dec",
+  "Dez",
 ];
 
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {

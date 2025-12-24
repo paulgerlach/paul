@@ -203,8 +203,8 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
   const now = new Date();
   const daysSinceReading = Math.floor((now.getTime() - lastReading.getTime()) / (1000 * 60 * 60 * 24));
   
-  // Alert if no data for 7+ days
-  if (daysSinceReading >= 7) {
+  // Alert if no data for 3+ days
+  if (daysSinceReading >= 3) {
     const meterId = device.ID || device["Number Meter"];
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
@@ -258,13 +258,45 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
 
 /**
  * Get all consumption notifications for parsed data
+ * CRITICAL: Groups by meter ID and only analyzes the MOST RECENT record per meter
+ * This prevents false "no data" alerts when old records exist alongside new ones
  */
 export function getConsumptionNotifications(parsedData: {
   data: MeterReadingType[];
 }): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
   
+  // Group records by meter ID and keep only the most recent one per meter
+  const meterMap = new Map<string, MeterReadingType>();
+  
   for (const device of parsedData.data) {
+    const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
+    if (!meterId) continue;
+    
+    const existingDevice = meterMap.get(meterId);
+    
+    if (!existingDevice) {
+      meterMap.set(meterId, device);
+    } else {
+      // Compare dates - keep the more recent one
+      const existingDate = existingDevice["Actual Date"] || existingDevice["Raw Date"] || existingDevice["IV,0,0,0,,Date/Time"];
+      const newDate = device["Actual Date"] || device["Raw Date"] || device["IV,0,0,0,,Date/Time"];
+      
+      if (existingDate && newDate) {
+        const existingParsed = parseGermanDate(existingDate);
+        const newParsed = parseGermanDate(newDate);
+        
+        if (existingParsed && newParsed && newParsed > existingParsed) {
+          meterMap.set(meterId, device); // New record is more recent
+        }
+      } else if (newDate && !existingDate) {
+        meterMap.set(meterId, device); // New has date, existing doesn't
+      }
+    }
+  }
+  
+  // Now analyze only the most recent record per meter
+  for (const device of meterMap.values()) {
     const deviceNotifications = analyzeConsumption(device);
     notifications.push(...deviceNotifications);
   }

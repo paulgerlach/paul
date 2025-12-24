@@ -1,0 +1,18 @@
+Number Route;Description Route;Number Meter;Device Type;Telegram Type;Status Byte;RSSI Value;Hint Code;Hint Code Description;Actual Date;Monthly Value 1;Monthly Unit 1;Monthly Value 2;Monthly Unit 2;Monthly Value 3;Monthly Unit 3;IV,0,0,0,,ErrorFlags(binary)(deviceType specific)
+100;Test Building;TEST001;Heat;EFE;0x01;;0;;29.11.2025;100,000;MWh;70,000;MWh;65,000;MWh;0b00000001
+100;Test Building;TEST002;WWater;DWZ;0x01;;5;Leckage erkannt;29.11.2025;50,000;m³;48,000;m³;45,000;m³;0b
+100;Test Building;TEST003;Water;DWZ;0x01;-95;;Schwaches Signal;29.11.2025;30,000;m³;29,000;m³;28,000;m³;0b
+100;Test Building;TEST004;Heat;EFE;0x01;-105;;Kritisches Signal;29.11.2025;200,000;MWh;140,000;MWh;130,000;MWh;0b
+100;Test Building;TEST005;WWater;DWZ;0x01;;12;Rauchwarnmelder entfernt;29.11.2025;25,000;m³;24,000;m³;23,000;m³;0b
+100;Test Building;TEST006;Water;DWZ;0x01;;;No issues;29.11.2025;0,000;m³;0,000;m³;0,000;m³;0b
+100;Test Building;TEST007;Heat;EFE;0x01;;;Old data;01.11.2025;80,000;MWh;75,000;MWh;70,000;MWh;0b
+100;Test Building;TEST008;WWater;DWZ;0x01;;15;Ungewöhnlicher Verbrauch;29.11.2025;150,000;m³;100,000;m³;90,000;m³;0b
+
+
+
+
+
+
+
+
+

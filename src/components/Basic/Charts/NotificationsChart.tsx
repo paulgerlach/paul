@@ -120,6 +120,10 @@ export default function NotificationsChart({
   const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
   const { data: user } = useAuthUser();
   
+  // Track if user has dismissed notifications (for better UX when all are dismissed)
+  const [hasDismissedNotifications, setHasDismissedNotifications] = useState(false);
+  const [originalNotificationCount, setOriginalNotificationCount] = useState(0);
+  
   // Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
   const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
@@ -130,6 +134,7 @@ export default function NotificationsChart({
   };
 
   const deleteNotification = (index: number) => {
+    setHasDismissedNotifications(true); // Track that user has dismissed notifications
     setNotifications((prev) => {
       const newNotifications = prev.filter((_, i) => i !== index);
       
@@ -231,10 +236,19 @@ export default function NotificationsChart({
       const dynamicNotifications: NotificationItem[] = [];
       
       // Filter to only selected meters
-      const selectedMeters = parsedData.data.filter(device => {
-        const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
-        return meterId && meterIds.includes(meterId);
-      });
+      // CRITICAL FIX: Detect if meterIds are UUIDs (main dashboard) or serial numbers (shared dashboard)
+      // UUIDs contain dashes, serial numbers are just digits
+      // For main dashboard: API already filters by UUIDs, so we use all data
+      // For shared dashboard: meterIds are serial numbers, so we filter by device.ID
+      const isUuidFormat = meterIds.length > 0 && meterIds[0]?.includes('-');
+      
+      const selectedMeters = isUuidFormat
+        ? parsedData.data  // Main dashboard: data is already filtered by API using UUIDs
+        : parsedData.data.filter(device => {
+            // Shared dashboard: filter by serial number
+            const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
+            return meterId && meterIds.includes(meterId);
+          });
       
       // GROUP 1: Check for error flags
       const selectedMetersWithErrors = selectedMeters.filter(device => {
@@ -619,10 +633,14 @@ export default function NotificationsChart({
       return notifications.slice(0, 10);
     };
 
+    // Reset dismissed state when data changes (new data load)
+    setHasDismissedNotifications(false);
+    
     // Prevent unnecessary re-renders
     if (!parsedData || isEmpty) {
       setNotifications([]);
       setNotificationQueue([]);
+      setOriginalNotificationCount(0);
       return;
     }
 
@@ -633,6 +651,9 @@ export default function NotificationsChart({
       const finalNotifications = isDemoAccount 
         ? generateNotifications()  // Shows dummy_notifications for demo
         : generateDynamicNotifications();  // Shows real errors for live users
+      
+      // Track original count for better UX messaging
+      setOriginalNotificationCount(finalNotifications.length);
       
       // Split into displayed (first 10, scrollable) and queue (rest)
       const displayed = finalNotifications.slice(0, 10);
@@ -645,6 +666,7 @@ export default function NotificationsChart({
       // Fallback to existing logic if anything fails
       console.warn('Notifications generation failed:', error);
       const fallback = generateNotifications();
+      setOriginalNotificationCount(fallback.length);
       setNotifications(fallback);
     }
     // Use stable values in dependencies to prevent infinite loops
@@ -682,12 +704,23 @@ export default function NotificationsChart({
       </div>
       <div className="space-y-2 flex-1 overflow-y-auto max-h-[280px] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         {notifications.length === 0 ? (
-          <EmptyState
-            title={emptyTitle ?? "No data available."}
-            description={emptyDescription ?? "No data available."}
-            imageSrc={notification.src}
-            imageAlt="Benachrichtigungen"
-          />
+          hasDismissedNotifications && originalNotificationCount > 0 ? (
+            // User dismissed all notifications - show success state
+            <EmptyState
+              title="Alle Warnungen gelöscht"
+              description={`${originalNotificationCount} ${originalNotificationCount === 1 ? 'Warnung wurde' : 'Warnungen wurden'} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
+              imageSrc={notification.src}
+              imageAlt="Benachrichtigungen"
+            />
+          ) : (
+            // Genuinely no data or no notifications
+            <EmptyState
+              title={emptyTitle ?? "No data available."}
+              description={emptyDescription ?? "No data available."}
+              imageSrc={notification.src}
+              imageAlt="Benachrichtigungen"
+            />
+          )
         ) : (
           notifications.map((n, idx) => (
             <div key={idx} className="flex items-center justify-between w-full gap-2">

@@ -53,8 +53,6 @@ interface NotificationsChartProps {
     data: MeterReadingType[];
     errors?: { row: number; error: string; rawRow: any }[];
   };
-  /** Force demo mode to show sample notifications (for shared dashboard) */
-  forceDemo?: boolean;
 }
 
 const dummy_notifications = [
@@ -113,7 +111,6 @@ export default function NotificationsChart({
   emptyTitle,
   emptyDescription,
   parsedData,
-  forceDemo = false,
 }: NotificationsChartProps) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(undefined);
@@ -123,8 +120,8 @@ export default function NotificationsChart({
   const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
   const { data: user } = useAuthUser();
   
-  // Check if current user is the demo account or if demo mode is forced (shared dashboard)
-  const isDemoAccount = forceDemo || user?.email === "heidi@hausverwaltung.com";
+  // Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
+  const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
   const openErrorModal = (meterId?: number) => {
     setSelectedMeterId(meterId);

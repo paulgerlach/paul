@@ -247,19 +247,27 @@ export default function NotificationsChart({
         return hasErrorFlag;
       });
       
-      // GROUP 2: Check for hint codes
-      const selectedMetersWithHintCodes = selectedMeters.filter(device => {
-        const hintCode = device["Hint Code"];
-        return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI checking - These fields don't exist in CSV
+      // The Engelmann gateway CSV format doesn't output "Hint Code" or "RSSI Value"
+      // Keeping code commented for future if data format changes
+      // =========================================================================
       
-      // GROUP 2: Check for RSSI warnings
-      const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
-        const rssiValue = device["RSSI Value"];
-        if (!rssiValue) return false;
-        const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
-        return !isNaN(rssi) && rssi < -90; // Weak signal threshold
-      });
+      // GROUP 2: Hint codes - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithHintCodes = selectedMeters.filter(device => {
+      //   const hintCode = device["Hint Code"];
+      //   return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
+      // });
+      const selectedMetersWithHintCodes: typeof selectedMeters = []; // Empty - no hint codes in data
+      
+      // GROUP 2: RSSI warnings - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
+      //   const rssiValue = device["RSSI Value"];
+      //   if (!rssiValue) return false;
+      //   const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
+      //   return !isNaN(rssi) && rssi < -90;
+      // });
+      const selectedMetersWithRSSIWarnings: typeof selectedMeters = []; // Empty - no RSSI in data
       
       // GROUP 3: Consumption anomalies are now handled below (before success check)
       // The consumption analyzer groups readings by device and calculates spikes
@@ -365,21 +373,26 @@ export default function NotificationsChart({
         });
       });
       
-      // GROUP 2: Generate notifications for hint codes
-      selectedMetersWithHintCodes.forEach(device => {
-        const hintNotification = interpretHintCode(device);
-        if (hintNotification) {
-          dynamicNotifications.push(hintNotification);
-        }
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI notification generation
+      // These arrays are always empty because the fields don't exist in CSV data
+      // =========================================================================
       
-      // GROUP 2: Generate notifications for RSSI warnings
-      selectedMetersWithRSSIWarnings.forEach(device => {
-        const rssiNotification = checkRSSI(device);
-        if (rssiNotification) {
-          dynamicNotifications.push(rssiNotification);
-        }
-      });
+      // GROUP 2: Generate notifications for hint codes - DISABLED
+      // selectedMetersWithHintCodes.forEach(device => {
+      //   const hintNotification = interpretHintCode(device);
+      //   if (hintNotification) {
+      //     dynamicNotifications.push(hintNotification);
+      //   }
+      // });
+      
+      // GROUP 2: Generate notifications for RSSI warnings - DISABLED
+      // selectedMetersWithRSSIWarnings.forEach(device => {
+      //   const rssiNotification = checkRSSI(device);
+      //   if (rssiNotification) {
+      //     dynamicNotifications.push(rssiNotification);
+      //   }
+      // });
       
       // GROUP 3: Add consumption notifications (already generated above before success check)
       if (consumptionNotificationsGenerated.length > 0) {

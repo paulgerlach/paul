@@ -19,6 +19,9 @@ class MockComStarGateway {
     try {
       // Connect to MQTT broker
       await this.mqtt.connect(); 
+
+      this.uplinkScheduler.start();
+
     } catch (error) {
       console.error(`❌ Failed to start gateway:`, error.message);
       process.exit(1);

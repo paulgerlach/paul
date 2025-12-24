@@ -147,6 +147,11 @@ export class MqttClient {
     }
   }
 
+  async publish(topic, data, options = {}) {
+    const fullTopic = `LOB/${this.config.devEui}/${topic}`;
+    console.log(fullTopic);
+   }
+
   onReconnect() {
     this.reconnectAttempts++;
     console.log(`[${this.config.name}] 🔄 Reconnecting (attempt ${this.reconnectAttempts})...`);

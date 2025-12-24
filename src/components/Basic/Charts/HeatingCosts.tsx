@@ -203,18 +203,41 @@ const calculateMonthlyConsumptionFromIVColumns = (
   // monthOffset: 0 = current month, 1 = last month, 2 = 2 months ago, etc.
   const monthlyTotals = new Map<number, number>();
 
-  // Group readings by device to avoid double-counting
-  const deviceMap = new Map<string, MeterReadingType>();
+  // Group readings by device - keep the most recent reading per device
+  const deviceMap = new Map<string, { reading: MeterReadingType; date: Date }>();
   readings.forEach((reading) => {
     const deviceId = String(reading.ID || "unknown");
+    
+    // Get date from reading
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
+    
+    let dateString: string | null = null;
+    if (oldFormatDate && typeof oldFormatDate === "string") {
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate && typeof newActualDate === "string") {
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate && typeof newRawDate === "string") {
+      dateString = newRawDate.replace(/-/g, ".");
+    }
+    
+    let readingDate = new Date(0); // Default to epoch
+    if (dateString && dateString !== "00.00.00") {
+      const [day, month, year] = dateString.split(".").map(Number);
+      const fullYear = year > 50 ? (year < 100 ? 1900 + year : year) : (year < 100 ? 2000 + year : year);
+      readingDate = new Date(fullYear, month - 1, day);
+    }
+    
     // Keep the most recent reading per device
-    if (!deviceMap.has(deviceId)) {
-      deviceMap.set(deviceId, reading);
+    const existing = deviceMap.get(deviceId);
+    if (!existing || readingDate > existing.date) {
+      deviceMap.set(deviceId, { reading, date: readingDate });
     }
   });
 
   // For each device, extract monthly consumption from IV columns
-  deviceMap.forEach((reading) => {
+  deviceMap.forEach(({ reading }) => {
     // IV column indices for energy (Wh,E) - try both patterns
     // Some CSVs use IV,0, IV,2, IV,4... others use IV,0, IV,1, IV,3, IV,5...
     const ivIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];

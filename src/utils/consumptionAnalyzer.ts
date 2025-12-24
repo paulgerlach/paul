@@ -127,7 +127,11 @@ function extractHeatHistoricalValues(device: MeterReadingType): number[] {
     const rawValue = device[key];
     const value = parseGermanNumber(rawValue);
     
-    if (value !== null && value >= 0 && value < 100000000) {
+    // Filter out 0 values for historical columns (IV,1 and beyond) as they indicate "no data"
+    // IV,0 can be 0 legitimately (no consumption yet this month)
+    const isHistoricalZero = i > 0 && value === 0;
+    
+    if (value !== null && value >= 0 && value < 100000000 && !isHistoricalZero) {
       values.push(value);
     }
   }

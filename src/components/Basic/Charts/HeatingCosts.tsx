@@ -254,7 +254,12 @@ const extractHistoricalConsumptionFromDevice = (
     }
     
     // Filter out error codes (very large numbers like 77777777)
-    if (!isNaN(numValue) && numValue >= 0 && numValue < 100000000) {
+    // Also filter out 0 values for historical columns (IV,1 and beyond) as they indicate "no data"
+    // IV,0 can be 0 legitimately (no consumption yet this month)
+    const isValidValue = !isNaN(numValue) && numValue >= 0 && numValue < 100000000;
+    const isHistoricalZero = i > 0 && numValue === 0;
+    
+    if (isValidValue && !isHistoricalZero) {
       values.push({ index: i, value: numValue });
     }
   }

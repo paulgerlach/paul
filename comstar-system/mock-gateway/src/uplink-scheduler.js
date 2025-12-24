@@ -33,6 +33,10 @@ export class UplinkScheduler {
     console.log(`[${this.gateway.config.name}] Sending device uplink...`);
     await this.gateway.mqtt.publish('up/device', this.generateDeviceData());
     
+    // 2. CONFIG uplink (always second)
+    await this.delay(100);
+    console.log(`[${this.gateway.config.name}] Sending config uplink...`);
+    await this.gateway.mqtt.publish('up/config', this.generateConfigData());
   }
 
   generateDeviceData() {
@@ -52,6 +56,25 @@ export class UplinkScheduler {
       reboot_reason: this.state.bootReason,
       assert: "",
       final_words: ""
+    };
+  }
+
+  generateConfigData() {
+    return {
+      Host: this.config.brokerUrl,
+      UseLtem: this.config.useLtem,
+      UseNbiot: this.config.useNbiot,
+      WAN: this.config.wan,
+      listenCron: this.config.listenCron,
+      listenCronDurSec: this.config.listenCronDurSec,
+      maxTelegrams: this.config.maxTelegrams,
+      devFilter: this.config.devFilter,
+      mFilter: this.config.mFilter,
+      typFilter: this.config.typFilter,
+      ciFilter: this.config.ciFilter,
+      RndDelay: this.config.rndDelay,
+      LostReboot: 7,
+      etag: this.state.lastSyncEtag || `config-${Date.now().toString(16)}`
     };
   }
 

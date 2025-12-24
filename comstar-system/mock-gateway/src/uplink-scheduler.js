@@ -24,6 +24,9 @@ export class UplinkScheduler {
 
     // 2. Start cron-based collection schedule
     this.startCollectionSchedule();
+
+    // 3. Start periodic status updates
+    this.startStatusUpdates();
   }
 
   async sendInitialUplinks() {
@@ -72,8 +75,6 @@ export class UplinkScheduler {
     this.timers.clear();
     this.collectionActive = false;
   }
-
-  
   async startCollectionCycle() {
     if (this.collectionActive) {
       console.log(`[${this.gateway.config.name}] ⏸️ Collection already active, skipping...`);
@@ -129,6 +130,19 @@ export class UplinkScheduler {
       this.collectionActive = false;
     }
   }
+
+  startStatusUpdates() {
+    // Send status every 5 minutes
+    const timer = setInterval(async () => {
+      try {
+        await this.gateway.mqtt.publish('up/status', this.generateStatusData());
+      } catch (error) {
+        console.error(`[${this.gateway.config.name}] ❌ Status update failed:`, error.message);
+      }
+    }, 300000); // 5 minutes
+    
+    this.timers.set('status', timer);
+  }
   
   async endCollectionCycle() {
     this.collectionActive = false;
@@ -146,7 +160,6 @@ export class UplinkScheduler {
     // Send sync request to check for updates
     await this.sendSyncRequest();
   }
-
 
   async collectTelegrams(count) {
     console.log(`[${this.gateway.config.name}] Collecting ${count} telegrams...`);

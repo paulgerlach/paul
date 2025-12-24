@@ -72,3 +72,43 @@ export function validateShareUrl(searchParams: URLSearchParams): boolean {
   return checksum === expectedChecksum;
 }
 
+// Secret key for signing verified tokens (in production, use env variable)
+const VERIFICATION_SECRET = 'heidi-pin-verify-2024';
+
+/**
+ * Create a verified token after PIN validation
+ * This token proves the user entered the correct PIN
+ * Token is tied to the original link parameters and expires with the link
+ */
+export function createVerifiedToken(searchParams: URLSearchParams): string {
+  const meters = searchParams.get('meters') || '';
+  const exp = searchParams.get('exp') || '';
+  const checksum = searchParams.get('c') || '';
+  
+  // Create signature from link params + secret
+  const payload = `${meters}:${exp}:${checksum}:${VERIFICATION_SECRET}`;
+  const signature = btoa(payload).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
+  
+  return signature;
+}
+
+/**
+ * Validate a verified token
+ * Returns true if the token is valid for this link
+ */
+export function validateVerifiedToken(searchParams: URLSearchParams, token: string | null): boolean {
+  if (!token) return false;
+  
+  const expectedToken = createVerifiedToken(searchParams);
+  return token === expectedToken;
+}
+
+/**
+ * Add verified token to existing URL
+ */
+export function addVerifiedTokenToUrl(url: string, searchParams: URLSearchParams): string {
+  const token = createVerifiedToken(searchParams);
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}vt=${token}`;
+}
+

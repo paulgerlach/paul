@@ -261,7 +261,7 @@ export default function NotificationsChart({
         return !isNaN(rssi) && rssi < -90; // Weak signal threshold
       });
       
-      // GROUP 3: Consumption anomalies are now handled above (before success check)
+      // GROUP 3: Consumption anomalies are now handled below (before success check)
       // The consumption analyzer groups readings by device and calculates spikes
       
       // FIRST: Generate consumption notifications (must happen before success check!)

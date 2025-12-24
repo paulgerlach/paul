@@ -180,110 +180,7 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   return true;
 };
 
-// Helper to parse German number format
-const parseGermanNumber = (value: string | number | undefined): number | null => {
-  if (value === undefined || value === null || value === "") return null;
-  if (typeof value === "number") return value;
-  const str = String(value).trim();
-  if (str === "") return null;
-  const normalized = str.replace(/\./g, "").replace(/,/g, ".");
-  const parsed = parseFloat(normalized);
-  return isNaN(parsed) ? null : parsed;
-};
-
-// Calculate MONTHLY CONSUMPTION using embedded IV historical columns
-// This is more reliable than calculating deltas from consecutive readings
-// IV columns contain month-end snapshots: IV,0=current, IV,1=last month end, IV,3=2 months ago
-const calculateMonthlyConsumptionFromIVColumns = (
-  readings: MeterReadingType[]
-): { monthOffset: number; consumption: number }[] => {
-  if (!readings || readings.length === 0) return [];
-
-  // Aggregate consumption by month offset across all devices
-  // monthOffset: 0 = current month, 1 = last month, 2 = 2 months ago, etc.
-  const monthlyTotals = new Map<number, number>();
-
-  // Group readings by device - keep the most recent reading per device
-  const deviceMap = new Map<string, { reading: MeterReadingType; date: Date }>();
-  readings.forEach((reading) => {
-    const deviceId = String(reading.ID || "unknown");
-    
-    // Get date from reading
-    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
-    const newActualDate = reading["Actual Date"];
-    const newRawDate = reading["Raw Date"];
-    
-    let dateString: string | null = null;
-    if (oldFormatDate && typeof oldFormatDate === "string") {
-      dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate && typeof newActualDate === "string") {
-      dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate && typeof newRawDate === "string") {
-      dateString = newRawDate.replace(/-/g, ".");
-    }
-    
-    let readingDate = new Date(0); // Default to epoch
-    if (dateString && dateString !== "00.00.00") {
-      const [day, month, year] = dateString.split(".").map(Number);
-      const fullYear = year > 50 ? (year < 100 ? 1900 + year : year) : (year < 100 ? 2000 + year : year);
-      readingDate = new Date(fullYear, month - 1, day);
-    }
-    
-    // Keep the most recent reading per device
-    const existing = deviceMap.get(deviceId);
-    if (!existing || readingDate > existing.date) {
-      deviceMap.set(deviceId, { reading, date: readingDate });
-    }
-  });
-
-  // For each device, extract monthly consumption from IV columns
-  deviceMap.forEach(({ reading }) => {
-    // IV column indices for energy (Wh,E) - try both patterns
-    // Some CSVs use IV,0, IV,2, IV,4... others use IV,0, IV,1, IV,3, IV,5...
-    const ivIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-    
-    const cumulativeValues: { index: number; value: number }[] = [];
-    
-    for (const i of ivIndices) {
-      const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
-      const rawValue = reading[key];
-      const value = parseGermanNumber(rawValue);
-      
-      // Filter out error codes and zero values (except IV,0 which can be current reading)
-      if (value !== null && value >= 0 && value < 100000000) {
-        cumulativeValues.push({ index: i, value });
-      }
-    }
-
-    if (cumulativeValues.length < 2) return; // Need at least 2 values for consumption
-
-    // Sort by index to ensure chronological order (IV,0 is most recent)
-    cumulativeValues.sort((a, b) => a.index - b.index);
-
-    // Calculate consumption as delta between consecutive cumulative values
-    // IV,0 - IV,1 = current month consumption
-    // IV,1 - IV,3 = last month consumption (or IV,1 - IV,2)
-    for (let i = 0; i < cumulativeValues.length - 1; i++) {
-      const current = cumulativeValues[i];
-      const previous = cumulativeValues[i + 1];
-      
-      const consumption = current.value - previous.value;
-      
-      if (consumption >= 0) {
-        // Month offset is based on position in array (0 = most recent month)
-        const monthOffset = i;
-        monthlyTotals.set(monthOffset, (monthlyTotals.get(monthOffset) || 0) + consumption);
-      }
-    }
-  });
-
-  return Array.from(monthlyTotals.entries())
-    .map(([monthOffset, consumption]) => ({ monthOffset, consumption }))
-    .sort((a, b) => b.monthOffset - a.monthOffset); // Oldest first for chronological display
-};
-
-// Helper function to aggregate consumption data by time range
-// Uses IV columns for reliable monthly consumption data
+// Helper function to aggregate data by actual date ranges
 const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
   startDate?: Date,
@@ -294,52 +191,139 @@ const aggregateDataByTimeRange = (
   // Filter out invalid readings first
   const validReadings = readings.filter(isValidReading);
 
-  // Calculate monthly consumption from IV columns (most reliable for heating)
-  const monthlyConsumption = calculateMonthlyConsumptionFromIVColumns(validReadings);
+  // Get unique dates from valid readings and sort them
+  const uniqueDates = getUniqueDatesFromReadings(validReadings);
 
-  if (monthlyConsumption.length === 0) return [];
+  // Don't filter dates here - we need extra days before startDate for consumption calculation
+  // The filtering to display range happens later in the chart rendering
+  let filteredDates = uniqueDates;
 
-  // Determine how many months to show based on date range
-  const requestedDaysDiff = startDate && endDate 
-    ? Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-    : 30;
-  
-  const monthsToShow = Math.ceil(requestedDaysDiff / 30);
+  if (filteredDates.length === 0) return [];
 
-  // Get current date for calculating actual month names
-  const now = endDate || new Date();
-  
-  // Convert month offsets to actual month names and filter by requested range
-  const result: { label: string; value: number }[] = [];
-  
-  for (const { monthOffset, consumption } of monthlyConsumption) {
-    // Only include months within the requested range
-    if (monthOffset >= monthsToShow) continue;
+  const oldestDate = filteredDates[0];
+  const newestDate = filteredDates[filteredDates.length - 1];
+  const daysDiff = Math.ceil(
+    (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const monthsDiff = Math.ceil(daysDiff / 30);
+
+  // Aggregate readings by date for current energy values
+  const readingsByDate = new Map<string, number>();
+  validReadings.forEach((reading) => {
+    // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+    const newActualDate = reading["Actual Date"];
+    const newRawDate = reading["Raw Date"];
     
-    // Calculate the actual month for this offset
-    const monthDate = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
-    const monthName = monthNames[monthDate.getMonth()];
+    let dateString: string | null = null;
     
-    // For quarterly view (>1 year), aggregate by quarter
-    if (requestedDaysDiff > 365) {
-      const quarter = Math.ceil((monthDate.getMonth() + 1) / 3);
-      const quarterLabel = `Q${quarter} ${monthDate.getFullYear()}`;
-      
-      // Find or create quarter entry
-      const existingIdx = result.findIndex(r => r.label === quarterLabel);
-      if (existingIdx >= 0) {
-        result[existingIdx].value += consumption;
-  } else {
-        result.push({ label: quarterLabel, value: consumption });
-      }
-    } else {
-      result.push({ label: monthName, value: Math.round(consumption * 100) / 100 });
+    if (oldFormatDate && typeof oldFormatDate === "string") {
+      dateString = oldFormatDate.split(" ")[0];
+    } else if (newActualDate && typeof newActualDate === "string") {
+      dateString = newActualDate.split(" ")[0];
+    } else if (newRawDate && typeof newRawDate === "string") {
+      dateString = newRawDate.replace(/-/g, ".");
     }
-  }
+    
+    if (!dateString) return;
 
-  // Sort chronologically (oldest first) and round values
-  result.reverse();
-  return result.map(r => ({ ...r, value: Math.round(r.value * 100) / 100 }));
+    const [day, month, year] = dateString.split(".").map(Number);
+    const date = new Date(year, month - 1, day);
+
+    // Don't filter by date range here - we need extra days for consumption calculation
+    // The filtering to display range happens later in the chart rendering
+
+    // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+    const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
+    const newFormatEnergy = reading["Actual Energy / HCA"];
+    const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+    
+    let numValue = 0;
+    if (currentValue != null) {
+      numValue =
+        typeof currentValue === "number"
+          ? currentValue
+          : parseFloat(String(currentValue).replace(",", ".") || "0");
+    }
+
+    const dateKey = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+    readingsByDate.set(dateKey, (readingsByDate.get(dateKey) || 0) + numValue);
+  });
+
+  // Decide aggregation level based on time range
+  if (daysDiff <= 30) {
+    // Daily data for <= 30 days
+    // Filter to only show dates within the selected range (not the extra 7 days for calculation)
+    return Array.from(readingsByDate.entries())
+      .filter(([dateKey]) => {
+        if (!startDate || !endDate) return true;
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return date >= startDate && date <= endDate;
+      })
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([dateKey, value]) => {
+        const [year, month, day] = dateKey.split("-");
+        return {
+          label: `${day} ${monthNames[parseInt(month) - 1]}`,
+          value,
+        };
+      });
+  } else if (monthsDiff <= 4) {
+    // Monthly data for <= 4 months
+    const monthlyData = new Map<string, number>();
+
+    // Only aggregate dates within the selected range
+    readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
+      const [year, month] = dateKey.split("-");
+      const monthKey = `${year}-${month}`;
+      monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + value);
+    });
+
+    return Array.from(monthlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([monthKey, value]) => {
+        const [year, month] = monthKey.split("-");
+
+        return {
+          label: `${monthNames[parseInt(month) - 1]}`,
+          value,
+        };
+      });
+  } else {
+    // Quarterly data for > 4 months
+    const quarterlyData = new Map<string, number>();
+
+    // Only aggregate dates within the selected range
+    readingsByDate.forEach((value, dateKey) => {
+      if (startDate && endDate) {
+        const [year, month, day] = dateKey.split("-");
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (date < startDate || date > endDate) return;
+      }
+      
+      const [year, month] = dateKey.split("-");
+      const quarter = Math.ceil(parseInt(month) / 3);
+      const quarterKey = `Q${quarter}`;
+      quarterlyData.set(
+        quarterKey,
+        (quarterlyData.get(quarterKey) || 0) + value
+      );
+    });
+
+    return Array.from(quarterlyData.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([quarterKey, value]) => ({
+        label: quarterKey,
+        value,
+      }));
+  }
 };
 
 export default function HeatingCosts({

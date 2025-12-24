@@ -14,7 +14,7 @@ class MockComStarGateway {
 
     // Setup downlink handler
     this.mqtt.on('downlink', (downlink) => {
-      this.scheduler.handleDownlink(downlink);
+      this.uplinkScheduler.handleDownlink(downlink);
     });
   }
 

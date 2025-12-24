@@ -146,7 +146,7 @@ export class UplinkScheduler {
     
     this.timers.set('status', timer);
   }
-  
+
   startSyncRequests() {
     // Send sync request every 10 minutes
     const timer = setInterval(async () => {
@@ -384,5 +384,83 @@ export class UplinkScheduler {
       collectionActive: this.collectionActive,
       timers: this.timers.size
     };
+  }
+
+  async handleSyncResponse(response) {
+    console.log(`[${this.gateway.config.name}] Processing sync response...`);
+    
+    const { d: data } = response;
+    
+    // Check if config update needed
+    if (data.etag && data.etag !== true && data.etag !== this.state.lastSyncEtag) {
+      console.log(`[${this.gateway.config.name}] Config update needed (etag: ${data.etag})`);
+      this.state.pendingConfigUpdate = true;
+      await this.requestConfigUpdate(data.etag);
+    }
+    
+    // Check if firmware update needed
+    if (data.app && typeof data.app === 'string' && data.app.includes('+')) {
+      console.log(`[${this.gateway.config.name}] Firmware update requested: ${data.app}`);
+      await this.requestFirmwareUpdate(data.app);
+    }
+  }
+  
+  async handleConfigResponse(response) {
+    console.log(`[${this.gateway.config.name}] Processing config response...`);
+    
+    const { d: data } = response;
+    
+    if (data.config && data.etag) {
+      console.log(`[${this.gateway.config.name}] Received new configuration`);
+      
+      // Update configuration
+      Object.assign(this.config, data.config);
+      this.state.lastSyncEtag = data.etag;
+      this.state.pendingConfigUpdate = false;
+      
+      // Simulate reboot (as real gateway would)
+      await this.simulateReboot();
+    }
+  }
+
+  async handleFirmwareResponse(response) {
+    console.log(`[${this.gateway.config.name}] Processing firmware response...`);
+    // In real gateway, this would write firmware chunks
+    console.log(`Firmware chunk: ${JSON.stringify(response.d)}`);
+  }
+
+  async simulateReboot() {
+    console.log(`[${this.gateway.config.name}] 🔄 Simulating gateway reboot...`);
+    
+    // Stop all activities
+    this.stopAllTimers();
+    
+    // Update state
+    this.state.lastBootTime = Date.now();
+    this.state.bootReason = 'config_update';
+    this.state.collectedTelegrams = 0;
+    
+    // Wait (simulating reboot time)
+    await this.delay(3000);
+    
+    // Restart
+    this.start();
+  }
+  
+  async requestConfigUpdate(newEtag) {
+    console.log(`[${this.gateway.config.name}] Requesting config update...`);
+    
+    await this.gateway.mqtt.publish('req/config', {
+      etag: newEtag
+    });
+  }
+  
+  async requestFirmwareUpdate(firmwareFile) {
+    console.log(`[${this.gateway.config.name}] Requesting firmware: ${firmwareFile}`);
+    
+    await this.gateway.mqtt.publish('req/fw', {
+      f: firmwareFile,
+      c: 0
+    });
   }
 }

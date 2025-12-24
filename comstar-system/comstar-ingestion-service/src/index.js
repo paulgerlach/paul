@@ -1,8 +1,14 @@
 import config from './config/environment.js';
+import MqttHandler from './mqtt-handler.js';
 
 class IngestionService { 
   constructor() {
-    // this.mqttHandler = new MqttHandler();
+    this.mqttHandler = new MqttHandler();
+    this.stats = {
+      startTime: null,
+      messagesProcessed: 0,
+      errors: 0
+    };
   }
 
   async start() {
@@ -12,6 +18,19 @@ class IngestionService {
       nodeEnv: process.env.NODE_ENV,
       performance: config.performance
     }, 'Service configuration');
+    
+    this.stats.startTime = new Date();
+
+    console.log('START TIME : ', this.stats.startTime)
+
+    try {
+      await this.mqttHandler.connect();
+
+    } catch (error) {
+      console.error({ error }, '❌ Failed to start ingestion service');
+      process.exit(1);
+    }
+
   }
 
 }

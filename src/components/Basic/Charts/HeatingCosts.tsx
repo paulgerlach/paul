@@ -219,8 +219,80 @@ const parseEnergyValue = (reading: MeterReadingType): number => {
   return isNaN(numValue) ? 0 : numValue;
 };
 
+// =============================================================================
+// ROOT FIX: Aggregate data using IV,x COLUMNS for historical data
+// The CSV data embeds historical readings in columns (IV,0, IV,2, IV,4, etc.)
+// NOT across multiple rows. This is critical for correct monthly aggregation.
+// =============================================================================
+
+/**
+ * Extract historical energy consumption from IV,x columns
+ * Returns array of { date, consumption } where consumption = IV[n] - IV[n+1]
+ */
+const extractHistoricalConsumptionFromDevice = (
+  reading: MeterReadingType,
+  mostRecentDate: Date
+): { date: Date; consumption: number }[] => {
+  const consumptionData: { date: Date; consumption: number }[] = [];
+  
+  // Heat meters use IV,0, IV,2, IV,4, IV,6... for Wh,E (even numbers represent months back)
+  // IV,0 = current, IV,2 = 1 month ago, IV,4 = 2 months ago, etc.
+  const indices = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+  const values: { index: number; value: number }[] = [];
+  
+  for (const i of indices) {
+    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
+    const rawValue = reading[key];
+    
+    if (rawValue == null) continue;
+    
+    let numValue: number;
+    if (typeof rawValue === "number") {
+      numValue = rawValue;
+    } else {
+      numValue = parseFloat(String(rawValue).replace(",", ".") || "0");
+    }
+    
+    // Filter out error codes (very large numbers like 77777777)
+    if (!isNaN(numValue) && numValue >= 0 && numValue < 100000000) {
+      values.push({ index: i, value: numValue });
+    }
+  }
+  
+  // Need at least 2 values to calculate consumption
+  if (values.length < 2) return [];
+  
+  // Sort by index (0 = current, 2 = 1 month ago, etc.)
+  values.sort((a, b) => a.index - b.index);
+  
+  // Calculate consumption between consecutive readings
+  // consumption[i] = values[i].value - values[i+1].value
+  for (let i = 0; i < values.length - 1; i++) {
+    const current = values[i];
+    const previous = values[i + 1];
+    const consumption = current.value - previous.value;
+    
+    // Only include positive consumption
+    if (consumption >= 0) {
+      // Calculate the date for this consumption period
+      // IV,0 -> IV,2 = current month (date = mostRecentDate)
+      // IV,2 -> IV,4 = previous month (date = mostRecentDate - 1 month)
+      const monthsBack = current.index / 2;
+      const consumptionDate = new Date(mostRecentDate);
+      consumptionDate.setMonth(mostRecentDate.getMonth() - monthsBack);
+      
+      consumptionData.push({
+        date: consumptionDate,
+        consumption: consumption
+      });
+    }
+  }
+  
+  return consumptionData;
+};
+
 // Helper function to aggregate data by actual date ranges
-// NOW CALCULATES CONSUMPTION (delta between consecutive readings) instead of cumulative values
+// ROOT FIX: Uses IV,x COLUMNS for historical data, NOT consecutive CSV rows
 const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
   startDate?: Date,
@@ -232,126 +304,100 @@ const aggregateDataByTimeRange = (
   const validReadings = readings.filter(isValidReading);
   if (validReadings.length === 0) return [];
 
-  // STEP 1: Group readings by device ID
-  const deviceMap = new Map<string, { date: Date; energy: number }[]>();
-  
+  // Get the most recent date from readings (for calculating historical dates)
+  const mostRecentDate = getRecentReadingDate(validReadings);
+  if (!mostRecentDate) return [];
+
+  // Calculate the requested date range span
+  let requestedDaysDiff = 30; // Default
+  if (startDate && endDate) {
+    requestedDaysDiff = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+  }
+
+  // STEP 1: Extract ALL historical consumption from IV columns for each device
+  const allConsumptionData: { date: Date; consumption: number }[] = [];
+  const processedDeviceIds = new Set<string>();
+
   validReadings.forEach((reading) => {
     const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
-    const date = parseReadingDate(reading);
-    const energy = parseEnergyValue(reading);
     
-    if (!date || energy <= 0) return;
+    // Skip if we've already processed this device
+    if (processedDeviceIds.has(deviceId)) return;
+    processedDeviceIds.add(deviceId);
     
-    // Filter out obvious error codes (repeated digits like 77777777, 88888888, 99999999)
-    if (energy >= 10000000) return;
-    
-    if (!deviceMap.has(deviceId)) {
-      deviceMap.set(deviceId, []);
-    }
-    deviceMap.get(deviceId)!.push({ date, energy });
+    const deviceDate = parseReadingDate(reading) || mostRecentDate;
+    const deviceConsumption = extractHistoricalConsumptionFromDevice(reading, deviceDate);
+    allConsumptionData.push(...deviceConsumption);
   });
 
-  // STEP 2: Calculate CONSUMPTION between consecutive readings for each device
-  const consumptionByDate = new Map<string, { date: Date; consumption: number }>();
-  
-  deviceMap.forEach((deviceReadings, deviceId) => {
-    // Sort readings chronologically
-    deviceReadings.sort((a, b) => a.date.getTime() - b.date.getTime());
-    
-    // Calculate consumption between consecutive readings
-    for (let i = 1; i < deviceReadings.length; i++) {
-      const prev = deviceReadings[i - 1];
-      const curr = deviceReadings[i];
-      
-      // Consumption = current reading - previous reading
-      const consumption = curr.energy - prev.energy;
-      
-      // Only add positive consumption (handles meter rollovers/errors)
-      if (consumption >= 0) {
-        const dateKey = `${curr.date.getFullYear()}-${(curr.date.getMonth() + 1).toString().padStart(2, "0")}-${curr.date.getDate().toString().padStart(2, "0")}`;
-        
-        // Sum consumption for this date across all devices
-        if (!consumptionByDate.has(dateKey)) {
-          consumptionByDate.set(dateKey, { date: curr.date, consumption: 0 });
-        }
-        consumptionByDate.get(dateKey)!.consumption += consumption;
-      }
-    }
+  if (allConsumptionData.length === 0) return [];
+
+  // STEP 2: Filter by date range if specified
+  const filteredData = allConsumptionData.filter(item => {
+    if (!startDate || !endDate) return true;
+    return item.date >= startDate && item.date <= endDate;
   });
 
-  if (consumptionByDate.size === 0) return [];
+  if (filteredData.length === 0) return [];
 
-  // Get date range from consumption data
-  const dates = Array.from(consumptionByDate.values()).map(d => d.date);
-  const oldestDate = new Date(Math.min(...dates.map(d => d.getTime())));
-  const newestDate = new Date(Math.max(...dates.map(d => d.getTime())));
-  const daysDiff = Math.ceil(
-    (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const monthsDiff = Math.ceil(daysDiff / 30);
+  // STEP 3: Aggregate by time granularity based on REQUESTED range (not data range)
+  if (requestedDaysDiff <= 31) {
+    // Daily view - show individual consumption points
+    const dailyData = new Map<string, number>();
+    
+    filteredData.forEach(item => {
+      const dateKey = `${item.date.getFullYear()}-${(item.date.getMonth() + 1).toString().padStart(2, "0")}-${item.date.getDate().toString().padStart(2, "0")}`;
+      dailyData.set(dateKey, (dailyData.get(dateKey) || 0) + item.consumption);
+    });
 
-  // STEP 3: Aggregate by time granularity
-  if (daysDiff <= 30) {
-    // Daily data for <= 30 days
-    return Array.from(consumptionByDate.entries())
-      .filter(([dateKey]) => {
-        if (!startDate || !endDate) return true;
-        const [year, month, day] = dateKey.split("-");
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        return date >= startDate && date <= endDate;
-      })
+    return Array.from(dailyData.entries())
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([dateKey, data]) => {
-        const [year, month, day] = dateKey.split("-");
+      .map(([dateKey]) => {
+        const [, month, day] = dateKey.split("-");
         return {
           label: `${day} ${monthNames[parseInt(month) - 1]}`,
-          value: Math.round(data.consumption * 100) / 100, // Round to 2 decimal places
+          value: Math.round((dailyData.get(dateKey) || 0) * 100) / 100,
         };
       });
-  } else if (monthsDiff <= 4) {
-    // Monthly data for <= 4 months
+  } else if (requestedDaysDiff <= 120) {
+    // Monthly view for <= 4 months
     const monthlyData = new Map<string, number>();
 
-    consumptionByDate.forEach((data, dateKey) => {
-      if (startDate && endDate) {
-        if (data.date < startDate || data.date > endDate) return;
-      }
-      
-      const [year, month] = dateKey.split("-");
-      const monthKey = `${year}-${month}`;
-      monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + data.consumption);
+    filteredData.forEach(item => {
+      const monthKey = `${item.date.getFullYear()}-${(item.date.getMonth() + 1).toString().padStart(2, "0")}`;
+      monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + item.consumption);
     });
 
     return Array.from(monthlyData.entries())
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([monthKey, value]) => {
-        const [year, month] = monthKey.split("-");
+        const [, month] = monthKey.split("-");
         return {
           label: `${monthNames[parseInt(month) - 1]}`,
           value: Math.round(value * 100) / 100,
         };
       });
   } else {
-    // Quarterly data for > 4 months
+    // Quarterly view for > 4 months
     const quarterlyData = new Map<string, number>();
 
-    consumptionByDate.forEach((data, dateKey) => {
-      if (startDate && endDate) {
-        if (data.date < startDate || data.date > endDate) return;
-      }
-      
-      const [year, month] = dateKey.split("-");
-      const quarter = Math.ceil(parseInt(month) / 3);
-      const quarterKey = `Q${quarter}`;
-      quarterlyData.set(quarterKey, (quarterlyData.get(quarterKey) || 0) + data.consumption);
+    filteredData.forEach(item => {
+      const quarter = Math.ceil((item.date.getMonth() + 1) / 3);
+      const quarterKey = `${item.date.getFullYear()}-Q${quarter}`;
+      quarterlyData.set(quarterKey, (quarterlyData.get(quarterKey) || 0) + item.consumption);
     });
 
     return Array.from(quarterlyData.entries())
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([quarterKey, value]) => ({
-        label: quarterKey,
-        value: Math.round(value * 100) / 100,
-      }));
+      .map(([quarterKey, value]) => {
+        const [, quarter] = quarterKey.split("-");
+        return {
+          label: quarter,
+          value: Math.round(value * 100) / 100,
+        };
+      });
   }
 };
 

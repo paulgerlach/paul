@@ -235,9 +235,9 @@ const extractHistoricalConsumptionFromDevice = (
 ): { date: Date; consumption: number }[] => {
   const consumptionData: { date: Date; consumption: number }[] = [];
   
-  // Heat meters use IV,0, IV,1, IV,2, IV,4, IV,6... for Wh,E (EVEN numbers after 0,1,2)
-  // Based on ACTUAL CSV structure: IV,0,0,0,Wh,E, IV,1,0,0,Wh,E, IV,2,0,0,Wh,E, IV,4,0,0,Wh,E, etc.
-  const indices = [0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+  // Heat meters use IV,0, IV,1, IV,3, IV,5, IV,7... for Wh,E (ODD indices after 0 and 1)
+  // Verified against actual CSV data from Worringerestrasse86
+  const indices = [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
   const values: { index: number; value: number }[] = [];
   
   for (const i of indices) {

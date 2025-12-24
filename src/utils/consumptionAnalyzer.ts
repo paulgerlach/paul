@@ -118,9 +118,9 @@ function getDeviceTypeLabel(deviceType: string): string {
 function extractHeatHistoricalValues(device: MeterReadingType): number[] {
   const values: number[] = [];
   
-  // Heat meters use IV,0, IV,1, IV,2, IV,4, IV,6... for Wh,E (EVEN after 0,1,2)
-  // Based on ACTUAL CSV structure from Engelmann meters
-  const indices = [0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30];
+  // Heat meters use IV,0, IV,1, IV,3, IV,5, IV,7... for Wh,E (ODD indices after 0 and 1)
+  // Verified against actual CSV data from Engelmann meters
+  const indices = [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
   
   for (const i of indices) {
     const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;

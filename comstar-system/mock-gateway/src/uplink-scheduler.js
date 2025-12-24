@@ -73,18 +73,92 @@ export class UplinkScheduler {
     this.collectionActive = false;
   }
 
-  async startCollectionCycle() { 
+  
+  async startCollectionCycle() {
     if (this.collectionActive) {
       console.log(`[${this.gateway.config.name}] ⏸️ Collection already active, skipping...`);
       return;
     }
-
+    
     this.collectionActive = true;
     this.state.collectionsCompleted++;
     
     console.log(`[${this.gateway.config.name}] 🌀 Starting collection cycle...`);
     
+    try {
+      // 1. Send status showing collection started
+      await this.gateway.mqtt.publish('up/status', {
+        ...this.generateStatusData(),
+        collected: true,
+        telegram: 0,
+        uploading: this.config.mockTelegramCount
+      });
+      
+      // 2. Simulate collection duration
+      const collectionDuration = this.config.listenCronDurSec * 1000 || 30000;
+      
+      // 3. Collect telegrams over time
+      const telegramsPerSecond = Math.ceil(this.config.mockTelegramCount / (collectionDuration / 1000));
+      
+      let collected = 0;
+      const collectionInterval = setInterval(async () => {
+        if (collected >= this.config.mockTelegramCount) {
+          clearInterval(collectionInterval);
+          this.endCollectionCycle();
+          return;
+        }
+        
+        // Collect a batch of telegrams
+        const batchSize = Math.min(telegramsPerSecond, this.config.mockTelegramCount - collected);
+        await this.collectTelegrams(batchSize);
+        collected += batchSize;
+        
+        // Update status
+        this.state.collectedTelegrams += batchSize;
+        
+      }, 1000);
+      
+      // Auto-stop after duration
+      setTimeout(() => {
+        clearInterval(collectionInterval);
+        this.endCollectionCycle();
+      }, collectionDuration);
+      
+    } catch (error) {
+      console.error(`[${this.gateway.config.name}] ❌ Collection error:`, error.message);
+      this.collectionActive = false;
+    }
+  }
+  
+  async endCollectionCycle() {
+    this.collectionActive = false;
+    
+    console.log(`[${this.gateway.config.name}] ✅ Collection complete. Collected ${this.state.collectedTelegrams} telegrams`);
+    
+    // Send final status
+    await this.gateway.mqtt.publish('up/status', {
+      ...this.generateStatusData(),
+      collected: false,
+      telegram: this.state.collectedTelegrams,
+      uploading: 0
+    });
+    
+    // Send sync request to check for updates
+    await this.sendSyncRequest();
+  }
 
+
+  async collectTelegrams(count) {
+    console.log(`[${this.gateway.config.name}] Collecting ${count} telegrams...`);
+    
+    for (let i = 0; i < count; i++) {
+      try {
+        await this.sendDataUplink();
+        await this.delay(50); // Small delay between telegrams
+      } catch (error) {
+        console.error(`[${this.gateway.config.name}] ❌ Failed to send telegram:`, error.message);
+      }
+    }
   }
 
   generateDeviceData() {
@@ -168,5 +242,117 @@ export class UplinkScheduler {
     } else if (topic.includes('/down/fw')) {
       await this.handleFirmwareResponse(message);
     }
+  }
+  
+  // Generate realistic-looking wM-Bus telegram
+  generateWmBusTelegram(meter) {
+    // Create a realistic-looking hex telegram
+    const header = '2f44'; // wM-Bus header
+    const manufacturer = Buffer.from(meter.manufacturer).toString('hex').padStart(6, '0');
+    const serial = parseInt(meter.serial).toString(16).padStart(8, '0');
+    const version = meter.version.padStart(2, '0');
+    const type = meter.type.padStart(2, '0');
+    const value = Math.floor(meter.value * 1000).toString(16).padStart(8, '0');
+    
+    // Combine parts
+    const telegram = `${header}${manufacturer}${serial}${version}${type}${value}`;
+    
+    // Add some random bytes to make it look real
+    const randomBytes = Buffer.alloc(10);
+    for (let i = 0; i < 10; i++) {
+      randomBytes[i] = Math.floor(Math.random() * 256);
+    }
+    
+    return telegram + randomBytes.toString('hex').substring(0, 20);
+  }
+
+  async publishUplink(type, data) {
+    const topic = `LOB/${this.devEui}/${type}`;
+    const message = {
+      i: this.devEui,
+      n: this.uplinkCounter++,
+      q: type.split('/').pop(),
+      d: data
+    };
+
+    const encoded = await cbor.encodeAsync(message);
+    this.client.publish(topic, encoded, { qos: 1 });
+    console.log(`Published to ${topic}`);
+    
+    // Also publish as JSON for debugging
+    this.client.publish(`${topic}/json`, JSON.stringify(message), { qos: 0 });
+  }
+
+  async sendReceivesUplink() {
+    const receivesData = {
+      's/a': Math.floor(Math.random() * 10),
+      's/a.error': Math.floor(Math.random() * 2),
+      'c/a': Math.floor(Math.random() * 100),
+      'c/a.error': Math.floor(Math.random() * 10),
+      'c/b': Math.floor(Math.random() * 200),
+      'c/b.error': Math.floor(Math.random() * 20),
+      't/a': Math.floor(Math.random() * 50),
+      't/a.error': Math.floor(Math.random() * 5),
+      'sum': Math.floor(Math.random() * 300),
+      'sum.error': Math.floor(Math.random() * 30)
+    };
+    
+    await this.gateway.mqtt.publish('up/receives', receivesData);
+  }
+  
+  async sendDataUplink() {
+    const telegram = this.gateway.telegramGenerator.generateTelegram();
+    
+    await this.gateway.mqtt.publish('up/data', {
+      timestamp: Math.floor(Date.now() / 1000),
+      telegram: telegram.hex,
+      rssi: -60 + Math.floor(Math.random() * 30),
+      mode: ['C', 'T', 'S'][Math.floor(Math.random() * 3)],
+      type: ['A', 'B'][Math.floor(Math.random() * 2)]
+    });
+    
+    // Occasionally send diagnostic data
+    if (Math.random() > 0.9) {
+      await this.sendReceivesUplink();
+    }
+  }
+  
+  async sendReceivesUplink() {
+    const receivesData = {
+      's/a': Math.floor(Math.random() * 10),
+      's/a.error': Math.floor(Math.random() * 2),
+      'c/a': Math.floor(Math.random() * 100),
+      'c/a.error': Math.floor(Math.random() * 10),
+      'c/b': Math.floor(Math.random() * 200),
+      'c/b.error': Math.floor(Math.random() * 20),
+      't/a': Math.floor(Math.random() * 50),
+      't/a.error': Math.floor(Math.random() * 5),
+      'sum': Math.floor(Math.random() * 300),
+      'sum.error': Math.floor(Math.random() * 30)
+    };
+    
+    await this.gateway.mqtt.publish('up/receives', receivesData);
+  }
+
+  // Send sync request (q = 'sync')
+
+  async sendSyncRequest() {
+    console.log(`[${this.gateway.config.name}] Sending sync request...`);
+    
+    const syncData = {
+      app: this.config.firmwareVersion,
+      boot: this.config.bootVersion,
+      etag: this.state.lastSyncEtag || `config-${Date.now().toString(16)}`
+    };
+    
+    await this.gateway.mqtt.publish('req/sync', syncData);
+  }
+
+  getState() {
+    return {
+      ...this.state,
+      collectionActive: this.collectionActive,
+      timers: this.timers.size
+    };
   }
 }

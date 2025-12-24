@@ -46,7 +46,7 @@ class MockComStarGateway {
 
   logStatus() {
     const mqttStats = this.mqtt.getStats();
-    const schedulerState = this.scheduler.getState();
+    const schedulerState = this.uplinkScheduler.getState();
     
     console.log(`\n📊 ${this.config.name} Status:`);
     console.log(`   Connected: ${mqttStats.isConnected ? '✅' : '❌'}`);
@@ -90,7 +90,7 @@ class MockComStarGateway {
     
     // Disconnect
     this.mqtt.disconnect();
-    this.scheduler.stopAllTimers();
+    this.uplinkScheduler.stopAllTimers();
     
     console.log(`✅ ${this.config.name} shutdown complete`);
   }

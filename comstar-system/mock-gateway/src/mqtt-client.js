@@ -325,4 +325,16 @@ export class MqttClient {
     }
     return this.messageNumber++;
   }
+
+  getStats() {
+    return {
+      ...this.stats,
+      isConnected: this.isConnected,
+      queueLength: this.messageQueue.length,
+      reconnectAttempts: this.reconnectAttempts,
+      uptime: this.stats.connectionTime 
+        ? Date.now() - this.stats.connectionTime.getTime()
+        : 0
+    };
+  }
 }

@@ -203,8 +203,8 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
   const now = new Date();
   const daysSinceReading = Math.floor((now.getTime() - lastReading.getTime()) / (1000 * 60 * 60 * 24));
   
-  // Alert if no data for 7+ days
-  if (daysSinceReading >= 7) {
+  // Alert if no data for 3+ days
+  if (daysSinceReading >= 3) {
     const meterId = device.ID || device["Number Meter"];
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :

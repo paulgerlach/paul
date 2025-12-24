@@ -261,27 +261,24 @@ export default function NotificationsChart({
         return !isNaN(rssi) && rssi < -90; // Weak signal threshold
       });
       
-      // GROUP 3: Check for consumption anomalies
-      // IMPROVED: Include devices with Monthly Values OR cumulative readings
-      const selectedMetersWithConsumptionIssues = selectedMeters.filter(device => {
-        // Check if device has monthly data
-        const value1 = device["Monthly Value 1"];
-        const value2 = device["Monthly Value 2"];
-        const hasMonthlyData = value1 !== undefined && value2 !== undefined;
-        
-        // Also check for cumulative energy/volume readings (for calculating consumption from raw data)
-        const hasCumulativeEnergy = device["IV,0,0,0,Wh,E"] !== undefined || device["Actual Energy / HCA"] !== undefined;
-        const hasCumulativeVolume = device["IV,0,0,0,m^3,Vol"] !== undefined || device["Actual Volume"] !== undefined;
-        const hasDate = device["IV,0,0,0,,Date/Time"] !== undefined || device["Actual Date"] !== undefined || device["Raw Date"] !== undefined;
-        
-        return hasMonthlyData || ((hasCumulativeEnergy || hasCumulativeVolume) && hasDate);
-      });
+      // GROUP 3: Consumption anomalies are now handled above (before success check)
+      // The consumption analyzer groups readings by device and calculates spikes
       
-      // Count total issues
+      // FIRST: Generate consumption notifications (must happen before success check!)
+      // This analyzes whether there are actual consumption spikes, not just whether data exists
+      let consumptionNotificationsGenerated: NotificationItem[] = [];
+      if (selectedMeters.length > 0) {
+        // Pass ALL selected meters to consumption analyzer - it will group by device
+        consumptionNotificationsGenerated = getConsumptionNotifications({ 
+          data: selectedMeters 
+        });
+      }
+
+      // Count total ACTUAL issues (including consumption notifications that were generated)
       const totalIssues = selectedMetersWithErrors.length + 
                          selectedMetersWithHintCodes.length + 
                          selectedMetersWithRSSIWarnings.length + 
-                         selectedMetersWithConsumptionIssues.length;
+                         consumptionNotificationsGenerated.length;
 
       // If no issues detected, show success notification
       if (totalIssues === 0 && parsedData.data.length > 0) {
@@ -384,16 +381,9 @@ export default function NotificationsChart({
         }
       });
       
-      // GROUP 3: Generate notifications for consumption issues
-      // IMPROVED: Use getConsumptionNotifications which handles both Monthly Values
-      // and calculates from raw cumulative readings when Monthly Values unavailable
-      if (selectedMetersWithConsumptionIssues.length > 0) {
-        const consumptionNotifications = getConsumptionNotifications({ 
-          data: selectedMetersWithConsumptionIssues 
-        });
-        if (consumptionNotifications && consumptionNotifications.length > 0) {
-          dynamicNotifications.push(...consumptionNotifications);
-        }
+      // GROUP 3: Add consumption notifications (already generated above before success check)
+      if (consumptionNotificationsGenerated.length > 0) {
+        dynamicNotifications.push(...consumptionNotificationsGenerated);
       }
 
       // Sort by severity (critical > high > medium > low)

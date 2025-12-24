@@ -235,9 +235,10 @@ const extractHistoricalConsumptionFromDevice = (
 ): { date: Date; consumption: number }[] => {
   const consumptionData: { date: Date; consumption: number }[] = [];
   
-  // Heat meters use IV,0, IV,1, IV,3, IV,5, IV,7... for Wh,E (ODD indices after 0 and 1)
+  // Heat meters use IV,0, IV,3, IV,5, IV,7... for Wh,E
+  // NOTE: IV,1 is ALWAYS 0 (unused column) - SKIP IT!
   // Verified against actual CSV data from Worringerestrasse86
-  const indices = [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
+  const indices = [0, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
   const values: { index: number; value: number }[] = [];
   
   for (const i of indices) {
@@ -254,12 +255,8 @@ const extractHistoricalConsumptionFromDevice = (
     }
     
     // Filter out error codes (very large numbers like 77777777)
-    // Also filter out 0 values for historical columns (IV,1 and beyond) as they indicate "no data"
-    // IV,0 can be 0 legitimately (no consumption yet this month)
-    const isValidValue = !isNaN(numValue) && numValue >= 0 && numValue < 100000000;
-    const isHistoricalZero = i > 0 && numValue === 0;
-    
-    if (isValidValue && !isHistoricalZero) {
+    // Keep 0 values - they serve as baseline for oldest month calculation
+    if (!isNaN(numValue) && numValue >= 0 && numValue < 100000000) {
       values.push({ index: i, value: numValue });
     }
   }
@@ -347,27 +344,10 @@ const aggregateDataByTimeRange = (
 
   if (filteredData.length === 0) return [];
 
-  // STEP 3: Aggregate by time granularity based on REQUESTED range (not data range)
-  if (requestedDaysDiff <= 31) {
-    // Daily view - show individual consumption points
-    const dailyData = new Map<string, number>();
-    
-    filteredData.forEach(item => {
-      const dateKey = `${item.date.getFullYear()}-${(item.date.getMonth() + 1).toString().padStart(2, "0")}-${item.date.getDate().toString().padStart(2, "0")}`;
-      dailyData.set(dateKey, (dailyData.get(dateKey) || 0) + item.consumption);
-    });
-
-    return Array.from(dailyData.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([dateKey]) => {
-        const [, month, day] = dateKey.split("-");
-        return {
-          label: `${day} ${monthNames[parseInt(month) - 1]}`,
-          value: Math.round((dailyData.get(dateKey) || 0) * 100) / 100,
-        };
-      });
-  } else if (requestedDaysDiff <= 120) {
-    // Monthly view for <= 4 months
+  // STEP 3: Aggregate by month - IV column data is ALWAYS monthly granularity
+  // No daily view possible since source data is monthly cumulative readings
+  if (requestedDaysDiff <= 365) {
+    // Monthly view - the natural granularity for heating data
     const monthlyData = new Map<string, number>();
 
     filteredData.forEach(item => {
@@ -385,7 +365,7 @@ const aggregateDataByTimeRange = (
         };
       });
   } else {
-    // Quarterly view for > 4 months
+    // Quarterly view for > 1 year
     const quarterlyData = new Map<string, number>();
 
     filteredData.forEach(item => {

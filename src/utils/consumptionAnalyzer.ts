@@ -118,20 +118,18 @@ function getDeviceTypeLabel(deviceType: string): string {
 function extractHeatHistoricalValues(device: MeterReadingType): number[] {
   const values: number[] = [];
   
-  // Heat meters use IV,0, IV,1, IV,3, IV,5, IV,7... for Wh,E (ODD indices after 0 and 1)
+  // Heat meters use IV,0, IV,3, IV,5, IV,7... for Wh,E
+  // NOTE: IV,1 is ALWAYS 0 (unused column) - SKIP IT!
   // Verified against actual CSV data from Engelmann meters
-  const indices = [0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
+  const indices = [0, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
   
   for (const i of indices) {
     const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
     const rawValue = device[key];
     const value = parseGermanNumber(rawValue);
     
-    // Filter out 0 values for historical columns (IV,1 and beyond) as they indicate "no data"
-    // IV,0 can be 0 legitimately (no consumption yet this month)
-    const isHistoricalZero = i > 0 && value === 0;
-    
-    if (value !== null && value >= 0 && value < 100000000 && !isHistoricalZero) {
+    // Keep 0 values - they serve as baseline for oldest month calculation
+    if (value !== null && value >= 0 && value < 100000000) {
       values.push(value);
     }
   }

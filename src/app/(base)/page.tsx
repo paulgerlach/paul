@@ -148,12 +148,12 @@ export default async function Home() {
     ],
   };
 
-    const supabase = await supabaseServer();
-  
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    const isExistingClient = !!session; 
+  const supabase = await supabaseServer();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const isExistingClient = !!session;
 
   return (
     <Suspense fallback={<Loading />}>
@@ -283,7 +283,123 @@ export default async function Home() {
               </a>
             </div>
           </div>
-          <div className="hero-2 max-medium:px-4">
+        </div>
+        <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
+          <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
+            Die Wahl führender Innovatoren und Branchenführer
+          </p>
+          <div className="grid col-span-2 items-center justify-center grid-cols-4 max-medium:col-span-1 max-medium:grid-cols-3 max-medium:justify-items-center gap-x-10 gap-y-8">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-10"
+              src={berlin_bear_green}
+              alt="berlinBear"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-24 h-8"
+              src={dumax_green}
+              alt="dumax"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-24 h-8"
+              src={harte_green}
+              alt="harte"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-20 h-8"
+              src={hsp_green}
+              alt="hsp"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-4"
+              src={idgim_green}
+              alt="idgim"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={raum_green}
+              alt="raum"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-28 h-14"
+              src={schleicher_green}
+              alt="schleicher_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={vitec_green}
+              alt="vitec"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-32 h-8"
+              src={wagner_green}
+              alt="wagner"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={werne_green}
+              alt="werne_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={neckar_green}
+              alt="neckar_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={niesen_green}
+              alt="niesen_green"
+            />
+          </div>
+        </div>
+      <div className="hero-2 max-medium:px-4">
             <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
               Jetzt auf Funkzähler umsteigen
             </h2>
@@ -398,8 +514,8 @@ export default async function Home() {
                 />
               </div>
             </div>
-          </div>
-          <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
+      </div>
+      <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
             <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
               Die Wahl führender Innovatoren und Branchenführer
             </p>
@@ -532,7 +648,6 @@ export default async function Home() {
               />
             </div>
           </div>
-        </div>
         <PersonSwiper />
         <div className="px-[72px] max-large:px-6">
           <h2 className="mt-48 max-large:mt-16 section-title text-center text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-5 text-dark_text relative">

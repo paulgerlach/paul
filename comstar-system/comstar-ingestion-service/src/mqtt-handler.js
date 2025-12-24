@@ -7,6 +7,8 @@ import cbor from './utils/cbor.js';
 class MqttHandler { 
   constructor() { 
     this.config = config.mqtt;
+    this.client = null;
+    this.isConnected = false;
     //Add response tracking
     // Handler registry
     this.handlers = {
@@ -52,6 +54,9 @@ class MqttHandler {
 
       this.client.on('connect', () => this.onConnect(resolve));
       this.client.on('message', (topic, message) => this.onMessage(topic, message));
+      this.client.on('error', (err) => this.onError(err, reject));
+      this.client.on('close', () => this.onClose());
+      this.client.on('reconnect', () => this.onReconnect());
 
       // Connection timeout
       setTimeout(() => {
@@ -92,6 +97,23 @@ class MqttHandler {
       console.log('MQTT client disconnected');
     }
   }
+
+  onError(err, reject) {
+    console.error({ err }, 'MQTT error');
+    if (reject && !this.isConnected) {
+      reject(err);
+    }
+  }
+  
+  onClose() {
+    this.isConnected = false;
+    console.warn('Disconnected from MQTT broker');
+  }
+  
+  onReconnect() {
+    console.log('Reconnecting to MQTT broker...');
+  }
+
 
   async onMessage(topic, message) {
     const startTime = Date.now();

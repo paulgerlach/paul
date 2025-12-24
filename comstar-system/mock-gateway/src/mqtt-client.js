@@ -203,7 +203,15 @@ export class MqttClient {
         });
       });
     }
-}
+  }
+  
+
+  disconnect() {
+    if (this.client) {
+      console.log(`[${this.config.name}] Disconnecting...`);
+      this.client.end();
+    }
+  }
 
   onReconnect() {
     this.reconnectAttempts++;
@@ -265,7 +273,7 @@ export class MqttClient {
         }
       }
     });
-    
+
   }
 
   

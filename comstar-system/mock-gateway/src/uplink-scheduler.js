@@ -21,6 +21,9 @@ export class UplinkScheduler {
     
     // 1. Send initial uplinks (simulating boot sequence)
     this.sendInitialUplinks();
+
+    // 2. Start cron-based collection schedule
+    this.startCollectionSchedule();
   }
 
   async sendInitialUplinks() {
@@ -44,6 +47,44 @@ export class UplinkScheduler {
     await this.gateway.mqtt.publish('up/status', this.generateStatusData());
     
     console.log(`[${this.gateway.config.name}] ✅ Initial uplinks sent`);
+  }
+
+  startCollectionSchedule() {
+    console.log(`[${this.gateway.config.name}] Collection schedule: ${this.config.listenCron}`);
+    
+    // For testing: use fixed interval instead of cron
+    const interval = this.config.collectionInterval || 30000; // 30 seconds
+    
+    const timer = setInterval(() => {
+      this.startCollectionCycle();
+    }, interval);
+    
+    this.timers.set('collection', timer);
+    
+    // Log next collection
+    setTimeout(() => {
+      console.log(`[${this.gateway.config.name}] First collection in ${interval/1000} seconds...`);
+    }, 1000);
+  }
+  
+  stopAllTimers() {
+    this.timers.forEach(timer => clearInterval(timer));
+    this.timers.clear();
+    this.collectionActive = false;
+  }
+
+  async startCollectionCycle() { 
+    if (this.collectionActive) {
+      console.log(`[${this.gateway.config.name}] ⏸️ Collection already active, skipping...`);
+      return;
+    }
+
+    this.collectionActive = true;
+    this.state.collectionsCompleted++;
+    
+    console.log(`[${this.gateway.config.name}] 🌀 Starting collection cycle...`);
+    
+
   }
 
   generateDeviceData() {
@@ -114,5 +155,18 @@ export class UplinkScheduler {
 
   async delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Handle downlink responses
+  async handleDownlink(downlink) {
+    const { topic, message } = downlink;
+    
+    if (topic.includes('/down/sync')) {
+      await this.handleSyncResponse(message);
+    } else if (topic.includes('/down/config')) {
+      await this.handleConfigResponse(message);
+    } else if (topic.includes('/down/fw')) {
+      await this.handleFirmwareResponse(message);
+    }
   }
 }

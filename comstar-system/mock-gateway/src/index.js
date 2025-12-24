@@ -1,18 +1,23 @@
 import { loadConfig, GATEWAY_PROFILES } from './config.js';
 import { MqttClient } from './mqtt-client.js';
+import { TelegramGenerator } from './telegram-generator.js';
 
 class MockComStarGateway {
   constructor(configOverride = {}) {
     // Load configuration
     this.config = loadConfig(configOverride);
     this.mqtt = new MqttClient(this.config);
+
+    this.telegramGenerator = new TelegramGenerator(this.config);
+
+
   }
 
 
   async start() {
     try {
       // Connect to MQTT broker
-      await this.mqtt.connect();
+      await this.mqtt.connect(); 
     } catch (error) {
       console.error(`❌ Failed to start gateway:`, error.message);
       process.exit(1);

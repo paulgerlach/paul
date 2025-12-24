@@ -27,6 +27,9 @@ export class UplinkScheduler {
 
     // 3. Start periodic status updates
     this.startStatusUpdates();
+    
+    // 4. Start periodic sync requests
+    this.startSyncRequests();
   }
 
   async sendInitialUplinks() {
@@ -142,6 +145,20 @@ export class UplinkScheduler {
     }, 300000); // 5 minutes
     
     this.timers.set('status', timer);
+  }
+  
+  startSyncRequests() {
+    // Send sync request every 10 minutes
+    const timer = setInterval(async () => {
+      await this.sendSyncRequest();
+    }, 600000); // 10 minutes
+    
+    this.timers.set('sync', timer);
+    
+    // Send initial sync request
+    setTimeout(() => {
+      this.sendSyncRequest();
+    }, 5000);
   }
   
   async endCollectionCycle() {

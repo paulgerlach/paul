@@ -231,10 +231,19 @@ export default function NotificationsChart({
       const dynamicNotifications: NotificationItem[] = [];
       
       // Filter to only selected meters
-      const selectedMeters = parsedData.data.filter(device => {
-        const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
-        return meterId && meterIds.includes(meterId);
-      });
+      // CRITICAL FIX: Detect if meterIds are UUIDs (main dashboard) or serial numbers (shared dashboard)
+      // UUIDs contain dashes, serial numbers are just digits
+      // For main dashboard: API already filters by UUIDs, so we use all data
+      // For shared dashboard: meterIds are serial numbers, so we filter by device.ID
+      const isUuidFormat = meterIds.length > 0 && meterIds[0]?.includes('-');
+      
+      const selectedMeters = isUuidFormat
+        ? parsedData.data  // Main dashboard: data is already filtered by API using UUIDs
+        : parsedData.data.filter(device => {
+            // Shared dashboard: filter by serial number
+            const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
+            return meterId && meterIds.includes(meterId);
+          });
       
       // GROUP 1: Check for error flags
       const selectedMetersWithErrors = selectedMeters.filter(device => {

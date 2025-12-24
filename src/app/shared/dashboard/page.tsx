@@ -141,7 +141,7 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   return (
     <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">
       {/* Simple Header with Essential Info Only */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b border-black/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-md:px-3 py-3 max-md:py-2">
             <div className="flex items-center justify-between max-md:flex-col max-md:items-start max-md:gap-2">
                 <h1 className="text-xl max-md:text-lg font-bold text-gray-900 flex items-center gap-2">

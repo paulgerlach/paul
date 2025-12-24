@@ -212,30 +212,28 @@ export default function ShareDashboardDialog() {
           </p>
 
           {/* Enhanced URL input with copy functionality */}
-          <div className="relative">
-            <label
-              htmlFor="shareable_url"
-              className="text-[#757575] mb-1.5 text-sm"
-            >
-              Link mit Mietern teilen
-            </label>
-            <input
-              type="text"
-              id="shareable_url"
-              name="shareable_url"
-              value={shareUrl}
-              readOnly
-              className="w-full focus:outline-none p-6 pr-28 max-h-[70px] border border-black/20 rounded text-sm"
-            />
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <label
+                htmlFor="shareable_url"
+                className="text-[#757575] mb-1.5 text-sm block"
+              >
+                Link mit Mietern teilen
+              </label>
+              <input
+                type="text"
+                id="shareable_url"
+                name="shareable_url"
+                value={shareUrl}
+                readOnly
+                className="w-full focus:outline-none p-3 h-[46px] border border-black/20 rounded text-sm"
+              />
+            </div>
             <Button
               onClick={copyToClipboard}
-              className={`absolute max right-0 bottom-0 text-sm font-medium h-full max-h-[70px]`}
+              className="text-sm font-medium h-[46px] px-6"
             >
-              {copied ? (
-                <span className="flex items-center gap-1">Kopiert!</span>
-              ) : (
-                <span className="flex items-center gap-1">Kopieren</span>
-              )}
+              {copied ? "Kopiert!" : "Kopieren"}
             </Button>
           </div>
         </div>
@@ -277,6 +275,8 @@ export default function ShareDashboardDialog() {
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     📧 Zugangscode senden
+                  <span className="flex items-center justify-center">
+                    Zugangscode senden
                   </span>
                 )}
               </Button>

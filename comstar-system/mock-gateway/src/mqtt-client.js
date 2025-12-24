@@ -151,7 +151,6 @@ export class MqttClient {
   async publish(topic, data, options = {}) {
     const fullTopic = `LOB/${this.config.devEui}/${topic}`;
     
-
     // Default options
     const publishOptions = {
       qos: 1,
@@ -172,8 +171,37 @@ export class MqttClient {
       const encoded = await cbor.encodeAsync(envelope);
       console.log('Encoded envelope : ', encoded)
 
+      return new Promise((resolve, reject) => { 
+        this.client.publish(fullTopic, encoded, publishOptions, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            this.stats.uplinksSent++;
+            console.log(`[${this.config.name}] 📤 Published to ${fullTopic} (${encoded.length} bytes)`);
+
+            // Also publish as JSON for debugging
+            if (process.env.DEBUG === 'true') {
+              const jsonTopic = `${fullTopic}/json`;
+              this.client.publish(jsonTopic, JSON.stringify(envelope), { qos: 0 });
+            }
+            
+            resolve();
+          } 
+        });
+      });
     } catch (error) {
       console.error(`[${this.config.name}] ❌ Encoding error:`, error.message);
+      
+      return new Promise((resolve, reject) => {
+        this.client.publish(fullTopic, JSON.stringify(envelope), publishOptions, (err) => {
+          if (err) reject(err);
+          else {
+            this.stats.uplinksSent++;
+            console.log(`[${this.config.name}] 📤 Published to ${fullTopic} (JSON fallback)`);
+            resolve();
+          }
+        });
+      });
     }
 }
 

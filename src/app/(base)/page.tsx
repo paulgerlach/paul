@@ -148,12 +148,12 @@ export default async function Home() {
     ],
   };
 
-    const supabase = await supabaseServer();
-  
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    const isExistingClient = !!session; 
+  const supabase = await supabaseServer();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const isExistingClient = !!session;
 
   return (
     <Suspense fallback={<Loading />}>
@@ -399,32 +399,7 @@ export default async function Home() {
             />
           </div>
         </div>
-      </div>
-      <PersonSwiper />
-      <div className="px-[72px] max-large:px-6">
-        <h2 className="mt-48 max-large:mt-16 section-title text-center text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-5 text-dark_text relative">
-          So funktioniert die Installation
-        </h2>
-        <p className="mb-32 max-medium:mb-24 max-w-4xl mx-auto text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
-          Die innovativen Geräte von Heidi machen manuelles Ablesen überflüssig
-          –Warm- und Kaltwasserzähler werden automatisch erfasst, ganz ohne
-          Vor-Ort-Termine. Die Verbrauchsdaten werden digital übertragen und
-          direkt in Ihre Betriebskostenabrechnung integriert.
-        </p>
-        <div>
-          <div className="flex items-stretch justify-center gap-16 py-16 max-medium:py-8 max-large:border-transparent border-b border-dark_green/10 max-large:flex-col max-large:gap-4">
-            <div className="flex-col flex items-start justify-between max-w-lg max-small:max-w-lg">
-              <h3 className="text-dark_text text-[40px] max-large:relative numberedTitle leading-[48px] max-medium:text-2xl max-small:text-xl max-medium:leading-7 max-medium:mb-9">
-                1 Bedarfsanalyse
-              </h3>
-              <div>
-                <p className="mt-auto text-dark_text text-[25px] leading-[30px] mb-0 max-small:text-base">
-                  Teilen Sie uns mit, welche Funkzähler Sie benötigen –den Rest
-                  übernehmen wir. In Zusammenarbeit mit erfahrenen
-                  Meisterbetrieben sorgen wir für eine passgenaue Umsetzung, die
-                  Ihren Anforderungen entspricht. Effizient, zuverlässig,
-                  unkompliziert.
-          <div className="hero-2 max-medium:px-4">
+      <div className="hero-2 max-medium:px-4">
             <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
               Jetzt auf Funkzähler umsteigen
             </h2>
@@ -539,8 +514,8 @@ export default async function Home() {
                 />
               </div>
             </div>
-          </div>
-          <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
+      </div>
+      <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
             <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
               Die Wahl führender Innovatoren und Branchenführer
             </p>
@@ -673,7 +648,6 @@ export default async function Home() {
               />
             </div>
           </div>
-        </div>
         <PersonSwiper />
         <div className="px-[72px] max-large:px-6">
           <h2 className="mt-48 max-large:mt-16 section-title text-center text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-5 text-dark_text relative">

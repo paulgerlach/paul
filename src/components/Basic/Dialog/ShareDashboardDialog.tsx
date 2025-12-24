@@ -275,8 +275,6 @@ export default function ShareDashboardDialog() {
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     📧 Zugangscode senden
-                  <span className="flex items-center justify-center">
-                    Zugangscode senden
                   </span>
                 )}
               </Button>

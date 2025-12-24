@@ -34,6 +34,7 @@ function parseGermanNumber(value: string | number | undefined): number | null {
   if (str === "" || str === "0" || str === "0,000") return 0;
   
   // Handle German format: "1.234,56" → 1234.56
+  // Replace dots (thousands separator) and comma (decimal separator)
   const normalized = str
     .replace(/\./g, "") // Remove thousand separators
     .replace(/,/g, "."); // Replace decimal comma with dot
@@ -43,12 +44,31 @@ function parseGermanNumber(value: string | number | undefined): number | null {
 }
 
 /**
+ * Parse German date format to Date object
+ * "31.12.2024" → Date
+ */
+function parseGermanDate(dateStr: string | undefined): Date | null {
+  if (!dateStr) return null;
+  
+  const parts = dateStr.split(".");
+  if (parts.length !== 3) return null;
+  
+  const day = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+  const year = parseInt(parts[2]);
+  
+  if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+  
+  return new Date(year, month, day);
+}
+
+/**
  * Get device icon based on type
  */
 function getDeviceIcon(deviceType: string): StaticImageData {
   const type = deviceType.toLowerCase();
   
-  if (type.includes("heat") || type.includes("wärme") || type.includes("wmz") || type.includes("heizkostenverteiler")) {
+  if (type.includes("heat") || type.includes("wärme") || type.includes("wmz")) {
     return heater;
   }
   if (type.includes("wwat") || type.includes("warmwasser")) {
@@ -62,222 +82,50 @@ function getDeviceIcon(deviceType: string): StaticImageData {
 }
 
 /**
- * Get unit label based on device type (in German)
+ * Calculate consumption change percentage between two periods
  */
-function getUnitLabel(deviceType: string): string {
-  const type = deviceType.toLowerCase();
-  if (type.includes("heat") || type.includes("wärme") || type.includes("wmz") || type.includes("heizkostenverteiler") || type.includes("elec") || type.includes("strom")) {
-    return "Wh";
-  }
-  if (type.includes("water") || type.includes("wasser")) {
-    return "m³";
-  }
-  return "";
-}
-
-/**
- * Get German device type label
- */
-function getDeviceTypeLabel(deviceType: string): string {
-  switch (deviceType) {
-    case "WWater":
-    case "Warmwasserzähler":
-      return "Warmwasser";
-    case "Water":
-    case "Kaltwasserzähler":
-      return "Kaltwasser";
-    case "Heat":
-    case "WMZ Rücklauf":
-    case "Heizkostenverteiler":
-    case "Wärmemengenzähler":
-      return "Wärme";
-    case "Elec":
-    case "Stromzähler":
-      return "Strom";
-    default:
-      return deviceType;
-  }
-}
-
-/**
- * ============================================================================
- * ROOT FIX: Extract historical cumulative values from IV,x columns
- * 
- * The CSV data embeds historical readings in columns like:
- * - Heat meters: IV,0,0,0,Wh,E (current), IV,2,0,0,Wh,E (2 months ago), etc.
- * - Water meters: IV,0,0,0,m^3,Vol (current), IV,2,0,0,m^3,Vol, IV,3,0,0,m^3,Vol, etc.
- * 
- * These are CUMULATIVE values, so consumption = IV[n] - IV[n+1]
- * ============================================================================
- */
-
-/**
- * Extract all historical energy values from a heat meter device
- * Returns array of cumulative values from newest to oldest
- */
-function extractHeatHistoricalValues(device: MeterReadingType): number[] {
-  const values: number[] = [];
-  
-  // Heat meters use IV,0, IV,3, IV,5, IV,7... for Wh,E
-  // NOTE: IV,1 is ALWAYS 0 (unused column) - SKIP IT!
-  // Verified against actual CSV data from Engelmann meters
-  const indices = [0, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31];
-  
-  for (const i of indices) {
-    const key = `IV,${i},0,0,Wh,E` as keyof MeterReadingType;
-    const rawValue = device[key];
-    const value = parseGermanNumber(rawValue);
-    
-    // Keep 0 values - they serve as baseline for oldest month calculation
-    if (value !== null && value >= 0 && value < 100000000) {
-      values.push(value);
-    }
-  }
-  
-  return values;
-}
-
-/**
- * Extract all historical volume values from a water meter device
- * Returns array of cumulative values from newest to oldest
- */
-function extractWaterHistoricalValues(device: MeterReadingType): number[] {
-  const values: number[] = [];
-  
-  // Water meters use IV,0, IV,2, IV,3, IV,4, IV,5... for m^3,Vol
-  const indices = [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-  
-  for (const i of indices) {
-    const key = `IV,${i},0,0,m^3,Vol` as keyof MeterReadingType;
-    const rawValue = device[key];
-    const value = parseGermanNumber(rawValue);
-    
-    if (value !== null && value >= 0 && value < 100000) {
-      values.push(value);
-    }
-  }
-  
-  return values;
-}
-
-/**
- * Calculate consumption deltas from cumulative historical values
- * Input: [current, 1-month-ago, 2-months-ago, ...]
- * Output: [current-month-consumption, previous-month-consumption, ...]
- */
-function calculateConsumptionDeltas(cumulativeValues: number[]): number[] {
-  if (cumulativeValues.length < 2) return [];
-  
-  const deltas: number[] = [];
-  
-  for (let i = 0; i < cumulativeValues.length - 1; i++) {
-    const current = cumulativeValues[i];
-    const previous = cumulativeValues[i + 1];
-    const delta = current - previous;
-    
-    // Only include positive deltas (negative would indicate meter reset or error)
-    if (delta >= 0) {
-      deltas.push(delta);
-    }
-  }
-  
-  return deltas;
-}
-
-/**
- * ============================================================================
- * MAIN FUNCTION: Calculate consumption change from embedded IV,x columns
- * This is the ROOT FIX - reads from actual data fields that exist
- * ============================================================================
- */
-export function calculateConsumptionChangeFromIVColumns(device: MeterReadingType): {
+export function calculateConsumptionChange(device: MeterReadingType): {
   percentageChange: number;
-  currentConsumption: number;
-  previousConsumption: number;
-  unit: string;
+  currentValue: number;
+  previousValue: number;
 } | null {
-  const deviceType = device["Device Type"];
+  // Get the two most recent monthly values
+  const value1 = parseGermanNumber(device["Monthly Value 1"]); // Current month
+  const value2 = parseGermanNumber(device["Monthly Value 2"]); // Previous month
   
-  // Determine if this is a heat/energy or water/volume meter
-  const isHeatMeter = deviceType === "Heat" || deviceType === "WMZ Rücklauf" || 
-                      deviceType === "Heizkostenverteiler" || deviceType === "Wärmemengenzähler" ||
-                      deviceType === "Elec" || deviceType === "Stromzähler";
+  if (value1 === null || value2 === null) return null;
+  if (value2 === 0) return null; // Avoid division by zero
   
-  const isWaterMeter = deviceType === "Water" || deviceType === "WWater" || 
-                       deviceType === "Kaltwasserzähler" || deviceType === "Warmwasserzähler";
-  
-  if (!isHeatMeter && !isWaterMeter) return null;
-  
-  // Extract cumulative historical values from IV columns
-  const cumulativeValues = isHeatMeter 
-    ? extractHeatHistoricalValues(device)
-    : extractWaterHistoricalValues(device);
-  
-  if (cumulativeValues.length < 2) return null;
-  
-  // Calculate consumption deltas
-  const consumptionDeltas = calculateConsumptionDeltas(cumulativeValues);
-  
-  if (consumptionDeltas.length < 2) return null;
-  
-  // Get the two most recent consumption values
-  const currentConsumption = consumptionDeltas[0];
-  const previousConsumption = consumptionDeltas[1];
-  
-  // Avoid division by zero
-  if (previousConsumption === 0) {
-    // If previous was 0 and current > 0, that's infinite increase
-    // Only trigger if current is significant
-    if (currentConsumption > 0) {
-      return {
-        percentageChange: 100, // Cap at 100% for "from zero" scenarios
-        currentConsumption,
-        previousConsumption,
-        unit: isHeatMeter ? "Wh" : "m³"
-      };
-    }
-    return null;
-  }
-  
-  const percentageChange = ((currentConsumption - previousConsumption) / previousConsumption) * 100;
+  const change = ((value1 - value2) / value2) * 100;
   
   return {
-    percentageChange,
-    currentConsumption,
-    previousConsumption,
-    unit: isHeatMeter ? "Wh" : "m³"
+    percentageChange: change,
+    currentValue: value1,
+    previousValue: value2
   };
 }
 
 /**
- * Detect consumption anomalies (±30% change) using IV,x columns
- * This is the SURGICAL FIX for consumption spike detection
+ * Detect consumption anomalies (±30% change)
  */
 export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionNotification | null {
-  const change = calculateConsumptionChangeFromIVColumns(device);
+  const change = calculateConsumptionChange(device);
   
   if (!change) return null;
   
   const absChange = Math.abs(change.percentageChange);
   const meterId = device.ID || device["Number Meter"];
   const deviceType = device["Device Type"];
+  const unit = device["Monthly Unit 1"] || "MWh";
   
   // Only alert if change is >= 30%
   if (absChange < 30) return null;
   
   const isIncrease = change.percentageChange > 0;
-  const deviceTypeLabel = getDeviceTypeLabel(deviceType);
-  
-  // Format values appropriately based on magnitude
-  const formatValue = (val: number, unit: string): string => {
-    if (unit === "Wh" && val >= 1000) {
-      return `${(val / 1000).toFixed(1)} kWh`;
-    }
-    if (unit === "m³") {
-      return `${val.toFixed(3)} m³`;
-    }
-    return `${val.toFixed(0)} ${unit}`;
-  };
+  const deviceTypeLabel = deviceType === "WWater" ? "Warmwasser" :
+                         deviceType === "Water" ? "Kaltwasser" :
+                         deviceType === "Heat" ? "Wärme" :
+                         deviceType;
   
   if (isIncrease) {
     return {
@@ -286,7 +134,7 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       leftBg: "#E7E8EA",
       rightBg: "#F7E7D5",
       title: `Verbrauchsanstieg - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% angestiegen (von ${formatValue(change.previousConsumption, change.unit)} auf ${formatValue(change.currentConsumption, change.unit)})`,
+      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% angestiegen (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
       severity: absChange >= 50 ? "high" : "medium"
     };
@@ -297,7 +145,7 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       leftBg: "#E7E8EA",
       rightBg: "#E5EBF5",
       title: `Verbrauchsrückgang - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% gesunken (von ${formatValue(change.previousConsumption, change.unit)} auf ${formatValue(change.currentConsumption, change.unit)})`,
+      subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% gesunken (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
       severity: absChange >= 50 ? "medium" : "low"
     };
@@ -305,34 +153,24 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
 }
 
 /**
- * Detect zero consumption (3+ periods with no usage) using IV,x columns
+ * Detect zero consumption (3+ months with no usage)
  */
 export function detectZeroConsumption(device: MeterReadingType): ConsumptionNotification | null {
-  const deviceType = device["Device Type"];
+  // Check last 3 months
+  const value1 = parseGermanNumber(device["Monthly Value 1"]);
+  const value2 = parseGermanNumber(device["Monthly Value 2"]);
+  const value3 = parseGermanNumber(device["Monthly Value 3"]);
   
-  const isHeatMeter = deviceType === "Heat" || deviceType === "WMZ Rücklauf" || 
-                      deviceType === "Heizkostenverteiler" || deviceType === "Wärmemengenzähler";
+  if (value1 === null || value2 === null || value3 === null) return null;
   
-  const isWaterMeter = deviceType === "Water" || deviceType === "WWater" || 
-                       deviceType === "Kaltwasserzähler" || deviceType === "Warmwasserzähler";
-  
-  if (!isHeatMeter && !isWaterMeter) return null;
-  
-  const cumulativeValues = isHeatMeter 
-    ? extractHeatHistoricalValues(device)
-    : extractWaterHistoricalValues(device);
-  
-  if (cumulativeValues.length < 4) return null; // Need 4 readings for 3 consumption periods
-  
-  const consumptionDeltas = calculateConsumptionDeltas(cumulativeValues);
-  
-  if (consumptionDeltas.length < 3) return null;
-  
-  // Check if first 3 consumption periods are all zero
-  const lastThree = consumptionDeltas.slice(0, 3);
-  if (lastThree.every(c => c === 0)) {
+  // All three months have zero consumption
+  if (value1 === 0 && value2 === 0 && value3 === 0) {
     const meterId = device.ID || device["Number Meter"];
-    const deviceTypeLabel = getDeviceTypeLabel(deviceType);
+    const deviceType = device["Device Type"];
+    const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
+                           deviceType === "Water" ? "Kaltwasserzähler" :
+                           deviceType === "Heat" ? "Wärmezähler" :
+                           deviceType;
     
     return {
       leftIcon: getDeviceIcon(deviceType),
@@ -340,7 +178,7 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
       leftBg: "#E7E8EA",
       rightBg: "#F7E7D5",
       title: `Kein Verbrauch - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}zähler meldet seit 3 Monaten keinen Verbrauch - mögliche Blockade oder Defekt`,
+      subtitle: `${deviceTypeLabel} meldet seit 3 Monaten keinen Verbrauch - mögliche Blockade oder Defekt`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
       severity: "high"
     };
@@ -350,51 +188,39 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
 }
 
 /**
- * Detect potential leakage from constantly high consumption pattern
- * Only for water meters (heat meters have seasonal variation)
+ * Detect missing data (no recent readings)
  */
-export function detectConstantHighConsumption(device: MeterReadingType): ConsumptionNotification | null {
-  const deviceType = device["Device Type"];
+export function detectNoData(device: MeterReadingType): ConsumptionNotification | null {
+  // Check Actual Date (NEW format) or IV,0,0,0,,Date/Time (OLD format)
+  const actualDate = device["Actual Date"] || device["Raw Date"] || device["IV,0,0,0,,Date/Time"];
   
-  // Only for water meters
-  const isWaterMeter = deviceType === "Water" || deviceType === "WWater" || 
-                       deviceType === "Kaltwasserzähler" || deviceType === "Warmwasserzähler";
+  if (!actualDate) return null;
   
-  if (!isWaterMeter) return null;
+  const lastReading = parseGermanDate(actualDate);
   
-  const cumulativeValues = extractWaterHistoricalValues(device);
+  if (!lastReading) return null;
   
-  if (cumulativeValues.length < 4) return null;
+  const now = new Date();
+  const daysSinceReading = Math.floor((now.getTime() - lastReading.getTime()) / (1000 * 60 * 60 * 24));
   
-  const consumptionDeltas = calculateConsumptionDeltas(cumulativeValues);
-  
-  if (consumptionDeltas.length < 3) return null;
-  
-  // Check last 3 consumption periods
-  const lastThree = consumptionDeltas.slice(0, 3);
-  const avg = lastThree.reduce((a, b) => a + b, 0) / 3;
-  
-  if (avg < 0.5) return null; // Too low to be meaningful for leakage
-  
-  // Check if consumption is constantly high with low variation
-  const allHigh = lastThree.every(val => val > avg * 0.7);
-  const maxVal = Math.max(...lastThree);
-  const minVal = Math.min(...lastThree);
-  const isConstant = avg > 0 && (maxVal - minVal) / avg < 0.3;
-  
-  if (allHigh && isConstant) {
+  // Alert if no data for 7+ days
+  if (daysSinceReading >= 7) {
     const meterId = device.ID || device["Number Meter"];
-    const deviceTypeLabel = getDeviceTypeLabel(deviceType);
+    const deviceType = device["Device Type"];
+    const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
+                           deviceType === "Water" ? "Kaltwasserzähler" :
+                           deviceType === "Heat" ? "Wärmezähler" :
+                           deviceType;
     
     return {
       leftIcon: getDeviceIcon(deviceType),
       rightIcon: alert_triangle,
       leftBg: "#E7E8EA",
-      rightBg: "#FFE5E5", // Critical - red background
-      title: `Mögliche Leckage - Zähler ${meterId}`,
-      subtitle: `${deviceTypeLabel}zähler zeigt dauerhaft hohen Verbrauch (Ø ${avg.toFixed(2)} m³/Monat) - bitte Leitungen prüfen`,
+      rightBg: daysSinceReading >= 30 ? "#FFE5E5" : "#F7E7D5",
+      title: `Keine Daten - Zähler ${meterId}`,
+      subtitle: `${deviceTypeLabel} sendet seit ${daysSinceReading} Tagen keine Daten`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "critical"
+      severity: daysSinceReading >= 30 ? "critical" : "high"
     };
   }
   
@@ -402,18 +228,18 @@ export function detectConstantHighConsumption(device: MeterReadingType): Consump
 }
 
 /**
- * Get all consumption-related notifications for a single device
+ * Get all consumption-related notifications for a device
  */
 export function analyzeConsumption(device: MeterReadingType): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
   
-  // 1. Check for consumption anomalies (±30%)
+  // Check for consumption anomalies (±30%)
   const anomaly = detectConsumptionAnomaly(device);
   if (anomaly) {
     notifications.push(anomaly);
   }
   
-  // 2. Check for zero consumption (only if no anomaly detected)
+  // Check for zero consumption (only if no anomaly detected)
   if (!anomaly) {
     const zeroConsumption = detectZeroConsumption(device);
     if (zeroConsumption) {
@@ -421,10 +247,10 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
     }
   }
   
-  // 3. Check for potential leakage (water meters only)
-  const leakage = detectConstantHighConsumption(device);
-  if (leakage) {
-    notifications.push(leakage);
+  // Check for missing data
+  const noData = detectNoData(device);
+  if (noData) {
+    notifications.push(noData);
   }
   
   return notifications;
@@ -432,22 +258,13 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
 
 /**
  * Get all consumption notifications for parsed data
- * ROOT FIX: Uses IV,x columns from each device record
  */
 export function getConsumptionNotifications(parsedData: {
   data: MeterReadingType[];
 }): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
-  const processedDeviceIds = new Set<string>();
   
   for (const device of parsedData.data) {
-    const deviceId = device.ID?.toString() || device["Number Meter"]?.toString() || "";
-    
-    // Skip if we've already processed this device (avoid duplicates from multiple CSV rows)
-    if (processedDeviceIds.has(deviceId)) continue;
-    processedDeviceIds.add(deviceId);
-    
-    // Analyze consumption using IV,x columns
     const deviceNotifications = analyzeConsumption(device);
     notifications.push(...deviceNotifications);
   }
@@ -455,45 +272,3 @@ export function getConsumptionNotifications(parsedData: {
   return notifications;
 }
 
-// ============================================================================
-// LEGACY EXPORTS (kept for backwards compatibility, but they use the new logic)
-// ============================================================================
-
-export function calculateConsumptionChange(device: MeterReadingType) {
-  return calculateConsumptionChangeFromIVColumns(device);
-}
-
-export function calculateConsumptionChangeFromReadings(readings: MeterReadingType[]) {
-  // For backwards compatibility - just analyze the first device
-  if (readings.length > 0) {
-    return calculateConsumptionChangeFromIVColumns(readings[0]);
-  }
-  return null;
-}
-
-export function detectConsumptionAnomalyFromReadings(readings: MeterReadingType[]) {
-  if (readings.length > 0) {
-    return detectConsumptionAnomaly(readings[0]);
-  }
-  return null;
-}
-
-export function detectZeroConsumptionFromReadings(readings: MeterReadingType[]) {
-  if (readings.length > 0) {
-    return detectZeroConsumption(readings[0]);
-  }
-  return null;
-}
-
-export function detectConstantHighFromReadings(readings: MeterReadingType[]) {
-  if (readings.length > 0) {
-    return detectConstantHighConsumption(readings[0]);
-  }
-  return null;
-}
-
-export function detectNoData(device: MeterReadingType): ConsumptionNotification | null {
-  // This function checks for stale data - keeping for backwards compatibility
-  // but the main consumption analysis now uses IV,x columns
-  return null;
-}

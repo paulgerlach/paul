@@ -1,4 +1,5 @@
 import mqtt from 'mqtt';
+import cbor from 'cbor';
 
 export class MqttClient {
   constructor(config) { 
@@ -149,8 +150,32 @@ export class MqttClient {
 
   async publish(topic, data, options = {}) {
     const fullTopic = `LOB/${this.config.devEui}/${topic}`;
-    console.log(fullTopic);
-   }
+    
+
+    // Default options
+    const publishOptions = {
+      qos: 1,
+      retain: false,
+      ...options
+    };
+
+    // Create message envelope
+    const envelope = {
+      i: this.config.devEui,
+      n: this.getNextMessageNumber(),
+      q: topic.split('/').pop(),
+      d: data
+    };
+
+    try {
+      // Encode as CBOR (like real gateway)
+      const encoded = await cbor.encodeAsync(envelope);
+      console.log('Encoded envelope : ', encoded)
+
+    } catch (error) {
+      console.error(`[${this.config.name}] ❌ Encoding error:`, error.message);
+    }
+}
 
   onReconnect() {
     this.reconnectAttempts++;
@@ -254,5 +279,13 @@ export class MqttClient {
     const logFile = `logs/downlinks-${this.config.devEui}.log`;
     
     fs.appendFile(logFile, JSON.stringify(entry) + '\n').catch(console.error);
+  }
+
+  getNextMessageNumber() {
+    // Start at 1 after "boot", increment for each message
+    if (!this.messageNumber) {
+      this.messageNumber = 1;
+    }
+    return this.messageNumber++;
   }
 }

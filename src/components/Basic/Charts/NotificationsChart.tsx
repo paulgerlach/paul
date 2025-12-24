@@ -693,7 +693,7 @@ export default function NotificationsChart({
           />
         ) : (
           notifications.map((n, idx) => (
-            <div key={idx} className="flex items-center justify-between w-full gap-2 overflow-hidden">
+            <div key={idx} className="flex items-center justify-between w-full gap-2">
               <div className="flex-1 min-w-0">
                 <NotificationItem {...n} />
               </div>

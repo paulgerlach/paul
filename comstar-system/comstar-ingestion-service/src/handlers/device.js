@@ -31,7 +31,7 @@ class DeviceHandler {
       console.log('Device uplink data validated successfully');
 
       const sanitizedData = this.sanitizeDeviceData(data);
-      console.log('Sanitized device data:', sanitizedData);
+      console.log('Device uplink data sanitized successfully');
 
       // Check if we should skip (recent update)
       if (await this.shouldSkipUpdate(gatewayEui, sanitizedData)) {
@@ -41,8 +41,13 @@ class DeviceHandler {
         }, 'Skipping device update (recent)');
         return;
       }
+
       //Store in Cache
-      //Store in database
+      this.updateCache(gatewayEui, sanitizedData);
+      console.log('Device uplink data cached successfully');
+
+      //TODO: Store in database
+      
       return {
         success: true,
         gatewayId: 0,
@@ -240,6 +245,27 @@ class DeviceHandler {
       
       if (!hasChanges) {
         return true;
+      }
+    }
+  }
+
+
+  updateCache(gatewayEui, data) {
+    this.gatewayCache.set(gatewayEui, {
+      ...data,
+      cached_at: Date.now()
+    });
+    
+    // Clean old cache entries
+    this.cleanCache();
+  }
+  
+  cleanCache() {
+    const now = Date.now();
+    for (const [eui, data] of this.gatewayCache.entries()) {
+      if (now - data.cached_at > this.cacheTTL) {
+        this.gatewayCache.delete(eui);
+        this.lastDeviceUpdate.delete(eui);
       }
     }
   }

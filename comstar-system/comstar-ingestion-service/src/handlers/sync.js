@@ -12,20 +12,20 @@ class SyncHandler {
     // const desiredState = await databaseService.getDesiredGatewayState(gatewayEui);
 
     // Build response according to ComStar spec
-    const response = {
-      app: this.compareFirmware(data.app, desiredState.app),
-      boot: this.compareFirmware(data.boot, desiredState.boot),
-      etag: this.compareEtag(data.etag, desiredState.etag)
-    };
+    // const response = {
+    //   app: this.compareFirmware(data.app, desiredState.app),
+    //   boot: this.compareFirmware(data.boot, desiredState.boot),
+    //   etag: this.compareEtag(data.etag, desiredState.etag)
+    // };
 
-    console.log({
-      gatewayEui,
-      current: { app: data.app, etag: data.etag },
-      desired: desiredState,
-      response
-    }, 'Sync response prepared');
+    // console.log({
+    //   gatewayEui,
+    //   current: { app: data.app, etag: data.etag },
+    //   desired: desiredState,
+    //   response
+    // }, 'Sync response prepared');
     
-    return response;
+    // return response;
 
   }
 

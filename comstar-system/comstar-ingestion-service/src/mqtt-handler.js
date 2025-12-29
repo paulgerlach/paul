@@ -179,7 +179,7 @@ class MqttHandler {
         return;
       }
 
-      console.log('Handler Configuration', handlerConfig);
+      console.log('Handler Configuration', handlerConfig.handler.name, handlerConfig.isUrgent);
 
       await handlerConfig.handler.handle({
         gatewayEui,

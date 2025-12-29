@@ -44,4 +44,9 @@ export default {
     batchSize: 50,
     maxConcurrentParses: 10
   },
+  gateway: {
+    defaultFirmware: 'app-nrf9160-wmbus v0.23.8-7+hw3 TZ2',
+    defaultBoot: 'app-boot-nrf9160-sec v1.8.4',
+    configTtl: 24 * 60 * 60 * 1000 // 24 hours cache
+  }
 }

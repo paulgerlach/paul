@@ -29,7 +29,7 @@ class DataHandler {
     const parser = new WirelessMbusParser();
     const evaluatedData = await parser.parse(
       Buffer.from(telegram, "hex"),
-      { key: Buffer.from(process.env.DEFAULT_KEY_EFE, "hex") }
+      { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
     
     console.log(evaluatedData, 'Telegram data parsed successfully');

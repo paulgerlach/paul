@@ -1,23 +1,15 @@
 import { randomUUID } from 'crypto';
 
-const MANUFACTURER_MAP = {
-  EFE: 'Engelmann Sensor',
-  // HAG: 'Hydrometer (Diehl Metering)',
-  // KAM: 'Kamstrup',
-  // SON: 'Sontex',
-  // SEN: 'Sensus (Xylem)',
-};
-
 export class TelegramGenerator { 
   constructor(config) { 
     this.config = config;
-    this.manufacturers = Object.keys(MANUFACTURER_MAP); //['EFE', 'HAG', 'KAM', 'SON', 'SEN'];
+    this.manufacturers = ['EFE', 'HAG', 'KAM', 'SON', 'SEN'];
     this.deviceTypes = {
       'EFE': ['07', '08'],  // Heat meters, Heat cost allocators
-      // 'HAG': ['02', '0A'],  // Water meters
-      // 'KAM': ['02', '03'],  // Electricity meters
-      // 'SON': ['03', '07'],  // Various
-      // 'SEN': ['0A', '0B']   // Water, Gas
+      'HAG': ['02', '0A'],  // Water meters
+      'KAM': ['02', '03'],  // Electricity meters
+      'SON': ['03', '07'],  // Various
+      'SEN': ['0A', '0B']   // Water, Gas
     };
 
     this.mockMeters = this.generateMockMeters();
@@ -28,6 +20,8 @@ export class TelegramGenerator {
     const serials = ['12345678', '87654321', '11223344', '44332211', '55667788'];
     
     serials.forEach(serial => {
+      console.log('MANU', this.manufacturers);
+      console.log('DEVICE TYPES', this.deviceTypes);
       const manufacturer = this.manufacturers[Math.floor(Math.random() * this.manufacturers.length)];
       const type = this.deviceTypes[manufacturer][Math.floor(Math.random() * this.deviceTypes[manufacturer].length)];
       

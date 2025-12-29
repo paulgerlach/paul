@@ -28,10 +28,10 @@ class DeviceHandler {
       else
         this.validateDeviceConfigData(data, gatewayEui);
 
-      console.log('Device uplink data validated successfully');
+      console.log('Device uplink data validated successfully', data);
 
       const sanitizedData = this.sanitizeDeviceData(data);
-      console.log('Device uplink data sanitized successfully');
+      console.log('Device uplink data sanitized successfully', sanitizedData);
 
       // Check if we should skip (recent update)
       if (await this.shouldSkipUpdate(gatewayEui, sanitizedData)) {
@@ -46,7 +46,7 @@ class DeviceHandler {
       this.updateCache(gatewayEui, sanitizedData);
       console.log('Device uplink data cached successfully');
 
-      //TODO: Store in database
+      //TODO: Maybe Store in database
       
       return {
         success: true,

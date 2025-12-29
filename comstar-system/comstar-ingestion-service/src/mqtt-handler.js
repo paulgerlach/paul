@@ -171,15 +171,11 @@ class MqttHandler {
       //   topic
       // }, 'Received MQTT message');
 
-      // console.log('DATA', data);
-      console.log('Query Type', queryType);
       const handlerConfig = this.handlers[queryType];
       if (!handlerConfig) {
         console.warn({ gatewayEui, queryType }, 'No handler for query type');
         return;
       }
-
-      console.log('Handler Configuration', handlerConfig.handler.name, handlerConfig.isUrgent);
 
       await handlerConfig.handler.handle({
         gatewayEui,

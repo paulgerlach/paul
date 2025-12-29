@@ -89,42 +89,73 @@ export class TelegramGenerator {
   }
 
   generateWmBusHex(meter, value) {
-    // Generate realistic-looking wM-Bus telegram
-    const header = '2A44'; // Standard header
-    
-    // Manufacturer ID (3 bytes ASCII)
-    const manufacturerHex = Buffer.from(meter.manufacturer).toString('hex');
-    
-    // Serial number (4 bytes, LSB first)
-    const serialNum = parseInt(meter.serial);
-    const serialHex = serialNum.toString(16).padStart(8, '0');
-    // Reverse for LSB first
-    const serialBytes = serialHex.match(/.{2}/g).reverse().join('');
-    
-    // Version and type
-    const versionHex = meter.version.padStart(2, '0');
-    const typeHex = meter.type.padStart(2, '0');
-    
-    // Data field header (simplified)
-    const dataHeader = '2F2F';
-    
-    // Value (4 bytes, scaled)
-    const scaledValue = Math.floor(value * 1000); // Scale to integer
-    const valueHex = scaledValue.toString(16).padStart(8, '0');
-    const valueBytes = valueHex.match(/.{2}/g).reverse().join('');
-    
-    // Combine
-    let telegram = header + manufacturerHex + serialBytes + versionHex + typeHex + dataHeader + valueBytes;
-    
-    // Add random padding to look real
-    const padding = randomUUID().replace(/-/g, '').substring(0, 20);
-    telegram += padding;
-    
-    // Ensure even length
-    if (telegram.length % 2 !== 0) {
-      telegram += '0';
-    }
-    
-    return telegram.toUpperCase();
-  }
+  // ---- Fixed constants ----
+  const CONTROL = '44';      // Typical SND-NR
+  const CI = '72';           // Variable data response
+  const ACCESS_NUMBER = '00'; // Access number (increments with each telegram)
+  const STATUS = '00';       // Status byte (0x00 = no errors)
+  const CRC = '0000';        // Fake CRC (parser-safe)
+
+  // ---- Manufacturer (2 bytes, NOT ASCII) ----
+  const MANUFACTURER_MAP = {
+    EFE: '2D2C',
+    KAM: '2C2D',
+    SON: '4E53',
+    SEN: '4E45',
+    HAG: '4748'
+  };
+
+  const manufacturerHex = MANUFACTURER_MAP[meter.manufacturer] ?? 'FFFF';
+
+  // ---- Serial (4 bytes, LSB first) ----
+  const serialHex = parseInt(meter.serial, 10)
+    .toString(16)
+    .padStart(8, '0')
+    .match(/.{2}/g)
+    .reverse()
+    .join('');
+
+  // ---- Version + Device type ----
+  const versionHex = meter.version.padStart(2, '0');
+  const typeHex = meter.type.padStart(2, '0');
+
+  // ---- Data payload ----
+  const scaledValue = Math.floor(value * 1000);
+  const valueHex = scaledValue
+    .toString(16)
+    .padStart(8, '0')
+    .match(/.{2}/g)
+    .reverse()
+    .join('');
+
+  // Configuration word (2 bytes) - typically 0x0000 for unencrypted
+  const configWord = '0000';
+
+  // DIF/VIF for energy (0x0C = 32-bit integer, 0x13 = Energy in Wh)
+  const dataRecords = '0C13' + valueHex;
+
+  // ---- Assemble without length ----
+  let body =
+    CONTROL +
+    manufacturerHex +
+    serialHex +
+    versionHex +
+    typeHex +
+    CI +
+    ACCESS_NUMBER +
+    STATUS +
+    configWord +
+    dataRecords +
+    CRC;
+
+  // ---- Length byte (total bytes AFTER length byte) ----
+  const lengthByte = (body.length / 2)
+    .toString(16)
+    .padStart(2, '0');
+
+  const telegram = (lengthByte + body).toUpperCase();
+
+  return telegram;
+}
+
 }

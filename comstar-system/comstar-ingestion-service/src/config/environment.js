@@ -48,5 +48,17 @@ export default {
     defaultFirmware: 'app-nrf9160-wmbus v0.23.8-7+hw3 TZ2',
     defaultBoot: 'app-boot-nrf9160-sec v1.8.4',
     configTtl: 24 * 60 * 60 * 1000 // 24 hours cache
-  }
+  },
+  // Parsing
+  parsing: {
+    wmBusParser: {
+      debug: process.env.NODE_ENV === 'development',
+      defaultManufacturerKeys: {
+        // Default keys (override with database)
+        'EFE': process.env.DEFAULT_KEY_EFE,
+        'KAM': process.env.DEFAULT_KEY_KAM,
+        'HAG': process.env.DEFAULT_KEY_HAG
+      }
+    }
+  },
 }

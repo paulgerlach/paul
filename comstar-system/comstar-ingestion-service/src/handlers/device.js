@@ -1,7 +1,9 @@
-export default {
-  name: 'device',
-  isUrgent: false,
-  
+class DeviceHandler {
+  constructor() {
+    this.name = 'device';
+    this.isUrgent = false;
+  }
+
   async handle({ gatewayEui, data }) {
     // Just log it and move on
     console.log('📱 DEVICE UPLINK:', {
@@ -10,8 +12,11 @@ export default {
       model: data.model || 'unknown',
       reboot: data.reboot_reason || 'none'
     });
-    
+
     // That's it! No database, no validation, no nothing
-    return { logged: true };
+    return;
   }
-};
+}
+
+const deviceHandler = new DeviceHandler();
+export default deviceHandler

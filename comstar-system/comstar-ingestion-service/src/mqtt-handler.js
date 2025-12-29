@@ -1,7 +1,12 @@
 import config from './config/environment.js'
 import mqtt from 'mqtt';
+import receivesHandler from './handlers/receives.js'
+import dataHandler from './handlers/data.js'
+import statusHandler from './handlers/status.js'
 import syncHandler from './handlers/sync.js'
-import deviceHandler from './handlers/deviceHandler.js'
+import deviceHandler from './handlers/device.js'
+import fwRequestHandler from './handlers/fw-request.js'
+import configRequestHandler from './handlers/config-request.js'
 import cbor from './utils/cbor.js';
 
 class MqttHandler { 
@@ -18,12 +23,39 @@ class MqttHandler {
         isUrgent: true,
         responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/sync`
       },
+      'config': {
+        handler: configRequestHandler,
+        isUrgent: true,
+        responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/config`
+      },
+      'fw': {
+        handler: fwRequestHandler,
+        isUrgent: true,
+        responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/fw`
+      },
       
       // Data handlers (no response needed)
       'device': {
         handler: deviceHandler,
         isUrgent: false
       },
+      'config': { // 'config' as data uplink (not request)
+        handler: deviceHandler,   //Same handler as device
+        isUrgent: false
+      },
+      'status': {
+        handler: statusHandler,
+        isUrgent: false
+      },
+      'data': {
+        handler: dataHandler,
+        isUrgent: false
+      },
+      'receives': {
+        handler: receivesHandler,
+        isUrgent: false
+      }
+
     }
   }
 
@@ -130,17 +162,31 @@ class MqttHandler {
       const decoded = await cbor.decode(message);
       const { n: messageNumber, q: queryType, d: data } = decoded;
       
-      console.log({
-        gatewayEui,
-        messageType,
-        direction,
-        messageNumber,
-        queryType,
-        topic
-      }, 'Received MQTT message');
+      // console.log({
+      //   gatewayEui,
+      //   messageType,
+      //   direction,
+      //   messageNumber,
+      //   queryType,
+      //   topic
+      // }, 'Received MQTT message');
 
-      console.log('DATA', data);
-      
+      // console.log('DATA', data);
+      console.log('Query Type', queryType);
+      const handlerConfig = this.handlers[queryType];
+      if (!handlerConfig) {
+        console.warn({ gatewayEui, queryType }, 'No handler for query type');
+        return;
+      }
+
+      console.log('Handler Configuration', handlerConfig);
+
+      await handlerConfig.handler.handle({
+        gatewayEui,
+        data,
+        messageNumber,
+        mqtt: this.client,
+      });
     
     } catch (error) {
       console.error({ error, topic, message: message.toString('hex').substring(0, 100) }, 'Message processing error');

@@ -16,8 +16,8 @@ class DataHandler {
 
   async handle({ gatewayEui, data, messageNumber }) {
     console.log({ gatewayEui, messageNumber }, 'Processing data update');
-    if(data && data.telegram) {
-      return this.handleTelegramData(gatewayEui, data.telegram);
+    if(data && data.d.telegram) {
+      return this.handleTelegramData(gatewayEui, data.d.telegram);
     } else {
       console.warn({ gatewayEui, data }, 'No telegram data found');
       return null;
@@ -25,11 +25,12 @@ class DataHandler {
   }
 
   async handleTelegramData(gatewayEui, telegram) {
+    console.log({ gatewayEui, telegram }, 'Processing telegram data');
     // Process telegram data here
     const parser = new WirelessMbusParser();
     const evaluatedData = await parser.parse(
       Buffer.from(telegram, "hex"),
-      { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
+      // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
     
     console.log(evaluatedData, 'Telegram data parsed successfully');

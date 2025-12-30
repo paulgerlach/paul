@@ -4,6 +4,7 @@ export class UplinkScheduler {
     this.config = gateway.config;
     this.timers = new Map();
     this.collectionActive = false;
+    this.sequenceNumber = 1;
     
     // Gateway state
     this.state = {
@@ -331,15 +332,40 @@ export class UplinkScheduler {
   }
   
   async sendDataUplink() {
-    const telegram = this.gateway.telegramGenerator.generateTelegram();
-    
+    const {telegram, meter} = await this.gateway.telegramGenerator.generateTelegram();
+    console.log(`********************[${this.gateway.config.name}] Telegram: ${telegram}`, meter);
+
+  // Map manufacturer to expected mode/type
+  const modeMap = {
+    'EFE': 'T',
+    'HAG': 'C',
+    'KAM': 'S',
+    'SON': 'T',
+    'SEN': 'C'
+  };
+  
+  const typeMap = {
+    'EFE': 'A',
+    'HAG': 'B',
+    'KAM': 'A',
+    'SON': 'B',
+    'SEN': 'A'
+  };
+
+  const now = new Date();
+
     await this.gateway.mqtt.publish('up/data', {
-      timestamp: Math.floor(Date.now() / 1000),
-      telegram: telegram.hex,
+    i: this.gateway.config.deviceEUI || '70b3d5e050010233', // Should come from config
+    n: this.sequenceNumber++, // Increment per uplink
+    q: 'data',
+    d: {
+      timestamp: Math.floor(now.getTime() / 1000), // Unix seconds
+      telegram: telegram,
       rssi: -60 + Math.floor(Math.random() * 30),
-      mode: ['C', 'T', 'S'][Math.floor(Math.random() * 3)],
-      type: ['A', 'B'][Math.floor(Math.random() * 2)]
-    });
+      mode: modeMap[meter.manufacturer] || 'T',
+      type: typeMap[meter.manufacturer] || 'A'
+    }
+  });
     
     // Occasionally send diagnostic data
     if (Math.random() > 0.9) {

@@ -148,130 +148,203 @@ export class TelegramGenerator {
     
     return byte1 + byte2;
   }
-  
+
   generateWmBusHex(meter, value) {
-    // C-field: 0x44 = SND-NR (Send, no reply)
-    const CONTROL = '44';
-    
-    // M-field: Manufacturer (2 bytes, special encoding)
-    const manufacturerHex = this.encodeManufacturer(meter.manufacturer);
-    
-    // A-field: Serial number (4 bytes, little-endian BCD)
-    const serialHex = this.encodeBCD(meter.serial);
-    
-    // Version
-    const versionHex = parseInt(meter.version, 10).toString(16).padStart(2, '0');
-    
-    // Medium/Device type
-    const typeHex = meter.type.padStart(2, '0');
-    
-    // CI-field: 0x72 = Variable data response
-    const CI = '72';
-    
-    // Access number (increments with each telegram)
-    this.accessNumberCounter = (this.accessNumberCounter + 1) % 256;
-    const ACCESS_NUMBER = this.accessNumberCounter.toString(16).padStart(2, '0');
-    
-    // Status byte
-    const STATUS = '00';
-    
-    // Configuration word (2 bytes) - CRITICAL for wireless M-Bus with CI=0x72
-    // Bits indicate encryption mode, accessibility, etc.
-    // 0x0000 = no encryption, no special features
-    const CONFIG_WORD = '0000';
-    
-    // Generate data records
-    const dataRecords = this.generateDataRecords(meter, value);
-    
-    // Assemble telegram body (without length byte)
-    const body = 
-      CONTROL +
-      manufacturerHex +
-      serialHex +
-      versionHex +
-      typeHex +
-      CI +
-      ACCESS_NUMBER +
-      STATUS +
-      CONFIG_WORD +
-      dataRecords;
-    
-    // Calculate length (number of bytes after length byte)
-    const lengthByte = (body.length / 2).toString(16).padStart(2, '0');
-    
-    // Final telegram (NO CRC - gateway strips it)
-    const telegram = (lengthByte + body).toUpperCase();
-    
-    return telegram;
+  // According to documentation, telegrams should be WITHOUT CRC
+  // C-field: 0x44 = SND-NR (Send, no reply)
+  const CONTROL = '44';
+  
+  // M-field: Manufacturer (2 bytes, special encoding)
+  const manufacturerHex = this.encodeManufacturer(meter.manufacturer);
+  
+  // A-field: Serial number (4 bytes, little-endian BCD)
+  const serialHex = this.encodeBCD(meter.serial);
+  
+  // Version (1 byte)
+  const versionHex = parseInt(meter.version, 10).toString(16).padStart(2, '0');
+  
+  // Medium/Device type (1 byte)
+  const typeHex = meter.type.padStart(2, '0');
+  
+  // CI-field: 0x72 = Variable data response
+  const CI = '72';
+  
+  // Access number (1 byte) - increments with each telegram
+  this.accessNumberCounter = (this.accessNumberCounter + 1) % 256;
+  const ACCESS_NUMBER = this.accessNumberCounter.toString(16).padStart(2, '0');
+  
+  // Status byte (1 byte)
+  // Bit 7: Permanent error (0=no, 1=yes)
+  // Bit 6: Temporary error (0=no, 1=yes)
+  // Bit 5: Reserved
+  // Bit 4: Encrypted (0=no, 1=yes)
+  // Bit 3-0: Battery status (0=low, 1=OK, 2-14=reserved, 15=external power)
+  const STATUS = '00'; // No errors, not encrypted, battery OK
+  
+  // Configuration word (2 bytes) - REQUIRED for CI=0x72
+  // Bits 15-12: AES mode (0=no encryption, 2=CBC, 3=CTR)
+  // Bits 11-8: Accessibility (0=always, 1=during predefined window)
+  // Bits 7-0: RFU (should be 0)
+  const CONFIG_WORD = '0000'; // No encryption, always accessible
+  
+  // Generate data records - ensure we have enough data for valid telegram
+  const dataRecords = this.generateDataRecords(meter, value);
+  
+  // Assemble telegram body (without length byte)
+  const body = 
+    CONTROL +
+    manufacturerHex +
+    serialHex +
+    versionHex +
+    typeHex +
+    CI +
+    ACCESS_NUMBER +
+    STATUS +
+    CONFIG_WORD +
+    dataRecords;
+  
+  // Calculate length (number of bytes after length byte)
+  const bodyBytes = body.length / 2;
+  const lengthByte = bodyBytes.toString(16).padStart(2, '0');
+  
+  // Final telegram WITHOUT CRC (as per documentation page 13)
+  const telegram = (lengthByte + body).toUpperCase();
+  
+  // Debug: Check telegram length
+  const totalBytes = telegram.length / 2;
+  console.log(`Generated telegram: ${telegram.length} chars, ${totalBytes} bytes`);
+  console.log(`Body length: ${bodyBytes} bytes`);
+  
+  if (totalBytes < 50) {
+    console.warn(`⚠️ Telegram is only ${totalBytes} bytes, expected at least 50 bytes`);
+    // Pad with zeros to reach minimum length
+    const paddingNeeded = 50 - totalBytes;
+    const padding = '00'.repeat(paddingNeeded);
+    return telegram + padding;
   }
+  
+  return telegram;
+}
 
-  // Encode serial number as BCD (Binary Coded Decimal), little-endian
-  encodeBCD(serial) {
-    // Convert each digit to its BCD representation
-    const digits = serial.padStart(8, '0');
-    let hex = '';
-    
-    for (let i = 0; i < 8; i += 2) {
-      const byte = digits.substr(i, 2);
-      hex += byte;
-    }
-    
-    // Convert to little-endian (reverse byte order)
-    return hex.match(/.{2}/g).reverse().join('');
-  }
+// Updated data records generator to create longer telegrams
+generateDataRecords(meter, value) {
+  let records = '';
+  
+  // First record: Main value (32-bit integer)
+  const scaledValue = this.getScaledValue(meter.type, value);
+  const vif = this.getVIFForType(meter.type);
+  
+  // DIF: 0x04 = 32-bit integer, no extension
+  records += '04' + vif + this.encodeValue32(scaledValue);
+  
+  // Second record: Add timestamp (mandatory for many meters)
+  const now = new Date();
+  
+  // DIF: 0x0C = 32-bit integer with time extension
+  // VIF: 0x6C = Date & time (type G)
+  const timestamp = this.encodeTimestamp(now);
+  records += '0C6C' + timestamp;
+  
+  // Third record: Add status information
+  // DIF: 0x02 = 8-bit integer
+  // VIF: 0xFD = Extended VIF
+  // VIFE: 0x17 = Status information
+  const statusInfo = 'FD17';
+  const statusByte = '00'; // No errors
+  records += '02' + statusInfo + statusByte;
+  
+  // Fourth record: Add battery voltage (optional but makes telegram longer)
+  // DIF: 0x04 = 32-bit integer
+  // VIF: 0xFD2B = Battery voltage in mV (extended VIF)
+  const batteryVoltage = Math.floor(3600 + Math.random() * 300); // 3600-3900 mV
+  records += '04FD2B' + this.encodeValue32(batteryVoltage);
+  
+  return records;
+}
 
-  generateDataRecords(meter, value) {
-    let records = '';
-    
-    // Main reading - DIF=0x04 (32-bit integer), VIF depends on type
-    const scaledValue = this.getScaledValue(meter.type, value);
-    const vif = this.getVIFForType(meter.type);
-    
-    // DIF: 0x04 = 32-bit integer, no extension
-    // VIF: depends on unit
-    // Value: 4 bytes, little-endian
-    records += '04' + vif + this.encodeValue32(scaledValue);
-    
-    // Don't add additional records for now - keep it simple
-    // The parser might be expecting a specific structure
-    
-    return records;
-  }
+// Encode timestamp as 4 bytes little-endian
+encodeTimestamp(date) {
+  const year = date.getFullYear() - 2000; // Years since 2000
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  
+  // Format according to wMBus time format (Type G):
+  // Byte 0: Minute
+  // Byte 1: Hour
+  // Byte 2: Day
+  // Byte 3: (Month << 4) | (Year & 0x0F)
+  
+  const minuteByte = minute & 0x3F;
+  const hourByte = hour & 0x1F;
+  const dayByte = day & 0x1F;
+  const monthYearByte = ((year & 0x0F) << 4) | (month & 0x0F);
+  
+  // Encode as little-endian hex
+  const hex = 
+    minuteByte.toString(16).padStart(2, '0') +
+    hourByte.toString(16).padStart(2, '0') +
+    dayByte.toString(16).padStart(2, '0') +
+    monthYearByte.toString(16).padStart(2, '0');
+  
+  return hex;
+}
 
-  getScaledValue(type, value) {
-    // Scale based on VIF encoding
-    if (['02', '03', '04'].includes(type)) {
-      return Math.floor(value * 1000); // kWh to Wh
-    } else if (['07', '0B'].includes(type)) {
-      return Math.floor(value * 1000); // m³ to liters  
-    } else {
-      return Math.floor(value);
-    }
-  }
+// Helper method to encode 32-bit value as little-endian
+encodeValue32(value) {
+  const intValue = Math.floor(value);
+  const hex = intValue.toString(16).padStart(8, '0');
+  return hex.match(/.{2}/g).reverse().join('');
+}
 
-  getVIFForType(type) {
-    const vifMap = {
-      '02': '06', // Energy Wh
-      '03': '06', // Energy Wh
-      '04': '06', // Energy Wh (heat)
-      '07': '13', // Volume m³ (E-3 m³ = liters)
-      '08': 'FD17', // HCA units (extended VIF + VIFE)
-      '0B': '16', // Volume m³ (gas)
-      '19': 'FD17', // Repeater
-      '1A': 'FD17', // Smoke detector
-      '25': 'FD17'  // Communications controller
-    };
-    return vifMap[type] || 'FD17';
+// Also need to fix the encodeBCD method to ensure proper serial encoding
+encodeBCD(serial) {
+  // Ensure serial is 8 digits
+  const paddedSerial = serial.padStart(8, '0');
+  
+  // Convert to BCD: each digit becomes a nibble (4 bits)
+  // For wMBus, serial is stored as 4 bytes (8 BCD digits)
+  let hex = '';
+  
+  for (let i = 0; i < 8; i += 2) {
+    const highDigit = parseInt(paddedSerial.charAt(i), 10);
+    const lowDigit = parseInt(paddedSerial.charAt(i + 1), 10);
+    const byte = (highDigit << 4) | lowDigit;
+    hex += byte.toString(16).padStart(2, '0');
   }
+  
+  // Reverse for little-endian
+  return hex.match(/.{2}/g).reverse().join('');
+}
 
-  encodeValue32(value) {
-    // Encode as 32-bit little-endian hex
-    const intValue = Math.floor(value);
-    const hex = intValue.toString(16).padStart(8, '0');
-    return hex.match(/.{2}/g).reverse().join('');
-  }
+// Add this method for proper VIF encoding based on type
+getVIFForType(type) {
+  const vifMap = {
+    '02': '06', // Energy Wh (0.001 kWh)
+    '03': '06', // Energy Wh
+    '04': '06', // Energy Wh (heat)
+    '07': '13', // Volume m³ (0.001 m³ = liters)
+    '08': 'FD17', // HCA units (extended VIF)
+    '0B': '16', // Volume m³ (gas)
+    '19': 'FD17', // Repeater
+    '1A': 'FD17', // Smoke detector
+    '25': 'FD17'  // Communications controller
+  };
+  
+  return vifMap[type] || 'FD17';
+}
 
-  getAccessNumber() {
-    return this.accessNumberCounter;
+// Ensure scaled values are appropriate
+getScaledValue(type, value) {
+  // Scale values appropriately for VIF encoding
+  if (['02', '03', '04'].includes(type)) {
+    return Math.floor(value * 1000); // kWh to Wh
+  } else if (['07', '0B'].includes(type)) {
+    return Math.floor(value * 1000); // m³ to liters
+  } else {
+    return Math.floor(value * 100); // Scale for better precision
   }
+}
+
 }

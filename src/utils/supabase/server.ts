@@ -13,17 +13,19 @@ export async function supabaseServer() {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet: any) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }: any) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
+          setAll(cookiesToSet: any) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }: any) =>
+                cookiesToSet.forEach(({ name, value, options }: any) =>
+                  cookieStore.set(name, value, options)
+                );
+            } catch {
+              // The `setAll` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
+          },
         },
-      },
-    }
+      }
   );
 }

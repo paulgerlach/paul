@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     const shareToken = generateShareToken();
 
     // Calculate expiry (default 30 days if not provided)
-    const expiryDate = expiresAt 
-      ? new Date(expiresAt) 
+    const expiryDate = expiresAt
+      ? new Date(expiresAt)
       : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     // Store in database

@@ -55,13 +55,13 @@ export async function POST(request: NextRequest) {
         );
       }
       record = data;
-    } 
+    }
     // LEGACY WAY: Find by linkParams (for backward compatibility)
     else if (linkParams) {
       const params = new URLSearchParams(linkParams);
       const meters = params.get('meters') || '';
       const exp = params.get('exp') || '';
-      
+
       const { data: records, error: findError } = await supabase
         .from("share_pins")
         .select("*")
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     // Hash the provided PIN and compare
     const providedHash = hashPin(pin);
-    
+
     if (providedHash !== record.pin_hash) {
       // Increment attempt counter
       await supabase
@@ -112,12 +112,12 @@ export async function POST(request: NextRequest) {
 
       const remainingAttempts = MAX_ATTEMPTS - record.attempts - 1;
       console.log("[share-pin/verify] Invalid PIN, attempts remaining:", remainingAttempts);
-      
+
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: `Invalid code. ${remainingAttempts} attempts remaining.`,
-          remainingAttempts 
+          remainingAttempts
         },
         { status: 401 }
       );

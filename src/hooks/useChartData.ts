@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { MeterReadingType } from '@/api';
-import { useChartStore } from '@/store/useChartStore';
+import { useState, useEffect, useCallback } from "react";
+import { MeterReadingType } from "@/api";
+import { useChartStore } from "@/store/useChartStore";
 
 export interface ChartDataHookResult {
   data: MeterReadingType[];
@@ -9,11 +9,29 @@ export interface ChartDataHookResult {
   refetch: () => void;
 }
 
+export const DEVICE_TYPES = {
+  waterCold: ["Water", "Kaltwasserzähler"],
+  waterHot: ["WWater", "Warmwasserzähler"],
+  electricity: ["Elec", "Stromzähler"],
+  heat: ["Heat", "WMZ Rücklauf", "Heizkostenverteiler", "Wärmemengenzähler"],
+  notifications: [
+    "Heat",
+    "Water",
+    "WWater",
+    "Elec",
+    "Stromzähler",
+    "Kaltwasserzähler",
+    "Warmwasserzähler",
+    "WMZ Rücklauf",
+    "Heizkostenverteiler",
+  ],
+} as const;
+
 const fetchChartData = async (
   meterIds: string[],
   deviceTypes: string[],
   startDate?: Date | null,
-  endDate?: Date | null
+  endDate?: Date | null,
 ): Promise<MeterReadingType[]> => {
   if (!meterIds.length || !deviceTypes.length) {
     return [];
@@ -30,10 +48,10 @@ const fetchChartData = async (
     adjustedStartDate.setDate(adjustedStartDate.getDate() - 7);
   }
 
-  const response = await fetch('/api/dashboard-data', {
-    method: 'POST',
+  const response = await fetch("/api/dashboard-data", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       meterIds,
@@ -51,7 +69,7 @@ const fetchChartData = async (
   return result.data || [];
 };
 
-export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResult => {
+const useChartData = (deviceTypes: readonly string[]): ChartDataHookResult => {
   const { meterIds, startDate, endDate } = useChartStore();
   const [data, setData] = useState<MeterReadingType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,48 +78,7 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
   const fetchData = useCallback(async () => {
     if (!meterIds.length) {
       setData([]);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Support both OLD format ('Water', 'WWater') and NEW format ('Kaltwasserzähler', 'Warmwasserzähler')
-      const deviceTypes = chartType === 'cold' 
-        ? ['Water', 'Kaltwasserzähler'] 
-        : ['WWater', 'Warmwasserzähler'];
-      
-      const chartData = await fetchChartData(meterIds, deviceTypes, startDate, endDate);
-      setData(chartData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch water data');
-      setData([]);
-    } finally {
       setLoading(false);
-    }
-  }, [meterIds, chartType, startDate, endDate]);
-
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch };
-};
-
-export const useElectricityChartData = (): ChartDataHookResult => {
-  const { meterIds, startDate, endDate } = useChartStore();
-  const [data, setData] = useState<MeterReadingType[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!meterIds.length) {
-      setData([]);
       return;
     }
 
@@ -109,114 +86,47 @@ export const useElectricityChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      // Support both OLD format ('Elec') and NEW format ('Stromzähler')
-      const chartData = await fetchChartData(meterIds, ['Elec', 'Stromzähler'], startDate, endDate);
-      setData(chartData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch electricity data');
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [meterIds, startDate, endDate]);
-
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch };
-};
-
-export const useHeatChartData = (): ChartDataHookResult => {
-  const { meterIds, startDate, endDate } = useChartStore();
-  const [data, setData] = useState<MeterReadingType[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!meterIds.length) {
-      setData([]);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler')
       const chartData = await fetchChartData(
-        meterIds, 
-        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'], 
-        startDate, 
-        endDate
+        meterIds,
+        [...deviceTypes],
+        startDate,
+        endDate,
       );
       setData(chartData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch heat data');
-      setData([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [meterIds, startDate, endDate]);
-
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch };
-};
-
-export const useNotificationsChartData = (): ChartDataHookResult => {
-  const { meterIds, startDate, endDate } = useChartStore();
-  const [data, setData] = useState<MeterReadingType[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    if (!meterIds.length) {
-      setData([]);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Notifications chart needs all device types (both old and new format names)
-      const chartData = await fetchChartData(
-        meterIds, 
-        [
-          'Heat', 'Water', 'WWater', 'Elec',  // OLD format
-          'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'  // NEW format
-        ], 
-        startDate, 
-        endDate
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch chart data",
       );
-      setData(chartData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch notifications data');
       setData([]);
     } finally {
       setLoading(false);
     }
-  }, [meterIds, startDate, endDate]);
-
-  const refetch = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
+  }, [meterIds, deviceTypes, startDate, endDate]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  return { data, loading, error, refetch };
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchData,
+  };
 };
 
+export const useWaterChartData = (
+  chartType: "cold" | "hot",
+): ChartDataHookResult =>
+  useChartData(
+    chartType === "cold" ? DEVICE_TYPES.waterCold : DEVICE_TYPES.waterHot,
+  );
+
+export const useElectricityChartData = (): ChartDataHookResult =>
+  useChartData(DEVICE_TYPES.electricity);
+
+export const useHeatChartData = (): ChartDataHookResult =>
+  useChartData(DEVICE_TYPES.heat);
+
+export const useNotificationsChartData = (): ChartDataHookResult =>
+  useChartData(DEVICE_TYPES.notifications);

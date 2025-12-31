@@ -36,14 +36,14 @@ const monthNames = [
 
 const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
-  
+
   // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
   const oldFormatDate = readings[0]["IV,0,0,0,,Date/Time"];
   const newActualDate = readings[0]["Actual Date"];
   const newRawDate = readings[0]["Raw Date"];
-  
+
   let dateString: string | null = null;
-  
+
   if (oldFormatDate && typeof oldFormatDate === "string") {
     dateString = oldFormatDate.split(" ")[0];
   } else if (newActualDate && typeof newActualDate === "string") {
@@ -52,7 +52,7 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
     // Convert "29-10-2025" to "29.10.2025"
     dateString = newRawDate.replace(/-/g, ".");
   }
-  
+
   if (!dateString) return null;
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);
@@ -68,9 +68,9 @@ const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
     const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
     const newActualDate = reading["Actual Date"];
     const newRawDate = reading["Raw Date"];
-    
+
     let dateString: string | null = null;
-    
+
     if (oldFormatDate && typeof oldFormatDate === "string") {
       dateString = oldFormatDate.split(" ")[0];
     } else if (newActualDate && typeof newActualDate === "string") {
@@ -78,7 +78,7 @@ const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
     } else if (newRawDate && typeof newRawDate === "string") {
       dateString = newRawDate.replace(/-/g, ".");
     }
-    
+
     if (dateString && !uniqueDates.has(dateString)) {
       uniqueDates.add(dateString);
       const [day, month, year] = dateString.split(".").map(Number);
@@ -91,7 +91,7 @@ const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
 
 // Helper function that returns an array with both date and value for monthly historical data
 const getMonthlyEnergyDataWithDates = (
-  readings: MeterReadingType[]
+  readings: MeterReadingType[],
 ): { date: Date; value: number }[] => {
   const monthlyData: { date: Date; value: number }[] = [];
   const mostRecentDate = getRecentReadingDate(readings);
@@ -137,8 +137,9 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
   const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
   const newFormatEnergy = reading["Actual Energy / HCA"];
-  const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
-  
+  const currentValue =
+    newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+
   let numValue = 0;
   if (currentValue != null) {
     numValue =
@@ -157,8 +158,9 @@ const isValidReading = (reading: MeterReadingType): boolean => {
   // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
   const oldFormatVolume = reading["IV,0,0,0,m^3,Vol"];
   const newFormatVolume = reading["Actual Volume"];
-  const volume = newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume;
-  
+  const volume =
+    newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume;
+
   let volumeValue = 0;
   if (volume != null) {
     volumeValue =
@@ -184,7 +186,7 @@ const isValidReading = (reading: MeterReadingType): boolean => {
 const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
   startDate?: Date,
-  endDate?: Date
+  endDate?: Date,
 ): { label: string; value: number }[] => {
   if (!readings || readings.length === 0) return [];
 
@@ -203,7 +205,7 @@ const aggregateDataByTimeRange = (
   const oldestDate = filteredDates[0];
   const newestDate = filteredDates[filteredDates.length - 1];
   const daysDiff = Math.ceil(
-    (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24)
+    (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24),
   );
   const monthsDiff = Math.ceil(daysDiff / 30);
 
@@ -214,9 +216,9 @@ const aggregateDataByTimeRange = (
     const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
     const newActualDate = reading["Actual Date"];
     const newRawDate = reading["Raw Date"];
-    
+
     let dateString: string | null = null;
-    
+
     if (oldFormatDate && typeof oldFormatDate === "string") {
       dateString = oldFormatDate.split(" ")[0];
     } else if (newActualDate && typeof newActualDate === "string") {
@@ -224,7 +226,7 @@ const aggregateDataByTimeRange = (
     } else if (newRawDate && typeof newRawDate === "string") {
       dateString = newRawDate.replace(/-/g, ".");
     }
-    
+
     if (!dateString) return;
 
     const [day, month, year] = dateString.split(".").map(Number);
@@ -236,8 +238,9 @@ const aggregateDataByTimeRange = (
     // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
     const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
     const newFormatEnergy = reading["Actual Energy / HCA"];
-    const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
-    
+    const currentValue =
+      newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+
     let numValue = 0;
     if (currentValue != null) {
       numValue =
@@ -258,7 +261,11 @@ const aggregateDataByTimeRange = (
       .filter(([dateKey]) => {
         if (!startDate || !endDate) return true;
         const [year, month, day] = dateKey.split("-");
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+        );
         return date >= startDate && date <= endDate;
       })
       .sort(([a], [b]) => a.localeCompare(b))
@@ -277,10 +284,14 @@ const aggregateDataByTimeRange = (
     readingsByDate.forEach((value, dateKey) => {
       if (startDate && endDate) {
         const [year, month, day] = dateKey.split("-");
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+        );
         if (date < startDate || date > endDate) return;
       }
-      
+
       const [year, month] = dateKey.split("-");
       const monthKey = `${year}-${month}`;
       monthlyData.set(monthKey, (monthlyData.get(monthKey) || 0) + value);
@@ -304,16 +315,20 @@ const aggregateDataByTimeRange = (
     readingsByDate.forEach((value, dateKey) => {
       if (startDate && endDate) {
         const [year, month, day] = dateKey.split("-");
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const date = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+        );
         if (date < startDate || date > endDate) return;
       }
-      
+
       const [year, month] = dateKey.split("-");
       const quarter = Math.ceil(parseInt(month) / 3);
       const quarterKey = `Q${quarter}`;
       quarterlyData.set(
         quarterKey,
-        (quarterlyData.get(quarterKey) || 0) + value
+        (quarterlyData.get(quarterKey) || 0) + value,
       );
     });
 
@@ -339,7 +354,7 @@ export default function HeatingCosts({
   const { startDate, endDate } = useChartStore();
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 10000]);
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
-    () => (value: number) => `${value.toLocaleString()}`
+    () => (value: number) => `${value.toLocaleString()}`,
   );
 
   const data = useMemo(() => {
@@ -354,17 +369,22 @@ export default function HeatingCosts({
     const aggregatedData = aggregateDataByTimeRange(
       filteredDevices,
       startDate || undefined,
-      endDate || undefined
+      endDate || undefined,
     );
 
     // If we have raw device data but no readings for the selected date range,
     // show 0 value for each day in the range instead of "no data available"
     // This provides better UX - users see "0 consumption" rather than ambiguous "no data"
-    if (aggregatedData.length === 0 && filteredDevices.length > 0 && startDate && endDate) {
+    if (
+      aggregatedData.length === 0 &&
+      filteredDevices.length > 0 &&
+      startDate &&
+      endDate
+    ) {
       const result: { label: string; value: number }[] = [];
       const currentDate = new Date(startDate);
       const end = new Date(endDate);
-      
+
       while (currentDate <= end) {
         result.push({
           label: `${currentDate.getDate()} ${monthNames[currentDate.getMonth()]}`,
@@ -372,7 +392,7 @@ export default function HeatingCosts({
         });
         currentDate.setDate(currentDate.getDate() + 1);
       }
-      
+
       return result;
     }
 

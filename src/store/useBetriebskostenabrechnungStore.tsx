@@ -10,6 +10,8 @@ export type BetriebskostenabrechnungCostType = Partial<DocCostCategoryType> & {
 export type BetriebskostenabrechnungStoreType = {
   start_date: Date | null;
   end_date: Date | null;
+  meterIds: string[];
+  setMeterIds: (id: string[]) => void;
   activeCostType: BetriebskostenabrechnungCostType["type"] | null;
   documentGroups: BetriebskostenabrechnungCostType[];
   setDocumentGroups: (groups: BetriebskostenabrechnungCostType[]) => void;
@@ -19,7 +21,7 @@ export type BetriebskostenabrechnungStoreType = {
   addDocumentGroup: (group: BetriebskostenabrechnungCostType) => void;
   updateDocumentGroup: (
     key: BetriebskostenabrechnungCostType["type"],
-    newItem: Partial<InvoiceDocumentType> & { document?: File[] }
+    newItem: Partial<InvoiceDocumentType> & { document?: File[] },
   ) => void;
   removeDocumentGroup: (key: BetriebskostenabrechnungCostType["type"]) => void;
   purposeOptions: string[];
@@ -33,14 +35,14 @@ export type BetriebskostenabrechnungStoreType = {
   updateDocumentGroupValues: (
     key: BetriebskostenabrechnungCostType["type"],
     index: number,
-    values: Partial<InvoiceDocumentType> & { document?: File }
+    values: Partial<InvoiceDocumentType> & { document?: File },
   ) => void;
   getDocumentGroupByType: (
-    key: BetriebskostenabrechnungCostType["type"]
+    key: BetriebskostenabrechnungCostType["type"],
   ) => BetriebskostenabrechnungCostType | undefined;
   updateAllocationKey: (
     key: BetriebskostenabrechnungCostType["type"],
-    allocationKey: BetriebskostenabrechnungCostType["allocation_key"]
+    allocationKey: BetriebskostenabrechnungCostType["allocation_key"],
   ) => void;
   setPurposeOptions: () => void;
 };
@@ -55,6 +57,12 @@ export const useBetriebskostenabrechnungStore =
     operatingDocID: undefined,
     localID: null,
     purposeOptions: [],
+    meterIds: [],
+    setMeterIds: (ids: string[]) => {
+      set({
+        meterIds: ids?.length ? Array.from(new Set(ids)) : [],
+      });
+    },
     setDocumentGroups: (groups) =>
       set({
         documentGroups: groups,
@@ -104,7 +112,7 @@ export const useBetriebskostenabrechnungStore =
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? { ...group, data: [...group.data, newItem] }
-            : group
+            : group,
         ),
       })),
     updateDocumentGroupValues: (key, index, values) =>
@@ -122,16 +130,16 @@ export const useBetriebskostenabrechnungStore =
                           ? [...(item.document ?? []), values.document].flat()
                           : item.document,
                       }
-                    : item
+                    : item,
                 ),
               }
-            : group
+            : group,
         ),
       })),
     removeDocumentGroup: (key) =>
       set((state) => ({
         documentGroups: state.documentGroups.filter(
-          (group) => group.type !== key
+          (group) => group.type !== key,
         ),
       })),
     updateAllocationKey: (key, allocationKey) =>
@@ -139,13 +147,13 @@ export const useBetriebskostenabrechnungStore =
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? { ...group, allocation_key: allocationKey }
-            : group
+            : group,
         ),
       })),
     setPurposeOptions: () => {
       const { documentGroups, activeCostType } = get();
       const options = documentGroups.find(
-        (group) => group.type === activeCostType
+        (group) => group.type === activeCostType,
       )?.options;
       set({
         purposeOptions: options ?? [],

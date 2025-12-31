@@ -15,7 +15,7 @@ import type {
   UserType,
 } from "@/types";
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
-import { differenceInMonths, max, min, parse } from "date-fns";
+import { differenceInMonths, max, min } from "date-fns";
 
 export type HeatingBillPreviewProps = {
   mainDoc: HeatingBillDocumentType;
@@ -52,6 +52,8 @@ export type HeatingBillPreviewData = {
   costCategories: DocCostCategoryType[];
   propertyNumber: string;
   heidiCustomerNumber: string;
+  localId?: string;
+  unitArea: number;
 };
 
 export default function HeatingBillPreview({
@@ -62,6 +64,7 @@ export default function HeatingBillPreview({
   objekt,
   totalLivingSpace,
   user,
+  local,
 }: HeatingBillPreviewProps) {
   const periodStart = mainDoc?.start_date
     ? new Date(mainDoc.start_date)
@@ -122,6 +125,8 @@ export default function HeatingBillPreview({
     costCategories,
     propertyNumber: generatePropertyNumber(),
     heidiCustomerNumber: generateHeidiCustomerNumber(),
+    localId: mainDoc?.local_id ?? undefined,
+    unitArea: Number(local.living_space || 0),
   };
 
   return (

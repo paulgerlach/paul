@@ -23,6 +23,7 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     invoices,
     totalLivingSpace,
     costCategories,
+    local,
   } = props;
 
   const periodStart = mainDoc?.start_date
@@ -66,12 +67,12 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     },
     mainDocData: mainDoc,
     userInfo: {
-      first_name: user?.first_name,
-      last_name: user?.last_name,
+      first_name: user?.first_name || "",
+      last_name: user?.last_name || "",
     },
     objektInfo: {
-      zip: objekt?.zip,
-      street: objekt?.street,
+      zip: objekt?.zip || "",
+      street: objekt?.street || "",
     },
     contractorsNames: contractors
       ?.map((c) => `${c.first_name} ${c.last_name}`)
@@ -87,6 +88,8 @@ export default function HeidiSystemsPdf(props: HeatingBillPreviewProps) {
     costCategories,
     propertyNumber: generatePropertyNumber(),
     heidiCustomerNumber: generateHeidiCustomerNumber(),
+    localId: local?.id,
+    unitArea: Number(local?.living_space || 0),
   };
 
   return (

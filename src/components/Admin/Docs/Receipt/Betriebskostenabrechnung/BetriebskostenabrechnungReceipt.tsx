@@ -32,6 +32,7 @@ export default function BetriebskostenabrechnungReceipt({
     totalDirectCosts,
     totalSpreadedAmount,
     totalHouseFee,
+    meterIds,
   } = useReceiptAmounts({
     documentGroups,
     start_date,
@@ -67,7 +68,9 @@ export default function BetriebskostenabrechnungReceipt({
           {start_date} - {end_date}
         </p>
         <div className="flex flex-col items-center justify-center">
-          <p className="text-admin_dark_text max-medium:text-sm">Differenzbetrag</p>
+          <p className="text-admin_dark_text max-medium:text-sm">
+            Differenzbetrag
+          </p>
           <Image
             width={0}
             height={0}

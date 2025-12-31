@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useDiffInMonths } from "@/hooks/useDiffInMonths";
-import { BetriebskostenabrechnungCostType } from "@/store/useBetriebskostenabrechnungStore";
+import {
+  BetriebskostenabrechnungCostType,
+  useBetriebskostenabrechnungStore,
+} from "@/store/useBetriebskostenabrechnungStore";
 import { HeizkostenabrechnungCostType } from "@/store/useHeizkostenabrechnungStore";
 import type { ContractType, LocalType } from "@/types";
 import { differenceInMonths, max, min, parse } from "date-fns";
@@ -9,15 +12,27 @@ export function useReceiptAmounts({
   documentGroups,
   start_date,
   end_date,
-  locals
+  locals,
 }: {
   documentGroups:
-  | BetriebskostenabrechnungCostType[]
-  | HeizkostenabrechnungCostType[];
+    | BetriebskostenabrechnungCostType[]
+    | HeizkostenabrechnungCostType[];
   start_date: string;
   end_date: string;
   locals: (LocalType & { contracts: ContractType[] })[];
 }) {
+  const { setMeterIds } = useBetriebskostenabrechnungStore();
+
+  const meterIds = useMemo(() => {
+    return locals.reduce((acc, local) => {
+      return [...acc, ...(local?.meter_ids || [])];
+    }, [] as string[]);
+  }, [locals]);
+
+  useEffect(() => {
+    setMeterIds(meterIds);
+  }, [meterIds, setMeterIds]);
+
   const monthsDiff = useDiffInMonths(start_date, end_date);
 
   const {
@@ -26,7 +41,7 @@ export function useReceiptAmounts({
     totalAmount,
     totalContractsAmount,
     totalDiff,
-    totalHouseFee
+    totalHouseFee,
   } = useMemo(() => {
     const totalSpreadedAmount = documentGroups.reduce((acc, group) => {
       const groupTotal =
@@ -58,7 +73,8 @@ export function useReceiptAmounts({
     const allContracts = locals.flatMap((local) => local.contracts ?? []);
 
     const filteredContracts = allContracts.filter((contract) => {
-      if (!contract.rental_start_date || !contract.rental_end_date) return false;
+      if (!contract.rental_start_date || !contract.rental_end_date)
+        return false;
       const rentalEnd = new Date(contract.rental_end_date);
       return rentalEnd <= periodEnd;
     });
@@ -78,7 +94,7 @@ export function useReceiptAmounts({
 
     const totalHouseFee = locals.reduce(
       (acc, local) => acc + Number(local.house_fee ?? 0),
-      0
+      0,
     );
 
     const totalDiff = totalContractsAmount - totalAmount;
@@ -89,7 +105,7 @@ export function useReceiptAmounts({
       totalAmount,
       totalContractsAmount,
       totalDiff,
-      totalHouseFee
+      totalHouseFee,
     };
   }, [documentGroups, locals, start_date, end_date]);
 
@@ -100,6 +116,7 @@ export function useReceiptAmounts({
     totalContractsAmount,
     totalDiff,
     monthsDiff,
-    totalHouseFee
+    totalHouseFee,
+    meterIds,
   };
 }

@@ -12,6 +12,7 @@ import type {
 import { formatDateGerman, formatEuro } from "@/utils";
 import { differenceInMonths, min, max, differenceInDays } from "date-fns";
 import { useMemo } from "react";
+import { useConsumptionData } from "@/hooks/useConsumptionData";
 
 export type BetriebskostenabrechnungPreviewProps = {
   mainDoc: OperatingCostDocumentType;
@@ -41,6 +42,12 @@ export default function BetriebskostenabrechnungPreview({
   const periodEnd = useMemo(() => {
     return mainDoc?.end_date ? new Date(mainDoc?.end_date) : null;
   }, [mainDoc?.end_date]);
+
+  const { consumption } = useConsumptionData(
+    previewLocal?.id,
+    periodStart,
+    periodEnd
+  );
 
   const filteredContracts = useMemo(() => {
     if (!periodEnd) return [];
@@ -360,6 +367,30 @@ export default function BetriebskostenabrechnungPreview({
               </tbody>
             </table>
           </div>
+
+          <h3 className="text-xs font-bold mb-3 uppercase mt-8">Ihre Verbrauchsdaten</h3>
+          <table className="w-full border border-black mb-6">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="text-[8px] font-bold px-1 py-1 border-r border-b border-black text-start">Zählerart</th>
+                <th className="text-[8px] font-bold px-1 py-1 border-b border-black text-end">Gesamtverbrauch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="text-[8px] p-1 border-r border-b border-black">Kaltwasser</td>
+                <td className="text-[8px] p-1 border-b border-black text-end">{(consumption.waterCold * 1000).toLocaleString("de-DE", { maximumFractionDigits: 0 })} L</td>
+              </tr>
+              <tr>
+                <td className="text-[8px] p-1 border-r border-b border-black">Warmwasser</td>
+                <td className="text-[8px] p-1 border-b border-black text-end">{(consumption.waterHot * 1000).toLocaleString("de-DE", { maximumFractionDigits: 0 })} L</td>
+              </tr>
+              <tr>
+                <td className="text-[8px] p-1 border-r border-black font-semibold">Heizung</td>
+                <td className="text-[8px] p-1 text-end font-semibold">{consumption.heat.toLocaleString("de-DE", { maximumFractionDigits: 0 })} Wh</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* Page Number */}

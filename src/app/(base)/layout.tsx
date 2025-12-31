@@ -4,10 +4,13 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
-import LoginDialog from "@/components/Basic/Dialog/LoginDialog";
-import RegisterDialog from "@/components/Basic/Dialog/RegisterDialog";
-import ForgotPasswordDialog from "@/components/Basic/Dialog/ForgotPasswordDialog";
 import { Toaster } from "@/components/Basic/ui/Sonner";
+import { Suspense, lazy } from "react";
+
+// Lazy-load the dialogs
+const LazyLoginDialog = lazy(() => import("@/components/Basic/Dialog/LoginDialog"));
+const LazyRegisterDialog = lazy(() => import("@/components/Basic/Dialog/RegisterDialog"));
+const LazyForgotPasswordDialog = lazy(() => import("@/components/Basic/Dialog/ForgotPasswordDialog"));
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -32,10 +35,18 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
-          <LoginDialog />
-          <RegisterDialog />
-          <ForgotPasswordDialog />
-          <Toaster />
+          {/* Wrap each in Suspense with a fallback (e.g., loading spinner or nothing) */}
+          <Suspense fallback={null}>
+            <LazyLoginDialog />
+          </Suspense>
+          <Suspense fallback={null}>
+            <LazyRegisterDialog />
+          </Suspense>
+          <Suspense fallback={null}>
+            <LazyForgotPasswordDialog />
+          </Suspense>
+          <Toaster />{" "}
+          {/* Toaster might not need lazy loading if it's lightweight */}
         </QueryProvider>
       </body>
     </html>

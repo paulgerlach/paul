@@ -49,9 +49,9 @@ export default function NotificationItem({
           />
         </span>
       </div>
-      <div className="flex-1 min-w-0 overflow-hidden">
+      <div className="flex-1 min-w-0">
         {/* <p className="text-sm max-md:text-xs text-black/50 font-medium leading-tight">{title}</p> */}
-        <p className="text-xs max-lg:text-[10px] text-black/50 leading-tight mt-[-1px] line-clamp-3 break-words">{subtitle}</p>
+        <p className="text-xs max-lg:text-[10px] text-black/50 leading-tight mt-[-1px] break-words whitespace-normal">{subtitle}</p>
       </div>
     </div>
   );

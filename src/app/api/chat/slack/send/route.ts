@@ -14,9 +14,7 @@ export async function POST(req: NextRequest) {
 
     const formattedMessage = threadTs
       ? message.trim()
-      :
-`*Support Request - ${user.user_metadata.first_name}*
-* Message: ${message}* `
+      : `${message}`
 
     const ts = await sendSlackMessage(formattedMessage, threadTs);
 

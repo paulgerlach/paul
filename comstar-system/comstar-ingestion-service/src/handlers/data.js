@@ -28,16 +28,15 @@ class DataHandler {
     console.log({ gatewayEui, telegram }, 'Processing telegram data');
     // Process telegram data here
     const parser = new WirelessMbusParser();
-    const evaluatedData = await parser.parse(
+    const result = await parser.parse(
       Buffer.from(telegram, 'hex'),
       {
-  skipCRC: true, // or disableCRC: true
-  // ... other options
-}
+        skipCRC: true,        
+      }
       // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
     
-    console.log(evaluatedData, 'Telegram data parsed successfully');
+    console.log(result, 'Telegram data parsed successfully');
 
     // For example, parse the telegram and store relevant information
     return {

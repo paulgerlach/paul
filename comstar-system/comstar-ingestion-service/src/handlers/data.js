@@ -29,7 +29,7 @@ class DataHandler {
     // Process telegram data here
     const parser = new WirelessMbusParser();
     const evaluatedData = await parser.parse(
-      Buffer.from(telegram, ''),
+      Buffer.from(telegram, 'hex'),
       {
   skipCRC: true, // or disableCRC: true
   // ... other options

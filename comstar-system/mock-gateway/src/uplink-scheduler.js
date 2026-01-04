@@ -353,7 +353,7 @@ export class UplinkScheduler {
   };
 
   const now = new Date();
-      const exampleTelegram = "2e44931578563412330333637a2a0020055923c95aaa26d1b2e7493bc5c2b36f69ebf6c973dd68442e799bf05957e5e8";
+      const exampleTelegram = "2E44931578563412330333637A2A0020255923C95AAA26D1B2E7493BC2AD013EC4A6F6D3529B520EDFF0EA6DEFC955B29D6D69EBF3EC8A";
     await this.gateway.mqtt.publish('up/data', {
     i: this.gateway.config.deviceEUI || '70b3d5e050010233', // Should come from config
     n: this.sequenceNumber++, // Increment per uplink

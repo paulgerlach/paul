@@ -6,6 +6,7 @@ class DataHandler {
     this.isUrgent = false;
     this.meterMapping = null;
     this.parser = null;
+    this.key = "0102030405060708090A0B0C0D0E0F11";
   }
 
   async initialize() {
@@ -31,7 +32,9 @@ class DataHandler {
     const result = await parser.parse(
       Buffer.from(telegram, 'hex'),
       {
-        skipCRC: true,        
+    // verbose: true,
+    containsCrc: undefined,  
+    key: Buffer.from(this.key, "hex")     
       }
       // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );

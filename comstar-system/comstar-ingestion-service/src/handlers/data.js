@@ -1,4 +1,5 @@
 import { WirelessMbusParser } from "wireless-mbus-parser";
+import databaseService from '../services/databaseService.js';
 
 class DataHandler {
   constructor() {
@@ -10,9 +11,9 @@ class DataHandler {
   }
 
   async initialize() {
-    if (!this.meterMapping) {
-      this.meterMapping = await databaseService.getMeterMapping();
-    }
+    // if (!this.meterMapping) {
+    //   this.meterMapping = await databaseService.getMeterMapping();
+    // }
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
@@ -39,12 +40,22 @@ class DataHandler {
       // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
     
-    console.log(result, 'Telegram data parsed successfully');
+    const meterId = result.meter.id;
+    const meterManufacturer = result.meter.manufacturer;
+    const meterType = result.meter.type;
+    const meterDeviceType = result.meter.deviceType;
+    const version = result.meter.version;
+    const status = result.meter.status;
+    const accessNo = result.meter.accessNo;
 
-    // For example, parse the telegram and store relevant information
+    const readings = result.data;
+
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings);
+
     return {
       success: true,
       gatewayEui,
+      meterId,
       processedAt: new Date()
     };
   }

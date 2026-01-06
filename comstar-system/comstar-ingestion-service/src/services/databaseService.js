@@ -4,7 +4,7 @@ class DatabaseService {
   constructor() { }
 
   insertMeterReading = async (meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings) => {
-
+    console.log(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo);
     readings.map(async (reading) => {
       console.log(reading.info)
     });

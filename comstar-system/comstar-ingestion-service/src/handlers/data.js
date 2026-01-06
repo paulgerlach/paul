@@ -53,22 +53,21 @@ class DataHandler {
       console.warn({ gatewayEui }, 'Invalid or missing meter ID');
       return null;
     }
-
-    if(meterIdExists(meterId) === false) {
-      console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
-      return null;
-    }
-
+    // const meterExists = await this.meterIdExists(meterId);
+    // if(!meterExists) {
+    //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
+    //   return null;
+    // }
 
     if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
       console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
       return null;
     }
 
-    if (typeof meterType !== 'string' || meterType.trim() === '') {
-      console.warn({ gatewayEui, meterId }, 'Invalid or missing meter type');
-      return null;
-    }
+    // if (typeof meterType !== 'string' || meterType.trim() === '') {
+    //   console.warn({ gatewayEui, meterId }, 'Invalid or missing meter type');
+    //   return null;
+    // }
 
     if (typeof meterDeviceType !== 'string' || meterDeviceType.trim() === '') {
       console.warn({ gatewayEui, meterId }, 'Invalid or missing device type');
@@ -101,7 +100,7 @@ class DataHandler {
     }
 
     console.log("============VALIDATION SUCCESSFUL!!!=============")
-    // await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings);
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings);
 
     return {
       success: true,
@@ -114,7 +113,7 @@ class DataHandler {
   async meterIdExists(meterId) {
     // Check if meterId exists in this.meterMapping
     const meter = await databaseService.getMeterById(meterId);
-    return meter !== null;
+    return meter !== null && meter !== undefined;
   }
 }
 

@@ -10,6 +10,7 @@
     "test:performance": "node test/performance.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
     "cbor": "^10.0.11",
     "dotenv": "^17.2.3",
     "mqtt": "^5.14.1",

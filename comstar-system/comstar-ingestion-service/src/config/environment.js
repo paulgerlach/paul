@@ -5,8 +5,8 @@ dotenv.config();
 // Validate required environment variables
 const requiredEnvVars = [
   'MQTT_BROKER_URL',
-  // 'SUPABASE_URL',
-  // 'SUPABASE_SERVICE_KEY'
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_KEY'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -61,4 +61,8 @@ export default {
       }
     }
   },
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    serviceKey: process.env.SUPABASE_SERVICE_KEY
+  }
 }

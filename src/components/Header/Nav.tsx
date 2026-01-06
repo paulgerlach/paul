@@ -231,25 +231,29 @@ export default function Nav() {
   };
 
   return (
-    <nav className="flex items-center justify-center gap-8 max-medium:gap-4 max-large:flex-col max-large:items-center max-large:justify-center">
+    <nav className="flex items-center justify-center gap-8 max-medium:gap-4 max-large:flex-col max-large:items-center max-large:justify-center max-large:w-full max-large:gap-0">
       {navGroups.map((group) => (
         <NavGroup key={group.title} group={group} />
       ))}
-      <Link
-        onClick={() => handleBurgerMenu()}
-        href={ROUTE_HOME}
-        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text max-large:text-lg max-large:justify-center"
-      >
-        Kunden
-      </Link>
+      <div className="max-large:py-3 max-large:w-full max-large:text-center">
+        <Link
+          onClick={() => handleBurgerMenu()}
+          href={ROUTE_HOME}
+          className="flex items-center text-base max-xl:text-sm text-dark_text justify-center gap-2 max-large:text-base"
+        >
+          Kunden
+        </Link>
+      </div>
 
-      <Link
-        onClick={() => handleBurgerMenu()}
-        href={ROUTE_PREISE}
-        className="flex items-center text-base max-xl:text-sm text-dark_text justify-start gap-2 max-large:text-dark_text max-large:text-lg max-large:justify-center"
-      >
-        Preise
-      </Link>
+      <div className="max-large:py-3 max-large:w-full max-large:text-center">
+        <Link
+          onClick={() => handleBurgerMenu()}
+          href={ROUTE_PREISE}
+          className="flex items-center text-base max-xl:text-sm text-dark_text justify-center gap-2 max-large:text-base"
+        >
+          Preise
+        </Link>
+      </div>
     </nav>
   );
 }

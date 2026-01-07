@@ -11,6 +11,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { Exo_2 } from "next/font/google";
+import { truncate } from 'lodash';
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -31,7 +32,7 @@ export default function ChatBotContainer({
 }: ChatBotContainerProps) {
   const [showChatBot, setShowChatBot] = useState(false);
   // const [showPopup, setShowPopup] = useState(false);
-  const [isSlackChat, setIsSlackChat] = useState(false);
+  const [isSlackChat, setIsSlackChat] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const {storedMessages} = useAIMessagesStore();

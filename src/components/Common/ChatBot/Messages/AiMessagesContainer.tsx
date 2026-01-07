@@ -281,7 +281,6 @@ export default function AiMessagesContainer({
         </div>
       ) : (
         <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
-          {isExistingClient && (
             <button
               title="Send message"
               onClick={toggleChatType}
@@ -289,7 +288,6 @@ export default function AiMessagesContainer({
             >
               <MdOutlineSupportAgent color="#FFFFFF" size={30} />
             </button>
-          )}
 
           {/* Show clear session button for anonymous users */}
           {!isExistingClient && isChatStarted && (

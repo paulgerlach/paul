@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import Message from "./Message";
 import { ChatRequestOptions, ChatStatus, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import AIChatInput from "../AIChatInput";
-import axios from "axios";
 import AnonymousChatBanner from "../AnonymousChatBanner";
 import DefaultChatMessage from "./DefaultChatMessage";
 import LoadingMessage from "./LoadingMessage";
-import VisitorEmailFormContainer from "../VisitorEmailFormContainer";
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
   toggleChatType: () => void;
@@ -43,6 +41,10 @@ interface AiMessagesContainerProps {
   ) => Promise<void>;
   status: ChatStatus;
   stop: () => Promise<void>;
+  anonymousUserEmail: string;
+  setAnonymousUserEmail: Dispatch<React.SetStateAction<string>>;
+  isChatStarted: boolean;
+  setIsChatStarted: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function  AiMessagesContainer({
@@ -52,20 +54,11 @@ export default function  AiMessagesContainer({
   sendMessage,
   status,
   stop,
+  anonymousUserEmail,
+  setAnonymousUserEmail,
+  isChatStarted,
+  setIsChatStarted
 }: AiMessagesContainerProps) {
-  const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("anonymousUserEmail") || "";
-    }
-    return "";
-  });
-
-  const [isChatStarted, setIsChatStarted] = useState(() => {
-    if (typeof window !== "undefined") {
-      return !!sessionStorage.getItem("anonymousUserEmail");
-    }
-    return false;
-  });
 
 
   const setStoredMessages = useAIMessagesStore(
@@ -84,7 +77,6 @@ export default function  AiMessagesContainer({
       sessionStorage.removeItem("anonymousUserEmail");
       setAnonymousUserEmail("");
       setIsChatStarted(false);
-      setIsEmailValid(false);
     }
   };
 
@@ -118,13 +110,7 @@ export default function  AiMessagesContainer({
           )}
         </div>
       </div>
-      {!isChatStarted && !isExistingClient && !anonymousUserEmail ? (
-        <VisitorEmailFormContainer
-          setIsChatStarted={setIsChatStarted}
-          setAnonymousUserEmail={setAnonymousUserEmail}
-          anonymousUserEmail={anonymousUserEmail}
-        />
-      ) : (
+      
         <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
           <button
             title="Send message"
@@ -155,7 +141,7 @@ export default function  AiMessagesContainer({
             stop={stop}
           />
         </div>
-      )}
+      
     </div>
   );
 }

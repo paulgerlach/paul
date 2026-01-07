@@ -11,7 +11,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { Exo_2 } from "next/font/google";
-import { truncate } from 'lodash';
+import VisitorEmailFormContainer from './VisitorEmailFormContainer';
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -34,6 +34,19 @@ export default function ChatBotContainer({
   // const [showPopup, setShowPopup] = useState(false);
   const [isSlackChat, setIsSlackChat] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("anonymousUserEmail") || "";
+    }
+    return "";
+  });
+
+  const [isChatStarted, setIsChatStarted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!sessionStorage.getItem("anonymousUserEmail");
+    }
+    return false;
+  });
 
   const {storedMessages} = useAIMessagesStore();
   const {
@@ -93,7 +106,6 @@ export default function ChatBotContainer({
               onClick={toggleChatBot}
               className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
             />
-
             <ChatHeader
               headerText="Kundenservice"
               subHeaderText={isSlackChat ? "Max Sommerfeld" : "Max Sommerfeld"}
@@ -112,8 +124,21 @@ export default function ChatBotContainer({
                 sendMessage={sendMessage}
                 status={status}
                 stop={stop}
+                anonymousUserEmail={anonymousUserEmail}
+                setAnonymousUserEmail={setAnonymousUserEmail}
+                isChatStarted={isChatStarted}
+                setIsChatStarted={setIsChatStarted}
               />
             )}
+            <>
+              {(!isChatStarted && !isExistingClient && !anonymousUserEmail && (
+                <VisitorEmailFormContainer
+                  setIsChatStarted={setIsChatStarted}
+                  setAnonymousUserEmail={setAnonymousUserEmail}
+                  anonymousUserEmail={anonymousUserEmail}
+                />
+              ))}
+            </>
           </div>
         </div>
       ) : (

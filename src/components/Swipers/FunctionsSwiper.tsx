@@ -4,7 +4,7 @@ import { article1 } from "@/static/icons";
 import Image from "next/image";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import type { FunctionsSlideType } from "@/types";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import animation4 from "@/animations/Animation_4.json";
@@ -68,24 +68,40 @@ export const functionsSwiper: FunctionsSlideType[] = [
 
 export default function FunctionsSwiper() {
 	return (
-		<Swiper
-			modules={[Pagination]}
-			spaceBetween={20}
-			slidesPerView={1}
-			pagination={{ clickable: true }}
-			className="swiper !pt-8 functions-swiper"
-		>
-			{functionsSwiper.map((slide, index) => (
-				<SwiperSlide key={index} className="swiper-slide space-y-6">
-					{slide.item}
-					<p className="text-dark_text text-xl font-bold leading-[24px]">
-						{slide.title}
-					</p>
-					<p className="text-dark_text leading-5 text-[17px]">
-						{slide.subtitle}
-					</p>
-				</SwiperSlide>
-			))}
-		</Swiper>
+		<div className="relative">
+			{/* Swipe indicator - mobile only */}
+			<div className="hidden max-medium:block absolute top-2 left-1/2 -translate-x-1/2 z-10 animate-fade-out">
+				<div className="flex items-center gap-2 text-dark_text/60 text-sm animate-swipe-hint">
+					<span>👆</span>
+					<span>Wischen</span>
+					<span className="animate-swipe-arrow">→</span>
+				</div>
+			</div>
+			<Swiper
+				modules={[Pagination, Autoplay]}
+				spaceBetween={20}
+				slidesPerView={1}
+				pagination={{ clickable: true }}
+				autoplay={{
+					delay: 3000,
+					disableOnInteraction: false,
+					pauseOnMouseEnter: true,
+				}}
+				loop={true}
+				className="swiper !pt-8 functions-swiper"
+			>
+				{functionsSwiper.map((slide, index) => (
+					<SwiperSlide key={index} className="swiper-slide space-y-6">
+						{slide.item}
+						<p className="text-dark_text text-xl font-bold leading-[24px]">
+							{slide.title}
+						</p>
+						<p className="text-dark_text leading-5 text-[17px]">
+							{slide.subtitle}
+						</p>
+					</SwiperSlide>
+				))}
+			</Swiper>
+		</div>
 	);
 }

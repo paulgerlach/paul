@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const formattedMessage = threadTs
       ? message.trim()
-      : `${message}`
+      : `${message}`;
 
     const ts = await sendSlackMessage(formattedMessage, threadTs);
 

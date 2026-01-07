@@ -432,7 +432,7 @@ export default function Footer() {
             Heidi Systems GmbH Rungestrasse 21 10179 Berlin
           </p>
         </div>
-        <div className="text-dark_text text-[30px] leading-9 max-w-lg max-medium:text-[19px] max-medium:leading-[22px] max-large:max-w-full">
+        <div className="text-dark_text text-[30px] leading-9 max-w-lg max-medium:text-[19px] max-medium:leading-[22px] max-small:text-base max-small:leading-5 max-small:px-2 max-large:max-w-full">
           Werde Teil der Revolution: Schon mehr als 15.000+ Geräte erfolgreich
           installiert.
         </div>

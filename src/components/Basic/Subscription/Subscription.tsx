@@ -50,8 +50,8 @@ export default function Subscription() {
   });
 
   return (
-    <div className="py-14 max-small:px-4">
-      <h2 className="text-center max-w-4xl mx-auto text-[30px] leading-9 mb-5 text-dark_text relative">
+    <div className="py-14 max-small:py-8 max-small:px-4">
+      <h2 className="text-center max-w-4xl mx-auto text-[30px] leading-9 mb-5 max-small:text-xl max-small:mb-3 text-dark_text relative">
         Zeit ist Geld. Sparen Sie beides.
       </h2>
 
@@ -64,13 +64,13 @@ export default function Subscription() {
         </label>
         <input
           {...register("email")}
-          className="py-5 px-7 min-w-[500px] max-small:min-w-fit border border-border_base rounded-halfbase placeholder:text-dark_text/50 text-dark_text text-xl placeholder:text-xl max-medium:w-full max-medium:text-center placeholder:leading-6 leading-6"
+          className="py-5 px-7 max-small:py-3 max-small:px-4 min-w-[500px] max-small:min-w-fit border border-border_base rounded-halfbase placeholder:text-dark_text/50 text-dark_text text-xl max-small:text-base placeholder:text-xl max-small:placeholder:text-base max-medium:w-full max-medium:text-center placeholder:leading-6 leading-6"
           placeholder="Wie lautet Ihre email?"
           type="email"
           id="contact_email"
         />
         <button
-          className="absolute max-medium:relative max-medium:right-0 max-medium:w-full py-4 px-8 whitespace-nowrap text-xl leading-6 bg-green rounded-halfbase flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+          className="absolute max-medium:relative max-medium:right-0 max-medium:w-full py-4 px-8 max-small:py-3 max-small:px-6 whitespace-nowrap text-xl max-small:text-base leading-6 bg-green rounded-halfbase flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
           type="submit"
           disabled={mutation.isPending}
         >

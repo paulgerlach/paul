@@ -1,20 +1,79 @@
 "use client";
 
-import React from 'react'
+import axios from 'axios';
+import React, { Dispatch, useCallback, useState } from 'react'
 
 export default function VisitorEmailFormContainer({
+  setIsChatStarted,
+  setAnonymousUserEmail,
   anonymousUserEmail,
-  handleEmailChange,
-  handleEmailSubmit,
-  emailError,
-  isEmailValid
 }: {
+  setIsChatStarted: Dispatch<React.SetStateAction<boolean>>;
+  setAnonymousUserEmail: Dispatch<React.SetStateAction<string>>;
   anonymousUserEmail: string;
-  handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleEmailSubmit: (e: React.FormEvent) => void;
-  emailError: string;
-  isEmailValid: boolean;
 }) {
+  const [emailError, setEmailError] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [userEmailInput, setUserEmailInput] = useState("");
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const saveLead = async (email: string) => {
+    try {
+      await axios.post(`/api/leads`, { email, source: "Heidi Website" });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const handleEmailChange = 
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const email = e.target.value;
+      setUserEmailInput(email);
+
+      if (emailError) {
+        setEmailError("");
+      }
+
+      if (email === "") {
+        setIsEmailValid(false);
+      } else {
+        setIsEmailValid(validateEmail(email));
+      }
+    }
+
+  const handleEmailSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (!userEmailInput.trim()) {
+        setEmailError("Bitte geben Sie eine E-Mail-Adresse ein.");
+        return;
+      }
+
+      if (!validateEmail(userEmailInput)) {
+        setEmailError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        return;
+      }
+
+      await saveLead(userEmailInput);
+
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("anonymousUserEmail", userEmailInput);
+      }
+
+      setIsChatStarted(true);
+      setEmailError("");
+      setAnonymousUserEmail(userEmailInput);
+      console.log("Chat started with email:", anonymousUserEmail);
+    },
+    [userEmailInput, anonymousUserEmail]
+  );
+
   return (
     <div className="flex flex-col w-full gap-4 p-6 border border-slate-300 rounded-2xl bg-white shadow-sm">
       <p className="text-sm font-medium text-slate-700">
@@ -46,7 +105,7 @@ export default function VisitorEmailFormContainer({
                   transition
                   ${emailError ? "focus:border-red-500 focus:ring-red-200" : ""}
                 `}
-            value={anonymousUserEmail}
+            value={userEmailInput}
             onChange={handleEmailChange}
             aria-describedby={emailError ? "email-error" : undefined}
           />

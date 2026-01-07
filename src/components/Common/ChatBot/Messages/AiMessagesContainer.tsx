@@ -45,7 +45,7 @@ interface AiMessagesContainerProps {
   stop: () => Promise<void>;
 }
 
-export default function AiMessagesContainer({
+export default function  AiMessagesContainer({
   isExistingClient,
   toggleChatType,
   aiMessages,
@@ -67,9 +67,6 @@ export default function AiMessagesContainer({
     return false;
   });
 
-  const [emailError, setEmailError] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [userEmailInput, setUserEmailInput] = useState("");
 
   const setStoredMessages = useAIMessagesStore(
     (state) => state.setStoredMessages
@@ -81,61 +78,6 @@ export default function AiMessagesContainer({
     setStoredMessages(aiMessages);
   }, [aiMessages, setStoredMessages]);
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const email = e.target.value;
-    setUserEmailInput(email);
-
-    if (emailError) {
-      setEmailError("");
-    }
-
-    if (email === "") {
-      setIsEmailValid(false);
-    } else {
-      setIsEmailValid(validateEmail(email));
-    }
-  }, [emailError]);
-
-  const saveLead = async (email: string) => {
-    try {
-      await axios.post(`/api/leads`, { email, source:'Heidi Website' });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  
-
-  const handleEmailSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!userEmailInput.trim()) {
-      setEmailError("Bitte geben Sie eine E-Mail-Adresse ein.");
-      return;
-    }
-
-    if (!validateEmail(userEmailInput)) {
-      setEmailError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-      return;
-    }
-
-    await saveLead(userEmailInput);
-
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("anonymousUserEmail", userEmailInput);
-    }
-
-    setIsChatStarted(true);
-    setEmailError("");
-    setAnonymousUserEmail(userEmailInput);
-    console.log("Chat started with email:", anonymousUserEmail);
-  }, [userEmailInput, anonymousUserEmail]);
 
   const clearSessionEmail = () => {
     if (typeof window !== "undefined") {
@@ -178,11 +120,9 @@ export default function AiMessagesContainer({
       </div>
       {!isChatStarted && !isExistingClient && !anonymousUserEmail ? (
         <VisitorEmailFormContainer
-          anonymousUserEmail={userEmailInput}
-          handleEmailChange={handleEmailChange}
-          handleEmailSubmit={handleEmailSubmit}
-          emailError={emailError}
-          isEmailValid={isEmailValid}
+          setIsChatStarted={setIsChatStarted}
+          setAnonymousUserEmail={setAnonymousUserEmail}
+          anonymousUserEmail={anonymousUserEmail}
         />
       ) : (
         <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">

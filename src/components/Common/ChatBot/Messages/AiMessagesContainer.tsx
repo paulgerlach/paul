@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Message from "./Message";
 import { ChatRequestOptions, ChatStatus, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import AIChatInput from "../AIChatInput";
-import Image from "next/image";
-import { max_chat_avatar } from "@/static/icons";
 import axios from "axios";
+import AnonymousChatBanner from "../AnonymousChatBanner";
+import DefaultChatMessage from "./DefaultChatMessage";
+import LoadingMessage from "./LoadingMessage";
+import VisitorEmailFormContainer from "../VisitorEmailFormContainer";
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
   toggleChatType: () => void;
@@ -67,6 +69,7 @@ export default function AiMessagesContainer({
 
   const [emailError, setEmailError] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const [userEmailInput, setUserEmailInput] = useState("");
 
   const setStoredMessages = useAIMessagesStore(
     (state) => state.setStoredMessages
@@ -83,9 +86,9 @@ export default function AiMessagesContainer({
     return emailRegex.test(email);
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
-    setAnonymousUserEmail(email);
+    setUserEmailInput(email);
 
     if (emailError) {
       setEmailError("");
@@ -96,7 +99,7 @@ export default function AiMessagesContainer({
     } else {
       setIsEmailValid(validateEmail(email));
     }
-  };
+  }, [emailError]);
 
   const saveLead = async (email: string) => {
     try {
@@ -107,30 +110,32 @@ export default function AiMessagesContainer({
     }
   };
 
-  const handleEmailSubmit = async(e: React.FormEvent) => {
+  
+
+  const handleEmailSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!anonymousUserEmail.trim()) {
+    if (!userEmailInput.trim()) {
       setEmailError("Bitte geben Sie eine E-Mail-Adresse ein.");
       return;
     }
 
-    if (!validateEmail(anonymousUserEmail)) {
+    if (!validateEmail(userEmailInput)) {
       setEmailError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
       return;
     }
 
-    await saveLead(anonymousUserEmail);
+    await saveLead(userEmailInput);
 
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("anonymousUserEmail", anonymousUserEmail);
+      sessionStorage.setItem("anonymousUserEmail", userEmailInput);
     }
 
     setIsChatStarted(true);
     setEmailError("");
-
+    setAnonymousUserEmail(userEmailInput);
     console.log("Chat started with email:", anonymousUserEmail);
-  };
+  }, [userEmailInput, anonymousUserEmail]);
 
   const clearSessionEmail = () => {
     if (typeof window !== "undefined") {
@@ -145,43 +150,18 @@ export default function AiMessagesContainer({
     <div className="flex flex-col flex-1 min-h-0 animate-from-right">
       <div className="flex-1 overflow-y-auto pb-4 overflow-scroll max-h-full h-full">
         <div className="flex flex-col gap-3">
-          {/* Optional: Show current email in chat header */}
           {isChatStarted && anonymousUserEmail && !isExistingClient && (
-            <div className="mb-2 p-3 bg-gray-100 rounded-lg text-sm text-gray-600">
-              <div className="flex justify-between items-center">
-                <span>
-                  Angemeldet als: <strong>{anonymousUserEmail}</strong>
-                </span>
-                <button
-                  onClick={clearSessionEmail}
-                  className="text-xs text-red-600 hover:text-red-800 underline ml-2"
-                  title="Andere E-Mail verwenden"
-                >
-                  Ändern
-                </button>
-              </div>
-            </div>
+            <AnonymousChatBanner
+              anonymousUserEmail={anonymousUserEmail}
+              clearSessionEmail={clearSessionEmail}
+            />
           )}
 
           {aiMessages.length === 0 && (
-            <div className="flex justify-start items-center gap-2">
-              <div>
-                <Image
-                  alt="chat avatar"
-                  src={max_chat_avatar.src}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </div>
-              <div className="max-w-[85%] rounded-2xl px-4 py-2 bg-white text-gray-600">
-                {isChatStarted && anonymousUserEmail
-                  ? `Hallo! Wie kann ich Ihnen heute helfen, ${
-                      anonymousUserEmail.split("@")[0]
-                    }?`
-                  : "Hallo, ich bin Max von Heidi Systems. Gern helfe ich Ihnen bei Fragen rund um digitale Verbrauchserfassung und Abrechnung."}
-              </div>
-            </div>
+            <DefaultChatMessage
+              anonymousUserEmail={anonymousUserEmail}
+              isChatStarted={isChatStarted}
+            />
           )}
 
           {aiMessages.map((message) => {
@@ -192,102 +172,27 @@ export default function AiMessagesContainer({
           })}
 
           {(status === "submitted" || status === "streaming") && (
-            <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-2xl px-4 py-2 flex items-center gap-2">
-                <p className="text-green-900 animate-pulse">tippt...</p>
-              </div>
-            </div>
+            <LoadingMessage />
           )}
         </div>
       </div>
-
-      {!isExistingClient && !isChatStarted ? (
-        <div className="flex flex-col w-full gap-4 p-6 border border-slate-300 rounded-2xl bg-white shadow-sm">
-          <p className="text-sm font-medium text-slate-700">
-            Geben Sie Ihre E-Mail ein, um den Chat zu starten
-          </p>
-
-          <form
-            onSubmit={handleEmailSubmit}
-            className="flex flex-col sm:flex-row items-stretch gap-2"
-            noValidate
-          >
-            <div className="flex-1">
-              <input
-                type="email"
-                placeholder="ihre@email.de"
-                required
-                className={`
-                  w-full
-                  rounded-xl
-                  border ${emailError ? "border-red-500" : "border-slate-300"}
-                  px-4 py-2.5
-                  text-sm
-                  text-slate-800
-                  placeholder:text-slate-400
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-black/20
-                  focus:border-black
-                  transition
-                  ${emailError ? "focus:border-red-500 focus:ring-red-200" : ""}
-                `}
-                value={anonymousUserEmail}
-                onChange={handleEmailChange}
-                aria-describedby={emailError ? "email-error" : undefined}
-              />
-              {emailError && (
-                <p id="email-error" className="mt-1 text-sm text-red-600">
-                  {emailError}
-                </p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={!isEmailValid}
-              className={`
-                rounded-xl
-                bg-dark_green
-                px-5 py-2.5
-                text-sm
-                font-semibold
-                text-white
-                shadow-md
-                transition-all
-                hover:scale-[1.02]
-                hover:bg-dark_green/90
-                active:scale-[0.98]
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                ${!isEmailValid ? "cursor-not-allowed" : "cursor-pointer"}
-              `}
-            >
-              Chat starten
-            </button>
-          </form>
-
-          {anonymousUserEmail && !emailError && (
-            <p
-              className={`text-xs mt-1 ${
-                isEmailValid ? "text-green-600" : "text-amber-600"
-              }`}
-            >
-              {isEmailValid
-                ? "✓ Gültige E-Mail-Adresse"
-                : "Bitte geben Sie eine gültige E-Mail-Adresse ein"}
-            </p>
-          )}
-        </div>
+      {!isChatStarted && !isExistingClient && !anonymousUserEmail ? (
+        <VisitorEmailFormContainer
+          anonymousUserEmail={userEmailInput}
+          handleEmailChange={handleEmailChange}
+          handleEmailSubmit={handleEmailSubmit}
+          emailError={emailError}
+          isEmailValid={isEmailValid}
+        />
       ) : (
         <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
-            <button
-              title="Send message"
-              onClick={toggleChatType}
-              className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
-            >
-              <MdOutlineSupportAgent color="#FFFFFF" size={30} />
-            </button>
+          <button
+            title="Send message"
+            onClick={toggleChatType}
+            className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
+          >
+            <MdOutlineSupportAgent color="#FFFFFF" size={30} />
+          </button>
 
           {/* Show clear session button for anonymous users */}
           {!isExistingClient && isChatStarted && (

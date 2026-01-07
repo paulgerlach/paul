@@ -1075,3 +1075,48 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+/* Swipe indicator animations */
+@keyframes swipe-hint {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(8px);
+    }
+}
+
+@keyframes swipe-arrow {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translateX(0) translateY(-50%);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(6px) translateY(-50%);
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.animate-swipe-hint {
+    animation: swipe-hint 1.5s ease-in-out infinite;
+}
+
+.animate-swipe-arrow {
+    animation: swipe-arrow 1.5s ease-in-out infinite;
+}
+
+.animate-fade-out {
+    animation: fade-out 4s ease-in-out forwards;
+}

@@ -3,7 +3,7 @@
 import { news1, news2, news3 } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 
 export type NewsSwiperType = {
 	image: StaticImageData;
@@ -34,12 +34,26 @@ export const newsSlides = [
 
 export default function NewsSwiper() {
 	return (
-		<div className="news-swiper">
+		<div className="news-swiper relative">
+			{/* Swipe indicator - mobile only */}
+			<div className="hidden max-medium:block absolute top-8 left-1/2 -translate-x-1/2 z-10 animate-fade-out">
+				<div className="flex items-center gap-2 text-dark_text/60 text-sm animate-swipe-hint">
+					<span>👆</span>
+					<span>Wischen</span>
+					<span className="animate-swipe-arrow">→</span>
+				</div>
+			</div>
 			<Swiper
-				modules={[Pagination]}
+				modules={[Pagination, Autoplay]}
 				spaceBetween={20}
 				slidesPerView={1}
 				pagination={{ clickable: true }}
+				autoplay={{
+					delay: 3000,
+					disableOnInteraction: false,
+					pauseOnMouseEnter: true,
+				}}
+				loop={true}
 				className="news-swiper px-[72px] max-large:px-6 mb-20 max-medium:!pt-20"
 			>
 				{newsSlides.map((slide, index) => (

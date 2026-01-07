@@ -53,11 +53,12 @@ class DataHandler {
       console.warn({ gatewayEui }, 'Invalid or missing meter ID');
       return null;
     }
-    // const meterExists = await this.meterIdExists(meterId);
-    // if(!meterExists) {
-    //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
-    //   return null;
-    // }
+
+    const meter = await this.meterIdExists(meterId);
+    if(!meter) {
+      console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
+      return null;
+    }
 
     if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
       console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
@@ -113,7 +114,7 @@ class DataHandler {
   async meterIdExists(meterId) {
     // Check if meterId exists in this.meterMapping
     const meter = await databaseService.getMeterById(meterId);
-    return meter !== null && meter !== undefined;
+    return meter;
   }
 }
 

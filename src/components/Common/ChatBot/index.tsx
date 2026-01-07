@@ -30,7 +30,7 @@ export default function ChatBotContainer({
   userId,
 }: ChatBotContainerProps) {
   const [showChatBot, setShowChatBot] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+  // const [showPopup, setShowPopup] = useState(false);
   const [isSlackChat, setIsSlackChat] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -48,13 +48,13 @@ export default function ChatBotContainer({
     initialMessages: storedMessages,
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowPopup(true);
-    }, 20000); // 1 minute
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setShowPopup(true);
+  //   }, 20000); // 1 minute
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -124,11 +124,11 @@ export default function ChatBotContainer({
         />
       )}
 
-      {!showChatBot && showPopup && (
+      {/* {!showChatBot && showPopup && (
         <div className="chat-popup animate-from-right">
           Hallo, schreiben Sie uns gern bei Fragen.
         </div>
-      )}
+      )} */}
     </div>
   );
 }

@@ -27,7 +27,6 @@ import {
   raum_green,
   niesen_green,
   neckar_green,
-  idgim_green,
   hsp_green,
   harte_green,
   dumax_green,
@@ -445,15 +444,6 @@ export default async function Home() {
                   sizes="100vw"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
-                  src={idgim_green}
-                  alt="idgim"
-                />
-                <Image
-                  width={140}
-                  height={45}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
                   src={raum_green}
                   alt="raum"
                 />
@@ -511,29 +501,16 @@ export default async function Home() {
                   src={niesen_green}
                   alt="niesen_green"
                 />
-                {/* Progera: in grid on desktop, hidden on mobile (shown centered below) */}
                 <Image
                   width={140}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] object-contain max-small:hidden"
+                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
                   src={progera_green}
                   alt="progera_green"
                 />
               </div>
-            </div>
-            {/* Progera centered on mobile only */}
-            <div className="hidden max-small:flex max-small:justify-center max-small:w-full max-small:mt-5">
-              <Image
-                width={140}
-                height={45}
-                sizes="100vw"
-                loading="lazy"
-                className="w-[90px] h-[30px] object-contain"
-                src={progera_green}
-                alt="progera_green"
-              />
             </div>
       </div>
         <PersonSwiper />

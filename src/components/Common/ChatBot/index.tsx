@@ -12,6 +12,8 @@ import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { Exo_2 } from "next/font/google";
 import VisitorEmailFormContainer from './VisitorEmailFormContainer';
+import { SlackMessage } from '@/types/Chat';
+import { useSlackChat } from '@/hooks/useSlackChat';
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -30,10 +32,15 @@ export default function ChatBotContainer({
   isExistingClient,
   userId,
 }: ChatBotContainerProps) {
+
+
+  const { isOutOfOffice } = useSlackChat(userId);
   const [showChatBot, setShowChatBot] = useState(false);
-  // const [showPopup, setShowPopup] = useState(false);
-  const [isSlackChat, setIsSlackChat] = useState(true);
+  const [isSlackChat, setIsSlackChat] = useState(!isOutOfOffice);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [localMessages, setLocalMessages] = useState<SlackMessage[]>([]);
+  // const [showPopup, setShowPopup] = useState(false);
+
   const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
     if (typeof window !== "undefined") {
       return sessionStorage.getItem("anonymousUserEmail") || "";
@@ -48,7 +55,7 @@ export default function ChatBotContainer({
     return false;
   });
 
-  const {storedMessages} = useAIMessagesStore();
+  const { storedMessages } = useAIMessagesStore();
   const {
     messages: aiMessages,
     sendMessage,
@@ -115,6 +122,8 @@ export default function ChatBotContainer({
               <SlackMessagesContainer
                 toggleChatType={toggleChatType}
                 userId={userId}
+                localMessages={localMessages}
+                setLocalMessages={setLocalMessages}
               />
             ) : (
               <AiMessagesContainer
@@ -131,13 +140,16 @@ export default function ChatBotContainer({
               />
             )}
             <>
-              {(!isChatStarted && !isExistingClient && !anonymousUserEmail && (
+              {!isChatStarted && !isExistingClient && !anonymousUserEmail && (
                 <VisitorEmailFormContainer
+                  isExistingClient={isExistingClient}
                   setIsChatStarted={setIsChatStarted}
                   setAnonymousUserEmail={setAnonymousUserEmail}
                   anonymousUserEmail={anonymousUserEmail}
+                  setLocalMessages={setLocalMessages}
+                  setIsSlackChat={setIsSlackChat}
                 />
-              ))}
+              )}
             </>
           </div>
         </div>

@@ -14,11 +14,11 @@ const isWithinBusinessHours = (): boolean => {
   // Monday to Friday: 1-5
   const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 
-  // Business hours: 9:00 - 21:00 (9 AM to 9 PM)
-  return isWeekday && berlinHour >= 9 && berlinHour < 21;
+  // Business hours: 8:00 - 20:00 (8 AM to 8 PM)
+  return isWeekday && berlinHour >= 8 && berlinHour < 20;
 };
 
-export const useSlackChat = (userId: string | undefined) => {
+export const useSlackChat = (userId?: string | undefined) => {
   const [messages, setMessages] = useState<SlackMessage[]>([]);
   const [status, setStatus] = useState<
     "ready" | "sending" | "waiting_for_human" | "fetching_messages"
@@ -49,15 +49,17 @@ export const useSlackChat = (userId: string | undefined) => {
 
   useEffect(() => {
     const getUserSlackThread = async () => {
-      if (userId) {
-        const stored = localStorage.getItem(`slack_thread_${userId}`);
-        if (stored) setThreadTs(stored);
-      }
+        const stored = localStorage.getItem(
+          `slack_thread_${userId ?? `visitor`}`
+        );
+        if (stored)
+          setThreadTs(stored);
     };
     getUserSlackThread();
   }, [userId]);
 
   useEffect(() => {
+    console.log('THREADS : ', threadTs)
     if (!threadTs) return;
     const loadInitialMessages = async () => {
       setStatus("fetching_messages");
@@ -131,9 +133,9 @@ export const useSlackChat = (userId: string | undefined) => {
   }, [threadTs, status, lastSentTs, isOutOfOffice, outOfOfficeMessageAdded]);
 
   const sendMessage = async (text: string) => {
-    console.log("USER ID", userId);
     console.log("MESSAGE", text);
-    if (!text.trim() || !userId) return;
+    console.log("Thread", threadTs)
+    if (!text.trim()) return;
 
     const userMessage: SlackMessage = {
       id: Date.now().toString(),
@@ -151,7 +153,7 @@ export const useSlackChat = (userId: string | undefined) => {
       setLastSentTs(newThreadTs);
       if (!threadTs) {
         setThreadTs(newThreadTs);
-        localStorage.setItem(`slack_thread_${userId}`, newThreadTs);
+        localStorage.setItem(`slack_thread_${userId ?? `visitor`}`, newThreadTs);
       }
 
       // Don't automatically add out-of-office message here

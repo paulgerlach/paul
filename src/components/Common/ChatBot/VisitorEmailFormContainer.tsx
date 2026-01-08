@@ -1,5 +1,7 @@
 "use client";
 
+import { useSlackChat } from '@/hooks/useSlackChat';
+import { SlackMessage } from '@/types/Chat';
 import axios from 'axios';
 import React, { Dispatch, useCallback, useState } from 'react'
 
@@ -7,14 +9,21 @@ export default function VisitorEmailFormContainer({
   setIsChatStarted,
   setAnonymousUserEmail,
   anonymousUserEmail,
+  isExistingClient,
+  setLocalMessages,
+  setIsSlackChat,
 }: {
   setIsChatStarted: Dispatch<React.SetStateAction<boolean>>;
   setAnonymousUserEmail: Dispatch<React.SetStateAction<string>>;
   anonymousUserEmail: string;
+  isExistingClient: boolean;
+  setLocalMessages: Dispatch<React.SetStateAction<SlackMessage[]>>;
+  setIsSlackChat: Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [emailError, setEmailError] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [userEmailInput, setUserEmailInput] = useState("");
+  const { sendMessage, status, input, setInput } = useSlackChat();
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,21 +39,40 @@ export default function VisitorEmailFormContainer({
     }
   };
 
-  const handleEmailChange = 
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const email = e.target.value;
-      setUserEmailInput(email);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    setUserEmailInput(email);
 
-      if (emailError) {
-        setEmailError("");
-      }
-
-      if (email === "") {
-        setIsEmailValid(false);
-      } else {
-        setIsEmailValid(validateEmail(email));
-      }
+    if (emailError) {
+      setEmailError("");
     }
+
+    if (email === "") {
+      setIsEmailValid(false);
+    } else {
+      setIsEmailValid(validateEmail(email));
+    }
+  };
+
+  const sendSlackMessage = async () => {
+    try {
+      console.log("Sending slack message", userEmailInput);
+      await sendMessage(
+        `Chat started by a user with the email : ${userEmailInput}`
+      );
+
+      setLocalMessages((prev) => [
+        ...prev,
+        {
+          role: "user",
+          text: `Chat started by a user with the email : ${userEmailInput}`,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleEmailSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -67,9 +95,13 @@ export default function VisitorEmailFormContainer({
       }
 
       setIsChatStarted(true);
+      setIsSlackChat(true);
       setEmailError("");
       setAnonymousUserEmail(userEmailInput);
-      console.log("Chat started with email:", anonymousUserEmail);
+
+      if (!isExistingClient) {
+        await sendSlackMessage();
+      }
     },
     [userEmailInput, anonymousUserEmail]
   );

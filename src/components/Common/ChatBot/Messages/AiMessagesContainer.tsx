@@ -9,6 +9,7 @@ import AIChatInput from "../AIChatInput";
 import AnonymousChatBanner from "../AnonymousChatBanner";
 import DefaultChatMessage from "./DefaultChatMessage";
 import LoadingMessage from "./LoadingMessage";
+import { SlackMessage } from "@/types/Chat";
 interface AiMessagesContainerProps {
   isExistingClient: boolean;
   toggleChatType: () => void;
@@ -47,7 +48,7 @@ interface AiMessagesContainerProps {
   setIsChatStarted: Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function  AiMessagesContainer({
+export default function AiMessagesContainer({
   isExistingClient,
   toggleChatType,
   aiMessages,
@@ -57,10 +58,8 @@ export default function  AiMessagesContainer({
   anonymousUserEmail,
   setAnonymousUserEmail,
   isChatStarted,
-  setIsChatStarted
+  setIsChatStarted,
 }: AiMessagesContainerProps) {
-
-
   const setStoredMessages = useAIMessagesStore(
     (state) => state.setStoredMessages
   );
@@ -71,10 +70,10 @@ export default function  AiMessagesContainer({
     setStoredMessages(aiMessages);
   }, [aiMessages, setStoredMessages]);
 
-
   const clearSessionEmail = () => {
     if (typeof window !== "undefined") {
       sessionStorage.removeItem("anonymousUserEmail");
+      sessionStorage.removeItem("slack_thread_visitor");
       setAnonymousUserEmail("");
       setIsChatStarted(false);
     }
@@ -110,38 +109,37 @@ export default function  AiMessagesContainer({
           )}
         </div>
       </div>
-      
-        <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
-          <button
-            title="Send message"
-            onClick={toggleChatType}
-            className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
-          >
-            <MdOutlineSupportAgent color="#FFFFFF" size={30} />
-          </button>
 
-          {/* Show clear session button for anonymous users */}
-          {!isExistingClient && isChatStarted && (
-            <div className="w-full flex justify-end mb-2">
-              <button
-                onClick={clearSessionEmail}
-                className="text-xs text-gray-600 hover:text-red-600 underline"
-                title="Chat mit anderer E-Mail fortsetzen"
-              >
-                Andere E-Mail verwenden
-              </button>
-            </div>
-          )}
+      <div className="flex flex-col items-start justify-center w-full gap-3 pt-4 border-gray-200">
+        <button
+          title="Send message"
+          onClick={toggleChatType}
+          className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
+        >
+          <MdOutlineSupportAgent color="#FFFFFF" size={30} />
+        </button>
 
-          <AIChatInput
-            sendMessage={sendMessage}
-            input={input}
-            setInput={setInput}
-            status={status}
-            stop={stop}
-          />
-        </div>
-      
+        {/* Show clear session button for anonymous users */}
+        {!isExistingClient && isChatStarted && (
+          <div className="w-full flex justify-end mb-2">
+            <button
+              onClick={clearSessionEmail}
+              className="text-xs text-gray-600 hover:text-red-600 underline"
+              title="Chat mit anderer E-Mail fortsetzen"
+            >
+              Andere E-Mail verwenden
+            </button>
+          </div>
+        )}
+
+        <AIChatInput
+          sendMessage={sendMessage}
+          input={input}
+          setInput={setInput}
+          status={status}
+          stop={stop}
+        />
+      </div>
     </div>
   );
 }

@@ -23,7 +23,8 @@ export default function SlackMessagesContainer({
   localMessages,
   setLocalMessages,
 }: SlackChatBotProps) {
-  const { messages, status } = useSlackChat(userId);
+  const threadTs = localStorage.getItem(`slack_thread_${userId ?? `visitor`}`) ?? undefined;
+const { messages, status } = useSlackChat(userId, threadTs);
 
   useEffect(() => {
     setLocalMessages(messages);

@@ -23,7 +23,7 @@ export default function VisitorEmailFormContainer({
   const [emailError, setEmailError] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [userEmailInput, setUserEmailInput] = useState("");
-  const { sendMessage, status, input, setInput } = useSlackChat();
+  const { sendMessage } = useSlackChat();
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,19 +56,20 @@ export default function VisitorEmailFormContainer({
 
   const sendSlackMessage = async () => {
     try {
-      console.log("Sending slack message", userEmailInput);
       await sendMessage(
-        `Chat started by a user with the email : ${userEmailInput}`
+        `Hallo, ich bin ein Besucher (nicht registrierter Nutzer) und benötige Unterstützung. Meine E-Mail-Adresse für die Kontaktaufnahme: ${userEmailInput}`
       );
 
       setLocalMessages((prev) => [
         ...prev,
         {
           role: "user",
-          text: `Chat started by a user with the email : ${userEmailInput}`,
+          text: `Hallo, ich bin ein Besucher (nicht registrierter Nutzer) und benötige Unterstützung. Meine E-Mail-Adresse für die Kontaktaufnahme: ${userEmailInput}`,
           timestamp: new Date(),
         },
       ]);
+
+      setUserEmailInput("");
     } catch (error) {
       console.error(error);
     }
@@ -98,6 +99,7 @@ export default function VisitorEmailFormContainer({
       setIsSlackChat(true);
       setEmailError("");
       setAnonymousUserEmail(userEmailInput);
+      
 
       if (!isExistingClient) {
         await sendSlackMessage();

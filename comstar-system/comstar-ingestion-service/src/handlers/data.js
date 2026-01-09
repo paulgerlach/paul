@@ -39,6 +39,8 @@ class DataHandler {
       }
       // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
+
+    console.log('Result========>', result)
     
     const meterId = result.meter.id;
     const meterManufacturer = result.meter.manufacturer;
@@ -54,11 +56,15 @@ class DataHandler {
       return null;
     }
 
-    const meter = await this.meterIdExists(meterId);
+    const meter = await this.getLocalMeter(meterId);
     if(!meter) {
       console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
       return null;
     }
+
+    //Fields will come from Engelmann's pre-decoded CSV format - null for now
+    const frame_type = null;
+    const encryption = null;
 
     if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
       console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
@@ -100,8 +106,11 @@ class DataHandler {
       return null;
     }
 
+    //TODO: Deduplication - Prevent duplicate readings (same meter + timestamp)
+
+
     console.log("============VALIDATION SUCCESSFUL!!!=============")
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings);
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);
 
     return {
       success: true,
@@ -111,10 +120,15 @@ class DataHandler {
     };
   }
 
-  async meterIdExists(meterId) {
-    // Check if meterId exists in this.meterMapping
-    const meter = await databaseService.getMeterById(meterId);
-    return meter;
+  async getLocalMeter(meterId) {
+    try {
+      const meter = await databaseService.getLocalMeterById(meterId);
+      return meter;
+    }
+    catch (error) {
+      console.error(error)
+      throw error;
+    }
   }
 }
 

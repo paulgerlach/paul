@@ -43,8 +43,14 @@ export default function BetriebskostenabrechnungPreview({
     return mainDoc?.end_date ? new Date(mainDoc?.end_date) : null;
   }, [mainDoc?.end_date]);
 
-  const { consumption } = useConsumptionData(
-    previewLocal?.id,
+
+
+  const allLocalIds = useMemo(() => {
+    return Array.from(new Set(contracts.map(c => c.local_id).filter(Boolean)));
+  }, [contracts]);
+
+  const { consumption: buildingConsumption } = useConsumptionData(
+    allLocalIds,
     periodStart,
     periodEnd
   );
@@ -379,15 +385,15 @@ export default function BetriebskostenabrechnungPreview({
             <tbody>
               <tr>
                 <td className="text-[8px] p-1 border-r border-b border-black">Kaltwasser</td>
-                <td className="text-[8px] p-1 border-b border-black text-end">{(consumption.waterCold * 1000).toLocaleString("de-DE", { maximumFractionDigits: 0 })} L</td>
+                <td className="text-[8px] p-1 border-b border-black text-end">{buildingConsumption.waterCold.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³</td>
               </tr>
               <tr>
                 <td className="text-[8px] p-1 border-r border-b border-black">Warmwasser</td>
-                <td className="text-[8px] p-1 border-b border-black text-end">{(consumption.waterHot * 1000).toLocaleString("de-DE", { maximumFractionDigits: 0 })} L</td>
+                <td className="text-[8px] p-1 border-b border-black text-end">{buildingConsumption.waterHot.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³</td>
               </tr>
               <tr>
                 <td className="text-[8px] p-1 border-r border-black font-semibold">Heizung</td>
-                <td className="text-[8px] p-1 text-end font-semibold">{consumption.heat.toLocaleString("de-DE", { maximumFractionDigits: 0 })} Wh</td>
+                <td className="text-[8px] p-1 text-end font-semibold">{buildingConsumption.heat.toLocaleString("de-DE", { maximumFractionDigits: 3 })} MWh</td>
               </tr>
             </tbody>
           </table>

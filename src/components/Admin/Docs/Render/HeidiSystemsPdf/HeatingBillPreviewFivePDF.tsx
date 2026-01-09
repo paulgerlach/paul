@@ -1,7 +1,7 @@
 "use client";
 
 import { Page, Text, View, StyleSheet, Image, Link } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/types";
 import { formatDateGerman } from "@/utils";
 
 const colors = {

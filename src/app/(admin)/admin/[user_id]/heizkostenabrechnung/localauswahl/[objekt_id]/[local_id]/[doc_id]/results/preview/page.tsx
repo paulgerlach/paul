@@ -6,7 +6,6 @@ import {
   getLocalById,
   getObjectById,
   getOperatingCostDocumentByID,
-  getRelatedContractors,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -40,7 +39,7 @@ export default async function ResultLocalPreview({
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("heizkostenabrechnung"),
     getOperatingCostDocumentByID(doc_id),
-    getAdminContractsWithContractorsByLocalID(local_id),
+    getAdminContractsWithContractorsByLocalID(local_id, user_id),
     getInvoicesByOperatingCostDocumentID(doc_id),
     getLocalById(local_id),
     getAdminUserData(user_id),

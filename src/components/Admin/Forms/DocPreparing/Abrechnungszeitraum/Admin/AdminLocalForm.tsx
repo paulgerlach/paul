@@ -61,14 +61,14 @@ export default function AdminAbrechnungszeitraumLocalForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
     defaultValues: docValues
       ? {
-          ...docValues,
-          start_date: new Date(
-            docValues.start_date ?? defaultValues.start_date
-          ),
-          end_date: new Date(docValues.end_date ?? defaultValues.end_date),
-          consumption_dependent: Number(docValues.consumption_dependent),
-          living_space_share: Number(docValues.living_space_share),
-        }
+        ...docValues,
+        start_date: new Date(
+          docValues.start_date ?? defaultValues.start_date
+        ),
+        end_date: new Date(docValues.end_date ?? defaultValues.end_date),
+        consumption_dependent: Number(docValues.consumption_dependent),
+        living_space_share: Number(docValues.living_space_share),
+      }
       : defaultValues,
   });
   const { setValue, watch, getValues } = methods;
@@ -126,7 +126,7 @@ export default function AdminAbrechnungszeitraumLocalForm({
   };
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/localauswahl`
     : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektID}`;
 
   return (

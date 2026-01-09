@@ -1,4 +1,4 @@
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { ContractorType } from "@/types";
 import { HeatingBillPreviewOneView } from "./HeatingBillPreviewOneView";
 

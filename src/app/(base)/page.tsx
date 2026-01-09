@@ -151,9 +151,9 @@ export default async function Home() {
   const supabase = await supabaseServer();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const isExistingClient = !!session;
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isExistingClient = !!user;
 
   return (
     <Suspense fallback={<Loading />}>
@@ -399,255 +399,255 @@ export default async function Home() {
             />
           </div>
         </div>
-      <div className="hero-2 max-medium:px-4">
-            <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
-              Jetzt auf Funkzähler umsteigen
-            </h2>
-            <p className="text-dark_text leading-[19.2px] text-base max-small:text-sm mb-16 max-w-3xl mx-auto text-center">
-              Revolutionieren Sie Ihr Energiemanagement: Reduzieren Sie Kosten,
-              steigern Sie die Effizienz und profitieren Sie von automatisierten
-              Überwachungs- und Steuerungslösungen für eine zukunftssichere
-              Verbrauchserfassung.
-            </p>
-            <div className="grid grid-cols-2 max-medium:grid-cols-1 mb-[18px] gap-6">
-              <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
-                <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                  Kostenfreie Installation
-                </p>
-                <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
-                  Wir rüsten Sie kostenlos mit modernsten Funkzählern zur
-                  digitalen Erfassung Ihres Warm-, Kaltwasser- und
-                  Heizungsverbrauchs aus.
-                </p>
-                <Link
-                  href={ROUTE_FRAGEBOGEN}
-                  className="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white"
-                >
-                  Jetzt umrüsten lassen
-                </Link>
-                <div className="bg-white/90 flex items-center justify-center pt-[60px] px-[116px] max-megalarge:px-20 rounded-t-[20px]">
-                  <Image
-                    width={300}
-                    height={400}
-                    priority
-                    sizes="(max-width: 768px) 100vw, 300px"
-                    src={counter}
-                    alt="counter"
-                  />
-                </div>
-              </div>
-              <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
-                <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                  Dokumenten-Management
-                </p>
-                <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
-                  Alle Verbrauchsdaten werden automatisch erfasst und stehen
-                  Ihnen direkt für die Betriebskostenabrechnung zur Verfügung.
-                </p>
-                <Link
-                  href={ROUTE_FUNKTIONEN}
-                  className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
-                >
-                  mehr erfahren
-                </Link>
+        <div className="hero-2 max-medium:px-4">
+          <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
+            Jetzt auf Funkzähler umsteigen
+          </h2>
+          <p className="text-dark_text leading-[19.2px] text-base max-small:text-sm mb-16 max-w-3xl mx-auto text-center">
+            Revolutionieren Sie Ihr Energiemanagement: Reduzieren Sie Kosten,
+            steigern Sie die Effizienz und profitieren Sie von automatisierten
+            Überwachungs- und Steuerungslösungen für eine zukunftssichere
+            Verbrauchserfassung.
+          </p>
+          <div className="grid grid-cols-2 max-medium:grid-cols-1 mb-[18px] gap-6">
+            <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Kostenfreie Installation
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Wir rüsten Sie kostenlos mit modernsten Funkzählern zur
+                digitalen Erfassung Ihres Warm-, Kaltwasser- und
+                Heizungsverbrauchs aus.
+              </p>
+              <Link
+                href={ROUTE_FRAGEBOGEN}
+                className="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white"
+              >
+                Jetzt umrüsten lassen
+              </Link>
+              <div className="bg-white/90 flex items-center justify-center pt-[60px] px-[116px] max-megalarge:px-20 rounded-t-[20px]">
                 <Image
-                  width={400}
-                  height={300}
+                  width={300}
+                  height={400}
                   priority
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  src={doc_phone}
-                  alt="screenshot"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  src={counter}
+                  alt="counter"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 max-medium:grid-cols-1 mb-20 gap-[18px]">
-              <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
-                <p className="text-[25px] max-small:text-xl relative z-[2] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                  Dashboard
-                </p>
-                <p className="text-center relative z-[2] text-dark_text text-base max-small:text-sm leading-[19.2px] mb-12">
-                  Alle Verbrauchswerte für Warmwasser, Kaltwasser und Heizkosten
-                  in einer übersichtlichen Darstellung.
-                </p>
-                <LazyLottie
-                  animationData={animation3}
-                  id="animation3"
-                  wrapperClassName="overflow-hidden relative z-[0]"
-                />
-              </div>
-              <div className="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
-                <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all px-[25px]">
-                  Digitale Funkablesung
-                </p>
-                <p className="text-center text-dark_text px-[25px] text-base max-small:text-sm leading-[19.2px]">
-                  Erfassen Sie Verbrauchsdaten über alle Sparten hinweg –
-                  komplett ohne manuelles Ablesen oder Vor-Ort-Termine.
-                </p>
-                <Link
-                  href={ROUTE_FUNKTIONEN}
-                  className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
-                >
-                  mehr erfahren
-                </Link>
-                <LazyLottie
-                  animationData={animation2}
-                  id="animation21"
-                  wrapperClassName="overflow-hidden pl-10 relative"
-                />
-              </div>
-              <div className="px-[25px] pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
-                <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
-                  Heizkostenabrechnung
-                </p>
-                <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
-                  Erstellen Sie Ihre Betriebskostenabrechnung schnell, einfach
-                  und präzise.
-                </p>
-                <Image
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="block px-16 w-full mt-auto mb-0"
-                  src={checkmarks3}
-                  alt="checkmarks3"
-                />
-              </div>
-            </div>
-      </div>
-      <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
-            <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
-              Die Wahl führender Innovatoren und Branchenführer
-            </p>
-            <div className="grid col-span-2 items-center justify-center grid-cols-4 max-medium:col-span-1 max-medium:grid-cols-3 max-medium:justify-items-center gap-x-10 gap-y-8">
+            <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Dokumenten-Management
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Alle Verbrauchsdaten werden automatisch erfasst und stehen
+                Ihnen direkt für die Betriebskostenabrechnung zur Verfügung.
+              </p>
+              <Link
+                href={ROUTE_FUNKTIONEN}
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
+                mehr erfahren
+              </Link>
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-24 h-10"
-                src={berlin_bear_green}
-                alt="berlinBear"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto w-24 h-8"
-                src={dumax_green}
-                alt="dumax"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto w-24 h-8"
-                src={harte_green}
-                alt="harte"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto w-20 h-8"
-                src={hsp_green}
-                alt="hsp"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-20 h-4"
-                src={idgim_green}
-                alt="idgim"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block col-span-2 mx-auto h-9"
-                src={quarterback_green}
-                alt="quarterback"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-24 h-8"
-                src={raum_green}
-                alt="raum"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-28 h-14"
-                src={schleicher_green}
-                alt="schleicher_green"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-20 h-8"
-                src={vitec_green}
-                alt="vitec"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-32 h-8"
-                src={wagner_green}
-                alt="wagner"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-20 h-8"
-                src={werne_green}
-                alt="werne_green"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-24 h-8"
-                src={neckar_green}
-                alt="neckar_green"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-20 h-8"
-                src={niesen_green}
-                alt="niesen_green"
-              />
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                loading="lazy"
-                className="inline-block mx-auto max-w-24 h-8"
-                src={progera_green}
-                alt="progera_green"
+                width={400}
+                height={300}
+                priority
+                sizes="(max-width: 768px) 100vw, 400px"
+                src={doc_phone}
+                alt="screenshot"
               />
             </div>
           </div>
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 mb-20 gap-[18px]">
+            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl relative z-[2] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Dashboard
+              </p>
+              <p className="text-center relative z-[2] text-dark_text text-base max-small:text-sm leading-[19.2px] mb-12">
+                Alle Verbrauchswerte für Warmwasser, Kaltwasser und Heizkosten
+                in einer übersichtlichen Darstellung.
+              </p>
+              <LazyLottie
+                animationData={animation3}
+                id="animation3"
+                wrapperClassName="overflow-hidden relative z-[0]"
+              />
+            </div>
+            <div className="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all px-[25px]">
+                Digitale Funkablesung
+              </p>
+              <p className="text-center text-dark_text px-[25px] text-base max-small:text-sm leading-[19.2px]">
+                Erfassen Sie Verbrauchsdaten über alle Sparten hinweg –
+                komplett ohne manuelles Ablesen oder Vor-Ort-Termine.
+              </p>
+              <Link
+                href={ROUTE_FUNKTIONEN}
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
+                mehr erfahren
+              </Link>
+              <LazyLottie
+                animationData={animation2}
+                id="animation21"
+                wrapperClassName="overflow-hidden pl-10 relative"
+              />
+            </div>
+            <div className="px-[25px] pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Heizkostenabrechnung
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Erstellen Sie Ihre Betriebskostenabrechnung schnell, einfach
+                und präzise.
+              </p>
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                loading="lazy"
+                className="block px-16 w-full mt-auto mb-0"
+                src={checkmarks3}
+                alt="checkmarks3"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-4 hero-3 grid-cols-3 max-medium:flex max-medium:flex-col max-medium:items-start max-medium:justify-start max-medium:space-y-4">
+          <p className="col-span-1 text-lg text-dark_text max-medium:text-center font-bold">
+            Die Wahl führender Innovatoren und Branchenführer
+          </p>
+          <div className="grid col-span-2 items-center justify-center grid-cols-4 max-medium:col-span-1 max-medium:grid-cols-3 max-medium:justify-items-center gap-x-10 gap-y-8">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-10"
+              src={berlin_bear_green}
+              alt="berlinBear"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-24 h-8"
+              src={dumax_green}
+              alt="dumax"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-24 h-8"
+              src={harte_green}
+              alt="harte"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto w-20 h-8"
+              src={hsp_green}
+              alt="hsp"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-4"
+              src={idgim_green}
+              alt="idgim"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block col-span-2 mx-auto h-9"
+              src={quarterback_green}
+              alt="quarterback"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={raum_green}
+              alt="raum"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-28 h-14"
+              src={schleicher_green}
+              alt="schleicher_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={vitec_green}
+              alt="vitec"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-32 h-8"
+              src={wagner_green}
+              alt="wagner"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={werne_green}
+              alt="werne_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={neckar_green}
+              alt="neckar_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-20 h-8"
+              src={niesen_green}
+              alt="niesen_green"
+            />
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="inline-block mx-auto max-w-24 h-8"
+              src={progera_green}
+              alt="progera_green"
+            />
+          </div>
+        </div>
         <PersonSwiper />
         <div className="px-[72px] max-large:px-6">
           <h2 className="mt-48 max-large:mt-16 section-title text-center text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-5 text-dark_text relative">

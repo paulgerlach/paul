@@ -1,8 +1,9 @@
 "use client";
 
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
-import { formatDateGerman } from "@/utils";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/types";
+import { formatDateGerman, formatEuro } from "@/utils";
+import { type HeatingBillPreviewFourCalculated } from "../HeatingBillPreview/HeatingBillPreviewFourView";
 
 const colors = {
   accent: "#DDE9E0",
@@ -220,9 +221,23 @@ const styles = StyleSheet.create({
 
 export default function HeatingBillPreviewFourPDF({
   previewData,
+  data,
 }: {
   previewData: HeatingBillPreviewData;
+  data: HeatingBillPreviewFourCalculated;
 }) {
+  const formatter = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const rateFormatter = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 6,
+  });
+
+  const { buildingConsumption, unitConsumption, costCalculations, groupedMeters } = data;
+
   return (
     <Page size="A4" style={styles.page}>
       {/* Header */}
@@ -329,13 +344,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              77,02 m² Wohnfläche
+              {formatter.format(buildingConsumption.heat)} MWh
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              1,869733 € je m²
+              {rateFormatter.format(costCalculations.heating.rateGrund)} € je MWh
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -345,7 +360,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              144,01 €
+              {formatEuro(costCalculations.heating.grund)}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -355,13 +370,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              7,00 MWh
+              {formatter.format(unitConsumption.heat)} MWh
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              120,895580 € je MWh
+              {rateFormatter.format(costCalculations.heating.rateVerbrauch)} € je MWh
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -371,7 +386,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              846,27 €
+              {formatEuro(costCalculations.heating.verbrauch)}
             </Text>
           </View>
         </View>
@@ -386,13 +401,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              77,02 m² Wohnfläche
+              {formatter.format(buildingConsumption.waterHot)} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              1,453210 € je m²
+              {rateFormatter.format(costCalculations.warmwater.rateGrund)} € je m³
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -402,7 +417,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              111,93 €
+              {formatEuro(costCalculations.warmwater.grund)}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -412,13 +427,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              10,88 m³
+              {formatter.format(unitConsumption.waterHot)} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              12,059077 € je m³
+              {rateFormatter.format(costCalculations.warmwater.rateVerbrauch)} € je m³
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -428,14 +443,16 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              131,20 €
+              {formatEuro(costCalculations.warmwater.verbrauch)}
             </Text>
           </View>
           <View style={[styles.sumRow, { marginTop: 4 }]}>
             <Text style={{ flex: 1 }}>
               Summe Kosten für Heizung und Warmwasser
             </Text>
-            <Text style={{ textAlign: "right" }}>1.233,41 €</Text>
+            <Text style={{ textAlign: "right" }}>
+              {formatEuro(costCalculations.heating.grund + costCalculations.heating.verbrauch + costCalculations.warmwater.grund + costCalculations.warmwater.verbrauch)}
+            </Text>
           </View>
         </View>
 
@@ -449,13 +466,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              45,20 m³
+              {formatter.format(costCalculations.coldwater.consumption)} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              1,713411 € je m³
+              {rateFormatter.format(costCalculations.coldwater.rates.kaltwasser)} € je m³
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -465,7 +482,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              77,45 €
+              {formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.kaltwasser)}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -475,13 +492,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              45,20 m³
+              {formatter.format(costCalculations.coldwater.consumption)} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              2,014517 € je m³
+              {rateFormatter.format(costCalculations.coldwater.rates.abwasser)} € je m³
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -491,7 +508,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              91,06 €
+              {formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.abwasser)}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -501,13 +518,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              45,20 m³
+              {formatter.format(costCalculations.coldwater.consumption)} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              0,228791 € je m³
+              {rateFormatter.format(costCalculations.coldwater.rates.geraetmiete)} € je m³
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -517,7 +534,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              10,34 €
+              {formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.geraetmiete)}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -533,7 +550,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              17,290569 € je Nutzeinh.
+              {rateFormatter.format(costCalculations.coldwater.rates.abrechnung)} € je Nutzeinh.
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -543,19 +560,19 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              17,29 €
+              {formatEuro(costCalculations.coldwater.rates.abrechnung)}
             </Text>
           </View>
           <View style={[styles.sumRow, { marginTop: 4 }]}>
             <Text style={{ flex: 1 }}>Summe Kosten für Kaltwasser</Text>
-            <Text style={{ textAlign: "right" }}>1.233,41 €</Text>
+            <Text style={{ textAlign: "right" }}>{formatEuro(costCalculations.coldwater.total)}</Text>
           </View>
         </View>
 
         {/* Total Amount */}
         <View style={styles.totalAmountBox}>
           <Text style={styles.totalAmountText}>Gesamtbetrag</Text>
-          <Text style={styles.totalAmountValue}>1.429,55 €</Text>
+          <Text style={styles.totalAmountValue}>{formatEuro(costCalculations.totalAmount)}</Text>
         </View>
       </View>
 
@@ -573,9 +590,11 @@ export default function HeatingBillPreviewFourPDF({
         <View style={styles.reliefDivider} />
         <View style={styles.reliefGrid}>
           <Text style={{ flex: 4, color: "white" }}>Preisbremse Energie</Text>
-          <Text style={{ flex: 1, color: "white" }}>21.035,94 €</Text>
+          <Text style={{ flex: 1, color: "white" }}>
+            {formatEuro(Number(previewData.invoices.find(i => i.cost_type?.toLowerCase().includes("preisbremse"))?.total_amount || 0))}
+          </Text>
           <Text style={{ flex: 1, textAlign: "right", color: "white" }}>
-            209,21 €
+            {formatEuro(0)}
           </Text>
         </View>
       </View>
@@ -602,23 +621,25 @@ export default function HeatingBillPreviewFourPDF({
             <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Flur</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                6EFE0121755587
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Wärmezähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {groupedMeters.heat.map((m, idx) => (
+              <View key={idx} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>{m.location}</Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {m.id}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {m.type}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.firstReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.lastReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{formatter.format(m.consumption)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
               <Text style={{ flex: 8 }}>Summe Heizung</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
+              <Text style={{ flex: 1 }}>{formatter.format(unitConsumption.heat)}</Text>
               <Text style={{ flex: 1 }}></Text>
             </View>
           </View>
@@ -644,37 +665,25 @@ export default function HeatingBillPreviewFourPDF({
             <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                9DWZ0122156287
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Warmwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                9DWZ0122156287
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Warmwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {groupedMeters.hot.map((m, idx) => (
+              <View key={idx} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>{m.location}</Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {m.id}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {m.type}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.firstReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.lastReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{formatter.format(m.consumption)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
               <Text style={{ flex: 8 }}>Summe Warmwasser</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
+              <Text style={{ flex: 1 }}>{formatter.format(unitConsumption.waterHot)}</Text>
               <Text style={{ flex: 1 }}></Text>
             </View>
           </View>
@@ -700,37 +709,25 @@ export default function HeatingBillPreviewFourPDF({
             <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                8DWZ0122033399
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Kaltwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                8DWZ0122033399
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Kaltwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {groupedMeters.cold.map((m, idx) => (
+              <View key={idx} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>{m.location}</Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {m.id}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {m.type}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.firstReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{rateFormatter.format(m.lastReading)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>{formatter.format(m.consumption)}</Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
               <Text style={{ flex: 8 }}>Summe Kaltwasser</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
+              <Text style={{ flex: 1 }}>{formatter.format(unitConsumption.waterCold)}</Text>
               <Text style={{ flex: 1 }}></Text>
             </View>
           </View>

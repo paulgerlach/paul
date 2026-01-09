@@ -1,9 +1,6 @@
 "use client";
 
-import { admin_logo } from "@/static/icons";
-import Image from "next/image";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
-import { formatDateGerman, formatEuro } from "@/utils";
+import { type HeatingBillPreviewData } from "./types";
 import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 
@@ -31,6 +28,8 @@ const HeatingBillPreviewTwo = ({
     periodStart,
     periodEnd
   );
+
+  console.log("buildingConsumption", buildingConsumption);
 
   const costGroups = useMemo(() => {
     const energy: any[] = [];

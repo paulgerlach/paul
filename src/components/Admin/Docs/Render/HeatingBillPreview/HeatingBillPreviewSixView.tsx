@@ -9,7 +9,7 @@ import {
     Legend,
     CartesianGrid,
 } from "recharts";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 
 export interface HeatingBillPreviewSixCalculated {
     energySource: string;

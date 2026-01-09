@@ -12,8 +12,8 @@ export function usePasswordResetSession() {
     const checkPasswordResetSession = async () => {
       try {
         // Check if we have a valid session first
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
+        const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
         if (sessionError) {
           console.error("Session error:", sessionError);
           toast.error("Ungültiger oder abgelaufener Link");
@@ -21,22 +21,12 @@ export function usePasswordResetSession() {
           return;
         }
 
-        if (!session) {
-          toast.error("Ungültiger oder abgelaufener Link");
-          router.push("/");
-          return;
-        }
-
-        // Get the current user
-        const { data: { user } } = await supabase.auth.getUser();
-        
         if (!user) {
           toast.error("Ungültiger oder abgelaufener Link");
           router.push("/");
           return;
         }
 
-        // Verify the user exists in our users table
         const { data: userData, error: userError } = await supabase
           .from("users")
           .select("id")
@@ -49,7 +39,6 @@ export function usePasswordResetSession() {
           return;
         }
 
-        // If we get here, the session is valid
         setIsValidToken(true);
       } catch (error) {
         console.error("Unexpected error in password reset session check:", error);
@@ -62,7 +51,7 @@ export function usePasswordResetSession() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === 'PASSWORD_RECOVERY') {
+        if (event === 'PASSWORD_RECOVERY' && session) {
           setIsValidToken(true);
           setIsLoading(false);
         } else if (event === 'SIGNED_OUT' || !session) {

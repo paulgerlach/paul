@@ -13,6 +13,7 @@ import type {
   OperatingCostDocumentType,
 } from "@/types";
 import { differenceInMonths, min, max, differenceInDays } from "date-fns";
+import { useConsumptionData } from "@/hooks/useConsumptionData";
 
 // Styles
 const styles = StyleSheet.create({
@@ -155,6 +156,16 @@ export default function BetriebskostenabrechnungPdf({
   const periodEnd = useMemo(() => {
     return mainDoc?.end_date ? new Date(mainDoc?.end_date) : null;
   }, [mainDoc?.end_date]);
+
+  const allLocalIds = useMemo(() => {
+    return Array.from(new Set(contracts.map(c => c.local_id).filter(Boolean)));
+  }, [contracts]);
+
+  const { consumption: buildingConsumption } = useConsumptionData(
+    allLocalIds,
+    periodStart,
+    periodEnd
+  );
 
   const filteredContracts = useMemo(() => {
     if (!periodEnd) return [];
@@ -492,6 +503,34 @@ export default function BetriebskostenabrechnungPdf({
               ]}
             >
               {formatEuro(amountsDiff)}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
+          IHRE VERBRAUCHSDATEN
+        </Text>
+        <View style={styles.table}>
+          <View style={[styles.tableRow, styles.tableHeader, { backgroundColor: "#f9fafb" }]}>
+            <Text style={[styles.tableCell, { textAlign: "left" }]}>Zählerart</Text>
+            <Text style={[styles.tableCell, { textAlign: "right" }]}>Gesamtverbrauch</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { textAlign: "left" }]}>Kaltwasser</Text>
+            <Text style={[styles.tableCell, { textAlign: "right" }]}>
+              {buildingConsumption.waterCold.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³
+            </Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { textAlign: "left" }]}>Warmwasser</Text>
+            <Text style={[styles.tableCell, { textAlign: "right" }]}>
+              {buildingConsumption.waterHot.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³
+            </Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={[styles.tableCell, { textAlign: "left", fontWeight: "bold" }]}>Heizung</Text>
+            <Text style={[styles.tableCell, { textAlign: "right", fontWeight: "bold" }]}>
+              {buildingConsumption.heat.toLocaleString("de-DE", { maximumFractionDigits: 3 })} MWh
             </Text>
           </View>
         </View>

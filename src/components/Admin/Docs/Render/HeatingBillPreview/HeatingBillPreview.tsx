@@ -1,3 +1,5 @@
+"use client";
+
 import HeatingBillPreviewOne from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreviewOne";
 import HeatingBillPreviewTwo from "./HeatingBillPreviewTwo";
 import HeatingBillPreviewThree from "./HeatingBillPreviewThree";
@@ -16,6 +18,8 @@ import type {
 } from "@/types";
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
 import { differenceInMonths, max, min } from "date-fns";
+import { HeatingBillPreviewData } from "./types";
+import { useConsumptionData } from "@/hooks/useConsumptionData";
 
 export type HeatingBillPreviewProps = {
   mainDoc: HeatingBillDocumentType;
@@ -26,34 +30,6 @@ export type HeatingBillPreviewProps = {
   invoices: InvoiceDocumentType[];
   objekt: ObjektType;
   user: UserType;
-};
-
-export type HeatingBillPreviewData = {
-  mainDocDates: {
-    created_at?: string;
-    start_date?: string | null;
-    end_date?: string | null;
-  };
-  mainDocData: HeatingBillDocumentType;
-  userInfo: {
-    first_name: string;
-    last_name: string;
-  };
-  objektInfo: {
-    zip: string;
-    street: string;
-  };
-  contractorsNames: string;
-  totalInvoicesAmount: number;
-  totalDiff: number;
-  totalLivingSpace: number;
-  contracts: (ContractType & { contractors: ContractorType[] })[];
-  invoices: InvoiceDocumentType[];
-  costCategories: DocCostCategoryType[];
-  propertyNumber: string;
-  heidiCustomerNumber: string;
-  localId?: string;
-  unitArea: number;
 };
 
 export default function HeatingBillPreview({
@@ -70,6 +46,21 @@ export default function HeatingBillPreview({
     ? new Date(mainDoc.start_date)
     : new Date();
   const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
+
+  // Fetch consumption data including raw meter readings for cold water, hot water, and heating
+  const {
+    consumption,
+    meters,
+    coldWaterData,
+    hotWaterData,
+    heatingData,
+    isLoading: consumptionLoading,
+    error: consumptionError
+  } = useConsumptionData(
+    mainDoc?.local_id ?? undefined,
+    periodStart,
+    periodEnd
+  );
 
   const filteredContracts = contracts.filter((contract) => {
     if (!contract.rental_start_date || !contract.rental_end_date) return false;
@@ -127,6 +118,12 @@ export default function HeatingBillPreview({
     heidiCustomerNumber: generateHeidiCustomerNumber(),
     localId: mainDoc?.local_id ?? undefined,
     unitArea: Number(local.living_space || 0),
+    // Meter reading data
+    coldWaterData,
+    hotWaterData,
+    heatingData,
+    consumption,
+    meters,
   };
 
   return (

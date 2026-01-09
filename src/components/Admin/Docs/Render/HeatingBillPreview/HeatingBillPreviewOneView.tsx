@@ -1,6 +1,6 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { ContractorType } from "@/types";
 import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 

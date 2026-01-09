@@ -96,13 +96,12 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   const previewLink =
     docType === "objektauswahl"
       ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/${item.id}/preview`
-      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`;
+      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${local.id}/${docID}/results/preview`;
 
   return (
     <div
-      className={`bg-white p-2 max-medium:p-3 rounded-2xl max-medium:rounded-xl ${
-        status === "vacancy" && "available"
-      } flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-3`}
+      className={`bg-white p-2 max-medium:p-3 rounded-2xl max-medium:rounded-xl ${status === "vacancy" && "available"
+        } flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-3`}
     >
       <div className="flex items-center justify-start gap-8 max-medium:gap-3 max-medium:w-full max-medium:justify-between">
         <div className="flex items-center gap-8 max-medium:gap-3">

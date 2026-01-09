@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 import { formatEuro } from "@/utils";
 import { useMemo } from "react";

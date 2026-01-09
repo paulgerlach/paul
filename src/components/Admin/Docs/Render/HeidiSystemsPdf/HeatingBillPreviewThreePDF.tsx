@@ -1,7 +1,9 @@
 "use client";
 
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/types";
+import { type HeatingBillPreviewFourCalculated } from "../HeatingBillPreview/HeatingBillPreviewFourView";
+import { formatEuro } from "@/utils";
 
 const colors = {
   accent: "#DDE9E0",
@@ -69,9 +71,23 @@ const styles = StyleSheet.create({
 
 export default function HeatingBillPreviewThreePDF({
   previewData,
+  data,
 }: {
   previewData: HeatingBillPreviewData;
+  data: HeatingBillPreviewFourCalculated;
 }) {
+  const formatter = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const rateFormatter = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 6,
+  });
+
+  const { costCalculations } = data;
+
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.headerBox}>
@@ -91,7 +107,7 @@ export default function HeatingBillPreviewThreePDF({
 
       <View style={styles.summaryTopRow}>
         <Text>Kosten für Kaltwasser</Text>
-        <Text>41.468,88 €</Text>
+        <Text>{formatEuro(costCalculations.coldwater.total)}</Text>
       </View>
 
       <View style={styles.table}>
@@ -99,39 +115,39 @@ export default function HeatingBillPreviewThreePDF({
           <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
             Kaltwasser
           </Text>
-          <Text style={styles.cellRight}>17.036,69 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>1,713411 €/m³</Text>
+          <Text style={styles.cellRight}>{formatter.format(costCalculations.coldwater.consumption)} m³ *</Text>
+          <Text style={styles.cellRight}>{rateFormatter.format(costCalculations.coldwater.rates.kaltwasser)} €/m³ =</Text>
+          <Text style={styles.cellRight}>{formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.kaltwasser)}</Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
             Abwasser Gesamt
           </Text>
-          <Text style={styles.cellRight}>20.030,62 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>2,014517 €/m³</Text>
+          <Text style={styles.cellRight}>{formatter.format(costCalculations.coldwater.consumption)} m³ *</Text>
+          <Text style={styles.cellRight}>{rateFormatter.format(costCalculations.coldwater.rates.abwasser)} €/m³ =</Text>
+          <Text style={styles.cellRight}>{formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.abwasser)}</Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
             Gerätemiete Kaltwasser
           </Text>
-          <Text style={styles.cellRight}>2.274,90 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>0,228791 €/m³</Text>
+          <Text style={styles.cellRight}>{formatter.format(costCalculations.coldwater.consumption)} m³ *</Text>
+          <Text style={styles.cellRight}>{rateFormatter.format(costCalculations.coldwater.rates.geraetmiete)} €/m³ =</Text>
+          <Text style={styles.cellRight}>{formatEuro(costCalculations.coldwater.consumption * costCalculations.coldwater.rates.geraetmiete)}</Text>
         </View>
         <View style={styles.tableRow}>
           <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
             Abrechnung Kaltwasser
           </Text>
-          <Text style={styles.cellRight}>2.126,67 € :</Text>
-          <Text style={styles.cellRight}>123,00 Nutzeinh. =</Text>
-          <Text style={styles.cellRight}>17,290000 €/Nutzeinh.</Text>
+          <Text style={styles.cellRight}>1,00 Nutzeinh. *</Text>
+          <Text style={styles.cellRight}>{rateFormatter.format(costCalculations.coldwater.rates.abrechnung)} €/Nutzeinh. =</Text>
+          <Text style={styles.cellRight}>{formatEuro(costCalculations.coldwater.rates.abrechnung)}</Text>
         </View>
       </View>
 
       <View style={styles.summaryRow}>
         <Text>Summe Ihrer Kosten für Kaltwasser</Text>
-        <Text>153,80 €</Text>
+        <Text>{formatEuro(costCalculations.coldwater.total)}</Text>
       </View>
     </Page>
   );

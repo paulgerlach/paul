@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/types";
 import type { ContractorType } from "@/types";
 import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 

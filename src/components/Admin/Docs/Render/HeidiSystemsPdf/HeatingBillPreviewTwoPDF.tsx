@@ -1,7 +1,8 @@
 "use client";
 
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { HeatingBillPreviewData } from "../HeatingBillPreview/types";
+import { type HeatingBillPreviewFourCalculated } from "../HeatingBillPreview/HeatingBillPreviewFourView";
 import { formatDateGerman } from "@/utils";
 
 const colors = {
@@ -164,9 +165,18 @@ const styles = StyleSheet.create({
 
 export default function HeatingBillPreviewTwoPDF({
   previewData,
+  data,
 }: {
   previewData: HeatingBillPreviewData;
+  data: HeatingBillPreviewFourCalculated;
 }) {
+  const formatter = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const { buildingConsumption } = data;
+
   return (
     <Page size="A4" style={styles.page}>
       {/* Header */}
@@ -233,12 +243,12 @@ export default function HeatingBillPreviewTwoPDF({
                 color: colors.dark,
               }}
             >
-              Energieart: Nah-/Fernwärme kWh
+              Energieart: Nah-/Fernwärme MWh
             </Text>
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderCell}>POSITION</Text>
               <Text style={styles.tableHeaderCell}>DATUM</Text>
-              <Text style={styles.tableHeaderCell}>kWh</Text>
+              <Text style={styles.tableHeaderCell}>MWh</Text>
               <Text style={styles.tableHeaderCellRight}>BETRAG</Text>
             </View>
             <View style={styles.tableRow}>
@@ -250,7 +260,7 @@ export default function HeatingBillPreviewTwoPDF({
             <View style={styles.tableRow}>
               <Text style={styles.tableCell}>Rechnung{"\n"}260002673166</Text>
               <Text style={styles.tableCell}>31.12.2023</Text>
-              <Text style={styles.tableCell}>761.123</Text>
+              <Text style={styles.tableCell}>{formatter.format(buildingConsumption.heat)}</Text>
               <Text style={styles.tableCellRight}>124.242,47 €</Text>
             </View>
             <View style={[styles.tableRow, styles.sumRow]}>
@@ -269,7 +279,7 @@ export default function HeatingBillPreviewTwoPDF({
                   { fontWeight: "bold", color: colors.dark },
                 ]}
               >
-                761.123
+                {formatter.format(buildingConsumption.heat)}
               </Text>
               <Text
                 style={[
@@ -330,7 +340,7 @@ export default function HeatingBillPreviewTwoPDF({
               <Text
                 style={
                   (styles.tableCellRight,
-                  { fontWeight: "bold", color: colors.dark })
+                    { fontWeight: "bold", color: colors.dark })
                 }
               >
                 115.498,07 €

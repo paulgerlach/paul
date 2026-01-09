@@ -22,18 +22,15 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet: any) {
           cookiesToSet.forEach(({ name, value }: any) =>
-            setAll(cookiesToSet: any) {
-            cookiesToSet.forEach(({ name, value }: any) =>
-              request.cookies.set(name, value)
-            );
-            supabaseResponse = NextResponse.next({ request });
-            cookiesToSet.forEach(({ name, value, options }: any) =>
-              cookiesToSet.forEach(({ name, value, options }: any) =>
-                supabaseResponse.cookies.set(name, value, options)
-              );
-          },
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }: any) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
       },
-      }
+    }
   );
 
   // Always call getUser immediately after creating client

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { formatDateGerman } from "@/utils";
 
 export interface HeatingBillPreviewFiveCalculated {

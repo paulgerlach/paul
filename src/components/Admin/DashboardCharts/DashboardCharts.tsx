@@ -61,6 +61,8 @@ export default function DashboardCharts() {
   const heatChart = useHeatChartData();
   const notificationsChart = useNotificationsChartData();
 
+  console.log("hotWaterChart", hotWaterChart.data);
+
   // Combine data for EinsparungChart (needs all device types for CO2 calculations)
   const einsparungChartData = [
     ...coldWaterChart.data,

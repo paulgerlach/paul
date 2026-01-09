@@ -1,6 +1,6 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { formatDateGerman, formatEuro } from "@/utils";
 
 export interface HeatingBillPreviewTwoCalculated {
@@ -141,7 +141,7 @@ export const HeatingBillPreviewTwoView = ({
                                         </td>
                                         <td className="py-1 px-2 text-right">
                                             {/* Fallback to building consumption for Heat if it's an energy invoice */}
-                                            {idx === 0 && Number(inv.total_amount) > 0 ? formatter.format(buildingConsumption.heat / 1000) : ""}
+                                            {idx === 0 && Number(inv.total_amount) > 0 ? formatter.format(buildingConsumption.heat) : ""}
                                         </td>
                                         <td className="py-1 px-2 text-right">{formatEuro(inv.total_amount)}</td>
                                     </tr>
@@ -152,7 +152,7 @@ export const HeatingBillPreviewTwoView = ({
                                     </td>
                                     <td className="bg-pdf-accent text-pdf-dark py-1 px-2"></td>
                                     <td className="text-right bg-pdf-accent text-pdf-dark py-1 px-2">
-                                        {formatter.format(buildingConsumption.heat / 1000)}
+                                        {formatter.format(buildingConsumption.heat)}
                                     </td>
                                     <td className="text-right bg-pdf-accent rounded-r-base text-pdf-dark py-1 px-2">
                                         {formatEuro(sums.energySum)}
@@ -317,19 +317,19 @@ export const HeatingBillPreviewTwoView = ({
                     </div>
                     <div className="grid grid-cols-4 text-pdf-text gap-4 mt-2">
                         <div className="text-pdf-dark font-bold">
-                            davon {previewData.mainDocData.living_space_share || 30}% Grundkosten
+                            davon {previewData.mainDocData?.living_space_share || 30}% Grundkosten
                         </div>
-                        <div className="text-right">{formatEuro(thermal.totalWarmWaterCosts * Number(previewData.mainDocData.living_space_share || 30) / 100)} :</div>
+                        <div className="text-right">{formatEuro(thermal.totalWarmWaterCosts * Number(previewData.mainDocData?.living_space_share || 30) / 100)} :</div>
                         <div className="text-right">{previewData.totalLivingSpace} m²</div>
-                        <div className="text-right">= {formatter.format((thermal.totalWarmWaterCosts * Number(previewData.mainDocData.living_space_share || 30) / 100) / (previewData.totalLivingSpace || 1))} €/m²</div>
+                        <div className="text-right">= {formatter.format((thermal.totalWarmWaterCosts * Number(previewData.mainDocData?.living_space_share || 30) / 100) / (previewData.totalLivingSpace || 1))} €/m²</div>
                     </div>
                     <div className="grid grid-cols-4 text-pdf-text gap-4">
                         <div className="text-pdf-dark font-bold">
-                            davon {previewData.mainDocData.consumption_dependent || 70}% Verbrauchskosten
+                            davon {previewData.mainDocData?.consumption_dependent || 70}% Verbrauchskosten
                         </div>
-                        <div className="text-right">{formatEuro(thermal.totalWarmWaterCosts * Number(previewData.mainDocData.consumption_dependent || 70) / 100)} :</div>
+                        <div className="text-right">{formatEuro(thermal.totalWarmWaterCosts * Number(previewData.mainDocData?.consumption_dependent || 70) / 100)} :</div>
                         <div className="text-right">{formatter.format(thermal.totalWaterHotm3)} m³</div>
-                        <div className="text-right">= {formatter.format((thermal.totalWarmWaterCosts * Number(previewData.mainDocData.consumption_dependent || 70) / 100) / (thermal.totalWaterHotm3 || 1))} €/m³</div>
+                        <div className="text-right">= {formatter.format((thermal.totalWarmWaterCosts * Number(previewData.mainDocData?.consumption_dependent || 70) / 100) / (thermal.totalWaterHotm3 || 1))} €/m³</div>
                     </div>
                 </div>
 
@@ -363,19 +363,19 @@ export const HeatingBillPreviewTwoView = ({
                     </div>
                     <div className="grid grid-cols-4 text-pdf-text gap-4">
                         <div className="text-pdf-dark font-bold">
-                            davon {previewData.mainDocData.living_space_share || 30}% Grundkosten
+                            davon {previewData.mainDocData?.living_space_share || 30}% Grundkosten
                         </div>
-                        <div className="text-right">{formatEuro(thermal.totalHeatingCosts * Number(previewData.mainDocData.living_space_share || 30) / 100)} :</div>
+                        <div className="text-right">{formatEuro(thermal.totalHeatingCosts * Number(previewData.mainDocData?.living_space_share || 30) / 100)} :</div>
                         <div className="text-right">{previewData.totalLivingSpace} m²</div>
-                        <div className="text-right">= {formatter.format((thermal.totalHeatingCosts * Number(previewData.mainDocData.living_space_share || 30) / 100) / (previewData.totalLivingSpace || 1))} €/m²</div>
+                        <div className="text-right">= {formatter.format((thermal.totalHeatingCosts * Number(previewData.mainDocData?.living_space_share || 30) / 100) / (previewData.totalLivingSpace || 1))} €/m²</div>
                     </div>
                     <div className="grid grid-cols-4 text-pdf-text gap-4">
                         <div className="text-pdf-dark font-bold">
-                            davon {previewData.mainDocData.consumption_dependent || 70}% Verbrauchskosten
+                            davon {previewData.mainDocData?.consumption_dependent || 70}% Verbrauchskosten
                         </div>
-                        <div className="text-right">{formatEuro(thermal.totalHeatingCosts * Number(previewData.mainDocData.consumption_dependent || 70) / 100)} :</div>
+                        <div className="text-right">{formatEuro(thermal.totalHeatingCosts * Number(previewData.mainDocData?.consumption_dependent || 70) / 100)} :</div>
                         <div className="text-right">{formatter.format(thermal.totalEnergykWh - thermal.warmWaterEnergykWh)} kWh</div>
-                        <div className="text-right">= {formatter.format((thermal.totalHeatingCosts * Number(previewData.mainDocData.consumption_dependent || 70) / 100) / ((thermal.totalEnergykWh - thermal.warmWaterEnergykWh) || 1))} €/kWh</div>
+                        <div className="text-right">= {formatter.format((thermal.totalHeatingCosts * Number(previewData.mainDocData?.consumption_dependent || 70) / 100) / ((thermal.totalEnergykWh - thermal.warmWaterEnergykWh) || 1))} €/kWh</div>
                     </div>
                 </div>
             </div>

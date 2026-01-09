@@ -1,6 +1,6 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { formatDateGerman, formatEuro } from "@/utils";
 
 export interface HeatingBillPreviewFourCalculated {
@@ -149,9 +149,9 @@ export const HeatingBillPreviewFourView = ({
                                 <td className="py-1 pr-2 font-bold text-pdf-dark">
                                     Grundkosten
                                 </td>
-                                <td className="py-1 px-2 text-right">{formatter.format(costCalculations.unitArea)} m² Wohnfläche</td>
+                                <td className="py-1 px-2 text-right">{formatter.format(buildingConsumption.heat)} MWh</td>
                                 <td className="py-1 px-2">x</td>
-                                <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.heating.rateGrund)} € je m²</td>
+                                <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.heating.rateGrund)} € je MWh</td>
                                 <td className="py-1 pl-2 text-right">=</td>
                                 <td className="py-1 pl-2 text-right">{formatEuro(costCalculations.heating.grund)}</td>
                             </tr>
@@ -159,7 +159,7 @@ export const HeatingBillPreviewFourView = ({
                                 <td className="py-1 pr-2 font-bold text-pdf-dark">
                                     Verbrauchskosten
                                 </td>
-                                <td className="py-1 px-2 text-right">{formatter.format(unitConsumption.heat / 1000)} MWh</td>
+                                <td className="py-1 px-2 text-right">{formatter.format(unitConsumption.heat)} MWh</td>
                                 <td className="py-1 px-2">x</td>
                                 <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.heating.rateVerbrauch)} € je MWh</td>
                                 <td className="py-1 pl-2 text-right">=</td>
@@ -177,9 +177,9 @@ export const HeatingBillPreviewFourView = ({
                                 <td className="py-1 pr-2 font-bold text-pdf-dark">
                                     Grundkosten
                                 </td>
-                                <td className="py-1 px-2 text-right">{formatter.format(costCalculations.unitArea)} m² Wohnfläche</td>
+                                <td className="py-1 px-2 text-right">{formatter.format(buildingConsumption.waterHot)} m³</td>
                                 <td className="py-1 px-2">x</td>
-                                <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.warmwater.rateGrund)} € je m²</td>
+                                <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.warmwater.rateGrund)} € je m³</td>
                                 <td className="py-1 pl-2 text-right">=</td>
                                 <td className="py-1 pl-2 text-right">{formatEuro(costCalculations.warmwater.grund)}</td>
                             </tr>
@@ -187,7 +187,7 @@ export const HeatingBillPreviewFourView = ({
                                 <td className="py-1 pr-2 font-bold text-pdf-dark">
                                     Verbrauchskosten
                                 </td>
-                                <td className="py-1 px-2 text-right">{formatter.format(unitConsumption.waterHot / 1000)} m³</td>
+                                <td className="py-1 px-2 text-right">{formatter.format(unitConsumption.waterHot)} m³</td>
                                 <td className="py-1 px-2">x</td>
                                 <td className="py-1 px-2 text-right">{rateFormatter.format(costCalculations.warmwater.rateVerbrauch)} € je m³</td>
                                 <td className="py-1 pl-2 text-right">=</td>
@@ -318,10 +318,10 @@ export const HeatingBillPreviewFourView = ({
                                     <td className="text-left py-1">{m.location}</td>
                                     <td className="text-left py-1">{m.id}</td>
                                     <td className="text-left py-1">{m.type}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading / 1000)}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading / 1000)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading)}</td>
                                     <td className="text-left py-1"></td>
-                                    <td className="text-left py-1">{formatter.format(m.consumption / 1000)}</td>
+                                    <td className="text-left py-1">{formatter.format(m.consumption)}</td>
                                     <td className="text-left py-1"></td>
                                 </tr>
                             ))}
@@ -333,7 +333,7 @@ export const HeatingBillPreviewFourView = ({
                                     Summe Heizung
                                 </td>
                                 <td className="border-y font-bold text-pdf-dark border-pdf-dark">
-                                    {formatter.format(unitConsumption.heat / 1000)}
+                                    {formatter.format(unitConsumption.heat)}
                                 </td>
                                 <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
                             </tr>
@@ -365,10 +365,10 @@ export const HeatingBillPreviewFourView = ({
                                     <td className="text-left py-1">{m.location}</td>
                                     <td className="text-left py-1">{m.id}</td>
                                     <td className="text-left py-1">{m.type}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading / 1000)}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading / 1000)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading)}</td>
                                     <td className="text-left py-1"></td>
-                                    <td className="text-left py-1">{formatter.format(m.consumption / 1000)}</td>
+                                    <td className="text-left py-1">{formatter.format(m.consumption)}</td>
                                     <td className="text-left py-1"></td>
                                 </tr>
                             ))}
@@ -380,7 +380,7 @@ export const HeatingBillPreviewFourView = ({
                                     Summe Warmwasser
                                 </td>
                                 <td className="border-y font-bold text-pdf-dark border-pdf-dark">
-                                    {formatter.format(unitConsumption.waterHot / 1000)}
+                                    {formatter.format(unitConsumption.waterHot)}
                                 </td>
                                 <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
                             </tr>
@@ -412,10 +412,10 @@ export const HeatingBillPreviewFourView = ({
                                     <td className="text-left py-1">{m.location}</td>
                                     <td className="text-left py-1">{m.id}</td>
                                     <td className="text-left py-1">{m.type}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading / 1000)}</td>
-                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading / 1000)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.firstReading)}</td>
+                                    <td className="text-left py-1">{rateFormatter.format(m.lastReading)}</td>
                                     <td className="text-left py-1"></td>
-                                    <td className="text-left py-1">{formatter.format(m.consumption / 1000)}</td>
+                                    <td className="text-left py-1">{formatter.format(m.consumption)}</td>
                                     <td className="text-left py-1"></td>
                                 </tr>
                             ))}
@@ -427,7 +427,7 @@ export const HeatingBillPreviewFourView = ({
                                     Summe Kaltwasser
                                 </td>
                                 <td className="border-y font-bold text-pdf-dark border-pdf-dark">
-                                    {formatter.format(unitConsumption.waterCold / 1000)}
+                                    {formatter.format(unitConsumption.waterCold)}
                                 </td>
                                 <td className="py-1 rounded-r-base border-pdf-dark border border-l-0 px-2 text-right"></td>
                             </tr>

@@ -1,14 +1,14 @@
 import {
+  getAdminHeatingBillDocumentByID,
+  getAdminInvoicesByHeatingBillDocumentID,
   getDocCostCategoryTypes,
-  getHeatingBillDocumentByID,
-  getInvoicesByHeatingBillDocumentID,
   getObjectById,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import GesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/HeatObjektauswahlForm";
+import AdminGesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function GesamtkostenEditPage({
@@ -18,12 +18,13 @@ export default async function GesamtkostenEditPage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "heizkostenabrechnung"
+    "heizkostenabrechnung",
+    user_id
   );
 
-  const relatedToDocInvoices = await getInvoicesByHeatingBillDocumentID(doc_id);
+  const relatedToDocInvoices = await getAdminInvoicesByHeatingBillDocumentID(doc_id, user_id);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(
@@ -39,7 +40,8 @@ export default async function GesamtkostenEditPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenHeatObjektauswahlForm
+        <AdminGesamtkostenHeatObjektauswahlForm
+          userId={user_id}
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}
           objektId={doc.objekt_id ?? ""}

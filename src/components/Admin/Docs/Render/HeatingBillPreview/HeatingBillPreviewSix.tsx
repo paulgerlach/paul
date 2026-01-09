@@ -1,6 +1,8 @@
+"use client";
+
 import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { HeatingBillPreviewSixView } from "./HeatingBillPreviewSixView";
 
 const HeatingBillPreviewSix = ({

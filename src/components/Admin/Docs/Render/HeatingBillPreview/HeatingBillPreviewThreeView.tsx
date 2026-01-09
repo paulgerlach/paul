@@ -1,6 +1,6 @@
 import { admin_logo } from "@/static/icons";
 import Image from "next/image";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+import { type HeatingBillPreviewData } from "./types";
 import { formatDateGerman, formatEuro } from "@/utils";
 
 export interface HeatingBillPreviewThreeCalculated {
@@ -121,7 +121,7 @@ export const HeatingBillPreviewThreeView = ({
                             <td className="py-2">Kaltwasser Gesamt</td>
                             <td className="text-right py-2">{formatEuro(kwCosts.kaltwasser)}</td>
                             <td className="text-center py-2 px-4">:</td>
-                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold / 1000)} m³</td>
+                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold)} m³</td>
                             <td className="text-center py-2 px-2">=</td>
                             <td className="text-right py-2">{rateFormatter.format(kwRates.kaltwasser)} €/m³</td>
                         </tr>
@@ -129,7 +129,7 @@ export const HeatingBillPreviewThreeView = ({
                             <td className="py-2">Abwasser Gesamt</td>
                             <td className="text-right py-2">{formatEuro(kwCosts.abwasser)}</td>
                             <td className="text-center py-2 px-4">:</td>
-                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold / 1000)} m³</td>
+                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold)} m³</td>
                             <td className="text-center py-2 px-2">=</td>
                             <td className="text-right py-2">{rateFormatter.format(kwRates.abwasser)} €/m³</td>
                         </tr>
@@ -137,7 +137,7 @@ export const HeatingBillPreviewThreeView = ({
                             <td className="py-2">Gerätemiete Kaltwasser</td>
                             <td className="text-right py-2">{formatEuro(kwCosts.geraetmiete)}</td>
                             <td className="text-center py-2 px-4">:</td>
-                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold / 1000)} m³</td>
+                            <td className="text-right py-2">{formatter.format(buildingConsumption.waterCold)} m³</td>
                             <td className="text-center py-2 px-2">=</td>
                             <td className="text-right py-2">{rateFormatter.format(kwRates.geraetmiete)} €/m³</td>
                         </tr>

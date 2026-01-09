@@ -1,6 +1,6 @@
 import {
   getAdminContractsByLocalID,
-  getHeatingBillDocumentByID,
+  getAdminHeatingBillDocumentByID,
   getLocalById,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -8,6 +8,7 @@ import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDoc
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
 import AdminAbrechnungszeitraumLocalForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/Admin/AdminLocalForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { LocalType } from "@/types";
 import { buildLocalName } from "@/utils";
 
 export default async function AbrechnungszeitraumContinuePage({
@@ -17,13 +18,12 @@ export default async function AbrechnungszeitraumContinuePage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localData = doc.local_id ? await getLocalById(doc.local_id) : ({} as LocalType);
+  const contracts = doc.local_id
+    ? await getAdminContractsByLocalID(doc.local_id, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 

@@ -1,11 +1,12 @@
 import {
-  getHeatingBillDocumentByID,
+  getAdminHeatingBillDocumentByID,
   getObjectById,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
+import AdminAbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/Admin/AdminHeatObjektauswahlForm";
 import AbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/HeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
@@ -16,7 +17,9 @@ export default async function AbrechnungszeitraumContinuePage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
+
+  console.log(doc);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(
@@ -32,8 +35,9 @@ export default async function AbrechnungszeitraumContinuePage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumHeatObjektauswahlForm
-          id={doc.objekt_id ?? ""}
+        <AdminAbrechnungszeitraumHeatObjektauswahlForm
+          objekteID={doc.objekt_id ?? ""}
+          userID={user_id}
           docValues={doc}
         />
         <HeizkostenabrechnungBuildingReceipt

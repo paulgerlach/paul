@@ -214,10 +214,12 @@ const aggregateDataByTimeRange = (
   const now = endDate || new Date();
   const rangeStart = startDate || new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
   const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
-  const monthsToShow = Math.max(2, Math.ceil(daysDiff / 30));
+  const monthsDiff = Math.ceil(daysDiff / 30);
+  const monthsToShow = Math.max(2, monthsDiff);
 
   // STEP 1: Get most recent reading per device
   const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
+  const readingsByDate = new Map<string, number>();
 
   validReadings.forEach((reading) => {
     const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");

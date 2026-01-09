@@ -8,8 +8,8 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
 import AdminUmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/Admin/AdminLocalForm";
-import UmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/LocalForm";
 import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
+import { LocalType } from "@/types";
 import { buildLocalName } from "@/utils";
 
 export default async function UmlageschlüsselEditPage({
@@ -25,11 +25,10 @@ export default async function UmlageschlüsselEditPage({
     user_id
   );
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localData = doc.local_id ? await getLocalById(doc.local_id) : ({} as LocalType);
+  const contracts = doc.local_id
+    ? await getAdminContractsByLocalID(doc.local_id, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 

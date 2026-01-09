@@ -1,9 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { admin_logo } from "@/static/icons";
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
-import { formatDateGerman, formatEuro } from "@/utils";
+import { type HeatingBillPreviewData } from "./types";
 import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 
@@ -52,10 +49,18 @@ const HeatingBillPreviewFour = ({
     const additionalSum = additionalInvoices.reduce((s, i) => s + Number(i.total_amount || 0), 0);
     const energyAndHeatingSum = energySum + additionalSum;
 
-    const totalEnergykWh = buildingConsumption.heat / 1000;
-    const totalWaterHotm3 = buildingConsumption.waterHot / 1000;
+
+
+    // Consumption is in final units (MWh for heat, m³ for water)
+    const totalEnergyMWh = buildingConsumption.heat;
+    const totalWaterHotm3 = buildingConsumption.waterHot;
+
+    // warmWaterEnergy is calculated in kWh (Formula: 2.5 * V * dT / 1.15)
+    // We convert it to MWh to calculate the percentage against totalEnergyMWh
     const warmWaterEnergykWh = totalWaterHotm3 > 0 ? (2.5 * totalWaterHotm3 * 50) / 1.15 : 0;
-    const warmWaterPercent = totalEnergykWh > 0 ? (warmWaterEnergykWh / totalEnergykWh) * 100 : 0;
+    const warmWaterEnergyMWh = warmWaterEnergykWh / 1000;
+
+    const warmWaterPercent = totalEnergyMWh > 0 ? (warmWaterEnergyMWh / totalEnergyMWh) * 100 : 0;
     const warmWaterBaseCosts = (energyAndHeatingSum * warmWaterPercent) / 100;
 
     const wwGeräteMiete = previewData.invoices.find(inv =>
@@ -71,16 +76,16 @@ const HeatingBillPreviewFour = ({
     const totalHeatingCosts = (energyAndHeatingSum - warmWaterBaseCosts) + Number(hGeräteMiete?.total_amount || 0);
 
     const unitArea = previewData.unitArea;
-    const livingSpaceShare = Number(previewData.mainDocData.living_space_share || 30);
-    const consumptionShare = Number(previewData.mainDocData.consumption_dependent || 70);
+    const livingSpaceShare = Number(previewData.mainDocData?.living_space_share || 30);
+    const consumptionShare = Number(previewData.mainDocData?.consumption_dependent || 70);
 
     // Individual Heating
     const heatGrundkosten = (totalHeatingCosts * livingSpaceShare / 100) / (previewData.totalLivingSpace || 1) * unitArea;
-    const heatVerbrauchskosten = (totalHeatingCosts * consumptionShare / 100) / ((totalEnergykWh - warmWaterEnergykWh) || 1) * (unitConsumption.heat / 1000);
+    const heatVerbrauchskosten = (totalHeatingCosts * consumptionShare / 100) / ((totalEnergyMWh - warmWaterEnergyMWh) || 1) * (unitConsumption.heat);
 
     // Individual Warmwater
     const wwGrundkosten = (totalWarmWaterCosts * livingSpaceShare / 100) / (previewData.totalLivingSpace || 1) * unitArea;
-    const wwVerbrauchskosten = (totalWarmWaterCosts * consumptionShare / 100) / (totalWaterHotm3 || 1) * (unitConsumption.waterHot / 1000);
+    const wwVerbrauchskosten = (totalWarmWaterCosts * consumptionShare / 100) / (totalWaterHotm3 || 1) * (unitConsumption.waterHot);
 
     // Coldwater calculation (similar to Page 3)
     const getKwSum = (type: string) =>
@@ -95,8 +100,8 @@ const HeatingBillPreviewFour = ({
       abrechnung: getKwSum("Abrechnung Kaltwasser"),
     };
 
-    const buildingKwConsumption = buildingConsumption.waterCold / 1000;
-    const unitKwConsumption = unitConsumption.waterCold / 1000;
+    const buildingKwConsumption = buildingConsumption.waterCold;
+    const unitKwConsumption = unitConsumption.waterCold;
 
     const kwRates = {
       kaltwasser: buildingKwConsumption > 0 ? kwCosts.kaltwasser / buildingKwConsumption : 0,
@@ -117,7 +122,7 @@ const HeatingBillPreviewFour = ({
         grund: heatGrundkosten,
         verbrauch: heatVerbrauchskosten,
         rateGrund: (totalHeatingCosts * livingSpaceShare / 100) / (previewData.totalLivingSpace || 1),
-        rateVerbrauch: (totalHeatingCosts * consumptionShare / 100) / ((totalEnergykWh - warmWaterEnergykWh) || 1),
+        rateVerbrauch: (totalHeatingCosts * consumptionShare / 100) / ((totalEnergyMWh - warmWaterEnergyMWh) || 1),
       },
       warmwater: {
         grund: wwGrundkosten,

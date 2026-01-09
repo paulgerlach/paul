@@ -1,4 +1,6 @@
-import { type HeatingBillPreviewData } from "./HeatingBillPreview";
+"use client";
+
+import { type HeatingBillPreviewData } from "./types";
 import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 import { HeatingBillPreviewFiveView } from "./HeatingBillPreviewFiveView";

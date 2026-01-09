@@ -28,7 +28,7 @@ import {
 } from "@/utils/errorFlagInterpreter";
 import { interpretHintCode } from "@/utils/hintCodeInterpreter";
 import { checkRSSI } from "@/utils/rssiChecker";
-import { analyzeConsumption } from "@/utils/consumptionAnalyzer";
+import { analyzeConsumption, getConsumptionNotifications } from "@/utils/consumptionAnalyzer";
 import { StaticImageData } from "next/image";
 import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
@@ -53,8 +53,6 @@ interface NotificationsChartProps {
     data: MeterReadingType[];
     errors?: { row: number; error: string; rawRow: any }[];
   };
-  /** Force demo mode to show sample notifications (for shared dashboard) */
-  forceDemo?: boolean;
 }
 
 const dummy_notifications = [
@@ -113,7 +111,6 @@ export default function NotificationsChart({
   emptyTitle,
   emptyDescription,
   parsedData,
-  forceDemo = false,
 }: NotificationsChartProps) {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(undefined);
@@ -123,8 +120,12 @@ export default function NotificationsChart({
   const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
   const { data: user } = useAuthUser();
   
-  // Check if current user is the demo account or if demo mode is forced (shared dashboard)
-  const isDemoAccount = forceDemo || user?.email === "heidi@hausverwaltung.com";
+  // Track if user has dismissed notifications (for better UX when all are dismissed)
+  const [hasDismissedNotifications, setHasDismissedNotifications] = useState(false);
+  const [originalNotificationCount, setOriginalNotificationCount] = useState(0);
+  
+  // Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
+  const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
   const openErrorModal = (meterId?: number) => {
     setSelectedMeterId(meterId);
@@ -133,6 +134,7 @@ export default function NotificationsChart({
   };
 
   const deleteNotification = (index: number) => {
+    setHasDismissedNotifications(true); // Track that user has dismissed notifications
     setNotifications((prev) => {
       const newNotifications = prev.filter((_, i) => i !== index);
       
@@ -234,10 +236,19 @@ export default function NotificationsChart({
       const dynamicNotifications: NotificationItem[] = [];
       
       // Filter to only selected meters
-      const selectedMeters = parsedData.data.filter(device => {
-        const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
-        return meterId && meterIds.includes(meterId);
-      });
+      // CRITICAL FIX: Detect if meterIds are UUIDs (main dashboard) or serial numbers (shared dashboard)
+      // UUIDs contain dashes, serial numbers are just digits
+      // For main dashboard: API already filters by UUIDs, so we use all data
+      // For shared dashboard: meterIds are serial numbers, so we filter by device.ID
+      const isUuidFormat = meterIds.length > 0 && meterIds[0]?.includes('-');
+      
+      const selectedMeters = isUuidFormat
+        ? parsedData.data  // Main dashboard: data is already filtered by API using UUIDs
+        : parsedData.data.filter(device => {
+            // Shared dashboard: filter by serial number
+            const meterId = device.ID?.toString() || device["Number Meter"]?.toString();
+            return meterId && meterIds.includes(meterId);
+          });
       
       // GROUP 1: Check for error flags
       const selectedMetersWithErrors = selectedMeters.filter(device => {
@@ -247,33 +258,46 @@ export default function NotificationsChart({
         return hasErrorFlag;
       });
       
-      // GROUP 2: Check for hint codes
-      const selectedMetersWithHintCodes = selectedMeters.filter(device => {
-        const hintCode = device["Hint Code"];
-        return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI checking - These fields don't exist in CSV
+      // The Engelmann gateway CSV format doesn't output "Hint Code" or "RSSI Value"
+      // Keeping code commented for future if data format changes
+      // =========================================================================
       
-      // GROUP 2: Check for RSSI warnings
-      const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
-        const rssiValue = device["RSSI Value"];
-        if (!rssiValue) return false;
-        const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
-        return !isNaN(rssi) && rssi < -90; // Weak signal threshold
-      });
+      // GROUP 2: Hint codes - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithHintCodes = selectedMeters.filter(device => {
+      //   const hintCode = device["Hint Code"];
+      //   return hintCode && hintCode !== "0" && hintCode !== 0 && hintCode !== "";
+      // });
+      const selectedMetersWithHintCodes: typeof selectedMeters = []; // Empty - no hint codes in data
       
-      // GROUP 3: Check for consumption anomalies
-      const selectedMetersWithConsumptionIssues = selectedMeters.filter(device => {
-        // Check if device has monthly data
-        const value1 = device["Monthly Value 1"];
-        const value2 = device["Monthly Value 2"];
-        return value1 !== undefined && value2 !== undefined;
-      });
+      // GROUP 2: RSSI warnings - DISABLED (field doesn't exist in CSV data)
+      // const selectedMetersWithRSSIWarnings = selectedMeters.filter(device => {
+      //   const rssiValue = device["RSSI Value"];
+      //   if (!rssiValue) return false;
+      //   const rssi = typeof rssiValue === "number" ? rssiValue : parseInt(String(rssiValue).replace(/[^\d-]/g, ''));
+      //   return !isNaN(rssi) && rssi < -90;
+      // });
+      const selectedMetersWithRSSIWarnings: typeof selectedMeters = []; // Empty - no RSSI in data
       
-      // Count total issues
+      // GROUP 3: Consumption anomalies are now handled below (before success check)
+      // The consumption analyzer groups readings by device and calculates spikes
+      
+      // FIRST: Generate consumption notifications (must happen before success check!)
+      // This analyzes whether there are actual consumption spikes, not just whether data exists
+      let consumptionNotificationsGenerated: NotificationItem[] = [];
+      if (selectedMeters.length > 0) {
+        // Pass ALL selected meters to consumption analyzer - it will group by device
+        consumptionNotificationsGenerated = getConsumptionNotifications({ 
+          data: selectedMeters 
+        });
+      }
+
+      // Count total ACTUAL issues (including consumption notifications that were generated)
       const totalIssues = selectedMetersWithErrors.length + 
                          selectedMetersWithHintCodes.length + 
                          selectedMetersWithRSSIWarnings.length + 
-                         selectedMetersWithConsumptionIssues.length;
+                         consumptionNotificationsGenerated.length;
 
       // If no issues detected, show success notification
       if (totalIssues === 0 && parsedData.data.length > 0) {
@@ -360,29 +384,31 @@ export default function NotificationsChart({
         });
       });
       
-      // GROUP 2: Generate notifications for hint codes
-      selectedMetersWithHintCodes.forEach(device => {
-        const hintNotification = interpretHintCode(device);
-        if (hintNotification) {
-          dynamicNotifications.push(hintNotification);
-        }
-      });
+      // =========================================================================
+      // DISABLED: Hint Code and RSSI notification generation
+      // These arrays are always empty because the fields don't exist in CSV data
+      // =========================================================================
       
-      // GROUP 2: Generate notifications for RSSI warnings
-      selectedMetersWithRSSIWarnings.forEach(device => {
-        const rssiNotification = checkRSSI(device);
-        if (rssiNotification) {
-          dynamicNotifications.push(rssiNotification);
-        }
-      });
+      // GROUP 2: Generate notifications for hint codes - DISABLED
+      // selectedMetersWithHintCodes.forEach(device => {
+      //   const hintNotification = interpretHintCode(device);
+      //   if (hintNotification) {
+      //     dynamicNotifications.push(hintNotification);
+      //   }
+      // });
       
-      // GROUP 3: Generate notifications for consumption issues
-      selectedMetersWithConsumptionIssues.forEach(device => {
-        const consumptionNotifications = analyzeConsumption(device);
-        if (consumptionNotifications && consumptionNotifications.length > 0) {
-          dynamicNotifications.push(...consumptionNotifications);
-        }
-      });
+      // GROUP 2: Generate notifications for RSSI warnings - DISABLED
+      // selectedMetersWithRSSIWarnings.forEach(device => {
+      //   const rssiNotification = checkRSSI(device);
+      //   if (rssiNotification) {
+      //     dynamicNotifications.push(rssiNotification);
+      //   }
+      // });
+      
+      // GROUP 3: Add consumption notifications (already generated above before success check)
+      if (consumptionNotificationsGenerated.length > 0) {
+        dynamicNotifications.push(...consumptionNotificationsGenerated);
+      }
 
       // Sort by severity (critical > high > medium > low)
       const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -607,10 +633,14 @@ export default function NotificationsChart({
       return notifications.slice(0, 10);
     };
 
+    // Reset dismissed state when data changes (new data load)
+    setHasDismissedNotifications(false);
+    
     // Prevent unnecessary re-renders
     if (!parsedData || isEmpty) {
       setNotifications([]);
       setNotificationQueue([]);
+      setOriginalNotificationCount(0);
       return;
     }
 
@@ -621,6 +651,9 @@ export default function NotificationsChart({
       const finalNotifications = isDemoAccount 
         ? generateNotifications()  // Shows dummy_notifications for demo
         : generateDynamicNotifications();  // Shows real errors for live users
+      
+      // Track original count for better UX messaging
+      setOriginalNotificationCount(finalNotifications.length);
       
       // Split into displayed (first 10, scrollable) and queue (rest)
       const displayed = finalNotifications.slice(0, 10);
@@ -633,6 +666,7 @@ export default function NotificationsChart({
       // Fallback to existing logic if anything fails
       console.warn('Notifications generation failed:', error);
       const fallback = generateNotifications();
+      setOriginalNotificationCount(fallback.length);
       setNotifications(fallback);
     }
     // Use stable values in dependencies to prevent infinite loops
@@ -670,15 +704,26 @@ export default function NotificationsChart({
       </div>
       <div className="space-y-2 flex-1 overflow-y-auto max-h-[280px] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         {notifications.length === 0 ? (
-          <EmptyState
-            title={emptyTitle ?? "No data available."}
-            description={emptyDescription ?? "No data available."}
-            imageSrc={notification.src}
-            imageAlt="Benachrichtigungen"
-          />
+          hasDismissedNotifications && originalNotificationCount > 0 ? (
+            // User dismissed all notifications - show success state
+            <EmptyState
+              title="Alle Warnungen gelöscht"
+              description={`${originalNotificationCount} ${originalNotificationCount === 1 ? 'Warnung wurde' : 'Warnungen wurden'} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
+              imageSrc={notification.src}
+              imageAlt="Benachrichtigungen"
+            />
+          ) : (
+            // Genuinely no data or no notifications
+            <EmptyState
+              title={emptyTitle ?? "No data available."}
+              description={emptyDescription ?? "No data available."}
+              imageSrc={notification.src}
+              imageAlt="Benachrichtigungen"
+            />
+          )
         ) : (
           notifications.map((n, idx) => (
-            <div key={idx} className="flex items-center justify-between w-full gap-2 overflow-hidden">
+            <div key={idx} className="flex items-center justify-between w-full gap-2">
               <div className="flex-1 min-w-0">
                 <NotificationItem {...n} />
               </div>

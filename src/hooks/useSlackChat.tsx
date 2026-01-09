@@ -14,17 +14,17 @@ const isWithinBusinessHours = (): boolean => {
   // Monday to Friday: 1-5
   const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
 
-  // Business hours: 9:00 - 21:00 (9 AM to 9 PM)
-  return isWeekday && berlinHour >= 9 && berlinHour < 21;
+  // Business hours: 8:00 - 20:00 (8 AM to 8 PM)
+  return isWeekday && berlinHour >= 8 && berlinHour < 20;
 };
 
-export const useSlackChat = (userId: string | undefined) => {
+export const useSlackChat = (userId?: string | undefined, initialThreadTs?: string) => {
   const [messages, setMessages] = useState<SlackMessage[]>([]);
   const [status, setStatus] = useState<
     "ready" | "sending" | "waiting_for_human" | "fetching_messages"
   >("ready");
   const [input, setInput] = useState("");
-  const [threadTs, setThreadTs] = useState<string | null>(null);
+  const [threadTs, setThreadTs] = useState<string | undefined>(initialThreadTs);
   const [lastSentTs, setLastSentTs] = useState<string | null>(null);
   const [isOutOfOffice, setIsOutOfOffice] = useState(false);
   const [outOfOfficeMessageAdded, setOutOfOfficeMessageAdded] = useState<
@@ -49,10 +49,10 @@ export const useSlackChat = (userId: string | undefined) => {
 
   useEffect(() => {
     const getUserSlackThread = async () => {
-      if (userId) {
-        const stored = localStorage.getItem(`slack_thread_${userId}`);
-        if (stored) setThreadTs(stored);
-      }
+      const stored = localStorage.getItem(
+        `slack_thread_${userId ?? `visitor`}`
+      );
+      if (stored) setThreadTs(stored);
     };
     getUserSlackThread();
   }, [userId]);
@@ -76,8 +76,8 @@ export const useSlackChat = (userId: string | undefined) => {
   useEffect(() => {
     if (!threadTs) return;
 
-    let pollInterval = 5000;
-    if (status === "waiting_for_human") pollInterval = 2000;
+    let pollInterval = 2000;
+    if (status === "waiting_for_human") pollInterval = 1000;
 
     const interval = setInterval(async () => {
       setStatus("fetching_messages");
@@ -90,7 +90,7 @@ export const useSlackChat = (userId: string | undefined) => {
 
           // Check if we need to add out-of-office message for new assistant messages
           const enhancedMessages = [...toAdd];
-          if (isOutOfOffice) {
+          if (isOutOfOffice && !outOfOfficeMessageAdded.has(threadTs)) {
             const hasAssistantMessage = toAdd.some(
               (m) => m.role === "assistant"
             );
@@ -98,7 +98,7 @@ export const useSlackChat = (userId: string | undefined) => {
               const outOfOfficeMessage: SlackMessage = {
                 id: `${Date.now()}`,
                 role: "human_reply",
-                text: "Vielen Dank für Ihre Nachricht. Unser Team ist derzeit außerhalb der Geschäftszeiten. Ihr Anliegen wurde erfasst und wird am nächsten Werktag priorisiert bearbeitet.",
+                text: "Vielen Dank für Ihre Nachricht. Unser Team ist derzeit außerhalb der Geschäftszeiten (Mo-Fr 08:00-20:00 Uhr). Ihr Anliegen wurde erfasst und wird am nächsten Werktag ab 08:00 Uhr priorisiert bearbeitet.",
                 timestamp: new Date(),
               };
               enhancedMessages.push(outOfOfficeMessage);
@@ -131,9 +131,7 @@ export const useSlackChat = (userId: string | undefined) => {
   }, [threadTs, status, lastSentTs, isOutOfOffice, outOfOfficeMessageAdded]);
 
   const sendMessage = async (text: string) => {
-    console.log("USER ID", userId);
-    console.log("MESSAGE", text);
-    if (!text.trim() || !userId) return;
+    if (!text.trim()) return;
 
     const userMessage: SlackMessage = {
       id: Date.now().toString(),
@@ -147,11 +145,14 @@ export const useSlackChat = (userId: string | undefined) => {
     setStatus("sending");
 
     try {
-      const newThreadTs = await sendSlackMessage(text, threadTs);
+      const newThreadTs = await sendSlackMessage(text, threadTs ?? null);
       setLastSentTs(newThreadTs);
       if (!threadTs) {
         setThreadTs(newThreadTs);
-        localStorage.setItem(`slack_thread_${userId}`, newThreadTs);
+        localStorage.setItem(
+          `slack_thread_${userId ?? `visitor`}`,
+          newThreadTs
+        );
       }
 
       // Don't automatically add out-of-office message here

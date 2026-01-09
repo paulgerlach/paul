@@ -1,38 +1,33 @@
 "use client";
 
-import { immobilien_1_50, immobilien_51_800, immobilien_over_800 } from "@/static/icons";
+import { yes_icon, no_icon } from "@/static/icons";
 import Image from "next/image";
-import { type BaseStepProps } from "../StepWrapper";
+import { type BaseStepProps } from "../../StepWrapper";
 import { useQuestionareStore } from "@/store/useQuestionareStore";
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
 import type { StepOptionType } from "@/types";
 
-// Property count category options
-const options: StepOptionType<"property_count_category">[] = [
+// Yes/No options
+const options: StepOptionType<"akuter_handlungsbedarf">[] = [
 	{ 
-		id: "property_1_50", 
-		value: "1-50 Immobilien", 
-		icon: immobilien_1_50 
+		id: "handlungsbedarf_ja", 
+		value: "Ja", 
+		icon: yes_icon 
 	},
 	{ 
-		id: "property_51_800", 
-		value: "51-800 Immobilien", 
-		icon: immobilien_51_800 
-	},
-	{ 
-		id: "property_over_800", 
-		value: "über 800 Immobilien", 
-		icon: immobilien_over_800 
+		id: "handlungsbedarf_nein", 
+		value: "Nein", 
+		icon: no_icon 
 	},
 ];
 
-export default function FragebogenStepOne({
+export default function StepFourOver50({
 	register,
 	watch,
 	setValue,
 }: BaseStepProps) {
 	const { activeStep, setActiveStep } = useQuestionareStore();
-	const selectedValue = watch("property_count_category");
+	const selectedValue = watch("akuter_handlungsbedarf");
 
 	const onChangeForward = (name: keyof QuestionareFormData, value: string) => {
 		setValue(name, value);
@@ -42,19 +37,19 @@ export default function FragebogenStepOne({
 	};
 
 	return (
-		<div data-step="1" className="questionare-step mb-10 max-w-xl">
+		<div data-step="4" className="questionare-step mb-10 max-w-xl">
 			<p className="mb-6 text-[40px] leading-tight max-small:text-2xl text-dark_text">
-				Immobilienbestand
+				Akuter Handlungsbedarf
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Wie viele Wohn- und Gewerbeimmobilien verwalten Sie<br />
-				aktuell insgesamt?
+				Gibt es aktuell eine Immobilie mit akutem<br />
+				Handlungsbedarf?
 			</p>
 			<div className="space-y-3">
-				{options.map((option: StepOptionType<"property_count_category">) => (
+				{options.map((option: StepOptionType<"akuter_handlungsbedarf">) => (
 					<label
 						onClick={() =>
-							onChangeForward("property_count_category", option.value as string)
+							onChangeForward("akuter_handlungsbedarf", option.value as string)
 						}
 						key={option.id}
 						htmlFor={option.id}
@@ -62,20 +57,20 @@ export default function FragebogenStepOne({
 					>
 						<input
 							className="hidden peer"
-							{...register("property_count_category")}
+							{...register("akuter_handlungsbedarf")}
 							id={option.id}
 							type="radio"
 							checked={selectedValue === option.value}
-							onChange={(e) => onChangeForward("property_count_category", e.target.value)}
+							onChange={(e) => onChangeForward("akuter_handlungsbedarf", e.target.value)}
 							value={option.value as string}
 						/>
 						<div className="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-xl border border-dark_green/20 w-[509px] h-[69px] px-4 flex items-center justify-start gap-5 text-[18px] text-dark_text">
-							<div className="bg-gray-100 rounded-lg p-3 flex items-center justify-center">
+							<div className="bg-gray-100 rounded-xl w-[50px] h-[50px] flex items-center justify-center">
 								<Image
-									width={25}
-									height={25}
+									width={40}
+									height={40}
 									loading="lazy"
-									className="w-[25px] h-[25px] object-contain"
+									className="w-[40px] h-[40px] object-contain"
 									alt={option.value as string}
 									src={option.icon}
 								/>
@@ -88,3 +83,4 @@ export default function FragebogenStepOne({
 		</div>
 	);
 }
+

@@ -5,7 +5,7 @@ import { checkmark_icon_big, chevron, counter, info } from "@/static/icons";
 import animation5 from "@/animations/Animation_5.json";
 import animation6 from "@/animations/Animation_6.json";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,49 +15,76 @@ import { useQuestionareStore } from "@/store/useQuestionareStore";
 import StepInfo from "@/components/Fragebogen/StepInfo";
 
 const formSchema = z.object({
-  email: z.string().email("Ungültige E-Mail-Adresse").nullable(),
-  first_name: z.string().min(1, "Vorname ist erforderlich").nullable(),
-  last_name: z.string().min(1, "Nachname ist erforderlich").nullable(),
-  appartment_number: z.number().min(1, "Wohnungsnummer ist erforderlich"),
+  // Step 1: Property count category (determines flow)
+  property_count_category: z
+    .enum([
+      "1-50 Immobilien",
+      "51-800 Immobilien",
+      "über 800 Immobilien",
+    ])
+    .nullable(),
+  
+  // Over50 Flow (51-800 & über 800 Immobilien) fields
+  messdienstleister_count: z.number().min(1).optional(),
+  zusammenarbeit_status: z
+    .enum(["Sehr zufrieden", "Teils / teils", "Stark unzufrieden"])
+    .nullable()
+    .optional(),
+  akuter_handlungsbedarf: z
+    .enum(["Ja", "Nein"])
+    .nullable()
+    .optional(),
+  
+  // Under50 Flow (1-50 Immobilien) fields
+  wohnungen_count: z.number().min(1).optional(),
+  funkzaehler_status: z
+    .enum(["Ja", "Nein"])
+    .nullable()
+    .optional(),
+  standort_schwerpunkt: z.string().optional().or(z.literal("")),
+  
+  // Contact form fields (Q5 - Location)
+  verwaltung_name: z.string().optional().or(z.literal("")),
+  postleitzahl: z.string().optional().or(z.literal("")),
+  ort: z.string().optional().or(z.literal("")),
+  
+  // Contact form fields (Q6 - Personal)
+  email: z.string().email("Ungültige E-Mail-Adresse").or(z.literal("")),
+  first_name: z.string().min(1, "Vorname ist erforderlich").or(z.literal("")),
+  last_name: z.string().min(1, "Nachname ist erforderlich").or(z.literal("")),
+  form_confirm: z.boolean().refine((val) => val === true, {
+    message: "Bitte akzeptieren Sie die Datenschutzbestimmungen",
+  }),
+  // Legacy fields (kept for backwards compatibility, will be removed after full migration)
+  appartment_number: z.number().min(1, "Wohnungsnummer ist erforderlich").optional(),
   heating_costs: z
     .enum([
       "Durch mich persönlich",
       "Durch einen anderen Messdienstleister",
       "Bisher noch gar nicht",
     ])
-    .refine((val) => !!val, {
-      message: "Heizkosten müssen angegeben werden",
-    })
-    .nullable(),
+    .nullable()
+    .optional(),
   heating_available: z
     .enum(["Ja", "Nein"])
-    .refine((val) => !!val, {
-      message: "Angabe erforderlich",
-    })
-    .nullable(),
+    .nullable()
+    .optional(),
   central_water_supply: z
     .enum(["Ja", "Nein"])
-    .refine((val) => !!val, {
-      message: "Angabe erforderlich",
-    })
-    .nullable(),
+    .nullable()
+    .optional(),
   central_heating_system: z
     .enum([
       "Nur Heizkörper",
       "Nur Fußbodenheizung",
       "Heizkörper und Fußbodenheizung",
     ])
-    .refine((val) => !!val, {
-      message: "Angabe erforderlich",
-    })
-    .nullable(),
+    .nullable()
+    .optional(),
   energy_sources: z
     .string()
-    .min(1, "Energiequelle ist erforderlich")
-    .nullable(),
-  form_confirm: z.boolean().refine((val) => val === true, {
-    message: "Bitte akzeptieren Sie die Datenschutzbestimmungen",
-  }),
+    .nullable()
+    .optional(),
 });
 
 export type QuestionareFormData = z.infer<typeof formSchema>;
@@ -69,9 +96,16 @@ export default function FragebogenPage() {
     handleNextStep,
     handlePrevStep,
     totalStepsNumber,
+    resetQuestionnaire,
   } = useQuestionareStore();
 
+  // Reset questionnaire state when page mounts
+  useEffect(() => {
+    resetQuestionnaire();
+  }, [resetQuestionnaire]);
+
   const [isSubmited, setIsSubmited] = useState<boolean>(false);
+  const [step0Error, setStep0Error] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -82,16 +116,31 @@ export default function FragebogenPage() {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      appartment_number: 2,
+      property_count_category: null,
+      // Over50 Flow fields
+      messdienstleister_count: 10,
+      zusammenarbeit_status: null,
+      akuter_handlungsbedarf: null,
+      // Under50 Flow fields
+      wohnungen_count: 3,
+      funkzaehler_status: null,
+      standort_schwerpunkt: "",
+      // Contact form fields (Q5 - Location)
+      verwaltung_name: "",
+      postleitzahl: "",
+      ort: "",
+      // Contact form fields (Q6 - Personal)
       email: "",
       first_name: "",
       last_name: "",
+      form_confirm: false,
+      // Legacy fields
+      appartment_number: 2,
       heating_costs: null,
       heating_available: null,
       central_water_supply: null,
       central_heating_system: null,
       energy_sources: "Fernwärme",
-      form_confirm: false,
     },
   });
 
@@ -201,7 +250,7 @@ export default function FragebogenPage() {
                 }`}
               ></span>
             ))}
-            <span className="text-xs text-dark_text/20"> noch 3 min </span>
+            <span className="text-xs text-dark_text/20"> noch 4 min </span>
           </div>
           <div className="questionare-steps max-w-6xl mx-auto flex items-start max-large:flex-col max-large:gap-10 justify-between">
             <form
@@ -237,25 +286,59 @@ export default function FragebogenPage() {
                 activeStep={activeStep}
               />
               {/*  */}
+              {/* Error message for step 0 */}
+              {step0Error && activeStep === 0 && (
+                <p className="text-red-500 text-sm mb-4">
+                  Bitte wählen Sie eine Option aus, um fortzufahren.
+                </p>
+              )}
               <div className="flex items-center justify-start gap-5">
-                <button
-                  id="next-step"
-                  className="rounded-base cursor-pointer bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-7 border border-transparent"
-                  onClick={() => handleNextStep()}
-                  type={`${activeStep === 6 ? "submit" : "button"}`}
-                >
-                  Bestätigen
-                </button>
-                {activeStep !== totalStepsNumber - 1 && (
-                  <button
-                    id="skip-step"
-                    className="rounded-base cursor-pointer bg-white flex items-center justify-center duration-300 hover:opacity-80 hover:border-green disabled:opacity-50 text-green font-bold text-[15px] py-4 px-7 border border-transparent"
-                    onClick={() => handleNextStep()}
-                    type="button"
-                  >
-                    Überspringen
-                  </button>
-                )}
+                {(() => {
+                  const propertyCategory = watch("property_count_category");
+                  const isUnder50Flow = propertyCategory === "1-50 Immobilien";
+                  // Under50 flow submits on step 4, Over50 flow submits on step 5
+                  const isSubmitStep = isUnder50Flow ? activeStep === 4 : activeStep === 5;
+                  
+                  const handleClick = () => {
+                    // Validate step 0 - property count is required
+                    if (activeStep === 0 && !propertyCategory) {
+                      setStep0Error(true);
+                      return;
+                    }
+                    setStep0Error(false);
+                    handleNextStep();
+                  };
+                  
+                  return (
+                    <button
+                      id="next-step"
+                      className="rounded-xl cursor-pointer bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-8 border border-transparent"
+                      onClick={isSubmitStep ? undefined : handleClick}
+                      type={isSubmitStep ? "submit" : "button"}
+                    >
+                      Bestätigen
+                    </button>
+                  );
+                })()}
+                {(() => {
+                  const propertyCategory = watch("property_count_category");
+                  const isUnder50Flow = propertyCategory === "1-50 Immobilien";
+                  // Under50 = 4 steps, Over50 = 5 steps
+                  const lastStep = isUnder50Flow ? 4 : 5;
+                  // Hide skip button on step 0 (required) and last step
+                  if (activeStep === 0 || activeStep === lastStep) return null;
+                  
+                  return (
+                    <button
+                      id="skip-step"
+                      className="cursor-pointer bg-transparent flex items-center justify-center duration-300 hover:opacity-80 disabled:opacity-50 text-green font-bold text-[15px] py-4 px-4"
+                      onClick={() => handleNextStep()}
+                      type="button"
+                    >
+                      Überspringen
+                    </button>
+                  );
+                })()}
               </div>
             </form>
             <StepInfo activeStep={activeStep} />

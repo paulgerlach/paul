@@ -10,6 +10,20 @@ export async function POST(req: Request) {
         await sendOfferInquiryEvent(data.email, {
             first_name: data.first_name,
             last_name: data.last_name,
+            // Over50 flow fields
+            property_count_category: data.property_count_category,
+            messdienstleister_count: data.messdienstleister_count,
+            zusammenarbeit_status: data.zusammenarbeit_status,
+            akuter_handlungsbedarf: data.akuter_handlungsbedarf,
+            // Under50 flow fields
+            wohnungen_count: data.wohnungen_count,
+            funkzaehler_status: data.funkzaehler_status,
+            standort_schwerpunkt: data.standort_schwerpunkt,
+            // Contact form fields
+            verwaltung_name: data.verwaltung_name,
+            postleitzahl: data.postleitzahl,
+            ort: data.ort,
+            // Legacy fields
             appartment_number: data.appartment_number,
             heating_costs: data.heating_costs,
             heating_available: data.heating_available,

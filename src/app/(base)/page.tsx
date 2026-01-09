@@ -27,12 +27,10 @@ import {
   raum_green,
   niesen_green,
   neckar_green,
-  idgim_green,
   hsp_green,
   harte_green,
   dumax_green,
   berlin_bear_green,
-  quarterback_green,
   progera_green,
 } from "@/static/icons";
 import animation1 from "@/animations/Animation_1.json";
@@ -181,11 +179,10 @@ export default async function Home() {
                   alt="weight"
                 />
               </span>
-              <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-                EU-Vorschriften
-                <br className="max-medium:hidden" /> einhalten
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center">
+                EU-Vorschriften einhalten
               </p>
-              <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
                 Mit unseren fernablesbaren Zählern erfüllen Sie alle
                 gesetzlichen Vorgaben und profitieren gleichzeitig von höherer
                 Effizienz und Transparenz. Modernste Energiemanagement-
@@ -210,11 +207,10 @@ export default async function Home() {
                   alt="clock"
                 />
               </span>
-              <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-                Zeit- und
-                <br className="max-medium:hidden" /> Kostenersparnis
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center">
+                Zeit- und Kostenersparnis
               </p>
-              <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
                 Reduzieren Sie manuelle Aufwände und sparen Sie wertvolle Zeit.
                 Unsere automatisierten Prozesse übernehmen die
                 Verbrauchserfassung effizient und zuverlässig.
@@ -238,11 +234,10 @@ export default async function Home() {
                   alt="instruments"
                 />
               </span>
-              <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-                Kostenfreie
-                <br className="max-medium:hidden" /> Installation
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center">
+                Kostenfreie Installation
               </p>
-              <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
                 Steigen Sie ohne Mehrkosten auf unsere innovative Technologie
                 um. Die Umrüstung erfolgt für Sie völlig kostenlos und ohne
                 Aufwand.
@@ -266,11 +261,10 @@ export default async function Home() {
                   alt="doc"
                 />
               </span>
-              <p className="text-[26px] leading-tight max-small:text-lg text-dark_text font-bold max-medium:text-center">
-                Heizkostenabrechnung
-                <br className="max-medium:hidden" /> erstellen
+              <p className="text-xl max-small:text-lg text-dark_text font-bold max-medium:text-center">
+                Heizkostenabrechnung erstellen
               </p>
-              <p className="text-lg max-small:text-sm leading-relaxed text-dark_text max-medium:text-center">
+              <p className="text-[15px] max-small:text-sm leading-[18px] text-dark_text max-medium:text-center">
                 Unsere drahtlosen Messgeräte erfassen alle Verbrauchsdaten
                 automatisch und bereiten sie für eine präzise und effiziente
                 Nebenkostenabrechnung auf.
@@ -648,6 +642,241 @@ export default async function Home() {
             />
           </div>
         </div>
+        <div className="hero-2 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5">
+          <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
+            Jetzt auf Funkzähler umsteigen
+          </h2>
+          <p className="text-dark_text leading-[19.2px] text-base max-small:text-sm mb-16 max-w-3xl mx-auto text-center">
+            Revolutionieren Sie Ihr Energiemanagement: Reduzieren Sie Kosten,
+            steigern Sie die Effizienz und profitieren Sie von automatisierten
+            Überwachungs- und Steuerungslösungen für eine zukunftssichere
+            Verbrauchserfassung.
+          </p>
+          <div className="grid grid-cols-2 max-medium:grid-cols-1 mb-[18px] gap-6">
+            <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Kostenfreie Installation
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Wir rüsten Sie kostenlos mit modernsten Funkzählern zur
+                digitalen Erfassung Ihres Warm-, Kaltwasser- und
+                Heizungsverbrauchs aus.
+              </p>
+              <Link
+                href={ROUTE_FRAGEBOGEN}
+                className="my-4 w-fit mx-auto border border-dark_green/20 flex items-center justify-center rounded-base py-3 px-6 text-dark_text/20 text-base leading-[19.2px] duration-300 hover:bg-green hover:border-green hover:text-white"
+              >
+                Jetzt umrüsten lassen
+              </Link>
+              <div className="bg-white/90 flex items-center justify-center pt-[60px] px-[116px] max-megalarge:px-20 rounded-t-[20px]">
+                <Image
+                  width={300}
+                  height={400}
+                  priority
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  src={counter}
+                  alt="counter"
+                />
+              </div>
+            </div>
+            <div className="px-5 pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-end">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Dokumenten-Management
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Alle Verbrauchsdaten werden automatisch erfasst und stehen
+                Ihnen direkt für die Betriebskostenabrechnung zur Verfügung.
+              </p>
+              <Link
+                href={ROUTE_FUNKTIONEN}
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
+                mehr erfahren
+              </Link>
+              <Image
+                width={400}
+                height={300}
+                priority
+                sizes="(max-width: 768px) 100vw, 400px"
+                src={doc_phone}
+                alt="screenshot"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 max-medium:grid-cols-1 mb-20 gap-[18px]">
+            <div className="px-[25px] overflow-hidden pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl relative z-[2] mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Dashboard
+              </p>
+              <p className="text-center relative z-[2] text-dark_text text-base max-small:text-sm leading-[19.2px] mb-12">
+                Alle Verbrauchswerte für Warmwasser, Kaltwasser und Heizkosten
+                in einer übersichtlichen Darstellung.
+              </p>
+              <LazyLottie
+                animationData={animation3}
+                id="animation3"
+                wrapperClassName="overflow-hidden relative z-[0]"
+              />
+            </div>
+            <div className="pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all px-[25px]">
+                Digitale Funkablesung
+              </p>
+              <p className="text-center text-dark_text px-[25px] text-base max-small:text-sm leading-[19.2px]">
+                Erfassen Sie Verbrauchsdaten über alle Sparten hinweg –
+                komplett ohne manuelles Ablesen oder Vor-Ort-Termine.
+              </p>
+              <Link
+                href={ROUTE_FUNKTIONEN}
+                className="block mb-10 text-center w-fit mx-auto text-green underline text-base leading-[19.2px]"
+              >
+                mehr erfahren
+              </Link>
+              <LazyLottie
+                animationData={animation2}
+                id="animation21"
+                wrapperClassName="overflow-hidden pl-10 relative"
+              />
+            </div>
+            <div className="px-[25px] pt-8 bg-card_dark_bg rounded-base flex flex-col items-center justify-between">
+              <p className="text-[25px] max-small:text-xl mb-2 text-dark_text leading-[30px] text-center font-bold break-all">
+                Heizkostenabrechnung
+              </p>
+              <p className="text-center text-dark_text text-base max-small:text-sm leading-[19.2px]">
+                Erstellen Sie Ihre Betriebskostenabrechnung schnell, einfach
+                und präzise.
+              </p>
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                loading="lazy"
+                className="block px-16 w-full mt-auto mb-0"
+                src={checkmarks3}
+                alt="checkmarks3"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="hero-3 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 max-small:px-6">
+          <div className="flex max-medium:flex-col max-medium:items-center gap-8 max-medium:gap-6">
+            <p className="text-lg max-small:text-xl text-dark_text max-medium:text-center font-bold max-medium:whitespace-normal whitespace-nowrap max-small:mb-4">
+              Die Wahl führender Innovatoren und Branchenführer
+            </p>
+            {/* Desktop: 4 columns, evenly spaced */}
+            {/* Mobile: 2 columns with space between */}
+            <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-16 max-small:gap-y-5">
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={berlin_bear_green}
+                alt="berlinBear"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={dumax_green}
+                alt="dumax"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={harte_green}
+                alt="harte"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={hsp_green}
+                alt="hsp"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={raum_green}
+                alt="raum"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={schleicher_green}
+                alt="schleicher_green"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={vitec_green}
+                alt="vitec"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={wagner_green}
+                alt="wagner"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={werne_green}
+                alt="werne_green"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={neckar_green}
+                alt="neckar_green"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={niesen_green}
+                alt="niesen_green"
+              />
+              <Image
+                width={140}
+                height={45}
+                sizes="100vw"
+                loading="lazy"
+                className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                src={progera_green}
+                alt="progera_green"
+              />
+            </div>
+          </div>
+        </div>
         <PersonSwiper />
         <div className="px-[72px] max-large:px-6">
           <h2 className="mt-48 max-large:mt-16 section-title text-center text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-5 text-dark_text relative">
@@ -829,13 +1058,13 @@ export default async function Home() {
             Immobilienbesitzer müssen daher ihre Systeme entsprechend umrüsten.
             Wir helfen Ihnen
           </p>
-          <div className="flex items-center max-medium:flex-col justify-center gap-4">
+          <div className="flex items-center justify-center gap-4 max-small:flex-col max-small:gap-4 max-small:px-4">
             <Image
               width={0}
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="max-small:hidden w-[313px] h-[269px]"
+              className="w-[313px] h-[269px] max-small:w-[220px] max-small:h-auto"
               src={eu_lock}
               alt="eu_lock"
             />
@@ -845,7 +1074,7 @@ export default async function Home() {
               sizes="100vw"
               loading="lazy"
               src={eu_gdpr}
-              className="w-[313px] h-[269px]"
+              className="w-[313px] h-[269px] max-small:w-[220px] max-small:h-auto"
               alt="eu_gdpr"
             />
           </div>

@@ -101,13 +101,29 @@ class DataHandler {
     }
 
     const readings = result.data;
-    if (!readings || typeof readings !== 'object' || Object.keys(readings).length === 0) {
+    if (!readings || (Array.isArray(readings) ? readings.length === 0 : (typeof readings !== 'object' || Object.keys(readings).length === 0))) {
       console.warn({ gatewayEui, meterId }, 'Invalid or empty readings, skipping');
       return null;
     }
 
-    //TODO: Deduplication - Prevent duplicate readings (same meter + timestamp)
+    // Deduplication - Prevent duplicate readings (same meter + timestamp)
+    let timestamp;
+    if (Array.isArray(readings)) {
+      const timePoint = readings.find(item => item.description === 'Time point');
+      timestamp = timePoint ? timePoint.value : null;
+    } else {
+      timestamp = readings.date;
+    }
+    if (!timestamp) {
+      console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
+      return null;
+    }
 
+    const exists = await databaseService.checkExistingReading(meter.local_meter_id, timestamp);
+    if (exists) {
+      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+      return null;
+    }
 
     console.log("============VALIDATION SUCCESSFUL!!!=============")
     await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);

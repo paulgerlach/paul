@@ -36,6 +36,27 @@ class DatabaseService {
     }
   }
 
+  checkExistingReading = async (local_meter_id, timestamp) => {
+    try {
+      const { data, error } = await supabase
+        .from('parsed_data')
+        .select('id')
+        .eq('local_meter_id', local_meter_id)
+        .contains('parsed_data', [{"description": "Time point", "value": timestamp}])
+        .limit(1);
+
+      if (error) {
+        console.error('Error checking existing reading:', error);
+        return false;
+      }
+
+      return data && data.length > 0;
+    } catch (error) {
+      console.error('Error checking existing reading:', error);
+      return false;
+    }
+  }
+
   getLocalMeterById = async (meterId) => {
     try {
       const { data, error } = await supabase
@@ -48,7 +69,7 @@ class DatabaseService {
       } else {
         console.log('Data:', data);
       }
-      
+
     } catch (error) {
       console.error('Error fetching meter by ID:', error);
       return null;

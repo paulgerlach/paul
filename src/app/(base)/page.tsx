@@ -20,6 +20,7 @@ import {
   list2,
   right_arrow,
   weight,
+  idgim_green,
   werne_green,
   wagner_green,
   vitec_green,
@@ -32,6 +33,7 @@ import {
   dumax_green,
   berlin_bear_green,
   progera_green,
+  quarterback_green,
 } from "@/static/icons";
 import animation1 from "@/animations/Animation_1.json";
 import animation2 from "@/animations/Animation_2.json";

@@ -3,6 +3,7 @@ import database from "@/db";
 import { locals, objekte } from "@/db/drizzle/schema";
 import { eq, sql, inArray } from "drizzle-orm";
 import { requireExternalAuth, formatError } from "../_lib/auth";
+import { addRateLimitHeaders } from "../_lib/rate-limit";
 import { transformPropertyToBVED, type InternalProperty } from "../_lib/transform";
 
 /**
@@ -15,13 +16,16 @@ import { transformPropertyToBVED, type InternalProperty } from "../_lib/transfor
  */
 export async function GET(request: Request) {
   try {
-    const token = await requireExternalAuth(request);
+    const authResult = await requireExternalAuth(request);
+    const { token, tokenRateLimit, ipRateLimit } = authResult;
 
+    // Option B: Scoped access - require user_id from token
     if (!token || !token.user_id) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
         { status: 401 }
       );
+      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
     }
 
     // Parse query parameters
@@ -50,6 +54,7 @@ export async function GET(request: Request) {
       .from(objekte)
       .where(eq(objekte.user_id, token.user_id));
 
+    // Fetch locals per property to provide counts (single query, avoid N+1)
     // Scope to user's properties only
     const propertyIds = properties.map(p => p.id);
     const unitsCountRows = propertyIds.length > 0
@@ -98,15 +103,17 @@ export async function GET(request: Request) {
         };
       });
 
-      return NextResponse.json({ billingunits: transformed });
+      const response = NextResponse.json({ billingunits: transformed });
+      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
     } else {
       // Default: Return internal format (backward compatibility)
-      const response = properties.map((p) => ({
+      const responseData = properties.map((p) => ({
         ...p,
         units_count: localsByProperty[p.id] || 0,
       }));
 
-      return NextResponse.json({ properties: response });
+      const response = NextResponse.json({ properties: responseData });
+      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
     }
   } catch (error) {
     return formatError(error);

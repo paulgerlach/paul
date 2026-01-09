@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import database from "@/db";
-import { requireExternalAuth, formatError } from "../_lib/auth";
+import { requireExternalAuth, formatError, createResponse } from "../_lib/auth";
 
 /**
  * BVED API: GET /api/bved/v1/health
@@ -9,16 +9,29 @@ import { requireExternalAuth, formatError } from "../_lib/auth";
  */
 export async function GET(request: Request) {
   try {
-    await requireExternalAuth(request);
+    const authResult = await requireExternalAuth(request);
+    const { tokenRateLimit, ipRateLimit } = authResult;
 
     await database.execute(sql`SELECT 1`);
 
-    return NextResponse.json({
-      status: "healthy",
-      version: "v1",
-      timestamp: new Date().toISOString(),
-    });
+    return createResponse(
+      {
+        status: "healthy",
+        version: "v1",
+        timestamp: new Date().toISOString(),
+      },
+      200,
+      tokenRateLimit,
+      ipRateLimit
+    );
   } catch (error) {
-    return formatError(error);
+    // Try to get auth result for rate limit headers even on error
+    let authResult;
+    try {
+      authResult = await requireExternalAuth(request);
+    } catch {
+      // Ignore auth errors, just return error without rate limit headers
+    }
+    return formatError(error, authResult);
   }
 }

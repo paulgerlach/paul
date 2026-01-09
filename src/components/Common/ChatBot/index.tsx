@@ -11,6 +11,9 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { Exo_2 } from "next/font/google";
+import VisitorEmailFormContainer from './VisitorEmailFormContainer';
+import { SlackMessage } from '@/types/Chat';
+import { useSlackChat } from '@/hooks/useSlackChat';
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -29,12 +32,30 @@ export default function ChatBotContainer({
   isExistingClient,
   userId,
 }: ChatBotContainerProps) {
-  const [showChatBot, setShowChatBot] = useState(false);
-  // const [showPopup, setShowPopup] = useState(false);
-  const [isSlackChat, setIsSlackChat] = useState(false);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const {storedMessages} = useAIMessagesStore();
+
+  const { isOutOfOffice } = useSlackChat(userId);
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [isSlackChat, setIsSlackChat] = useState(!isOutOfOffice);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [localMessages, setLocalMessages] = useState<SlackMessage[]>([]);
+  // const [showPopup, setShowPopup] = useState(false);
+
+  const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("anonymousUserEmail") || "";
+    }
+    return "";
+  });
+
+  const [isChatStarted, setIsChatStarted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!sessionStorage.getItem("anonymousUserEmail");
+    }
+    return false;
+  });
+
+  const { storedMessages } = useAIMessagesStore();
   const {
     messages: aiMessages,
     sendMessage,
@@ -92,7 +113,6 @@ export default function ChatBotContainer({
               onClick={toggleChatBot}
               className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
             />
-
             <ChatHeader
               headerText="Kundenservice"
               subHeaderText={isSlackChat ? "Max Sommerfeld" : "Max Sommerfeld"}
@@ -102,6 +122,8 @@ export default function ChatBotContainer({
               <SlackMessagesContainer
                 toggleChatType={toggleChatType}
                 userId={userId}
+                localMessages={localMessages}
+                setLocalMessages={setLocalMessages}
               />
             ) : (
               <AiMessagesContainer
@@ -111,8 +133,24 @@ export default function ChatBotContainer({
                 sendMessage={sendMessage}
                 status={status}
                 stop={stop}
+                anonymousUserEmail={anonymousUserEmail}
+                setAnonymousUserEmail={setAnonymousUserEmail}
+                isChatStarted={isChatStarted}
+                setIsChatStarted={setIsChatStarted}
               />
             )}
+            <>
+              {!isChatStarted && !isExistingClient && !anonymousUserEmail && (
+                <VisitorEmailFormContainer
+                  isExistingClient={isExistingClient}
+                  setIsChatStarted={setIsChatStarted}
+                  setAnonymousUserEmail={setAnonymousUserEmail}
+                  anonymousUserEmail={anonymousUserEmail}
+                  setLocalMessages={setLocalMessages}
+                  setIsSlackChat={setIsSlackChat}
+                />
+              )}
+            </>
           </div>
         </div>
       ) : (

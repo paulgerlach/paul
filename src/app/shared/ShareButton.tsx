@@ -33,7 +33,7 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
 					href={shareUrl}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="text-sm max-w-40 to-black line-clamp-1 cursor-pointer hover:underline pl-2.5"
+					className="text-sm max-w-40 line-clamp-1 cursor-pointer hover:underline pl-2.5"
 				>
 					{shareUrl}
 				</Link>
@@ -41,7 +41,7 @@ export default function ShareButton({ className = "" }: ShareButtonProps) {
 			<Button
 				onClick={handleOpen}
 				disabled={isOpen}
-				className={`inline-flex items-center gap-2 rounded font-medium transition-all duration-300 share-button-responsive ${className}`}
+				className={`inline-flex items-center gap-2 rounded font-medium transition-all duration-300 ${className}`}
 			>
 				Dashboard teilen
 			</Button>

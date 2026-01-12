@@ -9,14 +9,14 @@ export default function PriceCards() {
 			<div className="grid grid-cols-3 gap-5 max-medium:grid-cols-1">
 				<div className="relative border-dark_green/20 border rounded-base px-7 py-12">
 					<span className="absolute -top-4 left-1/2 -translate-x-1/2 py-1 px-9 rounded-[20px] bg-green">
-						5% sparen
+						Einstiegspreis
 					</span>
 					<p className="text-[25px] text-dark_text mb-2 text-center">Heidi</p>
 					<p className="text-center text-[15px] mb-7 text-dark_text/20">
 						ab <span className="text-dark_text text-[40px]">€200</span> pro Jahr
 					</p>
 					<p className="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
-						Preis für einen Heizzähler. Empfholen für Eigenheimbesitzer
+						Geeignet für Hausverwaltungen, deren Anforderung geringe Komplexität und minimale Verwaltungsarbeit sind.
 					</p>
 					<Link
 						href={ROUTE_KONTAKT}
@@ -43,7 +43,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Installation der Geräte
+							Rechtssichere Heizkostenabrechnung
 						</li>
 						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
 							<Image
@@ -54,29 +54,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Wartung
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Verbrauchsdaten in Echtzeit
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Weltweite Kontrolle und Daten
+							Kostenfreie Installation
 						</li>
 					</ul>
 				</div>
@@ -94,8 +72,7 @@ export default function PriceCards() {
 						ab <span className="text-dark_text text-[40px]">€150</span> pro Jahr
 					</p>
 					<p className="max-w-xs mx-auto text-center text-dark_text text-[15px] mb-9">
-						Sofern Sie mehr als 4 Wohnung betreuen, lohnt es sich Heidi plus zu
-						buchen.
+						Geeignet für Hausverwaltungen, deren Anforderung effiziente Prozesse und geringer Verwaltungsaufwand sind.
 					</p>
 					<Link
 						href={ROUTE_KONTAKT}
@@ -122,7 +99,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Installation der Geräte
+							Kostenfreie Installation und Wartung
 						</li>
 						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
 							<Image
@@ -133,7 +110,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Wartung
+							Rechtssichere Heizkostenabrechnung
 						</li>
 						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
 							<Image
@@ -144,29 +121,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Verbrauchsdaten in Echtzeit
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Betriebskostenabrechnung
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Weltweite Kontrolle und Daten
+							Verbrauchs- & Mieter-Information
 						</li>
 					</ul>
 				</div>
@@ -181,11 +136,10 @@ export default function PriceCards() {
 						</span>
 					</p>
 					<p className="text-center text-[15px] mb-7 text-dark_text/20">
-						Kontaktieren sie uns für eine Angbeot
+						Kontaktieren Sie uns für ein Angebot
 					</p>
 					<p className="max-w-xs mx-auto text-center text-dark_text text-[15px] mt-16 max-megalarge:mt-10 mb-9">
-						Preis für einen Heizzähler. Empfholen für Wohnungsgenossenschafften
-						und
+						Geeignet für Hausverwaltungen, deren Anforderung es ist, Prozesse zu automatisieren und skalierbar zu arbeiten.
 					</p>
 					<Link
 						href={ROUTE_KONTAKT}
@@ -212,7 +166,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Installation der Geräte
+							API Schnittstelle zu ERP & CRM System
 						</li>
 						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
 							<Image
@@ -223,7 +177,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Kostenfreie Wartung
+							Persönlicher Ansprechpartner vorort
 						</li>
 						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
 							<Image
@@ -234,40 +188,7 @@ export default function PriceCards() {
 								src={checkmark_bold}
 								alt="checkmark bold"
 							/>
-							Verbrauchsdaten in Echtzeit
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Betriebskostenabrechnung
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Weltweite Kontrolle und Daten
-						</li>
-						<li className="flex items-center justify-start gap-3.5 text-[15px] text-dark_text/50">
-							<Image
-								width={0}
-								height={0}
-								sizes="100vw"
-								loading="lazy"
-								src={checkmark_bold}
-								alt="checkmark bold"
-							/>
-							Persönlicher Ansprechpartner
+							Rechtssichere Heizkostenabrechnung
 						</li>
 					</ul>
 				</div>

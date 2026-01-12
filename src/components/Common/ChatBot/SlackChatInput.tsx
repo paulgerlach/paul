@@ -11,23 +11,24 @@ interface SlackChatInputProps {
 }
 
 export default function SlackChatInput({ userId, setLocalMessages }: SlackChatInputProps) {
-  const { sendMessage, status, input, setInput } = useSlackChat(userId);
+  const { sendMessage, status, input, setInput, isOutOfOffice } = useSlackChat(userId);
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (input.trim()) {
-          sendMessage(input);
+          if (input.trim()) {
+            sendMessage(input);
 
-          setLocalMessages((prev) => [
-            ...prev,
-            {
-              role: "assistant", //value for user as it comes from the bot
-              text: input,
-              timestamp: new Date(),
-            },
-          ]);
-        }
+            setLocalMessages((prev) => [
+              ...prev,
+              {
+                role: "assistant", //value for user as it comes from the bot
+                text: input,
+                timestamp: new Date(),
+              },
+            ]);
+          }
+        
       }}
       className="flex gap-2 w-full"
     >

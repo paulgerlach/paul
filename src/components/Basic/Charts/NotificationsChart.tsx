@@ -132,6 +132,7 @@ export default function NotificationsChart({
 		useState(false);
 	const [originalNotificationCount, setOriginalNotificationCount] =
 		useState(0);
+	const [showAllNotifications, setShowAllNotifications] = useState(false);
 
 	// Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
 	const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
@@ -850,7 +851,11 @@ export default function NotificationsChart({
 					alt="notification"
 				/>
 			</div>
-			<div className="space-y-2 flex-1 overflow-y-auto max-h-[280px] pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+			<div
+				className={`flex-1 overflow-y-auto ${
+					showAllNotifications ? "max-h-[280px]" : "max-h-[270px]"
+				} pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`}
+			>
 				{notifications.length === 0 ? (
 					hasDismissedNotifications &&
 					originalNotificationCount > 0 ? (
@@ -877,64 +882,83 @@ export default function NotificationsChart({
 						/>
 					)
 				) : (
-					notifications.map((n, idx) => (
-						<div
-							key={idx}
-							className="flex items-center justify-between w-full gap-2 hover:bg-base-bg/70 hover:rounded-base hover:font-medium"
-						>
-							<div className="flex-1 min-w-0">
-								<NotificationItem {...n} />
-							</div>
-							<div className="flex items-center flex-shrink-0 ml-1">
-								<Popover
-									open={openPopoverId === idx}
-									onOpenChange={(open) =>
-										setOpenPopoverId(open ? idx : null)
-									}
-								>
-									<PopoverTrigger asChild>
-										<button
-											className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
+					notifications
+						.slice(
+							0,
+							showAllNotifications ? notifications.length : 4
+						)
+						.map((n, idx) => (
+							<div
+								key={idx}
+								className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg"
+							>
+								<div className="flex-1 min-w-0">
+									<NotificationItem {...n} />
+								</div>
+								<div className="flex items-center flex-shrink-0 ml-1">
+									<Popover
+										open={openPopoverId === idx}
+										onOpenChange={(open) =>
+											setOpenPopoverId(open ? idx : null)
+										}
+									>
+										<PopoverTrigger asChild>
+											<button
+												className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
+												onClick={(e) =>
+													e.stopPropagation()
+												}
+											>
+												<Image
+													width={0}
+													height={0}
+													sizes="100vw"
+													loading="lazy"
+													className="max-w-4 max-h-4"
+													src={dots_button}
+													alt="dots button"
+												/>
+											</button>
+										</PopoverTrigger>
+										<PopoverContent
+											className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
 											onClick={(e) => e.stopPropagation()}
 										>
-											<Image
-												width={0}
-												height={0}
-												sizes="100vw"
-												loading="lazy"
-												className="max-w-4 max-h-4"
-												src={dots_button}
-												alt="dots button"
-											/>
-										</button>
-									</PopoverTrigger>
-									<PopoverContent
-										className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
-										onClick={(e) => e.stopPropagation()}
-									>
-										<button
-											onClick={() =>
-												openErrorModal(n.meterId)
-											}
-											className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
-										>
-											<Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
-											öffnen
-										</button>
-										<button
-											onClick={() => {
-												deleteNotification(idx);
-											}}
-											className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
-										>
-											<Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
-											Löschen
-										</button>
-									</PopoverContent>
-								</Popover>
+											<button
+												onClick={() =>
+													openErrorModal(n.meterId)
+												}
+												className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+											>
+												<Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+												öffnen
+											</button>
+											<button
+												onClick={() => {
+													deleteNotification(idx);
+												}}
+												className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+											>
+												<Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+												Löschen
+											</button>
+										</PopoverContent>
+									</Popover>
+								</div>
 							</div>
-						</div>
-					))
+						))
+				)}
+				{notifications.length > 4 && (
+					<button
+						onClick={() =>
+							setShowAllNotifications(!showAllNotifications)
+						}
+						className="text-[10px] text-link text-center underline w-full inline-block hover:text-blue-600"
+					>
+						{showAllNotifications
+							? "Weniger anzeigen"
+							: "Weitere Benachrichtigungen anzeigen"}
+					</button>
 				)}
 			</div>
 			{/* <>{notifications.length}</> */}

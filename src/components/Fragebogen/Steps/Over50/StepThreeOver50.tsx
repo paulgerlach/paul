@@ -1,38 +1,38 @@
 "use client";
 
-import { immobilien_1_50, immobilien_51_800, immobilien_over_800 } from "@/static/icons";
+import { zufrieden_check, teils_teils_scale, unzufrieden_x } from "@/static/icons";
 import Image from "next/image";
-import { type BaseStepProps } from "../StepWrapper";
+import { type BaseStepProps } from "../../StepWrapper";
 import { useQuestionareStore } from "@/store/useQuestionareStore";
 import type { QuestionareFormData } from "@/app/(service)/fragebogen/page";
 import type { StepOptionType } from "@/types";
 
-// Property count category options
-const options: StepOptionType<"property_count_category">[] = [
+// Satisfaction options
+const options: StepOptionType<"zusammenarbeit_status">[] = [
 	{ 
-		id: "property_1_50", 
-		value: "1-50 Immobilien", 
-		icon: immobilien_1_50 
+		id: "zufrieden", 
+		value: "Sehr zufrieden", 
+		icon: zufrieden_check 
 	},
 	{ 
-		id: "property_51_800", 
-		value: "51-800 Immobilien", 
-		icon: immobilien_51_800 
+		id: "teils_teils", 
+		value: "Teils / teils", 
+		icon: teils_teils_scale 
 	},
 	{ 
-		id: "property_over_800", 
-		value: "über 800 Immobilien", 
-		icon: immobilien_over_800 
+		id: "unzufrieden", 
+		value: "Stark unzufrieden", 
+		icon: unzufrieden_x 
 	},
 ];
 
-export default function FragebogenStepOne({
+export default function StepThreeOver50({
 	register,
 	watch,
 	setValue,
 }: BaseStepProps) {
 	const { activeStep, setActiveStep } = useQuestionareStore();
-	const selectedValue = watch("property_count_category");
+	const selectedValue = watch("zusammenarbeit_status");
 
 	const onChangeForward = (name: keyof QuestionareFormData, value: string) => {
 		setValue(name, value);
@@ -42,19 +42,19 @@ export default function FragebogenStepOne({
 	};
 
 	return (
-		<div data-step="1" className="questionare-step mb-10 max-w-xl">
+		<div data-step="3" className="questionare-step mb-10 max-w-xl">
 			<p className="mb-6 text-[40px] leading-tight max-small:text-2xl text-dark_text">
-				Immobilienbestand
+				Status der Zusammenarbeit
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Wie viele Wohn- und Gewerbeimmobilien verwalten Sie<br />
-				aktuell insgesamt?
+				Wie zufrieden sind Sie insgesamt mit der Zusammenarbeit<br />
+				mit den Messdienstleistern?
 			</p>
 			<div className="space-y-3">
-				{options.map((option: StepOptionType<"property_count_category">) => (
+				{options.map((option: StepOptionType<"zusammenarbeit_status">) => (
 					<label
 						onClick={() =>
-							onChangeForward("property_count_category", option.value as string)
+							onChangeForward("zusammenarbeit_status", option.value as string)
 						}
 						key={option.id}
 						htmlFor={option.id}
@@ -62,11 +62,11 @@ export default function FragebogenStepOne({
 					>
 						<input
 							className="hidden peer"
-							{...register("property_count_category")}
+							{...register("zusammenarbeit_status")}
 							id={option.id}
 							type="radio"
 							checked={selectedValue === option.value}
-							onChange={(e) => onChangeForward("property_count_category", e.target.value)}
+							onChange={(e) => onChangeForward("zusammenarbeit_status", e.target.value)}
 							value={option.value as string}
 						/>
 						<div className="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-xl border border-dark_green/20 w-[509px] h-[69px] px-4 flex items-center justify-start gap-5 text-[18px] text-dark_text">
@@ -88,3 +88,4 @@ export default function FragebogenStepOne({
 		</div>
 	);
 }
+

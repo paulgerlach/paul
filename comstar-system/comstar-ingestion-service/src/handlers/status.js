@@ -5,7 +5,7 @@ class StatusHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    console.log({ gatewayEui, messageNumber }, 'Processing status update');
+    // console.log({ gatewayEui, messageNumber }, 'Processing status update');
   }
 
 }

@@ -64,16 +64,40 @@ class DatabaseService {
 
       if (error) {
         //replace with logger
-        console.error('Error fetching data:', error, meterId);
+        // console.error('Error fetching data:', error, meterId);
       }
       
-      if (!data || data.length < 1) {
+      if (!data) {
         console.error({ meterId }, 'Unknown meter ID, skipping');
       }
 
       return data;
     } catch (error) {
       console.error('Error fetching meter by ID:', error);
+      return null;
+    }
+  }
+
+  async getDesiredGatewayState(gatewayEui) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_desired_states')
+        .select('*')
+        .eq('gateway_eui', gatewayEui)
+        .single();
+
+      if (error) {
+        //replace with logger
+        console.error('Error fetching gateway_desired_states data:', error, meterId);
+      }
+      
+      if (!data) {
+        console.error({ gatewayEui }, 'Unknown Gateway EUI');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error Gateway State data:', error);
       return null;
     }
   }

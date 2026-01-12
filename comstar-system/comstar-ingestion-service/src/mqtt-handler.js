@@ -59,7 +59,6 @@ class MqttHandler {
     }
   }
 
-
   async connect() { 
     return new Promise((resolve, reject) => { 
       console.log(`Connecting to MQTT broker: ${this.config.brokerUrl}`);
@@ -177,12 +176,37 @@ class MqttHandler {
         return;
       }
 
-      await handlerConfig.handler.handle({
+      const result = await handlerConfig.handler.handle({
         gatewayEui,
         data,
         messageNumber,
         mqtt: this.client,
       });
+
+      if (handlerConfig.isUrgent && result) {
+        const responseTopic = handlerConfig.responseTopic(gatewayEui);
+        const downlinkMessage = {
+          n: this.getNextDownlinkNumber(),  // Unique downlink message number
+          r: messageNumber,                  // Reference to original uplink message number
+          d: result                          // Response data from handler
+        };
+  
+        try { 
+          const encoded = await cbor.encode(downlinkMessage);
+              
+          // Publish to MQTT broker
+          this.client.publish(responseTopic, encoded, {
+            qos: this.config.publishQos,
+            retain: false  // Typically false for responses
+          });
+          
+          console.log({ gatewayEui, queryType: handlerConfig.handler.name }, 'Downlink response sent');
+        }catch(error)
+        {
+          console.error({ error, gatewayEui, queryType: handlerConfig.handler.name }, 'Failed to send downlink response');
+          await this.sendErrorResponse(error.gatewayEui, error.queryType, error.messageNumber, error);
+        }
+      }
     
     } catch (error) {
       console.error({ error, topic, message: message.toString('hex').substring(0, 100) }, 'Message processing error');
@@ -241,6 +265,11 @@ class MqttHandler {
       connected: this.isConnected,
       responseStats: 0 //this.responseTracker.getStats()
     };
+  }
+
+  getNextDownlinkNumber() {
+    if (!this.downlinkCounter) this.downlinkCounter = 0;
+    return ++this.downlinkCounter;
   }
 
 }

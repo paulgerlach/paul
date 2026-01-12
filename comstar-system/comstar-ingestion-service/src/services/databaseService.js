@@ -4,7 +4,6 @@ class DatabaseService {
   constructor() { }
 
   insertMeterReading = async (meter_id, meterManufacturer, meterType, meter_device_type, version, status, accessNo, readings, local_meter_id, frame_type, encryption) => {
-    console.log(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, local_meter_id, frame_type, encryption);
     
     try {
       const { data, error } = await supabase
@@ -25,13 +24,11 @@ class DatabaseService {
         })
 
       if (error) {
-        console.error('Error fetching data:', error);
-      } else {
-        console.log('Data:', data);
+        console.error('Error insert reading data:', error);
       }
       
     } catch (error) {
-      console.error('Error fetching meter by ID:', error);
+      console.error('Error insert reading data:', error);
       return null;
     }
   }
@@ -62,14 +59,19 @@ class DatabaseService {
       const { data, error } = await supabase
         .from('local_meters')
         .select('*')
-        .eq('meter_number', meterId);
+        .eq('meter_number', meterId)
+        .single();
 
       if (error) {
-        console.error('Error fetching data:', error);
-      } else {
-        console.log('Data:', data);
+        //replace with logger
+        console.error('Error fetching data:', error, meterId);
+      }
+      
+      if (!data || data.length < 1) {
+        console.error({ meterId }, 'Unknown meter ID, skipping');
       }
 
+      return data;
     } catch (error) {
       console.error('Error fetching meter by ID:', error);
       return null;

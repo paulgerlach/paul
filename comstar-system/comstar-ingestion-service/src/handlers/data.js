@@ -17,7 +17,6 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    console.log({ gatewayEui, messageNumber }, 'Processing data update');
     if(data && data.d.telegram) {
       return this.handleTelegramData(gatewayEui, data.d.telegram);
     } else {
@@ -27,7 +26,7 @@ class DataHandler {
   }
 
   async handleTelegramData(gatewayEui, telegram) {
-    console.log({ gatewayEui, telegram }, 'Processing telegram data');
+    // console.log({ gatewayEui, telegram }, 'Processing telegram data');
     // Process telegram data here
     const parser = new WirelessMbusParser();
     const result = await parser.parse(
@@ -40,7 +39,7 @@ class DataHandler {
       // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
 
-    console.log('Result========>', result)
+    // console.log('Result========>', result)
     
     const meterId = result.meter.id;
     const meterManufacturer = result.meter.manufacturer;
@@ -125,7 +124,6 @@ class DataHandler {
       return null;
     }
 
-    console.log("============VALIDATION SUCCESSFUL!!!=============")
     await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);
 
     return {

@@ -563,6 +563,10 @@ html {
   }
 }
 
+.to-black {
+    color: #1E322D;
+}
+
 
 .reviews-swiper .swiper-slide {
     max-width: max-content !important;

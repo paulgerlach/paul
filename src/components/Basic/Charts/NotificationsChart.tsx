@@ -830,7 +830,7 @@ export default function NotificationsChart({
 				isEmpty ? "flex flex-col" : ""
 			}`}
 		>
-			<div className="flex pb-6 border-b border-b-dark_green/10 items-center justify-between mb-2">
+			<div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-2">
 				<div className="flex items-center gap-2">
 					<h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
 						Benachrichtigungen

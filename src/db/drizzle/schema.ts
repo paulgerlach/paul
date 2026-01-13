@@ -451,12 +451,5 @@ export const gateway_desired_states = pgTable("gateway_desired_states", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-	unique("gateway_desired_states_gateway_eui_key").on(table.gateway_eui),
 	pgPolicy("Admins can manage gateway states", { as: "permissive", for: "all", to: ["service_role"] }),
-	pgPolicy("Users can view gateway states for their properties", {
-		as: "permissive",
-		for: "select",
-		to: ["public"],
-		using: sql`(user_id = auth.uid() OR EXISTS (SELECT 1 FROM objekte WHERE objekte.id = objekt_id AND objekte.user_id = auth.uid()))`
-	}),
 ]);

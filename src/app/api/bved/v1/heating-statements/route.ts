@@ -27,8 +27,9 @@ import { requireExternalAuth, formatError, createResponse } from "../_lib/auth";
  * Only returns heating statements for properties where objekte.user_id = token.user_id
  */
 export async function GET(request: Request) {
+  let authResult;
   try {
-    const authResult = await requireExternalAuth(request);
+    authResult = await requireExternalAuth(request);
     const { token, tokenRateLimit, ipRateLimit } = authResult;
 
     // Scoped access - require user_id from token
@@ -282,6 +283,6 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    return formatError(error);
+    return formatError(error, authResult);
   }
 }

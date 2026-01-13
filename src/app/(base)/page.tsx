@@ -434,7 +434,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
                   src={hsp_green}
                   alt="hsp"
                 />
@@ -448,20 +448,20 @@ export default async function Home() {
                   alt="raum"
                 />
                 <Image
-                  width={140}
-                  height={45}
+                  width={180}
+                  height={55}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[120px] max-small:h-[40px] object-contain"
+                  className="w-[180px] h-[55px] max-small:w-[140px] max-small:h-[46px] object-contain"
                   src={schleicher_green}
                   alt="schleicher_green"
                 />
                 <Image
-                  width={140}
-                  height={45}
+                  width={100}
+                  height={35}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[70px] max-small:h-[24px] object-contain"
+                  className="w-[100px] h-[35px] max-small:w-[70px] max-small:h-[24px] object-contain"
                   src={vitec_green}
                   alt="vitec"
                 />

@@ -43,7 +43,10 @@ export default function InstallFaq() {
 
 	const swiperRef = useRef(null);
 	const [activeIndex, setActiveIndex] = useState(0);
+	const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+	const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
 
+	// Desktop bullet animation
 	useEffect(() => {
 		const updateNextClass = () => {
 			const bullets = document.querySelectorAll(".install-faq-bullet");
@@ -64,12 +67,40 @@ export default function InstallFaq() {
 		updateNextClass();
 	}, [activeIndex, slides.length]);
 
+	// Mobile autoplay - cycles every 5 seconds
+	useEffect(() => {
+		if (isAutoplayPaused) return;
+
+		const interval = setInterval(() => {
+			setMobileActiveIndex((prev) => (prev + 1) % slides.length);
+		}, 5000);
+
+		return () => clearInterval(interval);
+	}, [isAutoplayPaused, slides.length]);
+
+	// Resume autoplay after 8 seconds of inactivity
+	useEffect(() => {
+		if (!isAutoplayPaused) return;
+
+		const timeout = setTimeout(() => {
+			setIsAutoplayPaused(false);
+		}, 8000);
+
+		return () => clearTimeout(timeout);
+	}, [isAutoplayPaused]);
+
+	const handleMobileStepClick = (index: number) => {
+		setMobileActiveIndex(index);
+		setIsAutoplayPaused(true); // Pause autoplay when user interacts
+	};
+
 	return (
 		<div
 			id="installFaq"
 			className="my-16 max-small:my-8 py-16 pl-[100px] pr-[156px] max-large:px-20 max-medium:px-10 max-small:px-5 max-large:gap-8 bg-[#AEBBA5]"
 		>
-			<div className="relative space-y-7">
+			{/* Desktop Version */}
+			<div className="relative space-y-7 max-small:hidden">
 				<h4 className="text-[44px] max-w-[480px] leading-[54px] max-medium:text-2xl text-dark_text">
 					Kostenfreie Installation der neuen Funkgeräte
 				</h4>
@@ -143,6 +174,69 @@ export default function InstallFaq() {
 						</SwiperSlide>
 					))}
 				</Swiper>
+			</div>
+
+			{/* Mobile Version - Matching Figma Design */}
+			<div className="hidden max-small:block px-5">
+				<h4 className="text-[30px] leading-[36px] text-dark_text mb-8">
+					Kostenfrei Installation der neuen Funkgeräte
+				</h4>
+				
+				{/* Numbered Steps */}
+				<div className="space-y-3">
+					{slides.map((slide, index) => (
+						<div key={index}>
+							<button
+								onClick={() => handleMobileStepClick(index)}
+								className={`flex items-center gap-2 px-1.5 pr-5 py-1.5 rounded-full transition-all duration-300 ${
+									mobileActiveIndex === index
+										? "bg-dark_text text-white"
+										: "bg-[#D0D7CA] text-dark_text"
+								}`}
+							>
+								<span
+									className={`rounded-full size-10 flex items-center justify-center text-lg font-medium ${
+										mobileActiveIndex === index
+											? "bg-white text-dark_text"
+											: "bg-white text-dark_text"
+									}`}
+								>
+									{index + 1}
+								</span>
+								<span className="text-[28px]">
+									{slide.name}
+								</span>
+							</button>
+							{/* Description text below active item */}
+							{mobileActiveIndex === index && (
+								<p className="text-[15px] leading-[18px] text-dark_text mt-2 ml-1">
+									{slide.text}
+								</p>
+							)}
+						</div>
+					))}
+				</div>
+
+				{/* Card below */}
+				<div className="mt-10">
+					{slides[mobileActiveIndex].animation ? (
+						<LazyLottie
+							wrapperClassName="w-full h-[300px]"
+							id={slides[mobileActiveIndex].id}
+							animationData={slides[mobileActiveIndex].animation}
+						/>
+					) : (
+						<Image
+							width={0}
+							height={0}
+							sizes="100vw"
+							loading="lazy"
+							src={slides[mobileActiveIndex].img}
+							alt={slides[mobileActiveIndex].name}
+							className="w-full rounded-xl"
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 
 import { HeatingBillPreviewTwoView } from "./HeatingBillPreviewTwoView";
+import { ENERGY_TYPES, SEPARATE_TYPES } from "./constants";
 
 const HeatingBillPreviewTwo = ({
   previewData,
@@ -29,29 +30,32 @@ const HeatingBillPreviewTwo = ({
     periodEnd
   );
 
-  console.log("buildingConsumption", buildingConsumption);
-
   const costGroups = useMemo(() => {
-    const energy: any[] = [];
-    const additional: any[] = [];
-    const separate: any[] = [];
+    const energy = previewData.invoices.filter((inv) =>
+      previewData.costCategories.some(
+        (cat) =>
+          cat.type === inv.cost_type &&
+          ENERGY_TYPES.some((t) => cat.type?.toLowerCase().includes(t))
+      )
+    );
 
-    const energyTypes = ["fernwärme", "brennstoff", "heizöl", "gas", "preisbremse", "nahwärme"];
-    const separateTypes = ["kaltwasser", "abwasser", "gerätemiete", "zählermiete", "abrechnung kaltwasser"];
+    const separate = previewData.invoices.filter((inv) =>
+      previewData.costCategories.some(
+        (cat) =>
+          cat.type === inv.cost_type &&
+          SEPARATE_TYPES.some((t) => cat.type?.toLowerCase().includes(t))
+      )
+    );
 
-    previewData.invoices.forEach(inv => {
-      const type = (inv.cost_type || "").toLowerCase();
-      if (energyTypes.some(t => type.includes(t))) {
-        energy.push(inv);
-      } else if (separateTypes.some(t => type.includes(t))) {
-        separate.push(inv);
-      } else {
-        additional.push(inv);
-      }
-    });
+    const additional = previewData.invoices.filter(
+      (inv) =>
+        previewData.costCategories.some((cat) => cat.type === inv.cost_type) &&
+        !ENERGY_TYPES.some((t) => inv.cost_type?.toLowerCase().includes(t)) &&
+        !SEPARATE_TYPES.some((t) => inv.cost_type?.toLowerCase().includes(t))
+    );
 
     return { energy, additional, separate };
-  }, [previewData.invoices]);
+  }, [previewData.invoices, previewData.costCategories]);
 
   const sums = useMemo(() => {
     const energySum = costGroups.energy.reduce((s, i) => s + Number(i.total_amount || 0), 0);
@@ -109,7 +113,7 @@ const HeatingBillPreviewTwo = ({
         costGroups,
         sums,
         thermal,
-      }}
+      } as any}
     />
   );
 };

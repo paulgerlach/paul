@@ -5,11 +5,6 @@ import { formatDateGerman, formatEuro } from "@/utils";
 
 export interface HeatingBillPreviewTwoCalculated {
     buildingConsumption: any;
-    costGroups: {
-        energy: any[];
-        additional: any[];
-        separate: any[];
-    };
     sums: {
         energySum: number;
         additionalSum: number;
@@ -29,6 +24,11 @@ export interface HeatingBillPreviewTwoCalculated {
         remainingHeatingEnergyCosts: number;
         totalHeatingCosts: number;
     };
+    costGroups: {
+        energy: any[];
+        additional: any[];
+        separate: any[];
+    };
 }
 
 export const HeatingBillPreviewTwoView = ({
@@ -43,6 +43,7 @@ export const HeatingBillPreviewTwoView = ({
         maximumFractionDigits: 2,
     });
 
+    const { costCategories, invoices } = previewData;
     const { buildingConsumption, costGroups, sums, thermal } = data;
 
     return (
@@ -143,7 +144,7 @@ export const HeatingBillPreviewTwoView = ({
                                             {/* Fallback to building consumption for Heat if it's an energy invoice */}
                                             {idx === 0 && Number(inv.total_amount) > 0 ? formatter.format(buildingConsumption.heat) : ""}
                                         </td>
-                                        <td className="py-1 px-2 text-right">{formatEuro(inv.total_amount)}</td>
+                                        <td className="py-1 px-2 text-right">{formatEuro(Number(inv.total_amount || 0))}</td>
                                     </tr>
                                 ))}
                                 <tr className="font-bold">
@@ -189,7 +190,7 @@ export const HeatingBillPreviewTwoView = ({
                                         <td className="py-1 px-2 text-center text-xs">
                                             {inv.invoice_date ? formatDateGerman(inv.invoice_date) : ""}
                                         </td>
-                                        <td className="py-1 px-2 text-right">{formatEuro(inv.total_amount)}</td>
+                                        <td className="py-1 px-2 text-right">{formatEuro(Number(inv.total_amount || 0))}</td>
                                     </tr>
                                 ))}
                                 <tr className="font-bold">
@@ -241,7 +242,7 @@ export const HeatingBillPreviewTwoView = ({
                                     <td className="py-1 px-2 text-center text-xs">
                                         {inv.invoice_date ? formatDateGerman(inv.invoice_date) : ""}
                                     </td>
-                                    <td className="py-1 px-2 text-right">{formatEuro(inv.total_amount)}</td>
+                                    <td className="py-1 px-2 text-right">{formatEuro(Number(inv.total_amount || 0))}</td>
                                 </tr>
                             );
                         })}

@@ -54,8 +54,6 @@ export default function HeatingBillPreview({
     coldWaterData,
     hotWaterData,
     heatingData,
-    isLoading: consumptionLoading,
-    error: consumptionError
   } = useConsumptionData(
     mainDoc?.local_id ?? undefined,
     periodStart,
@@ -85,6 +83,9 @@ export default function HeatingBillPreview({
     (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
     0
   );
+
+  console.log("totalAmount", totalAmount);
+  console.log("totalContractsAmount", filteredContracts);
 
   const totalDiff = totalContractsAmount - totalAmount;
 

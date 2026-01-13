@@ -11,6 +11,8 @@ export const HeatingBillPreviewOneView = ({
     previewData: HeatingBillPreviewData;
     contractors: ContractorType[];
 }) => {
+
+    console.log("previewData", previewData);
     return (
         <div className="mx-auto max-w-[1400px] space-y-[70px] font-sans text-sm">
             {/* Green Header Box */}

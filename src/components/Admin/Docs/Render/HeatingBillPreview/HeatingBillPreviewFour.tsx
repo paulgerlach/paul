@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useConsumptionData } from "@/hooks/useConsumptionData";
 
 import { HeatingBillPreviewFourView } from "./HeatingBillPreviewFourView";
+import { ENERGY_TYPES, ADDITIONAL_TYPES } from "./constants";
 
 const HeatingBillPreviewFour = ({
   previewData,
@@ -36,15 +37,13 @@ const HeatingBillPreviewFour = ({
   );
 
   const costCalculations = useMemo(() => {
-    const energyTypes = ["fernwärme", "brennstoff", "heizöl", "gas", "preisbremse", "nahwärme"];
     const energyInvoices = previewData.invoices.filter(inv =>
-      energyTypes.some(t => inv.cost_type?.toLowerCase().includes(t))
+      ENERGY_TYPES.some(t => inv.cost_type?.toLowerCase().includes(t))
     );
     const energySum = energyInvoices.reduce((s, i) => s + Number(i.total_amount || 0), 0);
 
-    const additionalTypes = ["wartung", "strom", "bedienung", "emissionsmessung", "reinigung"];
     const additionalInvoices = previewData.invoices.filter(inv =>
-      additionalTypes.some(t => inv.cost_type?.toLowerCase().includes(t))
+      ADDITIONAL_TYPES.some(t => inv.cost_type?.toLowerCase().includes(t))
     );
     const additionalSum = additionalInvoices.reduce((s, i) => s + Number(i.total_amount || 0), 0);
     const energyAndHeatingSum = energySum + additionalSum;

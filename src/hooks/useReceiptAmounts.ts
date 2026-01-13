@@ -15,8 +15,8 @@ export function useReceiptAmounts({
   locals,
 }: {
   documentGroups:
-    | BetriebskostenabrechnungCostType[]
-    | HeizkostenabrechnungCostType[];
+  | BetriebskostenabrechnungCostType[]
+  | HeizkostenabrechnungCostType[];
   start_date: string;
   end_date: string;
   locals: (LocalType & { contracts: ContractType[] })[];

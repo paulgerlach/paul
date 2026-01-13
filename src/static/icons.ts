@@ -308,6 +308,13 @@ import harte_green from "@/asset/harte_green.png";
 import dumax_green from "@/asset/dumax_green.png";
 import berlin_bear_green from "@/asset/berlin_bear_green.png";
 import max_chat_avatar from "@/asset/max_chat_avatar.png";
+import immobilien_1_50 from "@/asset/immobilien_1_50.png";
+import immobilien_51_800 from "@/asset/immobilien_51_800.png";
+import immobilien_over_800 from "@/asset/immobilien_over_800.png";
+import info_circle_grey from "@/asset/info_circle_grey.png";
+import zufrieden_check from "@/asset/zufrieden_check.png";
+import teils_teils_scale from "@/asset/teils_teils_scale.png";
+import unzufrieden_x from "@/asset/unzufrieden_x.png";
 
 export {
   accentro_colored,
@@ -619,5 +626,12 @@ export {
   clock_dark,
   close_white,
   building,
-  max_chat_avatar
+  max_chat_avatar,
+  immobilien_1_50,
+  immobilien_51_800,
+  immobilien_over_800,
+  info_circle_grey,
+  zufrieden_check,
+  teils_teils_scale,
+  unzufrieden_x
 };

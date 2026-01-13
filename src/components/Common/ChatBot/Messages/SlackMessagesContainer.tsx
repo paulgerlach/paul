@@ -1,7 +1,7 @@
 'use client';
 
 import { useSlackChat } from '@/hooks/useSlackChat';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import SlackChatInput from '../SlackChatInput';
 import { LuBrainCircuit } from "react-icons/lu";
 import {Triangle} from 'react-loader-spinner'
@@ -13,17 +13,20 @@ import { max_chat_avatar } from '@/static/icons';
 interface SlackChatBotProps {
   toggleChatType: () => void;
   userId?: string;
+  localMessages: SlackMessage[];
+  setLocalMessages:Dispatch<React.SetStateAction<SlackMessage[]>>
 }
 
 export default function SlackMessagesContainer({
   toggleChatType,
   userId,
+  localMessages,
+  setLocalMessages,
 }: SlackChatBotProps) {
-  const [localMessages, setLocalMessages] = useState<SlackMessage[]>([]);
-  const { messages, status } = useSlackChat(userId);
+  const threadTs = localStorage.getItem(`slack_thread_${userId ?? `visitor`}`) ?? undefined;
+const { messages, status } = useSlackChat(userId, threadTs);
 
   useEffect(() => {
-    console.log(messages)
     setLocalMessages(messages);
   }, [messages]);
 
@@ -48,7 +51,13 @@ export default function SlackMessagesContainer({
         )}
         {localMessages.map((message, idx) => {
           //Messages from the web platform are technically sent by the Bot
-          return <SlackMessageContainer key={idx} message={message} userId={userId} />;
+          return (
+            <SlackMessageContainer
+              key={idx}
+              message={message}
+              userId={userId}
+            />
+          );
         })}
         {status !== "ready" && (
           <div className="flex flex-row items-center justify-center">

@@ -50,7 +50,7 @@ export default function DialogBase({
       <div
         ref={dialogRef}
         style={{ maxWidth: `${size}px`, maxHeight: `${maxHeight}px` }}
-        className="w-full bg-white rounded flex flex-col overflow-hidden"
+        className="w-full max-small:w-[85%] bg-white rounded flex flex-col overflow-hidden"
       >
         <div className="px-9 py-4 flex-shrink-0">
           <button

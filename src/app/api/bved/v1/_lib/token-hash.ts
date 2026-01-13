@@ -9,7 +9,7 @@ if (!process.env.BVED_TOKEN_PEPPER && process.env.NODE_ENV === "production") {
 // generate a secure random token
 export function generateToken(prefix: string = "bved"): string {
     const randomPart = randomBytes(32).toString("hex");
-    return `${prefix}-${randomPart}`;
+    return `${prefix}_${randomPart}`;
 }
 
 // Extract prefix from token (first  8 chars after prefix)

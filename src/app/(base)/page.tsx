@@ -249,7 +249,7 @@ export default async function Home() {
                 Jetzt installieren lassen
               </Link>
             </div>
-            <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start max-small:hidden">
               <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
                 <Image
                   width={25}
@@ -278,7 +278,7 @@ export default async function Home() {
             </div>
           </div>
         </div>
-      <div className="hero-2 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5">
+      <div className="hero-2 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 max-small:pt-20">
             <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
               Jetzt auf Funkzähler umsteigen
             </h2>
@@ -401,13 +401,13 @@ export default async function Home() {
               </p>
               {/* Desktop: 4 columns, evenly spaced */}
               {/* Mobile: 2 columns with space between */}
-              <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-16 max-small:gap-y-5">
+              <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-10 max-small:gap-y-6">
                 <Image
                   width={140}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={berlin_bear_green}
                   alt="berlinBear"
                 />
@@ -416,7 +416,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={dumax_green}
                   alt="dumax"
                 />
@@ -425,7 +425,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={harte_green}
                   alt="harte"
                 />
@@ -434,7 +434,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={hsp_green}
                   alt="hsp"
                 />
@@ -443,7 +443,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={raum_green}
                   alt="raum"
                 />
@@ -452,7 +452,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[120px] max-small:h-[40px] object-contain"
                   src={schleicher_green}
                   alt="schleicher_green"
                 />
@@ -461,7 +461,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[70px] max-small:h-[24px] object-contain"
                   src={vitec_green}
                   alt="vitec"
                 />
@@ -470,7 +470,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={wagner_green}
                   alt="wagner"
                 />
@@ -479,7 +479,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={werne_green}
                   alt="werne_green"
                 />
@@ -488,7 +488,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={neckar_green}
                   alt="neckar_green"
                 />
@@ -497,7 +497,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={niesen_green}
                   alt="niesen_green"
                 />
@@ -506,7 +506,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={progera_green}
                   alt="progera_green"
                 />

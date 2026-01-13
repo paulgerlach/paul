@@ -3,6 +3,13 @@ import database from "@/db";
 import { bved_api_tokens } from "@/db/drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { extractTokenPrefix, verifyToken } from "./token-hash";
+import {
+  checkTokenRateLimit,
+  checkIPRateLimit,
+  getClientIP,
+  addRateLimitHeaders,
+  type RateLimitResult,
+} from "./rate-limit";
 
 export class ExternalAuthError extends Error {
   status: number;
@@ -15,24 +22,47 @@ export class ExternalAuthError extends Error {
   }
 }
 
+export type TokenRecord = typeof bved_api_tokens.$inferSelect;
+
+export interface AuthResult {
+  token: TokenRecord | null;
+  tokenRateLimit: RateLimitResult;
+  ipRateLimit: RateLimitResult;
+  clientIP: string;
+}
+
 /**
  * External auth guard for BVED outbound APIs.
+ * Returns the validated token record so routes can scope data by user_id.
+ * Also performs rate limiting checks.
  * 
  * Supports:
  * 1. Database tokens (hashed, with expiration) - primary method
- * 2. Environment variable tokens (backward compatibility)
+ * 2. Environment variable tokens (backward compatibility) - NOTE: No user_id available
  * 
  * Headers:
  * - Authorization: Bearer <token>
  * - X-API-Key: <token>
+ * 
+ * Rate Limiting:
+ * - Per-token: 1000 requests/hour (default)
+ * - Per-IP: 100 requests/minute (default)
+ * 
+ * @throws ExternalAuthError if rate limit exceeded or token invalid
  */
-export type TokenRecord = typeof bved_api_tokens.$inferSelect;
+export async function requireExternalAuth(request: Request): Promise<AuthResult> {
+  const clientIP = getClientIP(request);
+  
+  // Check IP rate limit first (before token validation)
+  const ipRateLimit = checkIPRateLimit(clientIP, 100, 60); // 100 req/min
+  if (!ipRateLimit.allowed) {
+    throw new ExternalAuthError(
+      `Rate limit exceeded. Try again after ${new Date(ipRateLimit.reset * 1000).toISOString()}`,
+      429,
+      "RATE_LIMIT_EXCEEDED"
+    );
+  }
 
-/**
- * External auth guard. Returns the validated token record so callers
- * can scope data (e.g., filter by tokenRecord.user_id).
- */
-export async function requireExternalAuth(request: Request): Promise<TokenRecord | null> {
   const authHeader = request.headers.get("authorization");
   const apiKeyHeader = request.headers.get("x-api-key");
 
@@ -82,14 +112,32 @@ export async function requireExternalAuth(request: Request): Promise<TokenRecord
         throw new ExternalAuthError("Token has expired", 401, "TOKEN_EXPIRED");
       }
 
-      // Update last_used_at (non-blocking)
+      // Check token rate limit
+      const tokenRateLimit = checkTokenRateLimit(tokenRecord.id, 1000, 3600); // 1000 req/hour
+      if (!tokenRateLimit.allowed) {
+        throw new ExternalAuthError(
+          `Rate limit exceeded. Try again after ${new Date(tokenRateLimit.reset * 1000).toISOString()}`,
+          429,
+          "RATE_LIMIT_EXCEEDED"
+        );
+      }
+
+      // Update last_used_at (fire and forget, but log errors)
       database
         .update(bved_api_tokens)
         .set({ last_used_at: new Date().toISOString() })
         .where(eq(bved_api_tokens.id, tokenRecord.id))
-        .catch(() => {}); // Don't fail if update fails
+        .catch((err) => {
+          // Log but don't fail the request
+          console.error("[BVED API] Failed to update last_used_at:", err);
+        });
 
-        return tokenRecord; // Token is valid, return record for scoping
+      return {
+        token: tokenRecord,
+        tokenRateLimit,
+        ipRateLimit,
+        clientIP,
+      };
     }
   } catch (error) {
     // If it's an ExternalAuthError, re-throw it
@@ -99,27 +147,62 @@ export async function requireExternalAuth(request: Request): Promise<TokenRecord
     // Otherwise, fall through to env var check
   }
 
-   // NOTE: Env tokens have no user context; with Option B (scoped by user_id), they cannot be used.
+  // Fallback: Check environment variables (backward compatibility)
+  // NOTE: Env tokens have no user_id, so return null (routes must handle this)
   const bearerEnv = process.env.BVED_EXTERNAL_BEARER_TOKEN;
   const apiKeyEnv = process.env.BVED_EXTERNAL_API_KEY;
   const allowedTokens = [bearerEnv, apiKeyEnv].filter(Boolean);
 
-  if (!allowedTokens.includes(providedToken)) {
-    throw new ExternalAuthError("Invalid authentication token", 401, "UNAUTHORIZED");
+  if (allowedTokens.includes(providedToken)) {
+    // Env token is valid but has no user context
+    // Return null - routes should handle this (either reject or allow full access)
+    // Note: No token rate limiting for env tokens (no token ID)
+    return {
+      token: null,
+      tokenRateLimit: { allowed: true, limit: 0, remaining: 0, reset: 0 },
+      ipRateLimit,
+      clientIP,
+    };
   }
-   // Env tokens are not allowed for scoped access (no user_id available)
-   throw new ExternalAuthError("Token does not include user context", 401, "UNAUTHORIZED");
+
+  throw new ExternalAuthError("Invalid authentication token", 401, "UNAUTHORIZED");
 }
 
-export function formatError(error: unknown) {
+/**
+ * Helper to create a response with rate limit headers
+ */
+export function createResponse(
+  data: any,
+  status: number,
+  tokenRateLimit: RateLimitResult,
+  ipRateLimit: RateLimitResult
+): Response {
+  const response = NextResponse.json(data, { status });
+  addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
+  return response;
+}
+
+export function formatError(error: unknown, authResult?: AuthResult) {
   if (error instanceof ExternalAuthError) {
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: { code: error.code, message: error.message } },
       { status: error.status }
     );
+    
+    // Add rate limit headers if available
+    if (authResult) {
+      addRateLimitHeaders(response, authResult.tokenRateLimit, authResult.ipRateLimit);
+    }
+    
+    // Add rate limit headers even on error (if available)
+    if (error.status === 429) {
+      response.headers.set("Retry-After", "60"); // Suggest retry after 60 seconds
+    }
+    
+    return response;
   }
 
-  return NextResponse.json(
+  const response = NextResponse.json(
     {
       error: {
         code: "INTERNAL_ERROR",
@@ -129,4 +212,13 @@ export function formatError(error: unknown) {
     },
     { status: 500 }
   );
+  
+  // Add rate limit headers if available
+  if (authResult) {
+    addRateLimitHeaders(response, authResult.tokenRateLimit, authResult.ipRateLimit);
+  }
+  
+  return response;
 }
+
+

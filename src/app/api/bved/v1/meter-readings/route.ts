@@ -1,106 +1,248 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/utils/supabase/server";
-import { requireExternalAuth, formatError } from "../_lib/auth";
 import database from "@/db";
-import { objekte, locals, local_meters } from "@/db/drizzle/schema";
+import {
+  locals,
+  objekte,
+  contracts,
+  contractors,
+} from "@/db/drizzle/schema";
 import { eq, inArray } from "drizzle-orm";
-
-type ParsedDataRecord = {
-  device_id: string;
-  device_type?: string;
-  manufacturer?: string;
-  frame_type?: string;
-  version?: string;
-  access_number?: number;
-  status?: string;
-  encryption?: number;
-  parsed_data?: Record<string, unknown>;
-};
+import { requireExternalAuth, formatError, createResponse } from "../_lib/auth";
+import { addRateLimitHeaders } from "../_lib/rate-limit";
+import {
+  transformToOnSiteRoles,
+  transformUnitsToConsumptionData,
+  type InternalProperty,
+  type InternalUnit,
+} from "../_lib/transform";
 
 /**
- * GET /api/bved/v1/meter-readings
+ * GET /api/bved/v1/units
  * 
+ * Returns units in BVED format (on-site-roles or consumption-data format)
+ * 
+ * Query parameters:
+ * - format: "on-site-roles" | "consumption-data" | "internal" (default: "internal" for backward compatibility)
  */
 export async function GET(request: Request) {
+  let authResult;
   try {
-    const authResult = await requireExternalAuth(request);
+    authResult = await requireExternalAuth(request);
     const { token, tokenRateLimit, ipRateLimit } = authResult;
 
-    // Option B: Scoped access - require user_id from token
+    // Scoped access - require user_id from token
     if (!token || !token.user_id) {
-      return NextResponse.json(
+      return createResponse(
         { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
-        { status: 401 }
+        401,
+        tokenRateLimit,
+        ipRateLimit
       );
     }
 
-    // Step 1: Get all properties owned by token user
-    const userProperties = await database
-      .select({ id: objekte.id })
-      .from(objekte)
+    // Parse query parameters
+    const url = new URL(request.url);
+    const format = url.searchParams.get("format") || "internal";
+
+    // Fetch units with property data
+    const unitRows = await database
+      .select({
+        id: locals.id,
+        objekt_id: locals.objekt_id,
+        usage_type: locals.usage_type,
+        floor: locals.floor,
+        living_space: locals.living_space,
+        house_location: locals.house_location,
+        rooms: locals.rooms,
+        tags: locals.tags,
+        heating_systems: locals.heating_systems,
+        created_at: locals.created_at,
+        // Property fields
+        property_id: objekte.id,
+        property_type: objekte.objekt_type,
+        property_street: objekte.street,
+        property_zip: objekte.zip,
+        property_administration_type: objekte.administration_type,
+        property_hot_water_preparation: objekte.hot_water_preparation,
+        property_living_area: objekte.living_area,
+        property_usable_area: objekte.usable_area,
+        property_land_area: objekte.land_area,
+        property_build_year: objekte.build_year,
+        property_has_elevator: objekte.has_elevator,
+        property_heating_systems: objekte.heating_systems,
+        property_tags: objekte.tags,
+        property_created_at: objekte.created_at,
+        property_user_id: objekte.user_id,
+      })
+      .from(locals)
+      .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
       .where(eq(objekte.user_id, token.user_id));
 
-    if (userProperties.length === 0) {
-      return NextResponse.json({ meter_readings: [] });
+    const localIds = unitRows.map((u) => u.id);
+    let contractRows: typeof contracts.$inferSelect[] = [];
+    let contractorRows: typeof contractors.$inferSelect[] = [];
+
+    if (localIds.length > 0) {
+      contractRows = await database
+        .select()
+        .from(contracts)
+        .where(inArray(contracts.local_id, localIds));
+
+      const contractIds = contractRows.map((c) => c.id);
+      if (contractIds.length > 0) {
+        contractorRows = await database
+          .select()
+          .from(contractors)
+          .where(inArray(contractors.contract_id, contractIds));
+      }
     }
 
-    const propertyIds = userProperties.map(p => p.id);
-
-    // Step 2: Get all locals (units) for user's properties
-    const userLocals = await database
-      .select({ id: locals.id })
-      .from(locals)
-      .where(inArray(locals.objekt_id, propertyIds));
-
-    if (userLocals.length === 0) {
-      return NextResponse.json({ meter_readings: [] });
+    // Group contractors by contract
+    const contractorsByContract: Record<string, typeof contractorRows> = {};
+    for (const ct of contractorRows) {
+      contractorsByContract[ct.contract_id] = [
+        ...(contractorsByContract[ct.contract_id] || []),
+        ct,
+      ];
     }
 
-    const localIds = userLocals.map(l => l.id);
-
-    // Step 3: Get all local_meters for user's locals
-    const userMeters = await database
-      .select({ id: local_meters.id })
-      .from(local_meters)
-      .where(inArray(local_meters.local_id, localIds));
-
-    if (userMeters.length === 0) {
-      return NextResponse.json({ meter_readings: [] });
+    // Group contracts by local
+    const contractsByLocal: Record<string, Array<typeof contractRows[0] & { contractors: typeof contractorRows }>> = {};
+    for (const c of contractRows) {
+      contractsByLocal[c.local_id] = [
+        ...(contractsByLocal[c.local_id] || []),
+        {
+          ...c,
+          contractors: contractorsByContract[c.id] || [],
+        },
+      ];
     }
 
-    const meterIds = userMeters.map(m => m.id);
+    // Transform based on requested format
+    if (format === "on-site-roles") {
+      // Return in BVED on-site-roles format
+      const transformed = unitRows.map((unit) => {
+        const property: InternalProperty = {
+          id: unit.property_id!,
+          objekt_type: unit.property_type || "",
+          street: unit.property_street || "",
+          zip: unit.property_zip || "",
+          administration_type: unit.property_administration_type || "",
+          hot_water_preparation: unit.property_hot_water_preparation || "",
+          living_area: unit.property_living_area || null,
+          usable_area: unit.property_usable_area || null,
+          land_area: unit.property_land_area || null,
+          build_year: unit.property_build_year || null,
+          has_elevator: unit.property_has_elevator || false,
+          heating_systems: unit.property_heating_systems || [],
+          tags: unit.property_tags || [],
+          created_at: unit.property_created_at || "",
+          user_id: unit.property_user_id || "",
+          image_url: null,
+        };
 
-    // Step 4: Query parsed_data filtered by local_meter_id
-    const supabase = await supabaseServer();
+        const floorValue: string = unit.floor ?? "";
+        const unitData = {
+          id: unit.id,
+          objekt_id: unit.objekt_id || "",
+          usage_type: unit.usage_type || "",
+          floor: floorValue,
+          living_space: unit.living_space || null,
+          house_location: unit.house_location || null,
+          rooms: unit.rooms || null,
+          tags: unit.tags || null,
+          heating_systems: unit.heating_systems || null,
+          created_at: unit.created_at || "",
+        } as InternalUnit;
 
-    const { data, error } = await supabase
-      .from("parsed_data")
-      .select(
-        "device_id, device_type, manufacturer, frame_type, version, access_number, status, encryption, parsed_data"
-      )
-      .in("local_meter_id", meterIds)
-      .limit(200);
+        const contractData = (contractsByLocal[unit.id] || []).map((c) => ({
+          ...c,
+          contractors: c.contractors,
+        }));
 
-    if (error) {
-      throw error;
+        return transformToOnSiteRoles(property, unitData, contractData);
+      });
+
+      const response = NextResponse.json({ units: transformed });
+      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
+    } else if (format === "consumption-data") {
+      // Return in BVED consumption-data format
+      // Group units by property
+      const propertiesMap = new Map<string, InternalProperty & { units: InternalUnit[] }>();
+
+      for (const unit of unitRows) {
+        if (!unit.property_id) continue;
+
+        const propertyId = unit.property_id;
+        if (!propertiesMap.has(propertyId)) {
+          const property: InternalProperty = {
+            id: propertyId,
+            objekt_type: unit.property_type || "",
+            street: unit.property_street || "",
+            zip: unit.property_zip || "",
+            administration_type: unit.property_administration_type || "",
+            hot_water_preparation: unit.property_hot_water_preparation || "",
+            living_area: unit.property_living_area || null,
+            usable_area: unit.property_usable_area || null,
+            land_area: unit.property_land_area || null,
+            build_year: unit.property_build_year || null,
+            has_elevator: unit.property_has_elevator || false,
+            heating_systems: unit.property_heating_systems || [],
+            tags: unit.property_tags || [],
+            created_at: unit.property_created_at || "",
+            user_id: unit.property_user_id || "",
+            image_url: null,
+          };
+          propertiesMap.set(propertyId, { ...property, units: [] });
+        }
+
+        const floorValue: string = unit.floor ?? "";
+        const unitData = {
+          id: unit.id,
+          objekt_id: unit.objekt_id || "",
+          usage_type: unit.usage_type || "",
+          floor: floorValue,
+          living_space: unit.living_space || null,
+          house_location: unit.house_location || null,
+          rooms: unit.rooms || null,
+          tags: unit.tags || null,
+          heating_systems: unit.heating_systems || null,
+          created_at: unit.created_at || "",
+        } as InternalUnit;
+
+        propertiesMap.get(propertyId)!.units.push(unitData);
+      }
+
+      const transformed = transformUnitsToConsumptionData(Array.from(propertiesMap.values()));
+      const response = NextResponse.json({ billingunits: transformed });
+      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
+    } else {
+      // Default: Return internal format (backward compatibility)
+      const response = unitRows.map((unit) => ({
+        unit: {
+          id: unit.id,
+          usage_type: unit.usage_type,
+          floor: unit.floor,
+          living_space: unit.living_space,
+          house_location: unit.house_location,
+          rooms: unit.rooms,
+          tags: unit.tags,
+          heating_systems: unit.heating_systems,
+          created_at: unit.created_at,
+        },
+        property: {
+          id: unit.objekt_id,
+          type: unit.property_type,
+          street: unit.property_street,
+          zip: unit.property_zip,
+        },
+        contracts: contractsByLocal[unit.id] || [],
+      }));
+
+      const jsonResponse = NextResponse.json({ units: response });
+      return addRateLimitHeaders(jsonResponse, tokenRateLimit, ipRateLimit);
     }
-
-    const readings = (data || []).map((record: ParsedDataRecord) => ({
-      id: record.device_id,
-      device_type: record.device_type,
-      manufacturer: record.manufacturer,
-      frame_type: record.frame_type,
-      version: record.version,
-      access_number: record.access_number,
-      status: record.status,
-      encryption: record.encryption,
-      parsed_data: record.parsed_data,
-    }));
-
-    return NextResponse.json({ meter_readings: readings });
   } catch (error) {
-    return formatError(error);
+    return formatError(error, authResult);
   }
 }
-
-

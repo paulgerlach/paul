@@ -10,8 +10,8 @@ export const DEFAULT_CONFIG = {
   
   // MQTT connection
   brokerUrl: process.env.MQTT_BROKER || 'mqtt://localhost:1883',
-  username: process.env.MQTT_USERNAME || '',//'comstar',
-  password: process.env.MQTT_PASSWORD || '',//'comstar123',
+  username: process.env.MQTT_USERNAME || '',
+  password: process.env.MQTT_PASSWORD || '',
   
   // Gateway behavior
   rebootReason: 'power_on',

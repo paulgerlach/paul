@@ -61,18 +61,17 @@ export default function StepInfo({ activeStep }: { activeStep: number }) {
 	};
 
 	return (
-		<div className="questionare-info max-w-[40%] max-large:max-w-full w-full max-medium:mr-0 mt-2 -mr-10 max-small:order-1 max-small:mt-0">
+		<div className="questionare-info max-w-[40%] max-large:max-w-full w-full max-medium:mr-0 mt-2 -mr-10">
 			<div className="questionare-answer-item bg-dark_green/5 rounded-2xl">
 				<div
 					onClick={handleInfoSlide}
-					className={`questionare-answer-header p-5 max-small:p-4 cursor-pointer flex items-center justify-between ${isInfoOpened ? "opened" : ""}`}
+					className={`questionare-answer-header p-5 cursor-pointer flex items-center justify-between ${isInfoOpened ? "opened" : ""}`}
 				>
-					<p className="questionare-question text-dark_text/40 flex items-center justify-between gap-3 max-small:gap-2 text-[20px] max-small:text-base">
+					<p className="questionare-question text-dark_text/40 flex items-center justify-between gap-3 text-[20px]">
 						<Image
 							width={24}
 							height={24}
 							loading="lazy"
-							className="max-small:w-5 max-small:h-5"
 							src={info_circle_grey}
 							alt="info"
 						/>
@@ -92,9 +91,9 @@ export default function StepInfo({ activeStep }: { activeStep: number }) {
 				</div>
 				<div
 					ref={infoRef}
-					className="questionare-answer-content px-5 max-small:px-4 pb-5 max-small:pb-4 hidden"
+					className="questionare-answer-content px-5 pb-5 hidden"
 				>
-					<p className="text-[16px] max-small:text-sm text-dark_text/70 leading-relaxed">{stepData().text}</p>
+					<p className="text-[16px] text-dark_text/70 leading-relaxed">{stepData().text}</p>
 				</div>
 			</div>
 		</div>

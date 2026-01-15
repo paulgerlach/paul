@@ -12,7 +12,8 @@ export default function StepFiveOver50({
 				Ihre Kontaktdaten
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				In welcher Region befindet sich das Hauptgeschäftsfeld<br />
+				In welcher Region befindet sich das Hauptgeschäftsfeld{" "}
+				<span className="max-small:hidden"><br /></span>
 				Ihrer Verwaltung?
 			</p>
 			<div className="space-y-4">
@@ -28,7 +29,7 @@ export default function StepFiveOver50({
 						<p className="text-red-500 text-sm mt-1">{errors.verwaltung_name.message}</p>
 					)}
 				</label>
-				<div className="flex gap-4 max-w-[509px]">
+				<div className="flex max-small:flex-col gap-4 max-w-[509px]">
 					<label htmlFor="postleitzahl" className="block flex-1">
 						<input
 							className="border border-dark_green/20 w-full rounded-xl py-4 px-5 duration-300 outline-none focus:ring-4 focus:ring-green/40 text-[16px]"
@@ -58,4 +59,5 @@ export default function StepFiveOver50({
 		</div>
 	);
 }
+
 

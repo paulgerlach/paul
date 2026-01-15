@@ -1,13 +1,32 @@
+import dynamic from "next/dynamic";
 import MobileDifference from "@/components/Basic/MobileDifference/MobileDifference";
-import Subscription from "@/components/Basic/Subscription/Subscription";
 import HomeHero from "@/components/Hero/HomeHero";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
-import FunctionsList from "@/components/Swipers/FunctionsList";
-import FunctionsSwiper from "@/components/Swipers/FunctionsSwiper";
-import NewsList from "@/components/Swipers/NewsList";
-import NewsSwiper from "@/components/Swipers/NewsSwiper";
-import PersonSwiper from "@/components/Swipers/PersonSwiper";
 import { ROUTE_FRAGEBOGEN, ROUTE_FUNKTIONEN } from "@/routes/routes";
+
+// Dynamic imports for below-fold components (reduces initial JS bundle)
+const PersonSwiper = dynamic(
+  () => import("@/components/Swipers/PersonSwiper"),
+  { loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-base mx-[72px]" /> }
+);
+const FunctionsList = dynamic(
+  () => import("@/components/Swipers/FunctionsList")
+);
+const FunctionsSwiper = dynamic(
+  () => import("@/components/Swipers/FunctionsSwiper")
+);
+const NewsList = dynamic(
+  () => import("@/components/Swipers/NewsList")
+);
+const NewsSwiper = dynamic(
+  () => import("@/components/Swipers/NewsSwiper")
+);
+const Subscription = dynamic(
+  () => import("@/components/Basic/Subscription/Subscription")
+);
+const ChatBotContainer = dynamic(
+  () => import("@/components/Common/ChatBot")
+);
 import {
   checkmarks3,
   clock,
@@ -39,7 +58,6 @@ import animation3 from "@/animations/Animation_3.json";
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
-import ChatBotContainer from "@/components/Common/ChatBot";
 import { supabaseServer } from "@/utils/supabase/server";
 import { Suspense } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
@@ -405,7 +423,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={berlin_bear_green}
@@ -414,7 +432,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={dumax_green}
@@ -423,7 +441,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={harte_green}
@@ -432,43 +450,43 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 90px, 140px"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
                   src={hsp_green}
                   alt="hsp"
                 />
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={raum_green}
                   alt="raum"
                 />
                 <Image
-                  width={140}
-                  height={45}
-                  sizes="100vw"
+                  width={180}
+                  height={55}
+                  sizes="(max-width: 480px) 140px, 180px"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[120px] max-small:h-[40px] object-contain"
+                  className="w-[180px] h-[55px] max-small:w-[140px] max-small:h-[46px] object-contain"
                   src={schleicher_green}
                   alt="schleicher_green"
                 />
                 <Image
-                  width={140}
-                  height={45}
-                  sizes="100vw"
+                  width={100}
+                  height={35}
+                  sizes="(max-width: 480px) 70px, 100px"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[70px] max-small:h-[24px] object-contain"
+                  className="w-[100px] h-[35px] max-small:w-[70px] max-small:h-[24px] object-contain"
                   src={vitec_green}
                   alt="vitec"
                 />
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={wagner_green}
@@ -477,7 +495,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={werne_green}
@@ -486,7 +504,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={neckar_green}
@@ -495,7 +513,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={niesen_green}
@@ -504,7 +522,7 @@ export default async function Home() {
                 <Image
                   width={140}
                   height={45}
-                  sizes="100vw"
+                  sizes="(max-width: 480px) 95px, 140px"
                   loading="lazy"
                   className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={progera_green}

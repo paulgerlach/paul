@@ -10,7 +10,7 @@ export default function ChessSection() {
 		<div className="pl-[100px] max-large:px-16 max-medium:px-10 max-small:px-5 pr-[60px]">
 			<div className="flex justify-between py-16 max-medium:py-8 border-t border-dark_green/10 items-center max-large:flex-col gap-8">
 				<div className="max-w-xl space-y-6">
-					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
 						Verbrauchsdaten in Echtzeit ablesen
 					</h4>
 					<p>
@@ -53,7 +53,7 @@ export default function ChessSection() {
 					alt="payment"
 				/>
 				<div className="max-w-xl space-y-6">
-					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
 						Zeit- und Geldersparnis
 					</h4>
 					<p>
@@ -79,7 +79,7 @@ export default function ChessSection() {
 			</div>
 			<div className="flex justify-between py-16 max-medium:py-8 border-t border-dark_green/10 items-center max-large:flex-col gap-8">
 				<div className="max-w-xl space-y-6">
-					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
 						Kostenfreie Installation
 					</h4>
 					<p>
@@ -87,7 +87,7 @@ export default function ChessSection() {
 						Ort, schnell und ohne zusätzliche Kosten für Sie.
 					</p>
 					<Link
-						className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] w-fit rounded-hafbase bg-[#6083CC]"
+						className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg max-small:text-base cursor-pointer py-5 max-small:py-4 px-[104px] max-small:px-0 w-fit max-small:w-full rounded-xl bg-[#6083CC]"
 						href={ROUTE_FRAGEBOGEN}
 					>
 						Anfrage stellen
@@ -109,7 +109,7 @@ export default function ChessSection() {
 					alt="box_brands"
 				/>
 				<div className="max-w-xl space-y-6">
-					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
 						Das Vertrauen von Branchenexperten
 					</h4>
 					<p>

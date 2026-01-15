@@ -85,7 +85,7 @@ export default function FAQSection() {
 
   return (
     <div className="bg-section-bg px-[72px] max-large:px-6 pt-16 pb-32 max-large:pt-8 max-large:pb-20">
-      <h3 className="mb-14 text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+      <h3 className="mb-14 text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
         FAQ
       </h3>
       <div className="faq-tabs-answers grid-cols-2 grid gap-[88px] max-large:gap-11 max-medium:grid-cols-1 max-medium:gap-6">

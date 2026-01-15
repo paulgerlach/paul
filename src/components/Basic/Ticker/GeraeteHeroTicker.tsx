@@ -18,15 +18,15 @@ import Image from "next/image";
 
 export default function GeraeteHeroTicker() {
   return (
-    <div className="px-[100px] py-8 flex items-center justify-start gap-16">
-      <div className="flex group items-center justify-start max-w-[345px] w-full max-small:flex-col rounded-[40px] py-2.5 px-4 max-medium:hidden gap-3">
-        <span className="flex items-center w-full justify-start gap-2">
+    <div className="px-[100px] max-small:px-5 py-8 max-small:py-4 flex items-center justify-start max-small:flex-col max-small:justify-center gap-16 max-small:gap-4">
+      <div className="flex group items-center justify-start max-small:justify-center max-w-[345px] w-full rounded-[40px] py-2.5 px-4 gap-3 max-small:gap-2">
+        <span className="flex items-center justify-start max-small:justify-center gap-2 max-small:gap-1">
           <Image
             width={0}
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="colored-to-black size-5"
+            className="colored-to-black size-5 max-small:size-4"
             src={google}
             alt="google"
           />
@@ -35,7 +35,7 @@ export default function GeraeteHeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="size-4"
+            className="size-4 max-small:size-3"
             src={star}
             alt="rate star"
           />
@@ -44,7 +44,7 @@ export default function GeraeteHeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="size-4"
+            className="size-4 max-small:size-3"
             src={star}
             alt="rate star"
           />
@@ -53,7 +53,7 @@ export default function GeraeteHeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="size-4"
+            className="size-4 max-small:size-3"
             src={star}
             alt="rate star"
           />
@@ -62,7 +62,7 @@ export default function GeraeteHeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="size-4"
+            className="size-4 max-small:size-3"
             src={star}
             alt="rate star"
           />
@@ -71,12 +71,12 @@ export default function GeraeteHeroTicker() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="size-4"
+            className="size-4 max-small:size-3"
             src={star}
             alt="rate star"
           />
         </span>
-        <span className="text-[15px] whitespace-nowrap leading-[18px] text-dark_text text-center">
+        <span className="text-[15px] max-small:text-xs whitespace-nowrap leading-[18px] text-dark_text text-center">
           1.850+ Bewertungen
         </span>
         <Image
@@ -84,12 +84,12 @@ export default function GeraeteHeroTicker() {
           height={0}
           sizes="100vw"
           loading="lazy"
-          className="size-2.5 -rotate-90 transition colored-to-black group-hover:translate-x-1.5"
+          className="size-2.5 max-small:size-2 -rotate-90 transition colored-to-black group-hover:translate-x-1.5"
           src={right_arrow}
           alt="chevron"
         />
       </div>
-      <div className="ticker-wrap not-filtered max-medium:hidden">
+      <div className="ticker-wrap not-filtered max-small:w-full">
         <div className="ticker">
           <div className="ticker__item">
             <Image

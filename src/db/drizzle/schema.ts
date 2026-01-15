@@ -273,6 +273,7 @@ export const users = pgTable("users", {
 	first_name: text().notNull(),
 	last_name: text().notNull(),
 	permission: text().default('user').notNull(),
+	has_seen_tour: boolean().default(false).notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	foreignKey({

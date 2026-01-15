@@ -4,6 +4,11 @@ import React from "react";
 import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
 import { useTourStore } from "@/store/useTourStore";
 
+interface TourGuideProps {
+	onTourComplete?: () => void;
+	onTourSkip?: () => void;
+}
+
 const steps = [
 	{
 		target: "#WaterChart",
@@ -76,14 +81,18 @@ const CustomTooltip = ({
 	</div>
 );
 
-export default function TourGuide() {
+export default function TourGuide({ onTourComplete, onTourSkip }: TourGuideProps) {
 	const run = useTourStore((state) => state.run);
 	const setRun = useTourStore((state) => state.setRun);
 
 	const handleJoyrideCallback = (data: CallBackProps) => {
 		const { status } = data;
-		if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
+		if (status === STATUS.FINISHED) {
 			setRun(false);
+			onTourComplete?.();
+		} else if (status === STATUS.SKIPPED) {
+			setRun(false);
+			onTourSkip?.();
 		}
 	};
 

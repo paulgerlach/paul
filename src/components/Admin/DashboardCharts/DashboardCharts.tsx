@@ -159,7 +159,7 @@ export default function DashboardCharts() {
 
       {/* Column 2: Stromverbrauch + Heizkosten */}
       <div className="flex flex-col gap-3">
-        <div className="h-[265px]">
+        <div className="electricity-chart-container h-[265px]">
           {electricityChart.loading ? (
             <ChartCardSkeleton />
           ) : (
@@ -171,7 +171,7 @@ export default function DashboardCharts() {
             />
           )}
         </div>
-        <div className="h-[318px]">
+        <div className="heating-chart-container h-[318px]">
           {heatChart.loading ? (
             <ChartCardSkeleton />
           ) : (
@@ -187,7 +187,7 @@ export default function DashboardCharts() {
 
       {/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
       <div className="flex flex-col gap-3 max-large:col-span-2 max-large:grid max-large:grid-cols-2 max-large:gap-3 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:flex max-medium:flex-col">
-        <div className="h-[360px] max-large:h-[300px]">
+        <div className="notifications-chart-container h-[360px] max-large:h-[300px]">
           {notificationsChart.loading ? (
             <ChartCardSkeleton />
           ) : (
@@ -199,7 +199,7 @@ export default function DashboardCharts() {
             />
           )}
         </div>
-        <div className="h-[220px] max-large:h-[300px]">
+        <div className="einsparung-chart-container h-[220px] max-large:h-[300px]">
           {einsparungChartLoading ? (
             <ChartCardSkeleton />
           ) : (

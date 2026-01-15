@@ -8,6 +8,7 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import TourDashboardCharts from "@/components/Admin/DashboardCharts/TourDashboardCharts";
 import TourGuide from "@/components/Guide/TourGuide";
 import { useTourStore } from "@/store/useTourStore";
+import ShareButton from "@/app/shared/ShareButton";
 
 export default function TourDashboardPage() {
 	const router = useRouter();
@@ -23,12 +24,14 @@ export default function TourDashboardPage() {
 			try {
 				const supabase = createClient(
 					process.env.NEXT_PUBLIC_SUPABASE_URL!,
-					process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+					process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 				);
-				const { data: { user } } = await supabase.auth.getUser();
+				const {
+					data: { user },
+				} = await supabase.auth.getUser();
 				setUserId(user?.id || null);
 			} catch (error) {
-				console.error('Error loading user:', error);
+				console.error("Error loading user:", error);
 			}
 		}
 		loadUserId();
@@ -37,13 +40,13 @@ export default function TourDashboardPage() {
 	const handleSkipTour = async () => {
 		if (userId) {
 			try {
-				await fetch('/api/mark-tour-seen', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+				await fetch("/api/mark-tour-seen", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ userId }),
 				});
 			} catch (error) {
-				console.error('Error marking tour as seen:', error);
+				console.error("Error marking tour as seen:", error);
 			}
 		}
 		router.push(ROUTE_DASHBOARD);
@@ -52,13 +55,13 @@ export default function TourDashboardPage() {
 	const handleTourComplete = async () => {
 		if (userId) {
 			try {
-				await fetch('/api/mark-tour-seen', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+				await fetch("/api/mark-tour-seen", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ userId }),
 				});
 			} catch (error) {
-				console.error('Error marking tour as seen:', error);
+				console.error("Error marking tour as seen:", error);
 			}
 		}
 		router.push(ROUTE_DASHBOARD);
@@ -76,26 +79,12 @@ export default function TourDashboardPage() {
 				title="Tour Dashboard"
 			/>
 			<TourDashboardCharts />
-			<TourGuide onTourComplete={handleTourComplete} onTourSkip={handleSkipTour} />
+			<TourGuide
+				onTourComplete={handleTourComplete}
+				onTourSkip={handleSkipTour}
+			/>
 			<div className="flex gap-2 max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl rounded-2xl mx-auto">
-				<button
-					onClick={handleRestartTour}
-					className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium text-sm"
-				>
-					Restart Tour
-				</button>
-				<button
-					onClick={handleSkipTour}
-					className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium text-sm"
-				>
-					Skip Tour
-				</button>
-				<button
-					onClick={() => router.push(ROUTE_DASHBOARD)}
-					className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm"
-				>
-					Go to Dashboard
-				</button>
+				<ShareButton />
 			</div>
 		</div>
 	);

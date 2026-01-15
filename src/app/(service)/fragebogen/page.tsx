@@ -49,7 +49,7 @@ const formSchema = z.object({
   ort: z.string().optional().or(z.literal("")),
   
   // Contact form fields (Q6 - Personal)
-  email: z.string().email("Ungültige E-Mail-Adresse").or(z.literal("")),
+  email: z.string().min(1, "E-Mail-Adresse ist erforderlich").email("Ungültige E-Mail-Adresse"),
   first_name: z.string().min(1, "Vorname ist erforderlich").or(z.literal("")),
   last_name: z.string().min(1, "Nachname ist erforderlich").or(z.literal("")),
   form_confirm: z.boolean().refine((val) => val === true, {
@@ -113,8 +113,11 @@ export default function FragebogenPage() {
     reset,
     watch,
     setValue,
+    clearErrors,
   } = useForm({
     resolver: zodResolver(formSchema),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       property_count_category: null,
       // Over50 Flow fields
@@ -183,8 +186,9 @@ export default function FragebogenPage() {
           <h1 className="text-[40px] max-small:text-2xl mb-4 text-dark_text">
             Anfrage erfolgreich versendet
           </h1>
-          <p className="text-dark_text text-xl max-large:mb-16 max-medium:mb-8 mb-24">
-            Wir werden uns in den nächsten 24h bei Ihnen mit einem <br />
+          <p className="text-dark_text text-xl max-small:text-base max-large:mb-16 max-medium:mb-8 mb-24">
+            Wir werden uns in den nächsten 24h bei Ihnen mit einem{" "}
+            <span className="max-small:hidden"><br /></span>
             für Sie zugeschnitten Angebot melden.
           </p>
           <div className="grid gap-8 max-medium:grid-cols-1 grid-cols-10">
@@ -209,7 +213,7 @@ export default function FragebogenPage() {
                 />
               </div>
             </div>
-            <div className="col-span-4 max-medium:col-span-1 bg-dark_green/5 rounded-t-base px-10 pt-9">
+            <div className="col-span-4 max-medium:col-span-1 bg-dark_green/5 rounded-t-base px-10 max-small:px-5 pt-9">
               <p className="flex items-center text-dark_text justify-start gap-4 text-2xl font-bold mb-14">
                 <button>
                   <Image
@@ -245,24 +249,36 @@ export default function FragebogenPage() {
               <span
                 key={step}
                 data-step-index={step}
-                className={`w-[50px] h-[1px] ${
+                className={`w-[50px] max-small:w-[30px] h-[1px] ${
                   step <= activeStep ? "bg-green" : "bg-dark_green/10"
                 }`}
               ></span>
             ))}
             <span className="text-xs text-dark_text/20"> noch 4 min </span>
           </div>
-          <div className="questionare-steps max-w-6xl mx-auto flex items-start max-large:flex-col max-large:gap-10 justify-between">
+          <div className="questionare-steps max-w-6xl mx-auto flex items-start max-large:flex-col max-large:gap-10 max-small:gap-4 justify-between">
             <form
               onSubmit={handleSubmit((data) => mutation.mutate(data))}
+              onKeyDown={(e) => {
+                // Prevent Enter key from submitting form on non-submit steps
+                const propertyCategory = watch("property_count_category");
+                const isUnder50Flow = propertyCategory === "1-50 Immobilien";
+                const isSubmitStep = isUnder50Flow ? activeStep === 4 : activeStep === 5;
+                if (e.key === "Enter" && !isSubmitStep) {
+                  e.preventDefault();
+                }
+              }}
               id="questionare-form"
-              className="steps-wrapper"
+              className="steps-wrapper max-small:order-2"
             >
               {activeStep > 0 && (
                 <button
                   className="text-[15px] cursor-pointer group text-dark_text/20 font-bold flex items-center justify-start gap-3"
                   id="prev-step"
-                  onClick={() => handlePrevStep()}
+                  onClick={() => {
+                    clearErrors();
+                    handlePrevStep();
+                  }}
                   type="button"
                 >
                   <Image
@@ -299,22 +315,40 @@ export default function FragebogenPage() {
                   // Under50 flow submits on step 4, Over50 flow submits on step 5
                   const isSubmitStep = isUnder50Flow ? activeStep === 4 : activeStep === 5;
                   
-                  const handleClick = () => {
+                  const handleClick = (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     // Validate step 0 - property count is required
                     if (activeStep === 0 && !propertyCategory) {
                       setStep0Error(true);
                       return;
                     }
                     setStep0Error(false);
+                    // Clear any validation errors when navigating (not submitting)
+                    clearErrors();
                     handleNextStep();
                   };
+                  
+                  // On submit step, let form handle submission naturally
+                  // On other steps, use button type to prevent form submission
+                  if (isSubmitStep) {
+                    return (
+                      <button
+                        id="next-step"
+                        className="rounded-xl cursor-pointer bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-8 border border-transparent"
+                        type="submit"
+                      >
+                        Bestätigen
+                      </button>
+                    );
+                  }
                   
                   return (
                     <button
                       id="next-step"
                       className="rounded-xl cursor-pointer bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-8 border border-transparent"
-                      onClick={isSubmitStep ? undefined : handleClick}
-                      type={isSubmitStep ? "submit" : "button"}
+                      onClick={handleClick}
+                      type="button"
                     >
                       Bestätigen
                     </button>
@@ -332,7 +366,10 @@ export default function FragebogenPage() {
                     <button
                       id="skip-step"
                       className="cursor-pointer bg-transparent flex items-center justify-center duration-300 hover:opacity-80 disabled:opacity-50 text-green font-bold text-[15px] py-4 px-4"
-                      onClick={() => handleNextStep()}
+                      onClick={() => {
+                        clearErrors();
+                        handleNextStep();
+                      }}
                       type="button"
                     >
                       Überspringen

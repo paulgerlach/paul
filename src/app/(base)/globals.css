@@ -95,7 +95,7 @@ html {
     width: 100%;
     box-sizing: content-box;
     overflow: hidden;
-    height: 34px;
+    height: 44px;
     display: block;
 }
 
@@ -403,6 +403,13 @@ html {
 
 .faq-answer-item:first-child .faq-answer-header {
     border-top: 1px solid rgba(30, 50, 45, 0.2);
+}
+
+/* Hide border-top of second FAQ column on mobile to prevent double line */
+@media (max-width: 640px) {
+    .faq-answers-container[data-tab="2"] .faq-answer-item:first-child .faq-answer-header {
+        border-top: none;
+    }
 }
 
 .faq-answer-header {
@@ -844,11 +851,22 @@ html {
     }
 }
 
+@media (max-width: 640px) {
+
+    .numbered-item-swiper--first,
+    .numbered-item-swiper--second,
+    .numbered-item-swiper--third,
+    .numbered-item-swiper--fourth {
+        height: 280px;
+    }
+}
+
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second,
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-third-second,
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-fourth-second {
     right: auto;
     left: 100px;
+    z-index: 10;
 }
 
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-second-second {
@@ -856,6 +874,7 @@ html {
     left: 160px;
     top: 40px;
     transform: translateY(0);
+    z-index: 10;
 }
 
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-third-second {
@@ -863,6 +882,7 @@ html {
     left: 160px;
     top: 90px;
     transform: translateY(0);
+    z-index: 10;
 }
 
 .numbered-swiper .swiper-pagination.numbered-item-swiper-pagination-first-second .swiper-pagination-bullet:nth-child(1) {

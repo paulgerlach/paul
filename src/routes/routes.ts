@@ -8,6 +8,7 @@ export const ROUTE_IMPRESSUM = "/impressum";
 export const ROUTE_PREISE = "/preise";
 export const ROUTE_BLOG = "/blog";
 export const ROUTE_DASHBOARD = "/dashboard";
+export const ROUTE_TOUR_DASHBOARD = "/dashboard-tour";
 export const ROUTE_OBJEKTE = "/objekte";
 export const ROUTE_ADMIN = "/admin";
 export const ROUTE_OBJEKTE_CREATE = "/objekte/create";

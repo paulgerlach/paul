@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { ROUTE_OBJEKTE, ROUTE_DASHBOARD } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import TourDashboardCharts from "@/components/Admin/DashboardCharts/TourDashboardCharts";
 import TourGuide from "@/components/Guide/TourGuide";
@@ -46,7 +46,7 @@ export default function TourDashboardPage() {
 				console.error('Error marking tour as seen:', error);
 			}
 		}
-		router.push("/admin/dashboard");
+		router.push(ROUTE_DASHBOARD);
 	};
 
 	const handleTourComplete = async () => {
@@ -61,7 +61,7 @@ export default function TourDashboardPage() {
 				console.error('Error marking tour as seen:', error);
 			}
 		}
-		router.push("/admin/dashboard");
+		router.push(ROUTE_DASHBOARD);
 	};
 
 	const handleRestartTour = () => {
@@ -91,7 +91,7 @@ export default function TourDashboardPage() {
 					Skip Tour
 				</button>
 				<button
-					onClick={() => router.push("/admin/dashboard")}
+					onClick={() => router.push(ROUTE_DASHBOARD)}
 					className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium text-sm"
 				>
 					Go to Dashboard

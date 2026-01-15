@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Exo_2 } from "next/font/google";
 import "./(base)/globals.css";
-import TourGuide from "@/components/Guide/TourGuide";
 
 const exo_2Sans = Exo_2({
 	variable: "--font-exo_2-sans",
@@ -69,7 +68,6 @@ export default function RootLayout({
 	return (
 		<html lang="de">
 			<body className={`${exo_2Sans.variable}`} suppressHydrationWarning>
-				<TourGuide />
 				{children}
 			</body>
 		</html>

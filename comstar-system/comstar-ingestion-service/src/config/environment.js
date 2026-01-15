@@ -1,12 +1,13 @@
-
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: '.env.local' }); 
 
 // Validate required environment variables
 const requiredEnvVars = [
-  'MQTT_BROKER_URL',
-  'SUPABASE_URL',
-  'SUPABASE_SERVICE_KEY'
+  'MQTT_BROKER',
+  'MQTT_USERNAME',
+  'MQTT_PASSWORD',
+  // 'SUPABASE_URL',
+  // 'SUPABASE_SERVICE_KEY'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -19,7 +20,7 @@ for (const envVar of requiredEnvVars) {
 export default {
   // MQTT Configuration
   mqtt: {
-    brokerUrl: process.env.MQTT_BROKER_URL,
+    brokerUrl: process.env.MQTT_BROKER,
     username: process.env.MQTT_USERNAME || '',
     password: process.env.MQTT_PASSWORD || '',
     clientId: process.env.MQTT_CLIENT_ID || 'comstar-ingestion',

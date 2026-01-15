@@ -1,4 +1,6 @@
 import { randomUUID } from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' }); 
 
 // Default configuration matching ComStar documentation
 export const DEFAULT_CONFIG = {

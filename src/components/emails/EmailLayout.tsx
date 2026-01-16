@@ -54,6 +54,7 @@ export const EmailLayout = ({ previewText, children }: EmailLayoutProps) => {
     backgroundColor: '#2D3F3E',
     padding: '24px',
     textAlign: 'center',
+    marginTop: '25px'
   }}
 >
     <Row style={{ marginBottom: '16px' }}>

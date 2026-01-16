@@ -15,6 +15,7 @@ export default function AdminPage() {
 	useEffect(() => {
 		async function checkTourStatus() {
 			try {
+				console.log("[Tour Check] Starting tour status check...");
 				const supabase = createClient(
 					process.env.NEXT_PUBLIC_SUPABASE_URL!,
 					process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -23,6 +24,7 @@ export default function AdminPage() {
 					data: { user },
 				} = await supabase.auth.getUser();
 
+				console.log("[Tour Check] User:", user?.id);
 				if (user) {
 					const { data, error } = await supabase
 						.from("users")
@@ -30,13 +32,17 @@ export default function AdminPage() {
 						.eq("id", user.id)
 						.single();
 
+					console.log("[Tour Check] Tour data:", { data, error });
 					if (!error && data && !data.has_seen_tour) {
+						console.log("[Tour Check] Redirecting to tour dashboard...");
 						router.push(ROUTE_TOUR_DASHBOARD);
 						return;
+					} else {
+						console.log("[Tour Check] No redirect - has_seen_tour:", data?.has_seen_tour);
 					}
 				}
 			} catch (error) {
-				console.error("Error checking tour status:", error);
+				console.error("[Tour Check] Error checking tour status:", error);
 			} finally {
 				setIsChecking(false);
 			}

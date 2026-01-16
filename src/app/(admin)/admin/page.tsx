@@ -3,10 +3,29 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminUserItem from "@/components/Admin/ObjekteItem/AdminUserItem";
 import RegistrationToggle from "@/components/Admin/RegistrationToggle/RegistrationToggle";
-import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { supabaseServer } from "@/utils/supabase/server";
 
 export default async function AdminPage() {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { data } = await supabase
+      .from("users")
+      .select("has_seen_tour")
+      .eq("id", user.id)
+      .single();
+
+    if (data && !data.has_seen_tour) {
+      redirect(ROUTE_TOUR_DASHBOARD);
+    }
+  }
+
   const users = await getUsers();
 
   // Sort alphabetically by email

@@ -38,30 +38,36 @@ export default function TourDashboardPage() {
 	}, []);
 
 	const handleSkipTour = async () => {
+		console.log("[Tour] Skip tour clicked, userId:", userId);
 		if (userId) {
 			try {
-				await fetch("/api/mark-tour-seen", {
+				const response = await fetch("/api/mark-tour-seen", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ userId }),
 				});
+				const data = await response.json();
+				console.log("[Tour] Skip tour API response:", data);
 			} catch (error) {
-				console.error("Error marking tour as seen:", error);
+				console.error("[Tour] Error marking tour as seen:", error);
 			}
 		}
 		router.push(ROUTE_DASHBOARD);
 	};
 
 	const handleTourComplete = async () => {
+		console.log("[Tour] Tour complete, userId:", userId);
 		if (userId) {
 			try {
-				await fetch("/api/mark-tour-seen", {
+				const response = await fetch("/api/mark-tour-seen", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ userId }),
 				});
+				const data = await response.json();
+				console.log("[Tour] Complete tour API response:", data);
 			} catch (error) {
-				console.error("Error marking tour as seen:", error);
+				console.error("[Tour] Error marking tour as seen:", error);
 			}
 		}
 		router.push(ROUTE_DASHBOARD);

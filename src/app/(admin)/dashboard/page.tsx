@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/utils/supabase/client";
 import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts";
@@ -16,10 +16,6 @@ export default function AdminPage() {
 		async function checkTourStatus() {
 			try {
 				console.log("[Tour Check] Starting tour status check...");
-				const supabase = createClient(
-					process.env.NEXT_PUBLIC_SUPABASE_URL!,
-					process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-				);
 				const {
 					data: { user },
 				} = await supabase.auth.getUser();

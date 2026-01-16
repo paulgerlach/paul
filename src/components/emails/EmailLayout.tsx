@@ -109,7 +109,7 @@ export const EmailLayout = ({ previewText, children }: EmailLayoutProps) => {
       marginTop: '8px',
     }}
   >
-    You're receiving this email because you're subscribed to useful
+     You&apos;re receiving this email because  you&apos;re subscribed to useful
     tips and best practices for getting the most out of Heidi Systems.
   </Text>
 

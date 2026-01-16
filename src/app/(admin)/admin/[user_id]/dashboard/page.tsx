@@ -1,6 +1,9 @@
 "use client";
 
-import { ROUTE_OBJEKTE } from "@/routes/routes";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts";
 import ShareButton from "@/app/shared/ShareButton";
@@ -10,6 +13,52 @@ export default function AdminDashboardPage({
 }: {
 	params: Promise<{ user_id: string }>;
 }) {
+	const router = useRouter();
+	const [isChecking, setIsChecking] = useState(true);
+
+	useEffect(() => {
+		async function checkTourStatus() {
+			try {
+				console.log("[Tour Check] Starting tour status check...");
+				const supabase = createClient(
+					process.env.NEXT_PUBLIC_SUPABASE_URL!,
+					process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+				);
+				const {
+					data: { user },
+				} = await supabase.auth.getUser();
+
+				console.log("[Tour Check] User:", user?.id);
+				if (user) {
+					const { data, error } = await supabase
+						.from("users")
+						.select("has_seen_tour")
+						.eq("id", user.id)
+						.single();
+
+					console.log("[Tour Check] Tour data:", { data, error });
+					if (!error && data && !data.has_seen_tour) {
+						console.log("[Tour Check] Redirecting to tour dashboard...");
+						router.push(ROUTE_TOUR_DASHBOARD);
+						return;
+					} else {
+						console.log("[Tour Check] No redirect - has_seen_tour:", data?.has_seen_tour);
+					}
+				}
+			} catch (error) {
+				console.error("[Tour Check] Error checking tour status:", error);
+			} finally {
+				setIsChecking(false);
+			}
+		}
+
+		checkTourStatus();
+	}, [router]);
+
+	if (isChecking) {
+		return null;
+	}
+
 	return (
 		<div className="py-6 px-9 max-medium:px-4 max-medium:py-4 overflow-scroll space-y-6">
 			<Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />

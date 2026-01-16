@@ -85,7 +85,7 @@ function isValidNumeric(value: string | number): boolean {
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   let authResult;
   try {
@@ -108,7 +108,8 @@ export async function GET(
       );
     }
 
-    const statementId = params.id;
+    const { id } = await params;
+    const statementId = id;
 
     if (!statementId || !isValidUUID(statementId)) {
       return createResponse(
@@ -296,16 +297,18 @@ export async function GET(
  */
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return handleUpdate(request, params.id);
+  const { id } = await params;
+  return handleUpdate(request, id);
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  return handleUpdate(request, params.id);
+  const { id } = await params;
+  return handleUpdate(request, id);
 }
 
 async function handleUpdate(request: Request, statementId: string) {
@@ -780,7 +783,7 @@ async function handleUpdate(request: Request, statementId: string) {
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   let authResult;
   try {
@@ -803,7 +806,8 @@ export async function DELETE(
       );
     }
 
-    const statementId = params.id;
+    const { id } = await params;
+    const statementId = id;
 
     if (!statementId || !isValidUUID(statementId)) {
       return createResponse(

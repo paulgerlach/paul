@@ -4,7 +4,7 @@ class DatabaseService {
   constructor() { }
 
   insertMeterReading = async (meter_id, meterManufacturer, meterType, meter_device_type, version, status, accessNo, readings, local_meter_id, frame_type, encryption) => {
-    
+
     try {
       const { data, error } = await supabase
         .from('parsed_data')
@@ -26,7 +26,7 @@ class DatabaseService {
       if (error) {
         console.error('Error insert reading data:', error);
       }
-      
+
     } catch (error) {
       console.error('Error insert reading data:', error);
       return null;
@@ -66,7 +66,7 @@ class DatabaseService {
         //replace with logger
         // console.error('Error fetching data:', error, meterId);
       }
-      
+
       if (!data) {
         console.error({ meterId }, 'Unknown meter ID, skipping');
       }
@@ -88,9 +88,9 @@ class DatabaseService {
 
       if (error) {
         //replace with logger
-        console.error('Error fetching gateway_desired_states data:', error, meterId);
+        console.error('Error fetching gateway_desired_states data:', error, gatewayEui);
       }
-      
+
       if (!data) {
         console.error({ gatewayEui }, 'Unknown Gateway EUI');
       }
@@ -101,7 +101,33 @@ class DatabaseService {
       return null;
     }
   }
-  
+
+  async setDesiredGatewayState(gatewayEui, desiredAppVersion, desiredBootVersion, desiredEtag) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_desired_states')
+        .upsert({
+          gateway_eui: gatewayEui,
+          desired_app_version: desiredAppVersion,
+          desired_boot_version: desiredBootVersion,
+          desired_etag: desiredEtag,
+          updated_at: new Date()
+        }, {
+          onConflict: 'gateway_eui'
+        })
+
+      if (error) {
+        console.error('Error setting desired gateway state:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error setting desired gateway state:', error);
+      return null;
+    }
+  }
+
 }
 
 

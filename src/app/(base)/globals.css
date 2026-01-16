@@ -91,6 +91,16 @@ html {
     z-index: 999 !important;
 }
 
+.white-bg1{
+    background-color: #FFFFFA;
+}
+
+
+.light-green-bg1{
+    background-color: #F3F3EA;
+}
+
+
 .ticker-wrap {
     width: 100%;
     box-sizing: content-box;

@@ -38,6 +38,7 @@ const items: ReviewSwiperType[] = [
 
 export default function ReviewsSwiper() {
 	const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+	const mobileVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
 	const handleVideoClick = (index: number) => {
 		videoRefs.current.forEach((video, i) => {
@@ -54,65 +55,150 @@ export default function ReviewsSwiper() {
 			}
 		});
 	};
+
+	const handleMobileVideoClick = (index: number) => {
+		mobileVideoRefs.current.forEach((video, i) => {
+			if (video) {
+				if (i === index) {
+					if (video.paused) {
+						video.play();
+					} else {
+						video.pause();
+					}
+				} else {
+					video.pause();
+				}
+			}
+		});
+	};
+
 	return (
-		<div className="py-16 max-medium:py-8 pl-36 max-large:pl-30 max-medium:pl-16 max-small:pl-5 max-medium:flex-col max-medium:gap-8 flex items-center justify-start gap-[72px]">
-			<div className="max-w-[436px] pt-12 space-y-6">
-				<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
-					Das sagen unsere Kund:innen über Heidi
-				</h4>
-				<p className="text-xl text-dark_text">
-					Zu gut, um wahr zu sein? Lassen wir die sprechen, die es am besten
-					wissen - unsere Kund:innen. Ihre Erfahrungen zeigen, warum Heidi
-					überzeugt.
-				</p>
-				<Image
-					width={0}
-					height={0}
-					sizes="100vw"
-					loading="lazy"
-					src={trustpilot}
-					alt="trustpilot"
-				/>
-				<Link
-					className="text-lg block w-fit text-dark_text py-2.5 px-5 border border-dark_green/20 duration-300 transition hover:bg-green hover:border-green hover:text-white rounded-full"
-					href={ROUTE_FRAGEBOGEN}
-				>
-					Anfrage starten
-				</Link>
-			</div>
-			<Swiper
-				navigation
-				loop={false}
-				slidesPerView={1.3}
-				modules={[Navigation]}
-				spaceBetween={65}
-				className="swiper max-w-full !pt-12 reviews-swiper relative"
-			>
-				{items.map((item, index) => (
-					<SwiperSlide
-						key={index}
-						className="swiper-slide !max-w-[680px] !flex items-stretch justify-between max-medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
+		<>
+			{/* Desktop Version */}
+			<div className="max-small:hidden py-16 max-medium:py-8 pl-36 max-large:pl-30 max-medium:pl-16 max-medium:flex-col max-medium:gap-8 flex items-center justify-start gap-[72px]">
+				<div className="max-w-[436px] pt-12 space-y-6">
+					<h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
+						Das sagen unsere Kund:innen über Heidi
+					</h4>
+					<p className="text-xl text-dark_text">
+						Zu gut, um wahr zu sein? Lassen wir die sprechen, die es am besten
+						wissen - unsere Kund:innen. Ihre Erfahrungen zeigen, warum Heidi
+						überzeugt.
+					</p>
+					<Image
+						width={0}
+						height={0}
+						sizes="100vw"
+						loading="lazy"
+						src={trustpilot}
+						alt="trustpilot"
+					/>
+					<Link
+						className="text-lg block w-fit text-dark_text py-2.5 px-5 border border-dark_green/20 duration-300 transition hover:bg-green hover:border-green hover:text-white rounded-full"
+						href={ROUTE_FRAGEBOGEN}
 					>
-						<div className="flex flex-col items-start justify-between">
-							<p className="text-xl text-white leading-[1]">„{item.text}“</p>
-							<div className="space-y-1.5">
-								<p className="text-xl text-white">{item.name}</p>
-								<p className="text-xl text-white">{item.position}</p>
-							</div>
-						</div>
-						<video
-							ref={(el) => {
-								videoRefs.current[index] = el;
-							}}
-							onClick={() => handleVideoClick(index)}
-							className="-mt-20 max-medium:mt-0 max-medium:w-full max-medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
-							loop
+						Anfrage starten
+					</Link>
+				</div>
+				<Swiper
+					navigation
+					loop={false}
+					slidesPerView={1.3}
+					modules={[Navigation]}
+					spaceBetween={65}
+					className="swiper max-w-full !pt-12 reviews-swiper relative"
+				>
+					{items.map((item, index) => (
+						<SwiperSlide
+							key={index}
+							className="swiper-slide !max-w-[680px] !flex items-stretch justify-between max-medium:flex-col gap-3 rounded-[30px] bg-dark_green px-10 pt-8 pb-6"
 						>
-							<source src={item.video} type="video/mp4" />
-						</video>
-					</SwiperSlide>
-				))}
-			</Swiper>
-		</div>
+							<div className="flex flex-col items-start justify-between">
+								<p className="text-xl text-white leading-[1]">&bdquo;{item.text}&ldquo;</p>
+								<div className="space-y-1.5">
+									<p className="text-xl text-white">{item.name}</p>
+									<p className="text-xl text-white">{item.position}</p>
+								</div>
+							</div>
+							<video
+								ref={(el) => {
+									videoRefs.current[index] = el;
+								}}
+								onClick={() => handleVideoClick(index)}
+								className="-mt-20 max-medium:mt-0 max-medium:w-full max-medium:h-auto duration-300 relative object-cover aspect-video cursor-pointer w-[200px] h-[336px] rounded-[40px]"
+								loop
+							>
+								<source src={item.video} type="video/mp4" />
+							</video>
+						</SwiperSlide>
+					))}
+				</Swiper>
+			</div>
+
+			{/* Mobile Version - Figma Design */}
+			<div className="hidden max-small:block pt-12 pb-8 px-5">
+				{/* Title and Trustpilot for mobile */}
+				<div className="mb-10 space-y-5">
+					<h4 className="text-[30px] leading-[36px] text-dark_text">
+						Das schätzen unsere Kund:innen an Heidi
+					</h4>
+					<Image
+						width={0}
+						height={0}
+						sizes="100vw"
+						loading="lazy"
+						src={trustpilot}
+						alt="trustpilot"
+					/>
+				</div>
+				<Swiper
+					navigation={{
+						nextEl: ".mobile-review-next",
+						prevEl: ".mobile-review-prev",
+					}}
+					loop={true}
+					slidesPerView={1}
+					modules={[Navigation]}
+					spaceBetween={20}
+					className="swiper mobile-reviews-swiper relative"
+				>
+					{items.map((item, index) => (
+						<SwiperSlide key={index} className="swiper-slide">
+							{/* Video/Image on top */}
+							<div className="relative">
+								<video
+									ref={(el) => {
+										mobileVideoRefs.current[index] = el;
+									}}
+									onClick={() => handleMobileVideoClick(index)}
+									className="w-full h-[400px] object-cover rounded-[20px] cursor-pointer"
+									loop
+									playsInline
+								>
+									<source src={item.video} type="video/mp4" />
+								</video>
+								{/* Navigation arrow on video */}
+								<button className="mobile-review-next absolute right-4 top-1/2 -translate-y-1/2 z-10 w-14 h-14 bg-white/80 rounded-full flex items-center justify-center shadow-lg">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M9 18L15 12L9 6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+									</svg>
+								</button>
+							</div>
+							
+							{/* Quote card below */}
+							<div className="bg-dark_green rounded-[20px] px-6 py-8 -mt-16 relative z-0 pt-20">
+								<p className="text-[22px] leading-[28px] text-white italic mb-8">
+									&ldquo;{item.text}&rdquo;
+								</p>
+								<div className="space-y-1">
+									<p className="text-lg text-white">{item.name}</p>
+									<p className="text-lg text-white/80">{item.position}</p>
+								</div>
+							</div>
+						</SwiperSlide>
+					))}
+				</Swiper>
+			</div>
+		</>
 	);
 }

@@ -16,7 +16,7 @@ export default function Kostenfrei() {
 				Kostenfrei nachrüsten
 			</h5>
 			<Link
-				className="flex items-center mx-auto justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-5 px-[104px] max-medium:w-full max-medium:text-center max-medium:px-0 w-fit rounded-halfbase bg-green"
+				className="flex items-center mx-auto justify-center transition hover:opacity-80 text-white text-center text-lg max-small:text-base cursor-pointer py-5 max-medium:py-3 px-[104px] max-medium:w-full max-medium:px-10 w-fit rounded-halfbase bg-green"
 				href={ROUTE_FRAGEBOGEN}
 			>
 				Jetzt installieren lassen
@@ -93,11 +93,11 @@ export default function Kostenfrei() {
 					src={small_counter}
 					alt="small_counter"
 				/>
-				<p className="text-[30px] max-medium:text-center text-dark_text">
+				<p className="text-[30px] max-medium:text-center max-small:text-xl text-dark_text">
 					Jetzt auf digitale Funkzähler umstellen lassen.
 				</p>
 				<Link
-					className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg cursor-pointer py-4 px-5 w-fit rounded-base bg-green"
+					className="flex items-center justify-center transition hover:opacity-80 text-white text-center text-lg max-small:text-base cursor-pointer py-4 max-small:py-3 px-5 max-small:px-6 w-fit rounded-base max-small:rounded-lg bg-green"
 					href={ROUTE_FRAGEBOGEN}
 				>
 					Angebot anfordern

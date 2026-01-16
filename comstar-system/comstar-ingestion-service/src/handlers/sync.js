@@ -20,13 +20,6 @@ class SyncHandler {
         etag: this.compareEtag(data.etag, desiredState.etag)
       };
     
-      console.log({
-        gatewayEui,
-        current: { app: data.app, etag: data.etag },
-        desired: desiredState,
-        response
-      }, 'Sync response prepared');
-    
       return response;
     } catch (error) {
       console.error({ error, gatewayEui }, 'Sync handler error');

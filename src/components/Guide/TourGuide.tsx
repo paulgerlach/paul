@@ -12,24 +12,25 @@ interface TourGuideProps {
 const steps = [
 	{
 		target: "#WaterChart",
-		content: "Welcome to your dashboard! Here you can monitor your water consumption in real-time.",
+		content:
+			"Welcome to your dashboard! Here you can monitor your water consumption in real-time.",
 		disableBeacon: true,
 	},
 	{
-		target: ".electricity-chart-container",
-		content: "Track your electricity usage and identify trends to optimize your energy consumption.",
-	},
-	{
-		target: ".heating-chart-container",
-		content: "Monitor your heating costs and analyze seasonal patterns for better efficiency.",
-	},
-	{
 		target: ".notifications-chart-container",
-		content: "Stay informed with real-time notifications about your meters and usage alerts.",
+		content:
+			"Stay informed with real-time notifications about your meters and usage alerts.",
 	},
 	{
 		target: ".einsparung-chart-container",
-		content: "See your CO₂ savings contributions and environmental impact over time.",
+		content:
+			"See your CO₂ savings contributions and environmental impact over time.",
+	},
+	{
+		target: "#sidebar",
+		content:
+			"Use the sidebar to navigate through your dashboard, objects, documents, and billing information.",
+		placement: "right" as const,
 	},
 ];
 
@@ -47,13 +48,9 @@ const CustomTooltip = ({
 		className="bg-white rounded-lg shadow-xl p-5 max-w-sm border border-gray-100"
 	>
 		{step.title && (
-			<h3 className="text-lg font-semibold text-gray-900 mb-2">
-				{step.title}
-			</h3>
+			<h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
 		)}
-		<div className="text-sm text-gray-700 leading-relaxed">
-			{step.content}
-		</div>
+		<div className="text-sm text-gray-700 leading-relaxed">{step.content}</div>
 		<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
 			<button
 				{...skipProps}
@@ -81,7 +78,10 @@ const CustomTooltip = ({
 	</div>
 );
 
-export default function TourGuide({ onTourComplete, onTourSkip }: TourGuideProps) {
+export default function TourGuide({
+	onTourComplete,
+	onTourSkip,
+}: TourGuideProps) {
 	const run = useTourStore((state) => state.run);
 	const setRun = useTourStore((state) => state.setRun);
 

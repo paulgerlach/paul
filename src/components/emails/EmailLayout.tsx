@@ -18,15 +18,17 @@ import {
 interface EmailLayoutProps {
   previewText: string;
   children: React.ReactNode;
+  variant?: 'light' | 'dark'; // Added variant for footer/bg flexibility
 }
 
-export const EmailLayout = ({ previewText, children }: EmailLayoutProps) => {
+export const EmailLayout = ({ previewText, children, variant = 'dark' }: EmailLayoutProps) => {
+    const isLight = variant === 'light';
   return (
     <Html>
       <Head />
       <Preview>{previewText}</Preview>
       <Tailwind>
-        <Body className="bg-white my-auto mx-auto font-sans font-medium">
+        <Body className={`${isLight ? 'bg-[#F9F9F4]' : 'bg-white'} my-auto mx-auto font-sans`}>
           <Container className="rounded my-[40px] mx-auto p-[20px] max-w-[656px]">
             {/* Header */}
             <Section className="mt-[32px]">
@@ -50,83 +52,51 @@ export const EmailLayout = ({ previewText, children }: EmailLayoutProps) => {
 
             {/* Footer */}
             <Section
-  style={{
-    backgroundColor: '#2D3F3E',
-    padding: '24px',
-    textAlign: 'center',
-    marginTop: '25px'
-  }}
->
-    <Row style={{ marginBottom: '16px' }}>
-  <Column align="center" style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-    <Link href="https://www.instagram.com/heidisystems/" style={{ display: 'inline-block' }}>
-      <Img
-        src="https://img.icons8.com/?size=100&id=32320&format=png&color=FFFFFF"
-        width="20"
-        height="20"
-        alt="Instagram"
-      />
-    </Link>
+              style={{
+                textAlign: 'center',
+                marginTop: '40px',
+                padding: '24px',
+                backgroundColor: isLight ? 'transparent' : '#2D3F3E',
+                borderRadius: '8px'
+              }}
+            >
+              <Row style={{ marginBottom: '16px' }}>
+                <Column align="center">
+                  <div style={{ display: 'inline-flex', gap: '16px', justifyContent: 'center' }}>
+                    <Link href="https://www.instagram.com/heidisystems/">
+                      <Img src={`https://img.icons8.com/?size=100&id=32320&format=png&color=${isLight ? '000000' : 'FFFFFF'}`} width="20" height="20" />
+                    </Link>
+                    <Link href="https://x.com/Heidisystems">
+                      <Img src={`https://img.icons8.com/?size=100&id=YfCbGWCWcuar&format=png&color=${isLight ? '000000' : 'FFFFFF'}`} width="20" height="20" />
+                    </Link>
+                    <Link href="https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q">
+                      <Img src={`https://img.icons8.com/?size=100&id=62852&format=png&color=${isLight ? '000000' : 'FFFFFF'}`} width="20" height="20" />
+                    </Link>
+                    <Link href="https://www.linkedin.com/company/heidisystems/">
+                      <Img src={`https://img.icons8.com/?size=100&id=98960&format=png&color=${isLight ? '000000' : 'FFFFFF'}`} width="20" height="20" />
+                    </Link>
+                  </div>
+                </Column>
+              </Row>
 
-    <Link href="https://x.com/Heidisystems" style={{ display: 'inline-block' }}>
-      <Img
-        src="https://img.icons8.com/?size=100&id=YfCbGWCWcuar&format=png&color=FFFFFF"
-        width="20"
-        height="20"
-        alt="Twitter"
-      />
-    </Link>
+              <Text style={{ color: isLight ? '#525252' : '#E5E7EB', fontSize: '12px', lineHeight: '18px' }}>
+                Sent by the team at Heidi Systems GmbH Rungestrasse 21 10179 Berlin.
+              </Text>
 
-    <Link href="https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q" style={{ display: 'inline-block' }}>
-      <Img
-        src="https://img.icons8.com/?size=100&id=62852&format=png&color=FFFFFF"
-        width="20"
-        height="20"
-        alt="YouTube"
-      />
-    </Link>
+              <Text style={{ color: isLight ? '#525252' : '#E5E7EB', fontSize: '12px', lineHeight: '18px', marginTop: '8px' }}>
+                You&apos;re receiving this email because you&apos;re subscribed to useful tips and best practices for getting the most out of Heidi Systems.
+              </Text>
 
-    <Link href="https://www.linkedin.com/company/heidisystems/" style={{ display: 'inline-block' }}>
-      <Img
-        src="https://img.icons8.com/?size=100&id=98960&format=png&color=FFFFFF"
-        width="20"
-        height="20"
-        alt="LinkedIn"
-      />
-    </Link>
-  </Column>
-</Row>
-
-  <Text style={{ color: '#E5E7EB', fontSize: '12px', lineHeight: '18px' }}>
-    Sent by the team at Heidi Systems GmbH Rungestrasse 21 10179 Berlin.
-  </Text>
-
-  <Text
-    style={{
-      color: '#E5E7EB',
-      fontSize: '12px',
-      lineHeight: '18px',
-      marginTop: '8px',
-    }}
-  >
-     You&apos;re receiving this email because  you&apos;re subscribed to useful
-    tips and best practices for getting the most out of Heidi Systems.
-  </Text>
-
-  <Row style={{ marginTop: '16px' }}>
-    <Column align="center">
-      <Text style={{ fontSize: '12px', color: '#E5E7EB' }}>
-        <Link href="#" style={{ color: '#E5E7EB', textDecoration: 'underline' }}>
-          Manage subscriptions
-        </Link>
-        <span style={{ margin: '0 6px' }}>|</span>
-        <Link href="#" style={{ color: '#E5E7EB', textDecoration: 'underline' }}>
-          Unsubscribe
-        </Link>
-      </Text>
-    </Column>
-  </Row>
-</Section>
+              <Row style={{ marginTop: '16px' }}>
+                <Column align="center">
+                  <Text style={{ fontSize: '12px' }}>
+                    <Link href="#" style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}>Manage subscriptions</Link>
+                    <span style={{ margin: '0 8px', color: isLight ? '#525252' : '#E5E7EB' }}>|</span>
+                    <Link href="#" style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}>Unsubscribe</Link>
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
 
           </Container>
         </Body>

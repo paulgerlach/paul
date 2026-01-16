@@ -25,11 +25,13 @@ import { render } from '@react-email/render';
 import HeidiPremiumTrial from '@/components/emails/HeidiPremiumTrial';
 import HeidiYearlyReview from '@/components/emails/HeidiYearlyReview';
 import CreatorCampEmail from '@/components/emails/CreatorCampEmail';
+import HeidiConfirmEmail from '@/components/emails/HediConfirmEmail';
 
 const templates = {
   premiumTrial: HeidiPremiumTrial,
   yearlyReview: HeidiYearlyReview,
    creatorCamp: CreatorCampEmail,
+   confirmEmail: HeidiConfirmEmail,
 };
 
 export type EmailTemplateKey = keyof typeof templates;

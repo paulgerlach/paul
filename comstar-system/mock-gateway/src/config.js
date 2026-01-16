@@ -9,7 +9,7 @@ export const DEFAULT_CONFIG = {
   name: `Mock-Gateway-${Date.now().toString(36)}`,
   
   // MQTT connection
-  brokerUrl: process.env.MQTT_BROKER || 'mqtt://localhost:1883',
+  brokerUrl: process.env.MQTT_BROKER || '',
   username: process.env.MQTT_USERNAME || '',
   password: process.env.MQTT_PASSWORD || '',
   

@@ -13,23 +13,23 @@ const steps = [
 	{
 		target: "#WaterChart",
 		content:
-			"Welcome to your dashboard! Here you can monitor your water consumption in real-time.",
+			"Willkommen auf Ihrem Dashboard! Hier können Sie Ihren Wasserverbrauch in Echtzeit überwachen.",
 		disableBeacon: true,
 	},
 	{
 		target: ".notifications-chart-container",
 		content:
-			"Stay informed with real-time notifications about your meters and usage alerts.",
+			"Bleiben Sie mit Echtzeitbenachrichtigungen über Ihre Zähler und Verbrauchsalarme informiert.",
 	},
 	{
 		target: ".einsparung-chart-container",
 		content:
-			"See your CO₂ savings contributions and environmental impact over time.",
+			"Verfolgen Sie Ihren CO₂-Einsparungsbeitrag und die Umweltauswirkungen über die Zeit.",
 	},
 	{
 		target: "#sidebar",
 		content:
-			"Use the sidebar to navigate through your dashboard, objects, documents, and billing information.",
+			"Nutzen Sie die Seitenleiste, um durch Ihr Dashboard, Objekte, Dokumente und Abrechnungsinformationen zu navigieren.",
 		placement: "right" as const,
 	},
 ];
@@ -51,12 +51,12 @@ const CustomTooltip = ({
 			<h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
 		)}
 		<div className="text-sm text-gray-700 leading-relaxed">{step.content}</div>
-		<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+			<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
 			<button
 				{...skipProps}
 				className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
 			>
-				Skip tour
+				Tour überspringen
 			</button>
 			<div className="flex gap-2">
 				{index > 0 && (
@@ -64,14 +64,14 @@ const CustomTooltip = ({
 						{...backProps}
 						className="px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
 					>
-						Back
+						Zurück
 					</button>
 				)}
 				<button
 					{...primaryProps}
-					className="px-3 py-1.5 text-sm text-white bg-rose-500 rounded-md hover:bg-rose-600 transition-colors font-medium"
+					className="px-3 py-1.5 text-sm text-dark_text bg-green rounded-md hover:bg-green/80 transition-colors font-medium"
 				>
-					{isLastStep ? "Finish" : "Next"}
+					{isLastStep ? "Fertigstellen" : "Weiter"}
 				</button>
 			</div>
 		</div>

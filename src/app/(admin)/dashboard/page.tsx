@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
 import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -10,9 +10,18 @@ import ShareButton from "@/app/shared/ShareButton";
 
 export default function AdminPage() {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const tourCompleted = searchParams.get("tour_completed") === "true";
 	const [isChecking, setIsChecking] = useState(true);
 
 	useEffect(() => {
+		// Skip tour check if user just completed tour
+		if (tourCompleted) {
+			console.log("[Tour Check] Skipping check - tour just completed");
+			setIsChecking(false);
+			return;
+		}
+
 		async function checkTourStatus() {
 			try {
 				console.log("[Tour Check] Starting tour status check...");
@@ -45,7 +54,7 @@ export default function AdminPage() {
 		}
 
 		checkTourStatus();
-	}, [router]);
+	}, [router, tourCompleted]);
 
 	if (isChecking) {
 		return null;

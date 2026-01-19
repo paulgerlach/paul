@@ -8,13 +8,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/utils/supabase/server";
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tour_completed?: string }>;
+}) {
+  const params = await searchParams;
+  const tourCompleted = params.tour_completed === "true";
+
   const supabase = await supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
+  // Skip tour check if user just completed tour
+  if (!tourCompleted && user) {
     const { data } = await supabase
       .from("users")
       .select("has_seen_tour")

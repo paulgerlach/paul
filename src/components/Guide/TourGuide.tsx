@@ -51,7 +51,7 @@ const CustomTooltip = ({
 			<h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
 		)}
 		<div className="text-sm text-gray-700 leading-relaxed">{step.content}</div>
-			<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+		<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
 			<button
 				{...skipProps}
 				className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
@@ -102,6 +102,7 @@ export default function TourGuide({
 			run={run}
 			continuous
 			showSkipButton
+			spotlightPadding={0}
 			tooltipComponent={CustomTooltip}
 			callback={handleJoyrideCallback}
 			styles={{
@@ -110,7 +111,7 @@ export default function TourGuide({
 					overlayColor: "rgba(0, 0, 0, 0.5)",
 				},
 				spotlight: {
-					borderRadius: 8,
+					borderRadius: 15,
 				},
 			}}
 		/>

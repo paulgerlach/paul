@@ -34,7 +34,7 @@ export default function FormMoneyInput<T extends FieldValues = FieldValues>({
             <FormControl>
               <Input {...field} disabled={disabled} value={field.value ?? ""} />
             </FormControl>
-            <span className="absolute text-sm text-dark_green right-7 bottom-5 max-xl:bottom-2.5">
+            <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">
               €
             </span>
           </div>

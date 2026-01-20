@@ -160,15 +160,6 @@ class MqttHandler {
       // Decode message
       const decoded = await cbor.decode(message);
       const { n: messageNumber, q: queryType, d: data } = decoded;
-      
-      // console.log({
-      //   gatewayEui,
-      //   messageType,
-      //   direction,
-      //   messageNumber,
-      //   queryType,
-      //   topic
-      // }, 'Received MQTT message');
 
       const handlerConfig = this.handlers[queryType];
       if (!handlerConfig) {

@@ -128,6 +128,31 @@ class DatabaseService {
     }
   }
 
+  async getConfiguration(gatewayEui, etag) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_desired_states')
+        .select('*')
+        .eq('gateway_eui', gatewayEui)
+        .eq('etag', etag)
+        .single();
+
+      if (error) {
+        //replace with logger
+        console.error('Error fetching gateway_desired_states data:', error, gatewayEui);
+      }
+
+      if (!data) {
+        console.error({ gatewayEui }, 'Unknown Gateway EUI');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error Gateway State data:', error);
+      return null;
+    }
+  }
+
 }
 
 

@@ -453,3 +453,146 @@ export const gateway_desired_states = pgTable("gateway_desired_states", {
 }, (table) => [
 	pgPolicy("Admins can manage gateway states", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
+
+// Config versions (stores actual config content)
+export const config_versions = pgTable("config_versions", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	etag: text().notNull().unique(), // Hash of config content
+	config: jsonb().notNull(), // The actual configuration
+	description: text(),
+	created_by: text(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	is_active: boolean().default(true),
+}, (table) => [
+	pgPolicy("Admins can manage config versions", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware versions
+export const firmware_versions = pgTable("firmware_versions", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	filename: text().notNull().unique(),
+	original_filename: text().notNull(),
+	version: text().notNull(),
+	type: text().notNull(), // 'boot', 'modem', 'application'
+	device_model: text().notNull(),
+	size_bytes: integer().notNull(),
+	checksum_sha256: text().notNull(),
+	total_chunks: integer().notNull(),
+	chunk_size: integer().default(512),
+	description: text(),
+	release_notes: text(),
+	min_version: text(),
+	max_version: text(),
+	deployment_type: text().default('scheduled'), // 'scheduled', 'available', 'force'
+	allowed_gateways: jsonb().default('[]'),
+	is_active: boolean().default(true),
+	uploaded_by: text(),
+	uploaded_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage firmware", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware deployments
+export const firmware_deployments = pgTable("firmware_deployments", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	firmware_id: uuid().references(() => firmware_versions.id),
+	scheduled_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	started_at: timestamp({ withTimezone: true, mode: 'string' }),
+	completed_at: timestamp({ withTimezone: true, mode: 'string' }),
+	status: text().default('scheduled'), // 'scheduled', 'downloading', 'flashing', 'completed', 'failed', 'cancelled', 'retrying'
+	current_chunk: integer().default(0),
+	total_chunks: integer(),
+	error_message: text(),
+	retry_count: integer().default(0),
+	last_chunk_at: timestamp({ withTimezone: true, mode: 'string' }),
+	metadata: jsonb().default({}),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage deployments", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Gateway config overrides
+export const gateway_config_overrides = pgTable("gateway_config_overrides", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	config_key: text().notNull(),
+	config_value: text(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage overrides", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware download log
+export const firmware_download_log = pgTable("firmware_download_log", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	firmware_filename: text().notNull(),
+	chunk_number: integer().notNull(),
+	success: boolean().notNull(),
+	error_message: text(),
+	response_time_ms: integer(),
+	downloaded_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can view all logs", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+// Gateway status history
+export const gateway_status_history = pgTable("gateway_status_history", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	timestamp: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	battery_voltage: integer(),
+	battery_level: text(),
+	temperature: integer(), // In 0.1°C units
+	signal_strength: text(),
+	signal_quality: text(),
+	rsrp: integer(),
+	rsrq: integer(),
+	snr: integer(),
+	operator: text(),
+	cell_id: text(),
+	connected: boolean(),
+	collecting: boolean(),
+	telegrams_collected: integer(),
+	metadata: jsonb().default({}),
+	alerts: jsonb().default([]),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can view all status", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+// Gateway devices (from device uplink)
+export const gateway_devices = pgTable("gateway_devices", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	eui: text().notNull().unique(),
+	imei: text(),
+	imsi: text(),
+	iccid: text(),
+	model: text(),
+	firmware: text(),
+	boot_version: text(),
+	last_seen: timestamp({ withTimezone: true, mode: 'string' }),
+	metadata: jsonb().default({}),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware history
+export const firmware_history = pgTable("firmware_history", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	firmware_type: text().notNull(), // 'app', 'boot', 'modem'
+	version: text().notNull(),
+	details: jsonb().default({}),
+	first_seen: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	last_seen: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
+]);

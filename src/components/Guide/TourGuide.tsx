@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
 import { useTourStore } from "@/store/useTourStore";
 
@@ -95,6 +95,51 @@ export default function TourGuide({
 			onTourSkip?.();
 		}
 	};
+
+	// Handle overlay clicks to complete the tour
+	useEffect(() => {
+		if (!run) return;
+
+		const handleOverlayClick = (event: MouseEvent) => {
+			const target = event.target as HTMLElement;
+			
+			// Ignore clicks on tooltip, spotlight, or buttons
+			if (
+				target.closest('[class*="react-joyride__tooltip"]') ||
+				target.closest('[class*="tooltip"]') ||
+				target.closest('[class*="react-joyride__spotlight"]') ||
+				target.closest('[class*="spotlight"]') ||
+				target.closest('button') ||
+				target.tagName === 'BUTTON'
+			) {
+				return;
+			}
+			
+			// Check if clicked element is the overlay (full-screen dark background)
+			const rect = target.getBoundingClientRect();
+			const isOverlay = 
+				rect.width >= window.innerWidth * 0.95 && 
+				rect.height >= window.innerHeight * 0.95 &&
+				window.getComputedStyle(target).position === 'fixed';
+			
+			if (isOverlay) {
+				event.preventDefault();
+				event.stopPropagation();
+				setRun(false);
+				onTourComplete?.();
+			}
+		};
+
+		// Add click listener with a delay to ensure overlay is rendered
+		const timeoutId = setTimeout(() => {
+			document.addEventListener("click", handleOverlayClick, true);
+		}, 150);
+
+		return () => {
+			clearTimeout(timeoutId);
+			document.removeEventListener("click", handleOverlayClick, true);
+		};
+	}, [run, setRun, onTourComplete]);
 
 	return (
 		<Joyride

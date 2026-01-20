@@ -18,11 +18,11 @@ import {
 interface EmailLayoutProps {
   previewText: string;
   children: React.ReactNode;
-  variant?: 'light' | 'dark'; // Added variant for footer/bg flexibility
+  variant?: 'light' | 'dark'; // Variante für Footer-/Hintergrund-Flexibilität
 }
 
 export const EmailLayout = ({ previewText, children, variant = 'dark' }: EmailLayoutProps) => {
-    const isLight = variant === 'light';
+  const isLight = variant === 'light';
   return (
     <Html>
       <Head />
@@ -33,22 +33,20 @@ export const EmailLayout = ({ previewText, children, variant = 'dark' }: EmailLa
             {/* Header */}
             <Section className="mt-[32px]">
               <Img
-    src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter_logo.187aba8a.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q"
-    alt="Heidi Systems"
-    width="120"
-    height="auto"
-    style={{
-      margin: '0 auto',
-      maxWidth: '120px',
-      width: '100%',
-      height: 'auto',
-    }}
-  />
+                src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter_logo.187aba8a.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q"
+                alt="Heidi Systems"
+                width="120"
+                height="auto"
+                style={{
+                  margin: '0 auto',
+                  maxWidth: '120px',
+                  width: '100%',
+                  height: 'auto',
+                }}
+              />
             </Section>
 
             {children}
-
-            {/* <Hr className="border border-solid border-[#eaeaea] my-[32px]" /> */}
 
             {/* Footer */}
             <Section
@@ -80,24 +78,33 @@ export const EmailLayout = ({ previewText, children, variant = 'dark' }: EmailLa
               </Row>
 
               <Text style={{ color: isLight ? '#525252' : '#E5E7EB', fontSize: '12px', lineHeight: '18px' }}>
-                Sent by the team at Heidi Systems GmbH Rungestrasse 21 10179 Berlin.
+                Versendet vom Team der Heidi Systems GmbH, Rungestraße 21, 10179 Berlin.
               </Text>
 
               <Text style={{ color: isLight ? '#525252' : '#E5E7EB', fontSize: '12px', lineHeight: '18px', marginTop: '8px' }}>
-                You&apos;re receiving this email because you&apos;re subscribed to useful tips and best practices for getting the most out of Heidi Systems.
+                Du erhältst diese E-Mail, weil du hilfreiche Tipps und Best Practices abonniert hast, um Heidi Systems optimal zu nutzen.
               </Text>
 
               <Row style={{ marginTop: '16px' }}>
                 <Column align="center">
                   <Text style={{ fontSize: '12px' }}>
-                    <Link href="#" style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}>Manage subscriptions</Link>
+                    <Link
+                      href="#"
+                      style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}
+                    >
+                      Abonnements verwalten
+                    </Link>
                     <span style={{ margin: '0 8px', color: isLight ? '#525252' : '#E5E7EB' }}>|</span>
-                    <Link href="#" style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}>Unsubscribe</Link>
+                    <Link
+                      href="#"
+                      style={{ color: isLight ? '#525252' : '#E5E7EB', textDecoration: 'underline' }}
+                    >
+                      Abmelden
+                    </Link>
                   </Text>
                 </Column>
               </Row>
             </Section>
-
           </Container>
         </Body>
       </Tailwind>

@@ -18,22 +18,21 @@ export const CreatorCampEmail = ({
   userFirstName = 'there',
 }: CreatorCampEmailProps) => {
   return (
-    <EmailLayout previewText="Turn consistency into creator confidence">
+    <EmailLayout previewText="Mach aus Beständigkeit Creator-Selbstvertrauen">
       {/* Headline */}
       <Section className="mt-[32px] text-center">
         <Text className="text-gray-900 text-2xl font-semibold leading-8">
-          Turn consistency into creator confidence
+          Mach aus Beständigkeit Creator-Selbstvertrauen
         </Text>
 
         <Text className="text-gray-700 mt-4 text-lg leading-7">
-          Building an audience doesn’t happen overnight; it happens post by
-          post.
+          Eine Community entsteht nicht über Nacht – sondern Beitrag für Beitrag.
         </Text>
 
         <Text className="text-gray-700 mt-4 text-lg leading-7">
-          That’s why we’re hosting our sixth edition of Creator Camp: a 30-day
-          challenge to help you find your rhythm, stay accountable, and build
-          the consistency every creator needs to grow.
+          Genau deshalb veranstalten wir die sechste Ausgabe unseres Creator Camps:
+          eine 30-tägige Challenge, die dir hilft, deinen Rhythmus zu finden,
+          dranzubleiben und die Beständigkeit aufzubauen, die jede Creator-Journey braucht.
         </Text>
       </Section>
 
@@ -47,7 +46,7 @@ export const CreatorCampEmail = ({
             color: '#2F6121',
           }}
         >
-          Claim your spot →
+          Sichere dir deinen Platz →
         </Button>
       </Section>
 
@@ -56,38 +55,38 @@ export const CreatorCampEmail = ({
       {/* Benefits */}
       <Section>
         <Text className="text-gray-900 text-lg font-semibold mb-4">
-          Join Creator Camp to get:
+          Das erwartet dich im Creator Camp:
         </Text>
 
         <Text className="text-gray-700 text-lg leading-7">
-          • <strong>Daily prompts</strong>: easy ideas surfaced in Buffer’s
-          Template Library
+          • <strong>Tägliche Impulse</strong>: einfache Ideen direkt aus Buffers
+          Vorlagenbibliothek
         </Text>
 
         <Text className="text-gray-700 text-lg leading-7 mt-2">
-          • <strong>Habit tracking</strong>: see your streaks and posting goals
-          progress in real time
+          • <strong>Habit-Tracking</strong>: verfolge deine Streaks und Posting-Ziele
+          in Echtzeit
         </Text>
 
         <Text className="text-gray-700 text-lg leading-7 mt-2">
-          • <strong>Community support</strong>: a friendly Discord space to
-          share wins, ask for feedback, and stay motivated
+          • <strong>Community-Support</strong>: ein freundlicher Discord-Space, um
+          Erfolge zu teilen, Feedback zu bekommen und motiviert zu bleiben
         </Text>
       </Section>
 
       <Section className="mt-[24px]">
         <Text className="text-gray-700 text-lg leading-7">
-          Camp begins <strong>Wednesday, October 15</strong>, and it’s
-          completely <strong className="underline">free to join</strong>!
+          Das Camp startet am <strong>Mittwoch, den 15. Oktober</strong> – und die
+          Teilnahme ist <strong className="underline">komplett kostenlos</strong>!
         </Text>
 
         <Text className="text-gray-700 text-lg leading-7 mt-2">
-          Spots in the Discord cohort are limited to keep the group small and
-          supportive.
+          Die Plätze in der Discord-Gruppe sind begrenzt, damit die Community klein
+          und unterstützend bleibt.
         </Text>
 
         <Text className="text-gray-700 text-lg leading-7 mt-2">
-          See you in Discord!
+          Wir sehen uns auf Discord!
         </Text>
       </Section>
 
@@ -99,11 +98,11 @@ export const CreatorCampEmail = ({
               src="https://tse4.mm.bing.net/th/id/OIP.E5TZoUH1kdRUJ8UnouzAWgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
               alt="Serena G."
               style={{
-        maxHeight: '100%', 
-        height: 'auto',
-        maxWidth: '100%',
-        objectFit: 'contain',
-      }}
+                maxHeight: '100%',
+                height: 'auto',
+                maxWidth: '100%',
+                objectFit: 'contain',
+              }}
             />
           </Column>
 
@@ -112,7 +111,7 @@ export const CreatorCampEmail = ({
               Serena G.
             </Text>
             <Text className="text-gray-600 text-sm">
-              <em>Brand & community manager</em>
+              <em>Markenmanager</em>
             </Text>
           </Column>
         </Row>

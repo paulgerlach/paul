@@ -1,5 +1,5 @@
 // HeidiPremiumTrial.tsx
-// src/components/emails/HeidiPremiumTria.tsx
+// src/components/emails/HeidiPremiumTrial.tsx
 import {
   Body,
   Container,
@@ -23,132 +23,137 @@ interface HeidiPremiumTrialProps {
 }
 
 export const HeidiPremiumTrial = ({ userFirstName = 'there' }: HeidiPremiumTrialProps) => {
-  // const previewText = `Unlock Heidi Systems Premium Tools for Free!`;
-
   return (
-    <EmailLayout previewText="Unlock Heidi Systems Premium Tools for Free!">
+    <EmailLayout previewText="Schalte die Premium-Tools von Heidi Systems kostenlos frei!">
       {/* Greeting */}
-            <Section className="mt-[32px]">
-              <Text className="text-gray-900 text-lg leading-6">
-                Hi {userFirstName},
-              </Text>
-              <Text className="text-gray-900 mt-4 text-lg leading-6">
-                We hope you&apos;ve been enjoying Heidi Systems and are in your social media management groove. 
-                If you&apos;re looking for even more, unlock our premium tools free with trial!
-              </Text>
-            </Section>
+      <Section className="mt-[32px]">
+        <Text className="text-gray-900 text-lg leading-6">
+          Hi {userFirstName},
+        </Text>
+        <Text className="text-gray-900 mt-4 text-lg leading-6">
+          wir hoffen, dass dir Heidi Systems gefällt und du gut in deinem Social-Media-Workflow
+          angekommen bist. Wenn du noch mehr herausholen möchtest, schalte unsere Premium-Tools
+          mit einer kostenlosen Testphase frei!
+        </Text>
+      </Section>
 
-            {/* CTA Button */}
-            <Section className="text-center mt-[32px] mb-[32px]">
-              <Button
-                href="#"
-                className="rounded-full text-[#ffffff] text-lg text-[#2F6121] font-medium no-underline text-center px-6 py-4"
-                style={{ backgroundColor: '#BDEAA4' }}
-              >
-                Try premium tools for free
-              </Button>
-            </Section>
+      {/* CTA Button */}
+      <Section className="text-center mt-[32px] mb-[32px]">
+        <Button
+          href="#"
+          className="rounded-full text-[#ffffff] text-lg text-[#2F6121] font-medium no-underline text-center px-6 py-4"
+          style={{ backgroundColor: '#BDEAA4' }}
+        >
+          Premium-Tools kostenlos testen
+        </Button>
+      </Section>
 
-            <Hr className="border border-solid border-[#eaeaea] my-[32px] mx-0" />
+      <Hr className="border border-solid border-[#eaeaea] my-[32px] mx-0" />
 
-            {/* Features Section */}
-            <Section>
-              <Text className="text-gray-900 text-lg font-medium">
-                In addition to <strong>unlimited scheduled</strong> posts per channel, our 14-day free trial gives you access to <strong className='underline text-[#2F6121]'>engagement</strong> and <strong className='underline text-[#2F6121]'>analytics</strong> tools.
-              </Text>
-            </Section>
+      {/* Features Section */}
+      <Section>
+        <Text className="text-gray-900 text-lg font-medium">
+          Zusätzlich zu <strong>unbegrenzt geplanten</strong> Beiträgen pro Kanal erhältst du mit
+          unserer 14-tägigen kostenlosen Testphase Zugriff auf{' '}
+          <strong className="underline text-[#2F6121]">Engagement</strong>- und{' '}
+          <strong className="underline text-[#2F6121]">Analyse</strong>-Tools.
+        </Text>
+      </Section>
 
-            {/* Feature 1 */}
-            <Section className="mt-[32px]">
+      {/* Feature 1 */}
+      <Section className="mt-[32px]">
         <Row>
           <Column width="50%" className="pr-4">
             <Img
-              src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnews3.dbb8aec9.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q" 
-              alt="Comments Icon"
+              src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnews3.dbb8aec9.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q"
+              alt="Kommentare"
               className="object-contain"
               style={{
-        maxHeight: '100%', 
-        maxWidth: '100%',
-        height: 'auto',
-        objectFit: 'contain',
-      }}
+                maxHeight: '100%',
+                maxWidth: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
             />
           </Column>
-          <Column width="50%" style={{ display: 'flex', width:'100%', flexDirection: 'column', justifyContent: 'center' }}>
+          <Column
+            width="50%"
+            style={{ display: 'flex', width: '100%', flexDirection: 'column', justifyContent: 'center' }}
+          >
             <Text className="text-gray-900 text-xl font-medium">
-              <strong>Jump to important comments</strong>
+              <strong>Direkt zu wichtigen Kommentaren springen</strong>
             </Text>
             <Text className="text-gray-900 mt-2 text-lg leading-6">
-              Your Instagram and Facebook posts have labels for unread or negative comments, 
-              or comments with a question.
+              Deine Instagram- und Facebook-Beiträge werden mit Labels für ungelesene oder negative
+              Kommentare sowie Kommentare mit Fragen versehen.
             </Text>
           </Column>
         </Row>
       </Section>
 
-            {/* Feature 2 */}
-            <Section className="mt-[32px]">
-              <Row>
-                <Column width="50%" style={{ display: 'flex', width:'100%', flexDirection: 'column', justifyContent: 'center' }}>
-              <Text className="text-gray-900 text-xl font-medium">
-                <strong>
-                  Unlock insights with Analytics
-                </strong>
-              </Text>
-              <Text className="text-gray-900 mt-2 text-lg leading-6">
-                An all-in-one, sortable view by reach and engagement with personalized 
-                recommendations for posting times and frequency.
-              </Text>
-              </Column>
-              <Column width="50%" className="pr-4">
+      {/* Feature 2 */}
+      <Section className="mt-[32px]">
+        <Row>
+          <Column
+            width="50%"
+            style={{ display: 'flex', width: '100%', flexDirection: 'column', justifyContent: 'center' }}
+          >
+            <Text className="text-gray-900 text-xl font-medium">
+              <strong>Erhalte wertvolle Einblicke mit Analytics</strong>
+            </Text>
+            <Text className="text-gray-900 mt-2 text-lg leading-6">
+              Eine zentrale, sortierbare Übersicht nach Reichweite und Engagement – inklusive
+              personalisierter Empfehlungen für optimale Posting-Zeiten und -Frequenz.
+            </Text>
+          </Column>
+          <Column width="50%" className="pr-4">
             <Img
-              src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnews1.e6e07b67.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q" 
-              alt="Important Comments Icon"
+              src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnews1.e6e07b67.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q"
+              alt="Analytics"
               className="object-contain"
               style={{
-        maxHeight: '100%', 
-        height: 'auto',
-        maxWidth: '100%',
-        objectFit: 'contain',
-      }}
+                maxHeight: '100%',
+                height: 'auto',
+                maxWidth: '100%',
+                objectFit: 'contain',
+              }}
             />
           </Column>
-              </Row>
-            </Section>
+        </Row>
+      </Section>
 
-            <Hr className="border border-solid border-[#eaeaea] my-[32px]" />
+      <Hr className="border border-solid border-[#eaeaea] my-[32px]" />
 
-           {/* Signature */}
-<Section className="mt-[32px]">
-  <Row style={{ alignItems: 'center', gap: '12px' }}>
-    {/* Avatar */}
-    <Column width="30%">
-      <Img
-        src="https://tse4.mm.bing.net/th/id/OIP.E5TZoUH1kdRUJ8UnouzAWgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" 
-        alt="Serena G."
-         style={{
-        maxHeight: '100%', 
-        height: 'auto',
-        maxWidth: '100%',
-        objectFit: 'contain',
-      }}
-      />
-    </Column>
+      {/* Signature */}
+      <Section className="mt-[32px]">
+        <Row style={{ alignItems: 'center', gap: '12px' }}>
+          {/* Avatar */}
+          <Column width="30%">
+            <Img
+              src="https://tse4.mm.bing.net/th/id/OIP.E5TZoUH1kdRUJ8UnouzAWgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+              alt="Serena G."
+              style={{
+                maxHeight: '100%',
+                height: 'auto',
+                maxWidth: '100%',
+                objectFit: 'contain',
+              }}
+            />
+          </Column>
 
-    {/* Signature text */}
-    <Column className='ml-8'>
-      <Text className="text-gray-900 text-lg font-medium mt-2">
-        Serena G.
-      </Text>
-      <Text className="text-gray-600 text-sm mt-1">
-        <em>Brand & community manager</em>
-      </Text>
-    </Column>
-  </Row>
-</Section>
-
+          {/* Signature text */}
+          <Column className="ml-8">
+            <Text className="text-gray-900 text-lg font-medium mt-2">
+              Serena G.
+            </Text>
+            <Text className="text-gray-600 text-sm mt-1">
+              <em>Markenmanager</em>
+            </Text>
+          </Column>
+        </Row>
+      </Section>
     </EmailLayout>
-  )
+  );
 };
 
 export default HeidiPremiumTrial;

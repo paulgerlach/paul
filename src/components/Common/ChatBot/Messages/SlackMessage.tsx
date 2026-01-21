@@ -6,7 +6,7 @@ import React from 'react'
 import { Triangle } from 'react-loader-spinner';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { MdOutlineSupportAgent } from "react-icons/md";
+import { SupportAgentIcon } from "../icons";
 
 interface SlackMessageContainerProps {
   message: SlackMessage;
@@ -28,7 +28,7 @@ export default function SlackMessageContainer({
       {!isUser && (
         <div>
           {isOutOfOffice ?
-            <MdOutlineSupportAgent color="#FFFFFF" size={30} /> :
+            <SupportAgentIcon className="w-[30px] h-[30px] text-white" /> :
             <Image
               alt="chat avatar"
               src={max_chat_avatar.src}

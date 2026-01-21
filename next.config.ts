@@ -22,6 +22,22 @@ const nextConfig: NextConfig = {
     ]
   },
   output: "standalone",
+  experimental: {
+    // Tree-shake unused exports from these packages to reduce bundle size
+    optimizePackageImports: [
+      "lucide-react",
+      "react-icons",
+      "lodash",
+      "date-fns",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-select",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-radio-group",
+      "@radix-ui/react-switch",
+      "recharts",
+    ],
+  },
 };
 
 export default nextConfig;

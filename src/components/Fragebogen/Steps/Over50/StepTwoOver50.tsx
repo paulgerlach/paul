@@ -15,15 +15,16 @@ export default function StepTwoOver50({
 				Anzahl der Messdienstleister
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Bitte geben Sie an, mit wie vielen Messdienstleistern Sie derzeit<br />
+				Bitte geben Sie an, mit wie vielen Messdienstleistern Sie derzeit{" "}
+				<span className="max-small:hidden"><br /></span>
 				zusammenarbeiten.
 			</p>
-			<div className="flex items-center justify-start gap-4">
+			<div className="flex items-start justify-start gap-4">
 				<button
 					onClick={() =>
 						setValue("messdienstleister_count", Math.max((stepValue as number) - 1, 1))
 					}
-					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center"
+					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center mt-1"
 					type="button"
 				>
 					-
@@ -42,7 +43,7 @@ export default function StepTwoOver50({
 				</div>
 				<button
 					onClick={() => setValue("messdienstleister_count", (stepValue as number) + 1)}
-					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center"
+					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center mt-1"
 					type="button"
 				>
 					+

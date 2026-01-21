@@ -27,7 +27,7 @@ import {
 export async function GET(request: Request) {
   let authResult;
   try {
-    authResult = await requireExternalAuth(request);
+    const authResult = await requireExternalAuth(request);
     const { token, tokenRateLimit, ipRateLimit } = authResult;
 
     // Scoped access - require user_id from token

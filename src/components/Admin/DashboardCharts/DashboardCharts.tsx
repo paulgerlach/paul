@@ -125,7 +125,7 @@ export default function DashboardCharts() {
     <ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1100px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:[grid-template-columns:minmax(0,1fr)]">
       {/* Column 1: Kaltwasser + Warmwasser */}
       <div className="flex flex-col gap-3">
-        <div className="h-[312px]">
+        <div className="h-[240px]">
           {coldWaterChart.loading ? (
             <ChartCardSkeleton />
           ) : (
@@ -140,7 +140,7 @@ export default function DashboardCharts() {
             />
           )}
         </div>
-        <div className="h-[271px]">
+        <div className="h-[240px]">
           {hotWaterChart.loading ? (
             <ChartCardSkeleton />
           ) : (

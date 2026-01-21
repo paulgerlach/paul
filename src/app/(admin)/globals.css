@@ -554,6 +554,20 @@ html {
     }
 }
 
+@media (width < 1640px) {
+  .share-button-responsive {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+.to-black {
+    color: #1E322D;
+}
+
+
 .reviews-swiper .swiper-slide {
     max-width: max-content !important;
 }

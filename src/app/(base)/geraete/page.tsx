@@ -32,11 +32,11 @@ export default function GeraetePage() {
             alt="paket"
           />
           <div className="space-y-6">
-            <h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-xl text-dark_text">
+            <h4 className="text-[45px] leading-[54px] max-medium:text-2xl max-small:text-[30px] max-small:leading-[36px] text-dark_text">
               Alles in einem Paket
             </h4>
-            <p className="max-small:text-sm">Wir übernehmen die Installation für Sie</p>
-            <ul className="space-y-4 max-small:text-sm">
+            <p className="max-small:text-[14px]">Wir übernehmen die Installation für Sie</p>
+            <ul className="space-y-4 max-small:text-[14px]">
               <li className="flex items-center justify-start gap-5">
                 <Image
                   width={0}

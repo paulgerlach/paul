@@ -529,7 +529,7 @@ const einsparungDemoData: MeterReadingType[] = [
 
 export default function TourDashboardCharts() {
   return (
-    <ContentWrapper className="grid gap-3 grid-cols-3 max-large:grid-cols-2 max-medium:grid-cols-1">
+    <ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1100px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:[grid-template-columns:minmax(0,1fr)]">
       <div className="flex flex-col gap-3">
         <div id="WaterChart" className="h-[312px]">
           <WaterChart
@@ -566,14 +566,14 @@ export default function TourDashboardCharts() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 max-large:col-span-2 max-large:grid max-large:grid-cols-2 max-large:gap-3 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:flex max-medium:flex-col">
-        <div className="notifications-chart-container h-[360px] max-large:h-[300px]">
+      <div className="flex flex-col gap-3 max-[1100px]:col-span-2 max-[1100px]:grid max-[1100px]:grid-cols-2 max-[1100px]:gap-3 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:flex max-medium:flex-col">
+        <div className="notifications-chart-container h-[360px] max-[1100px]:h-[300px]">
           <NotificationsChart
             isEmpty={false}
             parsedData={{ data: notificationsDemoData, errors: [] }}
           />
         </div>
-        <div className="einsparung-chart-container h-[220px] max-large:h-[300px]">
+        <div className="einsparung-chart-container h-[220px] max-[1100px]:h-[300px]">
           <EinsparungChart
             selectedData={einsparungDemoData}
             isEmpty={false}

@@ -1,170 +1,219 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Joyride, { ACTIONS, CallBackProps, STATUS } from "react-joyride";
+import React, { useEffect, useMemo } from "react";
+import {
+	NextStep,
+	NextStepProvider,
+	useNextStep,
+	type CardComponentProps,
+	type Tour,
+} from "nextstepjs";
 import { useTourStore } from "@/store/useTourStore";
 
 interface TourGuideProps {
 	onTourComplete?: () => void;
 	onTourSkip?: () => void;
+	children: React.ReactNode;
 }
 
-const steps = [
+const TOUR_NAME = "dashboardTour";
+
+const nextStepTours: Tour[] = [
 	{
-		target: "#WaterChart",
-		content:
-			"Willkommen auf Ihrem Dashboard! Hier können Sie Ihren Wasserverbrauch in Echtzeit überwachen.",
-		disableBeacon: true,
-	},
-	{
-		target: ".notifications-chart-container",
-		content:
-			"Bleiben Sie mit Echtzeitbenachrichtigungen über Ihre Zähler und Verbrauchsalarme informiert.",
-	},
-	{
-		target: ".einsparung-chart-container",
-		content:
-			"Verfolgen Sie Ihren CO₂-Einsparungsbeitrag und die Umweltauswirkungen über die Zeit.",
-	},
-	{
-		target: "#sidebar",
-		content:
-			"Nutzen Sie die Seitenleiste, um durch Ihr Dashboard, Objekte, Dokumente und Abrechnungsinformationen zu navigieren.",
-		placement: "right" as const,
+		tour: TOUR_NAME,
+		steps: [
+			{
+				icon: "",
+				title: "",
+				content:
+					"Willkommen auf Ihrem Dashboard! Hier können Sie Ihren Wasserverbrauch in Echtzeit überwachen.",
+				selector: "#WaterChart",
+				side: "top",
+				showControls: true,
+				showSkip: true,
+				pointerPadding: 0,
+				pointerRadius: 15,
+			},
+			{
+				icon: "",
+				title: "",
+				content:
+					"Bleiben Sie mit Echtzeitbenachrichtigungen über Ihre Zähler und Verbrauchsalarme informiert.",
+				selector: ".notifications-chart-container",
+				side: "left",
+				showControls: true,
+				showSkip: true,
+				pointerPadding: 0,
+				pointerRadius: 15,
+			},
+			{
+				icon: "",
+				title: "",
+				content:
+					"Verfolgen Sie Ihren CO₂-Einsparungsbeitrag und die Umweltauswirkungen über die Zeit.",
+				selector: ".einsparung-chart-container",
+				side: "left",
+				showControls: true,
+				showSkip: true,
+				pointerPadding: 0,
+				pointerRadius: 15,
+			},
+			{
+				icon: "",
+				title: "",
+				content:
+					"Nutzen Sie die Seitenleiste, um durch Ihr Dashboard, Objekte, Dokumente und Abrechnungsinformationen zu navigieren.",
+				selector: "#sidebar",
+				side: "right",
+				showControls: true,
+				showSkip: true,
+				pointerPadding: 0,
+				pointerRadius: 15,
+			},
+		],
 	},
 ];
 
-const CustomTooltip = ({
+function isLikelyOverlayElement(el: HTMLElement): boolean {
+	const rect = el.getBoundingClientRect();
+	if (rect.width < window.innerWidth * 0.9) return false;
+	if (rect.height < window.innerHeight * 0.9) return false;
+	const style = window.getComputedStyle(el);
+	if (style.position !== "fixed") return false;
+
+	const bg = style.backgroundColor || "";
+	const match = bg.match(
+		/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/
+	);
+	if (!match) return false;
+	const alpha = match[4] ? Number(match[4]) : 1;
+	return alpha > 0 && alpha < 1;
+}
+
+function TourCard({
 	step,
-	backProps,
-	primaryProps,
-	skipProps,
-	tooltipProps,
-	isLastStep,
-	index,
-}: any) => (
-	<div
-		{...tooltipProps}
-		className="bg-white rounded-lg shadow-xl p-5 max-w-sm border border-gray-100"
-	>
-		{step.title && (
-			<h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-		)}
-		<div className="text-sm text-gray-700 leading-relaxed">{step.content}</div>
-		<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-			<button
-				{...skipProps}
-				className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
-			>
-				Tour überspringen
-			</button>
-			<div className="flex gap-2">
-				{index > 0 && (
+	currentStep,
+	totalSteps,
+	nextStep,
+	prevStep,
+	skipTour,
+	arrow,
+}: CardComponentProps) {
+	const isLast = currentStep === totalSteps - 1;
+
+	return (
+		<div className="nextstep-tour-card bg-white rounded-lg shadow-xl p-5 w-[440px] max-w-[92vw] border border-gray-100">
+			{step.title ? (
+				<h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
+			) : null}
+			<div className="text-sm text-gray-700 leading-relaxed">{step.content as any}</div>
+			{arrow}
+			<div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+				{step.showSkip && skipTour ? (
 					<button
-						{...backProps}
-						className="px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+						onClick={skipTour}
+						className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
 					>
-						Zurück
+						Tour überspringen
 					</button>
+				) : (
+					<span />
 				)}
-				<button
-					{...primaryProps}
-					className="px-3 py-1.5 text-sm text-dark_text bg-green rounded-md hover:bg-green/80 transition-colors font-medium"
-				>
-					{isLastStep ? "Fertigstellen" : "Weiter"}
-				</button>
+				<div className="flex gap-2">
+					{currentStep > 0 && prevStep ? (
+						<button
+							onClick={prevStep}
+							className="px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+						>
+							Zurück
+						</button>
+					) : null}
+					<button
+						onClick={nextStep}
+						className="px-3 py-1.5 text-sm text-dark_text bg-green rounded-md hover:bg-green/80 transition-colors font-medium"
+					>
+						{isLast ? "Fertigstellen" : "Weiter"}
+					</button>
+				</div>
 			</div>
 		</div>
-	</div>
-);
+	);
+}
+
+function TourAutoStart({
+	onTourComplete,
+}: {
+	onTourComplete?: () => void;
+}) {
+	const run = useTourStore((state) => state.run);
+	const setRun = useTourStore((state) => state.setRun);
+	const { startNextStep, closeNextStep, isNextStepVisible } = useNextStep();
+
+	// Start when run=true (keeps existing behavior)
+	useEffect(() => {
+		if (!run) return;
+		startNextStep(TOUR_NAME);
+	}, [run, startNextStep]);
+
+	// Treat overlay clicks as completing the tour
+	useEffect(() => {
+		if (!isNextStepVisible) return;
+
+		const onClickCapture = (e: MouseEvent) => {
+			const target = e.target as HTMLElement | null;
+			if (!target) return;
+
+			// Ignore clicks inside the tour card/tooltip
+			if (target.closest(".nextstep-tour-card")) return;
+
+			// If user clicks the shaded area (overlay), treat it as completion.
+			// (We also accept "anything outside the card" as a close gesture.)
+			if (isLikelyOverlayElement(target) || !target.closest(".nextstep-tour-card")) {
+				e.preventDefault();
+				e.stopPropagation();
+				setRun(false);
+				closeNextStep();
+				onTourComplete?.();
+			}
+		};
+
+		document.addEventListener("click", onClickCapture, true);
+		return () => document.removeEventListener("click", onClickCapture, true);
+	}, [isNextStepVisible, closeNextStep, onTourComplete, setRun]);
+
+	return null;
+}
 
 export default function TourGuide({
 	onTourComplete,
 	onTourSkip,
+	children,
 }: TourGuideProps) {
-	const run = useTourStore((state) => state.run);
 	const setRun = useTourStore((state) => state.setRun);
-
-	const handleJoyrideCallback = (data: CallBackProps) => {
-		const { status, action } = data;
-
-		// Treat clicking the shaded overlay (Joyride "close") as completing the tour.
-		// This ensures we mark `has_seen_tour=true` the same as the normal finish flow.
-		if (status === STATUS.FINISHED) {
-			setRun(false);
-			onTourComplete?.();
-			return;
-		}
-
-		if (status === STATUS.SKIPPED) {
-			setRun(false);
-
-			if (action === ACTIONS.CLOSE) {
-				onTourComplete?.();
-				return;
-			}
-
-			onTourSkip?.();
-		}
-	};
-
-	// Backup: reliably catch clicks on the Joyride overlay element itself.
-	// (Depending on Joyride version/config, overlay click doesn't always surface clearly via callback.)
-	useEffect(() => {
-		if (!run) return;
-
-		const handleOverlayClick = (event: MouseEvent) => {
-			event.preventDefault();
-			event.stopPropagation();
-			setRun(false);
-			onTourComplete?.();
-		};
-
-		let overlayEl: HTMLElement | null = null;
-		let observer: MutationObserver | null = null;
-
-		const attach = () => {
-			const el = document.querySelector<HTMLElement>(".react-joyride__overlay");
-			if (!el) return false;
-			overlayEl = el;
-			overlayEl.addEventListener("click", handleOverlayClick, true);
-			return true;
-		};
-
-		if (!attach()) {
-			observer = new MutationObserver(() => {
-				if (attach()) observer?.disconnect();
-			});
-			observer.observe(document.body, { childList: true, subtree: true });
-		}
-
-		return () => {
-			observer?.disconnect();
-			if (overlayEl) {
-				overlayEl.removeEventListener("click", handleOverlayClick, true);
-			}
-		};
-	}, [run, setRun, onTourComplete]);
+	const shadowOpacity = useMemo(() => "0.5", []);
 
 	return (
-		<Joyride
-			steps={steps}
-			run={run}
-			continuous
-			showSkipButton
-			disableOverlayClose={false}
-			spotlightPadding={0}
-			tooltipComponent={CustomTooltip}
-			callback={handleJoyrideCallback}
-			styles={{
-				options: {
-					zIndex: 1000,
-					overlayColor: "rgba(0, 0, 0, 0.5)",
-				},
-				spotlight: {
-					borderRadius: 15,
-				},
-			}}
-		/>
+		<NextStepProvider>
+			<NextStep
+				steps={nextStepTours}
+				cardComponent={TourCard}
+				shadowRgb="0, 0, 0"
+				shadowOpacity={shadowOpacity}
+				clickThroughOverlay={false}
+				onComplete={() => {
+					setRun(false);
+					onTourComplete?.();
+				}}
+				onSkip={() => {
+					setRun(false);
+					onTourSkip?.();
+				}}
+			>
+				<>
+					{children}
+					<TourAutoStart onTourComplete={onTourComplete} />
+				</>
+			</NextStep>
+		</NextStepProvider>
 	);
 }

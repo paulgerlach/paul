@@ -35,15 +35,31 @@ export default function TourDashboardPage() {
 		loadUserId();
 	}, []);
 
+	const ensureUserId = async (): Promise<string | null> => {
+		if (userId) return userId;
+		try {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+			const id = user?.id || null;
+			setUserId(id);
+			return id;
+		} catch (error) {
+			console.error("[Tour] Error ensuring userId:", error);
+			return null;
+		}
+	};
+
 	const handleSkipTour = async () => {
-		console.log("[Tour] Skip tour clicked, userId:", userId);
-		if (userId) {
+		const id = await ensureUserId();
+		console.log("[Tour] Skip tour clicked, userId:", id);
+		if (id) {
 			try {
 				console.log("[Tour] Calling API to mark tour as seen...");
 				const response = await fetch("/api/mark-tour-seen", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ userId }),
+					body: JSON.stringify({ userId: id }),
 				});
 
 				console.log("[Tour] API response status:", response.status);
@@ -74,14 +90,15 @@ export default function TourDashboardPage() {
 	};
 
 	const handleTourComplete = async () => {
-		console.log("[Tour] Tour complete, userId:", userId);
-		if (userId) {
+		const id = await ensureUserId();
+		console.log("[Tour] Tour complete, userId:", id);
+		if (id) {
 			try {
 				console.log("[Tour] Calling API to mark tour as seen...");
 				const response = await fetch("/api/mark-tour-seen", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ userId }),
+					body: JSON.stringify({ userId: id }),
 				});
 
 				console.log("[Tour] API response status:", response.status);

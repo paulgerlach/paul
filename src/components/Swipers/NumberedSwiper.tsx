@@ -5,7 +5,6 @@ import { Swiper, type SwiperClass, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Controller, Autoplay } from "swiper/modules";
 import {
   numbered_counter1,
-  numbered_counter1_mobile,
   numbered_counter2,
   numbered_counter3,
   numbered_counter4,
@@ -59,7 +58,6 @@ function FeatureSlideContent({
 export const items: NymberedSwiperDataItemType[] = [
   {
     mainImage: numbered_counter1,
-    mobileImage: numbered_counter1_mobile,
     slides: [
       {
         text: "Kaltwasser-Funkgerät",
@@ -301,12 +299,12 @@ export default function NumberedSwiper() {
           <div key={index} className="flex flex-col gap-4">
             {/* Product Image */}
             <Image
-              width={0}
-              height={0}
-              sizes="100vw"
+              width={400}
+              height={400}
+              sizes="(max-width: 640px) 280px, 400px"
               loading="lazy"
               className="h-[280px] w-auto mx-auto object-contain"
-              src={item.mobileImage || item.mainImage}
+              src={item.mainImage}
               alt="numbered counter"
             />
             {/* Navigation Arrows between image and title */}

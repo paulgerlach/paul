@@ -2,9 +2,6 @@ import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";
 import { article1 } from "@/static/icons";
 import type { FunctionsSlideType } from "@/types";
-import animation4 from "@/animations/Animation_4.json";
-import animation5 from "@/animations/Animation_5.json";
-import animation6 from "@/animations/Animation_6.json";
 
 export const functionsSwiper: FunctionsSlideType[] = [
 	{
@@ -26,7 +23,7 @@ export const functionsSwiper: FunctionsSlideType[] = [
 	{
 		item: (
 			<LazyLottie
-				animationData={animation5}
+				animationName="Animation_5"
 				id="animation5"
 				wrapperClassName="relative max-h-[244px] max-w-[300px] max-medium:max-h-full max-medium:max-w-full overflow-hidden max-large:w-full max-large:object-fill"
 			/>
@@ -38,7 +35,7 @@ export const functionsSwiper: FunctionsSlideType[] = [
 	{
 		item: (
 			<LazyLottie
-				animationData={animation6}
+				animationName="Animation_6"
 				id="animation6"
 				wrapperClassName="relative max-h-[244px] max-w-[300px] max-medium:max-h-full max-medium:max-w-full overflow-hidden max-large:w-full max-large:object-fill"
 			/>
@@ -50,7 +47,7 @@ export const functionsSwiper: FunctionsSlideType[] = [
 	{
 		item: (
 			<LazyLottie
-				animationData={animation4}
+				animationName="Animation_4"
 				id="animation4"
 				wrapperClassName="relative max-h-[244px] max-w-[300px] max-medium:max-h-full max-medium:max-w-full overflow-hidden max-large:w-full max-large:object-fill"
 			/>

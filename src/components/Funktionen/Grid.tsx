@@ -1,8 +1,6 @@
 import { chart1, chart2, chart3, chart5 } from "@/static/icons";
 import Image from "next/image";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import animation12 from "@/animations/Animation_12.json";
-import animation13 from "@/animations/Animation_13.json";
 
 export default function FunktionenGrid() {
 	return (
@@ -46,7 +44,7 @@ export default function FunktionenGrid() {
 					</div>
 					<LazyLottie
 						id="chart4"
-						animationData={animation12}
+						animationName="Animation_12"
 						wrapperClassName="h-full"
 					/>
 				</div>
@@ -65,7 +63,7 @@ export default function FunktionenGrid() {
 					<LazyLottie
 						id="chart6"
 						wrapperClassName="h-fit"
-						animationData={animation13}
+						animationName="Animation_13"
 					/>
 				</div>
 			</div>

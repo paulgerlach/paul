@@ -5,7 +5,6 @@ import { arrow } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
-import animation10 from "@/animations/Animation_10.json";
 
 export default function NavFunktionenRightSide() {
 	return (
@@ -25,7 +24,7 @@ export default function NavFunktionenRightSide() {
 					/>
 				</span>
 			</p>
-			<LazyLottie animationData={animation10} id="animation10" />
+			<LazyLottie animationName="Animation_10" id="animation10" />
 			<p className="text-dark_text text-[15px] font-bold mb-3">Dashboard</p>
 			<p className="text-xs text-dark_text">
 				Sehen Sie alle Verbräuche in Echtzeit in einem übersichtlichen Dashboard

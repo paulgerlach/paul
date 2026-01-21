@@ -3,7 +3,7 @@
 import { useSlackChat } from '@/hooks/useSlackChat';
 import React, { Dispatch, useEffect, useState } from 'react';
 import SlackChatInput from '../SlackChatInput';
-import { LuBrainCircuit } from "react-icons/lu";
+import { BrainCircuitIcon } from "../icons";
 import {Triangle} from 'react-loader-spinner'
 import { SlackMessage } from '@/types/Chat';
 import SlackMessageContainer from './SlackMessage';
@@ -84,7 +84,7 @@ const { messages, status } = useSlackChat(userId, threadTs);
           onClick={toggleChatType}
           className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
         >
-          <LuBrainCircuit color="#FFFFFF" size={30} />
+          <BrainCircuitIcon className="w-[30px] h-[30px] text-white" />
         </button>
         <SlackChatInput userId={userId} setLocalMessages={setLocalMessages} />
       </div>

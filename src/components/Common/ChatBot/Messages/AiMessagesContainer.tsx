@@ -3,7 +3,7 @@
 import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import Message from "./Message";
 import { ChatRequestOptions, ChatStatus, FileUIPart, UIDataTypes, UIMessage, UITools } from "ai";
-import { MdOutlineSupportAgent } from "react-icons/md";
+import { SupportAgentIcon } from "../icons";
 import { useAIMessagesStore } from "@/store/useAIMessagesStore";
 import AIChatInput from "../AIChatInput";
 import AnonymousChatBanner from "../AnonymousChatBanner";
@@ -116,7 +116,7 @@ export default function AiMessagesContainer({
           onClick={toggleChatType}
           className="bg-dark_green text-white rounded-full p-2 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg cursor-pointer"
         >
-          <MdOutlineSupportAgent color="#FFFFFF" size={30} />
+          <SupportAgentIcon className="w-[30px] h-[30px] text-white" />
         </button>
 
         {/* Show clear session button for anonymous users */}

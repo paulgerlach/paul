@@ -60,7 +60,7 @@ export default function FormTechnicalEquipment<
                     onClick={(e) => disabled && e.preventDefault()}
                     asChild
                   >
-                    <div className="border-black/20 aria-invalid:ring-green/20 aria-invalid:border-destructive flex items-center justify-between gap-2 rounded border bg-transparent px-3 py-4 text-sm max-xl:text-sm max-xl:py-2 whitespace-nowrap outline-none focus-visible:ring-[3px] focus-visible:ring-green disabled:cursor-not-allowed disabled:opacity-50  *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 w-full">
+                    <div className="border-black/20 aria-invalid:ring-green/20 aria-invalid:border-destructive flex items-center justify-between gap-2 rounded border bg-transparent px-3 h-14 text-sm max-xl:text-sm whitespace-nowrap outline-none focus-visible:ring-[3px] focus-visible:ring-green disabled:cursor-not-allowed disabled:opacity-50  *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 w-full">
                       {selectedValues.length > 0
                         ? `${selectedValues.length} ausgewählt`
                         : "Optionen auswählen"}

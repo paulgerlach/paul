@@ -7,7 +7,7 @@ import { ROUTE_FRAGEBOGEN, ROUTE_FUNKTIONEN } from "@/routes/routes";
 // Dynamic imports for below-fold components (reduces initial JS bundle)
 const PersonSwiper = dynamic(
   () => import("@/components/Swipers/PersonSwiper"),
-  { loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-base mx-[72px]" /> }
+  { loading: () => <div className="h-[500px] animate-pulse bg-gray-100 rounded-base mx-[72px] max-medium:mx-5" /> }
 );
 const FunctionsList = dynamic(
   () => import("@/components/Swipers/FunctionsList")
@@ -52,9 +52,7 @@ import {
   berlin_bear_green,
   progera_green,
 } from "@/static/icons";
-import animation1 from "@/animations/Animation_1.json";
-import animation2 from "@/animations/Animation_2.json";
-import animation3 from "@/animations/Animation_3.json";
+// Animation data is now dynamically imported inside LazyLottie when visible
 import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
@@ -367,7 +365,7 @@ export default async function Home() {
                   in einer übersichtlichen Darstellung.
                 </p>
                 <LazyLottie
-                  animationData={animation3}
+                  animationName="Animation_3"
                   id="animation3"
                   wrapperClassName="overflow-hidden relative z-[0]"
                 />
@@ -387,7 +385,7 @@ export default async function Home() {
                   mehr erfahren
                 </Link>
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation21"
                   wrapperClassName="overflow-hidden pl-10 relative"
                 />
@@ -575,7 +573,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation1}
+                  animationName="Animation_1"
                   id="animation1"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />
@@ -654,7 +652,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation2"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />

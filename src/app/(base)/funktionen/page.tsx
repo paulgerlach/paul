@@ -16,7 +16,6 @@ import {
 	lock,
 	vitolos,
 } from "@/static/icons";
-import animation10 from "@/animations/Animation_10.json";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -125,7 +124,7 @@ export default function FunktionenPage() {
 					Zugang sichern
 				</Link>
 				<LazyLottie
-					animationData={animation10}
+					animationName="Animation_10"
 					id="score_chart_main"
 					wrapperClassName="relative mx-auto max-w-3xl w-fit"
 				/>

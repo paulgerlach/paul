@@ -113,7 +113,6 @@ import news2 from "@/asset/news2.png";
 import news3 from "@/asset/news3.png";
 import no_icon from "@/asset/no_icon.png";
 import numbered_counter1 from "@/asset/numbered_counter1.png";
-import numbered_counter1_mobile from "@/asset/numbered_counter1_mobile.png";
 import numbered_counter2 from "@/asset/numbered_counter2.png";
 import numbered_counter3 from "@/asset/numbered_counter3.png";
 import numbered_counter4 from "@/asset/numbered_counter4.png";
@@ -557,7 +556,6 @@ export {
   news3,
   no_icon,
   numbered_counter1,
-  numbered_counter1_mobile,
   numbered_counter2,
   numbered_counter3,
   numbered_counter4,

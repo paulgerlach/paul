@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PiChatCircleDotsFill } from "react-icons/pi";
+import { ChatCircleIcon, MinimizeIcon } from "./icons";
 import "./AIChatBot.css";
-import { FaRegWindowMinimize } from 'react-icons/fa';
 import ChatHeader from './ChatHeader';
 import AiMessagesContainer from './Messages/AiMessagesContainer';
 import SlackMessagesContainer from './Messages/SlackMessagesContainer';
@@ -109,9 +108,9 @@ export default function ChatBotContainer({
       {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window !opacity-[95%]">
           <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
-            <FaRegWindowMinimize
+            <MinimizeIcon
               onClick={toggleChatBot}
-              className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
+              className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute w-4 h-4"
             />
             <ChatHeader
               headerText="Kundenservice"
@@ -154,9 +153,9 @@ export default function ChatBotContainer({
           </div>
         </div>
       ) : (
-        <PiChatCircleDotsFill
+        <ChatCircleIcon
           onClick={toggleChatBot}
-          className="w-auto h-auto bg-dark_green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+          className="w-14 h-14 bg-dark_green text-white cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-3"
           color="#FFFFFF"
           size={28}
         />

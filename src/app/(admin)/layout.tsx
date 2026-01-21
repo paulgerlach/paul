@@ -9,6 +9,7 @@ import { Suspense, lazy } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
 import ChatBotContainer from "@/components/Common/ChatBot";
 import { supabaseServer } from "@/utils/supabase/server";
+import { MainDashboardTourShell } from "@/components/Tours/MainDashboardTour";
 
 
 // Lazy-load all dialogs
@@ -140,14 +141,16 @@ export default async function AdminLayout({
   return (
     <Suspense fallback={<Loading />}>
       <QueryProvider>
-        <main className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
-          <AdminHeader />
-          <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
-            <Sidebar />
-            <MobileSidebar />
-            {children}
-          </div>
-        </main>
+        <MainDashboardTourShell>
+          <main className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
+            <AdminHeader />
+            <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
+              <Sidebar />
+              <MobileSidebar />
+              {children}
+            </div>
+          </main>
+        </MainDashboardTourShell>
         <Suspense fallback={null}>
           <LazyObjekteDeleteDialog />
         </Suspense>

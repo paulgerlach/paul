@@ -199,6 +199,7 @@ export default function TourGuide({
 				cardComponent={TourCard}
 				shadowRgb="0, 0, 0"
 				shadowOpacity={shadowOpacity}
+				overlayZIndex={20000}
 				clickThroughOverlay={false}
 				onComplete={() => {
 					setRun(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
+import Joyride, { ACTIONS, CallBackProps, STATUS } from "react-joyride";
 import { useTourStore } from "@/store/useTourStore";
 
 interface TourGuideProps {
@@ -86,58 +86,63 @@ export default function TourGuide({
 	const setRun = useTourStore((state) => state.setRun);
 
 	const handleJoyrideCallback = (data: CallBackProps) => {
-		const { status } = data;
+		const { status, action } = data;
+
+		// Treat clicking the shaded overlay (Joyride "close") as completing the tour.
+		// This ensures we mark `has_seen_tour=true` the same as the normal finish flow.
 		if (status === STATUS.FINISHED) {
 			setRun(false);
 			onTourComplete?.();
-		} else if (status === STATUS.SKIPPED) {
+			return;
+		}
+
+		if (status === STATUS.SKIPPED) {
 			setRun(false);
+
+			if (action === ACTIONS.CLOSE) {
+				onTourComplete?.();
+				return;
+			}
+
 			onTourSkip?.();
 		}
 	};
 
-	// Handle overlay clicks to complete the tour
+	// Backup: reliably catch clicks on the Joyride overlay element itself.
+	// (Depending on Joyride version/config, overlay click doesn't always surface clearly via callback.)
 	useEffect(() => {
 		if (!run) return;
 
 		const handleOverlayClick = (event: MouseEvent) => {
-			const target = event.target as HTMLElement;
-			
-			// Ignore clicks on tooltip, spotlight, or buttons
-			if (
-				target.closest('[class*="react-joyride__tooltip"]') ||
-				target.closest('[class*="tooltip"]') ||
-				target.closest('[class*="react-joyride__spotlight"]') ||
-				target.closest('[class*="spotlight"]') ||
-				target.closest('button') ||
-				target.tagName === 'BUTTON'
-			) {
-				return;
-			}
-			
-			// Check if clicked element is the overlay (full-screen dark background)
-			const rect = target.getBoundingClientRect();
-			const isOverlay = 
-				rect.width >= window.innerWidth * 0.95 && 
-				rect.height >= window.innerHeight * 0.95 &&
-				window.getComputedStyle(target).position === 'fixed';
-			
-			if (isOverlay) {
-				event.preventDefault();
-				event.stopPropagation();
-				setRun(false);
-				onTourComplete?.();
-			}
+			event.preventDefault();
+			event.stopPropagation();
+			setRun(false);
+			onTourComplete?.();
 		};
 
-		// Add click listener with a delay to ensure overlay is rendered
-		const timeoutId = setTimeout(() => {
-			document.addEventListener("click", handleOverlayClick, true);
-		}, 150);
+		let overlayEl: HTMLElement | null = null;
+		let observer: MutationObserver | null = null;
+
+		const attach = () => {
+			const el = document.querySelector<HTMLElement>(".react-joyride__overlay");
+			if (!el) return false;
+			overlayEl = el;
+			overlayEl.addEventListener("click", handleOverlayClick, true);
+			return true;
+		};
+
+		if (!attach()) {
+			observer = new MutationObserver(() => {
+				if (attach()) observer?.disconnect();
+			});
+			observer.observe(document.body, { childList: true, subtree: true });
+		}
 
 		return () => {
-			clearTimeout(timeoutId);
-			document.removeEventListener("click", handleOverlayClick, true);
+			observer?.disconnect();
+			if (overlayEl) {
+				overlayEl.removeEventListener("click", handleOverlayClick, true);
+			}
 		};
 	}, [run, setRun, onTourComplete]);
 
@@ -147,6 +152,7 @@ export default function TourGuide({
 			run={run}
 			continuous
 			showSkipButton
+			disableOverlayClose={false}
 			spotlightPadding={0}
 			tooltipComponent={CustomTooltip}
 			callback={handleJoyrideCallback}

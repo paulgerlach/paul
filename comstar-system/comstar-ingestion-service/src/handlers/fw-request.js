@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
 import logger from '../utils/logger.js';
-import databaseService from '../services/database.js';
+import databaseService from '../services/databaseService.js';
 
 class FirmwareRequestHandler {
   constructor() {

@@ -1,19 +1,11 @@
-// Simple logger implementation for temporary use
-// Logs messages to console with appropriate levels
+const transports = [];
 
-const logger = {
-  info: (...args) => {
-    console.log('[INFO]', ...args);
-  },
-  debug: (...args) => {
-    console.log('[DEBUG]', ...args);
-  },
-  warn: (...args) => {
-    console.warn('[WARN]', ...args);
-  },
-  error: (...args) => {
-    console.error('[ERROR]', ...args);
-  }
-};
+if (process.env.NODE_ENV === 'production') {
+  transports.push({ target: 'pino/file', options: { destination: './logs/app.log' } });
+} else {
+  transports.push({ target: 'pino-pretty' });  // Pretty console logs for development
+}
 
-export default logger;
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info'
+}, { pipeline: transports });

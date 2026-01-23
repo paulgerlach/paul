@@ -1,7 +1,6 @@
 import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_FRAGEBOGEN } from "@/routes/routes";
 import Link from "next/link";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import animation1 from "@/animations/Animation_1.json";
 import Image from "next/image";
 import { box_brands, daten, payment, right_arrow } from "@/static/icons";
 
@@ -96,7 +95,7 @@ export default function ChessSection() {
 				<LazyLottie
 					wrapperClassName="relative"
 					id="installation"
-					animationData={animation1}
+					animationName="Animation_1"
 				/>
 			</div>
 			<div className="flex justify-between py-16 max-medium:py-8 border-t border-dark_green/10 items-center max-large:flex-col gap-8">

@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, Mousewheel } from "swiper/modules";
 import { install_faq2, install_faq3, install_faq5 } from "@/static/icons";
-import animation1 from "@/animations/Animation_1.json";
-import animation10 from "@/animations/Animation_10.json";
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import Image from "next/image";
 import { slideDown, slideUp } from "@/utils";
@@ -16,7 +14,7 @@ export default function InstallFaq() {
 			id: "bedarfsanalyse",
 			name: "Bedarfsanalyse",
 			text: "Wir prüfen Ihren aktuellen Bestand und ermitteln, welche Geräte optimal zu Ihren Anforderungen passen, um Zeit und Kosten zu sparen.",
-			animation: animation1,
+			animationName: "Animation_1",
 		},
 		{
 			name: "Installation",
@@ -32,7 +30,7 @@ export default function InstallFaq() {
 			id: "score_chart",
 			name: "Verbrauchsanalyse",
 			text: "Übersichtliche und detaillierte Analysen ermöglichen eine präzise Verbrauchsauswertung, auch über mehrere Immobilien hinweg.",
-			animation: animation10,
+			animationName: "Animation_10",
 		},
 		{
 			name: "Wartung",
@@ -154,13 +152,13 @@ export default function InstallFaq() {
 							key={index}
 							className="relative ml-auto mr-0 max-w-xl w-full"
 						>
-							{slide.animation ? (
+							{slide.animationName ? (
 								<LazyLottie
 									wrapperClassName="w-full h-[440px]"
 									id={slide.id}
-									animationData={slide.animation}
+									animationName={slide.animationName}
 								/>
-							) : (
+							) : slide.img ? (
 								<Image
 									width={0}
 									height={0}
@@ -170,7 +168,7 @@ export default function InstallFaq() {
 									alt={slide.name}
 									className="w-full"
 								/>
-							)}
+							) : null}
 						</SwiperSlide>
 					))}
 				</Swiper>
@@ -219,23 +217,23 @@ export default function InstallFaq() {
 
 				{/* Card below */}
 				<div className="mt-10">
-					{slides[mobileActiveIndex].animation ? (
-						<LazyLottie
-							wrapperClassName="w-full h-[300px]"
-							id={slides[mobileActiveIndex].id}
-							animationData={slides[mobileActiveIndex].animation}
-						/>
-					) : (
-						<Image
-							width={0}
-							height={0}
-							sizes="100vw"
-							loading="lazy"
-							src={slides[mobileActiveIndex].img}
-							alt={slides[mobileActiveIndex].name}
-							className="w-full rounded-xl"
-						/>
-					)}
+				{slides[mobileActiveIndex].animationName ? (
+					<LazyLottie
+						wrapperClassName="w-full h-[300px]"
+						id={slides[mobileActiveIndex].id}
+						animationName={slides[mobileActiveIndex].animationName}
+					/>
+				) : slides[mobileActiveIndex].img ? (
+					<Image
+						width={0}
+						height={0}
+						sizes="100vw"
+						loading="lazy"
+						src={slides[mobileActiveIndex].img}
+						alt={slides[mobileActiveIndex].name}
+						className="w-full rounded-xl"
+					/>
+				) : null}
 				</div>
 			</div>
 		</div>

@@ -20,6 +20,7 @@ export default function HeaderButton({ scrolled }: { scrolled: boolean }) {
 		<button
 			ref={burgerRef}
 			onClick={handleBurgerMenu}
+			aria-label="Menü öffnen"
 			className={`burger size-9 duration-300 hover:opacity-80 rounded-halfbase border hidden max-large:flex items-center justify-center flex-col gap-1 z-10 [.active_&]:hidden ${
 				scrolled ? "border-dark_text bg-white/50" : "border-border_base"
 			}`}

@@ -1,7 +1,6 @@
 import { hero_counter, hero_small_counter } from "@/static/icons";
 import Image from "next/image";
 import { LazyLottie } from "../Lottie/LazyLottie";
-import animation1 from "@/animations/Animation_1.json";
 import { ROUTE_FRAGEBOGEN } from "@/routes/routes";
 import Link from "next/link";
 
@@ -50,7 +49,7 @@ export default function GeraeteHero() {
 				<LazyLottie
 					id="hero-pointer"
 					wrapperClassName="relative"
-					animationData={animation1}
+					animationName="Animation_1"
 				/>
 			</div>
 		</div>

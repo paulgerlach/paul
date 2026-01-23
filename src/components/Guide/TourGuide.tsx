@@ -200,6 +200,7 @@ export default function TourGuide({
 				shadowRgb="0, 0, 0"
 				shadowOpacity={shadowOpacity}
 				clickThroughOverlay={false}
+				overlayZIndex={10000}
 				onComplete={() => {
 					setRun(false);
 					onTourComplete?.();

@@ -83,6 +83,7 @@ import install_faq1 from "@/asset/install_faq1.png";
 import install_faq2 from "@/asset/install_faq2.png";
 import install_faq3 from "@/asset/install_faq3.png";
 import install_faq5 from "@/asset/install_faq5.png";
+import information from "@/asset/information.png";
 import instruments from "@/asset/instruments.png";
 import instrumentssvg from "@/asset/instruments.svg";
 import ki_akademie from "@/asset/ki_akademie.svg";
@@ -525,6 +526,7 @@ export {
   install_faq2,
   install_faq3,
   install_faq5,
+  information,
   instasvg,
   instruments,
   instrumentssvg,

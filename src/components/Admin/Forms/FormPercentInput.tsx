@@ -47,7 +47,7 @@ export default function FormPercentInput<T extends FieldValues = FieldValues>({
                 value={field.value ?? ""}
               />
             </FormControl>
-            <span className="absolute text-sm text-dark_green right-7 bottom-3">
+            <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">
               %
             </span>
           </div>

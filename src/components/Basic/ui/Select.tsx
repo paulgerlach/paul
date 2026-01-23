@@ -33,7 +33,7 @@ export default function Select({
       <div className="relative min-w-[195px]">
         <ListboxButton
           disabled={disabled}
-          className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green max-xl:text-sm max-xl:py-2 px-3.5 py-4 border border-black/20 rounded-md max-xl:min-h-10 min-h-14">
+          className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green max-xl:text-sm px-3.5 border border-black/20 rounded-md h-14 items-center">
           <span className="truncate pr-6">
             {selectedValue ? selectedValue : placeholder}
           </span>

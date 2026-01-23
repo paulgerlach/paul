@@ -1,6 +1,3 @@
-import animation7 from "@/animations/Animation_7.json";
-import animation8 from "@/animations/Animation_8.json";
-import animation9 from "@/animations/Animation_9.json";
 import { LazyLottie } from "../Lottie/LazyLottie";
 
 export default function AnimationsSection() {
@@ -12,7 +9,7 @@ export default function AnimationsSection() {
 			<div className="grid grid-cols-3 max-medium:grid-cols-1 gap-6">
 				<div className="space-y-6">
 					<LazyLottie
-						animationData={animation7}
+						animationName="Animation_7"
 						id="animation7"
 						wrapperClassName="relative max-h-[317px] overflow-hidden rounded-base max-large:max-h-fit h-full"
 					/>
@@ -28,7 +25,7 @@ export default function AnimationsSection() {
 				</div>
 				<div className="space-y-6">
 					<LazyLottie
-						animationData={animation8}
+						animationName="Animation_8"
 						id="animation8"
 						wrapperClassName="relative max-h-[317px] overflow-hidden rounded-base max-large:max-h-fit h-ful"
 					/>
@@ -44,7 +41,7 @@ export default function AnimationsSection() {
 				</div>
 				<div className="space-y-6">
 					<LazyLottie
-						animationData={animation9}
+						animationName="Animation_9"
 						id="animation9"
 						wrapperClassName="relative max-h-[317px] overflow-hidden rounded-base max-large:max-h-fit h-full"
 					/>

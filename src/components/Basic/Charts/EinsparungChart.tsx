@@ -69,7 +69,7 @@ export default function EinsparungChart({
 						imageAlt="Einsparung"
 					/>
 				) : (
-					<div className="text-center">
+					<div>
 						<p className="text-6xl md:text-3xl lg:text-4xl text-black/50 mb-2">
 							{co2Display}
 						</p>

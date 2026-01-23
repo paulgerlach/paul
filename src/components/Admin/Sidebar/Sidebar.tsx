@@ -17,6 +17,7 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
+import TipsOfTheDay from "./TipsOfTheDay";
 import { useState } from "react";
 
 export type SidebarLinkType = {
@@ -95,7 +96,7 @@ export default function Sidebar() {
     isAdmin ? pathname === route : pathname?.startsWith(route);
 
   return (
-    <div id="sidebar" className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[200px] max-large:hidden h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 flex flex-col justify-between">
+    <div id="sidebar" className="bg-white max-w-[356px] border-r border-[#EAEAEA] shadow-2xs min-w-[356px] max-xl:min-w-xs max-megalarge:min-w-[200px] max-large:hidden h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] px-4 py-10 max-xl:py-4 flex flex-col">
       <div className="flex flex-col gap-0.5">
         {dashboardLinks.map((link: SidebarLinkType) =>
           link.type === "button" ? (
@@ -142,17 +143,25 @@ export default function Sidebar() {
           )
         )}
       </div>
-      <div className="flex items-center justify-center gap-8">
-        <Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
-          Impressum
-        </Link>
-        <Link
-          className="text-sm text-light-text"
-          href={ROUTE_DATENSCHUTZHINWEISE}
-        >
-          Datenschutz
-        </Link>
-      </div>
+
+		{/* Remaining space container - pushes content to bottom */}
+		<div className="flex-1 flex flex-col justify-end">
+			{/* Tips of the Day - positioned above footer */}
+			<TipsOfTheDay />
+
+			{/* Footer Links - at the bottom */}
+			<div className="flex items-center justify-center gap-8 mb-0">
+				<Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
+					Impressum
+				</Link>
+				<Link
+					className="text-sm text-light-text"
+					href={ROUTE_DATENSCHUTZHINWEISE}
+				>
+					Datenschutz
+				</Link>
+			</div>
+		</div>
     </div>
   );
 }

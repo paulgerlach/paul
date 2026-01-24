@@ -89,8 +89,8 @@ export default function DashboardCharts() {
 		heatChart.loading;
 
 	if (!meterIds.length && !isAnyChartLoading) {
-		return (
-			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-large:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:[grid-template-columns:minmax(0,1fr)]">
+ 	return (
+			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 				<div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
 					<div className="text-gray-400 mb-4">
 						<svg
@@ -111,8 +111,7 @@ export default function DashboardCharts() {
 						Keine Wohnungen ausgewählt
 					</h3>
 					<p className="text-gray-600">
-						Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten
-						anzuzeigen.
+						Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten anzuzeigen.
 					</p>
 				</div>
 			</ContentWrapper>
@@ -123,10 +122,10 @@ export default function DashboardCharts() {
 	const shouldShowElectricityChart = electricityChart.data.length > 0;
 
 	return (
-		<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-large:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:[grid-template-columns:minmax(0,1fr)]">
+			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 			{/* Column 1: Kaltwasser + Warmwasser */}
 			<div className="flex flex-col gap-3">
-				<div className="h-[240px]">
+				<div className="h-[312px]">
 					{coldWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -141,7 +140,7 @@ export default function DashboardCharts() {
 						/>
 					)}
 				</div>
-				<div className="h-[240px]">
+				<div className="h-[271px]">
 					{hotWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -160,7 +159,7 @@ export default function DashboardCharts() {
 
 			{/* Column 2: Stromverbrauch + Heizkosten */}
 			<div className="flex flex-col gap-3">
-				<div className="h-[200px]">
+				<div className="electricity-chart-container h-[265px]">
 					{electricityChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -172,7 +171,7 @@ export default function DashboardCharts() {
 						/>
 					)}
 				</div>
-				<div className="h-[280px]">
+				<div className="heating-chart-container h-[318px]">
 					{heatChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -187,8 +186,8 @@ export default function DashboardCharts() {
 			</div>
 
 			{/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
-			<div className="flex flex-col gap-3 max-large:col-span-2 max-large:grid max-large:grid-cols-2 max-large:gap-3 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:flex max-medium:flex-col">
-				<div className="h-[300px] max-large:h-[300px]">
+			<div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1 max-medium:flex max-medium:flex-col">
+				<div className="notifications-chart-container h-[360px] max-[1300px]:h-[300px]">
 					{notificationsChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -196,14 +195,11 @@ export default function DashboardCharts() {
 							isEmpty={notificationsChart.data.length === 0}
 							emptyTitle="Keine Daten verfügbar."
 							emptyDescription="Keine Daten im ausgewählten Zeitraum."
-							parsedData={{
-								data: notificationsChart.data,
-								errors: [],
-							}}
+							parsedData={{ data: notificationsChart.data, errors: [] }}
 						/>
 					)}
 				</div>
-				<div className="h-[180px] max-large:h-[300px]">
+				<div className="einsparung-chart-container h-[220px] max-[1300px]:h-[300px]">
 					{einsparungChartLoading ? (
 						<ChartCardSkeleton />
 					) : (

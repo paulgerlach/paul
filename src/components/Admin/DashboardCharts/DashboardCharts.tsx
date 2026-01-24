@@ -125,7 +125,7 @@ export default function DashboardCharts() {
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 			{/* Column 1: Kaltwasser + Warmwasser */}
 			<div className="flex flex-col gap-3">
-				<div className="h-[312px]">
+				<div className="h-[240px]">
 					{coldWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -140,7 +140,7 @@ export default function DashboardCharts() {
 						/>
 					)}
 				</div>
-				<div className="h-[271px]">
+				<div className="h-[240px]">
 					{hotWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -159,7 +159,7 @@ export default function DashboardCharts() {
 
 			{/* Column 2: Stromverbrauch + Heizkosten */}
 			<div className="flex flex-col gap-3">
-				<div className="electricity-chart-container h-[265px]">
+				<div className="h-[200px]">
 					{electricityChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -171,7 +171,7 @@ export default function DashboardCharts() {
 						/>
 					)}
 				</div>
-				<div className="heating-chart-container h-[318px]">
+				<div className="h-[280px]">
 					{heatChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -187,7 +187,7 @@ export default function DashboardCharts() {
 
 			{/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
 			<div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1 max-medium:flex max-medium:flex-col">
-				<div className="notifications-chart-container h-[360px] max-[1300px]:h-[300px]">
+				<div className="h-[300px] max-[1300px]:h-[300px]">
 					{notificationsChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -199,7 +199,7 @@ export default function DashboardCharts() {
 						/>
 					)}
 				</div>
-				<div className="einsparung-chart-container h-[220px] max-[1300px]:h-[300px]">
+				<div className="h-[180px] max-[1300px]:h-[300px]">
 					{einsparungChartLoading ? (
 						<ChartCardSkeleton />
 					) : (

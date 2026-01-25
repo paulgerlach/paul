@@ -1016,6 +1016,17 @@ export async function getOperatingCostDocumentByID(docId: string): Promise<Opera
   return document;
 }
 
+export async function getAdminOperatingCostDocumentByID(docId: string, userId: string): Promise<OperatingCostDocumentType> {
+
+  const document = await database
+    .select()
+    .from(operating_cost_documents)
+    .where(and(eq(operating_cost_documents.id, docId), eq(operating_cost_documents.user_id, userId)))
+    .then((res) => res[0]);
+
+  return document;
+}
+
 export async function getInvoicesByOperatingCostDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 

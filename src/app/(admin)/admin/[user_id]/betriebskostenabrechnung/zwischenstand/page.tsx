@@ -2,8 +2,7 @@ import { getObjektsByUserID } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminObjekteItemDocAccordion from "../../../../../../components/Admin/ObjekteLocalsAccordion/Admin/AdminObjekteItemDocAccordion";
-import { buildSubRoute } from "@/lib/navigation";
-import { ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
+import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { cost_type_plus } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +14,8 @@ export default async function ZwischenstandPage({
 }) {
   const { user_id } = await params;
   const objekts = await getObjektsByUserID(user_id);
-  const innerLink = await buildSubRoute("objektauswahl");
+
+  const innerLink = `${ROUTE_ADMIN}/${user_id}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl`;
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-[calc(100dvh-53px)] max-medium:max-h-[calc(100dvh-53px)] grid grid-rows-[auto_1fr]">

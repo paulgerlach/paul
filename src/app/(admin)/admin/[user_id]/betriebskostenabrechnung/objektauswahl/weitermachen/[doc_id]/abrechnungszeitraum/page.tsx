@@ -1,6 +1,6 @@
 import {
   getObjectById,
-  getOperatingCostDocumentByID,
+  getAdminOperatingCostDocumentByID,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -16,7 +16,7 @@ export default async function AbrechnungszeitraumContinuePage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getOperatingCostDocumentByID(doc_id);
+  const doc = await getAdminOperatingCostDocumentByID(doc_id, user_id);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(

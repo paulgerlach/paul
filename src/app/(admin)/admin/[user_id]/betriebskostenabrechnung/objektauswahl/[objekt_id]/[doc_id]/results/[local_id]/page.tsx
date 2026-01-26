@@ -1,10 +1,10 @@
 import {
-  getContractsWithContractorsByLocalID,
+  getAdminContractsWithContractorsByLocalID,
+  getAdminInvoicesByOperatingCostDocumentID,
+  getAdminOperatingCostDocumentByID,
   getDocCostCategoryTypes,
-  getInvoicesByOperatingCostDocumentID,
   getLocalById,
   getObjectById,
-  getOperatingCostDocumentByID,
   getRelatedLocalsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -36,9 +36,9 @@ export default async function ResultBuildingLocalPreview({
     getObjectById(objekt_id),
     getRelatedLocalsByObjektId(objekt_id),
     getDocCostCategoryTypes("betriebskostenabrechnung"),
-    getOperatingCostDocumentByID(doc_id),
-    getContractsWithContractorsByLocalID(local_id),
-    getInvoicesByOperatingCostDocumentID(doc_id),
+    getAdminOperatingCostDocumentByID(doc_id, user_id),
+    getAdminContractsWithContractorsByLocalID(local_id, user_id),
+    getAdminInvoicesByOperatingCostDocumentID(doc_id, user_id),
     getLocalById(local_id),
   ]);
 
@@ -46,6 +46,9 @@ export default async function ResultBuildingLocalPreview({
     relatedLocals?.reduce((sum, local) => {
       return sum + (Number(local.living_space) || 0);
     }, 0) || 0;
+
+  console.log("mainDoc", mainDoc);
+  console.log("contracts", contracts);
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">

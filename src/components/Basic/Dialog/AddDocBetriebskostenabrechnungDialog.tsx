@@ -66,10 +66,12 @@ export default function AddDocBetriebskostenabrechnungDialog() {
   const { data: locals } = useLocalsByObjektID(objektID);
   const isOpen = Object.entries(openDialogByType).some(
     ([key, value]) =>
-      key.endsWith("_betriebskostenabrechnung_upload") && value === true
+      key.endsWith("_betriebskostenabrechnung_upload") &&
+      value === true &&
+      !key.includes("admin_"),
   );
   const activeDialog = Object.entries(openDialogByType).find(
-    ([_, value]) => value === true
+    ([_, value]) => value === true,
   )?.[0];
   const methods = useForm({
     resolver: zodResolver(addDocBetriebskostenabrechnungDialogSchema),
@@ -82,7 +84,7 @@ export default function AddDocBetriebskostenabrechnungDialog() {
   const forAllTenants = methods.watch("for_all_tenants");
 
   const onSubmit = async (
-    data: AddDocBetriebskostenabrechnungDialogFormValues
+    data: AddDocBetriebskostenabrechnungDialogFormValues,
   ) => {
     if (!activeCostType) return;
 
@@ -114,7 +116,7 @@ export default function AddDocBetriebskostenabrechnungDialog() {
         },
         objektID,
         operatingDocID,
-        activeCostType
+        activeCostType,
       );
 
       updateDocumentGroup(activeCostType, formattedPayload);

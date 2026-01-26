@@ -14,6 +14,7 @@ import { createBuildingDocuments } from "@/actions/create/createBuildingDocument
 import { editBuildingDocument } from "@/actions/edit/editBuildingDocument";
 import type { OperatingCostDocumentType } from "@/types";
 import FormDateInput from "../../../FormDateInput";
+import { adminCreateBuildingDocuments } from "@/actions/create/admin/adminCreateBuildingDocuments";
 
 const abrechnungszeitraumBuildingSchema = z.object({
   start_date: z.coerce
@@ -56,7 +57,7 @@ export default function AdminAbrechnungszeitraumBuildingForm({
       ? {
           ...docValues,
           start_date: new Date(
-            docValues.start_date ?? defaultValues.start_date
+            docValues.start_date ?? defaultValues.start_date,
           ),
           end_date: new Date(docValues.end_date ?? defaultValues.end_date),
         }
@@ -90,14 +91,18 @@ export default function AdminAbrechnungszeitraumBuildingForm({
       if (isEditMode) {
         await editBuildingDocument(docValues.id ?? "", payload);
         router.push(
-          `${ROUTE_ADMIN}/${userID}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docValues.id}/gesamtkosten`
+          `${ROUTE_ADMIN}/${userID}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docValues.id}/gesamtkosten`,
         );
       } else {
-        const result = await createBuildingDocuments(objekteID, payload);
+        const result = await adminCreateBuildingDocuments(
+          objekteID,
+          userID,
+          payload,
+        );
         const insertedDoc = result?.[0];
         if (insertedDoc?.id) {
           router.push(
-            `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
+            `${ROUTE_ADMIN}/${userID}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`,
           );
         } else {
           console.error("Kein Dokument wurde erstellt.");

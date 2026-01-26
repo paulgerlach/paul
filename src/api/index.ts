@@ -28,19 +28,16 @@ import type {
   LocalType,
   ObjektType,
   OperatingCostDocumentType,
-  UserType
+  UserType,
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
-import { MASTER_DATA, MASTER_DATA_2 } from "./data";
-import { writeFileSync } from "fs";
-import { CSVParser } from "./parse_csv_to_json";
 
 export type MeterReadingType = {
   "Frame Type": string;
   Manufacturer: string;
   ID: string;
   Version: string;
-  "Device Type": "Heat" | "WWater" | string;
+  "Device Type": "Heat" | "WWater" | "Water" | "Elec" | string;
   "TPL-Config": string;
   "Access Number": number;
   Status: string;
@@ -169,8 +166,7 @@ export type MeterReadingType = {
   "IV,12,0,0,m^3,Vol"?: number;
   "IV,14,0,0,m^3,Vol"?: number;
   "IV,16,0,0,m^3,Vol"?: number;
-
-}
+};
 
 interface DeviceTypeSummary {
   type: string;
@@ -190,16 +186,23 @@ export interface ParseResult {
 }
 
 // Helper function to fetch and parse a single CSV file
-async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseResult> {
+async function fetchAndParseCsv(
+  url: string,
+  fileName: string,
+): Promise<ParseResult> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${fileName} file: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch ${fileName} file: ${response.statusText}`,
+      );
     }
     const csvData = await response.text();
 
     // if filename includes .json then parse as json otherwise parse as csv
-    const parseResult = fileName.endsWith('.txt') ? JSON.parse(csvData) : parseCsv(csvData);
+    const parseResult = fileName.endsWith(".txt")
+      ? JSON.parse(csvData)
+      : parseCsv(csvData);
 
     if (parseResult.errors.length > 0) {
       console.warn(`Parse errors found in ${fileName}:`, parseResult.errors);
@@ -208,7 +211,16 @@ async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseRes
     return parseResult;
   } catch (error) {
     console.error(`Error processing ${fileName}:`, error);
-    return { data: [], errors: [{ row: 0, error: `Failed to fetch ${fileName}: ${error}`, rawRow: null }] };
+    return {
+      data: [],
+      errors: [
+        {
+          row: 0,
+          error: `Failed to fetch ${fileName}: ${error}`,
+          rawRow: null,
+        },
+      ],
+    };
   }
 }
 
@@ -220,21 +232,23 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
 
     // Query the parsed_data table directly
     let query = supabase
-      .from('parsed_data')
-      .select('device_id, device_type, manufacturer, frame_type, version, access_number, status, encryption, parsed_data');
+      .from("parsed_data")
+      .select(
+        "device_id, device_type, manufacturer, frame_type, version, access_number, status, encryption, parsed_data",
+      );
 
     // If specific meter IDs are provided, filter by them
     if (meterIds && meterIds.length > 0) {
-      query = query.in('device_id', meterIds);
+      query = query.in("device_id", meterIds);
     }
 
     const { data: parsedData, error } = await query;
 
     if (error) {
-      console.error('Error fetching data from database:', error);
+      console.error("Error fetching data from database:", error);
       return {
         data: [],
-        errors: [error.message]
+        errors: [error.message],
       };
     }
 
@@ -244,32 +258,45 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       const parsedDataJson = record.parsed_data;
 
       return {
-        'Frame Type': record.frame_type || parsedDataJson['Frame Type'] || '',
-        'Manufacturer': record.manufacturer || parsedDataJson['Manufacturer'] || '',
-        'ID': record.device_id,
-        'Version': record.version || parsedDataJson['Version'] || '',
-        'Device Type': record.device_type,
-        'TPL-Config': parsedDataJson['TPL-Config'] || '',
-        'Access Number': record.access_number || parsedDataJson['Access Number'] || 0,
-        'Status': record.status || parsedDataJson['Status'] || '',
-        'Encryption': record.encryption || parsedDataJson['Encryption'] || 0,
-        ...parsedDataJson // Include all the original CSV columns like "IV,0,0,0,Wh,E", "IV,0,0,0,,Date/Time", etc.
+        "Frame Type": record.frame_type || parsedDataJson["Frame Type"] || "",
+        Manufacturer:
+          record.manufacturer || parsedDataJson["Manufacturer"] || "",
+        ID: record.device_id,
+        Version: record.version || parsedDataJson["Version"] || "",
+        "Device Type": record.device_type,
+        "TPL-Config": parsedDataJson["TPL-Config"] || "",
+        "Access Number":
+          record.access_number || parsedDataJson["Access Number"] || 0,
+        Status: record.status || parsedDataJson["Status"] || "",
+        Encryption: record.encryption || parsedDataJson["Encryption"] || 0,
+        ...parsedDataJson, // Include all the original CSV columns like "IV,0,0,0,Wh,E", "IV,0,0,0,,Date/Time", etc.
       };
     }) as MeterReadingType[];
 
     // Filter by device types (Heat, Water, WWater, Elec) and ensure DateTime exists
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
-    const filteredData = transformedData.filter(item =>
-      validDeviceTypes.includes(item['Device Type']) &&
-      (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
+    const validDeviceTypes = ["Heat", "Water", "WWater", "Elec"];
+    const filteredData = transformedData.filter(
+      (item) =>
+        validDeviceTypes.includes(item["Device Type"]) &&
+        (item["IV,0,0,0,,Date/Time"] ||
+          item["Actual Date"] ||
+          item["Raw Date"]),
     );
 
     // Separate by device type for processing
-    const heatMetersReadings = filteredData.filter(dt => dt['Device Type'] === 'Heat');
-    const coldwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'Water');
-    const hotwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'WWater');
-    const electricityMetersReadings = filteredData.filter(dt => dt['Device Type'] === 'Elec');
+    const heatMetersReadings = filteredData.filter(
+      (dt) => dt["Device Type"] === "Heat",
+    );
+    const coldwaterReadings = filteredData.filter(
+      (dt) => dt["Device Type"] === "Water",
+    );
+    const hotwaterReadings = filteredData.filter(
+      (dt) => dt["Device Type"] === "WWater",
+    );
+    const electricityMetersReadings = filteredData.filter(
+      (dt) => dt["Device Type"] === "Elec",
+    );
 
     // Combine all readings for charts (only those with valid DateTime)
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
@@ -277,27 +304,33 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       ...heatMetersReadings,
       ...coldwaterReadings,
       ...hotwaterReadings,
-      ...electricityMetersReadings
-    ].filter(item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]);
+      ...electricityMetersReadings,
+    ].filter(
+      (item) =>
+        item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"],
+    );
 
     // Check if all items have DateTime (either old or new format)
     const allHaveDateTime = dataSentToGraphsCombiningHeatWaterWWwaterHeat.every(
-      item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]
+      (item) =>
+        item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"],
     );
 
     if (!allHaveDateTime) {
-      console.warn("Some items are missing date/time fields (checked: IV,0,0,0,,Date/Time, Actual Date, Raw Date).");
+      console.warn(
+        "Some items are missing date/time fields (checked: IV,0,0,0,,Date/Time, Actual Date, Raw Date).",
+      );
     }
 
     return {
       data: dataSentToGraphsCombiningHeatWaterWWwaterHeat,
-      errors: []
+      errors: [],
     };
   } catch (err) {
-    console.error('Unexpected error in parseCSVs:', err);
+    console.error("Unexpected error in parseCSVs:", err);
     return {
       data: [],
-      errors: [err instanceof Error ? err.message : 'Unknown error']
+      errors: [err instanceof Error ? err.message : "Unknown error"],
     };
   }
 };
@@ -310,7 +343,7 @@ export async function getSignedUrlsForObject(objectId: string) {
     .select()
     .from(documents)
     .where(
-      and(eq(documents.related_id, objectId), eq(documents.user_id, user.id))
+      and(eq(documents.related_id, objectId), eq(documents.user_id, user.id)),
     );
 
   if (!files) {
@@ -327,7 +360,7 @@ export async function getSignedUrlsForObject(objectId: string) {
     if (signedUrlError) {
       console.error(
         `Failed to get signed URL for ${file.document_url}:`,
-        signedUrlError.message
+        signedUrlError.message,
       );
       return null;
     }
@@ -344,14 +377,17 @@ export async function getSignedUrlsForObject(objectId: string) {
   return signedUrls.filter((url) => url !== null);
 }
 
-export async function getAdminSignedUrlsForObject(objectId: string, userId: string) {
+export async function getAdminSignedUrlsForObject(
+  objectId: string,
+  userId: string,
+) {
   const supabase = await supabaseServer();
 
   const files = await database
     .select()
     .from(documents)
     .where(
-      and(eq(documents.related_id, objectId), eq(documents.user_id, userId))
+      and(eq(documents.related_id, objectId), eq(documents.user_id, userId)),
     );
 
   if (!files) {
@@ -368,7 +404,7 @@ export async function getAdminSignedUrlsForObject(objectId: string, userId: stri
     if (signedUrlError) {
       console.error(
         `Failed to get signed URL for ${file.document_url}:`,
-        signedUrlError.message
+        signedUrlError.message,
       );
       return null;
     }
@@ -387,9 +423,8 @@ export async function getAdminSignedUrlsForObject(objectId: string, userId: stri
 
 export async function getContractByID(
   contractID: string,
-  withContractor = false
+  withContractor = false,
 ): Promise<{ contract: ContractType; mainContractor?: ContractorType | null }> {
-
   const user = await getAuthenticatedServerUser();
 
   const contract = await database
@@ -410,8 +445,8 @@ export async function getContractByID(
       .where(
         and(
           eq(contractors.contract_id, contract[0].id),
-          eq(contractors.user_id, user.id)
-        )
+          eq(contractors.user_id, user.id),
+        ),
       );
 
     mainContractor = contractorResult[0] || null;
@@ -423,9 +458,8 @@ export async function getContractByID(
 export async function getAdminContractByID(
   contractID: string,
   userID: string,
-  withContractor = false
+  withContractor = false,
 ): Promise<{ contract: ContractType; mainContractor?: ContractorType | null }> {
-
   const contract = await database
     .select()
     .from(contracts)
@@ -444,8 +478,8 @@ export async function getAdminContractByID(
       .where(
         and(
           eq(contractors.contract_id, contract[0].id),
-          eq(contractors.user_id, userID)
-        )
+          eq(contractors.user_id, userID),
+        ),
       );
 
     mainContractor = contractorResult[0] || null;
@@ -467,10 +501,7 @@ export async function getContractsByLocalID(
     .select()
     .from(contracts)
     .where(
-      and(
-        eq(contracts.local_id, localID),
-        eq(contracts.user_id, user.id)
-      )
+      and(eq(contracts.local_id, localID), eq(contracts.user_id, user.id)),
     );
 
   return result;
@@ -487,12 +518,7 @@ export async function getAdminContractsByLocalID(
   const result = await database
     .select()
     .from(contracts)
-    .where(
-      and(
-        eq(contracts.local_id, localID),
-        eq(contracts.user_id, userID)
-      )
-    );
+    .where(and(eq(contracts.local_id, localID), eq(contracts.user_id, userID)));
 
   return result;
 }
@@ -511,13 +537,13 @@ export async function getContractsWithContractorsByLocalID(
     .from(contracts)
     .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
     .where(
-      and(
-        eq(contracts.local_id, localID),
-        eq(contracts.user_id, user.id)
-      )
+      and(eq(contracts.local_id, localID), eq(contracts.user_id, user.id)),
     );
 
-  const contractsWithContractors: Record<string, ContractType & { contractors: ContractorType[] }> = {};
+  const contractsWithContractors: Record<
+    string,
+    ContractType & { contractors: ContractorType[] }
+  > = {};
 
   for (const row of results) {
     const contract = row.contracts;
@@ -550,14 +576,12 @@ export async function getAdminContractsWithContractorsByLocalID(
     .select()
     .from(contracts)
     .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
-    .where(
-      and(
-        eq(contracts.local_id, localID),
-        eq(contracts.user_id, userID)
-      )
-    );
+    .where(and(eq(contracts.local_id, localID), eq(contracts.user_id, userID)));
 
-  const contractsWithContractors: Record<string, ContractType & { contractors: ContractorType[] }> = {};
+  const contractsWithContractors: Record<
+    string,
+    ContractType & { contractors: ContractorType[] }
+  > = {};
 
   for (const row of results) {
     const contract = row.contracts;
@@ -595,13 +619,16 @@ export async function getActiveContractByLocalID(
         eq(contracts.local_id, localID),
         eq(contracts.user_id, user.id),
         eq(contracts.is_current, true),
-      )
-    ).then((res) => res[0]);
+      ),
+    )
+    .then((res) => res[0]);
 
   return result;
 }
 
-export async function getRelatedContractors(contractID?: string): Promise<ContractorType[]> {
+export async function getRelatedContractors(
+  contractID?: string,
+): Promise<ContractorType[]> {
   if (!contractID) {
     throw new Error("Missing contractID");
   }
@@ -614,14 +641,17 @@ export async function getRelatedContractors(contractID?: string): Promise<Contra
     .where(
       and(
         eq(contractors.contract_id, contractID),
-        eq(contractors.user_id, user.id)
-      )
+        eq(contractors.user_id, user.id),
+      ),
     );
 
   return contractorsData;
 }
 
-export async function getAdminRelatedContractors(contractID?: string, userID?: string): Promise<ContractorType[]> {
+export async function getAdminRelatedContractors(
+  contractID?: string,
+  userID?: string,
+): Promise<ContractorType[]> {
   if (!contractID || !userID) {
     throw new Error("Missing contractID");
   }
@@ -632,8 +662,8 @@ export async function getAdminRelatedContractors(contractID?: string, userID?: s
     .where(
       and(
         eq(contractors.contract_id, contractID),
-        eq(contractors.user_id, userID)
-      )
+        eq(contractors.user_id, userID),
+      ),
     );
 
   return contractorsData;
@@ -651,10 +681,8 @@ export async function getObjekts(): Promise<ObjektType[]> {
 
   let objekts;
 
-  if (userPermission === 'admin') {
-    objekts = await database
-      .select()
-      .from(objekte);
+  if (userPermission === "admin") {
+    objekts = await database.select().from(objekte);
   } else {
     objekts = await database
       .select()
@@ -665,18 +693,20 @@ export async function getObjekts(): Promise<ObjektType[]> {
   return objekts;
 }
 
-export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> {
-
+export async function getObjektsByUserID(
+  userID: string,
+): Promise<ObjektType[]> {
   const objekts = await database
     .select()
     .from(objekte)
     .where(eq(objekte.user_id, userID));
 
-
   return objekts;
 }
 
-export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[]> {
+export async function getObjektsWithLocalsByUserID(
+  userID: string,
+): Promise<any[]> {
   const objekts = await database
     .select()
     .from(objekte)
@@ -693,7 +723,7 @@ export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[
         .where(eq(locals.objekt_id, objekt.id));
 
       return { ...objekt, locals: localsData || [] };
-    })
+    }),
   );
 
   return objektsWithLocals;
@@ -717,7 +747,7 @@ export async function getObjektsWithLocals(): Promise<any[]> {
         .where(eq(locals.objekt_id, objekt.id));
 
       return { ...objekt, locals: localsData || [] };
-    })
+    }),
   );
 
   return objektsWithLocals;
@@ -734,48 +764,61 @@ export async function getDocumentsByUserId(userId: string): Promise<any[]> {
     return [];
   }
   const heatingBillIds = userDocuments
-    .filter(doc => doc.related_type === "heating_bill")
-    .map(doc => doc.related_id);
+    .filter((doc) => doc.related_type === "heating_bill")
+    .map((doc) => doc.related_id);
 
   let heatingBillObjekts: Record<string, string> = {};
   if (heatingBillIds.length > 0) {
     const heatingBills = await database
-      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .select({
+        id: heating_bill_documents.id,
+        objekt_id: heating_bill_documents.objekt_id,
+      })
       .from(heating_bill_documents)
       .where(inArray(heating_bill_documents.id, heatingBillIds));
 
-    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
-      if (bill.objekt_id) {
-        acc[bill.id] = bill.objekt_id;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+    heatingBillObjekts = heatingBills.reduce(
+      (acc, bill) => {
+        if (bill.objekt_id) {
+          acc[bill.id] = bill.objekt_id;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
   const operatingCostIds = userDocuments
-    .filter(doc => doc.related_type === "operating_costs")
-    .map(doc => doc.related_id);
+    .filter((doc) => doc.related_type === "operating_costs")
+    .map((doc) => doc.related_id);
 
   let operatingCostObjekts: Record<string, string> = {};
   if (operatingCostIds.length > 0) {
     const operatingCosts = await database
-      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .select({
+        id: operating_cost_documents.id,
+        objekt_id: operating_cost_documents.objekt_id,
+      })
       .from(operating_cost_documents)
       .where(inArray(operating_cost_documents.id, operatingCostIds));
 
-    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
-      if (cost.objekt_id) {
-        acc[cost.id] = cost.objekt_id;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+    operatingCostObjekts = operatingCosts.reduce(
+      (acc, cost) => {
+        if (cost.objekt_id) {
+          acc[cost.id] = cost.objekt_id;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
-  return userDocuments.map(doc => ({
+  return userDocuments.map((doc) => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill"
-      ? heatingBillObjekts[doc.related_id] || null
-      : doc.related_type === "operating_costs"
-        ? operatingCostObjekts[doc.related_id] || null
-        : null
+    objekt_id:
+      doc.related_type === "heating_bill"
+        ? heatingBillObjekts[doc.related_id] || null
+        : doc.related_type === "operating_costs"
+          ? operatingCostObjekts[doc.related_id] || null
+          : null,
   }));
 }
 
@@ -794,54 +837,66 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     return [];
   }
   const heatingBillIds = userDocuments
-    .filter(doc => doc.related_type === "heating_bill")
-    .map(doc => doc.related_id);
+    .filter((doc) => doc.related_type === "heating_bill")
+    .map((doc) => doc.related_id);
 
   let heatingBillObjekts: Record<string, string> = {};
   if (heatingBillIds.length > 0) {
     const heatingBills = await database
-      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .select({
+        id: heating_bill_documents.id,
+        objekt_id: heating_bill_documents.objekt_id,
+      })
       .from(heating_bill_documents)
       .where(inArray(heating_bill_documents.id, heatingBillIds));
 
-    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
-      if (bill.objekt_id) {
-        acc[bill.id] = bill.objekt_id;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+    heatingBillObjekts = heatingBills.reduce(
+      (acc, bill) => {
+        if (bill.objekt_id) {
+          acc[bill.id] = bill.objekt_id;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
   const operatingCostIds = userDocuments
-    .filter(doc => doc.related_type === "operating_costs")
-    .map(doc => doc.related_id);
+    .filter((doc) => doc.related_type === "operating_costs")
+    .map((doc) => doc.related_id);
 
   let operatingCostObjekts: Record<string, string> = {};
   if (operatingCostIds.length > 0) {
     const operatingCosts = await database
-      .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+      .select({
+        id: operating_cost_documents.id,
+        objekt_id: operating_cost_documents.objekt_id,
+      })
       .from(operating_cost_documents)
       .where(inArray(operating_cost_documents.id, operatingCostIds));
 
-    operatingCostObjekts = operatingCosts.reduce((acc, cost) => {
-      if (cost.objekt_id) {
-        acc[cost.id] = cost.objekt_id;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+    operatingCostObjekts = operatingCosts.reduce(
+      (acc, cost) => {
+        if (cost.objekt_id) {
+          acc[cost.id] = cost.objekt_id;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
 
-  return userDocuments.map(doc => ({
+  return userDocuments.map((doc) => ({
     ...doc,
-    objekt_id: doc.related_type === "heating_bill"
-      ? heatingBillObjekts[doc.related_id] || null
-      : doc.related_type === "operating_costs"
-        ? operatingCostObjekts[doc.related_id] || null
-        : null
+    objekt_id:
+      doc.related_type === "heating_bill"
+        ? heatingBillObjekts[doc.related_id] || null
+        : doc.related_type === "operating_costs"
+          ? operatingCostObjekts[doc.related_id] || null
+          : null,
   }));
 }
 
 export async function getUsers(): Promise<UserType[]> {
-
   const basicUsers = await database
     .select()
     .from(users)
@@ -863,7 +918,6 @@ export async function getUserData(): Promise<UserType> {
 }
 
 export async function getAdminUserData(userID: string): Promise<UserType> {
-
   const data = await database
     .select()
     .from(users)
@@ -883,7 +937,9 @@ export async function getObjectById(objectId: string): Promise<ObjektType> {
   return object;
 }
 
-export async function getRelatedLocalsByObjektId(objektID: string): Promise<LocalType[]> {
+export async function getRelatedLocalsByObjektId(
+  objektID: string,
+): Promise<LocalType[]> {
   const relatedLocals = await database
     .select()
     .from(locals)
@@ -892,18 +948,19 @@ export async function getRelatedLocalsByObjektId(objektID: string): Promise<Loca
   return relatedLocals;
 }
 
-export async function getRelatedLocalsWithContractsByObjektId(objektID: string): Promise<
-  (LocalType & { contracts: ContractType[] })[]
-> {
+export async function getRelatedLocalsWithContractsByObjektId(
+  objektID: string,
+): Promise<(LocalType & { contracts: ContractType[] })[]> {
   const results = await database
     .select()
     .from(locals)
-    .leftJoin(contracts, and(
-      eq(contracts.local_id, locals.id)
-    ))
+    .leftJoin(contracts, and(eq(contracts.local_id, locals.id)))
     .where(eq(locals.objekt_id, objektID));
 
-  const localsWithContracts: Record<string, LocalType & { contracts: ContractType[] }> = {};
+  const localsWithContracts: Record<
+    string,
+    LocalType & { contracts: ContractType[] }
+  > = {};
 
   for (const row of results) {
     const local = row.locals;
@@ -924,9 +981,7 @@ export async function getRelatedLocalsWithContractsByObjektId(objektID: string):
   return Object.values(localsWithContracts);
 }
 
-
 export async function getLocalById(localId: string): Promise<LocalType> {
-
   const local = await database
     .select()
     .from(locals)
@@ -937,7 +992,7 @@ export async function getLocalById(localId: string): Promise<LocalType> {
 }
 
 export async function getLocalWithContractsById(
-  localId: string
+  localId: string,
 ): Promise<(LocalType & { contracts: ContractType[] }) | null> {
   const local = await database
     .select()
@@ -958,8 +1013,9 @@ export async function getLocalWithContractsById(
   };
 }
 
-export async function getMetersByLocalId(localId: string): Promise<LocalMeterType[]> {
-
+export async function getMetersByLocalId(
+  localId: string,
+): Promise<LocalMeterType[]> {
   const meters = await database
     .select()
     .from(local_meters)
@@ -968,7 +1024,9 @@ export async function getMetersByLocalId(localId: string): Promise<LocalMeterTyp
   return meters;
 }
 
-export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMeterType[]> {
+export async function getMetersByLocalIds(
+  localIds: string[],
+): Promise<LocalMeterType[]> {
   if (localIds.length === 0) {
     return [];
   }
@@ -982,8 +1040,10 @@ export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMete
 }
 
 export async function getDocCostCategoryTypes(
-  documentType: "betriebskostenabrechnung" | "heizkostenabrechnung" = "betriebskostenabrechnung",
-  userIdParam?: string
+  documentType:
+    | "betriebskostenabrechnung"
+    | "heizkostenabrechnung" = "betriebskostenabrechnung",
+  userIdParam?: string,
 ): Promise<DocCostCategoryType[]> {
   const user = await getAuthenticatedServerUser();
 
@@ -997,108 +1057,188 @@ export async function getDocCostCategoryTypes(
     .where(
       and(
         eq(doc_cost_category.document_type, documentType),
-        eq(doc_cost_category.user_id, userIdToQuery)
-      )
+        eq(doc_cost_category.user_id, userIdToQuery),
+      ),
     );
 
   return types;
 }
 
-export async function getOperatingCostDocumentByID(docId: string): Promise<OperatingCostDocumentType> {
+export async function getOperatingCostDocumentByID(
+  docId: string,
+): Promise<OperatingCostDocumentType> {
   const user = await getAuthenticatedServerUser();
 
   const document = await database
     .select()
     .from(operating_cost_documents)
-    .where(and(eq(operating_cost_documents.id, docId), eq(operating_cost_documents.user_id, user.id)))
+    .where(
+      and(
+        eq(operating_cost_documents.id, docId),
+        eq(operating_cost_documents.user_id, user.id),
+      ),
+    )
     .then((res) => res[0]);
 
   return document;
 }
 
-export async function getAdminOperatingCostDocumentByID(docId: string, userId: string): Promise<OperatingCostDocumentType> {
-
+export async function getAdminOperatingCostDocumentByID(
+  docId: string,
+  userId: string,
+): Promise<OperatingCostDocumentType> {
   const document = await database
     .select()
     .from(operating_cost_documents)
-    .where(and(eq(operating_cost_documents.id, docId), eq(operating_cost_documents.user_id, userId)))
+    .where(
+      and(
+        eq(operating_cost_documents.id, docId),
+        eq(operating_cost_documents.user_id, userId),
+      ),
+    )
     .then((res) => res[0]);
 
   return document;
 }
 
-export async function getInvoicesByOperatingCostDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
+export async function getInvoicesByOperatingCostDocumentID(
+  docId: string,
+): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 
   const invoices = await database
     .select()
     .from(invoice_documents)
-    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, user.id)));
+    .where(
+      and(
+        eq(invoice_documents.operating_doc_id, docId),
+        eq(invoice_documents.user_id, user.id),
+      ),
+    );
 
   return invoices;
 }
 
-export async function getHeatingBillDocumentByID(docId: string): Promise<HeatingBillDocumentType> {
+export async function getAdminInvoicesByOperatingCostDocumentID(
+  docId: string,
+  userId: string,
+): Promise<InvoiceDocumentType[]> {
+  const invoices = await database
+    .select()
+    .from(invoice_documents)
+    .where(
+      and(
+        eq(invoice_documents.operating_doc_id, docId),
+        eq(invoice_documents.user_id, userId),
+      ),
+    );
+
+  return invoices;
+}
+
+export async function getHeatingBillDocumentByID(
+  docId: string,
+): Promise<HeatingBillDocumentType> {
   const user = await getAuthenticatedServerUser();
 
   const document = await database
     .select()
     .from(heating_bill_documents)
-    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .where(
+      and(
+        eq(heating_bill_documents.id, docId),
+        eq(heating_bill_documents.user_id, user.id),
+      ),
+    )
     .then((res) => res[0]);
 
   return document;
 }
 
-export async function getAdminHeatingBillDocumentByID(docId: string, userId: string): Promise<HeatingBillDocumentType> {
-
+export async function getAdminHeatingBillDocumentByID(
+  docId: string,
+  userId: string,
+): Promise<HeatingBillDocumentType> {
   const document = await database
     .select()
     .from(heating_bill_documents)
-    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, userId)))
+    .where(
+      and(
+        eq(heating_bill_documents.id, docId),
+        eq(heating_bill_documents.user_id, userId),
+      ),
+    )
     .then((res) => res[0]);
 
   return document;
 }
 
-export async function getInvoicesByHeatingBillDocumentID(docId: string): Promise<InvoiceDocumentType[]> {
+export async function getInvoicesByHeatingBillDocumentID(
+  docId: string,
+): Promise<InvoiceDocumentType[]> {
   const user = await getAuthenticatedServerUser();
 
   const invoices = await database
     .select()
     .from(invoice_documents)
-    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, user.id)));
+    .where(
+      and(
+        eq(invoice_documents.operating_doc_id, docId),
+        eq(invoice_documents.user_id, user.id),
+      ),
+    );
 
   return invoices;
 }
 
-export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<InvoiceDocumentType[]> {
-
+export async function getAdminInvoicesByHeatingBillDocumentID(
+  docId: string,
+  userId: string,
+): Promise<InvoiceDocumentType[]> {
   const invoices = await database
     .select()
     .from(invoice_documents)
-    .where(and(eq(invoice_documents.operating_doc_id, docId), eq(invoice_documents.user_id, userId)));
+    .where(
+      and(
+        eq(invoice_documents.operating_doc_id, docId),
+        eq(invoice_documents.user_id, userId),
+      ),
+    );
 
   return invoices;
 }
 
-export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
+export async function getHeatingInvoicesByHeatingBillDocumentID(
+  docId: string,
+): Promise<HeatingInvoiceType[]> {
   const user = await getAuthenticatedServerUser();
 
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+    .where(
+      and(
+        eq(heating_invoices.heating_doc_id, docId),
+        eq(heating_invoices.user_id, user.id),
+      ),
+    );
 
   return invoices;
 }
 
-export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: string, userId: string): Promise<HeatingInvoiceType[]> {
-
+export async function getAdminHeatingInvoicesByHeatingBillDocumentID(
+  docId: string,
+  userId: string,
+): Promise<HeatingInvoiceType[]> {
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
+    .where(
+      and(
+        eq(heating_invoices.heating_doc_id, docId),
+        eq(heating_invoices.user_id, userId),
+      ),
+    );
 
   return invoices;
 }

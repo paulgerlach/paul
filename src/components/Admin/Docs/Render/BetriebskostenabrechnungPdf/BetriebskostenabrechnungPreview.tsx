@@ -24,6 +24,47 @@ export type BetriebskostenabrechnungPreviewProps = {
   objekt: ObjektType;
 };
 
+function calculateLocalInvoiceShare({
+  invoice,
+  allocationKey,
+  livingSpace,
+  totalLivingSpace,
+  totalUnits,
+  localConsumption,
+  totalConsumption,
+}: {
+  invoice: InvoiceDocumentType;
+  allocationKey?: "Wohneinheiten" | "Verbrauch" | "m2 Wohnfläche" | null;
+  livingSpace: number;
+  totalLivingSpace: number;
+  totalUnits: number;
+  localConsumption: number;
+  totalConsumption: number;
+}) {
+  const totalAmount = Number(invoice.total_amount ?? 0);
+
+  switch (allocationKey) {
+    case "m2 Wohnfläche":
+      return totalLivingSpace > 0
+        ? (totalAmount / totalLivingSpace) * livingSpace
+        : 0;
+
+    case "Wohneinheiten":
+      return totalUnits > 0 ? totalAmount / totalUnits : 0;
+
+    case "Verbrauch":
+      return totalConsumption > 0
+        ? (totalAmount / totalConsumption) * localConsumption
+        : 0;
+
+    default:
+      // fallback: m² logic (or 0 if you prefer)
+      return totalLivingSpace > 0
+        ? (totalAmount / totalLivingSpace) * livingSpace
+        : 0;
+  }
+}
+
 export default function BetriebskostenabrechnungPreview({
   mainDoc,
   previewLocal,
@@ -43,16 +84,10 @@ export default function BetriebskostenabrechnungPreview({
     return mainDoc?.end_date ? new Date(mainDoc?.end_date) : null;
   }, [mainDoc?.end_date]);
 
-
-
-  const allLocalIds = useMemo(() => {
-    return Array.from(new Set(contracts.map(c => c.local_id).filter(Boolean)));
-  }, [contracts]);
-
-  const { consumption: buildingConsumption } = useConsumptionData(
-    allLocalIds,
+  const { consumption: localConsumption } = useConsumptionData(
+    previewLocal?.id ? [previewLocal.id] : [],
     periodStart,
-    periodEnd
+    periodEnd,
   );
 
   const filteredContracts = useMemo(() => {
@@ -87,10 +122,10 @@ export default function BetriebskostenabrechnungPreview({
     }, 0);
   }, [filteredContracts, periodStart, periodEnd]);
 
-  const totalInvoicesAmount = invoices.reduce(
-    (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-    0
-  );
+  // const totalInvoicesAmount = invoices.reduce(
+  //   (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
+  //   0,
+  // );
 
   const localPrice = useMemo(() => {
     return invoices.reduce((sum, row) => {
@@ -104,6 +139,8 @@ export default function BetriebskostenabrechnungPreview({
     return filteredContracts.flatMap((contract) => contract.contractors);
   }, [filteredContracts]);
 
+  console.log(periodStart, periodEnd);
+
   if (!periodStart || !periodEnd) {
     return null;
   }
@@ -113,6 +150,46 @@ export default function BetriebskostenabrechnungPreview({
     localPrice - baseContractPayment - Number(previewLocal.house_fee);
   const formattedStartDate = formatDateGerman(mainDoc?.start_date);
   const formattedEndDate = formatDateGerman(mainDoc?.end_date);
+
+  const totalLocalInvoicesAmount = useMemo(() => {
+    const totalUnits = filteredContracts.length;
+    console.log("totalUnits", totalUnits);
+
+    const totalConsumption =
+      localConsumption.waterCold +
+      localConsumption.waterHot +
+      localConsumption.heat;
+
+    return invoices.reduce((sum, invoice) => {
+      const costCategory = costCategories.find(
+        (c) => c.type === invoice.cost_type,
+      );
+
+      const localShare = calculateLocalInvoiceShare({
+        invoice,
+        allocationKey: costCategory?.allocation_key,
+        livingSpace: Number(living_space),
+        totalLivingSpace,
+        totalUnits,
+        localConsumption:
+          localConsumption.waterCold +
+          localConsumption.waterHot +
+          localConsumption.heat,
+        totalConsumption,
+      });
+
+      console.log("localShare", localShare);
+
+      return sum + localShare;
+    }, 0);
+  }, [
+    invoices,
+    costCategories,
+    living_space,
+    totalLivingSpace,
+    filteredContracts.length,
+    localConsumption,
+  ]);
 
   return (
     <div className="grid grid-cols-2 gap-5 mx-auto">
@@ -138,13 +215,13 @@ export default function BetriebskostenabrechnungPreview({
               <div className="border border-black w-52 mb-3">
                 <p className="text-[8px] border-b border-black p-2 flex items-end justify-between">
                   Ihr Nebenkostenanteil für den <br /> Nutzungszeitraum:
-                  <span>{formatEuro(totalInvoicesAmount)}</span>
+                  <span>{formatEuro(totalLocalInvoicesAmount)}</span>
                 </p>
                 <p className="text-[8px] border-b border-black p-2 flex items-end justify-between">
                   Ihre Nebenkostenvorauszahlung:
                   <span>
                     {formatEuro(
-                      baseContractPayment + Number(previewLocal.house_fee)
+                      baseContractPayment + Number(previewLocal.house_fee),
                     )}
                   </span>
                 </p>
@@ -303,14 +380,24 @@ export default function BetriebskostenabrechnungPreview({
             <tbody>
               {invoices.map((row) => {
                 const costCategory = costCategories.find(
-                  (category) => category.type === row.cost_type
+                  (category) => category.type === row.cost_type,
                 );
 
-                const prisePerSquareMeter =
-                  Number(row?.total_amount) / totalLivingSpace;
-
-                const pricePerLocalMeters =
-                  prisePerSquareMeter * Number(living_space);
+                const localShare = calculateLocalInvoiceShare({
+                  invoice: row,
+                  allocationKey: costCategory?.allocation_key,
+                  livingSpace: Number(living_space),
+                  totalLivingSpace,
+                  totalUnits: filteredContracts.length,
+                  localConsumption:
+                    localConsumption.waterCold +
+                    localConsumption.waterHot +
+                    localConsumption.heat,
+                  totalConsumption:
+                    localConsumption.waterCold +
+                    localConsumption.waterHot +
+                    localConsumption.heat,
+                });
 
                 return (
                   <tr key={row.id}>
@@ -332,7 +419,7 @@ export default function BetriebskostenabrechnungPreview({
                         : `${daysDiff}/${daysDiff}`}
                     </td>
                     <td className="text-[8px] p-1 border-r border-b border-black text-center last:border-r-0">
-                      {formatEuro(pricePerLocalMeters)}
+                      {formatEuro(localShare)}
                     </td>
                   </tr>
                 );
@@ -358,7 +445,7 @@ export default function BetriebskostenabrechnungPreview({
                   </td>
                   <td className="text-[8px] p-1 border-b border-black text-right">
                     {formatEuro(
-                      baseContractPayment + Number(previewLocal.house_fee)
+                      baseContractPayment + Number(previewLocal.house_fee),
                     )}
                   </td>
                 </tr>
@@ -374,26 +461,53 @@ export default function BetriebskostenabrechnungPreview({
             </table>
           </div>
 
-          <h3 className="text-xs font-bold mb-3 uppercase mt-8">Ihre Verbrauchsdaten</h3>
+          <h3 className="text-xs font-bold mb-3 uppercase mt-8">
+            Ihre Verbrauchsdaten
+          </h3>
           <table className="w-full border border-black mb-6">
             <thead>
               <tr className="bg-gray-50">
-                <th className="text-[8px] font-bold px-1 py-1 border-r border-b border-black text-start">Zählerart</th>
-                <th className="text-[8px] font-bold px-1 py-1 border-b border-black text-end">Gesamtverbrauch</th>
+                <th className="text-[8px] font-bold px-1 py-1 border-r border-b border-black text-start">
+                  Zählerart
+                </th>
+                <th className="text-[8px] font-bold px-1 py-1 border-b border-black text-end">
+                  Gesamtverbrauch
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="text-[8px] p-1 border-r border-b border-black">Kaltwasser</td>
-                <td className="text-[8px] p-1 border-b border-black text-end">{buildingConsumption.waterCold.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³</td>
+                <td className="text-[8px] p-1 border-r border-b border-black">
+                  Kaltwasser
+                </td>
+                <td className="text-[8px] p-1 border-b border-black text-end">
+                  {localConsumption.waterCold.toLocaleString("de-DE", {
+                    maximumFractionDigits: 3,
+                  })}{" "}
+                  m³
+                </td>
               </tr>
               <tr>
-                <td className="text-[8px] p-1 border-r border-b border-black">Warmwasser</td>
-                <td className="text-[8px] p-1 border-b border-black text-end">{buildingConsumption.waterHot.toLocaleString("de-DE", { maximumFractionDigits: 3 })} m³</td>
+                <td className="text-[8px] p-1 border-r border-b border-black">
+                  Warmwasser
+                </td>
+                <td className="text-[8px] p-1 border-b border-black text-end">
+                  {localConsumption.waterHot.toLocaleString("de-DE", {
+                    maximumFractionDigits: 3,
+                  })}{" "}
+                  m³
+                </td>
               </tr>
               <tr>
-                <td className="text-[8px] p-1 border-r border-black font-semibold">Heizung</td>
-                <td className="text-[8px] p-1 text-end font-semibold">{buildingConsumption.heat.toLocaleString("de-DE", { maximumFractionDigits: 3 })} MWh</td>
+                <td className="text-[8px] p-1 border-r border-black font-semibold">
+                  Heizung
+                </td>
+                <td className="text-[8px] p-1 text-end font-semibold">
+                  {localConsumption.heat.toLocaleString("de-DE", {
+                    maximumFractionDigits: 3,
+                  })}{" "}
+                  MWh
+                </td>
               </tr>
             </tbody>
           </table>

@@ -1,8 +1,8 @@
 import {
   getDocCostCategoryTypes,
-  getInvoicesByOperatingCostDocumentID,
+  getAdminInvoicesByOperatingCostDocumentID,
   getObjectById,
-  getOperatingCostDocumentByID,
+  getAdminOperatingCostDocumentByID,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -19,18 +19,19 @@ export default async function GesamtkostenEditPage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getOperatingCostDocumentByID(doc_id);
+  const doc = await getAdminOperatingCostDocumentByID(doc_id, user_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "betriebskostenabrechnung"
+    "betriebskostenabrechnung",
   );
 
-  const relatedToDocInvoices = await getInvoicesByOperatingCostDocumentID(
-    doc_id
+  const relatedToDocInvoices = await getAdminInvoicesByOperatingCostDocumentID(
+    doc_id,
+    user_id,
   );
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(
-    doc.objekt_id ?? ""
+    doc.objekt_id ?? "",
   );
 
   return (

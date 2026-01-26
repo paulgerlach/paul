@@ -6,8 +6,16 @@ import {
   objekte,
   locals,
 } from "@/db/drizzle/schema";
-import { eq, inArray, and, gte, lte } from "drizzle-orm";
+import { eq, inArray, and, gte, lte, desc, lt, or } from "drizzle-orm";
 import { requireExternalAuth, formatError, createResponse } from "../_lib/auth";
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  decodeCursor,
+  SORT_FIELDS,
+  type PaginatedResponse,
+  type SortField,
+} from "../_lib/pagination";
 
 interface ValidationError {
   field: string;
@@ -53,7 +61,8 @@ interface HeatingInvoiceRequest {
  * - local_id: Optional filter by specific unit UUID
  * - start_date: Optional filter by start date (ISO 8601)
  * - end_date: Optional filter by end date (ISO 8601)
- * - limit: Maximum number of records (default: 100, max: 500)
+ * - cursor: Optional cursor for pagination (from previous response)
+ * - limit: Maximum number of records (default: 100, max: 1000)
  * 
  * Data Scoping:
  * Only returns heating statements for properties where objekte.user_id = token.user_id
@@ -91,8 +100,12 @@ export async function GET(request: Request) {
     const localId = url.searchParams.get("local_id");
     const startDate = url.searchParams.get("start_date");
     const endDate = url.searchParams.get("end_date");
-    const limitParam = url.searchParams.get("limit");
-    const limit = limitParam ? Math.min(parseInt(limitParam, 10) || 100, 500) : 100;
+    
+    // Parse pagination parameters
+    const paginationParams = parsePaginationParams(url);
+    const { cursor, limit } = paginationParams;
+    // Ensure limit is always defined (parsePaginationParams always returns a number)
+    const pageLimit = limit || 100;
 
     // Step 1: Get all properties owned by token user
     const userProperties = await database
@@ -150,7 +163,36 @@ export async function GET(request: Request) {
       );
     }
 
-    // Step 3: Fetch heating bill documents
+    // Handle cursor-based pagination
+    if (cursor) {
+      const cursorData = decodeCursor(cursor);
+      if (cursorData) {
+        // Apply cursor filter: fetch items where (created_at, id) < (cursor.created_at, cursor.id)
+        if (cursorData.created_at || cursorData.id) {
+          const cursorConditions = [];
+          if (cursorData.created_at) {
+            cursorConditions.push(
+              or(
+                lt(heating_bill_documents.created_at, cursorData.created_at),
+                and(
+                  eq(heating_bill_documents.created_at, cursorData.created_at),
+                  cursorData.id ? lt(heating_bill_documents.id, cursorData.id) : undefined
+                )
+              ) as any
+            );
+          } else if (cursorData.id) {
+            cursorConditions.push(lt(heating_bill_documents.id, cursorData.id));
+          }
+          if (cursorConditions.length > 0) {
+            conditions.push(and(...cursorConditions) as any);
+          }
+        }
+      }
+    }
+
+    // Step 3: Fetch heating bill documents with cursor pagination
+    // Fetch limit + 1 to check if there are more items
+    const fetchLimit = pageLimit + 1;
     const statements = await database
       .select({
         id: heating_bill_documents.id,
@@ -175,11 +217,24 @@ export async function GET(request: Request) {
       .leftJoin(objekte, eq(heating_bill_documents.objekt_id, objekte.id))
       .leftJoin(locals, eq(heating_bill_documents.local_id, locals.id))
       .where(and(...conditions))
-      .limit(limit);
+      .orderBy(desc(heating_bill_documents.created_at), desc(heating_bill_documents.id))
+      .limit(fetchLimit);
+    
+    // Check if there are more items
+    const hasMore = statements.length > pageLimit;
+    const actualStatements = hasMore ? statements.slice(0, pageLimit) : statements;
 
-    if (statements.length === 0) {
+    if (actualStatements.length === 0) {
       return createResponse(
-        { heating_statements: [] },
+        {
+          heating_statements: [],
+          pagination: {
+            cursor: null,
+            has_more: false,
+            limit: pageLimit,
+            count: 0,
+          },
+        },
         200,
         tokenRateLimit,
         ipRateLimit
@@ -187,7 +242,7 @@ export async function GET(request: Request) {
     }
 
     // Step 4: Fetch related invoices for each statement
-    const statementIds = statements.map((s) => s.id);
+    const statementIds = actualStatements.map((s) => s.id);
     const invoices = await database
       .select()
       .from(heating_invoices)
@@ -207,7 +262,7 @@ export async function GET(request: Request) {
     // Step 5: Format response based on format parameter
     if (format === "bved") {
       // BVED format (simplified - adjust based on BVED spec requirements)
-      const transformed = statements.map((stmt) => ({
+      const transformed = actualStatements.map((stmt) => ({
         id: stmt.id,
         billing_unit: {
           reference: {
@@ -257,15 +312,22 @@ export async function GET(request: Request) {
         created_at: stmt.created_at,
       }));
 
+      const paginatedResponse = createPaginatedResponse(
+        transformed,
+        pageLimit,
+        SORT_FIELDS.HEATING_STATEMENTS as readonly SortField[],
+        hasMore
+      );
+
       return createResponse(
-        { heating_statements: transformed },
+        { heating_statements: paginatedResponse.data, pagination: paginatedResponse.pagination },
         200,
         tokenRateLimit,
         ipRateLimit
       );
     } else {
       // Internal format (default)
-      const response = statements.map((stmt) => ({
+      const response = actualStatements.map((stmt) => ({
         id: stmt.id,
         created_at: stmt.created_at,
         start_date: stmt.start_date,
@@ -311,8 +373,15 @@ export async function GET(request: Request) {
         })),
       }));
 
+      const paginatedResponse = createPaginatedResponse(
+        response,
+        pageLimit,
+        SORT_FIELDS.HEATING_STATEMENTS as readonly SortField[],
+        hasMore
+      );
+
       return createResponse(
-        { heating_statements: response },
+        { heating_statements: paginatedResponse.data, pagination: paginatedResponse.pagination },
         200,
         tokenRateLimit,
         ipRateLimit

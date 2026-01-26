@@ -1102,3 +1102,15 @@ input[type="number"] {
     animation: fromRight 0.3s ease-out forwards;
     transform-origin: right bottom;
 }
+
+/* NextStep.js Tour Overlay - Ensure it covers everything including header */
+body > div[data-name="nextstep-overlay"],
+body > div[style*="position: fixed"] {
+    z-index: 10000 !important;
+}
+
+/* NextStep.js Tour Card - Above overlay */
+div[data-name="nextstep-card"],
+div[data-name="nextstep-pointer"] {
+    z-index: 10001 !important;
+}

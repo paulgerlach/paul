@@ -76,6 +76,7 @@ import hero_review from "@/asset/hero_review.png";
 import hero_small_counter from "@/asset/hero_small_counter.png";
 import idea from "@/asset/idea.png";
 import info from "@/asset/info.png";
+import information from "@/asset/information.png";
 import insta from "@/asset/insta.png";
 import instasvg from "@/asset/insta.svg";
 import instalation from "@/asset/instalation.png";
@@ -519,6 +520,7 @@ export {
   hero_small_counter,
   idea,
   info,
+  information,
   insta,
   instalation,
   install_faq1,

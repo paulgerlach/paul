@@ -1,31 +1,33 @@
-import { NextResponse } from "next/server";
-import database from "@/db";
-import {
-  locals,
-  objekte,
-  contracts,
-  contractors,
-} from "@/db/drizzle/schema";
+import database, { postgresClient } from "@/db";
+import { objekte, locals, local_meters } from "@/db/drizzle/schema";
 import { eq, inArray } from "drizzle-orm";
 import { requireExternalAuth, formatError, createResponse } from "../_lib/auth";
-import { addRateLimitHeaders } from "../_lib/rate-limit";
 import {
-  transformToOnSiteRoles,
-  transformUnitsToConsumptionData,
-  type InternalProperty,
-  type InternalUnit,
-} from "../_lib/transform";
+  parsePaginationParams,
+  decodeCursor,
+  encodeCursor,
+} from "../_lib/pagination";
 
 /**
- * GET /api/bved/v1/units
+ * GET /api/bved/v1/meter-readings
  * 
- * Returns units in BVED format (on-site-roles or consumption-data format)
+ * Returns meter readings (parsed_data) for meters linked to properties owned by the token's user.
  * 
  * Query parameters:
- * - format: "on-site-roles" | "consumption-data" | "internal" (default: "internal" for backward compatibility)
+ * - cursor: Optional cursor for pagination (from previous response)
+ * - limit: Maximum number of records (default: 100, max: 1000)
+ * 
+ * Data Scoping: Multi-step scoping process:
+ * 1. Get properties: `objekte.user_id = token.user_id`
+ * 2. Get units: `locals.objekt_id IN (user's properties)`
+ * 3. Get meters: `local_meters.local_id IN (user's units)`
+ * 4. Get readings: `parsed_data.local_meter_id IN (user's meters)`
+ * 
+ * Only returns readings where `parsed_data.local_meter_id` is set (linked readings only).
  */
 export async function GET(request: Request) {
-  let authResult;
+  let authResult: Awaited<ReturnType<typeof requireExternalAuth>> | undefined;
+
   try {
     authResult = await requireExternalAuth(request);
     const { token, tokenRateLimit, ipRateLimit } = authResult;
@@ -33,7 +35,12 @@ export async function GET(request: Request) {
     // Scoped access - require user_id from token
     if (!token || !token.user_id) {
       return createResponse(
-        { error: { code: "UNAUTHORIZED", message: "Token does not include user context. Database tokens required for scoped access." } },
+        {
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Token does not include user context. Database tokens required for scoped access.",
+          },
+        },
         401,
         tokenRateLimit,
         ipRateLimit
@@ -42,207 +49,251 @@ export async function GET(request: Request) {
 
     // Parse query parameters
     const url = new URL(request.url);
-    const format = url.searchParams.get("format") || "internal";
+    const paginationParams = parsePaginationParams(url);
+    const { cursor, limit } = paginationParams;
+    const pageLimit = limit || 100;
 
-    // Fetch units with property data
-    const unitRows = await database
-      .select({
-        id: locals.id,
-        objekt_id: locals.objekt_id,
-        usage_type: locals.usage_type,
-        floor: locals.floor,
-        living_space: locals.living_space,
-        house_location: locals.house_location,
-        rooms: locals.rooms,
-        tags: locals.tags,
-        heating_systems: locals.heating_systems,
-        created_at: locals.created_at,
-        // Property fields
-        property_id: objekte.id,
-        property_type: objekte.objekt_type,
-        property_street: objekte.street,
-        property_zip: objekte.zip,
-        property_administration_type: objekte.administration_type,
-        property_hot_water_preparation: objekte.hot_water_preparation,
-        property_living_area: objekte.living_area,
-        property_usable_area: objekte.usable_area,
-        property_land_area: objekte.land_area,
-        property_build_year: objekte.build_year,
-        property_has_elevator: objekte.has_elevator,
-        property_heating_systems: objekte.heating_systems,
-        property_tags: objekte.tags,
-        property_created_at: objekte.created_at,
-        property_user_id: objekte.user_id,
-      })
-      .from(locals)
-      .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
+    // Step 1: Get all properties owned by token user
+    const userProperties = await database
+      .select({ id: objekte.id })
+      .from(objekte)
       .where(eq(objekte.user_id, token.user_id));
 
-    const localIds = unitRows.map((u) => u.id);
-    let contractRows: typeof contracts.$inferSelect[] = [];
-    let contractorRows: typeof contractors.$inferSelect[] = [];
-
-    if (localIds.length > 0) {
-      contractRows = await database
-        .select()
-        .from(contracts)
-        .where(inArray(contracts.local_id, localIds));
-
-      const contractIds = contractRows.map((c) => c.id);
-      if (contractIds.length > 0) {
-        contractorRows = await database
-          .select()
-          .from(contractors)
-          .where(inArray(contractors.contract_id, contractIds));
-      }
-    }
-
-    // Group contractors by contract
-    const contractorsByContract: Record<string, typeof contractorRows> = {};
-    for (const ct of contractorRows) {
-      contractorsByContract[ct.contract_id] = [
-        ...(contractorsByContract[ct.contract_id] || []),
-        ct,
-      ];
-    }
-
-    // Group contracts by local
-    const contractsByLocal: Record<string, Array<typeof contractRows[0] & { contractors: typeof contractorRows }>> = {};
-    for (const c of contractRows) {
-      contractsByLocal[c.local_id] = [
-        ...(contractsByLocal[c.local_id] || []),
+    if (userProperties.length === 0) {
+      return createResponse(
         {
-          ...c,
-          contractors: contractorsByContract[c.id] || [],
+          meter_readings: [],
+          pagination: {
+            cursor: null,
+            has_more: false,
+            limit: pageLimit,
+            count: 0,
+          },
         },
-      ];
+        200,
+        tokenRateLimit,
+        ipRateLimit
+      );
     }
 
-    // Transform based on requested format
-    if (format === "on-site-roles") {
-      // Return in BVED on-site-roles format
-      const transformed = unitRows.map((unit) => {
-        const property: InternalProperty = {
-          id: unit.property_id!,
-          objekt_type: unit.property_type || "",
-          street: unit.property_street || "",
-          zip: unit.property_zip || "",
-          administration_type: unit.property_administration_type || "",
-          hot_water_preparation: unit.property_hot_water_preparation || "",
-          living_area: unit.property_living_area || null,
-          usable_area: unit.property_usable_area || null,
-          land_area: unit.property_land_area || null,
-          build_year: unit.property_build_year || null,
-          has_elevator: unit.property_has_elevator || false,
-          heating_systems: unit.property_heating_systems || [],
-          tags: unit.property_tags || [],
-          created_at: unit.property_created_at || "",
-          user_id: unit.property_user_id || "",
-          image_url: null,
-        };
+    const propertyIds = userProperties.map((p) => p.id);
 
-        const floorValue: string = unit.floor ?? "";
-        const unitData = {
-          id: unit.id,
-          objekt_id: unit.objekt_id || "",
-          usage_type: unit.usage_type || "",
-          floor: floorValue,
-          living_space: unit.living_space || null,
-          house_location: unit.house_location || null,
-          rooms: unit.rooms || null,
-          tags: unit.tags || null,
-          heating_systems: unit.heating_systems || null,
-          created_at: unit.created_at || "",
-        } as InternalUnit;
+    // Step 2: Get units belonging to user's properties
+    const userUnits = await database
+      .select({ id: locals.id })
+      .from(locals)
+      .where(inArray(locals.objekt_id, propertyIds));
 
-        const contractData = (contractsByLocal[unit.id] || []).map((c) => ({
-          ...c,
-          contractors: c.contractors,
-        }));
+    if (userUnits.length === 0) {
+      return createResponse(
+        {
+          meter_readings: [],
+          pagination: {
+            cursor: null,
+            has_more: false,
+            limit: pageLimit,
+            count: 0,
+          },
+        },
+        200,
+        tokenRateLimit,
+        ipRateLimit
+      );
+    }
 
-        return transformToOnSiteRoles(property, unitData, contractData);
-      });
+    const unitIds = userUnits.map((u) => u.id);
 
-      const response = NextResponse.json({ units: transformed });
-      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
-    } else if (format === "consumption-data") {
-      // Return in BVED consumption-data format
-      // Group units by property
-      const propertiesMap = new Map<string, InternalProperty & { units: InternalUnit[] }>();
+    // Step 3: Get meters belonging to user's units (using Drizzle schema)
+    const userMeters = await database
+      .select({ id: local_meters.id })
+      .from(local_meters)
+      .where(inArray(local_meters.local_id, unitIds));
 
-      for (const unit of unitRows) {
-        if (!unit.property_id) continue;
+    if (userMeters.length === 0) {
+      return createResponse(
+        {
+          meter_readings: [],
+          pagination: {
+            cursor: null,
+            has_more: false,
+            limit: pageLimit,
+            count: 0,
+          },
+        },
+        200,
+        tokenRateLimit,
+        ipRateLimit
+      );
+    }
 
-        const propertyId = unit.property_id;
-        if (!propertiesMap.has(propertyId)) {
-          const property: InternalProperty = {
-            id: propertyId,
-            objekt_type: unit.property_type || "",
-            street: unit.property_street || "",
-            zip: unit.property_zip || "",
-            administration_type: unit.property_administration_type || "",
-            hot_water_preparation: unit.property_hot_water_preparation || "",
-            living_area: unit.property_living_area || null,
-            usable_area: unit.property_usable_area || null,
-            land_area: unit.property_land_area || null,
-            build_year: unit.property_build_year || null,
-            has_elevator: unit.property_has_elevator || false,
-            heating_systems: unit.property_heating_systems || [],
-            tags: unit.property_tags || [],
-            created_at: unit.property_created_at || "",
-            user_id: unit.property_user_id || "",
-            image_url: null,
-          };
-          propertiesMap.set(propertyId, { ...property, units: [] });
-        }
+    const meterIds = userMeters.map((m) => m.id);
 
-        const floorValue: string = unit.floor ?? "";
-        const unitData = {
-          id: unit.id,
-          objekt_id: unit.objekt_id || "",
-          usage_type: unit.usage_type || "",
-          floor: floorValue,
-          living_space: unit.living_space || null,
-          house_location: unit.house_location || null,
-          rooms: unit.rooms || null,
-          tags: unit.tags || null,
-          heating_systems: unit.heating_systems || null,
-          created_at: unit.created_at || "",
-        } as InternalUnit;
-
-        propertiesMap.get(propertyId)!.units.push(unitData);
+    // Step 4: Fetch readings from parsed_data table
+    // parsed_data is not in Drizzle schema, so we use raw SQL via postgres client
+    const fetchLimit = pageLimit + 1;
+    
+    // Parse cursor data
+    let cursorCreatedAt: string | null = null;
+    let cursorId: string | null = null;
+    if (cursor) {
+      const cursorData = decodeCursor(cursor);
+      if (cursorData) {
+        cursorCreatedAt = cursorData.created_at || null;
+        cursorId = cursorData.id || null;
       }
-
-      const transformed = transformUnitsToConsumptionData(Array.from(propertiesMap.values()));
-      const response = NextResponse.json({ billingunits: transformed });
-      return addRateLimitHeaders(response, tokenRateLimit, ipRateLimit);
-    } else {
-      // Default: Return internal format (backward compatibility)
-      const response = unitRows.map((unit) => ({
-        unit: {
-          id: unit.id,
-          usage_type: unit.usage_type,
-          floor: unit.floor,
-          living_space: unit.living_space,
-          house_location: unit.house_location,
-          rooms: unit.rooms,
-          tags: unit.tags,
-          heating_systems: unit.heating_systems,
-          created_at: unit.created_at,
-        },
-        property: {
-          id: unit.objekt_id,
-          type: unit.property_type,
-          street: unit.property_street,
-          zip: unit.property_zip,
-        },
-        contracts: contractsByLocal[unit.id] || [],
-      }));
-
-      const jsonResponse = NextResponse.json({ units: response });
-      return addRateLimitHeaders(jsonResponse, tokenRateLimit, ipRateLimit);
     }
+
+    // Use postgres-js tagged template for safe parameterized queries
+    // postgres-js handles arrays natively with ANY()
+    let allReadings: any[];
+    
+    if (cursorCreatedAt && cursorId) {
+      // With full cursor (created_at + id)
+      allReadings = await postgresClient`
+        SELECT 
+          id,
+          device_id,
+          device_type,
+          manufacturer,
+          frame_type,
+          version,
+          access_number,
+          status,
+          encryption,
+          parsed_data,
+          local_meter_id,
+          created_at
+        FROM parsed_data
+        WHERE local_meter_id = ANY(${meterIds}::uuid[])
+          AND (created_at, id) < (${cursorCreatedAt}::timestamptz, ${cursorId}::uuid)
+        ORDER BY created_at DESC, id DESC
+        LIMIT ${fetchLimit}
+      `;
+    } else if (cursorCreatedAt) {
+      // With created_at cursor only
+      allReadings = await postgresClient`
+        SELECT 
+          id,
+          device_id,
+          device_type,
+          manufacturer,
+          frame_type,
+          version,
+          access_number,
+          status,
+          encryption,
+          parsed_data,
+          local_meter_id,
+          created_at
+        FROM parsed_data
+        WHERE local_meter_id = ANY(${meterIds}::uuid[])
+          AND created_at < ${cursorCreatedAt}::timestamptz
+        ORDER BY created_at DESC, id DESC
+        LIMIT ${fetchLimit}
+      `;
+    } else if (cursorId) {
+      // With id cursor only
+      allReadings = await postgresClient`
+        SELECT 
+          id,
+          device_id,
+          device_type,
+          manufacturer,
+          frame_type,
+          version,
+          access_number,
+          status,
+          encryption,
+          parsed_data,
+          local_meter_id,
+          created_at
+        FROM parsed_data
+        WHERE local_meter_id = ANY(${meterIds}::uuid[])
+          AND id < ${cursorId}::uuid
+        ORDER BY created_at DESC, id DESC
+        LIMIT ${fetchLimit}
+      `;
+    } else {
+      // No cursor - first page
+      allReadings = await postgresClient`
+        SELECT 
+          id,
+          device_id,
+          device_type,
+          manufacturer,
+          frame_type,
+          version,
+          access_number,
+          status,
+          encryption,
+          parsed_data,
+          local_meter_id,
+          created_at
+        FROM parsed_data
+        WHERE local_meter_id = ANY(${meterIds}::uuid[])
+        ORDER BY created_at DESC, id DESC
+        LIMIT ${fetchLimit}
+      `;
+    }
+    const hasMore = allReadings.length > pageLimit;
+    const actualReadings = hasMore ? allReadings.slice(0, pageLimit) : allReadings;
+
+    if (actualReadings.length === 0) {
+      return createResponse(
+        {
+          meter_readings: [],
+          pagination: {
+            cursor: null,
+            has_more: false,
+            limit: pageLimit,
+            count: 0,
+          },
+        },
+        200,
+        tokenRateLimit,
+        ipRateLimit
+      );
+    }
+
+    // Step 5: Format response
+    const meterReadings = actualReadings.map((reading: any) => ({
+      id: reading.device_id,
+      device_type: reading.device_type,
+      manufacturer: reading.manufacturer,
+      frame_type: reading.frame_type || null,
+      version: reading.version || null,
+      access_number: reading.access_number || null,
+      status: reading.status || null,
+      encryption: reading.encryption || null,
+      parsed_data: reading.parsed_data || {},
+    }));
+
+    // Build pagination cursor from last item
+    let nextCursor: string | null = null;
+    if (hasMore && actualReadings.length > 0) {
+      const lastItem = actualReadings[actualReadings.length - 1];
+      nextCursor = encodeCursor({
+        created_at: lastItem.created_at,
+        id: lastItem.id,
+      });
+    }
+
+    return createResponse(
+      {
+        meter_readings: meterReadings,
+        pagination: {
+          cursor: nextCursor,
+          has_more: hasMore,
+          limit: pageLimit,
+          count: meterReadings.length,
+        },
+      },
+      200,
+      tokenRateLimit,
+      ipRateLimit
+    );
   } catch (error) {
+    console.error("[BVED API] Error fetching meter readings:", error);
     return formatError(error, authResult);
   }
 }

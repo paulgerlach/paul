@@ -11,13 +11,15 @@ import {
   ROUTE_HEIZKOSTENABRECHNUNG,
   ROUTE_ADMIN,
   ROUTE_CSV_UPLOAD,
+  ROUTE_MQTT_GATEWAY,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte, caract_files } from "@/static/icons";
+import { abrechnung, dashboard, dokumente, objekte, caract_files, caract_radio } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import { useState } from "react";
+import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
   title: string;
@@ -30,9 +32,10 @@ export type SidebarLinkType = {
 export default function Sidebar() {
   const pathname = usePathname();
   const { user_id } = useParams();
+  const { data: user } = useAuthUser();
   const [openLink, setOpenLink] = useState<string | null>(null);
 
-  const isAdmin = !!user_id;
+  const isAdmin = user?.permission === "admin";
 
   const withUserPrefix = (route: string) =>
     isAdmin ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
@@ -88,6 +91,12 @@ export default function Sidebar() {
       title: "CSV Upload",
       icon: caract_files,
       route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
+    });
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(4, 0, {
+      title: "Gateway Management",
+      icon: caract_radio,
+      route: `${ROUTE_MQTT_GATEWAY}`,
     });
   }
 

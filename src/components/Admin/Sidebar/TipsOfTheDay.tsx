@@ -2,9 +2,20 @@
 
 import Image from "next/image";
 import { information } from "@/static/icons";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { X } from "lucide-react";
 
 export default function TipsOfTheDay() {
+	const [isVisible, setIsVisible] = useState(true);
+
+	useEffect(() => {
+		const storedDate = localStorage.getItem("tipOfTheDay_closed");
+		const today = new Date().toDateString();
+		if (storedDate === today) {
+			setIsVisible(false);
+		}
+	}, []);
+
 	const tips = [
 		"Schalten Sie Lichter aus, wenn Sie den Raum verlassen",
 		"LED-Lampen verbrauchen bis zu 75% weniger Energie",
@@ -29,6 +40,14 @@ export default function TipsOfTheDay() {
 		return tips[hash % tips.length];
 	}, []);
 
+	const handleClose = () => {
+		const today = new Date().toDateString();
+		localStorage.setItem("tipOfTheDay_closed", today);
+		setIsVisible(false);
+	};
+
+	if (!isVisible) return null;
+
 	return (
 		<div className="px-2 mb-4">
 			<div className="w-full bg-[#EFEFEF] rounded-base p-4 flex flex-col gap-2 items-center justify-center text-center relative">
@@ -42,6 +61,15 @@ export default function TipsOfTheDay() {
 						className="w-8 h-8 brightness-[0.6] grayscale p-1"
 					/>
 				</div>
+
+				{/* Close button */}
+				<button 
+					onClick={handleClose}
+					className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
+					aria-label="Close tip"
+				>
+					<X size={16} />
+				</button>
 
 				<h3 className="font-bold text-sm mt-2">Tipp des Tages</h3>
 				<p className="text-xs text-gray-600 mt-2 pb-4">{dailyTip}</p>

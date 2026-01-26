@@ -44,7 +44,7 @@ export default function TipsOfTheDay() {
 				</div>
 
 				<h3 className="font-bold text-sm mt-2">Tipp des Tages</h3>
-				<p className="text-xs text-gray-600 mt-2">{dailyTip}</p>
+				<p className="text-xs text-gray-600 mt-2 pb-4">{dailyTip}</p>
 			</div>
 		</div>
 	);

@@ -349,7 +349,7 @@ export default async function Home() {
                   in einer übersichtlichen Darstellung.
                 </p>
                 <LazyLottie
-                  animationData={animation3}
+                  animationName="Animation_3"
                   id="animation3"
                   wrapperClassName="overflow-hidden relative z-[0]"
                 />
@@ -369,7 +369,7 @@ export default async function Home() {
                   mehr erfahren
                 </Link>
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation21"
                   wrapperClassName="overflow-hidden pl-10 relative"
                 />
@@ -557,7 +557,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation1}
+                  animationName="Animation_1"
                   id="animation1"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />
@@ -636,7 +636,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation2"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />

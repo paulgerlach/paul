@@ -197,13 +197,13 @@ export default function FragebogenPage() {
               </p>
               <div className="grid gap-5 max-medium:grid-cols-1 grid-cols-2">
                 <LazyLottie
-                  animationData={animation5}
+                  animationName="Animation_5"
                   id="questionare-final-animation1"
                   wrapperClassName="relative"
                 />
 
                 <LazyLottie
-                  animationData={animation6}
+                  animationName="Animation_6"
                   id="questionare-final-animation2"
                   wrapperClassName="relative"
                 />

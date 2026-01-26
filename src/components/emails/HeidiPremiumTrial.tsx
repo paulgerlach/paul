@@ -23,6 +23,8 @@ interface HeidiPremiumTrialProps {
 }
 
 export const HeidiPremiumTrial = ({ userFirstName = 'there' }: HeidiPremiumTrialProps) => {
+  const loginUrl = "https://heidisystems.com";
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(loginUrl)}&format=png&color=2F6121&bgcolor=FFFFFF&margin=10`;
   return (
     <EmailLayout previewText="Schalte die Premium-Tools von Heidi Systems kostenlos frei!">
       {/* Greeting */}
@@ -46,6 +48,34 @@ export const HeidiPremiumTrial = ({ userFirstName = 'there' }: HeidiPremiumTrial
         >
           Premium-Tools kostenlos testen
         </Button>
+      </Section>
+
+       <Section className="mt-[32px] mb-[32px] text-center border border-solid border-[#E5E5E5] rounded-[24px] p-[30px]">
+        <Text className="text-gray-900 text-lg font-medium mb-[20px]">
+          Schneller Login mit QR-Code
+        </Text>
+        <Row>
+          <Column align="center">
+            <div className="inline-block bg-white p-[15px] rounded-[12px] border border-solid border-[#E5E5E5]">
+              <Img
+                src={qrCodeUrl}
+                alt="Heidi Systems Login QR Code"
+                width="150"
+                height="150"
+                className="mx-auto"
+              />
+            </div>
+            <Text className="text-gray-600 text-sm mt-[16px] mb-[20px]">
+              Scanne den QR-Code mit deinem Smartphone<br />für direkten Login
+            </Text>
+            <Link
+              href={loginUrl}
+              className="text-[#2F6121] text-base font-medium underline"
+            >
+              Oder hier klicken zum Einloggen →
+            </Link>
+          </Column>
+        </Row>
       </Section>
 
       <Hr className="border border-solid border-[#eaeaea] my-[32px] mx-0" />

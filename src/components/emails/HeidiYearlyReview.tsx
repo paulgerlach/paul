@@ -37,6 +37,8 @@ export const HeidiYearlyReview = ({
   topPostUsername = 'heidisystems',
 }: HeidiYearlyReviewProps) => {
   const previewText = `Dein Heidi Systems Jahresrückblick 2025 ist da!`;
+  const loginUrl = "https://heidisystems.com";
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(loginUrl)}&format=png&color=2F6121&bgcolor=fff&margin=10`;
 
   return (
     <EmailLayout previewText={previewText}>
@@ -101,6 +103,44 @@ export const HeidiYearlyReview = ({
           <br />
           <br />— deine Ideen heben richtig ab.
         </Text>
+      </Section>
+
+      {/* QR Code Login Section - Integrated in dark theme */}
+      <Section
+        className="text-center rounded-4xl mt-[32px] mb-[32px]"
+        style={{
+          backgroundColor: '#193333',
+          color: '#fff',
+          padding: '30px 24px',
+        }}
+      >
+        <Row align="center">
+          <Column width="60%" className="text-left pl-[20px]">
+            <Text className="text-xl font-medium mb-[12px]" style={{ color: '#fff' }}>
+              Jetzt einloggen & Statistiken sehen
+            </Text>
+            <Text className="text-base leading-[22px] mb-[16px]" style={{ color: '#BDEAA4' }}>
+              Scanne den QR-Code oder klicke auf den Button, um direkt zu deinem Dashboard zu gelangen.
+            </Text>
+            <Button
+              href={loginUrl}
+              className="rounded-full bg-[#BDEAA4] text-[#193333] text-base font-medium no-underline text-center px-6 py-3"
+            >
+              Zum Dashboard
+            </Button>
+          </Column>
+          <Column width="40%" align="center">
+            <div className="bg-white p-[12px] rounded-[12px] inline-block">
+              <Img
+                src={qrCodeUrl}
+                alt="Heidi Systems Login QR Code"
+                width="120"
+                height="120"
+                className="mx-auto"
+              />
+            </div>
+          </Column>
+        </Row>
       </Section>
 
       {/* CTA Button */}

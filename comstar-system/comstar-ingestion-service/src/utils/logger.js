@@ -3,7 +3,7 @@ const transports = [];
 if (process.env.NODE_ENV === 'production') {
   transports.push({ target: 'pino/file', options: { destination: './logs/app.log' } });
 } else {
-  transports.push({ target: 'pino-pretty' });  // Pretty console logs for development
+  transports.push({ target: 'pino-pretty' });
 }
 
 const logger = pino({

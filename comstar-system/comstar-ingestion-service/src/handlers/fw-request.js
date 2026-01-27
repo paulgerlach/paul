@@ -10,7 +10,7 @@ class FirmwareRequestHandler {
     this.isUrgent = true; // 🚨 MUST respond within 5 seconds!
     
     // Configuration
-    this.FIRMWARE_DIR = process.env.FIRMWARE_DIR || '/var/lib/comstar/firmware';
+    this.FIRMWARE_DIR = process.env.FIRMWARE_DIR || './firmware';
     this.CHUNK_SIZE = 512; // ComStar specification
     this.MAX_RETRY_ATTEMPTS = 3;
     

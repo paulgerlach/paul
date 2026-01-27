@@ -153,6 +153,61 @@ class DatabaseService {
     }
   }
 
+  async insertGatewayStatus(
+        gateway_eui,
+        timestamp,
+        sync_from,
+        sync_to,
+        sync_ticks,
+        monitor,
+        ci,
+        tac,
+        rsrp,
+        snr,
+        operator,
+        band,
+        apn, //apn
+        vbat,
+        temperature,
+        collected,
+        telegram_count,
+        uploading_count
+  ) {
+    console.log()
+    try {
+      const { data, error } = await supabase
+        .from('gateway_status')
+        .insert({
+        gateway_eui,
+        timestamp,
+        sync_from,
+        sync_to,
+        sync_ticks,
+        monitor,
+        ci,
+        tac,
+        rsrp,
+        snr,
+        operator,
+        band,
+        apn, //apn
+        vbat,
+        temperature : parseInt(temperature),
+        collected,
+        telegram_count,
+        uploading_count
+        })
+
+      if (error) {
+        console.error('Error insert gateway status data:', error);
+      }
+
+    } catch (error) {
+      console.error('Error gateway status data:', error);
+      return null;
+    }
+  }
+
 }
 
 

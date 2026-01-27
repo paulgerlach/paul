@@ -132,7 +132,7 @@ class StatusHandler {
       
       // Collection stats
       collection: {
-        active: data.collected || false,
+        active: data.collected === data.telegram  || false,
         telegrams_collected: data.telegram || 0,
         telegrams_uploading: data.uploading || 0,
         last_collection_time: data.time ? new Date(data.time * 1000) : null
@@ -252,55 +252,76 @@ class StatusHandler {
   async storeStatus(gatewayEui, status) {
     try {
       // Store in gateway_status table
-      const query = `
-        INSERT INTO gateway_status (
-          gateway_eui,
-          timestamp,
-          battery_voltage,
-          battery_level,
-          temperature,
-          signal_strength,
-          signal_quality,
-          rsrp,
-          rsrq,
-          snr,
-          operator,
-          cell_id,
-          connected,
-          collecting,
-          telegrams_collected,
-          metadata,
-          alerts
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-      `;
+      // const query = `
+      //   INSERT INTO gateway_status (
+      //     gateway_eui,
+      //     timestamp,
+      //     battery_voltage,
+      //     battery_level,
+      //     temperature,
+      //     signal_strength,
+      //     signal_quality,
+      //     rsrp,
+      //     rsrq,
+      //     snr,
+      //     operator,
+      //     cell_id,
+      //     connected,
+      //     collecting,
+      //     telegrams_collected,
+      //     metadata,
+      //     alerts
+      //   ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      // `;
       
       const alerts = await this.checkAlerts(gatewayEui, status);
-      
-      await databaseService.query(query, [
-        gatewayEui,
-        status.received_at,
-        status.battery.voltage,
-        status.battery.level,
-        status.temperature.celsius,
-        status.signal.strength,
-        status.signal.quality,
-        status.signal.rsrp,
-        status.signal.rsrq,
-        status.signal.snr,
-        status.signal.operator,
-        status.signal.cell_id,
-        status.network.connected,
-        status.collection.active,
-        status.collection.telegrams_collected,
-        JSON.stringify({
-          apn: status.network.apn,
-          band: status.signal.band,
-          tac: status.signal.tac,
-          time_sync: status.time_sync.sync_status,
-          monitor_details: status.network.parsed_monitor
-        }),
-        JSON.stringify(alerts)
-      ]);
+
+      await databaseService.insertGatewayStatus(
+        gatewayEui, //gateway_eui
+        status.received_at, //timestamp
+        status.time_sync.sync_from, //sync-from
+        status.time_sync.sync_to, //sync-to
+        status.time_sync.sync_ticks, //sync-time
+        status.network.parsed_monitor,//monitor
+        status.signal.cell_id,//ci
+        status.signal.tac,//tac
+        status.signal.rsrp, // rsrp
+        status.signal.snr,//snt
+        status.signal.operator, //operator
+        status.signal.band, //band
+        status.network.apn, //apn
+        status.battery.voltage, //vbat 
+        +status.temperature.celsius,  //temperature
+        !status.collection.active, //Collected
+        status.collection.telegrams_collected, //telegram count
+        status.collection.telegrams_uploading //uploading_count
+      )
+
+      // await databaseService.query(query, [
+      //   gatewayEui,
+      //   status.received_at,
+      //   status.battery.voltage,
+      //   status.battery.level,
+      //   status.temperature.celsius,
+      //   status.signal.strength,
+      //   status.signal.quality,
+      //   status.signal.rsrp,
+      //   status.signal.rsrq,
+      //   status.signal.snr,
+      //   status.signal.operator,
+      //   status.signal.cell_id,
+      //   status.network.connected,
+      //   status.collection.active,
+      //   status.collection.telegrams_collected,
+      //   JSON.stringify({
+      //     apn: status.network.apn,
+      //     band: status.signal.band,
+      //     tac: status.signal.tac,
+      //     time_sync: status.time_sync.sync_status,
+      //     monitor_details: status.network.parsed_monitor
+      //   }),
+      //   JSON.stringify(alerts)
+      // ]);
       
       console.log('✅ Status stored in database');
       

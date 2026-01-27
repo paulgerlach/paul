@@ -5,7 +5,7 @@
 
 const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -93,3 +93,24 @@ export async function sendOfferInquiryEvent(
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
 
+/**
+ * Send leak detected event
+ * Triggered when CSV processing detects error flags indicating leaks or pipe breakage
+ */
+export async function sendLeakDetectedEvent(
+  email: string,
+  deviceId: string,
+  deviceType: string,
+  errorDescription: string,
+  propertyAddress?: string,
+  apartmentInfo?: string
+): Promise<void> {
+  await sendWebhookEvent('leakdetected', email, {
+    device_id: deviceId,
+    device_type: deviceType,
+    error_description: errorDescription,
+    property_address: propertyAddress,
+    apartment_info: apartmentInfo,
+    severity: 'critical'
+  });
+}

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { processErrorsAndNotify } from './errorNotifications.ts'
 
 // Note: Environment variables are automatically available in production
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by the platform
@@ -717,6 +718,9 @@ serve(async (req: Request) => {
         if (errors.length > 0) {
             console.warn('Database insertion errors:', errors);
         }
+
+        // 🔔 Process errors and send webhook notifications
+        await processErrorsAndNotify(result.parsedData, dbHelper['supabase']);
 
         // Add database results to response
         result.insertedRecords = insertedCount;

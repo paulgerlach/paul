@@ -1,11 +1,21 @@
-const transports = [];
+import {pino} from 'pino'
+import fs from 'fs'
+import path from 'path'
+
+const targets = [];
 
 if (process.env.NODE_ENV === 'production') {
-  transports.push({ target: 'pino/file', options: { destination: './logs/app.log' } });
+  const logDir = './logs';
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+  targets.push({ target: 'pino/file', options: { destination: path.join(logDir, 'app.log') } });
 } else {
-  transports.push({ target: 'pino-pretty' });
+  targets.push({ target: 'pino-pretty' });
 }
 
 const logger = pino({
   level: process.env.LOG_LEVEL || 'info'
-}, { pipeline: transports });
+}, pino.transport({ targets }));
+
+export default logger;

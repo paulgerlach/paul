@@ -230,11 +230,11 @@ export interface FirmwareVersion {
   chunk_size: number;
   description: string | null;
   release_notes: string | null;
-  min_version: string | null;
-  max_version: string | null;
-  deployment_type: DeploymentType;
+  min_version?: string | null;
+  max_version?: string | null;
+  deployment_type?: DeploymentType;
   allowed_gateways: any[];
-  is_active: boolean;
+  is_active?: boolean;
   uploaded_by: string | null;
   uploaded_at: string | null;
   created_at: string;

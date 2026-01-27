@@ -540,29 +540,33 @@ export const firmware_download_log = pgTable("firmware_download_log", {
 	pgPolicy("Admins can view all logs", { as: "permissive", for: "select", to: ["service_role"] }),
 ]);
 
-// Gateway status history
-export const gateway_status_history = pgTable("gateway_status_history", {
+// Gateway status
+export const gateway_status = pgTable("gateway_status", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	gateway_eui: text().notNull(),
-	timestamp: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
-	battery_voltage: integer(),
-	battery_level: text(),
-	temperature: integer(), // In 0.1°C units
-	signal_strength: text(),
-	signal_quality: text(),
-	rsrp: integer(),
-	rsrq: integer(),
-	snr: integer(),
-	operator: text(),
-	cell_id: text(),
-	connected: boolean(),
-	collecting: boolean(),
-	telegrams_collected: integer(),
-	metadata: jsonb().default({}),
-	alerts: jsonb().default([]),
+	timestamp: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	// Status fields from documentation page 11-12
+	time: integer(),  // Unix timestamp
+	sync_to: integer(),
+	sync_from: integer(),
+	sync_ticks: integer(),
+	monitor: text(),
+	ci: text(),  // Cell ID
+	tac: text(),  // Tracking Area Code
+	rsrp: integer(),  // Received Signal Strength Indicator
+	rsrq: integer(),  // Reference Signal Received Quality
+	snr: integer(),  // Signal to Noise Ratio
+	operator: text(),  // Mobile Network Code
+	band: integer(),
+	apn: text(),
+	vbat: integer(),  // Battery voltage in mV
+	temperature: integer(),  // Temperature in 0.1°C
+	collected: boolean(),
+	telegram_count: integer(),
+	uploading_count: integer(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-	pgPolicy("Admins can view all status", { as: "permissive", for: "select", to: ["service_role"] }),
+		pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
 
 // Gateway devices (from device uplink)

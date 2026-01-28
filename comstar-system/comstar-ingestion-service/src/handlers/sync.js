@@ -17,9 +17,9 @@ class SyncHandler {
         await databaseService.setDesiredGatewayState(gatewayEui, data.app, data.boot, data.etag);
         const desiredState = await databaseService.getDesiredGatewayState(gatewayEui);
         const response = {
-          app: this.compareFirmware(data.app, desiredState.app),
-          boot: this.compareFirmware(data.boot, desiredState.boot),
-          etag: this.compareEtag(data.etag, desiredState.etag)
+          app: desiredState.app,
+          boot: desiredState.app,
+          etag: desiredState.app,
         };
         return response;
       }

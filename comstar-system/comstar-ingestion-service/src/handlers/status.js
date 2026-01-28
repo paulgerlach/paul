@@ -296,32 +296,6 @@ class StatusHandler {
         status.collection.telegrams_collected, //telegram count
         status.collection.telegrams_uploading //uploading_count
       )
-
-      // await databaseService.query(query, [
-      //   gatewayEui,
-      //   status.received_at,
-      //   status.battery.voltage,
-      //   status.battery.level,
-      //   status.temperature.celsius,
-      //   status.signal.strength,
-      //   status.signal.quality,
-      //   status.signal.rsrp,
-      //   status.signal.rsrq,
-      //   status.signal.snr,
-      //   status.signal.operator,
-      //   status.signal.cell_id,
-      //   status.network.connected,
-      //   status.collection.active,
-      //   status.collection.telegrams_collected,
-      //   JSON.stringify({
-      //     apn: status.network.apn,
-      //     band: status.signal.band,
-      //     tac: status.signal.tac,
-      //     time_sync: status.time_sync.sync_status,
-      //     monitor_details: status.network.parsed_monitor
-      //   }),
-      //   JSON.stringify(alerts)
-      // ]);
       
       console.log('✅ Status stored in database');
       

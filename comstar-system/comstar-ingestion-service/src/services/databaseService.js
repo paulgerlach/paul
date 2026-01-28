@@ -84,7 +84,7 @@ class DatabaseService {
         .from('gateway_desired_states')
         .select('*')
         .eq('gateway_eui', gatewayEui)
-        .single();
+        
 
       if (error) {
         //replace with logger
@@ -93,9 +93,10 @@ class DatabaseService {
 
       if (!data) {
         console.error({ gatewayEui }, 'Unknown Gateway EUI');
+        return null;
       }
 
-      return data;
+      return data[0];
     } catch (error) {
       console.error('Error Gateway State data:', error);
       return null;

@@ -282,6 +282,16 @@ class DatabaseService {
     }
   }
 
+  async query(sql, params = []) {
+    try {
+      const result = await supabase.postgres.query(sql, params);
+      return result;
+    } catch (error) {
+      console.error('Error executing query:', error);
+      throw error;
+    }
+  }
+
 }
 
 

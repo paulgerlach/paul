@@ -47,9 +47,6 @@ export default async function ResultBuildingLocalPreview({
       return sum + (Number(local.living_space) || 0);
     }, 0) || 0;
 
-  console.log("mainDoc", mainDoc);
-  console.log("contracts", contracts);
-
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
       <Breadcrumb

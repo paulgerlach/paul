@@ -48,17 +48,8 @@ export default function HeatingBillPreview({
   const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
 
   // Fetch consumption data including raw meter readings for cold water, hot water, and heating
-  const {
-    consumption,
-    meters,
-    coldWaterData,
-    hotWaterData,
-    heatingData,
-  } = useConsumptionData(
-    mainDoc?.local_id ?? undefined,
-    periodStart,
-    periodEnd
-  );
+  const { consumption, meters, coldWaterData, hotWaterData, heatingData } =
+    useConsumptionData(mainDoc?.local_id ?? undefined, periodStart, periodEnd);
 
   const filteredContracts = contracts.filter((contract) => {
     if (!contract.rental_start_date || !contract.rental_end_date) return false;
@@ -81,11 +72,8 @@ export default function HeatingBillPreview({
 
   const totalAmount = invoices.reduce(
     (sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-    0
+    0,
   );
-
-  console.log("totalAmount", totalAmount);
-  console.log("totalContractsAmount", filteredContracts);
 
   const totalDiff = totalContractsAmount - totalAmount;
 

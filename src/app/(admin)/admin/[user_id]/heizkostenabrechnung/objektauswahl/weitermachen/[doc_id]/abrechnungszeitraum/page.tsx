@@ -19,11 +19,9 @@ export default async function AbrechnungszeitraumContinuePage({
 
   const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
 
-  console.log(doc);
-
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(
-    doc.objekt_id ?? ""
+    doc.objekt_id ?? "",
   );
 
   return (

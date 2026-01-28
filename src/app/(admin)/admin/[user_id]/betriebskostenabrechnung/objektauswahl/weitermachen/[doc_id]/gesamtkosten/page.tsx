@@ -45,7 +45,7 @@ export default async function GesamtkostenEditPage({
       <CreateDocContentWrapper>
         <AdminGesamtkostenBuildingForm
           objektId={doc.objekt_id ?? ""}
-          userId={doc.objekt_id ?? ""}
+          userId={user_id}
           operatingDocId={doc.id ?? ""}
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}

@@ -139,8 +139,6 @@ export default function BetriebskostenabrechnungPreview({
     return filteredContracts.flatMap((contract) => contract.contractors);
   }, [filteredContracts]);
 
-  console.log(periodStart, periodEnd);
-
   if (!periodStart || !periodEnd) {
     return null;
   }
@@ -153,7 +151,6 @@ export default function BetriebskostenabrechnungPreview({
 
   const totalLocalInvoicesAmount = useMemo(() => {
     const totalUnits = filteredContracts.length;
-    console.log("totalUnits", totalUnits);
 
     const totalConsumption =
       localConsumption.waterCold +
@@ -177,8 +174,6 @@ export default function BetriebskostenabrechnungPreview({
           localConsumption.heat,
         totalConsumption,
       });
-
-      console.log("localShare", localShare);
 
       return sum + localShare;
     }, 0);

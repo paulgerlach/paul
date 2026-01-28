@@ -18,7 +18,7 @@ export default async function UmlageschlüsselPage({
 
   const objekt = await getObjectById(objekt_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "betriebskostenabrechnung"
+    "betriebskostenabrechnung",
   );
   const locals = await getRelatedLocalsWithContractsByObjektId(objekt_id);
 
@@ -34,7 +34,7 @@ export default async function UmlageschlüsselPage({
         <AdminUmlageschlüsselBuildingForm
           initialDocumentGroups={userDocCostCategories}
           operatingDocId={doc_id}
-          objektId={objekt_id}
+          objektId={user_id}
           userId={objekt_id}
         />
         <BetriebskostenabrechnungReceipt

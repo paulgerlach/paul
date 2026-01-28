@@ -18,7 +18,7 @@ export default async function GesamtkostenPage({
 
   const objekt = await getObjectById(objekt_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
-    "betriebskostenabrechnung"
+    "betriebskostenabrechnung",
   );
   const locals = await getRelatedLocalsWithContractsByObjektId(objekt_id);
 
@@ -34,7 +34,7 @@ export default async function GesamtkostenPage({
         <AdminGesamtkostenBuildingForm
           userDocCostCategories={userDocCostCategories}
           objektId={objekt_id}
-          userId={objekt_id}
+          userId={user_id}
           operatingDocId={doc_id}
         />
         <BetriebskostenabrechnungReceipt

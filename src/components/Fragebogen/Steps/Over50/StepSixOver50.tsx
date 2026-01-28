@@ -14,12 +14,11 @@ export default function StepSixOver50({
 				Ihre Kontaktdaten
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für{" "}
-				<span className="max-small:hidden"><br /></span>
+				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für<br />
 				Sie passendes Angebot zukommen lassen können.
 			</p>
 			<div className="space-y-4">
-				<div className="flex max-small:flex-col gap-4 max-w-[509px]">
+				<div className="flex gap-4 max-w-[509px]">
 					<label htmlFor="first_name" className="block flex-1">
 						<input
 							className="border border-dark_green/20 w-full rounded-xl py-4 px-5 duration-300 outline-none focus:ring-4 focus:ring-green/40 text-[16px]"
@@ -63,7 +62,9 @@ export default function StepSixOver50({
 				>
 					<input
 						id="form_confirm"
-						{...register("form_confirm")}
+						{...register("form_confirm", {
+							required: "Bitte akzeptieren Sie die Datenschutzbestimmungen.",
+						})}
 						className="accent-green w-5 h-5 mt-0.5 cursor-pointer"
 						type="checkbox"
 					/>
@@ -85,5 +86,4 @@ export default function StepSixOver50({
 		</div>
 	);
 }
-
 

@@ -1,4 +1,5 @@
 import config from '../config/environment.js';
+import databaseService from '../services/databaseService.js';
 
 class DeviceHandler {
   constructor() {
@@ -42,6 +43,12 @@ class DeviceHandler {
         return;
       }
 
+      const device = await this.getGatewayDeviceDetails(gatewayEui)
+
+      if (!device) {
+        await this.insertGatewayDeviceDetails(gatewayEui, data.model, sanitizedData)
+      }
+
       //Store in Cache
       this.updateCache(gatewayEui, sanitizedData);
       console.log('Device uplink data cached successfully');
@@ -63,10 +70,6 @@ class DeviceHandler {
       //TODO: Possibly store failed attempt      
       throw error;
     }
-
-
-    
-    return;
   }
 
   validateDeviceBootData(data, gatewayEui) {
@@ -247,6 +250,53 @@ class DeviceHandler {
     }
   }
 
+  async getGatewayDeviceDetails(gatewayEui) {
+    try {
+      return await databaseService.getGatewayDeviceDetailsByGatewayEui(gatewayEui);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async insertGatewayDeviceDetails(gatewayEui, model, data) {
+    try {
+      // Extract metadata from the data object
+      const metadata = {
+        // From device uplink (Page 9-10)
+        board: data.board,
+        hwversion: data.hwversion,
+        modem_firmware: data.modem,
+        mcu_bootloader: data.mcu,
+
+        // Reboot info
+        last_reboot: {
+          code: data.reboot_code,
+          reason: data.reboot_reason,
+          assert_message: data.assert,
+          final_words: data.final_words,
+          parsed: data.reboot_details // From your sanitize method
+        },
+
+        // Firmware details (from your parseFirmwareVersion)
+        firmware_details: data.firmware_details,
+
+        // Additional info that might be present
+        capabilities: this.extractCapabilities(data),
+        deployment: this.getDeploymentInfo(gatewayEui) // Could be from another source
+      };
+
+    // Clean up undefined values
+    Object.keys(metadata).forEach(key => 
+      metadata[key] === undefined && delete metadata[key]
+    );
+      return await databaseService.insertGatewayDeviceDetails(gatewayEui, model, metadata, data);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 
   updateCache(gatewayEui, data) {
     this.gatewayCache.set(gatewayEui, {
@@ -267,6 +317,37 @@ class DeviceHandler {
       }
     }
   }
+
+  extractCapabilities(data) {
+  const capabilities = ['wmbus']; // All gateways have wmbus
+  
+  // Check for communication capabilities
+  if (data.model?.includes('nRF9160')) {
+    capabilities.push('lte-m', 'nb-iot');
+  }
+  
+  // Check if LoRaWAN is supported
+  if (data.metadata?.wan_capabilities?.includes('lorawan') || 
+      data.model?.toLowerCase().includes('sx')) {
+    capabilities.push('lorawan');
+  }
+  
+  return capabilities;
+}
+
+getDeploymentInfo(gatewayEui) {
+  // This could come from:
+  // 1. A separate deployment table
+  // 2. Configuration file
+  // 3. Hardcoded for now
+  return {
+    // You might populate this later from a different source
+    installed_by: null,
+    installation_date: null,
+    location: null,
+    notes: 'Auto-registered via device uplink'
+  };
+}
   
 }
 

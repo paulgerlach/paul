@@ -174,7 +174,6 @@ class DatabaseService {
         telegram_count,
         uploading_count
   ) {
-    console.log()
     try {
       const { data, error } = await supabase
         .from('gateway_status')
@@ -197,6 +196,58 @@ class DatabaseService {
         collected,
         telegram_count,
         uploading_count
+        })
+
+      if (error) {
+        console.error('Error insert gateway status data:', error);
+      }
+
+    } catch (error) {
+      console.error('Error gateway status data:', error);
+      return null;
+    }
+  }
+
+
+  async getGatewayDeviceDetailsByGatewayEui(gatewayEui) { 
+    try {
+      const { data, error } = await supabase
+        .from('gateway_devices')
+        .select('*')
+        .eq('eui', gatewayEui)
+
+      if (error) {
+        //replace with logger
+        console.error('Error fetching gateway device data:', error, gatewayEui);
+        return null;
+      }
+
+      if (!data) {
+        console.error({ gatewayEui }, 'Unknown Gateway EUI');
+      }
+
+      return data[0];
+    } catch (error) {
+      console.error('Error Gateway Device data:', error);
+      return null;
+    }
+  }
+
+  async insertGatewayDeviceDetails(gateway_eui, model, metadata, gatewayData) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_devices')
+        .insert({
+          eui: gateway_eui,
+          imei: gatewayData.imei,
+          imsi: gatewayData.imsi,
+          iccid: gatewayData.iccid,
+          model: model,
+          firmware: gatewayData.firmware_details.name,
+          boot_version: gatewayData.firmware_details.version,
+          last_seen: gatewayData.received_at,
+          metadata: metadata,
+
         })
 
       if (error) {

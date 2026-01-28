@@ -260,6 +260,26 @@ class DatabaseService {
     }
   }
 
+  async saveTelegramDetails(
+    gateway_eui, timestamp, telegram_hex, rssi, mode, type, meter_number, manufacturer_code, version, device_type
+  ) {
+    try {
+      const { data, error } = await supabase
+        .from('wmbus_telegrams')
+        .insert({
+          gateway_eui, timestamp, telegram_hex, rssi, mode, type, meter_number, manufacturer_code, version, device_type
+        })
+
+      if (error) {
+        console.error('Error inserting wmbus telegram data:', error);
+      }
+
+    } catch (error) {
+      console.error('Error inserting wmbus telegram  data:', error);
+      return null;
+    }
+  }
+
 }
 
 

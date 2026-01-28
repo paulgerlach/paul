@@ -36,10 +36,9 @@ class DataHandler {
     containsCrc: undefined,  
     key: Buffer.from(this.key, "hex")     
       }
-      // { key: Buffer.from(process.env.DEFAULT_KEY_EFE ?? '', "hex") }
     );
 
-    // console.log('Result========>', result)
+    console.log('Result========>', result)
     
     const meterId = result.meter.id;
     const meterManufacturer = result.meter.manufacturer;
@@ -48,6 +47,8 @@ class DataHandler {
     const version = result.meter.version;
     const status = result.meter.status;
     const accessNo = result.meter.accessNo;
+    const rssi = result.meter.rssi;
+    const mode = result.meter.mode;
 
     // === Validation for meter metadata ===
     if (typeof meterId !== 'string' || meterId.trim() === '') {
@@ -118,13 +119,16 @@ class DataHandler {
       return null;
     }
 
-    const exists = await databaseService.checkExistingReading(meter.local_meter_id, timestamp);
-    if (exists) {
-      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
-      return null;
-    }
+    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType)
+    console.log('TELEGRAM WMBUS DATA SAVED✅')
 
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);
+    // const exists = await databaseService.checkExistingReading(meter.local_meter_id, timestamp);
+    // if (exists) {
+    //   console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+    //   return null;
+    // }
+    //SAVE TO PARSED DATA
+    // await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);
 
     return {
       success: true,

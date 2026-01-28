@@ -602,18 +602,7 @@ export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 	processed: boolean().default(false),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	// Note: Indexes are typically created in migrations, not in schema
-	// CREATE INDEX idx_wmbus_telegrams_gateway_eui ON wmbus_telegrams(gateway_eui);
-	// CREATE INDEX idx_wmbus_telegrams_timestamp ON wmbus_telegrams(timestamp DESC);
-	// etc.
-
-	pgPolicy("Only admin can edit this data", {
-		as: "permissive",
-		for: "all",
-		to: ["public"],
-		using: sql`is_admin()`,
-		withCheck: sql`is_admin()`
-	}),
+	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
 
 // Firmware history

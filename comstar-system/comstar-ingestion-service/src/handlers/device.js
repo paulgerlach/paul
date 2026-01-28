@@ -261,9 +261,7 @@ class DeviceHandler {
 
   async insertGatewayDeviceDetails(gatewayEui, model, data) {
     try {
-      // Extract metadata from the data object
       const metadata = {
-        // From device uplink (Page 9-10)
         board: data.board,
         hwversion: data.hwversion,
         modem_firmware: data.modem,
@@ -278,18 +276,16 @@ class DeviceHandler {
           parsed: data.reboot_details // From your sanitize method
         },
 
-        // Firmware details (from your parseFirmwareVersion)
         firmware_details: data.firmware_details,
 
         // Additional info that might be present
         capabilities: this.extractCapabilities(data),
-        deployment: this.getDeploymentInfo(gatewayEui) // Could be from another source
       };
 
-    // Clean up undefined values
-    Object.keys(metadata).forEach(key => 
-      metadata[key] === undefined && delete metadata[key]
-    );
+      // Clean up undefined values
+      Object.keys(metadata).forEach(key => 
+        metadata[key] === undefined && delete metadata[key]
+      );
       return await databaseService.insertGatewayDeviceDetails(gatewayEui, model, metadata, data);
     } catch (error) {
       console.error(error);
@@ -333,20 +329,6 @@ class DeviceHandler {
   }
   
   return capabilities;
-}
-
-getDeploymentInfo(gatewayEui) {
-  // This could come from:
-  // 1. A separate deployment table
-  // 2. Configuration file
-  // 3. Hardcoded for now
-  return {
-    // You might populate this later from a different source
-    installed_by: null,
-    installation_date: null,
-    location: null,
-    notes: 'Auto-registered via device uplink'
-  };
 }
   
 }

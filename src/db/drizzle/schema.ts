@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index, char } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -585,6 +585,35 @@ export const gateway_devices = pgTable("gateway_devices", {
 	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+export const wmbus_telegrams = pgTable("wmbus_telegrams", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull(),
+	timestamp: integer().notNull(),  // Unix timestamp
+	telegram_hex: text().notNull(),  // Binary data as hex string
+	rssi: integer(),  // Received Signal Strength Indicator in dBm
+	mode: char({ length: 1 }),  // 'C', 'T', 'S', 'X', 'U' as per documentation
+	type: char({ length: 1 }),  // 'A', 'B', 'X', 'U' as per documentation
+	meter_number: text(),  // Extracted from telegram
+	manufacturer_code: text(),
+	version: text(),
+	device_type: text(),
+	processed: boolean().default(false),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	// Note: Indexes are typically created in migrations, not in schema
+	// CREATE INDEX idx_wmbus_telegrams_gateway_eui ON wmbus_telegrams(gateway_eui);
+	// CREATE INDEX idx_wmbus_telegrams_timestamp ON wmbus_telegrams(timestamp DESC);
+	// etc.
+
+	pgPolicy("Only admin can edit this data", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`is_admin()`,
+		withCheck: sql`is_admin()`
+	}),
 ]);
 
 // Firmware history

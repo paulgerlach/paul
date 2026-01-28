@@ -12,8 +12,7 @@ export default function StepFourUnder50({
 				Standortschwerpunkt
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				In welcher Stadt befindet sich der Großteil Ihrer{" "}
-				<span className="max-small:hidden"><br /></span>
+				In welcher Stadt befindet sich der Großteil Ihrer<br />
 				Immobilien?
 			</p>
 			<div className="space-y-4">
@@ -33,5 +32,4 @@ export default function StepFourUnder50({
 		</div>
 	);
 }
-
 

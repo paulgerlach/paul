@@ -13,14 +13,15 @@ class DatabaseService {
           device_id: meter_id,
           device_type: meter_device_type,
           manufacturer: meterManufacturer,
-          frame_type, version,
+          frame_type, frame_type,
+          version: version,
           access_number: accessNo,
           status,
           encryption,
           parsed_data: readings,
           created_at: new Date(),
           updated_at: new Date(),
-          date_only: new Date().getDate()
+          date_only: new Date().toISOString().substring(0, 10)
         })
 
       if (error) {
@@ -33,13 +34,13 @@ class DatabaseService {
     }
   }
 
-  checkExistingReading = async (local_meter_id, timestamp) => {
+  checkExistingReading = async (local_id, timestamp) => {
     try {
       const { data, error } = await supabase
         .from('parsed_data')
         .select('id')
-        .eq('local_meter_id', local_meter_id)
-        .contains('parsed_data', [{"description": "Time point", "value": timestamp}])
+        .eq('local_meter_id', local_id)
+        .contains('parsed_data', {"description": "Time point", "value": timestamp})
         .limit(1);
 
       if (error) {
@@ -234,6 +235,7 @@ class DatabaseService {
   }
 
   async insertGatewayDeviceDetails(gateway_eui, model, metadata, gatewayData) {
+    console.log("Naples===>", gatewayData.firmware_details)
     try {
       const { data, error } = await supabase
         .from('gateway_devices')

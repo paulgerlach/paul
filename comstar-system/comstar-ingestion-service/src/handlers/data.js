@@ -120,15 +120,14 @@ class DataHandler {
     }
 
     await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType)
-    console.log('TELEGRAM WMBUS DATA SAVED✅')
 
-    // const exists = await databaseService.checkExistingReading(meter.local_meter_id, timestamp);
-    // if (exists) {
-    //   console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
-    //   return null;
-    // }
-    //SAVE TO PARSED DATA
-    // await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.local_meter_id, frame_type, encryption);
+    const exists = await databaseService.checkExistingReading(meter.id, timestamp);
+    if (exists) {
+      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+      return null;
+    }
+
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.id, frame_type, encryption);
 
     return {
       success: true,

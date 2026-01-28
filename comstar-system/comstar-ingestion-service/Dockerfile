@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -15,11 +15,11 @@ COPY src/ ./src/
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
 
+# Create firmware directory and set ownership
+RUN mkdir -p firmware && chown nodejs:nodejs firmware
+
 # Change to non-root user
 USER nodejs
-
-# Expose port if needed (check if the app listens on a port)
-# EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]

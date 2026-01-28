@@ -91,9 +91,9 @@ export default function PersonSwiper() {
           >
             <div className="p-5 max-medium:p-0 flex flex-col items-start justify-between">
               <Image
-                width={0}
-                height={0}
-                sizes="100vw"
+                width={120}
+                height={60}
+                sizes="120px"
                 loading="lazy"
                 className={`w-fit max-w-[120px] max-h-[60px] max-medium:mb-16`}
                 src={slide.icon}
@@ -105,9 +105,9 @@ export default function PersonSwiper() {
                 </p>
                 <div className="flex items-center gap-7">
                   <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
+                    width={100}
+                    height={60}
+                    sizes="100px"
                     loading="lazy"
                     className="w-[100px] h-[60px] rounded-base"
                     src={slide.personIcon}
@@ -127,6 +127,9 @@ export default function PersonSwiper() {
             <div className="max-medium:h-full">
               <div className="size-[500px] max-medium:w-full max-medium:h-full max-large:size-fit">
                 <Image
+                  width={500}
+                  height={500}
+                  sizes="(max-width: 768px) 100vw, 500px"
                   loading="lazy"
                   className="size-[500px] rounded-base max-medium:w-full max-medium:h-full max-medium:object-cover max-large:size-fit"
                   src={slide.image}

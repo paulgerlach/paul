@@ -11,8 +11,8 @@ import Link from "next/link";
 export default function PreisePage() {
   return (
     <main id="content">
-      <div className="pt-24 max-medium:pt-20 max-small:pt-16 max-large:pl-20 max-medium:pl-10 max-small:pl-5 mb-[52px] max-small:mb-8 pb-4 px-5">
-        <h1 className="text-[50px] max-megalarge:text-[50px] text-center leading-[1] max-large:text-4xl mb-5 max-medium:text-2xl max-small:text-xl text-dark_text">
+      <div className="pt-24 max-medium:pt-20 max-small:pt-32 max-large:pl-20 max-medium:pl-10 max-small:pl-5 mb-[52px] max-small:mb-8 pb-4 px-5">
+        <h1 className="text-[50px] max-megalarge:text-[50px] text-center leading-[1] max-large:text-4xl mb-5 max-medium:text-2xl max-small:text-[28px] text-dark_text">
           Unser Angebot im Überblick
         </h1>
         <p className="text-dark_text max-w-3xl mx-auto text-center text-base max-small:text-sm">

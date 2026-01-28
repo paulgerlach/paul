@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index, char } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -273,6 +273,7 @@ export const users = pgTable("users", {
 	first_name: text().notNull(),
 	last_name: text().notNull(),
 	permission: text().default('user').notNull(),
+	has_seen_tour: boolean().default(false).notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	foreignKey({

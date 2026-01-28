@@ -554,6 +554,20 @@ html {
     }
 }
 
+@media (width < 1640px) {
+  .share-button-responsive {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+.to-black {
+    color: #1E322D;
+}
+
+
 .reviews-swiper .swiper-slide {
     max-width: max-content !important;
 }
@@ -1087,4 +1101,16 @@ input[type="number"] {
 .animate-from-right {
     animation: fromRight 0.3s ease-out forwards;
     transform-origin: right bottom;
+}
+
+/* NextStep.js Tour Overlay - Ensure it covers everything including header */
+body > div[data-name="nextstep-overlay"],
+body > div[style*="position: fixed"] {
+    z-index: 10000 !important;
+}
+
+/* NextStep.js Tour Card - Above overlay */
+div[data-name="nextstep-card"],
+div[data-name="nextstep-pointer"] {
+    z-index: 10001 !important;
 }

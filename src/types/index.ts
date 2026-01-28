@@ -58,6 +58,7 @@ export type NymberedSwiperDataItemSlideType = {
 
 export type NymberedSwiperDataItemType = {
   mainImage: StaticImageData;
+  mobileImage?: StaticImageData;
   slides: NymberedSwiperDataItemSlideType[];
 };
 

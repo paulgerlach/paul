@@ -16,7 +16,6 @@ import {
 	lock,
 	vitolos,
 } from "@/static/icons";
-import animation10 from "@/animations/Animation_10.json";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -119,13 +118,13 @@ export default function FunktionenPage() {
 					damit auf Innovation des 21. Jahrhunderts
 				</p>
 				<Link
-					className="flex items-center justify-center w-fit !mb-12 mx-auto px-10 py-5 duration-300 hover:opacity-80 rounded-halfbase bg-green text-dark_text text-lg max-small:text-base"
+					className="flex items-center justify-center w-fit !mb-12 mx-auto px-10 max-small:px-8 py-5 max-small:py-3 duration-300 hover:opacity-80 rounded-halfbase bg-green text-dark_text text-lg max-small:text-base"
 					href={ROUTE_FRAGEBOGEN}
 				>
 					Zugang sichern
 				</Link>
 				<LazyLottie
-					animationData={animation10}
+					animationName="Animation_10"
 					id="score_chart_main"
 					wrapperClassName="relative mx-auto max-w-3xl w-fit"
 				/>

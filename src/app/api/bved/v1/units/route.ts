@@ -6,7 +6,7 @@ import {
   contracts,
   contractors,
 } from "@/db/drizzle/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, desc, lt, or, and } from "drizzle-orm";
 import { requireExternalAuth, formatError } from "../_lib/auth";
 import {
   transformToOnSiteRoles,
@@ -14,6 +14,13 @@ import {
   type InternalProperty,
   type InternalUnit,
 } from "../_lib/transform";
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  decodeCursor,
+  SORT_FIELDS,
+  type SortField,
+} from "../_lib/pagination";
 
 /**
  * GET /api/bved/v1/units
@@ -22,10 +29,13 @@ import {
  * 
  * Query parameters:
  * - format: "on-site-roles" | "consumption-data" | "internal" (default: "internal" for backward compatibility)
+ * - cursor: Optional cursor for pagination (from previous response)
+ * - limit: Maximum number of records (default: 100, max: 1000)
  */
 export async function GET(request: Request) {
   try {
-    const token = await requireExternalAuth(request);
+    const authResult = await requireExternalAuth(request);
+    const { token, tokenRateLimit, ipRateLimit } = authResult;
 
     // Scoped access - require user_id from token
     if (!token || !token.user_id) {
@@ -38,8 +48,44 @@ export async function GET(request: Request) {
     // Parse query parameters
     const url = new URL(request.url);
     const format = url.searchParams.get("format") || "internal";
+    
+    // Parse pagination parameters
+    const paginationParams = parsePaginationParams(url);
+    const { cursor, limit } = paginationParams;
+    const pageLimit = limit || 100;
 
-    // Fetch units with property data
+    // Build query conditions
+    const conditions = [eq(objekte.user_id, token.user_id)];
+
+    // Handle cursor-based pagination
+    if (cursor) {
+      const cursorData = decodeCursor(cursor);
+      if (cursorData) {
+        // Apply cursor filter: fetch items where (created_at, id) < (cursor.created_at, cursor.id)
+        if (cursorData.created_at || cursorData.id) {
+          const cursorConditions = [];
+          if (cursorData.created_at) {
+            cursorConditions.push(
+              or(
+                lt(locals.created_at, cursorData.created_at),
+                and(
+                  eq(locals.created_at, cursorData.created_at),
+                  cursorData.id ? lt(locals.id, cursorData.id) : undefined
+                )
+              ) as any
+            );
+          } else if (cursorData.id) {
+            cursorConditions.push(lt(locals.id, cursorData.id));
+          }
+          if (cursorConditions.length > 0) {
+            conditions.push(and(...cursorConditions) as any);
+          }
+        }
+      }
+    }
+
+    // Fetch limit + 1 to check if there are more items
+    const fetchLimit = pageLimit + 1;
     const unitRows = await database
       .select({
         id: locals.id,
@@ -71,9 +117,15 @@ export async function GET(request: Request) {
       })
       .from(locals)
       .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
-      .where(eq(objekte.user_id, token.user_id));
+      .where(and(...conditions))
+      .orderBy(desc(locals.created_at), desc(locals.id))
+      .limit(fetchLimit);
+    
+    // Check if there are more items
+    const hasMore = unitRows.length > pageLimit;
+    const actualUnitRows = hasMore ? unitRows.slice(0, pageLimit) : unitRows;
 
-    const localIds = unitRows.map((u) => u.id);
+    const localIds = actualUnitRows.map((u) => u.id);
     let contractRows: typeof contracts.$inferSelect[] = [];
     let contractorRows: typeof contractors.$inferSelect[] = [];
 
@@ -116,7 +168,7 @@ export async function GET(request: Request) {
     // Transform based on requested format
     if (format === "on-site-roles") {
       // Return in BVED on-site-roles format
-      const transformed = unitRows.map((unit) => {
+      const transformed = actualUnitRows.map((unit) => {
         const property: InternalProperty = {
           id: unit.property_id!,
           objekt_type: unit.property_type || "",
@@ -158,13 +210,23 @@ export async function GET(request: Request) {
         return transformToOnSiteRoles(property, unitData, contractData);
       });
 
-      return NextResponse.json({ units: transformed });
+      const paginatedResponse = createPaginatedResponse(
+        transformed,
+        pageLimit,
+        SORT_FIELDS.UNITS as readonly SortField[],
+        hasMore
+      );
+
+      return NextResponse.json({
+        units: paginatedResponse.data,
+        pagination: paginatedResponse.pagination,
+      });
     } else if (format === "consumption-data") {
       // Return in BVED consumption-data format
       // Group units by property
       const propertiesMap = new Map<string, InternalProperty & { units: InternalUnit[] }>();
 
-      for (const unit of unitRows) {
+      for (const unit of actualUnitRows) {
         if (!unit.property_id) continue;
 
         const propertyId = unit.property_id;
@@ -208,10 +270,24 @@ export async function GET(request: Request) {
       }
 
       const transformed = transformUnitsToConsumptionData(Array.from(propertiesMap.values()));
-      return NextResponse.json({ billingunits: transformed });
+      
+      // Note: For consumption-data format, pagination is applied to units before grouping
+      // The response contains billingunits which may have fewer items than units
+      // We return pagination info based on the units that were processed
+      const paginatedResponse = createPaginatedResponse(
+        transformed,
+        pageLimit,
+        SORT_FIELDS.UNITS as readonly SortField[],
+        hasMore
+      );
+
+      return NextResponse.json({
+        billingunits: paginatedResponse.data,
+        pagination: paginatedResponse.pagination,
+      });
     } else {
       // Default: Return internal format (backward compatibility)
-      const response = unitRows.map((unit) => ({
+      const response = actualUnitRows.map((unit) => ({
         unit: {
           id: unit.id,
           usage_type: unit.usage_type,
@@ -232,7 +308,17 @@ export async function GET(request: Request) {
         contracts: contractsByLocal[unit.id] || [],
       }));
 
-      return NextResponse.json({ units: response });
+      const paginatedResponse = createPaginatedResponse(
+        response,
+        pageLimit,
+        SORT_FIELDS.UNITS as readonly SortField[],
+        hasMore
+      );
+
+      return NextResponse.json({
+        units: paginatedResponse.data,
+        pagination: paginatedResponse.pagination,
+      });
     }
   } catch (error) {
     return formatError(error);

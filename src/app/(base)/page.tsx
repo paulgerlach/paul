@@ -27,7 +27,6 @@ import {
   raum_green,
   niesen_green,
   neckar_green,
-  idgim_green,
   hsp_green,
   harte_green,
   dumax_green,
@@ -250,7 +249,7 @@ export default async function Home() {
                 Jetzt installieren lassen
               </Link>
             </div>
-            <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start">
+            <div className="space-y-4 max-medium:flex max-medium:flex-col max-medium:items-center max-medium:justify-start max-small:hidden">
               <span className="circleIcon inline-block shrink-0 max-small:!w-9 max-small:!h-9">
                 <Image
                   width={25}
@@ -279,7 +278,7 @@ export default async function Home() {
             </div>
           </div>
         </div>
-      <div className="hero-2 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5">
+      <div className="hero-2 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 max-small:pt-20">
             <h2 className="section-title max-small:text-2xl max-small:leading-7 text-[50px] leading-[60px] mb-5 text-center relative text-dark_text">
               Jetzt auf Funkzähler umsteigen
             </h2>
@@ -350,7 +349,7 @@ export default async function Home() {
                   in einer übersichtlichen Darstellung.
                 </p>
                 <LazyLottie
-                  animationData={animation3}
+                  animationName="Animation_3"
                   id="animation3"
                   wrapperClassName="overflow-hidden relative z-[0]"
                 />
@@ -370,7 +369,7 @@ export default async function Home() {
                   mehr erfahren
                 </Link>
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation21"
                   wrapperClassName="overflow-hidden pl-10 relative"
                 />
@@ -402,13 +401,13 @@ export default async function Home() {
               </p>
               {/* Desktop: 4 columns, evenly spaced */}
               {/* Mobile: 2 columns with space between */}
-              <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-16 max-small:gap-y-5">
+              <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-10 max-small:gap-y-6">
                 <Image
                   width={140}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={berlin_bear_green}
                   alt="berlinBear"
                 />
@@ -417,7 +416,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={dumax_green}
                   alt="dumax"
                 />
@@ -426,7 +425,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={harte_green}
                   alt="harte"
                 />
@@ -435,7 +434,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={hsp_green}
                   alt="hsp"
                 />
@@ -444,16 +443,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
-                  src={idgim_green}
-                  alt="idgim"
-                />
-                <Image
-                  width={140}
-                  height={45}
-                  sizes="100vw"
-                  loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={raum_green}
                   alt="raum"
                 />
@@ -462,7 +452,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[120px] max-small:h-[40px] object-contain"
                   src={schleicher_green}
                   alt="schleicher_green"
                 />
@@ -471,7 +461,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[70px] max-small:h-[24px] object-contain"
                   src={vitec_green}
                   alt="vitec"
                 />
@@ -480,7 +470,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={wagner_green}
                   alt="wagner"
                 />
@@ -489,7 +479,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={werne_green}
                   alt="werne_green"
                 />
@@ -498,7 +488,7 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={neckar_green}
                   alt="neckar_green"
                 />
@@ -507,33 +497,20 @@ export default async function Home() {
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[90px] max-small:h-[30px] object-contain"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={niesen_green}
                   alt="niesen_green"
                 />
-                {/* Progera: in grid on desktop, hidden on mobile (shown centered below) */}
                 <Image
                   width={140}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] object-contain max-small:hidden"
+                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={progera_green}
                   alt="progera_green"
                 />
               </div>
-            </div>
-            {/* Progera centered on mobile only */}
-            <div className="hidden max-small:flex max-small:justify-center max-small:w-full max-small:mt-5">
-              <Image
-                width={140}
-                height={45}
-                sizes="100vw"
-                loading="lazy"
-                className="w-[90px] h-[30px] object-contain"
-                src={progera_green}
-                alt="progera_green"
-              />
             </div>
       </div>
         <PersonSwiper />
@@ -580,7 +557,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation1}
+                  animationName="Animation_1"
                   id="animation1"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />
@@ -659,7 +636,7 @@ export default async function Home() {
               </div>
               <div className="large:flex max-large:items-center max-large:justify-center">
                 <LazyLottie
-                  animationData={animation2}
+                  animationName="Animation_2"
                   id="animation2"
                   wrapperClassName="relative max-w-[537px] w-full overflow-hidden max-large:w-full max-large:object-fill"
                 />

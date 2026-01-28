@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Swiper, type SwiperClass, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Controller } from "swiper/modules";
+import { Navigation, Pagination, Controller, Autoplay } from "swiper/modules";
 import {
   numbered_counter1,
   numbered_counter2,
@@ -12,8 +12,48 @@ import {
 } from "@/static/icons";
 import Link from "next/link";
 import { ROUTE_BLOG } from "@/routes/routes";
-import type { NymberedSwiperDataItemType } from "@/types";
+import type { NymberedSwiperDataItemType, NymberedSwiperDataItemSlideType } from "@/types";
 import { useState, useEffect } from "react";
+
+// Shared component for feature slide content - reduces duplication
+function FeatureSlideContent({ 
+  slide, 
+  variant 
+}: { 
+  slide: NymberedSwiperDataItemSlideType; 
+  variant: "desktop" | "mobile";
+}) {
+  const isDesktop = variant === "desktop";
+  
+  return (
+    <div className={isDesktop ? "max-w-[594px] space-y-6" : "space-y-3 px-2"}>
+      <p className={`font-bold text-green ${isDesktop ? "text-base" : "text-sm"}`}>
+        {slide.text}
+      </p>
+      <h4 className={`text-dark_text ${isDesktop ? "text-[45px] leading-[54px] max-medium:text-2xl" : "text-xl"}`}>
+        {slide.title}
+      </h4>
+      <p className={isDesktop ? "" : "text-sm text-dark_text/80"}>
+        {slide.longText}
+      </p>
+      <Link
+        className={`group flex items-center text-link justify-start gap-1.5 cursor-pointer ${!isDesktop && "text-sm"}`}
+        href={ROUTE_BLOG}
+      >
+        Mehr erfahren
+        <Image
+          width={0}
+          height={0}
+          sizes="100vw"
+          loading="lazy"
+          className={`group-hover:translate-x-1 transition colored-to-blue -rotate-90 ${!isDesktop && "w-2 h-2"}`}
+          src={right_arrow}
+          alt="right_arrow"
+        />
+      </Link>
+    </div>
+  );
+}
 
 export const items: NymberedSwiperDataItemType[] = [
   {
@@ -168,6 +208,8 @@ export default function NumberedSwiper() {
 
   return (
     <div className="p-[72px] max-large:p-6">
+      {/* Desktop/Tablet Version */}
+      <div className="max-small:hidden">
       <Swiper
         modules={[Navigation]}
         spaceBetween={20}
@@ -196,8 +238,8 @@ export default function NumberedSwiper() {
                 pagination={{
                   el: `.numbered-item-swiper-pagination-${classNames[index]}-first`,
                   clickable: true,
-                  renderBullet: (index, className) =>
-                    `<span class="${className}">${index + 1}</span>`,
+                    renderBullet: (idx, className) =>
+                      `<span class="${className}">${idx + 1}</span>`,
                 }}
                 onSwiper={(swiper) => setSwiperMainAtIndex(swiper, index)}
                 slidesPerView={1}
@@ -211,30 +253,7 @@ export default function NumberedSwiper() {
                       key={slide.title}
                       className="swiper-slide rounded-base !flex items-center justify-start gap-9 max-large:flex-col"
                     >
-                      <div className="max-w-[594px] space-y-6">
-                        <p className="font-bold text-base text-green">
-                          {slide.text}
-                        </p>
-                        <h4 className="text-[45px] leading-[54px] max-medium:text-2xl text-dark_text">
-                          {slide.title}
-                        </h4>
-                        <p>{slide.longText}</p>
-                        <Link
-                          className="group flex items-center text-link justify-start gap-1.5 cursor-pointer"
-                          href={ROUTE_BLOG}
-                        >
-                          Mehr erfahren
-                          <Image
-                            width={0}
-                            height={0}
-                            sizes="100vw"
-                            loading="lazy"
-                            className="group-hover:translate-x-1 transition colored-to-blue -rotate-90"
-                            src={right_arrow}
-                            alt="right_arrow"
-                          />
-                        </Link>
-                      </div>
+                        <FeatureSlideContent slide={slide} variant="desktop" />
                     </SwiperSlide>
                   ))}
                 </div>
@@ -248,8 +267,8 @@ export default function NumberedSwiper() {
                 pagination={{
                   el: `.numbered-item-swiper-pagination-${classNames[index]}-second`,
                   clickable: true,
-                  renderBullet: (index, className) =>
-                    `<span class="${className}">${index + 1}</span>`,
+                    renderBullet: (idx, className) =>
+                      `<span class="${className}">${idx + 1}</span>`,
                 }}
                 onSwiper={(swiper) => setSwiperSecondAtIndex(swiper, index)}
                 className={`swiper w-0 numbered-item-swiper--${classNames[index]}`}
@@ -272,6 +291,65 @@ export default function NumberedSwiper() {
           ))}
         </div>
       </Swiper>
+      </div>
+
+      {/* Mobile Version - All 4 products stacked, features swipe horizontally */}
+      <div className="hidden max-small:flex flex-col gap-10">
+        {items.map((item, index) => (
+          <div key={index} className="flex flex-col gap-4">
+            {/* Product Image */}
+            <Image
+              width={400}
+              height={400}
+              sizes="(max-width: 640px) 280px, 400px"
+              loading="lazy"
+              className="h-[280px] w-auto mx-auto object-contain"
+              src={item.mainImage}
+              alt="numbered counter"
+            />
+            {/* Navigation Arrows between image and title */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                className={`mobile-swiper-prev-${index} w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200 text-dark_text hover:bg-gray-50 transition disabled:opacity-30`}
+              >
+                <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button
+                className={`mobile-swiper-next-${index} w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-md border border-gray-200 text-dark_text hover:bg-gray-50 transition disabled:opacity-30`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+            {/* Horizontal Feature Swiper with Autoplay */}
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              spaceBetween={16}
+              slidesPerView={1}
+              navigation={{
+                prevEl: `.mobile-swiper-prev-${index}`,
+                nextEl: `.mobile-swiper-next-${index}`,
+              }}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              loop={true}
+              className="w-full"
+            >
+              {item.slides.map((slide) => (
+                <SwiperSlide key={slide.title}>
+                  <FeatureSlideContent slide={slide} variant="mobile" />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

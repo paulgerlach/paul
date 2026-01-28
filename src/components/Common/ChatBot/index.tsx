@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { PiChatCircleDotsFill } from "react-icons/pi";
+import { ChatCircleIcon, MinimizeIcon } from "./icons";
 import "./AIChatBot.css";
-import { FaRegWindowMinimize } from 'react-icons/fa';
 import ChatHeader from './ChatHeader';
 import AiMessagesContainer from './Messages/AiMessagesContainer';
 import SlackMessagesContainer from './Messages/SlackMessagesContainer';
@@ -11,6 +10,9 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useAIMessagesStore } from '@/store/useAIMessagesStore';
 import { Exo_2 } from "next/font/google";
+import VisitorEmailFormContainer from './VisitorEmailFormContainer';
+import { SlackMessage } from '@/types/Chat';
+import { useSlackChat } from '@/hooks/useSlackChat';
 
 const exo_2Sans = Exo_2({
   variable: "--font-exo_2-sans",
@@ -29,12 +31,30 @@ export default function ChatBotContainer({
   isExistingClient,
   userId,
 }: ChatBotContainerProps) {
-  const [showChatBot, setShowChatBot] = useState(false);
-  // const [showPopup, setShowPopup] = useState(false);
-  const [isSlackChat, setIsSlackChat] = useState(false);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const {storedMessages} = useAIMessagesStore();
+
+  const { isOutOfOffice } = useSlackChat(userId);
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [isSlackChat, setIsSlackChat] = useState(!isOutOfOffice);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [localMessages, setLocalMessages] = useState<SlackMessage[]>([]);
+  // const [showPopup, setShowPopup] = useState(false);
+
+  const [anonymousUserEmail, setAnonymousUserEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("anonymousUserEmail") || "";
+    }
+    return "";
+  });
+
+  const [isChatStarted, setIsChatStarted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return !!sessionStorage.getItem("anonymousUserEmail");
+    }
+    return false;
+  });
+
+  const { storedMessages } = useAIMessagesStore();
   const {
     messages: aiMessages,
     sendMessage,
@@ -88,11 +108,10 @@ export default function ChatBotContainer({
       {showChatBot ? (
         <div ref={chatContainerRef} className="chat-window !opacity-[95%]">
           <div className="flex flex-col bg-slate-100 p-4 rounded-md shadow-lg h-[100vh] max-w-full relative animate-from-right">
-            <FaRegWindowMinimize
+            <MinimizeIcon
               onClick={toggleChatBot}
-              className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute"
+              className="self-end cursor-pointer hover:-translate-y-1 transition ease-in-out absolute w-4 h-4"
             />
-
             <ChatHeader
               headerText="Kundenservice"
               subHeaderText={isSlackChat ? "Max Sommerfeld" : "Max Sommerfeld"}
@@ -102,6 +121,8 @@ export default function ChatBotContainer({
               <SlackMessagesContainer
                 toggleChatType={toggleChatType}
                 userId={userId}
+                localMessages={localMessages}
+                setLocalMessages={setLocalMessages}
               />
             ) : (
               <AiMessagesContainer
@@ -111,14 +132,30 @@ export default function ChatBotContainer({
                 sendMessage={sendMessage}
                 status={status}
                 stop={stop}
+                anonymousUserEmail={anonymousUserEmail}
+                setAnonymousUserEmail={setAnonymousUserEmail}
+                isChatStarted={isChatStarted}
+                setIsChatStarted={setIsChatStarted}
               />
             )}
+            <>
+              {!isChatStarted && !isExistingClient && !anonymousUserEmail && (
+                <VisitorEmailFormContainer
+                  isExistingClient={isExistingClient}
+                  setIsChatStarted={setIsChatStarted}
+                  setAnonymousUserEmail={setAnonymousUserEmail}
+                  anonymousUserEmail={anonymousUserEmail}
+                  setLocalMessages={setLocalMessages}
+                  setIsSlackChat={setIsSlackChat}
+                />
+              )}
+            </>
           </div>
         </div>
       ) : (
-        <PiChatCircleDotsFill
+        <ChatCircleIcon
           onClick={toggleChatBot}
-          className="w-auto h-auto bg-dark_green cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-4"
+          className="w-14 h-14 bg-dark_green text-white cursor-pointer hover:scale-105 transition ease-in-out rounded-full shadow-md p-3"
           color="#FFFFFF"
           size={28}
         />

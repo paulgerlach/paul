@@ -23,7 +23,7 @@ export default function ContactForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -128,11 +128,11 @@ export default function ContactForm() {
         )}
 
         <button
-          className="py-4 px-9 text-[15px] cursor-pointer duration-300 hover:opacity-80 font-bold text-white rounded-md bg-green"
+          className="py-4 px-9 text-[15px] cursor-pointer duration-300 hover:opacity-80 font-bold text-white rounded-md bg-green disabled:opacity-50"
           type="submit"
-          disabled={isSubmitting}
+          disabled={mutation.isPending}
         >
-          {isSubmitting ? "Senden..." : "Bestätigen"}
+          {mutation.isPending ? "Senden..." : "Bestätigen"}
         </button>
       </form>
     </div>

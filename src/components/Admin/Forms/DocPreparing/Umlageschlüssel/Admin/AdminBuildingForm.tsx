@@ -35,7 +35,7 @@ export default function AdminUmlageschlüsselBuildingForm({
           </Link>
           <AdminSaveCostButton
             objektId={objektId}
-            userId={objektId}
+            userId={userId}
             initialDocumentGroups={initialDocumentGroups}
             documentType="betriebskostenabrechnung"
             operatingDocId={operatingDocId}

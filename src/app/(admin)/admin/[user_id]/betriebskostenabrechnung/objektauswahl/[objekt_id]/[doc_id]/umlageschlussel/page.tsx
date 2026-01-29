@@ -34,8 +34,8 @@ export default async function UmlageschlüsselPage({
         <AdminUmlageschlüsselBuildingForm
           initialDocumentGroups={userDocCostCategories}
           operatingDocId={doc_id}
-          objektId={user_id}
-          userId={objekt_id}
+          objektId={objekt_id}
+          userId={user_id}
         />
         <BetriebskostenabrechnungReceipt
           locals={locals}

@@ -8,10 +8,12 @@ import TourDashboardCharts from "@/components/Admin/DashboardCharts/TourDashboar
 import TourGuide from "@/components/Guide/TourGuide";
 import { useTourStore } from "@/store/useTourStore";
 import ShareButton from "@/app/shared/ShareButton";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function TourDashboardPage() {
 	const setRun = useTourStore((state) => state.setRun);
 	const [userId, setUserId] = useState<string | null>(null);
+	const isTableView = useChartStore((state) => state.isTableView);
 
 	useEffect(() => {
 		setRun(true);
@@ -133,7 +135,11 @@ export default function TourDashboardPage() {
 	return (
 		<TourGuide onTourComplete={handleTourComplete} onTourSkip={handleSkipTour}>
 			<div className="py-6 px-9 max-medium:px-4 max-medium:py-4 space-y-6 overflow-y-auto flex-1">
-				<Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
+				<Breadcrumb 
+					backTitle="Objekte" 
+					link={ROUTE_OBJEKTE} 
+					title={isTableView ? "Datenansicht" : "Dashboard"} 
+				/>
 				<TourDashboardCharts />
 				<div className="flex gap-2 max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl rounded-2xl mx-auto">
 					<ShareButton />

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useMemo } from "react";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import {
@@ -8,8 +9,10 @@ import {
 	useElectricityChartData,
 	useHeatChartData,
 	useNotificationsChartData,
+	useAllMeterData,
 } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+import DashboardTable from "./DashboardTable";
 
 const WaterChart = dynamic(
 	() => import("@/components/Basic/Charts/WaterChart"),
@@ -52,7 +55,7 @@ const EinsparungChart = dynamic(
 );
 
 export default function DashboardCharts() {
-	const { meterIds } = useChartStore();
+	const { meterIds, isTableView } = useChartStore();
 
 	// Individual chart data hooks
 	const coldWaterChart = useWaterChartData("cold");
@@ -60,35 +63,36 @@ export default function DashboardCharts() {
 	const electricityChart = useElectricityChartData();
 	const heatChart = useHeatChartData();
 	const notificationsChart = useNotificationsChartData();
+	
+	// Dedicated hook for the Table View to ensure EVERYTHING is fetched
+	const allMeterData = useAllMeterData();
 
 	// Combine data for EinsparungChart (needs all device types for CO2 calculations)
-	const einsparungChartData = [
+	const einsparungChartData = useMemo(() => [
 		...coldWaterChart.data,
 		...hotWaterChart.data,
 		...electricityChart.data,
 		...heatChart.data,
-	];
+	], [coldWaterChart.data, hotWaterChart.data, electricityChart.data, heatChart.data]);
+
 	const einsparungChartLoading =
 		coldWaterChart.loading ||
 		hotWaterChart.loading ||
 		electricityChart.loading ||
 		heatChart.loading;
 
-	// Debug logging
-	console.log("[DashboardCharts] Render:", {
-		meterIdsCount: meterIds.length,
-		loading: coldWaterChart.loading,
-	});
+	// Source for Table View - use the specialized "all" hook
+	const allData = allMeterData.data;
 
 	// Show message when no meter IDs are selected
-	// Only show if not loading (prevents showing message during initial load)
-	const isAnyChartLoading =
+	const isAnyLoading =
 		coldWaterChart.loading ||
 		hotWaterChart.loading ||
 		electricityChart.loading ||
-		heatChart.loading;
+		heatChart.loading ||
+		allMeterData.loading;
 
-	if (!meterIds.length && !isAnyChartLoading) {
+	if (!meterIds.length && !isAnyLoading) {
  	return (
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 				<div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
@@ -118,9 +122,27 @@ export default function DashboardCharts() {
 		);
 	}
 
-	// Determine whether to show electricity chart based on data availability
-	const shouldShowElectricityChart = electricityChart.data.length > 0;
+	// TABLE VIEW
+	if (isTableView) {
+		return (
+			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
+				<div className="col-span-full h-[492px]">
+					{allMeterData.loading ? (
+						<div className="h-full flex items-center justify-center bg-white rounded-2xl border border-gray-100 shadow-sm text-center p-6">
+							<div className="flex flex-col items-center gap-4">
+								<div className="w-12 h-12 border-4 border-dark_green/20 border-t-dark_green rounded-full animate-spin" />
+								<p className="text-gray-500 font-medium">Bereite vollständige Datenansicht vor...</p>
+							</div>
+						</div>
+					) : (
+						<DashboardTable data={allData} />
+					)}
+				</div>
+			</ContentWrapper>
+		);
+	}
 
+	// CHART VIEW (ORIGINAL)
 	return (
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 			{/* Column 1: Kaltwasser + Warmwasser */}

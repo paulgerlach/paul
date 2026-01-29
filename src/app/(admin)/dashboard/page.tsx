@@ -62,7 +62,7 @@ export default function AdminPage() {
 			<Breadcrumb 
 				backTitle="Objekte" 
 				link={ROUTE_OBJEKTE} 
-				title={isTableView ? "Datenansicht" : "Dashboard"} 
+				title={isTableView ? "Verbrauchsdaten" : "Dashboard"} 
 			/>
 			<DashboardCharts />
 			<div className="flex justify-start max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl rounded-2xl mx-auto">

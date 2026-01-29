@@ -138,7 +138,7 @@ export default function TourDashboardPage() {
 				<Breadcrumb 
 					backTitle="Objekte" 
 					link={ROUTE_OBJEKTE} 
-					title={isTableView ? "Datenansicht" : "Dashboard"} 
+					title={isTableView ? "Verbrauchsdaten" : "Dashboard"} 
 				/>
 				<TourDashboardCharts />
 				<div className="flex gap-2 max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl rounded-2xl mx-auto">

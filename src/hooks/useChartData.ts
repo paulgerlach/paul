@@ -258,3 +258,30 @@ export const useAllMeterData = (): ChartDataHookResult => {
   return { data, loading, error, refetch };
 };
 
+export const useMeterHierarchy = (userId?: string): { data: any; loading: boolean } => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchHierarchy = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/meter-hierarchy?userId=${userId}`);
+        if (response.ok) {
+          const result = await response.json();
+          setData(result);
+        }
+      } catch (error) {
+        console.error('Failed to fetch meter hierarchy:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHierarchy();
+  }, [userId]);
+
+  return { data, loading };
+};

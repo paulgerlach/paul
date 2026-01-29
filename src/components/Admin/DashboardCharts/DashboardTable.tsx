@@ -91,7 +91,7 @@ export default function DashboardTable({ data, hierarchy = {} }: DashboardTableP
     <div className="flex flex-col h-full w-full bg-white text-[#333] font-sans overflow-hidden border border-gray-100 rounded-2xl shadow-sm">
       <div className="flex-1 overflow-auto p-0">
         <table className="min-w-full border-separate border-spacing-0 text-[11px]">
-          <thead className="bg-[#4a5568] text-white sticky top-0 z-10 font-normal">
+          <thead className="bg-dark_green text-white sticky top-0 z-10 font-normal">
             <tr>
               {columns.map((col) => (
                 <Th key={col.key}>{col.label}</Th>

@@ -13,9 +13,11 @@ import { useAuthUser } from "@/apiClient";
 import AdminUsersDropdown from "./AdminUsersDropdown";
 import { Menu } from "lucide-react";
 import { useMobileSidebarStore } from "@/store/useMobileSidebarStore";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminHeader() {
   const { toggle } = useMobileSidebarStore();
+  const { isTableView, setIsTableView } = useChartStore();
   const pathname = usePathname();
   const isDashboard = pathname.includes(ROUTE_DASHBOARD);
 
@@ -61,7 +63,7 @@ export default function AdminHeader() {
             {isAdmin && <AdminUsersDropdown user={user} />}
 
             <div className="flex w-full items-center gap-3 justify-start bg-transparent border-none px-6 py-3">
-              <Switch />
+              <Switch checked={isTableView} onCheckedChange={setIsTableView} />
               <span className="text-sm">Datenansicht</span>
             </div>
           </div>
@@ -84,7 +86,7 @@ export default function AdminHeader() {
             </div>
           )}
           <div className="flex items-center gap-2 px-2">
-            <Switch />
+            <Switch checked={isTableView} onCheckedChange={setIsTableView} />
             <span className="text-sm whitespace-nowrap">Datenansicht</span>
           </div>
         </div>

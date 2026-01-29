@@ -7,6 +7,7 @@ import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import DashboardCharts from "@/components/Admin/DashboardCharts/DashboardCharts";
 import ShareButton from "@/app/shared/ShareButton";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminDashboardPage({
 	params,
@@ -17,6 +18,8 @@ export default function AdminDashboardPage({
 	const searchParams = useSearchParams();
 	const tourCompleted = searchParams.get("tour_completed") === "true";
 	const [isChecking, setIsChecking] = useState(true);
+	
+	const isTableView = useChartStore((state) => state.isTableView);
 
 	useEffect(() => {
 		// Skip tour check if user just completed tour
@@ -66,7 +69,11 @@ export default function AdminDashboardPage({
 
 	return (
 		<div className="py-6 px-9 max-medium:px-4 max-medium:py-4 overflow-scroll space-y-6">
-			<Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
+			<Breadcrumb 
+				backTitle="Objekte" 
+				link={ROUTE_OBJEKTE} 
+				title={isTableView ? "Verbrauchsdaten" : "Dashboard"} 
+			/>
 			<DashboardCharts />
 			<div className="flex justify-start max-w-[1440px] max-2xl:max-w-[1200px] max-xl:max-w-5xl rounded-2xl mx-auto">
 				<ShareButton />

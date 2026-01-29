@@ -12,12 +12,12 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const body = await request.json();
     const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
-    
+
     // Validate parameters - Filter out undefined/null values
-    const validMeterIds = Array.isArray(localMeterIds) 
-      ? localMeterIds.filter(id => id !== undefined && id !== null && id !== '') 
+    const validMeterIds = Array.isArray(localMeterIds)
+      ? localMeterIds.filter(id => id !== undefined && id !== null && id !== '')
       : [];
-    
+
     if (!validMeterIds.length) {
       console.warn('[dashboard-data] No valid meter IDs provided:', localMeterIds);
       return NextResponse.json(
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     // Parse date parameters
     let startDate: Date | null = null;
     let endDate: Date | null = null;
-    
+
     if (startDateParam) {
       startDate = new Date(startDateParam);
       if (isNaN(startDate.getTime())) {
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
     if (endDateParam) {
       endDate = new Date(endDateParam);
       if (isNaN(endDate.getTime())) {
@@ -101,19 +101,20 @@ export async function POST(request: NextRequest) {
       } as MeterReadingType;
     }) : [];
 
-    // Filter by valid device types and ensure date exists
-    // Note: Date filtering is now handled by the database function
-    // Support both old format (IV,0,0,0,,Date/Time) and new Engelmann format (Actual Date + Actual Time)
-    const validDeviceTypes = [
-      // OLD format device types
-      'Heat', 'Water', 'WWater', 'Elec',
-      // NEW Engelmann format device types
-      'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'
-    ];
-    const filteredData = transformedData.filter(item =>
-      validDeviceTypes.includes(item['Device Type']) &&
-      (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
-    );
+    // Filter by device types ONLY if specific ones were requested
+    // Otherwise, allow all data that has a valid date field
+    const filteredData = transformedData.filter(item => {
+      const hasDate = (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date']);
+      if (!hasDate) return false;
+
+      // If no specific types requested, return all with dates
+      if (requestedDeviceTypes.length === 0) return true;
+
+      // Otherwise filter by requested types
+      return requestedDeviceTypes.includes(item['Device Type']);
+    });
+
+    console.log(`[dashboard-data] Found ${transformedData.length} records, filtered to ${filteredData.length} (requestedTypes: ${requestedDeviceTypes.length})`);
 
     // Group data by device type for metadata
     const deviceTypes = filteredData.reduce((acc, reading) => {
@@ -136,13 +137,13 @@ export async function POST(request: NextRequest) {
           const dateString = dateTimeStr.split(" ")[0];
           return parseGermanDate(dateString);
         }
-        
+
         // Try new Engelmann format (Actual Date)
         const actualDate = reading["Actual Date"];
         if (actualDate) {
           return parseGermanDate(actualDate);
         }
-        
+
         // Try Raw Date format (yyyy-mm-dd)
         const rawDate = reading["Raw Date"];
         if (rawDate) {
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
             return parseGermanDate(`${parts[0]}.${parts[1]}.${parts[2]}`);
           }
         }
-        
+
         return null;
       })
       .filter((date): date is Date => date !== null && !isNaN(date.getTime()))
@@ -187,7 +188,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[dashboard-data] Unexpected error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
         details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
       },

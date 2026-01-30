@@ -256,22 +256,27 @@ export async function processErrorsAndNotify(
         console.log(`[WEBHOOK] Critical error detected for device ${deviceId}:`, errorInterpretation.errors);
 
         const managerInfo = await lookupPropertyManager(deviceId, supabase);
+
+        // Use fallback values for testing when no manager is found
+        const notificationEmail = managerInfo?.email || 'info@heidisystems.com';
+        const propertyAddress = managerInfo?.propertyAddress || 'NO PROPERTY MANAGER - Meter not linked';
+        const apartmentInfo = managerInfo?.apartmentInfo || 'Unlinked Meter';
+
         if (!managerInfo) {
-            console.warn(`[WEBHOOK] Could not find property manager for device ${deviceId}`);
-            continue;
+            console.warn(`[WEBHOOK] Could not find property manager for device ${deviceId}, using fallback email: info@heidisystems.com`);
         }
 
         try {
             await sendWebhook(
-                managerInfo.email,
+                notificationEmail,
                 deviceId,
                 errorInterpretation.deviceType,
                 errorInterpretation.errors.join(', '),
-                managerInfo.propertyAddress,
-                managerInfo.apartmentInfo
+                propertyAddress,
+                apartmentInfo
             );
             notificationsSent.push(deviceId);
-            console.log(`[WEBHOOK] Notification sent to ${managerInfo.email} for device ${deviceId}`);
+            console.log(`[WEBHOOK] Notification sent to ${notificationEmail} for device ${deviceId}`);
         } catch (error) {
             console.error(`[WEBHOOK] Failed to send notification for device ${deviceId}:`, error);
         }

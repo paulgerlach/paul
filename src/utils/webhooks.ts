@@ -105,6 +105,12 @@ export async function sendLeakDetectedEvent(
   propertyAddress?: string,
   apartmentInfo?: string
 ): Promise<void> {
+  // Validate required fields to prevent empty notifications
+  if (!email || !deviceId || !errorDescription) {
+    console.warn('[WEBHOOK] Skipping leakdetected event - missing required fields:', { email: !!email, deviceId: !!deviceId, errorDescription: !!errorDescription });
+    return;
+  }
+
   await sendWebhookEvent('leakdetected', email, {
     device_id: deviceId,
     device_type: deviceType,

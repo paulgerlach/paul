@@ -122,6 +122,12 @@ async function sendWebhook(
     propertyAddress?: string,
     apartmentInfo?: string
 ): Promise<void> {
+    // Validate required fields to prevent empty notifications
+    if (!email || !deviceId || !errorDescription) {
+        console.warn('[WEBHOOK] Skipping notification - missing required fields:', { email: !!email, deviceId: !!deviceId, errorDescription: !!errorDescription });
+        return;
+    }
+
     try {
         const payload = {
             event_type: 'leakdetected',

@@ -3,7 +3,7 @@
  * Sends events to Denis's Make.com workflows
  */
 
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/66fhqggqew5ngf5p1bx4qobr88qjlj2q';
 
 type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
 

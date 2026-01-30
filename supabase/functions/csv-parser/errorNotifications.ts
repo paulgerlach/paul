@@ -8,7 +8,7 @@ import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
 /**
  * Webhook configuration
  */
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/66fhqggqew5ngf5p1bx4qobr88qjlj2q';
 
 /**
  * Critical error keywords that trigger notifications

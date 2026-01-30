@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     // SECURITY: Validate checksum to prevent URL tampering
     const metersString = meters ? (Array.isArray(meters) ? meters.join(',') : meters) : '';
     const expectedChecksum = Buffer.from(`${metersString}:${exp}`).toString('base64').slice(0, 8);
-    
+
     if (checksum !== expectedChecksum) {
       console.warn('Share link checksum validation failed');
       return NextResponse.json(
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // Get service role key for bypassing RLS
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       console.error('Missing Supabase configuration for shared dashboard');
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     // Parse meter IDs
-    const meterIds = meters 
+    const meterIds = meters
       ? (Array.isArray(meters) ? meters : meters.split(',').filter(Boolean))
       : [];
 

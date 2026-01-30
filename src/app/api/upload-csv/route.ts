@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     // 🔒 SECURITY: Verify user is admin
     const supabase = await supabaseServer();
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please login' },
@@ -30,16 +30,16 @@ export async function POST(request: NextRequest) {
 
     // Extract filename from query params or headers
     const { searchParams } = new URL(request.url);
-    const fileName = searchParams.get('fileName') || 
-                    searchParams.get('filename') || 
-                    request.headers.get('x-filename') ||
-                    'manual-upload.csv';
-    
+    const fileName = searchParams.get('fileName') ||
+      searchParams.get('filename') ||
+      request.headers.get('x-filename') ||
+      'manual-upload.csv';
+
     console.log(`Processing admin upload for file: ${fileName} by user: ${user.email}`);
-    
+
     // Read raw CSV content from request body
     const csvContent = await request.text();
-    
+
     if (!csvContent || csvContent.trim().length === 0) {
       return NextResponse.json(
         { error: 'No CSV content provided' },
@@ -48,10 +48,10 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`Received CSV upload, size: ${csvContent.length} bytes`);
-    
+
     // Forward to Supabase Edge Function (same function Make.com uses)
     const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser?filename=${encodeURIComponent(fileName)}`;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!edgeFunctionUrl || !serviceRoleKey) {
       console.error('Missing Supabase configuration');
@@ -82,9 +82,9 @@ export async function POST(request: NextRequest) {
 
     const result = await response.json();
     console.log('Upload result:', result);
-    
+
     return NextResponse.json(result);
-    
+
   } catch (error: any) {
     console.error('Upload error:', error);
     return NextResponse.json(

@@ -16,43 +16,42 @@ class MqttHandler {
     this.client = null;
     this.isConnected = false;
     //Add response tracking
-    // Handler registry
     this.handlers = {
       // 🚨 URGENT HANDLERS (<5s response required!)
-      'sync': {
+      'req_sync': {
         handler: syncHandler,
         isUrgent: true,
         responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/sync`
       },
-      'config-request': {
+      'req_config': {
         handler: configRequestHandler,
         isUrgent: true,
         responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/config`
       },
-      'fw': {
+      'req_fw': {
         handler: fwRequestHandler,
         isUrgent: true,
         responseTopic: (gatewayEui) => `LOB/${gatewayEui}/down/fw`
       },
       
       // Data handlers (no response needed)
-      'device': {
+      'up_device': {
         handler: deviceHandler,
         isUrgent: false
       },
-      'config': { // 'config' as data uplink (not request)
+      'up_config': {
         handler: deviceHandler,   //Same handler as device
         isUrgent: false
       },
-      'status': {
+      'up_status': {
         handler: statusHandler,
         isUrgent: false
       },
-      'data': {
+      'up_data': {
         handler: dataHandler,
         isUrgent: false
       },
-      'receives': {
+      'up_receives': {
         handler: receivesHandler,
         isUrgent: false
       }
@@ -151,7 +150,7 @@ class MqttHandler {
     const startTime = Date.now();
     try {
       // Extract gateway EUI and message type from topic
-      const { gatewayEui, messageType, direction } = this.parseTopic(topic);
+      const { gatewayEui, messageType } = this.parseTopic(topic);
       
       if (!gatewayEui || !messageType) {
         console.error({ topic }, 'Could not parse topic');
@@ -162,7 +161,8 @@ class MqttHandler {
       const decoded = await cbor.decode(message);
       const { n: messageNumber, q: queryType, d: data } = decoded;
 
-      const handlerConfig = this.handlers[queryType];
+      const handlerKey = `${direction}_${queryType}`;
+      const handlerConfig = this.handlers[handlerKey];
       if (!handlerConfig) {
         console.warn({ gatewayEui, queryType }, 'No handler for query type');
         return;

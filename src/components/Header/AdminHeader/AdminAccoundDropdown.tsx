@@ -1,5 +1,6 @@
 "use client";
 
+import MenuModal from "@/components/Basic/ui/MenuModal";
 import {
   Popover,
   PopoverContent,
@@ -9,15 +10,24 @@ import { chevron_admin, main_account } from "@/static/icons";
 import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-export default function AdminAccoundDropdown() {
+
+export default function AdminAccountDropdown() {
   const router = useRouter();
 
   const signOut = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
+
+  const menuItems = [
+    { title: "Mein Profil" },
+    { title: "Unternehmensdaten" },
+    { title: "Impressum & Datenschutz" },
+    { title: "Sicherheit" },
+    { title: "Integrationen" },
+    { title: "Support" },
+  ];
 
   return (
     <Popover>
@@ -46,90 +56,43 @@ export default function AdminAccoundDropdown() {
           </div>
         </button>
       </PopoverTrigger>
-      <PopoverContent 
-        className="w-64 p-0 bg-white rounded-lg shadow-lg border border-gray-100 mt-2"
-        align="end"
-      >
-        <div className="py-2">
-          {/* Main Account Section */}
-          <div className="px-4 py-2">
-            <div className="space-y-1">
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Mein Profil
-              </Link>
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Unternehmensdaten
-              </Link>
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Team & Rollen
-              </Link>
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Sicherheit
-              </Link>
-            </div>
-          </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-100 my-2 w-30" />
+      <PopoverContent className="w-64 p-0 bg-white rounded-lg shadow-lg border border-gray-100 mt-2" align="end">
+        <div className="py-2 px-4 space-y-1">
+          {menuItems.slice(0, 4).map(item => (
+            <MenuModal
+              key={item.title}
+              title={item.title}
+              trigger={
+                <button className="block w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded">
+                  {item.title}
+                </button>
+              }
+            />
+          ))}
 
-          {/* Integrations & Support Section */}
-          <div className="px-4 py-2">
-            <div className="space-y-1">
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Integrationen
-              </Link>
-              <Link 
-                href="#" 
-                className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-              >
-                Support
-              </Link>
-            </div>
-          </div>
+          <div className="border-t border-gray-100 my-2" />
 
-          {/* Divider */}
-          <div className="border-t border-gray-100 my-2 w-30" />
+          {menuItems.slice(4).map(item => (
+            <MenuModal
+              key={item.title}
+              title={item.title}
+              trigger={
+                <button className="block w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded">
+                  {item.title}
+                </button>
+              }
+            />
+          ))}
 
-          {/* Logout Button */}
-          <div className="px-4 py-2">
-            <button
-              onClick={signOut}
-              className="w-full text-left text-sm text-red-300 hover:bg-red-50 px-2 py-1.5 rounded"
-            >
-              Logout
-            </button>
-          </div>
+          <div className="border-t border-gray-100 my-2" />
 
-          {/* Footer Links */}
-          <div className="px-4 py-2 flex justify-between">
-            <Link 
-              href="#" 
-              className="text-xs text-gray-400 hover:text-gray-700"
-            >
-              Impressum
-            </Link>
-            <Link 
-              href="#" 
-              className="text-xs text-gray-400 hover:text-gray-700"
-            >
-              Datenschutz
-            </Link>
-          </div>
+          <button
+            onClick={signOut}
+            className="w-full text-left text-sm text-red-500 hover:bg-red-50 px-2 py-1.5 rounded"
+          >
+            Logout
+          </button>
         </div>
       </PopoverContent>
     </Popover>

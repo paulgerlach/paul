@@ -10,6 +10,8 @@ import {
 	useNotificationsChartData,
 } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
+import { useRef } from "react";
+
 
 const WaterChart = dynamic(
 	() => import("@/components/Basic/Charts/WaterChart"),
@@ -50,6 +52,43 @@ const EinsparungChart = dynamic(
 		ssr: false,
 	},
 );
+
+function ResizableChart({
+  id,
+  defaultHeight,
+  minHeight,
+  children,
+}: {
+  id: string;
+  defaultHeight: number;
+  minHeight: number;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { chartHeights, setChartHeight } = useChartStore();
+
+  const height = chartHeights[id] ?? defaultHeight;
+
+  return (
+    <div
+  ref={ref}
+  className="resize overflow-hidden rounded-lg w-full max-w-full min-w-0"
+  style={{
+    height,
+    minHeight,
+  }}
+  onMouseUp={() => {
+    if (ref.current) {
+      setChartHeight(id, ref.current.offsetHeight);
+    }
+  }}
+>
+  {children}
+</div>
+
+  );
+}
+
 
 export default function DashboardCharts() {
 	const { meterIds } = useChartStore();
@@ -125,7 +164,7 @@ export default function DashboardCharts() {
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 			{/* Column 1: Kaltwasser + Warmwasser */}
 			<div className="flex flex-col gap-3">
-				<div className="h-[240px]">
+				<ResizableChart id="coldWater" defaultHeight={240} minHeight={160}>
 					{coldWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -139,8 +178,8 @@ export default function DashboardCharts() {
 							emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
 						/>
 					)}
-				</div>
-				<div className="h-[240px]">
+				</ResizableChart>
+				<ResizableChart id="hotWater" defaultHeight={240} minHeight={160}>
 					{hotWaterChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -154,12 +193,12 @@ export default function DashboardCharts() {
 							emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
 						/>
 					)}
-				</div>
+				</ResizableChart>
 			</div>
 
 			{/* Column 2: Stromverbrauch + Heizkosten */}
 			<div className="flex flex-col gap-3">
-				<div className="h-[200px]">
+				<ResizableChart id="electricity" defaultHeight={200} minHeight={160}>
 					{electricityChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -170,8 +209,8 @@ export default function DashboardCharts() {
 							emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
 						/>
 					)}
-				</div>
-				<div className="h-[280px]">
+				</ResizableChart>
+				<ResizableChart id="heating" defaultHeight={280} minHeight={180}>
 					{heatChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -182,12 +221,12 @@ export default function DashboardCharts() {
 							emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
 						/>
 					)}
-				</div>
+				</ResizableChart>
 			</div>
 
 			{/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
 			<div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1 max-medium:flex max-medium:flex-col">
-				<div className="h-[300px] max-[1300px]:h-[300px]">
+				<ResizableChart id="notifications" defaultHeight={300} minHeight={200}>
 					{notificationsChart.loading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -198,8 +237,8 @@ export default function DashboardCharts() {
 							parsedData={{ data: notificationsChart.data, errors: [] }}
 						/>
 					)}
-				</div>
-				<div className="h-[180px] max-[1300px]:h-[300px]">
+				</ResizableChart>
+				<ResizableChart id="einsparung" defaultHeight={180} minHeight={140} >
 					{einsparungChartLoading ? (
 						<ChartCardSkeleton />
 					) : (
@@ -210,7 +249,7 @@ export default function DashboardCharts() {
 							emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
 						/>
 					)}
-				</div>
+				</ResizableChart>
 			</div>
 		</ContentWrapper>
 	);

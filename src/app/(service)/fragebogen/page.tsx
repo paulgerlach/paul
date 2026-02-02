@@ -315,8 +315,9 @@ export default function FragebogenPage() {
                       className="rounded-xl cursor-pointer bg-green flex items-center justify-center duration-300 hover:opacity-80 text-white font-bold text-[15px] disabled:opacity-50 py-4 px-8 border border-transparent"
                       onClick={isSubmitStep ? undefined : handleClick}
                       type={isSubmitStep ? "submit" : "button"}
+                      disabled={isSubmitStep && mutation.isPending}
                     >
-                      Bestätigen
+                      {isSubmitStep && mutation.isPending ? "Wird gesendet..." : "Bestätigen"}
                     </button>
                   );
                 })()}

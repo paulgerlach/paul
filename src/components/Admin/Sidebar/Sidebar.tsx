@@ -68,10 +68,10 @@ export default function Sidebar() {
           title: "Heizkostenabrechnung",
           route: withUserPrefix(ROUTE_HEIZKOSTENABRECHNUNG),
         },
-        {
-          title: "Betriebskostenabrechnung",
-          route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
-        },
+        // {
+        //   title: "Betriebskostenabrechnung",
+        //   route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
+        // },
       ],
     },
   ];
@@ -83,7 +83,7 @@ export default function Sidebar() {
       icon: dashboard,
       route: ROUTE_ADMIN,
     });
-    
+
     // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
     dashboardLinks.splice(3, 0, {
       title: "CSV Upload",
@@ -126,9 +126,8 @@ export default function Sidebar() {
             <Link
               key={link.title}
               href={link.route}
-              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${
-                isRouteActive(link.route) ? "active" : ""
-              } [.active]:bg-black/10`}
+              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""
+                } [.active]:bg-black/10`}
             >
               <Image
                 width={28}
@@ -144,24 +143,24 @@ export default function Sidebar() {
         )}
       </div>
 
-		{/* Remaining space container - pushes content to bottom */}
-		<div className="flex-1 flex flex-col justify-end">
-			{/* Tips of the Day - positioned above footer */}
-			<TipsOfTheDay />
+      {/* Remaining space container - pushes content to bottom */}
+      <div className="flex-1 flex flex-col justify-end">
+        {/* Tips of the Day - positioned above footer */}
+        <TipsOfTheDay />
 
-			{/* Footer Links - at the bottom */}
-			<div className="flex items-center justify-center gap-8 mb-0">
-				<Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
-					Impressum
-				</Link>
-				<Link
-					className="text-sm text-light-text"
-					href={ROUTE_DATENSCHUTZHINWEISE}
-				>
-					Datenschutz
-				</Link>
-			</div>
-		</div>
+        {/* Footer Links - at the bottom */}
+        <div className="flex items-center justify-center gap-8 mb-0">
+          <Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
+            Impressum
+          </Link>
+          <Link
+            className="text-sm text-light-text"
+            href={ROUTE_DATENSCHUTZHINWEISE}
+          >
+            Datenschutz
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

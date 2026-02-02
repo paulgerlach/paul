@@ -8,7 +8,7 @@ import deviceHandler from './handlers/device.js'
 import fwRequestHandler from './handlers/fw-request.js'
 import configRequestHandler from './handlers/config-request.js'
 import cbor from './utils/cbor.js';
-import logger from '../utils/logger.js';
+import logger from './utils/logger.js';
 
 class MqttHandler { 
   constructor() { 

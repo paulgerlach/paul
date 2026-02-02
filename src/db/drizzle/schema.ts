@@ -445,7 +445,7 @@ export const leads = pgTable("leads", {
 
 export const gateway_desired_states = pgTable("gateway_desired_states", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull().unique(),  // Unique identifier for the gateway (e.g., from MQTT topic)
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),  // Unique identifier for the gateway (e.g., from MQTT topic)
 	desired_app_version: text(),  // Desired application firmware version
 	desired_boot_version: text(),  // Desired bootloader firmware version  
 	desired_etag: text(),  // Desired config ETag/hash
@@ -497,7 +497,7 @@ export const firmware_versions = pgTable("firmware_versions", {
 // Firmware deployments
 export const firmware_deployments = pgTable("firmware_deployments", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	firmware_id: uuid().references(() => firmware_versions.id),
 	scheduled_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
 	started_at: timestamp({ withTimezone: true, mode: 'string' }),
@@ -518,7 +518,7 @@ export const firmware_deployments = pgTable("firmware_deployments", {
 // Gateway config overrides
 export const gateway_config_overrides = pgTable("gateway_config_overrides", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	config_key: text().notNull(),
 	config_value: text(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -530,7 +530,7 @@ export const gateway_config_overrides = pgTable("gateway_config_overrides", {
 // Firmware download log
 export const firmware_download_log = pgTable("firmware_download_log", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	firmware_filename: text().notNull(),
 	chunk_number: integer().notNull(),
 	success: boolean().notNull(),
@@ -544,7 +544,7 @@ export const firmware_download_log = pgTable("firmware_download_log", {
 // Gateway status
 export const gateway_status = pgTable("gateway_status", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	timestamp: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 	// Status fields from documentation page 11-12
 	time: integer(),  // Unix timestamp
@@ -590,7 +590,7 @@ export const gateway_devices = pgTable("gateway_devices", {
 
 export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	timestamp: integer().notNull(),  // Unix timestamp
 	telegram_hex: text().notNull(),  // Binary data as hex string
 	rssi: integer(),  // Received Signal Strength Indicator in dBm
@@ -609,7 +609,7 @@ export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 // Firmware history
 export const firmware_history = pgTable("firmware_history", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
-	gateway_eui: text().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
 	firmware_type: text().notNull(), // 'app', 'boot', 'modem'
 	version: text().notNull(),
 	details: jsonb().default({}),

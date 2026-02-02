@@ -1,4 +1,4 @@
--- Migration 0004: Dashboard Performance Optimization
+-- Migration 0005: Dashboard Performance Optimization
 -- Created: January 27, 2026
 -- Purpose: Add missing indexes and fix data linkage for dashboard performance
 
@@ -140,3 +140,4 @@ WHERE local_meter_id = 'your-meter-uuid-here'
 -- - Run ANALYZE parsed_data periodically (monthly)
 -- - Monitor index bloat with pg_stat_user_indexes
 -- - Consider VACUUM if table has many UPDATE/DELETE operations
+

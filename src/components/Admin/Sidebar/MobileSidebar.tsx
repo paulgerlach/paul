@@ -73,10 +73,10 @@ export default function MobileSidebar() {
           title: "Heizkostenabrechnung",
           route: withUserPrefix(ROUTE_HEIZKOSTENABRECHNUNG),
         },
-        {
-          title: "Betriebskostenabrechnung",
-          route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
-        },
+        // {
+        //   title: "Betriebskostenabrechnung",
+        //   route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
+        // },
       ],
     },
   ];
@@ -88,7 +88,7 @@ export default function MobileSidebar() {
       icon: dashboard,
       route: ROUTE_ADMIN,
     });
-    
+
     dashboardLinks.splice(3, 0, {
       title: "CSV Upload",
       icon: caract_files,
@@ -104,17 +104,17 @@ export default function MobileSidebar() {
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 z-[9999] large:hidden"
         onClick={close}
       />
-      
+
       {/* Sidebar Drawer */}
       <div className="fixed top-0 left-0 h-full w-[280px] bg-white z-[10000] shadow-xl large:hidden overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[#EAEAEA]">
           <span className="font-semibold text-lg text-dark_green">Menü</span>
-          <button 
+          <button
             onClick={close}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
@@ -129,9 +129,8 @@ export default function MobileSidebar() {
               <div key={link.title}>
                 <button
                   onClick={() => handleClick(link.title)}
-                  className={`flex py-3 px-4 w-full items-center justify-between gap-3 rounded-lg hover:bg-base-bg/70 transition-all duration-300 ${
-                    openLink === link.title ? "bg-base-bg/50" : ""
-                  }`}
+                  className={`flex py-3 px-4 w-full items-center justify-between gap-3 rounded-lg hover:bg-base-bg/70 transition-all duration-300 ${openLink === link.title ? "bg-base-bg/50" : ""
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Image
@@ -156,9 +155,8 @@ export default function MobileSidebar() {
                         key={child.title}
                         href={child.route}
                         onClick={handleLinkClick}
-                        className={`py-2 px-4 rounded-lg hover:bg-base-bg/70 transition-all duration-300 text-sm ${
-                          isRouteActive(child.route) ? "bg-black/10 font-bold" : ""
-                        }`}
+                        className={`py-2 px-4 rounded-lg hover:bg-base-bg/70 transition-all duration-300 text-sm ${isRouteActive(child.route) ? "bg-black/10 font-bold" : ""
+                          }`}
                       >
                         {child.title}
                       </Link>
@@ -185,9 +183,8 @@ export default function MobileSidebar() {
                 key={link.title}
                 href={link.route}
                 onClick={handleLinkClick}
-                className={`flex py-3 px-4 w-full items-center gap-3 rounded-lg hover:bg-base-bg/70 transition-all duration-300 ${
-                  isRouteActive(link.route) ? "bg-black/10 font-bold" : ""
-                }`}
+                className={`flex py-3 px-4 w-full items-center gap-3 rounded-lg hover:bg-base-bg/70 transition-all duration-300 ${isRouteActive(link.route) ? "bg-black/10 font-bold" : ""
+                  }`}
               >
                 <Image
                   width={20}
@@ -205,8 +202,8 @@ export default function MobileSidebar() {
         {/* Footer Links */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[#EAEAEA] bg-white">
           <div className="flex items-center justify-center gap-6">
-            <Link 
-              className="text-sm text-light-text" 
+            <Link
+              className="text-sm text-light-text"
               href={ROUTE_IMPRESSUM}
               onClick={handleLinkClick}
             >

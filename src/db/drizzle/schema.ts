@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index, primaryKey } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -267,6 +267,34 @@ export const doc_cost_category_defaults = pgTable("doc_cost_category_defaults", 
 	pgPolicy("Enable read access for all users", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
 ]);
 
+
+
+export const agencies = pgTable('agencies', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	name: text('name').notNull(),
+	isActive: boolean('is_active').notNull().default(true),
+	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+	pgPolicy('super_admins_full_access', {
+		as: 'permissive',
+		for: 'all',
+		to: ["authenticated"],
+		using: sql`auth.role() = 'super_admin'`,
+	}),
+	pgPolicy('', {
+		as: 'permissive',
+		for: 'select',
+		to: 'authenticated',
+		using: sql`auth.role() = 'admin'`,
+	}),
+	pgPolicy('', {
+		as: 'permissive',
+		for: 'update',
+		to: 'authenticated',
+		using: sql`auth.role() = 'admin'`,
+	}),
+]);
+
 export const users = pgTable("users", {
 	id: uuid().primaryKey().notNull(),
 	email: text().notNull(),
@@ -274,12 +302,18 @@ export const users = pgTable("users", {
 	last_name: text().notNull(),
 	permission: text().default('user').notNull(),
 	has_seen_tour: boolean().default(false).notNull(),
+	agency_id: uuid(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 		columns: [table.id],
 		foreignColumns: [table.id],
 		name: "users_id_fkey"
+	}).onDelete("cascade"),
+	foreignKey({
+		columns: [table.agency_id],
+		foreignColumns: [agencies.id],
+		name: "agency_id_fkey"
 	}).onDelete("cascade"),
 	pgPolicy("Users can insert their own record", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`(auth.uid() = id)` }),
 	pgPolicy("Users can read their own data", { as: "permissive", for: "select", to: ["public"] }),
@@ -441,4 +475,4 @@ export const leads = pgTable("leads", {
 		to: ["authenticated"],
 		using: sql`auth.role() = 'admin'`
 	}),
-])
+]);

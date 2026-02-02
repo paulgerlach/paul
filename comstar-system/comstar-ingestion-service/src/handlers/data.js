@@ -7,7 +7,7 @@ class DataHandler {
     this.isUrgent = false;
     this.meterMapping = null;
     this.parser = null;
-    this.key = "0102030405060708090A0B0C0D0E0F11";
+    this.key = process.env.COMSTAR_ENCRYPTION_KEY;
   }
 
   async initialize() {

@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index, char } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, pgPolicy, uuid, timestamp, boolean, numeric, text, jsonb, date, unique, varchar, integer, pgEnum, index } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const doc_cost_category_allocation_key = pgEnum("doc_cost_category_allocation_key", ['Wohneinheiten', 'Verbrauch', 'm2 Wohnfläche'])
@@ -594,8 +594,8 @@ export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 	timestamp: integer().notNull(),  // Unix timestamp
 	telegram_hex: text().notNull(),  // Binary data as hex string
 	rssi: integer(),  // Received Signal Strength Indicator in dBm
-	mode: char({ length: 1 }),  // 'C', 'T', 'S', 'X', 'U' as per documentation
-	type: char({ length: 1 }),  // 'A', 'B', 'X', 'U' as per documentation
+	mode: text(),  // 'C', 'T', 'S', 'X', 'U' as per documentation
+	type: text(),  // 'A', 'B', 'X', 'U' as per documentation
 	meter_number: text(),  // Extracted from telegram
 	manufacturer_code: text(),
 	version: text(),

@@ -37,8 +37,6 @@ class DataHandler {
     key: Buffer.from(this.key, "hex")     
       }
     );
-
-    console.log('Result========>', result)
     
     const meterId = result.meter.id;
     const meterManufacturer = result.meter.manufacturer;

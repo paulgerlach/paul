@@ -235,7 +235,6 @@ class DatabaseService {
   }
 
   async insertGatewayDeviceDetails(gateway_eui, model, metadata, gatewayData) {
-    console.log("Naples===>", gatewayData.firmware_details)
     try {
       const { data, error } = await supabase
         .from('gateway_devices')

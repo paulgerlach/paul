@@ -150,7 +150,7 @@ class MqttHandler {
     const startTime = Date.now();
     try {
       // Extract gateway EUI and message type from topic
-      const { gatewayEui, messageType } = this.parseTopic(topic);
+      const { gatewayEui, messageType, direction } = this.parseTopic(topic);
       
       if (!gatewayEui || !messageType) {
         console.error({ topic }, 'Could not parse topic');

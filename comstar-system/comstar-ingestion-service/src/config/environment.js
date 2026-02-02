@@ -4,8 +4,6 @@ dotenv.config({ path: '.env.local' });
 // Validate required environment variables
 const requiredEnvVars = [
   'MQTT_BROKER',
-  'MQTT_USERNAME',
-  'MQTT_PASSWORD',
   'SUPABASE_URL',
   'SUPABASE_SERVICE_KEY'
 ];

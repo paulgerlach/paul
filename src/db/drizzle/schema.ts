@@ -619,3 +619,20 @@ export const firmware_history = pgTable("firmware_history", {
 }, (table) => [
 	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
 ]);
+
+// Severity enum
+export const severityEnum = pgEnum('alert_severity', ['info', 'warning', 'error', 'critical']);
+
+export const gatewayAlerts = pgTable('gateway_alerts', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	gatewayEui: varchar('gateway_eui', { length: 17 }).notNull(),
+	alertType: varchar('alert_type', { length: 50 }).notNull(),
+	severity: severityEnum('severity').notNull(),
+	message: text('message').notNull(),
+	data: jsonb('data'),
+	createdAt: timestamp('created_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
+	resolvedAt: timestamp('resolved_at', { mode: 'string', withTimezone: true }),
+	updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
+}, (table) =>[
+	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
+]);

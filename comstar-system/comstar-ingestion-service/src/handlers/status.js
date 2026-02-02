@@ -401,7 +401,7 @@ class StatusHandler {
       });
       
       // Store alerts in database
-      // await this.storeAlerts(gatewayEui, alerts);
+      await this.storeAlerts(gatewayEui, alerts);
     }
     
     return alerts;

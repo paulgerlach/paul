@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' }); 
+// import dotenv from 'dotenv';
+// dotenv.config({ path: '.env.local' }); 
 
 // Validate required environment variables
 const requiredEnvVars = [

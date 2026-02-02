@@ -1,4 +1,3 @@
-import logger from '../utils/logger.js';
 import databaseService from '../services/databaseService.js'
 
 class StatusHandler {

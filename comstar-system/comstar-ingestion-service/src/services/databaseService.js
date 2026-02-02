@@ -65,7 +65,7 @@ class DatabaseService {
 
       if (error) {
         //replace with logger
-        // console.error('Error fetching data:', error, meterId);
+        console.error('Error fetching data:', error, meterId);
       }
 
       if (!data) {

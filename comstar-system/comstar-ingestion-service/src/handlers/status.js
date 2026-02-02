@@ -77,6 +77,7 @@ class StatusHandler {
   }
   
   parseStatusData(data, gatewayEui) {
+    console.log("PARSE STATUS DATA====>", data)
     // Basic validation
     if (!data || typeof data !== 'object') {
       throw new Error('Invalid status data format');

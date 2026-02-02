@@ -3,7 +3,7 @@
  * Sends events to Denis's Make.com workflows
  */
 
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/66fhqggqew5ngf5p1bx4qobr88qjlj2q';
+const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
 
 type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
 
@@ -27,6 +27,11 @@ export async function sendWebhookEvent(
   additionalData?: Record<string, any>
 ): Promise<void> {
   try {
+    if (!MAKE_WEBHOOK_URL) {
+      console.warn('[WEBHOOK] MAKE_WEBHOOK_LEAK_DETECTION environment variable is not set. Skipping webhook.');
+      return;
+    }
+
     const payload: WebhookPayload = {
       event_type: eventType,
       email,

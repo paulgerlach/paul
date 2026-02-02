@@ -6,9 +6,9 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 /**
- * Webhook configuration
+ * Webhook configuration - uses environment variable for security
  */
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/66fhqggqew5ngf5p1bx4qobr88qjlj2q';
+const MAKE_WEBHOOK_URL = Deno.env.get('MAKE_WEBHOOK_LEAK_DETECTION');
 
 /**
  * Critical error keywords that trigger notifications
@@ -122,6 +122,12 @@ async function sendWebhook(
     propertyAddress?: string,
     apartmentInfo?: string
 ): Promise<void> {
+    // Validate webhook URL is configured
+    if (!MAKE_WEBHOOK_URL) {
+        console.warn('[WEBHOOK] Skipping notification - MAKE_WEBHOOK_LEAK_DETECTION environment variable is not set');
+        return;
+    }
+
     // Validate required fields to prevent empty notifications
     if (!email || !deviceId || !errorDescription) {
         console.warn('[WEBHOOK] Skipping notification - missing required fields:', { email: !!email, deviceId: !!deviceId, errorDescription: !!errorDescription });

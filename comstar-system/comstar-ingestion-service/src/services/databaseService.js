@@ -209,6 +209,40 @@ class DatabaseService {
     }
   }
 
+  
+
+  async insertGatewayAlert(
+    gateway_eui,
+    alert_type,
+    severity,
+    message,
+    alertData,
+    date
+  ) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_alerts')
+        .insert({
+        gateway_eui,
+        alert_type,
+        severity,
+        message,
+        data: alertData,
+        created_at : date,
+        resolved_at: date,
+        updated_at: date
+        })
+
+      if (error) {
+        console.error('Error insert gateway alerts data:', error);
+      }
+
+    } catch (error) {
+      console.error('Error gateway alerts data:', error);
+      return null;
+    }
+  }
+
 
   async getGatewayDeviceDetailsByGatewayEui(gatewayEui) { 
     try {

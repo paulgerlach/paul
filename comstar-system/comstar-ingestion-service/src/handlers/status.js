@@ -123,7 +123,15 @@ class StatusHandler {
       // Network
       network: {
         apn: data.apn || null,
-        connected: data.monitor ? data.monitor.includes('connected:1') : false,
+        connected: Boolean(
+          data.monitor && 
+          data.net === 'LTE-M' &&                     // or check if data.net exists and is truthy
+          data.monitor.includes('reg:') &&            // has registration info
+          !data.monitor.includes('reg:0') &&          // not unregistered (reg:0 usually = not registered)
+          data.monitor.includes('tac:') &&            // has valid TAC
+          data.monitor.includes('ci:') &&             // has valid cell ID
+          (data.rsrp > 0 || data.rsrp === undefined)  // RSRP positive or parsed elsewhere (27 is good here)
+        ),
         monitor_string: data.monitor || '',
         
         // Parse monitor string for more details

@@ -1,11 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useMemo, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
-import { useMemo } from "react";
 
 const WaterChart = dynamic(
   () => import("@/components/Basic/Charts/WaterChart"),

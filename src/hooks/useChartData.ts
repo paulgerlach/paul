@@ -15,7 +15,7 @@ const fetchChartData = async (
   startDate?: Date | null,
   endDate?: Date | null
 ): Promise<MeterReadingType[]> => {
-  if (!meterIds.length || !deviceTypes.length) {
+  if (!meterIds.length) {
     return [];
   }
 
@@ -68,10 +68,10 @@ export const useWaterChartData = (chartType: 'cold' | 'hot'): ChartDataHookResul
 
     try {
       // Support both OLD format ('Water', 'WWater') and NEW format ('Kaltwasserzähler', 'Warmwasserzähler')
-      const deviceTypes = chartType === 'cold' 
-        ? ['Water', 'Kaltwasserzähler'] 
+      const deviceTypes = chartType === 'cold'
+        ? ['Water', 'Kaltwasserzähler']
         : ['WWater', 'Warmwasserzähler'];
-      
+
       const chartData = await fetchChartData(meterIds, deviceTypes, startDate, endDate);
       setData(chartData);
     } catch (err) {
@@ -149,9 +149,9 @@ export const useHeatChartData = (): ChartDataHookResult => {
     try {
       // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler')
       const chartData = await fetchChartData(
-        meterIds, 
-        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'], 
-        startDate, 
+        meterIds,
+        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'],
+        startDate,
         endDate
       );
       setData(chartData);
@@ -192,12 +192,12 @@ export const useNotificationsChartData = (): ChartDataHookResult => {
     try {
       // Notifications chart needs all device types (both old and new format names)
       const chartData = await fetchChartData(
-        meterIds, 
+        meterIds,
         [
           'Heat', 'Water', 'WWater', 'Elec',  // OLD format
           'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'  // NEW format
-        ], 
-        startDate, 
+        ],
+        startDate,
         endDate
       );
       setData(chartData);
@@ -220,3 +220,68 @@ export const useNotificationsChartData = (): ChartDataHookResult => {
   return { data, loading, error, refetch };
 };
 
+export const useAllMeterData = (): ChartDataHookResult => {
+  const { meterIds, startDate, endDate } = useChartStore();
+  const [data, setData] = useState<MeterReadingType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!meterIds.length) {
+      setData([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Passing empty array for deviceTypes to fetch EVERYTHING
+      const chartData = await fetchChartData(meterIds, [], startDate, endDate);
+      setData(chartData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch all meter data');
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [meterIds, startDate, endDate]);
+
+  const refetch = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch };
+};
+
+export const useMeterHierarchy = (userId?: string): { data: any; loading: boolean } => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchHierarchy = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/meter-hierarchy?userId=${userId}`);
+        if (response.ok) {
+          const result = await response.json();
+          setData(result);
+        }
+      } catch (error) {
+        console.error('Failed to fetch meter hierarchy:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHierarchy();
+  }, [userId]);
+
+  return { data, loading };
+};

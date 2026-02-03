@@ -2,11 +2,11 @@
 import { Section, Text, Button, Link,  Column,
   Row, Img } from '@react-email/components';
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
+
 
 export const HeidiConfirmEmail = () => {
-    const loginUrl = "https://heidisystems.com";
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(loginUrl)}&format=png&color=2F6121&bgcolor=FFFFFF&margin=10`;
-  return (
+ return (
     <EmailLayout previewText="Confirm your email address" variant="light">
       <Section className="bg-white border border-solid border-[#E5E5E5] rounded-[24px] p-[40px] mt-[13px]">
   <Text className="text-[#1A1A1A] text-[20px] font-semibold m-0 mb-[20px]">
@@ -32,33 +32,12 @@ export const HeidiConfirmEmail = () => {
             Schneller Zugriff nach der Bestätigung:
           </Text>
           
-          <Row>
-            <Column width="40%" align="center">
-              <div className="bg-white p-[12px] rounded-[12px] border border-solid border-[#E5E5E5] inline-block">
-                <Img
-                  src={qrCodeUrl}
-                  alt="Heidi Systems Login QR Code"
-                  width="130"
-                  height="130"
-                  className="mx-auto"
-                />
-              </div>
-            </Column>
-            <Column width="60%" className="pl-[20px]">
-              <Text className="text-[#404040] text-[14px] leading-[20px] m-0 mb-[12px]">
-                <strong>Scan für schnellen Login</strong>
-              </Text>
-              <Text className="text-[#404040] text-[14px] leading-[20px] m-0 mb-[16px]">
-                Nach der Bestätigung deiner E-Mail, scanne diesen QR-Code mit deinem Smartphone für direkten Zugriff auf dein Heidi-Konto.
-              </Text>
-              <Link
-                href={loginUrl}
-                className="text-[#2F6121] text-[14px] font-medium underline"
-              >
-                Zum Login-Formular →
-              </Link>
-            </Column>
-          </Row>
+          <SharedQrLoginSection
+  size={130}
+  title="Schneller Zugriff nach der Bestätigung:"
+  description="Nach der Bestätigung deiner E-Mail scanne diesen QR-Code für direkten Zugriff."
+  buttonText="Zum Login-Formular"
+/>
         </Section>
 
   <Text className="text-[#404040] text-[16px] leading-[24px] m-0 mb-[24px]">

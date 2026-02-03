@@ -10,6 +10,8 @@ interface ChartState {
   chartHeights: Record<string, number>;
 
   setChartHeight: (key: string, height: number) => void;
+  isTableView: boolean;
+  setIsTableView: (isTable: boolean) => void;
 }
 
 export const useChartStore = create<ChartState>()(
@@ -29,13 +31,15 @@ export const useChartStore = create<ChartState>()(
           },
         })),
 
-      setMeterIds: (ids: string[]) => {
+      isTableView: false,
+  setMeterIds: (ids: string[]) => {
         set({
           meterIds: ids?.length ? Array.from(new Set(ids)) : [],
         });
       },
 
       setDates: (start, end) => set({ startDate: start, endDate: end }),
+  setIsTableView: (isTable: boolean) => set({ isTableView: isTable }),
     }),
     {
       name: "dashboard-chart-layout",

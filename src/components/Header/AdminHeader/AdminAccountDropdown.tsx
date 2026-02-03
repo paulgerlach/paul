@@ -18,13 +18,16 @@ const labelStyle = "text-xs font-medium text-gray-500";
 
 const ModalFooter = ({ onClose }: { onClose?: () => void }) => (
   <div className="flex justify-between items-center pt-6 mt-2">
-    <button 
+    <button
       onClick={onClose}
       className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
     >
       Abbrechen
     </button>
-    <button 
+
+    {/* TODO(form): UI-only – no submit logic yet, align with react-hook-form */}
+    <button
+      type="button"
       className="px-6 py-2.5 text-sm font-medium text-white bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors"
     >
       Speichern
@@ -32,7 +35,10 @@ const ModalFooter = ({ onClose }: { onClose?: () => void }) => (
   </div>
 );
 
+
 // --- 1. Mein Profil Form ---
+// TODO(form): UI-only form, not wired up.
+// Align with react-hook-form (useForm / register / handleSubmit)
 const ProfileEditForm = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className="flex flex-col gap-5 mt-2">
@@ -73,88 +79,149 @@ const ProfileEditForm = ({ onClose }: { onClose?: () => void }) => {
 };
 
 // --- 2. Unternehmensdaten Form (Company Data) ---
+// TODO(form): UI-only form. Submission + validation pending.
 const CompanyDataForm = ({ onClose }: { onClose?: () => void }) => {
   return (
-    <div className="flex flex-col gap-5 mt-2">
+    <div className="flex flex-col gap-6 mt-4">
+      {/* Top Row: Company Name & Logo */}
+      <div className="flex gap-6 items-start">
+        <div className="flex-grow space-y-1.5">
+          <label className={labelStyle}>Firmenname *</label>
+          <input type="text" className={inputStyle} />
+        </div>
+        
+        <div className="flex-shrink-0">
+          <label className={labelStyle}>Firmenlogo</label>
+          <div className="w-[180px] h-[72px] border-2 border-dashed border-blue-200 rounded-xl flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
+             <span className="text-[10px] text-blue-400 text-center px-4">
+                Logo hinzufügen<br/>(320 × 100 px)
+             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Rechnungsadresse Header */}
+      <div className="space-y-4">
+        <h4 className="text-sm font-bold text-gray-900">Rechnungsadresse</h4>
+        
+        <div className="w-full space-y-1.5">
+          <label className={labelStyle}>Straßenname</label>
+          <input type="text" className={inputStyle} />
+        </div>
+
+        <div className="flex gap-4 w-full">
+          <div className="flex-1 space-y-1.5">
+            <label className={labelStyle}>Postleitzahl</label>
+            <input type="text" className={inputStyle} />
+          </div>
+          <div className="flex-1 space-y-1.5">
+            <label className={labelStyle}>Stadt</label>
+            <input type="text" className={inputStyle} />
+          </div>
+        </div>
+      </div>
+
       <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Firmenname *</label>
-        <input type="text" className={inputStyle} placeholder="Muster GmbH" />
-      </div>
-      
-      <div className="flex gap-4 w-full">
-        <div className="flex-[2] space-y-1.5">
-          <label className={labelStyle}>Straße</label>
-          <input type="text" className={inputStyle} />
-        </div>
-        <div className="flex-1 space-y-1.5">
-          <label className={labelStyle}>Nr.</label>
-          <input type="text" className={inputStyle} />
-        </div>
-      </div>
-
-      <div className="flex gap-4 w-full">
-        <div className="flex-1 space-y-1.5">
-          <label className={labelStyle}>PLZ</label>
-          <input type="text" className={inputStyle} />
-        </div>
-        <div className="flex-[2] space-y-1.5">
-          <label className={labelStyle}>Stadt</label>
-          <input type="text" className={inputStyle} />
-        </div>
-      </div>
-
-      {/* <div className="w-full space-y-1.5">
         <label className={labelStyle}>Umsatzsteuer-ID</label>
         <input type="text" className={inputStyle} />
-      </div> */}
+      </div>
+
       <ModalFooter onClose={onClose} />
     </div>
   );
 };
 
-// --- 3. Impressum & Datenschutz Form ---
-const LegalForm = ({ onClose }: { onClose?: () => void }) => {
+// --- Component for a single row (Nutzer + Rolle) ---
+const TeamMemberRow = () => (
+  <div className="flex gap-4 w-full">
+    <div className="flex-1 space-y-1">
+      <label className={labelStyle}>Nutzer</label>
+      <button className={inputStyle}>
+        <span className="text-transparent">Placeholder</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+    <div className="flex-1 space-y-1">
+      <label className={labelStyle}>Rolle</label>
+      <button className={inputStyle}>
+        <span className="text-transparent">Placeholder</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+);
+// --- 3. Team & Rolle Form ---
+// TODO(form): UI-only form. Submission + validation pending.
+const TeamRolesForm = ({ onClose }: { onClose?: () => void }) => {
+  const selectTriggerStyle = `${inputStyle} flex items-center justify-between text-gray-400 cursor-pointer hover:bg-gray-50`;
+
+  const Row = () => (
+    <div className="flex gap-4 w-full">
+      <div className="flex-1">
+        <label className={labelStyle}>Nutzer</label>
+        <div className={selectTriggerStyle}>
+          <span></span> {/* Empty state as shown in image */}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      </div>
+      <div className="flex-1">
+        <label className={labelStyle}>Rolle</label>
+        <div className={selectTriggerStyle}>
+          <span></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-5 mt-2">
-      <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Impressum (Link oder Text)</label>
-        <textarea rows={3} className={`${inputStyle} resize-none`} placeholder="https://..." />
+      <Row />
+      <Row />
+      <Row />
+      
+      <div className="w-full">
+        <label className={labelStyle}>Weitere Nutzer</label>
+        <button className="w-full py-3 border-2 border-dashed border-[#D1D5DB] rounded-lg flex items-center justify-start px-4 gap-2 text-[#9CA3AF] hover:bg-gray-50 transition-colors">
+          <span className="text-xl font-light">+</span>
+          <span className="text-sm">Weiteren Nutzer hinzufügen</span>
+        </button>
       </div>
-      <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Datenschutzerklärung (Link oder Text)</label>
-        <textarea rows={3} className={`${inputStyle} resize-none`} placeholder="https://..." />
-      </div>
-       <div className="p-3 bg-gray-50 rounded border border-gray-100 text-xs text-gray-500 leading-relaxed">
-         Diese Informationen werden im Footer des Dashboards für Ihre Mieter angezeigt.
-       </div>
       <ModalFooter onClose={onClose} />
     </div>
   );
 };
 
 // --- 4. Sicherheit (Security) ---
+// TODO(form): UI-only form. Submission + validation pending.
 const SecurityForm = ({ onClose }: { onClose?: () => void }) => {
   return (
-    <div className="flex flex-col gap-5 mt-2">
-      <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Altes Passwort</label>
-        <input type="password" className={inputStyle} />
+    <div className="flex flex-col gap-6 mt-2">
+      <div className="w-full">
+        <label className={labelStyle}>Email Adresse *</label>
+        <input type="email" className={inputStyle} />
       </div>
-      <div className="border-t border-gray-100 my-1"></div>
-      <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Neues Passwort</label>
+      
+      <div className="w-full space-y-2">
+        <label className={labelStyle}>Passwort</label>
         <input type="password" className={inputStyle} />
+        <button 
+          type="button" 
+          className="text-xs text-[#6366F1] hover:underline block pt-1"
+        >
+          Passwort reset
+        </button>
       </div>
-      <div className="w-full space-y-1.5">
-        <label className={labelStyle}>Passwort bestätigen</label>
-        <input type="password" className={inputStyle} />
+
+      <div className="pt-4">
+        <ModalFooter onClose={onClose} />
       </div>
-      <ModalFooter onClose={onClose} />
     </div>
   );
 };
 
 // --- 5. Integrationen ---
+// TODO(form): Correct UI needed! + Submission + validation pending.
 const IntegrationsForm = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className="flex flex-col gap-5 mt-2">
@@ -195,6 +262,7 @@ const IntegrationsForm = ({ onClose }: { onClose?: () => void }) => {
 };
 
 // --- 6. Support ---
+// TODO(form): TODO(form): Correct UI needed! + Submission + validation pending.
 const SupportForm = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className="flex flex-col gap-5 mt-2">
@@ -236,7 +304,7 @@ export default function AdminAccountDropdown() {
   const menuItems: { title: string; component: ReactNode }[] = [
     { title: "Mein Profil", component: <ProfileEditForm /> },
     { title: "Unternehmensdaten", component: <CompanyDataForm /> },
-    { title: "Impressum & Datenschutz", component: <LegalForm /> },
+    { title: "Team & Rollen", component: <TeamRolesForm /> },
     { title: "Sicherheit", component: <SecurityForm /> },
     { title: "Integrationen", component: <IntegrationsForm /> },
     { title: "Support", component: <SupportForm /> },

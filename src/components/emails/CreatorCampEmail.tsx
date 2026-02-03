@@ -10,6 +10,7 @@ import {
   Link
 } from '@react-email/components';
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
 
 interface CreatorCampEmailProps {
   userFirstName?: string;
@@ -18,8 +19,7 @@ interface CreatorCampEmailProps {
 export const CreatorCampEmail = ({
   userFirstName = 'there',
 }: CreatorCampEmailProps) => {
-  const loginUrl = "https://heidisystems.com";
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(loginUrl)}&format=png&color=2F6121&bgcolor=FFFFFF&margin=10`;
+
   return (
     <EmailLayout previewText="Mach aus Beständigkeit Creator-Selbstvertrauen">
       {/* Headline */}
@@ -54,49 +54,14 @@ export const CreatorCampEmail = ({
       </Section>
 
        {/* QR Code Login Section - Matching the creative camp theme */}
-      <Section className="mt-[32px] mb-[24px] text-center border border-solid border-[#E5E5E5] rounded-[24px] p-[30px] bg-gradient-to-br from-white to-[#F8FDF4]">
-        <Text className="text-gray-900 text-lg font-semibold mb-[16px]">
-          🚀 Schneller Start ins Creator Camp
-        </Text>
-        
-        <Text className="text-gray-700 text-base leading-6 mb-[24px]">
-          Logge dich schnell mit dem QR-Code ein, um dein Profil für das Camp vorzubereiten<br />
-          und direkt mit der Planung zu starten.
-        </Text>
 
-        <Row align="center">
-          <Column align="center">
-            <div className="inline-block bg-white p-[14px] rounded-[16px] border border-solid border-[#E5E5E5] shadow-sm">
-              <Img
-                src={qrCodeUrl}
-                alt="Heidi Systems Creator Camp Login QR Code"
-                width="140"
-                height="140"
-                className="mx-auto"
-              />
-            </div>
-            <Text className="text-gray-600 text-sm mt-[16px] mb-[20px]">
-              Scan mit deiner Smartphone-Kamera für direkten Login
-            </Text>
-            
-            
-              <Text className="text-gray-700 text-sm mb-[12px]">
-                Oder verwende den direkten Link:
-              </Text>
-              <Button
-          href={loginUrl}
-          className="rounded-full text-lg font-medium no-underline px-8 py-4"
-          style={{
-            backgroundColor: '#BDEAA4',
-            color: '#2F6121',
-          }}
-        >
-          Einloggen
-        </Button>
-            
-          </Column>
-        </Row>
-      </Section>
+        <SharedQrLoginSection
+          size={130}
+          title="Schneller Zugriff nach der Bestätigung:"
+          description="Nach der Bestätigung deiner E-Mail scanne diesen QR-Code für direkten Zugriff."
+          buttonText="Zum Login-Formular"
+        />
+      
 
       <Hr className="border border-solid border-[#eaeaea] my-[32px]" />
 

@@ -252,7 +252,7 @@ class StatusHandler {
   async storeStatus(gatewayEui, status) {
     try {
       
-      const alerts = await this.checkAlerts(gatewayEui, status);
+      await this.checkAlerts(gatewayEui, status);
 
       await databaseService.insertGatewayStatus(
         gatewayEui, //gateway_eui

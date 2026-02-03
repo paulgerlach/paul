@@ -26,11 +26,12 @@ class DatabaseService {
 
       if (error) {
         console.error('Error insert reading data:', error);
+        throw error;
       }
 
     } catch (error) {
       console.error('Error insert reading data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -45,13 +46,13 @@ class DatabaseService {
 
       if (error) {
         console.error('Error checking existing reading:', error);
-        return false;
+        throw error;
       }
 
       return data && data.length > 0;
     } catch (error) {
       console.error('Error checking existing reading:', error);
-      return false;
+      return error;
     }
   }
 
@@ -66,6 +67,7 @@ class DatabaseService {
       if (error) {
         //replace with logger
         console.error('Error fetching data:', error, meterId);
+        throw error;
       }
 
       if (!data) {
@@ -75,7 +77,7 @@ class DatabaseService {
       return data;
     } catch (error) {
       console.error('Error fetching meter by ID:', error);
-      return null;
+      return error;
     }
   }
 
@@ -90,6 +92,7 @@ class DatabaseService {
       if (error) {
         //replace with logger
         console.error('Error fetching gateway_desired_states data:', error, gatewayEui);
+        throw error;
       }
 
       if (!data) {
@@ -100,7 +103,7 @@ class DatabaseService {
       return data[0];
     } catch (error) {
       console.error('Error Gateway State data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -120,13 +123,13 @@ class DatabaseService {
 
       if (error) {
         console.error('Error setting desired gateway state:', error);
-        return null;
+        throw error;
       }
 
       return data;
     } catch (error) {
       console.error('Error setting desired gateway state:', error);
-      return null;
+      return error;
     }
   }
 
@@ -142,16 +145,18 @@ class DatabaseService {
       if (error) {
         //replace with logger
         console.error('Error fetching gateway_desired_states data:', error, gatewayEui);
+        throw error;
       }
 
       if (!data) {
         console.error({ gatewayEui }, 'Unknown Gateway EUI');
+        return null
       }
 
       return data;
     } catch (error) {
       console.error('Error Gateway State data:', error);
-      return null;
+      throw error;
     }
   }
 
@@ -201,11 +206,12 @@ class DatabaseService {
 
       if (error) {
         console.error('Error insert gateway status data:', error);
+        throw error
       }
 
     } catch (error) {
       console.error('Error gateway status data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -239,7 +245,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error gateway alerts data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -264,7 +270,7 @@ class DatabaseService {
       return data[0];
     } catch (error) {
       console.error('Error Gateway Device data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -291,7 +297,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error gateway status data:', error);
-      return null;
+      return error;
     }
   }
 
@@ -311,7 +317,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error inserting wmbus telegram  data:', error);
-      return null;
+      return error;
     }
   }
 

@@ -123,7 +123,15 @@ class StatusHandler {
       // Network
       network: {
         apn: data.apn || null,
-        connected: data.monitor ? data.monitor.includes('connected:1') : false,
+        connected: Boolean(
+          data.monitor && 
+          data.net === 'LTE-M' &&                     // or check if data.net exists and is truthy
+          data.monitor.includes('reg:') &&            // has registration info
+          !data.monitor.includes('reg:0') &&          // not unregistered (reg:0 usually = not registered)
+          data.monitor.includes('tac:') &&            // has valid TAC
+          data.monitor.includes('ci:') &&             // has valid cell ID
+          (data.rsrp > 0 || data.rsrp === undefined)  // RSRP positive or parsed elsewhere (27 is good here)
+        ),
         monitor_string: data.monitor || '',
         
         // Parse monitor string for more details
@@ -251,30 +259,8 @@ class StatusHandler {
   
   async storeStatus(gatewayEui, status) {
     try {
-      // Store in gateway_status table
-      // const query = `
-      //   INSERT INTO gateway_status (
-      //     gateway_eui,
-      //     timestamp,
-      //     battery_voltage,
-      //     battery_level,
-      //     temperature,
-      //     signal_strength,
-      //     signal_quality,
-      //     rsrp,
-      //     rsrq,
-      //     snr,
-      //     operator,
-      //     cell_id,
-      //     connected,
-      //     collecting,
-      //     telegrams_collected,
-      //     metadata,
-      //     alerts
-      //   ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-      // `;
       
-      const alerts = await this.checkAlerts(gatewayEui, status);
+      await this.checkAlerts(gatewayEui, status);
 
       await databaseService.insertGatewayStatus(
         gatewayEui, //gateway_eui
@@ -409,27 +395,15 @@ class StatusHandler {
   
   async storeAlerts(gatewayEui, alerts) {
     try {
-      const insertPromises = alerts.map(alert => {
-        const query = `
-          INSERT INTO gateway_alerts (
-            gateway_eui,
-            alert_type,
-            severity,
-            message,
-            data,
-            created_at,
-            resolved_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, NULL)
-        `;
-        
-        return databaseService.query(query, [
+      const insertPromises = alerts.map(alert => {        
+        return databaseService.insertGatewayAlert(
           gatewayEui,
           alert.type,
           alert.severity,
           alert.message,
           JSON.stringify(alert.data),
           new Date().toISOString()
-        ]);
+        );
       });
       
       await Promise.all(insertPromises);

@@ -9,7 +9,14 @@ if (process.env.NODE_ENV === 'production') {
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
   }
-  targets.push({ target: 'pino/file', options: { destination: path.join(logDir, 'app.log') } });
+  targets.push({
+    target: 'pino/file', options: {
+      destination: path.join(logDir, 'app.log'),
+      maxSize: 10485760, // 10MB
+      maxFiles: 5,
+      gzip: true
+    }
+  });
 } else {
   targets.push({ target: 'pino-pretty' });
 }

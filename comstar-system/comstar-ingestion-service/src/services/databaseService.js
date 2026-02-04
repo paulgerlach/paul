@@ -178,7 +178,8 @@ class DatabaseService {
         temperature,
         collected,
         telegram_count,
-        uploading_count
+    uploading_count,
+        time
   ) {
     try {
       const { data, error } = await supabase
@@ -201,7 +202,8 @@ class DatabaseService {
         temperature : parseInt(temperature),
         collected,
         telegram_count,
-        uploading_count
+          uploading_count,
+        time
         })
 
       if (error) {

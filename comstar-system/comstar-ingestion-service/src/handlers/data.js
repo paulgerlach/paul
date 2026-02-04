@@ -17,6 +17,7 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
+    console.log('PARSED USAGE DATA =====>>', data)
     if(data && data.d.telegram) {
       return this.handleTelegramData(gatewayEui, data.d.telegram);
     } else {

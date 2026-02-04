@@ -34,17 +34,37 @@ class DataHandler {
   }
 
   async handleTelegramData(gatewayEui, telegram) {
-    // console.log({ gatewayEui, telegram }, 'Processing telegram data');
-    // Process telegram data here
+    const telegramBuffer = Buffer.from(telegram, 'hex');
     const parser = new WirelessMbusParser();
-    const result = await parser.parse(
-      Buffer.from(telegram, 'hex'),
-      {
-    // verbose: true,
-    containsCrc: undefined,  
-    key: Buffer.from(this.key, "hex")     
+    
+    try {
+      // First try with original buffer
+      const result = await parser.parse(telegramBuffer, {
+        containsCrc: undefined,
+        key: Buffer.from(this.key, "hex")     
+      });
+      return await this.processParsedResult(gatewayEui, telegram, result);
+    } catch (error) {
+      if (error.message.includes('too short')) {
+        console.warn({ gatewayEui, length: telegramBuffer.length }, 'Short telegram, trying padded version');
+        
+        // Pad and retry
+        const paddedBuffer = Buffer.alloc(169);
+        telegramBuffer.copy(paddedBuffer);
+        
+        const result = await parser.parse(paddedBuffer, {
+          containsCrc: false,
+          key: Buffer.from(this.key, "hex")     
+        });
+        return await this.processParsedResult(gatewayEui, telegram, result);
       }
-    );
+      console.error({ gatewayEui, error: error.message }, 'Parse error');
+      return null;
+    }
+  }
+
+  async processParsedResult(gatewayEui, telegram, result) {
+    console.log("RESULT OF PROCESSING====>", result);
     
     const meterId = result.meter.id;
     const meterManufacturer = result.meter.manufacturer;
@@ -68,7 +88,6 @@ class DataHandler {
       return null;
     }
 
-    //Fields will come from Engelmann's pre-decoded CSV format - null for now
     const frame_type = null;
     const encryption = null;
 
@@ -77,30 +96,21 @@ class DataHandler {
       return null;
     }
 
-    // if (typeof meterType !== 'string' || meterType.trim() === '') {
-    //   console.warn({ gatewayEui, meterId }, 'Invalid or missing meter type');
-    //   return null;
-    // }
-
     if (typeof meterDeviceType !== 'string' || meterDeviceType.trim() === '') {
       console.warn({ gatewayEui, meterId }, 'Invalid or missing device type');
       return null;
     }
 
-    // Version is usually a number (0-255), but some parsers return string/hex
     if (typeof version !== 'number' && typeof version !== 'string') {
       console.warn({ gatewayEui, meterId }, 'Invalid version format');
       return null;
     }
 
-    // Status can be a number, string, or object depending on parser
-    // We'll accept anything non-null/undefined for now, but log if unexpected
     if (status === undefined || status === null) {
       console.warn({ gatewayEui, meterId }, 'Missing status field');
       return null;
     }
 
-    // Access number should be a positive integer
     if (typeof accessNo !== 'number' || accessNo < 0 || !Number.isInteger(accessNo)) {
       console.warn({ gatewayEui, meterId }, 'Invalid access number');
       return null;
@@ -125,8 +135,9 @@ class DataHandler {
       return null;
     }
 
-    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType)
-
+    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+    console.log('Telegram saved');
+    
     const exists = await databaseService.checkExistingReading(meter.id, timestamp);
     if (exists) {
       console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');

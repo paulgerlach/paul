@@ -3,9 +3,9 @@
  * Sends events to Denis's Make.com workflows
  */
 
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
+const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -27,6 +27,11 @@ export async function sendWebhookEvent(
   additionalData?: Record<string, any>
 ): Promise<void> {
   try {
+    if (!MAKE_WEBHOOK_URL) {
+      console.warn('[WEBHOOK] MAKE_WEBHOOK_LEAK_DETECTION environment variable is not set. Skipping webhook.');
+      return;
+    }
+
     const payload: WebhookPayload = {
       event_type: eventType,
       email,
@@ -93,3 +98,30 @@ export async function sendOfferInquiryEvent(
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
 
+/**
+ * Send leak detected event
+ * Triggered when CSV processing detects error flags indicating leaks or pipe breakage
+ */
+export async function sendLeakDetectedEvent(
+  email: string,
+  deviceId: string,
+  deviceType: string,
+  errorDescription: string,
+  propertyAddress?: string,
+  apartmentInfo?: string
+): Promise<void> {
+  // Validate required fields to prevent empty notifications
+  if (!email || !deviceId || !errorDescription) {
+    console.warn('[WEBHOOK] Skipping leakdetected event - missing required fields:', { email: !!email, deviceId: !!deviceId, errorDescription: !!errorDescription });
+    return;
+  }
+
+  await sendWebhookEvent('leakdetected', email, {
+    device_id: deviceId,
+    device_type: deviceType,
+    error_description: errorDescription,
+    property_address: propertyAddress,
+    apartment_info: apartmentInfo,
+    severity: 'critical'
+  });
+}

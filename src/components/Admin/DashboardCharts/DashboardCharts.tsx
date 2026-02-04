@@ -1,10 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import { useChartStore } from "@/store/useChartStore";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { useMeterHierarchy } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import DashboardTable from "./DashboardTable";
 
@@ -50,6 +53,24 @@ const EinsparungChart = dynamic(
 
 export default function DashboardCharts() {
 	const { meterIds, isTableView } = useChartStore();
+	const params = useParams();
+	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+	// Get the effective user ID for metadata lookups (needed for Table View hierarchy)
+	useEffect(() => {
+		const getUserId = async () => {
+			if (params?.user_id) {
+				setCurrentUserId(params.user_id as string);
+			} else {
+				const { data: { user } } = await supabase.auth.getUser();
+				if (user) setCurrentUserId(user.id);
+			}
+		};
+		getUserId();
+	}, [params]);
+
+	// Hierarchy data for Table View (building/unit/tenant mapping)
+	const hierarchy = useMeterHierarchy(currentUserId || undefined);
 
 	// Single unified data fetch with SWR caching (replaces 5 separate API calls)
 	const {
@@ -103,10 +124,11 @@ export default function DashboardCharts() {
 
 	// TABLE VIEW
 	if (isTableView) {
+		const isTableLoading = isLoading || hierarchy.loading;
 		return (
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 				<div className="col-span-full h-[492px]">
-					{isLoading ? (
+					{isTableLoading ? (
 						<div className="h-full flex items-center justify-center bg-white rounded-2xl border border-gray-100 shadow-sm text-center p-6">
 							<div className="flex flex-col items-center gap-4">
 								<div className="w-12 h-12 border-4 border-dark_green/20 border-t-dark_green rounded-full animate-spin" />
@@ -114,7 +136,7 @@ export default function DashboardCharts() {
 							</div>
 						</div>
 					) : (
-						<DashboardTable data={allData} />
+						<DashboardTable data={allData} hierarchy={hierarchy.data} />
 					)}
 				</div>
 			</ContentWrapper>

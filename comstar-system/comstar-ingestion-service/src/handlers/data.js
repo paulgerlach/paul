@@ -45,7 +45,8 @@ class DataHandler {
       });
       return await this.processParsedResult(gatewayEui, telegram, result);
     } catch (error) {
-      if (error.message.includes('too short')) {
+      if (error.message.includes('too short')|| 
+      error.message.includes('DIF extension')) {
         console.warn({ gatewayEui, length: telegramBuffer.length }, 'Short telegram, trying padded version');
         
         // Pad and retry

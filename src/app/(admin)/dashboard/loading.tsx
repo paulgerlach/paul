@@ -7,7 +7,7 @@ export default function DashboardLoading() {
   return (
     <div className="py-6 px-9 overflow-scroll">
       <Breadcrumb backTitle="Objekte" link={ROUTE_OBJEKTE} title="Dashboard" />
-      <ContentWrapper className="grid gap-3 grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
+      <ContentWrapper className="grid gap-3 grid-cols-3 max-large:grid-cols-2 max-medium:grid-cols-1">
         <div className="flex flex-col gap-3">
           <div className="h-[312px]"><ChartCardSkeleton /></div>
           <div className="h-[273px]"><ChartCardSkeleton /></div>

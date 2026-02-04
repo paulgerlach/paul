@@ -290,7 +290,7 @@ import hsp from "@/asset/hsp.png";
 import idgim from "@/asset/idgim.png";
 import quarterback from "@/asset/quarterback.png";
 import raum from "@/asset/raum.png";
-import silverton from "@/asset/silverton.png";
+
 import vitec from "@/asset/vitec.png";
 import wagner from "@/asset/wagner.png";
 import winfried from "@/asset/winfried.png";
@@ -340,7 +340,7 @@ export {
   idgim,
   quarterback,
   raum,
-  silverton,
+
   vitec,
   wagner,
   winfried,

@@ -238,7 +238,7 @@ export default function Nav() {
       <div className="max-large:py-3 max-large:w-full max-large:text-center">
         <Link
           onClick={() => handleBurgerMenu()}
-          href={ROUTE_HOME}
+          href="/#kunden"
           className="flex items-center text-base max-xl:text-sm text-dark_text justify-center gap-2 max-large:text-base"
         >
           Kunden

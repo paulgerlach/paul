@@ -19,12 +19,12 @@ export default function StepTwoUnder50({
 				<span className="max-small:hidden"><br /></span>
 				betreuen und bei denen die Umrüstung auf Int. Systeme
 			</p>
-			<div className="flex max-small:flex-col items-center justify-start gap-4">
+			<div className="flex items-start justify-start gap-4">
 				<button
 					onClick={() =>
 						setValue("wohnungen_count", Math.max((stepValue ?? 1) - 1, 1))
 					}
-					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center -mt-10"
+					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center mt-2"
 					type="button"
 				>
 					-
@@ -43,7 +43,7 @@ export default function StepTwoUnder50({
 				</div>
 				<button
 					onClick={() => setValue("wohnungen_count", (stepValue ?? 1) + 1)}
-					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center -mt-10"
+					className="text-lg cursor-pointer text-dark_text size-12 rounded-full bg-dark_green/5 flex items-center justify-center mt-2"
 					type="button"
 				>
 					+
@@ -52,4 +52,3 @@ export default function StepTwoUnder50({
 		</div>
 	);
 }
-

@@ -17,13 +17,20 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    console.log('PARSED USAGE DATA =====>>', data)
-    if(data && data.d.telegram) {
-      return this.handleTelegramData(gatewayEui, data.d.telegram);
-    } else {
-      console.warn({ gatewayEui, data }, 'No telegram data found');
-      return null;
+    console.log('PARSED USAGE DATA =====>>', data);
+    if (data && data.batch && Array.isArray(data.batch)) {
+    // Handle batch of telegrams
+    for (const item of data.batch) {
+      if (item.telegram) {
+        await this.handleTelegramData(gatewayEui, item.telegram);
+      }
     }
+  } else if(data && data.d.telegram) {
+      return this.handleTelegramData(gatewayEui, data.d.telegram);
+  } else {
+    console.warn({ gatewayEui, data }, 'No telegram data found');
+    return null;
+  }
   }
 
   async handleTelegramData(gatewayEui, telegram) {

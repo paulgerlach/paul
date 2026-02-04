@@ -190,7 +190,7 @@ export async function fetchSharedDashboardData(
       acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
-    console.log('[SharedDashboard] Device types in RAW data:', rawDeviceTypeBreakdown);
+    logger.log('[SharedDashboard] Device types in RAW data:', rawDeviceTypeBreakdown);
 
     // Transform database records to match the expected MeterReadingType format
     // Same transformation as /api/dashboard-data/route.ts

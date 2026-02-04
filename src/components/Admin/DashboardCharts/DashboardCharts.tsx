@@ -62,15 +62,7 @@ export default function DashboardCharts() {
 		error
 	} = useDashboardData();
 
-	// Memoized combination for EinsparungChart
-	const einsparungChartData = useMemo(() => [
-		...coldWaterData,
-		...hotWaterData,
-		...electricityData,
-		...heatData,
-	], [coldWaterData, hotWaterData, electricityData, heatData]);
-
-	// Combined data for Table View (all device types)
+	// Combined data for EinsparungChart and Table View (all device types)
 	const allData = useMemo(() => [
 		...coldWaterData,
 		...hotWaterData,
@@ -213,8 +205,8 @@ export default function DashboardCharts() {
 						<ChartCardSkeleton />
 					) : (
 						<EinsparungChart
-							selectedData={einsparungChartData}
-							isEmpty={einsparungChartData.length === 0}
+							selectedData={allData}
+							isEmpty={allData.length === 0}
 							emptyTitle="Keine Daten verfügbar."
 							emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
 						/>

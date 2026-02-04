@@ -15,10 +15,11 @@ export default function StepTwoOver50({
 				Anzahl der Messdienstleister
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Bitte geben Sie an, mit wie vielen Messdienstleistern Sie derzeit<br />
+				Bitte geben Sie an, mit wie vielen Messdienstleistern Sie derzeit{" "}
+				<span className="max-small:hidden"><br /></span>
 				zusammenarbeiten.
 			</p>
-			<div className="flex items-center justify-start gap-4">
+			<div className="flex max-small:flex-col items-center justify-start gap-4">
 				<button
 					onClick={() =>
 						setValue("messdienstleister_count", Math.max((stepValue as number) - 1, 1))

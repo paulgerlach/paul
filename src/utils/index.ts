@@ -6,6 +6,7 @@ import {
   special_purpose,
   basement,
   staircase,
+  multi_family,
   cost_type_water_drop,
   cost_type_pipe,
   cost_type_heater,

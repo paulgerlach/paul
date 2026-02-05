@@ -10,6 +10,8 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useMeterHierarchy } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import DashboardTable from "./DashboardTable";
+import { useRef } from "react";
+
 
 const WaterChart = dynamic(
 	() => import("@/components/Basic/Charts/WaterChart"),
@@ -50,6 +52,54 @@ const EinsparungChart = dynamic(
 		ssr: false,
 	},
 );
+
+function ResizableChart({
+  id,
+  defaultHeight,
+  minHeight,
+  children,
+}: {
+  id: string;
+  defaultHeight: number;
+  minHeight: number;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { chartHeights, setChartHeight } = useChartStore();
+
+  const height = chartHeights[id] ?? defaultHeight;
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const element = ref.current;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newHeight = Math.round(entry.contentRect.height);
+        setChartHeight(id, newHeight);
+      }
+    });
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [id, setChartHeight]);
+
+  return (
+    <div
+      ref={ref}
+      className="resize overflow-hidden rounded-lg w-full max-w-full min-w-0"
+      style={{
+        height,
+        minHeight,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 
 export default function DashboardCharts() {
 	const { meterIds, isTableView } = useChartStore();
@@ -144,97 +194,102 @@ export default function DashboardCharts() {
 	}
 
 	// CHART VIEW (ORIGINAL)
-	return (
-		<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
-			{/* Column 1: Kaltwasser + Warmwasser */}
-			<div className="flex flex-col gap-3">
-				<div className="h-[240px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<WaterChart
-							csvText={coldWaterData}
-							color="#6083CC"
-							title="Kaltwasser"
-							chartType="cold"
-							isEmpty={coldWaterData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
-						/>
-					)}
-				</div>
-				<div className="h-[240px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<WaterChart
-							csvText={hotWaterData}
-							color="#E74B3C"
-							title="Warmwasser"
-							chartType="hot"
-							isEmpty={hotWaterData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
-						/>
-					)}
-				</div>
-			</div>
+return (
+  <ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
+    
+    {/* Column 1: Kaltwasser + Warmwasser */}
+    <div className="flex flex-col gap-3">
+      <ResizableChart id="coldWater" defaultHeight={240} minHeight={160}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <WaterChart
+            csvText={coldWaterData}
+            color="#6083CC"
+            title="Kaltwasser"
+            chartType="cold"
+            isEmpty={coldWaterData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
 
-			{/* Column 2: Stromverbrauch + Heizkosten */}
-			<div className="flex flex-col gap-3">
-				<div className="h-[200px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<ElectricityChart
-							electricityReadings={electricityData}
-							isEmpty={electricityData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
-						/>
-					)}
-				</div>
-				<div className="h-[280px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<HeatingCosts
-							csvText={heatData}
-							isEmpty={heatData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
-						/>
-					)}
-				</div>
-			</div>
+      <ResizableChart id="hotWater" defaultHeight={240} minHeight={160}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <WaterChart
+            csvText={hotWaterData}
+            color="#E74B3C"
+            title="Warmwasser"
+            chartType="hot"
+            isEmpty={hotWaterData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
+    </div>
 
-			{/* Column 3: Benachrichtigungen + Einsparung (these stay together on tablet) */}
-			<div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1 max-medium:flex max-medium:flex-col">
-				<div className="h-[300px] max-[1300px]:h-[300px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<NotificationsChart
-							isEmpty={notificationsData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine Daten im ausgewählten Zeitraum."
-							parsedData={{ data: notificationsData, errors: [] }}
-						/>
-					)}
-				</div>
-				<div className="h-[180px] max-[1300px]:h-[300px]">
-					{isLoading ? (
-						<ChartCardSkeleton />
-					) : (
-						<EinsparungChart
-							selectedData={allData}
-							isEmpty={allData.length === 0}
-							emptyTitle="Keine Daten verfügbar."
-							emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
-						/>
-					)}
-				</div>
-			</div>
-		</ContentWrapper>
-	);
+    {/* Column 2: Strom + Heizung */}
+    <div className="flex flex-col gap-3">
+      <ResizableChart id="electricity" defaultHeight={200} minHeight={160}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <ElectricityChart
+            electricityReadings={electricityData}
+            isEmpty={electricityData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
+
+      <ResizableChart id="heating" defaultHeight={280} minHeight={180}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <HeatingCosts
+            csvText={heatData}
+            isEmpty={heatData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
+    </div>
+
+    {/* Column 3: Notifications + Einsparung */}
+    <div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1">
+      <ResizableChart id="notifications" defaultHeight={300} minHeight={200}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <NotificationsChart
+            parsedData={{ data: notificationsData, errors: [] }}
+            isEmpty={notificationsData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
+
+      <ResizableChart id="einsparung" defaultHeight={180} minHeight={140}>
+        {isLoading ? (
+          <ChartCardSkeleton />
+        ) : (
+          <EinsparungChart
+            selectedData={allData}
+            isEmpty={allData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
+          />
+        )}
+      </ResizableChart>
+    </div>
+  </ContentWrapper>
+);
+
 }

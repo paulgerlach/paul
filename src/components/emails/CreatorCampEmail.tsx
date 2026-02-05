@@ -7,8 +7,10 @@ import {
   Row,
   Column,
   Img,
+  Link
 } from '@react-email/components';
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
 
 interface CreatorCampEmailProps {
   userFirstName?: string;
@@ -17,6 +19,7 @@ interface CreatorCampEmailProps {
 export const CreatorCampEmail = ({
   userFirstName = 'there',
 }: CreatorCampEmailProps) => {
+
   return (
     <EmailLayout previewText="Mach aus Beständigkeit Creator-Selbstvertrauen">
       {/* Headline */}
@@ -49,6 +52,16 @@ export const CreatorCampEmail = ({
           Sichere dir deinen Platz →
         </Button>
       </Section>
+
+       {/* QR Code Login Section - Matching the creative camp theme */}
+
+        <SharedQrLoginSection
+          size={130}
+          title="Schneller Zugriff nach der Bestätigung:"
+          description="Nach der Bestätigung deiner E-Mail scanne diesen QR-Code für direkten Zugriff."
+          buttonText="Zum Login-Formular"
+        />
+      
 
       <Hr className="border border-solid border-[#eaeaea] my-[32px]" />
 

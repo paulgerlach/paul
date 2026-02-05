@@ -17,6 +17,8 @@ import {
 } from '@react-email/components';
 import vector from "@/asset/Vector.svg";
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
+
 
 interface HeidiYearlyReviewProps {
   userFirstName?: string;
@@ -37,7 +39,7 @@ export const HeidiYearlyReview = ({
   topPostUsername = 'heidisystems',
 }: HeidiYearlyReviewProps) => {
   const previewText = `Dein Heidi Systems Jahresrückblick 2025 ist da!`;
-
+  
   return (
     <EmailLayout previewText={previewText}>
       {/* Header Section */}
@@ -102,6 +104,13 @@ export const HeidiYearlyReview = ({
           <br />— deine Ideen heben richtig ab.
         </Text>
       </Section>
+
+      {/* QR Code Login Section - Integrated in dark theme */}
+      <SharedQrLoginSection
+        variant="dark"
+        showButton
+        buttonText="Zum Dashboard"
+      />
 
       {/* CTA Button */}
       <Section className="text-center mt-[32px] mb-[32px]">

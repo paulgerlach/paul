@@ -139,17 +139,17 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
   const headerTitle = "Mieteransicht";
 
   return (
-    <div className="min-h-screen bg-gray-50 max-md:bg-gray-100">
+    <div className="min-h-screen bg-gray-50 max-medium:bg-gray-100">
       {/* Simple Header with Essential Info Only */}
       <div className="bg-white shadow-sm border-b border-black/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-md:px-3 py-3 max-md:py-2">
-            <div className="flex items-center justify-between max-md:flex-col max-md:items-start max-md:gap-2">
-                <h1 className="text-xl max-md:text-lg font-bold text-gray-900 flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-medium:px-3 py-3 max-medium:py-2">
+            <div className="flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-2">
+                <h1 className="text-xl max-medium:text-lg font-bold text-gray-900 flex items-center gap-2">
                     <span className="text-blue-600">📊</span>
                     {headerTitle}
                 </h1>
                 {expirationInfo.expiryDate && (
-                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm max-md:text-xs font-medium">
+                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm max-medium:text-xs font-medium">
                     ⏰ Läuft ab: {expirationInfo.expiryDate.toLocaleDateString()}
                     </div>
                 )}
@@ -158,7 +158,7 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
       </div>
 
       {/* Dashboard Content - Compact View */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 max-md:px-0 py-2 max-md:py-1 overflow-x-hidden max-md:max-w-full">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 max-medium:px-0 py-2 max-medium:py-1 overflow-x-hidden max-medium:max-w-full">
         <SharedDashboardWrapper 
             filteredData={filteredData || []} 
             filters={{

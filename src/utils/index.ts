@@ -2,10 +2,10 @@ import { floorShortcuts } from "@/static/formSelectOptions";
 import {
   commercial,
   keys,
-  multi_family,
   parking_lot,
   special_purpose,
   basement,
+  staircase,
   cost_type_water_drop,
   cost_type_pipe,
   cost_type_heater,
@@ -147,6 +147,8 @@ export const handleLocalTypeIcon = (
       return special_purpose;
     case "basement":
       return basement;
+    case "hallway":
+      return staircase;
   }
 };
 

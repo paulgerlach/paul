@@ -14,7 +14,8 @@ export default function StepSixOver50({
 				Ihre Kontaktdaten
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für<br />
+				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für{" "}
+				<span className="max-small:hidden"><br /></span>
 				Sie passendes Angebot zukommen lassen können.
 			</p>
 			<div className="space-y-4">

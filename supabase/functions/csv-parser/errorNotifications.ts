@@ -16,7 +16,6 @@ const MAKE_WEBHOOK_URL = Deno.env.get('MAKE_WEBHOOK_LEAK_DETECTION');
 const CRITICAL_ERROR_KEYWORDS = [
     'Leckage erkannt',        // Leak detected
     'Leckage',                // Leakage
-    'Rohrbruch',              // Pipe broken
     'Kabelbruch',             // Cable break
     'Elektronik defekt',      // Electronics defect
     'Kurzschluss',            // Short circuit

@@ -19,7 +19,8 @@ const CRITICAL_ERROR_KEYWORDS = [
     'Kabelbruch',             // Cable break
     'Elektronik defekt',      // Electronics defect
     'Kurzschluss',            // Short circuit
-    'Sensorfehler'            // Sensor error
+    'Sensorfehler',           // Sensor error
+    'Rauchalarm'              // Smoke alarm!
 ];
 
 /**
@@ -45,8 +46,25 @@ const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
         5: "Rückfluss oder Blockade",
         6: "Leckage erkannt",
         7: "Überlasthinweis"
+    },
+    HAG: {
+        0: "Rauchalarm",
+        1: "Verschmutzung",
+        2: "Batterie schwach",
+        3: "Entnahme erkannt",
+        4: "Hindernis erkannt",
+        5: "Testalarm",
+        6: "Gerätestörung",
+        7: "Funksignal schwach"
+    },
+    IST: {
+        2: "Batterie schwach",
+        3: "Gerätefehler dauerhaft",
+        4: "Gerätefehler temporär"
     }
 };
+
+
 
 interface ParsedRecord {
     [key: string]: string | number;
@@ -60,11 +78,10 @@ function parseBinaryFlag(flagString: string | number): number {
     const flagStr = typeof flagString === "string" ? flagString : String(flagString);
     const cleanFlag = flagStr.replace(/^0?b/, '');
     if (cleanFlag === '') return 0;
-    try {
-        return parseInt(cleanFlag, 2);
-    } catch {
-        return parseInt(cleanFlag, 10) || 0;
-    }
+    const val = parseInt(cleanFlag, 2);
+    if (!isNaN(val)) return val;
+    return parseInt(cleanFlag, 10) || 0;
+
 }
 
 /**

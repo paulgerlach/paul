@@ -119,6 +119,7 @@ export function useAdminContractorsByContractID(contractID?: string, userID?: st
     queryKey: ["contractors", contractID, userID],
     queryFn: () => getAdminContractorsByContractID(contractID, userID),
     refetchOnWindowFocus: false,
+    enabled: !!contractID && !!userID && userID !== "undefined", // Prevent query with invalid IDs
   });
 }
 
@@ -295,6 +296,7 @@ export function useUsersObjektsWithLocals(user_id?: string) {
     queryKey: ["objekts_with_locals", user_id],
     queryFn: () => getUsersObjektsWithLocals(user_id),
     refetchOnWindowFocus: false,
+    enabled: !!user_id && user_id !== "undefined", // Prevent query when user_id is invalid
   });
 }
 

@@ -1,5 +1,6 @@
 import config from '../config/environment.js';
 import databaseService from '../services/databaseService.js';
+import logger from '../utils/logger.js';
 
 class DeviceHandler {
   constructor() {

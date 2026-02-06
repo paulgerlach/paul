@@ -31,7 +31,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error insert reading data:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -52,7 +52,7 @@ class DatabaseService {
       return data && data.length > 0;
     } catch (error) {
       console.error('Error checking existing reading:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -62,7 +62,7 @@ class DatabaseService {
         .from('local_meters')
         .select('*')
         .eq('meter_number', meterId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         //replace with logger
@@ -72,12 +72,13 @@ class DatabaseService {
 
       if (!data) {
         console.error({ meterId }, 'Unknown meter ID, skipping');
+        return null;
       }
 
       return data;
     } catch (error) {
       console.error('Error fetching meter by ID:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -140,7 +141,7 @@ class DatabaseService {
         .select('*')
         .eq('gateway_eui', gatewayEui)
         .eq('etag', etag)
-        .single();
+        .maybeSingle();
 
       if (error) {
         //replace with logger
@@ -213,7 +214,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error gateway status data:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -247,7 +248,7 @@ class DatabaseService {
 
     } catch (error) {
       console.error('Error gateway alerts data:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -272,7 +273,7 @@ class DatabaseService {
       return data[0];
     } catch (error) {
       console.error('Error Gateway Device data:', error);
-      return error;
+      throw error;
     }
   }
 
@@ -294,12 +295,13 @@ class DatabaseService {
         })
 
       if (error) {
-        console.error('Error insert gateway status data:', error);
+        console.error('Error insert gateway device details data:', error);
+        throw error;
       }
 
     } catch (error) {
-      console.error('Error gateway status data:', error);
-      return error;
+      console.error('Error gateway device details data:', error);
+      throw error;
     }
   }
 
@@ -315,11 +317,12 @@ class DatabaseService {
 
       if (error) {
         console.error('Error inserting wmbus telegram data:', error);
+        throw error;
       }
 
     } catch (error) {
       console.error('Error inserting wmbus telegram  data:', error);
-      return error;
+      throw error;
     }
   }
 

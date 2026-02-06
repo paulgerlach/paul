@@ -81,78 +81,86 @@ class DataHandler {
     if (typeof meterId !== 'string' || meterId.trim() === '') {
       console.warn({ gatewayEui }, 'Invalid or missing meter ID');
       return null;
-    }
-
-    const meter = await this.getLocalMeter(meterId);
-    if(!meter) {
-      console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
-      return null;
-    }
-
-    const frame_type = null;
-    const encryption = null;
-
-    if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
-      console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
-      return null;
-    }
-
-    if (typeof meterDeviceType !== 'string' || meterDeviceType.trim() === '') {
-      console.warn({ gatewayEui, meterId }, 'Invalid or missing device type');
-      return null;
-    }
-
-    if (typeof version !== 'number' && typeof version !== 'string') {
-      console.warn({ gatewayEui, meterId }, 'Invalid version format');
-      return null;
-    }
-
-    if (status === undefined || status === null) {
-      console.warn({ gatewayEui, meterId }, 'Missing status field');
-      return null;
-    }
-
-    if (typeof accessNo !== 'number' || accessNo < 0 || !Number.isInteger(accessNo)) {
-      console.warn({ gatewayEui, meterId }, 'Invalid access number');
-      return null;
-    }
-
-    const readings = result.data;
-    if (!readings || (Array.isArray(readings) ? readings.length === 0 : (typeof readings !== 'object' || Object.keys(readings).length === 0))) {
-      console.warn({ gatewayEui, meterId }, 'Invalid or empty readings, skipping');
-      return null;
-    }
-
-    // Deduplication - Prevent duplicate readings (same meter + timestamp)
-    let timestamp;
-    if (Array.isArray(readings)) {
-      const timePoint = readings.find(item => item.description === 'Time point');
-      timestamp = timePoint ? timePoint.value : null;
-    } else {
-      timestamp = readings.date;
-    }
-    if (!timestamp) {
-      console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
-      return null;
-    }
-
-    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
-    console.log('Telegram saved');
-    
-    const exists = await databaseService.checkExistingReading(meter.id, timestamp);
-    if (exists) {
-      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
-      return null;
-    }
-
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.id, frame_type, encryption);
-
-    return {
-      success: true,
-      gatewayEui,
-      meterId,
-      processedAt: new Date()
     };
+    
+    try{
+      const meter = await this.getLocalMeter(meterId);
+      if(!meter) {
+        console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
+        return null;
+      }
+
+      const frame_type = null;
+      const encryption = null;
+
+      if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
+        console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
+        return null;
+      }
+
+      if (typeof meterDeviceType !== 'string' || meterDeviceType.trim() === '') {
+        console.warn({ gatewayEui, meterId }, 'Invalid or missing device type');
+        return null;
+      }
+
+      if (typeof version !== 'number' && typeof version !== 'string') {
+        console.warn({ gatewayEui, meterId }, 'Invalid version format');
+        return null;
+      }
+
+      if (status === undefined || status === null) {
+        console.warn({ gatewayEui, meterId }, 'Missing status field');
+        return null;
+      }
+
+      if (typeof accessNo !== 'number' || accessNo < 0 || !Number.isInteger(accessNo)) {
+        console.warn({ gatewayEui, meterId }, 'Invalid access number');
+        return null;
+      }
+
+      const readings = result.data;
+      if (!readings || (Array.isArray(readings) ? readings.length === 0 : (typeof readings !== 'object' || Object.keys(readings).length === 0))) {
+        console.warn({ gatewayEui, meterId }, 'Invalid or empty readings, skipping');
+        return null;
+      }
+
+      // Deduplication - Prevent duplicate readings (same meter + timestamp)
+      let timestamp;
+      if (Array.isArray(readings)) {
+        const timePoint = readings.find(item => item.description === 'Time point');
+        timestamp = timePoint ? timePoint.value : null;
+      } else {
+        timestamp = readings.date;
+      }
+      if (!timestamp) {
+        console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
+        return null;
+      }
+
+      await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+      console.log('Telegram saved');
+
+      const exists = await databaseService.checkExistingReading(meter.id, timestamp);
+      if (exists) {
+        console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+        return null;
+      }
+
+      await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.id, frame_type, encryption);
+
+      return {
+        success: true,
+        gatewayEui,
+        meterId,
+        processedAt: new Date()
+      };
+    } catch (error) {
+      logger.error({
+        gatewayEui,
+        etag,
+        error: error.message
+      }, 'Error fetching base configuration');
+    }
   }
 
   async getLocalMeter(meterId) {

@@ -33,8 +33,18 @@ class SyncHandler {
     
       return response;
     } catch (error) {
-      console.error({ error, gatewayEui }, 'Sync handler error');
-      throw error;
+      logger.error({
+        gatewayEui,
+        requestedEtag: data?.etag || null,
+        error: error.message
+      }, 'Failed to get configuration');
+      
+      // Return minimal configuration to keep gateway running
+      return {
+        app: null,
+        boot: null,
+        etag: null
+      };
     }
 
   }

@@ -289,7 +289,12 @@ class DeviceHandler {
       return await databaseService.insertGatewayDeviceDetails(gatewayEui, model, metadata, data);
     } catch (error) {
       console.error(error);
-      throw error;
+      logger.error({
+        gatewayEui,
+        etag: data?.etag || null,
+        error: error.message
+      }, 'Error inserting gateway device details');
+      
     }
   }
 

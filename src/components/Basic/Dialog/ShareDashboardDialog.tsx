@@ -88,8 +88,10 @@ export default function ShareDashboardDialog() {
   };
 
   useEffect(() => {
-    handleShare();
-  }, [startDate, endDate, meterIds]); // Regenerate URL when state changes
+    if (isOpen) {
+      handleShare();
+    }
+  }, [isOpen, startDate, endDate, meterIds]); // Only regenerate URL when dialog is open
 
 
   const copyToClipboard = async () => {

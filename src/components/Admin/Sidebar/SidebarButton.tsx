@@ -13,11 +13,13 @@ export default function SidebarButton({
   isOpen,
   onClick,
   pathname,
+  disabled,
 }: {
   button: SidebarLinkType;
   isOpen: boolean;
   pathname: string;
   onClick: (index: string) => void;
+  disabled?: boolean;
 }) {
   const contentRef = useRef(null);
 
@@ -33,7 +35,7 @@ export default function SidebarButton({
   return (
     <div>
       <button
-        disabled={pathname === ROUTE_ADMIN}
+        disabled={disabled || pathname === ROUTE_ADMIN}
         className={`flex cursor-pointer py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center justify-between gap-3 rounded-base hover:bg-base-bg/70 ${
           isOpen ? "active" : ""
         } [.active]:bg-black/10 disabled:hover:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed`}

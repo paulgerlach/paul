@@ -4,22 +4,28 @@ import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/Basic/ui/Button";
-import { uploadObjektImage } from "@/apiClient";
+import { uploadObjektImage, adminUploadObjektImage } from "@/apiClient";
 import { FormItem, FormLabel } from "@/components/Basic/ui/Form";
 
 export type FormImageUploadProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   objektId: string;
+  /** Use admin API route to bypass RLS (for super admin uploads) */
+  useAdminUpload?: boolean;
 };
 
 export default function FormImageUpload<T extends FieldValues = FieldValues>({
   control,
   name,
   objektId,
+  useAdminUpload = false,
 }: FormImageUploadProps<T>) {
   const [isUploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Choose the appropriate upload function based on context
+  const uploadFn = useAdminUpload ? adminUploadObjektImage : uploadObjektImage;
 
   return (
     <Controller
@@ -54,7 +60,7 @@ export default function FormImageUpload<T extends FieldValues = FieldValues>({
               setUploading(true);
               setError(null);
               try {
-                const url = await uploadObjektImage(file, objektId);
+                const url = await uploadFn(file, objektId);
                 field.onChange(url);
               } catch (e: any) {
                 console.error(e);

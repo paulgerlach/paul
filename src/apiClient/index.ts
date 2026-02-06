@@ -119,6 +119,7 @@ export function useAdminContractorsByContractID(contractID?: string, userID?: st
     queryKey: ["contractors", contractID, userID],
     queryFn: () => getAdminContractorsByContractID(contractID, userID),
     refetchOnWindowFocus: false,
+    enabled: !!contractID && !!userID && userID !== "undefined", // Prevent query with invalid IDs
   });
 }
 
@@ -295,6 +296,7 @@ export function useUsersObjektsWithLocals(user_id?: string) {
     queryKey: ["objekts_with_locals", user_id],
     queryFn: () => getUsersObjektsWithLocals(user_id),
     refetchOnWindowFocus: false,
+    enabled: !!user_id && user_id !== "undefined", // Prevent query when user_id is invalid
   });
 }
 
@@ -559,6 +561,30 @@ export async function uploadObjektImage(file: File, objektId: string): Promise<s
 
   if (!data?.publicUrl) throw new Error("Could not get public URL");
 
+  return data.publicUrl;
+}
+
+/**
+ * Admin version of uploadObjektImage that uses server-side API route
+ * to bypass RLS policies - allows super admins to upload images
+ * for any building regardless of ownership
+ */
+export async function adminUploadObjektImage(file: File, objektId: string): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("objektId", objektId);
+
+  const response = await fetch("/api/admin/upload-building-image", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Upload failed");
+  }
+
+  const data = await response.json();
   return data.publicUrl;
 }
 

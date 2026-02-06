@@ -259,6 +259,7 @@ import cost_type_chimney_sweep_costs from "@/asset/cost_type_chimney_sweep_costs
 import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_costs.png";
 import building from "@/asset/building.svg";
 import basement from "@/asset/basement.png";
+import staircase from "@/asset/staircase.png";
 import deutscheWonhenUpd from "@/asset/deutsche_wohnen_upd.png";
 import buderusUpd from "@/asset/buderus_upd.png";
 import accentroUpd from "@/asset/accentro_upd.png";
@@ -417,6 +418,7 @@ export {
   commercial,
   special_purpose,
   basement,
+  staircase,
   multi_family,
   trend_down,
   white_check_green_box,

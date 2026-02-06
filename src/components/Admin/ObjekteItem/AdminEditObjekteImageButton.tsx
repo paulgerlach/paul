@@ -94,6 +94,7 @@ export default function AdminEditObjekteImageButton({
               control={methods.control}
               name="image_url"
               objektId={item.id ?? ""}
+              useAdminUpload={true}
             />
             <div className="flex items-center justify-between gap-2">
               <button

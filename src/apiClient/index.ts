@@ -564,6 +564,30 @@ export async function uploadObjektImage(file: File, objektId: string): Promise<s
   return data.publicUrl;
 }
 
+/**
+ * Admin version of uploadObjektImage that uses server-side API route
+ * to bypass RLS policies - allows super admins to upload images
+ * for any building regardless of ownership
+ */
+export async function adminUploadObjektImage(file: File, objektId: string): Promise<string> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("objektId", objektId);
+
+  const response = await fetch("/api/admin/upload-building-image", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Upload failed");
+  }
+
+  const data = await response.json();
+  return data.publicUrl;
+}
+
 async function getBasicUsers(): Promise<UserType[]> {
   const { data, error } = await supabase
     .from("users")

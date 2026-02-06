@@ -14,6 +14,18 @@ interface ChartState {
   setIsTableView: (isTable: boolean) => void;
 }
 
+// Helper to safely convert a value to a Date or null.
+// Zustand persist serializes Date objects as ISO strings via JSON.stringify.
+// On rehydration, JSON.parse leaves them as strings, so we must convert them back.
+const toDateOrNull = (value: unknown): Date | null => {
+  if (value instanceof Date) return value;
+  if (typeof value === "string" || typeof value === "number") {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+};
+
 export const useChartStore = create<ChartState>()(
   persist(
     (set) => ({
@@ -43,6 +55,16 @@ export const useChartStore = create<ChartState>()(
     }),
     {
       name: "dashboard-chart-layout",
+      // Convert date strings back to Date objects after rehydration from localStorage
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState ?? {}) as Partial<ChartState>;
+        return {
+          ...currentState,
+          ...persisted,
+          startDate: toDateOrNull(persisted.startDate),
+          endDate: toDateOrNull(persisted.endDate),
+        };
+      },
     }
   )
 );

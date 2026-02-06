@@ -67,8 +67,7 @@ class DeviceHandler {
         data: JSON.stringify(data)
       }, 'Failed to process device uplink');
       
-      //TODO: Possibly store failed attempt      
-      throw error;
+      return null
     }
   }
 
@@ -294,7 +293,7 @@ class DeviceHandler {
         etag: data?.etag || null,
         error: error.message
       }, 'Error inserting gateway device details');
-      
+      return null;
     }
   }
 

@@ -157,9 +157,10 @@ class DataHandler {
     } catch (error) {
       logger.error({
         gatewayEui,
-        telegram,
+        meterId,
         error: error.message
       }, 'Error processing telegram data');
+      return null;
     }
   }
 

@@ -82,7 +82,7 @@ class DataHandler {
       console.warn({ gatewayEui }, 'Invalid or missing meter ID');
       return null;
     };
-    
+
     try{
       const meter = await this.getLocalMeter(meterId);
       if(!meter) {
@@ -157,9 +157,9 @@ class DataHandler {
     } catch (error) {
       logger.error({
         gatewayEui,
-        etag,
+        telegram,
         error: error.message
-      }, 'Error fetching base configuration');
+      }, 'Error processing telegram data');
     }
   }
 

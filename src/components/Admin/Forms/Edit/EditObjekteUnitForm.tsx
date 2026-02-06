@@ -65,10 +65,13 @@ const unitTypeOptions: FormRadioOption<UnitType>[] = [
   },
 ];
 
+// Types that don't require floor/living_space
+const NON_RESIDENTIAL_TYPES = ["parking", "warehouse", "basement", "hallway"];
+
 const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
-  floor: z.string().min(1, "Pflichtfeld"),
-  living_space: z.coerce.number().min(1, "Pflichtfeld"),
+  floor: z.string().nullable(),
+  living_space: z.coerce.number().nullable(),
   house_location: z.string().nullable(),
   outdoor: z.string().nullable(),
   rooms: z.coerce.number().nullable(),
@@ -85,6 +88,24 @@ const localSchema = z.object({
     })
     .nullable(),
   documents: z.array(z.instanceof(File)).nullable(),
+}).superRefine((data, ctx) => {
+  // Only require floor and living_space for residential/commercial types
+  if (!NON_RESIDENTIAL_TYPES.includes(data.usage_type)) {
+    if (!data.floor || data.floor.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pflichtfeld",
+        path: ["floor"],
+      });
+    }
+    if (!data.living_space || data.living_space <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pflichtfeld",
+        path: ["living_space"],
+      });
+    }
+  }
 });
 
 export type EditObjekteUnitFormValues = z.infer<typeof localSchema>;
@@ -113,6 +134,14 @@ type EditObjekteUnitFormProps = {
   uploadedDocuments?: UploadedDocument[];
 };
 
+// Map usage_type to display name
+const usageTypeToName: Record<string, string> = {
+  parking: "Stellplatz",
+  warehouse: "Lager",
+  basement: "Keller",
+  hallway: "Hausflur",
+};
+
 export default function EditObjekteUnitForm({
   objektID,
   localID,
@@ -132,6 +161,20 @@ export default function EditObjekteUnitForm({
   const house_location = methods.watch("house_location");
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
+  const usage_type = methods.watch("usage_type");
+  
+  // Check if current type is non-residential
+  const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
+  
+  // Build display name based on usage type
+  const displayName = isNonResidential
+    ? usageTypeToName[usage_type] || usage_type
+    : buildLocalName({
+        floor: floor ?? undefined,
+        house_location: house_location ?? undefined,
+        residential_area: residential_area ?? undefined,
+        living_space: String(living_space ?? 0),
+      });
 
   return (
     <Form {...methods}>
@@ -167,12 +210,7 @@ export default function EditObjekteUnitForm({
         <FormTagsInput<EditObjekteUnitFormValues> control={methods.control} />
         <div className="w-full border-b py-5 max-medium:py-3 space-y-5 max-medium:space-y-3 border-dark_green/10">
           <h1 className="text-2xl max-medium:text-lg mb-5 max-medium:mb-3 text-dark_green">
-            {buildLocalName({
-              floor,
-              house_location,
-              residential_area,
-              living_space: String(living_space),
-            })}
+            {displayName}
           </h1>
           <FormRadioOptions<EditObjekteUnitFormValues, UnitType>
             options={unitTypeOptions}
@@ -185,8 +223,8 @@ export default function EditObjekteUnitForm({
             <FormSelectField<EditObjekteUnitFormValues>
               control={methods.control}
               name="floor"
-              label="Etage*"
-              placeholder="Etage*"
+              label={isNonResidential ? "Etage" : "Etage*"}
+              placeholder={isNonResidential ? "Etage" : "Etage*"}
               options={floorOptions}
             />
             <FormSelectField<EditObjekteUnitFormValues>
@@ -213,9 +251,11 @@ export default function EditObjekteUnitForm({
             <FormInputField<EditObjekteUnitFormValues>
               control={methods.control}
               name="living_space"
-              label="Wohnfläche*"
+              label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
               placeholder="Quadratmeter"
             />
+            {/* Empty div to align grid when only 5 items */}
+            <div className="hidden max-medium:hidden" />
           </div>
         </div>
         <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">

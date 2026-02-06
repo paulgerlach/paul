@@ -15,8 +15,8 @@ export async function editLocal(
 
   const updateData = {
     usage_type: formData.usage_type,
-    floor: formData.floor,
-    living_space: String(formData.living_space) ?? 0,
+    floor: formData.floor ?? "",
+    living_space: String(formData.living_space ?? 0),
     house_location: formData.house_location ?? null,
     outdoor: formData.outdoor ?? null,
     rooms: String(formData.rooms) ?? 0,

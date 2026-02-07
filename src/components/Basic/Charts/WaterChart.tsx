@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
 import { EmptyState } from "@/components/Basic/ui/States";
+import { logger } from "@/utils/logger";
 
 const ALL_MONTHS = [
   "JAN",
@@ -57,7 +58,7 @@ const parseTimestamp = (dateTimeString: string): Date => {
       }
     }
   } catch (error) {
-    console.warn("Failed to parse timestamp:", dateTimeString, error);
+    logger.warn("Failed to parse timestamp:", dateTimeString, error);
   }
   return new Date();
 };
@@ -390,8 +391,7 @@ export default function WaterChart({
     const dataInRange = processedData.length > 0;
     setHasDataInRange(dataInRange);
 
-    // 🔍 DEBUG: Log date range filtering
-    console.log(`[WaterChart ${chartType}] Date Range:`, {
+    logger.log(`[WaterChart ${chartType}] Date Range:`, {
       startDate: startDate?.toISOString(),
       endDate: endDate?.toISOString(),
       processedDataCount: processedData.length,
@@ -399,7 +399,7 @@ export default function WaterChart({
     });
 
     if (!dataInRange) {
-      console.warn(`[WaterChart ${chartType}] No data in range!`);
+      logger.warn(`[WaterChart ${chartType}] No data in range!`);
       setChartData([]);
       return;
     }

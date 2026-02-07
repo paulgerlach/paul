@@ -17,12 +17,15 @@ import {
   Tailwind,
 } from '@react-email/components';
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
+
 
 interface HeidiPremiumTrialProps {
   userFirstName?: string;
 }
 
 export const HeidiPremiumTrial = ({ userFirstName = 'there' }: HeidiPremiumTrialProps) => {
+
   return (
     <EmailLayout previewText="Schalte die Premium-Tools von Heidi Systems kostenlos frei!">
       {/* Greeting */}
@@ -47,6 +50,14 @@ export const HeidiPremiumTrial = ({ userFirstName = 'there' }: HeidiPremiumTrial
           Premium-Tools kostenlos testen
         </Button>
       </Section>
+
+       <SharedQrLoginSection
+  size={130}
+  title="Schneller Zugriff nach der Bestätigung:"
+  description="Nach der Bestätigung deiner E-Mail scanne diesen QR-Code für direkten Zugriff."
+  buttonText="Zum Login-Formular"
+/>
+
 
       <Hr className="border border-solid border-[#eaeaea] my-[32px] mx-0" />
 

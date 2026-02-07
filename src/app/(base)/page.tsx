@@ -396,117 +396,117 @@ export default async function Home() {
       </div>
       <div className="hero-3 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 max-small:px-6">
             <div className="flex max-medium:flex-col max-medium:items-center gap-8 max-medium:gap-6">
-              <p className="text-lg max-small:text-xl text-dark_text max-medium:text-center font-bold max-medium:whitespace-normal whitespace-nowrap max-small:mb-4">
+              <p id="kunden" className="text-lg max-small:text-xl text-dark_text max-medium:text-center font-bold max-medium:whitespace-normal whitespace-nowrap max-small:mb-4" style={{ scrollMarginTop: '85px' }}>
                 Die Wahl führender Innovatoren und Branchenführer
               </p>
               {/* Desktop: 4 columns, evenly spaced */}
               {/* Mobile: 2 columns with space between */}
               <div className="grid flex-1 items-center justify-items-center grid-cols-4 max-medium:grid-cols-3 max-small:grid-cols-2 gap-x-12 gap-y-8 max-small:gap-x-10 max-small:gap-y-6">
                 <Image
-                  width={140}
+                  width={120}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[120px] h-[45px] max-small:w-[85px] max-small:h-[32px] object-contain"
                   src={berlin_bear_green}
                   alt="berlinBear"
                 />
                 <Image
-                  width={140}
+                  width={130}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[130px] h-[45px] max-small:w-[90px] max-small:h-[32px] object-contain"
                   src={dumax_green}
                   alt="dumax"
                 />
                 <Image
-                  width={140}
+                  width={130}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[130px] h-[45px] max-small:w-[90px] max-small:h-[32px] object-contain"
                   src={harte_green}
                   alt="harte"
                 />
                 <Image
-                  width={140}
+                  width={120}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[120px] h-[45px] max-small:w-[85px] max-small:h-[32px] object-contain"
                   src={hsp_green}
                   alt="hsp"
                 />
                 <Image
-                  width={140}
+                  width={125}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[125px] h-[45px] max-small:w-[88px] max-small:h-[32px] object-contain"
                   src={raum_green}
                   alt="raum"
                 />
                 <Image
-                  width={140}
+                  width={135}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[120px] max-small:h-[40px] object-contain"
+                  className="w-[135px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
                   src={schleicher_green}
                   alt="schleicher_green"
                 />
                 <Image
-                  width={140}
+                  width={100}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[70px] max-small:h-[24px] object-contain"
+                  className="w-[100px] h-[45px] max-small:w-[70px] max-small:h-[32px] object-contain"
                   src={vitec_green}
                   alt="vitec"
                 />
                 <Image
-                  width={140}
+                  width={125}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[125px] h-[45px] max-small:w-[88px] max-small:h-[32px] object-contain"
                   src={wagner_green}
                   alt="wagner"
                 />
                 <Image
-                  width={140}
+                  width={130}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[130px] h-[45px] max-small:w-[90px] max-small:h-[32px] object-contain"
                   src={werne_green}
                   alt="werne_green"
                 />
                 <Image
-                  width={140}
+                  width={125}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[125px] h-[45px] max-small:w-[88px] max-small:h-[32px] object-contain"
                   src={neckar_green}
                   alt="neckar_green"
                 />
                 <Image
-                  width={140}
+                  width={120}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[120px] h-[45px] max-small:w-[85px] max-small:h-[32px] object-contain"
                   src={niesen_green}
                   alt="niesen_green"
                 />
                 <Image
-                  width={140}
+                  width={130}
                   height={45}
                   sizes="100vw"
                   loading="lazy"
-                  className="w-[140px] h-[45px] max-small:w-[95px] max-small:h-[32px] object-contain"
+                  className="w-[130px] h-[45px] max-small:w-[90px] max-small:h-[32px] object-contain"
                   src={progera_green}
                   alt="progera_green"
                 />

@@ -34,10 +34,11 @@ export default function MobileSidebar() {
   const [openLink, setOpenLink] = useState<string | null>(null);
   const { isOpen, close } = useMobileSidebarStore();
 
-  const isAdmin = !!user_id;
+  const resolvedUserId = typeof user_id === "string" ? user_id : undefined;
+  const isAdmin = !!resolvedUserId;
 
   const withUserPrefix = (route: string) =>
-    isAdmin ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
+    isAdmin ? `${ROUTE_ADMIN}/${resolvedUserId}${route}` : route;
 
   const handleClick = (link: string) => {
     setOpenLink((prev) => (prev === link ? null : link));

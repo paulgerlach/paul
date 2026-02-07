@@ -3,7 +3,8 @@
     "start": "deno run --allow-net --allow-env index.ts"
   },
   "imports": {
-    "std/": "https://deno.land/std@0.168.0/"
+    "std/": "https://deno.land/std@0.177.0/",
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@^2.93.3"
   },
   "compilerOptions": {
     "lib": ["dom", "deno.ns"]

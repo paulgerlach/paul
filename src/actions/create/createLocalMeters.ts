@@ -2,9 +2,9 @@
 
 import { AdminEditObjekteUnitFormValues } from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
 import database from "@/db";
-import { local_meters, locals } from "@/db/drizzle/schema";
+import { local_meters } from "@/db/drizzle/schema";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
-import { eq, inArray } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function createLocalMeters(
   formData: AdminEditObjekteUnitFormValues["meters"],
@@ -15,41 +15,70 @@ export async function createLocalMeters(
 
   const safeFormData = formData ?? [];
 
-  // Get existing meters for this local
-  const existingLocal = await database
+  // Get valid meter numbers from form data
+  const formMeterIds = safeFormData
+    .map((m) => m.meter_number)
+    .filter(Boolean) as string[];
+
+  // Get existing meters from the database for this local
+  const existingMeters = await database
     .select()
-    .from(locals)
-    .where(eq(locals.id, localID))
-    .limit(1);
-  const existingMeterIds = existingLocal[0]?.meter_ids ?? [];
+    .from(local_meters)
+    .where(eq(local_meters.local_id, localID));
 
-  const formMeterIds = safeFormData.map((m) => m.meter_number).filter(Boolean) as string[];
+  // Process each meter from the form
+  for (const meter of safeFormData) {
+    if (!meter.meter_number) continue;
 
-  // Meters to delete: exist in DB but not in formData
-  const metersToDelete = existingMeterIds.filter((id) => !formMeterIds.includes(id));
+    const existingMeter = existingMeters.find(
+      (m) => m.meter_number === meter.meter_number
+    );
 
-  if (metersToDelete.length > 0) {
-    await database
-      .delete(local_meters)
-      .where(inArray(local_meters.meter_number, metersToDelete));
+    if (existingMeter) {
+      // UPDATE existing meter with new values
+      await database
+        .update(local_meters)
+        .set({
+          meter_note: meter.meter_note ?? null,
+          meter_type: meter.meter_type ?? null,
+        })
+        .where(
+          and(
+            eq(local_meters.local_id, localID),
+            eq(local_meters.meter_number, meter.meter_number)
+          )
+        );
+    } else {
+      // INSERT new meter
+      await database.insert(local_meters).values({
+        meter_number: meter.meter_number,
+        meter_note: meter.meter_note ?? null,
+        meter_type: meter.meter_type ?? null,
+        local_id: localID,
+      });
+    }
   }
 
-  // Insert new meters (or update existing ones if needed)
-  const insertData = safeFormData.map((meter) => ({
-    meter_number: meter.meter_number ?? null,
-    meter_note: meter.meter_note ?? null,
-    meter_type: meter.meter_type ?? null,
-    local_id: localID,
-  }));
+  // Delete meters that are no longer in the form
+  const metersToDelete = existingMeters.filter(
+    (m) => m.meter_number && !formMeterIds.includes(m.meter_number)
+  );
 
-  const inserted = await database.insert(local_meters).values(insertData).returning();
+  for (const meter of metersToDelete) {
+    await database
+      .delete(local_meters)
+      .where(eq(local_meters.id, meter.id));
+  }
 
-  const updatedMeterIds = [...new Set([...existingMeterIds.filter(id => !metersToDelete.includes(id)), ...formMeterIds])];
+  // NOTE: We intentionally do NOT update locals.meter_ids here
+  // because there's a database trigger that auto-creates local_meters
+  // records when meter_ids changes, which overwrites our updates.
 
-  await database
-    .update(locals)
-    .set({ meter_ids: updatedMeterIds })
-    .where(eq(locals.id, localID));
+  // Return updated meters
+  const updatedMeters = await database
+    .select()
+    .from(local_meters)
+    .where(eq(local_meters.local_id, localID));
 
-  return inserted;
+  return updatedMeters;
 }

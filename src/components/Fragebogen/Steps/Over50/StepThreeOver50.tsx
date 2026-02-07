@@ -47,7 +47,8 @@ export default function StepThreeOver50({
 				Status der Zusammenarbeit
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Wie zufrieden sind Sie insgesamt mit der Zusammenarbeit<br />
+				Wie zufrieden sind Sie insgesamt mit der Zusammenarbeit{" "}
+				<span className="max-small:hidden"><br /></span>
 				mit den Messdienstleistern?
 			</p>
 			<div className="space-y-3">
@@ -69,7 +70,7 @@ export default function StepThreeOver50({
 							onChange={(e) => onChangeForward("zusammenarbeit_status", e.target.value)}
 							value={option.value as string}
 						/>
-						<div className="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-xl border border-dark_green/20 w-[509px] h-[69px] px-4 flex items-center justify-start gap-5 text-[18px] text-dark_text">
+						<div className="peer-checked:border-green peer-checked:ring-4 peer-checked:ring-green/20 cursor-pointer duration-300 rounded-xl border border-dark_green/20 w-[509px] max-small:w-full h-[69px] max-small:h-auto max-small:py-4 px-4 flex items-center justify-start gap-5 max-small:gap-3 text-[18px] max-small:text-base text-dark_text">
 							<div className="bg-gray-100 rounded-lg p-3 flex items-center justify-center">
 								<Image
 									width={25}

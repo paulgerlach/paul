@@ -246,7 +246,15 @@ export const objekte = pgTable("objekte", {
 	heating_systems: jsonb().default([]),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 	image_url: text(),
+	agency_id: uuid(),
+	
 }, (table) => [
+	foreignKey({
+		columns: [table.agency_id],
+		foreignColumns: [agencies.id],
+		name: "agency_id_fkey"
+	}).onDelete("cascade"),
+
 	pgPolicy("Users and Admins can access objects", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
 	pgPolicy("Users and Admins can insert objects", { as: "permissive", for: "insert", to: ["public"] }),

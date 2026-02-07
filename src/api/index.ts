@@ -15,7 +15,7 @@ import {
 } from "@/db/drizzle/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
-import { isAdminUser } from "@/auth";
+import { getUserAgencyId, getUserRole, isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import type {
   ContractorType,
@@ -642,20 +642,35 @@ export async function getAdminRelatedContractors(contractID?: string, userID?: s
 export async function getObjekts(): Promise<ObjektType[]> {
   const user = await getAuthenticatedServerUser();
 
-  const [result] = await database
-    .select({ permission: users.permission })
+  // Get user role and agency_id
+  const [userResult] = await database
+    .select({
+      permission: users.permission,
+      agency_id: users.agency_id
+    })
     .from(users)
     .where(eq(users.id, user.id));
 
-  const userPermission = result?.permission;
+  const userRole = userResult?.permission || 'user';
+  const agencyId = userResult?.agency_id;
 
-  let objekts;
+  let objekts: ObjektType[];
 
-  if (userPermission === 'admin') {
+  if (userRole === 'super_admin') {
+    // Super admin: return ALL properties
     objekts = await database
       .select()
       .from(objekte);
-  } else {
+  }
+  else if ((userRole === 'agency_admin' || userRole === 'admin') && agencyId) {
+    // Agency admin & admin: return properties assigned to their agency or properties they own
+    objekts = await database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.agency_id, agencyId));
+  }
+  else {
+    // Regular user: return only their own properties
     objekts = await database
       .select()
       .from(objekte)
@@ -665,16 +680,43 @@ export async function getObjekts(): Promise<ObjektType[]> {
   return objekts;
 }
 
+
+
 export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> {
+  const [userResult] = await database
+    .select({
+      permission: users.permission,
+      agency_id: users.agency_id
+    })
+    .from(users)
+    .where(eq(users.id, userID));
 
-  const objekts = await database
+  const userRole = userResult?.permission || 'user';
+  const agencyId = userResult?.agency_id;
+
+  // If querying own data, return owned properties
+  // If querying another user, only super/agency admin should call this
+  if (userRole === 'user') {
+    return database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.user_id, userID));
+  }
+
+  // Agency admin or admin: return their agency's or user's properties
+  if ((userRole === 'agency_admin' || userRole === 'admin') && agencyId) {
+    return database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.agency_id, agencyId));
+  }
+
+  // Super admin: return all
+  return database
     .select()
-    .from(objekte)
-    .where(eq(objekte.user_id, userID));
-
-
-  return objekts;
+    .from(objekte);
 }
+
 
 export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[]> {
   const objekts = await database

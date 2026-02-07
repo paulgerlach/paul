@@ -5,7 +5,7 @@
 
 const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'invitation';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -15,6 +15,14 @@ interface WebhookPayload {
   [key: string]: any; // Additional data for complex events
 }
 
+export interface InvitationData {
+  inviter_name: string;
+  agency_name?: string;
+  role: string;
+  invitation_token: string;
+  expires_at: string;
+  invite_url: string; // Constructed frontend URL
+}
 /**
  * Send event to Make.com webhook
  * @param eventType - Type of event
@@ -92,4 +100,19 @@ export async function sendOfferInquiryEvent(
 ): Promise<void> {
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
+
+export async function sendInvitationEvent(
+  email: string,
+  invitationData: InvitationData
+): Promise<void> {
+  await sendWebhookEvent('invitation', email, {
+    inviter_name: invitationData.inviter_name,
+    agency_name: invitationData.agency_name,
+    role: invitationData.role,
+    invitation_token: invitationData.invitation_token,
+    expires_at: invitationData.expires_at,
+    invite_url: `${process.env.NEXT_PUBLIC_APP_URL}/invitation/accept?token=${invitationData.invitation_token}`
+  });
+}
+
 

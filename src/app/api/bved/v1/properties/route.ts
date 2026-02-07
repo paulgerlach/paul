@@ -96,6 +96,7 @@ export async function GET(request: Request) {
         created_at: objekte.created_at,
         user_id: objekte.user_id,
         image_url: objekte.image_url,
+        agency_id: objekte.agency_id,
       })
       .from(objekte)
       .where(and(...conditions))
@@ -147,6 +148,7 @@ export async function GET(request: Request) {
           created_at: p.created_at || "",
           user_id: p.user_id || "",
           image_url: p.image_url || null,
+          agency_id: p.agency_id || null,
         };
 
         return {

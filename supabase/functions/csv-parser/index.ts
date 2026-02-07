@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "std/http/server.ts"
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { processErrorsAndNotify } from './errorNotifications.ts'
 
 // Note: Environment variables are automatically available in production
@@ -47,7 +47,7 @@ interface DatabaseRecord {
     access_number?: number;
     status?: string;
     encryption?: number;
-    parsed_data: any;
+    parsed_data: ParsedRecord;
     date_only?: string; // YYYY-MM-DD format for DB unique constraint
 }
 
@@ -78,7 +78,7 @@ function extractDateFromFilename(fileName: string): string | null {
  * Handles multiple date formats: DD.MM.YYYY, DD-MM-YYYY
  * Falls back to filename date if no date found in CSV content
  */
-function extractDateOnly(record: any, fileName?: string): string | null {
+function extractDateOnly(record: ParsedRecord, fileName?: string): string | null {
     const deviceId = record['ID'] || record['Number Meter'] || 'unknown';
     const deviceType = record['Device Type'] || 'unknown';
 
@@ -115,28 +115,43 @@ function extractDateOnly(record: any, fileName?: string): string | null {
     for (const dateStr of dateFields) {
         if (!dateStr || typeof dateStr !== 'string' || dateStr.trim() === '') continue;
 
-        // Extract first 10 characters and trim
-        const normalized = dateStr.substring(0, 10).trim();
+        // Extract just the date portion (before any space/time component)
+        // Handles formats like "01.02.26 10:10:46 Day of Week..." from smoke detectors
+        const datePart = dateStr.split(' ')[0].trim();
 
-        console.log(`[DATE TRY CSV] Attempting to parse: "${normalized}"`);
+        console.log(`[DATE TRY CSV] Attempting to parse: "${datePart}" (from "${dateStr.substring(0, 30)}...")`);
 
-        // Match DD.MM.YYYY format
-        const dotMatch = normalized.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        // Match DD.MM.YYYY format (4-digit year)
+        const dotMatch = datePart.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
         if (dotMatch) {
             const [_, day, month, year] = dotMatch;
             const result = `${year}-${month}-${day}`;
-            console.log(`[DATE SUCCESS CSV] Extracted from CSV field: ${result}`);
+            console.log(`[DATE SUCCESS CSV] Extracted from CSV field (4-digit year): ${result}`);
+            return result; // Convert to YYYY-MM-DD
+        }
+
+        // Match DD.MM.YY format (2-digit year) - NEW for Maienweg customer
+        // Handles dates like "01.02.26" from HAG smoke detectors
+        const dotMatch2 = datePart.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+        if (dotMatch2) {
+            const [_, day, month, yearShort] = dotMatch2;
+            // Convert 2-digit year: ≤50 becomes 20xx, >50 becomes 19xx
+            const yearNum = parseInt(yearShort, 10);
+            const year = yearNum <= 50 ? `20${yearShort}` : `19${yearShort}`;
+            const result = `${year}-${month}-${day}`;
+            console.log(`[DATE SUCCESS CSV] Extracted from CSV field (2-digit year ${yearShort} → ${year}): ${result}`);
             return result; // Convert to YYYY-MM-DD
         }
 
         // Match DD-MM-YYYY format
-        const dashMatch = normalized.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+        const dashMatch = datePart.match(/^(\d{2})-(\d{2})-(\d{4})$/);
         if (dashMatch) {
             const [_, day, month, year] = dashMatch;
             const result = `${year}-${month}-${day}`;
             console.log(`[DATE SUCCESS CSV] Extracted from CSV field: ${result}`);
             return result; // Convert to YYYY-MM-DD
         }
+
     }
 
     // FALLBACK: If no date found in CSV content, try extracting from filename
@@ -189,7 +204,7 @@ class Utils {
                 if (!isNaN(floatValue)) {
                     return floatValue;
                 }
-            } catch (e) {
+            } catch (_e) {
                 // Keep as string if conversion fails
             }
         }
@@ -460,6 +475,10 @@ class DatabaseHelper {
                     continue;
                 }
 
+                // 🔥 RELAXED VALIDATION: SmokeDetector and HCA don't have standard consumption columns
+                const noConsumptionDevices = ['SmokeDetector', 'HCA'];
+                const isNoConsumptionDevice = noConsumptionDevices.includes(deviceType);
+
                 if (!deviceId || !deviceType || !manufacturer) {
                     errors.push(`Missing required fields for record: ${JSON.stringify(record)}`);
                     continue;
@@ -469,8 +488,32 @@ class DatabaseHelper {
                 const localMeterId = meterIdMap.get(deviceId) || null;
 
                 // For Elec devices, determine if we need to update the device ID
-                let updatedRecord = { ...record };
+                const updatedRecord = { ...record };
+
                 let finalDeviceId = deviceId;
+
+                // 🔥 RELAXED VALIDATION: SmokeDetector and HCA don't have standard consumption columns
+                // (Already defined above)
+
+                // 🔥 NEW: Alarm/Status Handling for Smoke Detectors AND HCAs
+                // Both device types use the Status field to report errors/alarms.
+                // We map this directly to the ErrorFlags field so the frontend/notification logic can interpret it.
+                if (deviceType === 'SmokeDetector' || deviceType === 'HCA') {
+                    const status = record['Status'];
+                    // If Status is present and not 0/00/00h, treat as Error/Alarm
+                    if (status && status !== '0' && status !== '00' && status !== '00h' && status !== 0) {
+                        console.log(`[STATUS] ${deviceType} ${deviceId} has status ${status} - mapping to ErrorFlag`);
+                        // STATUS conversion:
+
+                        // Treat status as Hex (common in MBus CSVs). Convert to binary string with "0b" prefix.
+                        // This prevents ambiguity in the interpreter (e.g. "04" being parsed as binary "0").
+                        const code = parseInt(String(status), 16);
+                        if (!isNaN(code)) {
+                            updatedRecord['IV,0,0,0,,ErrorFlags(binary)(deviceType specific)'] = "0b" + code.toString(2);
+                        }
+
+                    }
+                }
 
                 if (deviceType === 'Elec' && localMeterId && prefixedMatches.has(deviceId)) {
                     // This match was found with prefix, so update the device ID
@@ -479,9 +522,19 @@ class DatabaseHelper {
                     finalDeviceId = updatedId;
                 }
 
+
                 // Extract date_only for DB unique constraint (YYYY-MM-DD format)
-                // Pass fileName to allow fallback to filename date extraction
-                const dateOnlyYYYYMMDD = extractDateOnly(record, fileName);
+                let dateOnlyYYYYMMDD = extractDateOnly(record, fileName);
+
+                // 🔥 NEW: FALLBACK FOR NO-CONSUMPTION DEVICES (HCA/SmokeDetector)
+                // If they lack a date column, explicitly try filename date as a valid fallback
+                if (!dateOnlyYYYYMMDD && isNoConsumptionDevice && fileName) {
+                    const fallbackDate = extractDateFromFilename(fileName);
+                    if (fallbackDate) {
+                        dateOnlyYYYYMMDD = fallbackDate;
+                        console.log(`[FALLBACK DATE] Using filename date for ${deviceType} ${deviceId}: ${fallbackDate}`);
+                    }
+                }
 
                 // 🔥 NEW: REJECT RECORDS WITHOUT DATES (prevents null date bugs)
                 if (!dateOnlyYYYYMMDD) {
@@ -688,14 +741,21 @@ serve(async (req: Request) => {
         console.log('Raw body length:', rawBody.length)
         console.log('Raw body', rawBody)
 
-        let result: ParseResult
+        // Determine if the request body is a URL or raw CSV content
+        let result: ParseResult;
+        const csvUrl = url.searchParams.get('csvUrl'); // Assuming csvUrl can be passed as a query parameter
 
-        console.log('Parsing CSV from content')
-        // Parse CSV from content
-        result = CSVParser.parseCSVFromContent(
-            rawBody as string,
-            fileName
-        )
+        if (csvUrl) {
+            console.log('Parsing CSV from URL:', csvUrl);
+            result = await CSVParser.parseCSVFromURL(csvUrl, fileName);
+        } else {
+            console.log('Parsing CSV from content');
+            // Parse CSV from content
+            result = CSVParser.parseCSVFromContent(
+                rawBody as string,
+                fileName
+            );
+        }
 
         console.log(`Successfully parsed ${result.parsedData.length} records`)
 

@@ -88,8 +88,10 @@ export default function ShareDashboardDialog() {
   };
 
   useEffect(() => {
-    handleShare();
-  }, [startDate, endDate, meterIds]); // Regenerate URL when state changes
+    if (isOpen) {
+      handleShare();
+    }
+  }, [isOpen, startDate, endDate, meterIds]); // Only regenerate URL when dialog is open
 
 
   const copyToClipboard = async () => {
@@ -165,7 +167,8 @@ export default function ShareDashboardDialog() {
         
         console.log('[share-pin] 📤 Sending webhook payload:', webhookPayload);
         
-        const webhookResponse = await fetch('https://hook.eu2.make.com/0nabn3y343aq32nnvi2m1sd8u5k2k7yn', {
+        const shareWebhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN || 'https://hook.eu2.make.com/0nabn3y343aq32nnvi2m1sd8u5k2k7yn';
+        const webhookResponse = await fetch(shareWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(webhookPayload),

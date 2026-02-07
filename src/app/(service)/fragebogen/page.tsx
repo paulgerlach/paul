@@ -49,9 +49,9 @@ const formSchema = z.object({
   ort: z.string().optional().or(z.literal("")),
   
   // Contact form fields (Q6 - Personal)
-  email: z.string().email("Ungültige E-Mail-Adresse").or(z.literal("")),
-  first_name: z.string().min(1, "Vorname ist erforderlich").or(z.literal("")),
-  last_name: z.string().min(1, "Nachname ist erforderlich").or(z.literal("")),
+  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
+  first_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
+  last_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
   form_confirm: z.boolean().refine((val) => val === true, {
     message: "Bitte akzeptieren Sie die Datenschutzbestimmungen",
   }),

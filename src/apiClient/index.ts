@@ -357,8 +357,10 @@ async function getAuthenticatedUserData(): Promise<UserType> {
     .single();
 
   if (error) {
-    throw new Error(`Failed to fetch contracts: ${error.message}`);
+    throw new Error(`Failed to fetch user: ${error.message}`);
   }
+
+  console.log("Fetched authenticated user data:", data);
 
   return data;
 }

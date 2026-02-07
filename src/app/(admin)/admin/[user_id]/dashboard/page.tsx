@@ -1,5 +1,5 @@
 "use client";
-
+// page.tsx
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";

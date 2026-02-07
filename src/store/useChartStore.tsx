@@ -1,3 +1,4 @@
+// useChartStore.tsx
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -9,7 +10,9 @@ interface ChartState {
   setMeterIds: (id: string[]) => void;
   chartHeights: Record<string, number>;
 
-  setChartHeight: (key: string, height: number) => void;
+  chartSizes: Record<string, { height: number; width?: number }>;
+  setChartSize: (key: string, size: { width: number; height: number }) => void;
+
   isTableView: boolean;
   setIsTableView: (isTable: boolean) => void;
 }
@@ -23,11 +26,13 @@ export const useChartStore = create<ChartState>()(
 
       chartHeights: {},
 
-      setChartHeight: (key, height) =>
+      chartSizes: {},
+
+      setChartSize: (key, size) =>
         set((state) => ({
-          chartHeights: {
-            ...state.chartHeights,
-            [key]: height,
+          chartSizes: {
+            ...state.chartSizes,
+            [key]: size,
           },
         })),
 

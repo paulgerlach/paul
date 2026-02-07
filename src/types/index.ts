@@ -177,3 +177,78 @@ export type DialogStoreActionType =
   | DialogDocumentCostActionType
   | "shareModal"
   | "shareExtendedModal";
+
+export type FirmwareType = 'boot' | 'modem' | 'application';
+export type DeploymentType = 'scheduled' | 'available' | 'force';
+
+export interface GatewayDesiredState {
+  id: string;
+  gateway_eui: string;
+  desired_app_version: string | null;
+  desired_boot_version: string | null;
+  desired_etag: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type GatewayDesiredStateInsert = Omit<GatewayDesiredState, 'id' | 'created_at' | 'updated_at'> & {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type GatewayDesiredStateUpdate = Partial<Omit<GatewayDesiredState, 'id' | 'created_at' | 'updated_at'>> & {
+  updated_at?: string;
+};
+
+export interface ConfigVersion {
+  id: string;
+  etag: string;
+  config: any;
+  description: string | null;
+  created_by: string | null;
+  created_at: string;
+  is_active: boolean;
+}
+
+export type ConfigVersionInsert = Omit<ConfigVersion, 'id' | 'created_at'> & {
+  id?: string;
+  created_at?: string;
+};
+
+export type ConfigVersionUpdate = Partial<Omit<ConfigVersion, 'id' | 'created_at' | 'etag'>>;
+
+export interface FirmwareVersion {
+  id: string;
+  filename: string;
+  original_filename: string;
+  version: string;
+  type: FirmwareType;
+  device_model: string;
+  size_bytes: number;
+  checksum_sha256: string;
+  total_chunks: number;
+  chunk_size: number;
+  description: string | null;
+  release_notes: string | null;
+  min_version?: string | null;
+  max_version?: string | null;
+  deployment_type?: DeploymentType;
+  allowed_gateways: any[];
+  is_active?: boolean;
+  uploaded_by: string | null;
+  uploaded_at: string | null;
+  created_at: string;
+}
+
+export type FirmwareVersionInsert = Omit<FirmwareVersion, 'id' | 'created_at' | 'uploaded_at'> & {
+  id?: string;
+  uploaded_at?: string;
+  created_at?: string;
+};
+
+export type FirmwareVersionUpdate = Partial<Omit<FirmwareVersion, 'id' | 'created_at' | 'uploaded_at' | 'filename'>>;
+export interface FirmwareWithDownloadUrl extends FirmwareVersion {
+  download_url?: string;
+  signed_url?: string;
+}

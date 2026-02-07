@@ -11,14 +11,16 @@ import {
   ROUTE_HEIZKOSTENABRECHNUNG,
   ROUTE_ADMIN,
   ROUTE_CSV_UPLOAD,
+  ROUTE_MQTT_GATEWAY,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte, caract_files } from "@/static/icons";
+import { abrechnung, dashboard, dokumente, objekte, caract_files, caract_radio } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import TipsOfTheDay from "./TipsOfTheDay";
 import { useState } from "react";
+import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
   title: string;
@@ -31,9 +33,10 @@ export type SidebarLinkType = {
 export default function Sidebar() {
   const pathname = usePathname();
   const { user_id } = useParams();
+  const { data: user } = useAuthUser();
   const [openLink, setOpenLink] = useState<string | null>(null);
 
-  const isAdmin = !!user_id;
+  const isAdmin = user?.permission === "admin";
 
   const withUserPrefix = (route: string) =>
     isAdmin ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
@@ -68,10 +71,10 @@ export default function Sidebar() {
           title: "Heizkostenabrechnung",
           route: withUserPrefix(ROUTE_HEIZKOSTENABRECHNUNG),
         },
-        {
-          title: "Betriebskostenabrechnung",
-          route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
-        },
+        // {
+        //   title: "Betriebskostenabrechnung",
+        //   route: withUserPrefix(ROUTE_BETRIEBSKOSTENABRECHNUNG),
+        // },
       ],
     },
   ];
@@ -83,12 +86,18 @@ export default function Sidebar() {
       icon: dashboard,
       route: ROUTE_ADMIN,
     });
-    
+
     // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
     dashboardLinks.splice(3, 0, {
       title: "CSV Upload",
       icon: caract_files,
       route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
+    });
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(4, 0, {
+      title: "Gateway Management",
+      icon: caract_radio,
+      route: `${ROUTE_MQTT_GATEWAY}`,
     });
   }
 
@@ -126,9 +135,8 @@ export default function Sidebar() {
             <Link
               key={link.title}
               href={link.route}
-              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${
-                isRouteActive(link.route) ? "active" : ""
-              } [.active]:bg-black/10`}
+              className={`flex py-3 px-5 max-xl:text-sm transition-all duration-300 w-full items-center gap-3 rounded-base hover:bg-base-bg/70 ${isRouteActive(link.route) ? "active" : ""
+                } [.active]:bg-black/10`}
             >
               <Image
                 width={28}
@@ -144,24 +152,24 @@ export default function Sidebar() {
         )}
       </div>
 
-		{/* Remaining space container - pushes content to bottom */}
-		<div className="flex-1 flex flex-col justify-end">
-			{/* Tips of the Day - positioned above footer */}
-			<TipsOfTheDay />
+      {/* Remaining space container - pushes content to bottom */}
+      <div className="flex-1 flex flex-col justify-end">
+        {/* Tips of the Day - positioned above footer */}
+        <TipsOfTheDay />
 
-			{/* Footer Links - at the bottom */}
-			<div className="flex items-center justify-center gap-8 mb-0">
-				<Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
-					Impressum
-				</Link>
-				<Link
-					className="text-sm text-light-text"
-					href={ROUTE_DATENSCHUTZHINWEISE}
-				>
-					Datenschutz
-				</Link>
-			</div>
-		</div>
+        {/* Footer Links - at the bottom */}
+        <div className="flex items-center justify-center gap-8 mb-0">
+          <Link className="text-sm text-light-text" href={ROUTE_IMPRESSUM}>
+            Impressum
+          </Link>
+          <Link
+            className="text-sm text-light-text"
+            href={ROUTE_DATENSCHUTZHINWEISE}
+          >
+            Datenschutz
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

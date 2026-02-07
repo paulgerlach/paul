@@ -475,4 +475,198 @@ export const leads = pgTable("leads", {
 		to: ["authenticated"],
 		using: sql`auth.role() = 'admin'`
 	}),
+])
+
+export const gateway_desired_states = pgTable("gateway_desired_states", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),  // Unique identifier for the gateway (e.g., from MQTT topic)
+	desired_app_version: text(),  // Desired application firmware version
+	desired_boot_version: text(),  // Desired bootloader firmware version  
+	desired_etag: text(),  // Desired config ETag/hash
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage gateway states", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Config versions (stores actual config content)
+export const config_versions = pgTable("config_versions", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	etag: text().notNull().unique(), // Hash of config content
+	config: jsonb().notNull(), // The actual configuration
+	description: text(),
+	created_by: text(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	is_active: boolean().default(true),
+}, (table) => [
+	pgPolicy("Admins can manage config versions", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware versions
+export const firmware_versions = pgTable("firmware_versions", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	filename: text().notNull().unique(),
+	original_filename: text().notNull(),
+	version: text().notNull(),
+	type: text().notNull(), // 'boot', 'modem', 'application'
+	device_model: text().notNull(),
+	size_bytes: integer().notNull(),
+	checksum_sha256: text().notNull(),
+	total_chunks: integer().notNull(),
+	chunk_size: integer().default(512),
+	description: text(),
+	release_notes: text(),
+	min_version: text(),
+	max_version: text(),
+	deployment_type: text().default('scheduled'), // 'scheduled', 'available', 'force'
+	allowed_gateways: jsonb().default('[]'),
+	is_active: boolean().default(true),
+	uploaded_by: text(),
+	uploaded_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage firmware", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware deployments
+export const firmware_deployments = pgTable("firmware_deployments", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	firmware_id: uuid().references(() => firmware_versions.id),
+	scheduled_at: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	started_at: timestamp({ withTimezone: true, mode: 'string' }),
+	completed_at: timestamp({ withTimezone: true, mode: 'string' }),
+	status: text().default('scheduled'), // 'scheduled', 'downloading', 'flashing', 'completed', 'failed', 'cancelled', 'retrying'
+	current_chunk: integer().default(0),
+	total_chunks: integer(),
+	error_message: text(),
+	retry_count: integer().default(0),
+	last_chunk_at: timestamp({ withTimezone: true, mode: 'string' }),
+	metadata: jsonb().default({}),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage deployments", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Gateway config overrides
+export const gateway_config_overrides = pgTable("gateway_config_overrides", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	config_key: text().notNull(),
+	config_value: text(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage overrides", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware download log
+export const firmware_download_log = pgTable("firmware_download_log", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	firmware_filename: text().notNull(),
+	chunk_number: integer().notNull(),
+	success: boolean().notNull(),
+	error_message: text(),
+	response_time_ms: integer(),
+	downloaded_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can view all logs", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+// Gateway status
+export const gateway_status = pgTable("gateway_status", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	timestamp: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	// Status fields from documentation page 11-12
+	time: integer(),  // Unix timestamp
+	sync_to: integer(),
+	sync_from: integer(),
+	sync_ticks: integer(),
+	monitor: text(),
+	ci: text(),  // Cell ID
+	tac: text(),  // Tracking Area Code
+	rsrp: integer(),  // Received Signal Strength Indicator
+	rsrq: integer(),  // Reference Signal Received Quality
+	snr: integer(),  // Signal to Noise Ratio
+	operator: text(),  // Mobile Network Code
+	band: integer(),
+	apn: text(),
+	vbat: integer(),  // Battery voltage in mV
+	temperature: integer(),  // Temperature in 0.1°C
+	collected: boolean(),
+	telegram_count: integer(),
+	uploading_count: integer(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+		pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Gateway devices (from device uplink)
+export const gateway_devices = pgTable("gateway_devices", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	eui: text().notNull().unique(),
+	imei: text(),
+	imsi: text(),
+	iccid: text(),
+	model: text(),
+	firmware: text(),
+	boot_version: text(),
+	last_seen: timestamp({ withTimezone: true, mode: 'string' }),
+	metadata: jsonb().default({}),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updated_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+export const wmbus_telegrams = pgTable("wmbus_telegrams", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	timestamp: integer().notNull(),  // Unix timestamp
+	telegram_hex: text().notNull(),  // Binary data as hex string
+	rssi: integer(),  // Received Signal Strength Indicator in dBm
+	mode: text(),  // 'C', 'T', 'S', 'X', 'U' as per documentation
+	type: text(),  // 'A', 'B', 'X', 'U' as per documentation
+	meter_number: text(),  // Extracted from telegram
+	manufacturer_code: text(),
+	version: text(),
+	device_type: text(),
+	processed: boolean().default(false),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+// Firmware history
+export const firmware_history = pgTable("firmware_history", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	firmware_type: text().notNull(), // 'app', 'boot', 'modem'
+	version: text().notNull(),
+	details: jsonb().default({}),
+	first_seen: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	last_seen: timestamp({ withTimezone: true, mode: 'string' }).notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+// Severity enum
+export const severityEnum = pgEnum('alert_severity', ['info', 'warning', 'error', 'critical']);
+
+export const gatewayAlerts = pgTable('gateway_alerts', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	gatewayEui: varchar('gateway_eui', { length: 17 }).notNull(),
+	alertType: varchar('alert_type', { length: 50 }).notNull(),
+	severity: severityEnum('severity').notNull(),
+	message: text('message').notNull(),
+	data: jsonb('data'),
+	createdAt: timestamp('created_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
+	resolvedAt: timestamp('resolved_at', { mode: 'string', withTimezone: true }),
+	updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
+}, (table) =>[
+	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
 ]);

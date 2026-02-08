@@ -4,22 +4,17 @@ import {
   useContractsByLocalID,
   useHeatingBillDocumentsByLocalID,
 } from "@/apiClient";
-import { Skeleton } from "@/components/Basic/ui/Skeleton";
 import { useLocalStatus } from "@/hooks/useLocalStatus";
 import {
-  ROUTE_BETRIEBSKOSTENABRECHNUNG,
   ROUTE_HEIZKOSTENABRECHNUNG,
 } from "@/routes/routes";
 import {
-  chevron_admin,
   close_dialog,
   operating_cost_documents_pending,
 } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
-import type { LocalType, UnitType } from "@/types";
+import type { LocalType } from "@/types";
 import {
-  buildLocalName,
-  handleLocalTypeIcon,
   slideDown,
   slideUp,
 } from "@/utils";
@@ -74,9 +69,8 @@ export default function ObjekteItemLocalDocWithHistory({
 
   return (
     <div
-      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${
-        status === "vacancy" && "available"
-      } [.available.active]:pb-7`}
+      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${status === "vacancy" && "available"
+        } [.available.active]:pb-7`}
     >
       <ObjekteItemLocalHeader
         item={item}

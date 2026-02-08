@@ -21,11 +21,14 @@ export default function ShareDashboardDialog() {
   const { startDate, endDate, meterIds } = useChartStore();
 
   // Helper to format date as YYYY-MM-DD in local timezone (not UTC)
-  const formatLocalDate = (date: Date | null): string | undefined => {
+  // Defensively handles strings (from Zustand persist rehydration) in addition to Date objects.
+  const formatLocalDate = (date: Date | string | null | undefined): string | undefined => {
     if (!date) return undefined;
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return undefined;
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -44,10 +47,12 @@ export default function ShareDashboardDialog() {
 
   const handleShare = async () => {
     try {
-      // Debug: Log current state
+      // Debug: Log current state (safely handle string dates from persist rehydration)
+      const safeStart = startDate instanceof Date ? startDate : startDate ? new Date(startDate as unknown as string) : null;
+      const safeEnd = endDate instanceof Date ? endDate : endDate ? new Date(endDate as unknown as string) : null;
       console.log('Share Dialog Current State:', {
-        startDate: startDate?.toISOString(),
-        endDate: endDate?.toISOString(),
+        startDate: safeStart?.toISOString(),
+        endDate: safeEnd?.toISOString(),
         startDateLocal: formatLocalDate(startDate),
         endDateLocal: formatLocalDate(endDate),
         meterIds: meterIds,

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import AgencySelector from "./Admin/AgencySelector";
 import { updateUserPermission } from "@/actions/admin/updateUserPermission";
+import PermissionSelector from "./Admin/PermissionSelector";
 
 interface AdminUserItemProps {
 	item: UserType;
@@ -15,7 +16,6 @@ interface AdminUserItemProps {
 	isSuperAdmin?: boolean;
 }
 
-const PERMISSIONS = ["user", "admin", "super_admin"];
 
 export default function AdminUserItem({
 	item,
@@ -71,52 +71,15 @@ export default function AdminUserItem({
 
 					{/* Permission Selector */}
 					{isSuperAdmin && (
-						<div className="flex items-center gap-2">
-							{isEditingPermission ? (
-								<div className="flex items-center gap-2">
-									<select
-										title="permissions"
-										value={selectedPermission}
-										onChange={(e) => setSelectedPermission(e.target.value)}
-										className="text-sm border rounded px-2 py-1 bg-white"
-										disabled={isUpdating}
-									>
-										{PERMISSIONS.map((perm) => (
-											<option key={perm} value={perm}>
-												{perm}
-											</option>
-										))}
-									</select>
-									<button
-										onClick={handlePermissionSave}
-										disabled={isUpdating}
-										className="text-xs bg-green-500 text-white px-2 py-1 rounded"
-									>
-										{isUpdating ? "..." : "Save"}
-									</button>
-									<button
-										onClick={() => {
-											setIsEditingPermission(false);
-											setSelectedPermission(item.permission);
-										}}
-										className="text-xs bg-gray-300 px-2 py-1 rounded"
-									>
-										Cancel
-									</button>
-								</div>
-							) : (
-								<button
-									onClick={() => setIsEditingPermission(true)}
-									className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700 hover:cursor-pointer transition"
-								>
-									<span className="text-gray-500">Role:</span>
-										<span className="font-medium">{
-											item.permission === "super_admin" ?
-												"Super Admin" :
-												item.permission === "admin" ? "Admin" : "User"}</span>
-								</button>
-							)}
-						</div>
+						<PermissionSelector 
+							isEditingPermission={isEditingPermission}
+							selectedPermission={selectedPermission ?? 'user'}
+							setSelectedPermission={setSelectedPermission}
+							handlePermissionSave={handlePermissionSave}
+							isUpdating={isUpdating}
+							user={item}
+							setIsEditingPermission={setIsEditingPermission}
+						/>
 					)}
 
 					<Link

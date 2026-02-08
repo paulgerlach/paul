@@ -27,7 +27,12 @@ export type HeatingBillPreviewProps = {
 	objekt: ObjektType;
 	user: UserType;
 	logoSrc?: string; // Optional logo source (file path or data URL)
+	// Iteration 2: Energy consumption calculations
 	energyConsumption?: EnergyConsumptionData; // Calculated server-side
+
+	// Iteration 3: Additional costs and grand total
+	additionalCosts?: AdditionalCostsData;
+	totalHeatingCosts?: number;
 };
 
 /**
@@ -48,6 +53,17 @@ export type EnergyConsumptionData = {
 	lineItems: EnergyConsumptionLineItem[];
 	totalKwh: string; // Sum of kWh
 	totalAmount: number; // Sum of amounts (Summe Verbrauch)
+};
+
+export type AdditionalCostLineItem = {
+	position: string;
+	date?: string;
+	amount: number;
+};
+
+export type AdditionalCostsData = {
+	lineItems: AdditionalCostLineItem[];
+	totalAmount: number;
 };
 
 export type HeatingBillPreviewData = {
@@ -77,6 +93,10 @@ export type HeatingBillPreviewData = {
 	logoSrc?: string; // Optional logo source (file path or data URL)
 	// Iteration 2: Energy consumption calculations
 	energyConsumption?: EnergyConsumptionData;
+
+	// Iteration 3: Additional costs and grand total
+	additionalCosts?: AdditionalCostsData;
+	totalHeatingCosts?: number; // Summe Energie- und Heizungsbetriebskosten
 };
 
 export default function HeatingBillPreview({

@@ -307,26 +307,29 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableHeaderCell}>DATUM</Text>
 							<Text style={styles.tableHeaderCellRight}>BETRAG</Text>
 						</View>
+
+						{/* Carrier over from Energy Consumption */}
 						<View style={styles.tableRow}>
 							<Text style={styles.tableCell}>Übertrag</Text>
 							<Text style={styles.tableCell}></Text>
-							<Text style={styles.tableCellRight}>103.206,53 €</Text>
+							<Text style={styles.tableCellRight}>
+								{formatEuro(previewData.energyConsumption?.totalAmount || 0)}
+							</Text>
 						</View>
-						<View style={styles.tableRow}>
-							<Text style={styles.tableCell}>Verbrauchsabrechnung</Text>
-							<Text style={styles.tableCell}>31.12.2023</Text>
-							<Text style={styles.tableCellRight}>7.155,11 €</Text>
-						</View>
-						<View style={styles.tableRow}>
-							<Text style={styles.tableCell}>Betriebsstrom</Text>
-							<Text style={styles.tableCell}>31.12.2023</Text>
-							<Text style={styles.tableCellRight}>4.128,26 €</Text>
-						</View>
-						<View style={styles.tableRow}>
-							<Text style={styles.tableCell}>Wartungskosten</Text>
-							<Text style={styles.tableCell}>31.12.2023</Text>
-							<Text style={styles.tableCellRight}>1.008,17 €</Text>
-						</View>
+
+						{/* Dynamic additional cost line items */}
+						{previewData.additionalCosts?.lineItems.map((item, index) => (
+							<View key={index} style={styles.tableRow}>
+								<Text style={styles.tableCell}>{item.position}</Text>
+								<Text style={styles.tableCell}>
+									{item.date ? formatDateGerman(item.date) : ""}
+								</Text>
+								<Text style={styles.tableCellRight}>
+									{formatEuro(item.amount)}
+								</Text>
+							</View>
+						))}
+
 						<View style={[styles.tableRow, styles.sumRow]}>
 							<Text
 								style={[
@@ -342,7 +345,7 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark })
 								}
 							>
-								115.498,07 €
+								{formatEuro(previewData.totalHeatingCosts || 0)}
 							</Text>
 						</View>
 					</View>

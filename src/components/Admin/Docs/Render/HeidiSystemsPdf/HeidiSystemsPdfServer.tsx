@@ -31,6 +31,8 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		costCategories,
 		logoSrc,
 		energyConsumption, // Calculated in route handler, passed as prop
+		additionalCosts,
+		totalHeatingCosts,
 	} = props;
 
 	const periodStart = mainDoc?.start_date
@@ -98,6 +100,9 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		logoSrc,
 		// Energy consumption calculated server-side in route handler
 		energyConsumption,
+		// Iteration 3: Additional costs and grand total
+		additionalCosts,
+		totalHeatingCosts,
 	};
 
 	return (

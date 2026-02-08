@@ -21,6 +21,8 @@ import {
 import type {
 	EnergyConsumptionData,
 	EnergyConsumptionLineItem,
+	AdditionalCostsData,
+	AdditionalCostLineItem,
 } from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
 import type { InvoiceDocumentType } from "@/types";
 
@@ -50,6 +52,26 @@ function buildEnergyConsumption(
 		energyType: "Nah-/Fernwärme kWh",
 		lineItems,
 		totalKwh: "",
+		totalAmount,
+	};
+}
+
+/**
+ * Build additional costs data from non-fuel invoices.
+ */
+function buildAdditionalCosts(
+	otherInvoices: InvoiceDocumentType[],
+): AdditionalCostsData {
+	const lineItems: AdditionalCostLineItem[] = otherInvoices.map((invoice) => ({
+		position: invoice.purpose || invoice.cost_type || "Sonstige Kosten",
+		date: invoice.invoice_date || undefined,
+		amount: Number(invoice.total_amount ?? 0),
+	}));
+
+	const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
+
+	return {
+		lineItems,
 		totalAmount,
 	};
 }
@@ -117,7 +139,7 @@ export async function POST(request: NextRequest) {
 			getObjectById(objektId),
 			getLocalById(apartmentId),
 			getRelatedLocalsByObjektId(objektId),
-			getHeatingInvoicesByHeatingBillDocumentID(documentId, "fuel_costs"),
+			getHeatingInvoicesByHeatingBillDocumentID(documentId),
 			getDocCostCategoryTypes("heizkostenabrechnung"),
 			getContractsWithContractorsByLocalID(apartmentId),
 		]);
@@ -163,10 +185,21 @@ export async function POST(request: NextRequest) {
 		// 7. Get logo path for PDF
 		const logoSrc = path.join(process.cwd(), "public/admin_logo.png");
 
-		// 8. Build energy consumption from fuel invoices (pre-filtered at query level)
-		const energyConsumption = buildEnergyConsumption(invoices);
+		// 8. Split invoices into fuel and non-fuel
+		const fuelInvoices = invoices.filter(
+			(inv) => inv.cost_type === "fuel_costs",
+		);
+		const otherInvoices = invoices.filter(
+			(inv) => inv.cost_type !== "fuel_costs",
+		);
 
-		// 9. Build props for PDF component (matching HeatingBillPreviewProps)
+		// 9. Build energy consumption and additional costs
+		const energyConsumption = buildEnergyConsumption(fuelInvoices);
+		const additionalCosts = buildAdditionalCosts(otherInvoices);
+		const totalHeatingCosts =
+			energyConsumption.totalAmount + additionalCosts.totalAmount;
+
+		// 10. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
 			mainDoc: settlementDoc as any,
 			local: apartment as any,
@@ -178,6 +211,8 @@ export async function POST(request: NextRequest) {
 			contracts: contractsWithContractors as any[],
 			logoSrc,
 			energyConsumption,
+			additionalCosts,
+			totalHeatingCosts,
 		};
 
 		logger.info("Generating PDF server-side", {

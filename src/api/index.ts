@@ -14,7 +14,7 @@ import {
   heating_invoices,
   agencies,
 } from "@/db/drizzle/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { getUserAgencyId, getUserRole, isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -889,7 +889,8 @@ export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
     const allUsers = await database
       .select()
       .from(users)
-      .where(inArray(users.permission, permissions));
+      .where(inArray(users.permission, permissions))
+      .orderBy(sql`LOWER(${users.email}) DESC`);
     return allUsers;
   } catch (error) {
     console.error("Error fetching all users:", error);
@@ -906,7 +907,8 @@ export async function getUsers(agency_id: string, permissions: string[]): Promis
       .where(and(
         eq(users.agency_id, agency_id),
         inArray(users.permission, permissions)
-      ));
+      ))
+      .orderBy(sql`LOWER(${users.email}) DESC`);
     console.log('Allowed users', allowedUsers)
     return allowedUsers;
   } catch (error) {

@@ -21,7 +21,6 @@ export default async function AdminPage({
 	} = await supabase.auth.getUser();
 	let user:UserType|null = null;
 	let users:UserType[] = [];
-	console.log("Route to dashboard");
 	// Skip tour check if user just completed tour
 	if (!tourCompleted && supabaseUser) {
 		const { data } = await supabase
@@ -43,21 +42,11 @@ export default async function AdminPage({
 		if (!user?.agency_id)
 			users = [];
 		else {
-			console.log("Fetching users for agency_id:", user.agency_id);
 			users = await getUsers(user?.agency_id, ["user", "admin"]);
-	console.log("Users============>", users);
 		}
 	}
 
   const agencies = await getAgencies();
-	console.log("AGENCIES============>", agencies);
-
-	// Sort alphabetically by email
-	// users.sort((a, b) => {
-	//   const emailA = a.email?.toLowerCase() || '';
-	//   const emailB = b.email?.toLowerCase() || '';
-	//   return emailA.localeCompare(emailB);
-	// });
 
 	return (
 		<Suspense fallback={<Loading />}>

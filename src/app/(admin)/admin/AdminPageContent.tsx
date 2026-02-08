@@ -4,6 +4,7 @@ import Breadcrumb from '@/components/Admin/Breadcrumb/Breadcrumb';
 import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
 import AdminUserItem from '@/components/Admin/ObjekteItem/AdminUserItem';
 import RegistrationToggle from '@/components/Admin/RegistrationToggle/RegistrationToggle';
+import UsersList from '@/components/Admin/UsersList';
 import { ROUTE_OBJEKTE } from '@/routes/routes';
 import { UserType } from '@/types';
 import { Agency } from '@/types/Agency';
@@ -29,16 +30,7 @@ export default function AdminPageContent({ users, agencies }: AdminPageContentPr
 					<RegistrationToggle />
 
 					{/* User List */}
-					<div className="pt-4 max-medium:pt-2">
-						<h2 className="text-xl max-medium:text-lg font-semibold text-gray-900 mb-4 max-medium:mb-3">
-							Benutzer
-						</h2>
-						<div className="space-y-3 max-medium:space-y-2">
-							{users.map((user) => (
-								<AdminUserItem key={user.id} item={user} agencies={agencies} />
-							))}
-						</div>
-					</div>
+					<UsersList users={users} agencies={agencies} />
 				</div>
 			</ContentWrapper>
 		</div>

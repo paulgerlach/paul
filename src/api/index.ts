@@ -882,14 +882,17 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   }));
 }
 
-export async function getUsers(): Promise<UserType[]> {
+export async function getUsers(agency_id: string, permissions: string[]): Promise<UserType[]> {
   try {
-    const basicUsers = await database
+    const allowedUsers = await database
       .select()
       .from(users)
-      .where(eq(users.permission, "user"));
-    console.log('Basic users', users)
-    return basicUsers;
+      .where(and(
+        eq(users.agency_id, agency_id),
+        inArray(users.permission, permissions)
+      ));
+    console.log('Allowed users', allowedUsers)
+    return allowedUsers;
   } catch (error) {
     console.error("Error fetching users:", error);
     return [];

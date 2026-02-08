@@ -1,10 +1,12 @@
+'use client'
+
 import { ROUTE_ADMIN } from "@/routes/routes";
 import { admin_objekte } from "@/static/icons";
 import type { UserType } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function AdminUserItem({ item }: { item: UserType }) {
+export default function AdminUserItem({ item }: { item: UserType }) {
   if (!item.id) {
     throw new Error("Missing item.id");
   }

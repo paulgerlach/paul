@@ -5,6 +5,7 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { Suspense } from "react";
 import Loading from "./loading";
 import AdminPageContent from "./AdminPageContent";
+import { UserType } from "@/types";
 
 export default async function AdminPage({
   searchParams,
@@ -16,25 +17,32 @@ export default async function AdminPage({
 
 	const supabase = await supabaseServer();
 	const {
-		data: { user },
+		data: { user: supabaseUser },
 	} = await supabase.auth.getUser();
-
+	let user:UserType|null = null;
+	let users:UserType[] = [];
 	console.log("Route to dashboard");
 	// Skip tour check if user just completed tour
-	if (!tourCompleted && user) {
+	if (!tourCompleted && supabaseUser) {
 		const { data } = await supabase
 			.from("users")
-			.select("has_seen_tour")
-			.eq("id", user.id)
+			.select("*")
+			.eq("id", supabaseUser.id)
 			.single();
 
 		if (data && !data.has_seen_tour) {
 			redirect(ROUTE_TOUR_DASHBOARD);
+		} else {
+			user = data as UserType;
 		}
 	}
 
-	const users = await getUsers();
-	console.log("Fetched users for admin page:", users);
+	console.log('User in admin page============>', user)
+
+	if (user?.permission === "super_admin")
+		users = await getUsers(user?.agency_id ?? "", ["super_admin", "admin", "user"]);
+	else
+		users = await getUsers(user?.agency_id ?? "", ["user"]);
 
 	// Sort alphabetically by email
 	// users.sort((a, b) => {

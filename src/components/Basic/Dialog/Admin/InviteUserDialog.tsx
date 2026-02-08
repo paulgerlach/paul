@@ -46,8 +46,7 @@ export default function InviteUserDialog({
 			// Success
 			setEmail("");
 			setRole("user");
-			// onSuccess?.();
-			// onClose();
+			closeDialog("invite_user");
 		} catch (err) {
 			setError("An error occurred");
 		} finally {

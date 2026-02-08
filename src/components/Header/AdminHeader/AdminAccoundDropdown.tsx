@@ -16,7 +16,7 @@ import { useDialogStore } from "@/store/useDIalogStore";
 export default function AdminAccoundDropdown() {
 	const router = useRouter();
 	const { data: currentUser } = useAuthUser();
-	const { openDialog } = useDialogStore(); // ADD THIS
+	const { openDialog } = useDialogStore();
 
 	const signOut = async () => {
 		await supabase.auth.signOut();
@@ -78,21 +78,15 @@ export default function AdminAccoundDropdown() {
 								</Link>
 
 								{/* Team & Rollen - Opens Invite Modal */}
-								{/* {true ? ( */}
-									<button
-										onClick={() => openDialog("invite_user")} // USE THIS
-										className="w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-									>
-										Team & Rollen
-									</button>
-								{/* ) : (
-									<Link
-										href="#"
-										className="block text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
-									>
-										Team & Rollen
-									</Link>
-								)} */}
+								{canInviteUsers && (
+								<button
+									onClick={() => {
+										openDialog("invite_user");
+									}}
+									className="w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded"
+								>
+									Team & Rollen
+								</button>)}
 
 								<Link
 									href="#"
@@ -155,15 +149,6 @@ export default function AdminAccoundDropdown() {
 					</div>
 				</PopoverContent>
 			</Popover>
-
-			{/* Invite User Modal */}
-			{/* <InviteUserModal
-				isOpen={showInviteModal}
-				onClose={() => setShowInviteModal(false)}
-				onSuccess={() => {
-					console.log("User invited successfully");
-				}}
-			/> */}
 		</>
 	);
 }

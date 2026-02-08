@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import AdminUserItem from "./ObjekteItem/AdminUserItem";
 import { UserType } from "@/types";
 import { Agency } from "@/types/Agency";
 import SearchAndFilters from "./SearchAndFilters";
+import AdminUserItem from "../ObjekteItem/AdminUserItem";
 
 interface UsersListProps {
 	users: UserType[];

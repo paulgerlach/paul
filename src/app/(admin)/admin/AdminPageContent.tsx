@@ -2,9 +2,8 @@
 
 import Breadcrumb from '@/components/Admin/Breadcrumb/Breadcrumb';
 import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
-import AdminUserItem from '@/components/Admin/ObjekteItem/AdminUserItem';
 import RegistrationToggle from '@/components/Admin/RegistrationToggle/RegistrationToggle';
-import UsersList from '@/components/Admin/UsersList';
+import UsersList from '@/components/Admin/UserManagenent/UsersList';
 import { ROUTE_OBJEKTE } from '@/routes/routes';
 import { UserType } from '@/types';
 import { Agency } from '@/types/Agency';

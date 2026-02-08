@@ -12,7 +12,7 @@ type ObjekteItemLocalHeaderProps = {
   isLoading: boolean;
   hasDocuments: boolean;
   onClickAccordion: () => void;
-  link?: string;
+  link: string;
   isOpen?: boolean;
   renderStatusImage: () => React.ReactNode;
   renderStatusBadge: () => React.ReactNode;
@@ -28,14 +28,9 @@ export function ObjekteItemLocalHeader({
   link,
   isOpen = false,
 }: ObjekteItemLocalHeaderProps) {
-  const Wrapper: React.ElementType = hasDocuments ? "div" : Link;
-  const wrapperProps = hasDocuments
-    ? { onClick: onClickAccordion, role: "button", "aria-expanded": isOpen }
-    : { href: link ?? "#" };
-
   return (
-    <Wrapper
-      {...wrapperProps}
+    <Link
+      href={link}
       className="bg-white p-2 rounded-2xl max-medium:rounded-xl flex items-center justify-between max-medium:gap-2 cursor-pointer"
     >
       {/* Left Section: Icon + Name */}
@@ -61,22 +56,26 @@ export function ObjekteItemLocalHeader({
           )}
         </div>
 
-        <div className="flex items-center justify-start gap-5 max-medium:gap-1 min-w-0 flex-1">
+        <div className="grid grid-cols-[1fr_auto] items-center justify-start gap-5 max-medium:gap-1 min-w-0 flex-1">
           <p className="text-2xl max-xl:text-lg max-medium:text-xs text-dark_green max-medium:leading-tight">
             {buildLocalName(item)}
           </p>
           {hasDocuments && (
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className={`max-w-2.5 max-h-4 max-medium:max-w-2 max-medium:max-h-3 transition-all duration-300 flex-shrink-0 ${
-                isOpen ? "rotate-0" : "-rotate-90"
-              }`}
-              src={chevron_admin}
-              alt="chevron"
-            />
+            <button className="h-full cursor-pointer block px-8" onClick={(e) => {
+              e.preventDefault();
+              onClickAccordion()
+            }}>
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                loading="lazy"
+                className={`max-w-2.5 max-h-4 max-medium:max-w-2 max-medium:max-h-3 transition-all duration-300 flex-shrink-0 ${isOpen ? "rotate-0" : "-rotate-90"
+                  }`}
+                src={chevron_admin}
+                alt="chevron"
+              />
+            </button>
           )}
         </div>
       </div>
@@ -91,6 +90,6 @@ export function ObjekteItemLocalHeader({
           )}
         </div>
       </div>
-    </Wrapper>
+    </Link>
   );
 }

@@ -9,7 +9,7 @@ import {
   idgim,
   quarterback,
   raum,
-  silverton,
+
   vitec,
   wagner,
   winfried,
@@ -161,16 +161,7 @@ export default function GeraeteHeroTicker() {
               alt="raum"
             />
           </div>
-          <div className="ticker__item">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              src={silverton}
-              alt="silverton"
-            />
-          </div>
+
           <div className="ticker__item">
             <Image
               width={0}
@@ -271,16 +262,7 @@ export default function GeraeteHeroTicker() {
               alt="raum"
             />
           </div>
-          <div className="ticker__item">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              src={silverton}
-              alt="silverton"
-            />
-          </div>
+
           <div className="ticker__item">
             <Image
               width={0}
@@ -381,16 +363,7 @@ export default function GeraeteHeroTicker() {
               alt="raum"
             />
           </div>
-          <div className="ticker__item">
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              src={silverton}
-              alt="silverton"
-            />
-          </div>
+
           <div className="ticker__item">
             <Image
               width={0}

@@ -14,7 +14,8 @@ export default function StepSixOver50({
 				Ihre Kontaktdaten
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für<br />
+				Geben Sie Ihre Kontaktdaten ein, sodass wir Ihnen ein für{" "}
+				<span className="max-small:hidden"><br /></span>
 				Sie passendes Angebot zukommen lassen können.
 			</p>
 			<div className="space-y-4">
@@ -27,9 +28,9 @@ export default function StepSixOver50({
 							{...register("first_name")}
 							id="first_name"
 						/>
-						{errors.first_name && (
-							<p className="text-red-500 text-sm mt-1">{errors.first_name.message}</p>
-						)}
+					{errors.first_name && (
+						<p className="text-dark_text/50 text-sm mt-1">{errors.first_name.message}</p>
+					)}
 					</label>
 					<label htmlFor="last_name" className="block flex-1">
 						<input
@@ -39,9 +40,9 @@ export default function StepSixOver50({
 							{...register("last_name")}
 							id="last_name"
 						/>
-						{errors.last_name && (
-							<p className="text-red-500 text-sm mt-1">{errors.last_name.message}</p>
-						)}
+					{errors.last_name && (
+						<p className="text-dark_text/50 text-sm mt-1">{errors.last_name.message}</p>
+					)}
 					</label>
 				</div>
 				<label className="block max-w-[509px]" htmlFor="email">
@@ -52,9 +53,9 @@ export default function StepSixOver50({
 						type="email"
 						id="email"
 					/>
-					{errors.email && (
-						<p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-					)}
+			{errors.email && (
+				<p className="text-dark_text/50 text-sm mt-1">{errors.email.message}</p>
+			)}
 				</label>
 				<label
 					htmlFor="form_confirm"
@@ -79,9 +80,9 @@ export default function StepSixOver50({
 						gelesen und akzeptiert
 					</span>
 				</label>
-				{errors.form_confirm && (
-					<p className="text-red-500 text-sm">{errors.form_confirm.message}</p>
-				)}
+		{errors.form_confirm && (
+			<p className="text-red-500 text-sm">{errors.form_confirm.message}</p>
+		)}
 			</div>
 		</div>
 	);

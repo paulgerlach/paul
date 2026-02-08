@@ -12,7 +12,8 @@ export default function StepFiveOver50({
 				Ihre Kontaktdaten
 			</p>
 			<p className="mb-12 text-[20px] max-small:text-base text-dark_text">
-				In welcher Region befindet sich das Hauptgeschäftsfeld<br />
+				In welcher Region befindet sich das Hauptgeschäftsfeld{" "}
+				<span className="max-small:hidden"><br /></span>
 				Ihrer Verwaltung?
 			</p>
 			<div className="space-y-4">

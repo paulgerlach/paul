@@ -74,7 +74,7 @@ export default function UsersList({
 			) : (
 				<div className="space-y-3 max-medium:space-y-2">
 					{sortedUsers.map((user) => (
-						<AdminUserItem key={user.id} item={user} agencies={agencies} />
+						<AdminUserItem key={user.id} item={user} agencies={agencies} isSuperAdmin={isSuperAdmin} />
 					))}
 				</div>
 			)}

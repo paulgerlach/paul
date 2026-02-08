@@ -12,11 +12,11 @@ export default function AgenciesList({ agencies, handleToggleActive }: AgenciesL
   if(agencies.length === 0) {
     return <p>No agencies found.</p>;
   };
-  
+
 	return (
 		<ul>
 			{agencies?.map((agency: Agency) => (
-				<li key={agency.id}>
+				<li key={agency.id} className='space-x-4'>
 					{agency.name} - {agency.isActive ? "Active" : "Inactive"}
 					<button
 						onClick={() => handleToggleActive(agency.id, agency.isActive)}

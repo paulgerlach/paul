@@ -57,7 +57,7 @@ export default function AgencyManagement() {
 	if (error) return <div>Error: {error.message}</div>;
 
   return <div>
-    <CreateAgencyForm queryClient={queryClient} />
+    <CreateAgencyForm />
     <AgenciesList agencies={agencies ?? []} handleToggleActive={handleToggleActive} />
   </div>;
 }

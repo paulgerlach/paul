@@ -1,6 +1,6 @@
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
-import { formatDateGerman } from "@/utils";
+import { formatDateGerman, formatEuro } from "@/utils";
 
 const colors = {
 	accent: "#DDE9E0",
@@ -234,7 +234,9 @@ export default function HeatingBillPreviewTwoPDF({
 								color: colors.dark,
 							}}
 						>
-							Energieart: Nah-/Fernwärme kWh
+							Energieart:{" "}
+							{previewData.energyConsumption?.energyType ||
+								"Nah-/Fernwärme kWh"}
 						</Text>
 						<View style={styles.tableHeader}>
 							<Text style={styles.tableHeaderCell}>POSITION</Text>
@@ -242,18 +244,22 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableHeaderCell}>kWh</Text>
 							<Text style={styles.tableHeaderCellRight}>BETRAG</Text>
 						</View>
-						<View style={styles.tableRow}>
-							<Text style={styles.tableCell}>Preisbremse Energie</Text>
-							<Text style={styles.tableCell}></Text>
-							<Text style={styles.tableCell}></Text>
-							<Text style={styles.tableCellRight}>-21.035,94 €</Text>
-						</View>
-						<View style={styles.tableRow}>
-							<Text style={styles.tableCell}>Rechnung{"\n"}260002673166</Text>
-							<Text style={styles.tableCell}>31.12.2023</Text>
-							<Text style={styles.tableCell}>761.123</Text>
-							<Text style={styles.tableCellRight}>124.242,47 €</Text>
-						</View>
+						{/* Dynamic energy line items */}
+						{previewData.energyConsumption?.lineItems.map((item, index) => (
+							<View key={index} style={styles.tableRow}>
+								<Text style={styles.tableCell}>{item.position}</Text>
+								<Text style={styles.tableCell}>
+									{item.date ? formatDateGerman(item.date) : ""}
+								</Text>
+								<Text style={styles.tableCell}>
+									{item.kwh ? item?.kwh.toLocaleString() : ""}
+								</Text>
+								<Text style={styles.tableCellRight}>
+									{formatEuro(item.amount)}
+								</Text>
+							</View>
+						))}
+						{/* Sum row */}
 						<View style={[styles.tableRow, styles.sumRow]}>
 							<Text
 								style={[
@@ -270,7 +276,9 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
-								761.123
+								{previewData.energyConsumption?.totalKwh
+									? previewData.energyConsumption.totalKwh.toLocaleString()
+									: ""}
 							</Text>
 							<Text
 								style={[
@@ -278,7 +286,7 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
-								103.206,53 €
+								{formatEuro(previewData.energyConsumption?.totalAmount ?? 0)}
 							</Text>
 						</View>
 					</View>

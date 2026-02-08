@@ -18,6 +18,41 @@ import {
 	getDocCostCategoryTypes,
 	getContractsWithContractorsByLocalID,
 } from "@/api";
+import type {
+	EnergyConsumptionData,
+	EnergyConsumptionLineItem,
+} from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
+import type { InvoiceDocumentType } from "@/types";
+
+/**
+ * Build energy consumption data from fuel cost invoices for PDF display.
+ * Invoices are pre-filtered by cost_type at query level.
+ */
+function buildEnergyConsumption(
+	fuelInvoices: InvoiceDocumentType[],
+): EnergyConsumptionData {
+	// Create line items for each fuel invoice
+	const lineItems: EnergyConsumptionLineItem[] = fuelInvoices.map(
+		(invoice) => ({
+			position: invoice.document_name
+				? `Rechnung\n${invoice.document_name.split("-")[1]}`
+				: invoice.purpose || "Energiekosten",
+			date: invoice.invoice_date || undefined,
+			kwh: invoice.notes ?? "", // added as a remark on the invoice
+			amount: Number(invoice.total_amount ?? 0),
+		}),
+	);
+
+	// Calculate totals
+	const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
+
+	return {
+		energyType: "Nah-/Fernwärme kWh",
+		lineItems,
+		totalKwh: "",
+		totalAmount,
+	};
+}
 
 /**
  * Request validation schema for heating bill PDF generation.
@@ -82,7 +117,7 @@ export async function POST(request: NextRequest) {
 			getObjectById(objektId),
 			getLocalById(apartmentId),
 			getRelatedLocalsByObjektId(objektId),
-			getHeatingInvoicesByHeatingBillDocumentID(documentId),
+			getHeatingInvoicesByHeatingBillDocumentID(documentId, "fuel_costs"),
 			getDocCostCategoryTypes("heizkostenabrechnung"),
 			getContractsWithContractorsByLocalID(apartmentId),
 		]);
@@ -128,7 +163,10 @@ export async function POST(request: NextRequest) {
 		// 7. Get logo path for PDF
 		const logoSrc = path.join(process.cwd(), "public/admin_logo.png");
 
-		// 8. Build props for PDF component (matching HeatingBillPreviewProps)
+		// 8. Build energy consumption from fuel invoices (pre-filtered at query level)
+		const energyConsumption = buildEnergyConsumption(invoices);
+
+		// 9. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
 			mainDoc: settlementDoc as any,
 			local: apartment as any,
@@ -139,6 +177,7 @@ export async function POST(request: NextRequest) {
 			invoices: invoices as any[],
 			contracts: contractsWithContractors as any[],
 			logoSrc,
+			energyConsumption,
 		};
 
 		logger.info("Generating PDF server-side", {

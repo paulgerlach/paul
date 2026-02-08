@@ -1071,13 +1071,13 @@ export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, use
   return invoices;
 }
 
-export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
+export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string, costType?: string): Promise<HeatingInvoiceType[]> {
   const user = await getAuthenticatedServerUser();
 
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id), costType ? eq(heating_invoices.cost_type, costType) : undefined));
 
   return invoices;
 }

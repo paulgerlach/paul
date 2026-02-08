@@ -27,6 +27,27 @@ export type HeatingBillPreviewProps = {
 	objekt: ObjektType;
 	user: UserType;
 	logoSrc?: string; // Optional logo source (file path or data URL)
+	energyConsumption?: EnergyConsumptionData; // Calculated server-side
+};
+
+/**
+ * Energy consumption line item for display in PDF
+ */
+export type EnergyConsumptionLineItem = {
+	position: string; // e.g., "Rechnung 260002673166" or "Preisbremse Energie"
+	date?: string; // Invoice date
+	kwh?: string; // Energy consumption in kWh (if applicable)
+	amount: number; // Amount in EUR
+};
+
+/**
+ * Aggregated energy consumption data for PDF display
+ */
+export type EnergyConsumptionData = {
+	energyType: string; // e.g., "Nah-/Fernwärme kWh"
+	lineItems: EnergyConsumptionLineItem[];
+	totalKwh: string; // Sum of kWh
+	totalAmount: number; // Sum of amounts (Summe Verbrauch)
 };
 
 export type HeatingBillPreviewData = {
@@ -54,6 +75,8 @@ export type HeatingBillPreviewData = {
 	propertyNumber: string;
 	heidiCustomerNumber: string;
 	logoSrc?: string; // Optional logo source (file path or data URL)
+	// Iteration 2: Energy consumption calculations
+	energyConsumption?: EnergyConsumptionData;
 };
 
 export default function HeatingBillPreview({

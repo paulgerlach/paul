@@ -30,6 +30,7 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		totalLivingSpace,
 		costCategories,
 		logoSrc,
+		energyConsumption, // Calculated in route handler, passed as prop
 	} = props;
 
 	const periodStart = mainDoc?.start_date
@@ -95,6 +96,8 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
 		logoSrc,
+		// Energy consumption calculated server-side in route handler
+		energyConsumption,
 	};
 
 	return (

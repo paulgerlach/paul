@@ -57,7 +57,7 @@ export default function AgencyManagement() {
 	if (error) return <div>Error: {error.message}</div>;
 
   return (
-		<div>
+		<div className='space-y-4'>
 			<AgenciesList
 				agencies={agencies ?? []}
 				handleToggleActive={handleToggleActive}

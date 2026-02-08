@@ -55,7 +55,6 @@ export default function CreateAgencyForm({  }: CreateAgencyFormProps) {
 					{error}
 				</div>
 			)}
-
 			<div className="flex gap-2">
 				<Input
 					type="text"

@@ -51,7 +51,7 @@ function AgencyItem({
 			<div className="flex items-center gap-4">
 				<div
 					className={`w-3 h-3 rounded-full ${
-						agency.isActive ? "bg-green-500" : "bg-gray-300"
+						agency.is_active ? "bg-green-500" : "bg-gray-300"
 					}`}
 				/>
 				<div>
@@ -59,20 +59,20 @@ function AgencyItem({
 						{agency.name}
 					</h3>
 					<p className="text-sm text-gray-500">
-						{agency.isActive ? "Aktiv" : "Inaktiv"}
+						{agency.is_active ? "Aktiv" : "Inaktiv"}
 					</p>
 				</div>
 			</div>
 
 			<button
-				onClick={() => onToggle(agency.id, agency.isActive)}
-				className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-					agency.isActive
+				onClick={() => onToggle(agency.id, agency.is_active ?? false)}
+				className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:cursor-pointer hover:scale-105 ease-in-out ${
+					agency.is_active
 						? "bg-red-50 text-red-600 hover:bg-red-100"
 						: "bg-green-50 text-green-600 hover:bg-green-100"
 				}`}
 			>
-				{agency.isActive ? "Deaktivieren" : "Aktivieren"}
+				{agency.is_active ? "Deaktivieren" : "Aktivieren"}
 			</button>
 		</div>
 	);

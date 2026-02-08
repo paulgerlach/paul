@@ -14,7 +14,7 @@ export async function GET() {
   const { data } = await supabase
     .from("agencies")
     .select("*")
-    .eq("is_active", true)
+    // .eq("is_active", true)
     .order("name");
 
   return Response.json(data || []);
@@ -84,7 +84,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`Agency created: ${newAgencyId} by super admin ${user.id}`);
 
     return NextResponse.json({ id: newAgencyId }, { status: 201 });
 

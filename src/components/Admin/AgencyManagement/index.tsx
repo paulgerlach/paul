@@ -45,11 +45,13 @@ export default function AgencyManagement() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["agencies"] });
+			queryClient.refetchQueries({ queryKey: ["agencies"] });
 		},
 	});
   
 
 	const handleToggleActive = async (id: string, isActive: boolean) => {
+			console.log("=======++>Updating agency with data:", { id, is_active: isActive });
 		await updateMutation.mutateAsync({ id, is_active: !isActive });
 	};
 

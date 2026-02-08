@@ -1,6 +1,6 @@
 export type Agency = {
   id: string;
   name: string;
-  isActive: boolean;
-  createdAt: Date;
+  is_active: boolean;
+  created_at: Date;
 }

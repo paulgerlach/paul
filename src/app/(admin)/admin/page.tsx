@@ -1,5 +1,5 @@
 import { getAgencies, getAllUsers, getUsers } from "@/api";
-import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
+import { ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/utils/supabase/server";
 import { Suspense } from "react";

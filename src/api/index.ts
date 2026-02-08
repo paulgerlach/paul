@@ -899,7 +899,6 @@ export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
 }
 
 export async function getUsers(agency_id: string, permissions: string[]): Promise<UserType[]> {
-  console.log('*********Fetching users for agency_id:', agency_id, 'with permissions:', permissions);
   try {
     const allowedUsers = await database
       .select()
@@ -909,7 +908,6 @@ export async function getUsers(agency_id: string, permissions: string[]): Promis
         inArray(users.permission, permissions)
       ))
       .orderBy(sql`LOWER(${users.email}) DESC`);
-    console.log('Allowed users', allowedUsers)
     return allowedUsers;
   } catch (error) {
     console.error("Error fetching users:", error);

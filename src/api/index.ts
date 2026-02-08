@@ -883,13 +883,17 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
 }
 
 export async function getUsers(): Promise<UserType[]> {
-
-  const basicUsers = await database
-    .select()
-    .from(users)
-    .where(eq(users.permission, "user"));
-
-  return basicUsers;
+  try {
+    const basicUsers = await database
+      .select()
+      .from(users)
+      .where(eq(users.permission, "user"));
+    console.log('Basic users', users)
+    return basicUsers;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
 }
 
 export async function getUserData(): Promise<UserType> {

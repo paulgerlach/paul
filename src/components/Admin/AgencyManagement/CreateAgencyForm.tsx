@@ -29,8 +29,7 @@ export default function CreateAgencyForm({  }: CreateAgencyFormProps) {
 			return response.json();
 		},
 		onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["agencies"] });
-      setName("");
+      queryClient.invalidateQueries({ queryKey: ["agencies"] });      
 		},
 	});
 
@@ -45,7 +44,8 @@ export default function CreateAgencyForm({  }: CreateAgencyFormProps) {
 		try {
 			await createMutation.mutateAsync({name});
 		} finally {
-			setIsSubmitting(false);
+      setIsSubmitting(false);
+      setName("");
 		}
   };
   

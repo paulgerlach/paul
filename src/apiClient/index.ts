@@ -360,8 +360,6 @@ async function getAuthenticatedUserData(): Promise<UserType> {
     throw new Error(`Failed to fetch user: ${error.message}`);
   }
 
-  console.log("Fetched authenticated user data:", data);
-
   return data;
 }
 

@@ -56,8 +56,13 @@ export default function AgencyManagement() {
   if (isLoading) return <div>Loading agencies...</div>;
 	if (error) return <div>Error: {error.message}</div>;
 
-  return <div>
-    <CreateAgencyForm />
-    <AgenciesList agencies={agencies ?? []} handleToggleActive={handleToggleActive} />
-  </div>;
+  return (
+		<div>
+			<AgenciesList
+				agencies={agencies ?? []}
+				handleToggleActive={handleToggleActive}
+			/>
+			<CreateAgencyForm />
+		</div>
+	);
 }

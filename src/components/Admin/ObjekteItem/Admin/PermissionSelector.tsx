@@ -23,12 +23,16 @@ export default function PermissionSelector({isEditingPermission, selectedPermiss
 						title="permissions"
 						value={selectedPermission}
 						onChange={(e) => setSelectedPermission(e.target.value)}
-						className="text-sm border rounded px-2 py-1 bg-white"
+						className="text-md border rounded px-2 py-1 bg-white"
 						disabled={isUpdating}
 					>
 						{PERMISSIONS.map((perm) => (
 							<option key={perm} value={perm}>
-								{perm}
+								{perm === "super_admin"
+									? "Super Admin"
+									: perm === "admin"
+										? "Admin"
+										: "User"}
 							</option>
 						))}
 					</select>
@@ -52,7 +56,7 @@ export default function PermissionSelector({isEditingPermission, selectedPermiss
 			) : (
 				<button
 					onClick={() => setIsEditingPermission(true)}
-					className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700 hover:cursor-pointer transition"
+					className="flex items-center gap-2 text-md text-blue-500 hover:text-blue-700 hover:cursor-pointer transition hover:scale-105 ease-in-out"
 				>
 					<span className="text-gray-500">Role:</span>
 					<span className="font-medium">

@@ -1,7 +1,7 @@
 "use server";
 
 import { supabaseServer } from "@/utils/supabase/server";
-import { isAdminUser } from "@/auth";
+import { isSuperAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 /**
@@ -44,9 +44,9 @@ export async function updateRegistrationStatus(
 }> {
   try {
     const user = await getAuthenticatedServerUser();
-    const isAdmin = await isAdminUser(user.id);
+    const isSuperAdminUser = await isSuperAdmin(user.id);
 
-    if (!isAdmin) {
+    if (!isSuperAdminUser) {
       return {
         success: false,
         error: "Only administrators can change registration settings",

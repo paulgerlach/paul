@@ -12,7 +12,7 @@ import {
   users,
   local_meters,
   heating_invoices,
-  agencies,
+  agencies,   
 } from "@/db/drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -918,7 +918,16 @@ export async function getUsers(agency_id: string, permissions: string[]): Promis
 export async function getAgencies(): Promise<Agency[]> {
   try {
     const result = await database.select().from(agencies);
-    return result;
+    let agenciesDB: Agency[] = [];
+    result.forEach((agency: any) => {
+      agenciesDB.push({
+        id: agency.id,
+        name: agency.name,
+        created_at: agency.created_at,
+        is_active: agency.is_active,
+      })
+    });
+    return agenciesDB;
   } catch (error) {
     console.error("Error fetching agencies:", error);
     return [];

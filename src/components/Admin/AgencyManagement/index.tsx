@@ -51,18 +51,22 @@ export default function AgencyManagement() {
   
 
 	const handleToggleActive = async (id: string, isActive: boolean) => {
-			console.log("=======++>Updating agency with data:", { id, is_active: isActive });
 		await updateMutation.mutateAsync({ id, is_active: !isActive });
+	};
+
+	const handleEditName = async (id: string, name: string) => {
+		await updateMutation.mutateAsync({ id, name });
 	};
 
   if (isLoading) return <div>Loading agencies...</div>;
 	if (error) return <div>Error: {error.message}</div>;
 
   return (
-		<div className='space-y-4'>
+		<div className="space-y-4">
 			<AgenciesList
 				agencies={agencies ?? []}
 				handleToggleActive={handleToggleActive}
+				handleEditName={handleEditName}
 			/>
 			<CreateAgencyForm />
 		</div>

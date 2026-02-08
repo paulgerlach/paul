@@ -12,8 +12,17 @@ import {
   ROUTE_ADMIN,
   ROUTE_CSV_UPLOAD,
   ROUTE_MQTT_GATEWAY,
+  ROUTE_AGENCY_MANAGEMENT,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte, caract_files, caract_radio } from "@/static/icons";
+import {
+	abrechnung,
+	dashboard,
+	dokumente,
+	objekte,
+	caract_files,
+	caract_radio,
+	immobilien_1_50,
+} from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -37,6 +46,9 @@ export default function Sidebar() {
   const [openLink, setOpenLink] = useState<string | null>(null);
 
   const isAdmin = user?.permission === "admin";
+
+
+  const isSuperAdmin = user?.permission === "super_admin";
 
   const withUserPrefix = (route: string) =>
     isAdmin ? `${ROUTE_ADMIN}/${user_id}${route}` : route;
@@ -80,26 +92,35 @@ export default function Sidebar() {
   ];
 
   // 🔒 SECURITY: Admin-only links
-  if (isAdmin) {
-    dashboardLinks.unshift({
-      title: "User Übersicht",
-      icon: dashboard,
-      route: ROUTE_ADMIN,
-    });
+  if (isAdmin || isSuperAdmin) {
+		dashboardLinks.unshift({
+			title: "User Übersicht",
+			icon: dashboard,
+			route: ROUTE_ADMIN,
+		});
 
-    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
-    dashboardLinks.splice(3, 0, {
-      title: "CSV Upload",
-      icon: caract_files,
-      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
-    });
-    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
-    dashboardLinks.splice(4, 0, {
-      title: "Gateway Management",
-      icon: caract_radio,
-      route: `${ROUTE_MQTT_GATEWAY}`,
-    });
-  }
+		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+		dashboardLinks.splice(3, 0, {
+			title: "CSV Upload",
+			icon: caract_files,
+			route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
+		});
+	}
+  
+  if (isSuperAdmin) {
+		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+		dashboardLinks.splice(4, 0, {
+			title: "Gateway Management",
+			icon: caract_radio,
+			route: `${ROUTE_MQTT_GATEWAY}`,
+		});
+		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+		dashboardLinks.splice(4, 0, {
+			title: "Agency Management",
+			icon: immobilien_1_50,
+			route: `${ROUTE_AGENCY_MANAGEMENT}`,
+		});
+	}
 
   const isRouteActive = (route: string) =>
     isAdmin ? pathname === route : pathname?.startsWith(route);

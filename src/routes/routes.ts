@@ -20,3 +20,4 @@ export const ROUTE_CSV_UPLOAD = "/csv-upload";
 export const ROUTE_RESET_PASSWORD = "/reset-password";
 export const ROUTE_SHARED_DASHBOARD = "/shared/dashboard";
 export const ROUTE_MQTT_GATEWAY = "/mqtt-gateway";
+export const ROUTE_AGENCY_MANAGEMENT = "/agency-management";

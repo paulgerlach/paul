@@ -1,4 +1,4 @@
-import { getUsers } from "@/api";
+import { getAgencies, getAllUsers, getUsers } from "@/api";
 import { ROUTE_OBJEKTE, ROUTE_TOUR_DASHBOARD } from "@/routes/routes";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -37,12 +37,20 @@ export default async function AdminPage({
 		}
 	}
 
-	console.log('User in admin page============>', user)
+	if (user?.permission === "super_admin") {
+		users = await getAllUsers(["super_admin", "admin", "user"]);
+	} else {
+		if (!user?.agency_id)
+			users = [];
+		else {
+			console.log("Fetching users for agency_id:", user.agency_id);
+			users = await getUsers(user?.agency_id, ["user", "admin"]);
+	console.log("Users============>", users);
+		}
+	}
 
-	if (user?.permission === "super_admin")
-		users = await getUsers(user?.agency_id ?? "", ["super_admin", "admin", "user"]);
-	else
-		users = await getUsers(user?.agency_id ?? "", ["user"]);
+  const agencies = await getAgencies();
+	console.log("AGENCIES============>", agencies);
 
 	// Sort alphabetically by email
 	// users.sort((a, b) => {
@@ -53,7 +61,7 @@ export default async function AdminPage({
 
 	return (
 		<Suspense fallback={<Loading />}>
-			<AdminPageContent users={users} />
+			<AdminPageContent users={users} agencies={agencies} />
 		</Suspense>
 	);
 }

@@ -12,6 +12,7 @@ import {
   users,
   local_meters,
   heating_invoices,
+  agencies,
 } from "@/db/drizzle/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -34,6 +35,7 @@ import { parseCsv } from "@/utils/parser";
 import { MASTER_DATA, MASTER_DATA_2 } from "./data";
 import { writeFileSync } from "fs";
 import { CSVParser } from "./parse_csv_to_json";
+import { Agency } from "@/types/Agency";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -882,7 +884,21 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   }));
 }
 
+export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
+  try {
+    const allUsers = await database
+      .select()
+      .from(users)
+      .where(inArray(users.permission, permissions));
+    return allUsers;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    return [];
+  }
+}
+
 export async function getUsers(agency_id: string, permissions: string[]): Promise<UserType[]> {
+  console.log('*********Fetching users for agency_id:', agency_id, 'with permissions:', permissions);
   try {
     const allowedUsers = await database
       .select()
@@ -895,6 +911,16 @@ export async function getUsers(agency_id: string, permissions: string[]): Promis
     return allowedUsers;
   } catch (error) {
     console.error("Error fetching users:", error);
+    return [];
+  }
+}
+
+export async function getAgencies(): Promise<Agency[]> {
+  try {
+    const result = await database.select().from(agencies);
+    return result;
+  } catch (error) {
+    console.error("Error fetching agencies:", error);
     return [];
   }
 }

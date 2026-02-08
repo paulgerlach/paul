@@ -25,24 +25,6 @@ export default function AgencyManagement() {
 		refetchOnWindowFocus: false,
 	});
 
-	const createMutation = useMutation({
-		mutationFn: async (newAgency: { name: string; is_active?: boolean }) => {
-			const response = await fetch("/api/agencies", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(newAgency),
-			});
-			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.error || "Failed to create agency");
-			}
-			return response.json();
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["agencies"] });
-		},
-	});
-
 	// Update agency mutation
 	const updateMutation = useMutation({
 		mutationFn: async (updates: {
@@ -66,9 +48,6 @@ export default function AgencyManagement() {
 		},
 	});
   
-  const handleCreateAgency = async (name: string) => {
-		await createMutation.mutateAsync({ name });
-	};
 
 	const handleToggleActive = async (id: string, isActive: boolean) => {
 		await updateMutation.mutateAsync({ id, is_active: !isActive });
@@ -78,7 +57,7 @@ export default function AgencyManagement() {
 	if (error) return <div>Error: {error.message}</div>;
 
   return <div>
-    <CreateAgencyForm onCreate={handleCreateAgency} />
+    <CreateAgencyForm queryClient={queryClient} />
     <AgenciesList agencies={agencies ?? []} handleToggleActive={handleToggleActive} />
   </div>;
 }

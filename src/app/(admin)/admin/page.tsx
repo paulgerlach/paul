@@ -35,12 +35,11 @@ export default async function AdminPage({
 			user = data as UserType;
 		}
 	}
-
-	if (user?.permission === "super_admin") {
+	const userPermission = user?.permission || null;
+	if (userPermission === "super_admin") {
 		users = await getAllUsers(["super_admin", "admin", "user"]);
 	} else {
-		if (!user?.agency_id)
-			users = [];
+		if (!user?.agency_id) users = [];
 		else {
 			users = await getUsers(user?.agency_id, ["user", "admin"]);
 		}
@@ -50,7 +49,7 @@ export default async function AdminPage({
 
 	return (
 		<Suspense fallback={<Loading />}>
-			<AdminPageContent users={users} agencies={agencies} />
+			<AdminPageContent users={users} agencies={agencies} permission={userPermission ?? 'user'} />
 		</Suspense>
 	);
 }

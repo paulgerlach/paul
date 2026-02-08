@@ -53,7 +53,7 @@ export default function AdminEditObjekteImageButton({
               height={0}
               sizes="100vw"
               loading="lazy"
-              className="min-w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] flex items-center justify-center rounded-2xl max-xl:rounded-xl"
+              className="min-w-[218px] h-[112px] max-xl:w-[180px] max-xl:h-[96px] object-cover rounded-2xl max-xl:rounded-xl"
               src={item.image_url}
               alt={item.street}
             />
@@ -94,6 +94,7 @@ export default function AdminEditObjekteImageButton({
               control={methods.control}
               name="image_url"
               objektId={item.id ?? ""}
+              useAdminUpload={true}
             />
             <div className="flex items-center justify-between gap-2">
               <button

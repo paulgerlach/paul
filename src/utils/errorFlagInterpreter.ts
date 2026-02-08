@@ -5,7 +5,7 @@ const ERROR_FLAG_MAPPINGS: Record<string, Record<number, string>> = {
   standard: {
     0: "Sensorfehler",
     1: "Gerät Reset",
-    2: "Software-Fehler", 
+    2: "Software-Fehler",
     3: "Manipulationserkennung",
     4: "Batteriefehler",
     5: "Rückfluss/Blockade",
@@ -15,7 +15,7 @@ const ERROR_FLAG_MAPPINGS: Record<string, Record<number, string>> = {
   // Generic Heat meter fallback
   heat: {
     0: "Temperatursensor Fehler",
-    1: "Temperatursensor Kurzschluss", 
+    1: "Temperatursensor Kurzschluss",
     2: "Temperatursensor 2 Fehler",
     3: "Temperatursensor 2 Kurzschluss",
     4: "Durchflussmessung Fehler",
@@ -25,7 +25,7 @@ const ERROR_FLAG_MAPPINGS: Record<string, Record<number, string>> = {
   },
   default: {
     0: "Gerätefehler Bit 0",
-    1: "Gerätefehler Bit 1", 
+    1: "Gerätefehler Bit 1",
     2: "Gerätefehler Bit 2",
     3: "Gerätefehler Bit 3",
     4: "Gerätefehler Bit 4",
@@ -47,7 +47,7 @@ const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
     6: "Gerät Reset",                           // Device reset
     7: "Schwache Batterie"                      // Weak battery
   },
-  
+
   // Engelmann WaterStar M Water Meters (DWZ)
   DWZ: {
     0: "Sensorfehler",                          // Sensor error
@@ -58,7 +58,28 @@ const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
     5: "Rückfluss oder Blockade",               // Backflow or blockage
     6: "Leckage erkannt",                       // Leakage detected
     7: "Überlasthinweis"                        // Overload warning
+  },
+
+  // Hekatron Smoke Detectors (HAG)
+  HAG: {
+    0: "Rauchalarm",                            // Smoke alarm detected!
+    1: "Verschmutzung",                         // Sensor dirty/contamination
+    2: "Batterie schwach",                      // Low battery
+    3: "Entnahme erkannt",                      // Device removal detected (tamper)
+    4: "Hindernis erkannt",                     // Obstacle detected
+    5: "Testalarm",                             // Test alarm
+    6: "Gerätestörung",                         // Device fault
+    7: "Funksignal schwach"                     // Weak radio signal
+  },
+
+  // ista Heat Cost Allocators (IST) - Standard M-Bus Status Byte
+  IST: {
+    2: "Batterie schwach",                      // Power Low (Bit 2)
+    3: "Gerätefehler dauerhaft",                // Permanent Error (Bit 3)
+    4: "Gerätefehler temporär"                  // Temporary Error (Bit 4)
   }
+
+
 };
 
 export interface ErrorInterpretation {
@@ -72,32 +93,31 @@ export interface ErrorInterpretation {
 
 function parseBinaryFlag(flagString: string | number): number {
   if (!flagString || flagString === "0b") return 0;
-  
+
   // Convert to string if it's a number
   const flagStr = typeof flagString === "string" ? flagString : String(flagString);
 
   const cleanFlag = flagStr.replace(/^0?b/, '');
-  
+
   if (cleanFlag === '') return 0;
-  
-  try {
-    return parseInt(cleanFlag, 2);
-  } catch {
-    return parseInt(cleanFlag, 10) || 0;
-  }
+
+  const val = parseInt(cleanFlag, 2);
+  if (!isNaN(val)) return val;
+  return parseInt(cleanFlag, 10) || 0;
+
 }
 
 function getErrorMessages(bitPosition: number, deviceType: string, manufacturer: string): string {
   if (MANUFACTURER_ERROR_MAPPINGS[manufacturer]) {
     return MANUFACTURER_ERROR_MAPPINGS[manufacturer][bitPosition] || `Unknown error bit ${bitPosition}`;
   }
-  
+
   // Use heat mapping for Heat devices, standard for Water/WWater
   const mappingKey = deviceType === "Heat" ? "heat" : "standard";
   if (ERROR_FLAG_MAPPINGS[mappingKey]) {
     return ERROR_FLAG_MAPPINGS[mappingKey][bitPosition] || `Unknown error bit ${bitPosition}`;
   }
-  
+
   return ERROR_FLAG_MAPPINGS.default[bitPosition] || `Unknown error bit ${bitPosition}`;
 }
 
@@ -125,57 +145,57 @@ function getErrorSeverity(errors: string[]): 'low' | 'medium' | 'high' | 'critic
     'Software-Fehler',             // Software error
     'Überlasthinweis'              // Overload warning
   ];
-  
+
   if (errors.some(error => criticalErrors.some(critical => error.toLowerCase().includes(critical.toLowerCase())))) {
     return 'critical';
   }
-  
+
   if (errors.some(error => highErrors.some(high => error.toLowerCase().includes(high.toLowerCase())))) {
     return 'high';
   }
-  
+
   if (errors.some(error => mediumErrors.some(medium => error.toLowerCase().includes(medium.toLowerCase())))) {
     return 'medium';
   }
-  
+
   return 'low';
 }
 
 export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretation | null {
   const errorFlagRaw = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
-  
+
   // Check for null, undefined, empty string, "0b", or number 0
   if (!errorFlagRaw) {
     return null;
   }
-  
+
   if ((typeof errorFlagRaw === "string" && errorFlagRaw === "0b") || (typeof errorFlagRaw === "number" && errorFlagRaw === 0)) {
     return null;
   }
-  
+
   const errorFlag = parseBinaryFlag(errorFlagRaw);
-  
+
   if (errorFlag === 0) {
     return null;
   }
-  
+
   const deviceType = device["Device Type"];
   const manufacturer = device.Manufacturer;
   const deviceId = device.ID;
-  
+
   const errors: string[] = [];
-  
+
   for (let bit = 0; bit < 8; bit++) {
     if (errorFlag & (1 << bit)) {
       const errorMessage = getErrorMessages(bit, deviceType, manufacturer);
       errors.push(errorMessage);
     }
   }
-  
+
   if (errors.length === 0) {
     return null;
   }
-  
+
   return {
     deviceId,
     deviceType,
@@ -191,14 +211,14 @@ export function getDevicesWithErrors(parsedData: {
   errors?: { row: number; error: string; rawRow: any }[];
 }): ErrorInterpretation[] {
   const deviceErrors: ErrorInterpretation[] = [];
-  
+
   for (const device of parsedData.data) {
     const errorInterpretation = interpretErrorFlags(device);
     if (errorInterpretation) {
       deviceErrors.push(errorInterpretation);
     }
   }
-  
+
   return deviceErrors;
 }
 
@@ -213,13 +233,13 @@ export function groupErrorsBySeverity(errorInterpretations: ErrorInterpretation[
 
 export function groupErrorsByDeviceType(errorInterpretations: ErrorInterpretation[]) {
   const groups: Record<string, ErrorInterpretation[]> = {};
-  
+
   for (const error of errorInterpretations) {
     if (!groups[error.deviceType]) {
       groups[error.deviceType] = [];
     }
     groups[error.deviceType].push(error);
   }
-  
+
   return groups;
 }

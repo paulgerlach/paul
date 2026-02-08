@@ -1,9 +1,12 @@
 // src/components/emails/HeidiConfirmEmail.tsx
-import { Section, Text, Button, Link } from '@react-email/components';
+import { Section, Text, Button, Link,  Column,
+  Row, Img } from '@react-email/components';
 import { EmailLayout } from './EmailLayout';
+import { SharedQrLoginSection } from "./SharedQrLoginSection";
+
 
 export const HeidiConfirmEmail = () => {
-  return (
+ return (
     <EmailLayout previewText="Confirm your email address" variant="light">
       <Section className="bg-white border border-solid border-[#E5E5E5] rounded-[24px] p-[40px] mt-[13px]">
   <Text className="text-[#1A1A1A] text-[20px] font-semibold m-0 mb-[20px]">
@@ -23,6 +26,19 @@ export const HeidiConfirmEmail = () => {
       E-Mail-Adresse bestätigen
     </Button>
   </Section>
+
+  <Section className="mt-[32px] mb-[24px] pt-[24px] border-t border-solid border-[#E5E5E5]">
+          <Text className="text-[#1A1A1A] text-[16px] font-semibold mb-[16px]">
+            Schneller Zugriff nach der Bestätigung:
+          </Text>
+          
+          <SharedQrLoginSection
+  size={130}
+  title="Schneller Zugriff nach der Bestätigung:"
+  description="Nach der Bestätigung deiner E-Mail scanne diesen QR-Code für direkten Zugriff."
+  buttonText="Zum Login-Formular"
+/>
+        </Section>
 
   <Text className="text-[#404040] text-[16px] leading-[24px] m-0 mb-[24px]">
     Dieser Schritt erhöht die Sicherheit deines Kontos, indem bestätigt wird, dass dir diese

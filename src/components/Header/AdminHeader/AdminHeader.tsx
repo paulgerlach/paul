@@ -4,18 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { admin_logo } from "@/static/icons";
 import { ROUTE_DASHBOARD } from "@/routes/routes";
-import AdminAccoundDropdown from "./AdminAccoundDropdown";
+import AdminAccountDropdown from "./AdminAccountDropdown";
 import AdminApartmentsDropdown from "./AdminApartmentsDropdown";
 import AdminDatetimeDropdown from "@/components/Basic/Dropdown/AdminDatetimeDropdown";
 import { Switch } from "@/components/Basic/ui/Switch";
 import { usePathname } from "next/navigation";
 import { useAuthUser } from "@/apiClient";
 import AdminUsersDropdown from "./AdminUsersDropdown";
-import { Menu } from "lucide-react";
 import { useMobileSidebarStore } from "@/store/useMobileSidebarStore";
+import { useChartStore } from "@/store/useChartStore";
 
 export default function AdminHeader() {
   const { toggle } = useMobileSidebarStore();
+  const { isTableView, setIsTableView } = useChartStore();
   const pathname = usePathname();
   const isDashboard = pathname.includes(ROUTE_DASHBOARD);
 
@@ -33,7 +34,7 @@ export default function AdminHeader() {
           className="hidden max-large:flex p-2 mr-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
           aria-label="Toggle menu"
         >
-          <Menu className="w-6 h-6 text-dark_green" />
+          {/* <Menu className="w-6 h-6 text-dark_green" /> */}
         </button>
 
         <Link
@@ -61,12 +62,12 @@ export default function AdminHeader() {
             {isAdmin && <AdminUsersDropdown user={user} />}
 
             <div className="flex w-full items-center gap-3 justify-start bg-transparent border-none px-6 py-3">
-              <Switch />
+              <Switch checked={isTableView} onCheckedChange={setIsTableView} />
               <span className="text-sm">Datenansicht</span>
             </div>
           </div>
         )}
-        <AdminAccoundDropdown />
+        <AdminAccountDropdown />
       </div>
 
       {/* Tablet/Mobile Filters - Shown on screens smaller than large (992px) */}
@@ -84,7 +85,7 @@ export default function AdminHeader() {
             </div>
           )}
           <div className="flex items-center gap-2 px-2">
-            <Switch />
+            <Switch checked={isTableView} onCheckedChange={setIsTableView} />
             <span className="text-sm whitespace-nowrap">Datenansicht</span>
           </div>
         </div>

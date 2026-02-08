@@ -185,6 +185,9 @@ importers:
       swiper:
         specifier: ^11.2.5
         version: 11.2.10
+      swr:
+        specifier: ^2.3.8
+        version: 2.3.8(react@19.1.2)
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.3.1

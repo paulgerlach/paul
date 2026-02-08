@@ -7,7 +7,7 @@ export async function POST(req: Request) {
 
         // ✅ NEW: Use unified webhook with event_type 'contactform'
         // Send contact form data to Denis's Make.com workflow
-        await sendWebhookEvent('contactform' as any, email, {
+        await sendWebhookEvent('contactform', email, {
             first_name: name,
             message: message,
         });

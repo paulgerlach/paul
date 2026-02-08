@@ -576,6 +576,49 @@ html {
     transform: translateX(-50%);
 }
 
+/* Chart responsive styles */
+.chart-container {
+  position: relative;
+  width: 100%;
+}
+
+.chart-container canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 1280px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-2, .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .auto-rows-min {
+    grid-auto-rows: minmax(250px, auto) !important;
+  }
+}
+
+/* Prevent chart overflow */
+.recharts-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.recharts-surface {
+  max-width: 100% !important;
+}
+
+/* Smooth resize transitions */
+.resizable-transition {
+  transition: height 0.2s ease-in-out;
+}
+
 .numbered-swiper:after {
     position: absolute;
     width: 100%;

@@ -21,11 +21,13 @@ export default function AdminApartmentsDropdown() {
   const [open, setOpen] = useState(false);
   const [selectedLocalIds, setSelectedLocalIds] = useState<string[]>([]);
   const { user_id } = useParams();
+  // Safely extract user_id — never use String(user_id) which converts undefined → "undefined"
+  const resolvedUserId = typeof user_id === "string" ? user_id : undefined;
   const { data: apartments, isLoading: isLoadingApartments, error: apartmentsError } = useObjektsWithLocals();
-  const { data: usersApartments, isLoading: isLoadingUsersApartments, error: usersApartmentsError } = useUsersObjektsWithLocals(String(user_id));
+  const { data: usersApartments, isLoading: isLoadingUsersApartments, error: usersApartmentsError } = useUsersObjektsWithLocals(resolvedUserId);
   const { setMeterIds } = useChartStore();
 
-  const isAdmin = !!user_id;
+  const isAdmin = !!resolvedUserId;
 
   const apartmentsToUse = isAdmin ? usersApartments : apartments;
   const isLoading = isAdmin ? isLoadingUsersApartments : isLoadingApartments;

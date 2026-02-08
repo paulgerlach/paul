@@ -1,11 +1,16 @@
 /**
  * Webhook utilities for Make.com integrations
  * Sends events to Denis's Make.com workflows
+ *
+ * Two separate webhooks per Denis's Make.com architecture:
+ * - UNIFIED: login, registration, newsletter, pwrecovery, newinquiry, contactform
+ * - LEAK DETECTION: leakdetected only
  */
 
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1';
+const MAKE_WEBHOOK_UNIFIED = process.env.MAKE_WEBHOOK_UNIFIED;
+const MAKE_WEBHOOK_LEAK = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -13,6 +18,14 @@ interface WebhookPayload {
   timestamp?: string;
   ip_address?: string;
   [key: string]: any; // Additional data for complex events
+}
+
+/**
+ * Route event to the correct Make.com webhook URL
+ */
+function getWebhookUrl(eventType: EventType): string | undefined {
+  if (eventType === 'leakdetected') return MAKE_WEBHOOK_LEAK;
+  return MAKE_WEBHOOK_UNIFIED;
 }
 
 /**
@@ -27,6 +40,14 @@ export async function sendWebhookEvent(
   additionalData?: Record<string, any>
 ): Promise<void> {
   try {
+    const webhookUrl = getWebhookUrl(eventType);
+
+    if (!webhookUrl) {
+      const envVar = eventType === 'leakdetected' ? 'MAKE_WEBHOOK_LEAK_DETECTION' : 'MAKE_WEBHOOK_UNIFIED';
+      console.warn(`[WEBHOOK] ${envVar} environment variable is not set. Skipping ${eventType} webhook.`);
+      return;
+    }
+
     const payload: WebhookPayload = {
       event_type: eventType,
       email,
@@ -36,7 +57,7 @@ export async function sendWebhookEvent(
 
     console.log(`[WEBHOOK] Sending ${eventType} event for ${email}`);
 
-    const response = await fetch(MAKE_WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,3 +114,30 @@ export async function sendOfferInquiryEvent(
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
 
+/**
+ * Send leak detected event
+ * Triggered when CSV processing detects error flags indicating leaks or pipe breakage
+ */
+export async function sendLeakDetectedEvent(
+  email: string,
+  deviceId: string,
+  deviceType: string,
+  errorDescription: string,
+  propertyAddress?: string,
+  apartmentInfo?: string
+): Promise<void> {
+  // Validate required fields to prevent empty notifications
+  if (!email || !deviceId || !errorDescription) {
+    console.warn('[WEBHOOK] Skipping leakdetected event - missing required fields:', { email: !!email, deviceId: !!deviceId, errorDescription: !!errorDescription });
+    return;
+  }
+
+  await sendWebhookEvent('leakdetected', email, {
+    device_id: deviceId,
+    device_type: deviceType,
+    error_description: errorDescription,
+    property_address: propertyAddress,
+    apartment_info: apartmentInfo,
+    severity: 'critical'
+  });
+}

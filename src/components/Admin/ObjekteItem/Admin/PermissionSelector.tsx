@@ -56,7 +56,7 @@ export default function PermissionSelector({isEditingPermission, selectedPermiss
 			) : (
 				<button
 					onClick={() => setIsEditingPermission(true)}
-					className="flex items-center gap-2 text-md text-blue-500 hover:text-blue-700 hover:cursor-pointer transition hover:scale-105 ease-in-out"
+					className="flex items-center gap-2 text-md text-green-600 hover:text-green hover:cursor-pointer transition hover:scale-105 ease-in-out"
 				>
 					<span className="text-gray-500">Role:</span>
 					<span className="font-medium">

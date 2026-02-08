@@ -54,7 +54,7 @@ export default function AgencySelector({ item, agencies, isEditingAgency, setSel
 			) : (
 				<button
 					onClick={() => setIsEditingAgency(true)}
-					className="flex items-center gap-2 text-md text-blue-500 hover:text-blue-700  hover:cursor-pointer hover:scale-105 transition ease-in-out"
+					className="flex items-center gap-2 text-md text-green-600 hover:text-green hover:cursor-pointer hover:scale-105 transition ease-in-out"
 				>
 					<span className="text-dark_green/50">Agency:</span>
 					<span className="font-medium">{agencyName}</span>

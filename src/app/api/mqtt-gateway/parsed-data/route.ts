@@ -19,10 +19,12 @@ export async function GET(request: Request) {
       .from("parsed_data")
       .select("*", { count: "exact" });
 
-    // Add search filter if provided - search across device_id and parsed_data
+    // Add search filter if provided - use contains for safer searching
     if (search) {
+      // Escape special characters and use contains for safer searching
+      const escapedSearch = search.replace(/%/g, '\\%').replace(/_/g, '\\_');
       query = query.or(
-        `device_id.ilike.%${search}%,parsed_data->>'$.*'.ilike.%${search}%`
+        `device_id.ilike.%${escapedSearch}%`
       );
     }
 

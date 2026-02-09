@@ -19,10 +19,12 @@ export async function GET(request: Request) {
       .from("wmbus_telegrams")
       .select("*", { count: "exact" });
 
-    // Add search filter if provided
+    // Add search filter if provided - use contains for safer searching
     if (search) {
+      // Escape special characters and use contains for safer searching
+      const escapedSearch = search.replace(/%/g, '\\%').replace(/_/g, '\\_');
       query = query.or(
-        `raw_telegram.ilike.%${search}%,device_id.ilike.%${search}%,telegram_type.ilike.%${search}%`
+        `device_id.ilike.%${escapedSearch}%,raw_telegram.ilike.%${escapedSearch}%`
       );
     }
 

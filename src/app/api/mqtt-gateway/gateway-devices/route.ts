@@ -19,10 +19,12 @@ export async function GET(request: Request) {
       .from("gateway_devices")
       .select("*", { count: "exact" });
 
-    // Add search filter if provided
+    // Add search filter if provided - use contains for safer searching
     if (search) {
+      // Escape special characters and use contains for safer searching
+      const escapedSearch = search.replace(/%/g, '\\%').replace(/_/g, '\\_');
       query = query.or(
-        `eui.ilike.%${search}%,imei.ilike.%${search}%,imsi.ilike.%${search}%,iccid.ilike.%${search}%,model.ilike.%${search}%`
+        `eui.ilike.%${escapedSearch}%,imei.ilike.%${escapedSearch}%,imsi.ilike.%${escapedSearch}%,iccid.ilike.%${escapedSearch}%,model.ilike.%${escapedSearch}%`
       );
     }
 

@@ -47,7 +47,8 @@ export default function TelegramsContent() {
   return (
     <div className="space-y-2">
       <pre className="bg-gray-100 p-3 rounded overflow-x-auto text-sm">
-        {JSON.stringify(telegrams, null, 2)}
+        {/* {JSON.stringify(telegrams, null, 2)} */}
+        {telegrams.length}
       </pre>
     </div>
   );

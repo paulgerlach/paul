@@ -1,29 +1,31 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/utils/supabase/server";
-import type { FirmwareVersion } from "@/types";
-import { WmbusTelegram } from "@/types/WmbusTelegram";
-import { ParsedData } from "@/types/ParsedData";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET() {
   try {
-    const supabase = await supabaseServer();
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data, error } = await supabase
       .from("parsed_data")
       .select("*")
       .order("created_at", { ascending: false });
 
+    console.log("Fetched parsed data:", data?.length, "records");
+
     if (error) {
-      console.error("Error fetching parsed data:", error);
+      console.error("Supabase error:", error);
       return NextResponse.json(
-        { error: "Failed to fetch parsed data" },
+        { error: error.message },
         { status: 500 },
-      ); 
+      );
     }
 
-    return NextResponse.json(data as ParsedData[]);
+    return NextResponse.json(data || []);
   } catch (error) {
-    console.error("Unexpected error fetching parsed data:", error);
+    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

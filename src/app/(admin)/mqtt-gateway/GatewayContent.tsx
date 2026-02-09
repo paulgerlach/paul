@@ -24,7 +24,7 @@ export default function GatewayContent() {
 				<Devices />
 				<Firmware />
 				<Telegrams />
-				<ParsedData/>
+				<ParsedData />
 			</ContentWrapper>
 		</div>
 	);

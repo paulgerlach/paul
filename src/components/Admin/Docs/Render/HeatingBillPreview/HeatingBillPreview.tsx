@@ -35,7 +35,6 @@ export type HeatingBillGeneralInfo = {
 
 export type HeatingBillPreviewProps = {
 	generalInfo: HeatingBillGeneralInfo;
-	local: LocalType;
 	contracts: (ContractType & { contractors: ContractorType[] })[];
 	costCategories: DocCostCategoryType[];
 	invoices: InvoiceDocumentType[];

@@ -539,31 +539,18 @@ export async function POST(request: NextRequest) {
 		const { documentId, objektId, apartmentId } = validation.data;
 
 		// 3. Fetch all required data in parallel using existing API methods
-		const [
-			contractsWithContractors,
-			generalInfo,
-			apartment,
-			invoices,
-			costCategories,
-		] = await Promise.all([
-			getContractsWithContractorsByLocalID(apartmentId),
-			getHeatBillingGeneralInfo(documentId),
-			getLocalById(apartmentId),
-			getHeatingInvoicesByHeatingBillDocumentID(documentId),
-			getDocCostCategoryTypes("heizkostenabrechnung"),
-		]);
+		const [contractsWithContractors, generalInfo, invoices, costCategories] =
+			await Promise.all([
+				getContractsWithContractorsByLocalID(apartmentId),
+				getHeatBillingGeneralInfo(documentId),
+				getHeatingInvoicesByHeatingBillDocumentID(documentId),
+				getDocCostCategoryTypes("heizkostenabrechnung"),
+			]);
 
 		// 4. Validate required data exists
 		if (!generalInfo) {
 			return NextResponse.json(
 				{ error: "Dokument nicht gefunden", code: "DOCUMENT_NOT_FOUND" },
-				{ status: 404 },
-			);
-		}
-
-		if (!apartment) {
-			return NextResponse.json(
-				{ error: "Wohnung nicht gefunden", code: "APARTMENT_NOT_FOUND" },
 				{ status: 404 },
 			);
 		}
@@ -657,7 +644,6 @@ export async function POST(request: NextRequest) {
 		// 10. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
 			generalInfo,
-			local: apartment as any,
 			costCategories: costCategories as any[],
 			invoices: invoices as any[],
 			contracts: contractsWithContractors as any[],
@@ -709,7 +695,7 @@ export async function POST(request: NextRequest) {
 		const [documentRecord] = await database
 			.insert(documents)
 			.values({
-				document_name: `Heizkostenabrechnung_${apartment.floor || "Apartment"}.pdf`,
+				document_name: `Heizkostenabrechnung_${apartmentId || "Apartment"}.pdf`,
 				document_url: storagePath,
 				related_id: documentId,
 				related_type: "heating_bill",

@@ -4,17 +4,40 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const pageSize = parseInt(searchParams.get("pageSize") || "10");
+    const sortBy = searchParams.get("sortBy") || "updated_at";
+    const sortOrder = searchParams.get("sortOrder") || "desc";
+    const search = searchParams.get("search") || "";
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("gateway_devices")
-      .select("*")
-      .order("updated_at", { ascending: false });
-    
-    console.log("Fetched gateway devices:", data?.length, "records");
-    
+      .select("*", { count: "exact" });
+
+    // Add search filter if provided
+    if (search) {
+      query = query.or(
+        `eui.ilike.%${search}%,imei.ilike.%${search}%,imsi.ilike.%${search}%,iccid.ilike.%${search}%,model.ilike.%${search}%`
+      );
+    }
+
+    // Add sorting
+    query = query.order(sortBy, { ascending: sortOrder === "asc" });
+
+    // Add pagination
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    console.log("Fetched gateway devices:", data?.length, "of", count, "records");
+
     if (error) {
       console.error("Supabase error:", error);
       return NextResponse.json(
@@ -23,7 +46,15 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(data || []);
+    return NextResponse.json({
+      data: data || [],
+      pagination: {
+        page,
+        pageSize,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+      },
+    });
   } catch (error) {
     console.error("Unexpected error:", error);
     return NextResponse.json(

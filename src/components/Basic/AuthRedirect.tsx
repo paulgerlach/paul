@@ -12,21 +12,21 @@ export default function AuthRedirect() {
     const checkAuthAndRedirect = async () => {
       try {
         const {
-          data: { session },
+          data: { user },
           error,
-        } = await supabase.auth.getSession();
+        } = await supabase.auth.getUser();
 
         if (error) {
           console.error("Error checking session:", error);
           return;
         }
 
-        if (session?.user) {
+        if (user) {
           // User is authenticated, get their permission level
           const { data: userData, error: userError } = await supabase
             .from("users")
             .select("permission")
-            .eq("id", session.user.id)
+            .eq("id", user.id)
             .single();
 
           if (userError) {

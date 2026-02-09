@@ -17,15 +17,28 @@ import type {
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
 import { differenceInMonths, max, min, parse } from "date-fns";
 
-export type HeatingBillPreviewProps = {
-	mainDoc: HeatingBillDocumentType;
-	local: LocalType;
+// ... imports
+
+export type HeatingBillGeneralInfo = {
+	billingStartDate: string | null;
+	billingEndDate: string | null;
+	street: string | null;
+	zip: string | null;
+	consumptionDependent: string | null;
+	livingSpaceShare: string | null;
+	ownerFirstName: string | null;
+	ownerLastName: string | null;
+	documentCreationDate: string | null;
 	totalLivingSpace: number;
+	apartmentCount: number;
+};
+
+export type HeatingBillPreviewProps = {
+	generalInfo: HeatingBillGeneralInfo;
+	local: LocalType;
 	contracts: (ContractType & { contractors: ContractorType[] })[];
 	costCategories: DocCostCategoryType[];
 	invoices: InvoiceDocumentType[];
-	objekt: ObjektType;
-	user: UserType;
 	logoSrc?: string; // Optional logo source (file path or data URL)
 	// Iteration 2: Energy consumption calculations
 	energyConsumption?: EnergyConsumptionData; // Calculated server-side
@@ -70,24 +83,10 @@ export type AdditionalCostsData = {
 };
 
 export type HeatingBillPreviewData = {
-	mainDocDates: {
-		created_at?: string;
-		start_date?: string | null;
-		end_date?: string | null;
-	};
-	mainDocData: HeatingBillDocumentType;
-	userInfo: {
-		first_name: string;
-		last_name: string;
-	};
-	objektInfo: {
-		zip: string;
-		street: string;
-	};
+	generalInfo: HeatingBillGeneralInfo;
 	contractorsNames: string;
 	totalInvoicesAmount: number;
 	totalDiff: number;
-	totalLivingSpace: number;
 	contracts: (ContractType & { contractors: ContractorType[] })[];
 	invoices: InvoiceDocumentType[];
 	costCategories: DocCostCategoryType[];
@@ -109,15 +108,16 @@ export default function HeatingBillPreview({
 	costCategories,
 	heatRelatedCosts,
 	invoices,
-	mainDoc,
-	objekt,
-	totalLivingSpace,
-	user,
+	generalInfo,
 }: HeatingBillPreviewProps) {
-	const periodStart = mainDoc?.start_date
-		? new Date(mainDoc.start_date)
+	const periodStart = generalInfo.billingStartDate
+		? new Date(generalInfo.billingStartDate)
 		: new Date();
-	const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
+	const periodEnd = generalInfo.billingEndDate
+		? new Date(generalInfo.billingEndDate)
+		: new Date();
+
+	// ... rest of function using generalInfo instead of mainDoc/objekt/user
 
 	const filteredContracts = contracts.filter((contract) => {
 		if (!contract.rental_start_date || !contract.rental_end_date) return false;
@@ -148,27 +148,13 @@ export default function HeatingBillPreview({
 	const contractors = contracts.flatMap((contract) => contract.contractors);
 
 	const previewData: HeatingBillPreviewData = {
-		mainDocDates: {
-			created_at: mainDoc?.created_at,
-			start_date: mainDoc?.start_date,
-			end_date: mainDoc?.end_date,
-		},
-		mainDocData: mainDoc,
-		userInfo: {
-			first_name: user?.first_name,
-			last_name: user?.last_name,
-		},
-		objektInfo: {
-			zip: objekt?.zip,
-			street: objekt?.street,
-		},
+		generalInfo,
 		contractorsNames: contractors
 			?.map((c) => `${c.first_name} ${c.last_name}`)
 			.join(", "),
 		totalInvoicesAmount: totalAmount,
 		invoices,
 		costCategories,
-		totalLivingSpace,
 		contracts,
 		totalDiff,
 		heatRelatedCosts,

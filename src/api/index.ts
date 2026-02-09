@@ -13,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -1090,4 +1090,36 @@ export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: stri
     .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
 
   return invoices;
+}
+
+export async function getHeatBillingGeneralInfo(docId: string) {
+  const user = await getAuthenticatedServerUser();
+
+  const result = await database
+    .select({
+      billingStartDate: heating_bill_documents.start_date,
+      billingEndDate: heating_bill_documents.end_date,
+      street: objekte.street,
+      zip: objekte.zip,
+      consumptionDependent: heating_bill_documents.consumption_dependent,
+      livingSpaceShare: heating_bill_documents.living_space_share,
+      ownerFirstName: users.first_name,
+      ownerLastName: users.last_name,
+      documentCreationDate: heating_bill_documents.created_at,
+      totalLivingSpace: sql<number>`sum(${locals.living_space})`,
+      apartmentCount: sql<number>`count(${locals.id})`,
+    })
+    .from(heating_bill_documents)
+    .leftJoin(objekte, eq(heating_bill_documents.objekt_id, objekte.id))
+    .leftJoin(users, eq(objekte.user_id, users.id))
+    .leftJoin(locals, eq(locals.objekt_id, objekte.id))
+    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .groupBy(
+      heating_bill_documents.id,
+      objekte.id,
+      users.id
+    )
+    .then((res) => res[0]);
+
+  return result;
 }

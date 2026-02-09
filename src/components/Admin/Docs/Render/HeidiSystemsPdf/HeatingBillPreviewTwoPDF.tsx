@@ -194,8 +194,8 @@ export default function HeatingBillPreviewTwoPDF({
 							<View style={styles.detailItem}>
 								<Text style={styles.detailLabel}>Liegenschaft</Text>
 								<Text>{previewData.contractorsNames}</Text>
-								<Text>{previewData.objektInfo.street}</Text>
-								<Text>{previewData.objektInfo.zip}</Text>
+								<Text>{previewData.generalInfo.street}</Text>
+								<Text>{previewData.generalInfo.zip}</Text>
 							</View>
 							<View style={styles.detailItem}>
 								<Text style={styles.detailLabel}>Liegenschaftsnummer</Text>
@@ -204,15 +204,17 @@ export default function HeatingBillPreviewTwoPDF({
 							<View style={styles.detailItem}>
 								<Text style={styles.detailLabel}>Abrechnungszeitraum</Text>
 								<Text>
-									{formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-									{formatDateGerman(previewData.mainDocDates.end_date)}
+									{formatDateGerman(previewData.generalInfo.billingStartDate)} -{" "}
+									{formatDateGerman(previewData.generalInfo.billingEndDate)}
 								</Text>
 							</View>
 							<View style={styles.detailItem}>
 								<Text style={styles.detailLabel}>erstellt am</Text>
 								<Text>
 									{formatDateGerman(
-										formatDateGerman(previewData.mainDocDates.created_at),
+										formatDateGerman(
+											previewData.generalInfo.documentCreationDate,
+										),
 									)}
 								</Text>
 							</View>
@@ -430,7 +432,8 @@ export default function HeatingBillPreviewTwoPDF({
 								fontWeight: 400,
 							}}
 						>
-							2,5 kWh/m³/K x {previewData.totalLivingSpace} m³ x (60-10°C)
+							2,5 kWh/m³/K x {previewData.generalInfo.totalLivingSpace} m³ x
+							(60-10°C)
 						</Text>
 						<Text style={{ textAlign: "center" }}>1,15</Text>
 					</View>
@@ -459,7 +462,7 @@ export default function HeatingBillPreviewTwoPDF({
 			</View>
 			<View style={styles.allocationGrid}>
 				<Text style={styles.allocationLabelBold}>
-					davon {previewData.mainDocData.living_space_share}% Grundkosten
+					davon {previewData.generalInfo.livingSpaceShare}% Grundkosten
 				</Text>
 				<Text>16.270,72 € :</Text>
 				<Text>11.196,40 m²</Text>
@@ -467,8 +470,7 @@ export default function HeatingBillPreviewTwoPDF({
 			</View>
 			<View style={styles.allocationGrid}>
 				<Text style={styles.allocationLabelBold}>
-					davon {previewData.mainDocData.consumption_dependent}%
-					Verbrauchskosten
+					davon {previewData.generalInfo.consumptionDependent}% Verbrauchskosten
 				</Text>
 				<Text>37.964,99 € :</Text>
 				<Text>3.148,25 m³</Text>

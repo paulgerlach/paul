@@ -34,9 +34,9 @@ const HeatingBillPreviewFour = ({
                 <div>
                   {previewData.contractorsNames}
                   <br />
-                  {previewData.objektInfo.street}
+                  {previewData.generalInfo.street}
                   <br />
-                  {previewData.objektInfo.zip}
+                  {previewData.generalInfo.zip}
                 </div>
               </div>
               <div className="grid grid-cols-[200px_1fr] text-pdf-text gap-5">
@@ -44,9 +44,9 @@ const HeatingBillPreviewFour = ({
                 <div>
                   {previewData.contractorsNames}
                   <br />
-                  {previewData.objektInfo.street}
+                  {previewData.generalInfo.street}
                   <br />
-                  {previewData.objektInfo.zip}
+                  {previewData.generalInfo.zip}
                 </div>
               </div>
             </div>
@@ -62,14 +62,14 @@ const HeatingBillPreviewFour = ({
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>Abrechnungszeitraum</div>
                 <div>
-                  {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-                  {formatDateGerman(previewData.mainDocDates.end_date)}
+                  {formatDateGerman(previewData.generalInfo.billingStartDate)} -{" "}
+                  {formatDateGerman(previewData.generalInfo.billingEndDate)}
                 </div>
               </div>
               <div className="grid grid-cols-[200px_1fr] gap-5">
                 <div>erstellt am</div>
                 <div>
-                  {formatDateGerman(previewData.mainDocDates.created_at)}
+                  {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                 </div>
               </div>
             </div>
@@ -81,9 +81,9 @@ const HeatingBillPreviewFour = ({
             <div className="text-2xl">
               {previewData.contractorsNames}
               <br />
-              {previewData.objektInfo.street}
+              {previewData.generalInfo.street}
               <br />
-              {previewData.objektInfo.zip}
+              {previewData.generalInfo.zip}
             </div>
           </div>
         </div>

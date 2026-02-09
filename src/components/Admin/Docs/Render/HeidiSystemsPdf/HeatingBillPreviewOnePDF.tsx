@@ -154,10 +154,10 @@ export default function HeatingBillPreviewOnePDF({
 							{previewData.contractorsNames}
 						</Text>
 						<Text style={{ fontSize: 14, fontWeight: "bold" }}>
-							{previewData.objektInfo.street}
+							{previewData.generalInfo.street}
 						</Text>
 						<Text style={{ fontSize: 14, fontWeight: "bold" }}>
-							{previewData.objektInfo.zip}
+							{previewData.generalInfo.zip}
 						</Text>
 					</View>
 
@@ -178,26 +178,27 @@ export default function HeatingBillPreviewOnePDF({
 					<View style={styles.gridRow}>
 						<Text>Erstellt im Auftrag von</Text>
 						<Text>
-							{previewData.userInfo.first_name} {previewData.userInfo.last_name}
+							{previewData.generalInfo.ownerFirstName}{" "}
+							{previewData.generalInfo.ownerLastName}
 							{"\n"}
 							Immobilienmanagement {"\n"}
-							{previewData.objektInfo.street}
+							{previewData.generalInfo.street}
 							{"\n"}
-							{previewData.objektInfo.zip}
+							{previewData.generalInfo.zip}
 						</Text>
 					</View>
 					<View style={styles.gridRow}>
 						<Text style={styles.bold as any}>Abrechnungszeitraum</Text>
 						<Text>
-							{formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-							{formatDateGerman(previewData.mainDocDates.end_date)}
+							{formatDateGerman(previewData.generalInfo.billingStartDate)}{" "}
+							{formatDateGerman(previewData.generalInfo.billingEndDate)}
 						</Text>
 					</View>
 					<View style={styles.gridRow}>
 						<Text style={styles.bold as any}>Ihr Nutzungszeitraum</Text>
 						<Text>
-							{formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-							{formatDateGerman(previewData.mainDocDates.end_date)}
+							{formatDateGerman(previewData.generalInfo.billingStartDate)}{" "}
+							{formatDateGerman(previewData.generalInfo.billingEndDate)}
 						</Text>
 					</View>
 				</View>
@@ -206,16 +207,18 @@ export default function HeatingBillPreviewOnePDF({
 				<View style={styles.colHalf}>
 					<View style={styles.gridRow}>
 						<Text>Erstellt am</Text>
-						<Text>{formatDateGerman(previewData.mainDocDates.created_at)}</Text>
+						<Text>
+							{formatDateGerman(previewData.generalInfo.documentCreationDate)}
+						</Text>
 					</View>
 					<View style={styles.gridRow}>
 						<Text style={styles.bold as any}>Liegenschaft</Text>
 						<Text>
 							{previewData.contractorsNames}
 							{"\n"}
-							{previewData.objektInfo.street}
+							{previewData.generalInfo.street}
 							{"\n"}
-							{previewData.objektInfo.zip}
+							{previewData.generalInfo.zip}
 						</Text>
 					</View>
 					<View style={styles.gridRow}>
@@ -341,9 +344,9 @@ export default function HeatingBillPreviewOnePDF({
 							<Text>
 								{contractor.first_name} {contractor.last_name}
 								{"\n"}
-								{previewData.objektInfo.street}
+								{previewData.generalInfo.street}
 								{"\n"}
-								{previewData.objektInfo.zip}
+								{previewData.generalInfo.zip}
 							</Text>
 						</View>
 					))}

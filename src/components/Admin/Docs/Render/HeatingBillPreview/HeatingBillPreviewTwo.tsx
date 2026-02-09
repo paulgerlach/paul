@@ -42,9 +42,9 @@ const HeatingBillPreviewTwo = ({
               <p>
                 {previewData.contractorsNames}
                 <br />
-                {previewData.objektInfo.street}
+                {previewData.generalInfo.street}
                 <br />
-                {previewData.objektInfo.zip}
+                {previewData.generalInfo.zip}
               </p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
@@ -54,13 +54,13 @@ const HeatingBillPreviewTwo = ({
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>Abrechnungszeitraum</p>
               <p>
-                {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-                {formatDateGerman(previewData.mainDocDates.end_date)}
+                {formatDateGerman(previewData.generalInfo.billingStartDate)} -{" "}
+                {formatDateGerman(previewData.generalInfo.billingEndDate)}
               </p>
             </div>
             <div className="grid grid-cols-[200px_1fr] gap-10">
               <p>erstellt am</p>
-              <p>{formatDateGerman(previewData.mainDocDates.created_at)}</p>
+              <p>{formatDateGerman(previewData.generalInfo.documentCreationDate)}</p>
             </div>
           </div>
         </div>
@@ -106,7 +106,7 @@ const HeatingBillPreviewTwo = ({
                     260002673166
                   </td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">761.123</td>
                   <td className="py-1 px-2 text-right">124.242,47 €</td>
@@ -151,14 +151,14 @@ const HeatingBillPreviewTwo = ({
                 <tr>
                   <td className="py-1 px-2">Verbrauchsabrechnung</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">7.155,11 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Betriebsstrom</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">4.128,26 €</td>
                 </tr>
@@ -240,28 +240,28 @@ const HeatingBillPreviewTwo = ({
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Heizung/Warmwasser</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">6.210,80 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Kaltwasser</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">17.036,69 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Abwasser</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">20.030,62 €</td>
                 </tr>
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Kaltwasser</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">2.274,90 €</td>
                 </tr>
@@ -273,7 +273,7 @@ const HeatingBillPreviewTwo = ({
                 <tr>
                   <td className="py-1 px-2">Gerätemiete Heizung/Warmwasser</td>
                   <td className="py-1 px-2">
-                    {formatDateGerman(previewData.mainDocDates.created_at)}
+                    {formatDateGerman(previewData.generalInfo.documentCreationDate)}
                   </td>
                   <td className="py-1 px-2 text-right">2.307,77 €</td>
                 </tr>
@@ -348,7 +348,7 @@ const HeatingBillPreviewTwo = ({
           </div>
           <div className="grid grid-cols-4 text-pdf-text gap-4 mt-2">
             <div className="text-pdf-dark font-bold">
-              davon {previewData.mainDocData.living_space_share} % Grundkosten
+              davon {previewData.generalInfo.livingSpaceShare} % Grundkosten
             </div>
             <div className="text-right">16.270,72 € :</div>
             <div className="text-right">11.196,40 m²</div>
@@ -356,7 +356,7 @@ const HeatingBillPreviewTwo = ({
           </div>
           <div className="grid grid-cols-4 text-pdf-text gap-4">
             <div className="text-pdf-dark font-bold">
-              davon {previewData.mainDocData.consumption_dependent} %
+              davon {previewData.generalInfo.consumptionDependent} %
               Verbrauchskosten
             </div>
             <div className="text-right">37.964,99 € :</div>

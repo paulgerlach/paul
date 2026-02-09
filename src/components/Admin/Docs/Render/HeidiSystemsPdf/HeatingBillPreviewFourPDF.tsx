@@ -248,9 +248,9 @@ export default function HeatingBillPreviewFourPDF({
 								<Text style={styles.infoValue}>
 									{previewData.contractorsNames}
 									{"\n"}
-									{previewData.objektInfo.street}
+									{previewData.generalInfo.street}
 									{"\n"}
-									{previewData.objektInfo.zip}
+									{previewData.generalInfo.zip}
 								</Text>
 							</View>
 							<View style={styles.infoRow}>
@@ -260,9 +260,9 @@ export default function HeatingBillPreviewFourPDF({
 								<Text style={styles.infoValue}>
 									{previewData.contractorsNames}
 									{"\n"}
-									{previewData.objektInfo.street}
+									{previewData.generalInfo.street}
 									{"\n"}
-									{previewData.objektInfo.zip}
+									{previewData.generalInfo.zip}
 								</Text>
 							</View>
 						</View>
@@ -288,8 +288,8 @@ export default function HeatingBillPreviewFourPDF({
 									Abrechnungszeitraum
 								</Text>
 								<Text style={styles.infoValue}>
-									{formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-									{formatDateGerman(previewData.mainDocDates.end_date)}
+									{formatDateGerman(previewData.generalInfo.billingStartDate)} -{" "}
+									{formatDateGerman(previewData.generalInfo.billingEndDate)}
 								</Text>
 							</View>
 							<View style={styles.infoRow}>
@@ -297,7 +297,7 @@ export default function HeatingBillPreviewFourPDF({
 									erstellt am
 								</Text>
 								<Text style={styles.infoValue}>
-									{formatDateGerman(previewData.mainDocDates.created_at)}
+									{formatDateGerman(previewData.generalInfo.documentCreationDate)}
 								</Text>
 							</View>
 						</View>
@@ -309,9 +309,9 @@ export default function HeatingBillPreviewFourPDF({
 						<Text style={styles.recipientAddress}>
 							{previewData.contractorsNames}
 							{"\n"}
-							{previewData.objektInfo.street}
+							{previewData.generalInfo.street}
 							{"\n"}
-							{previewData.objektInfo.zip}
+							{previewData.generalInfo.zip}
 						</Text>
 					</View>
 				</View>

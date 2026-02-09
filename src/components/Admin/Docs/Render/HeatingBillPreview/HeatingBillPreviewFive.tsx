@@ -66,7 +66,7 @@ const HeatingBillPreviewFive = ({
             <tr>
               <td className="py-1 px-2">Bezug</td>
               <td className="py-1">
-                {formatDateGerman(previewData.mainDocDates.created_at)}
+                {formatDateGerman(previewData.generalInfo.documentCreationDate)}
               </td>
               <td className="py-1">761.123</td>
               <td className="py-1">159.911,9</td>

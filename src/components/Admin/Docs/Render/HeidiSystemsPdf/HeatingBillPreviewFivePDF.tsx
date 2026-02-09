@@ -285,7 +285,7 @@ export default function HeatingBillPreviewFivePDF({
 				<View style={styles.tableRow}>
 					<Text style={[styles.tableCell, { flex: 2 }]}>Bezug</Text>
 					<Text style={[styles.tableCell, { flex: 2 }]}>
-						{formatDateGerman(previewData.mainDocDates.created_at)}
+						{formatDateGerman(previewData.generalInfo.documentCreationDate)}
 					</Text>
 					<Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
 						761.123

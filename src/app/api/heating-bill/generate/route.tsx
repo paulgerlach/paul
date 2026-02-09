@@ -12,14 +12,11 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import HeidiSystemsPdfServer from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdfServer";
 import {
-	getHeatingBillDocumentByID,
-	getObjectById,
-	getAdminUserData,
 	getLocalById,
-	getRelatedLocalsByObjektId,
 	getHeatingInvoicesByHeatingBillDocumentID,
 	getDocCostCategoryTypes,
 	getContractsWithContractorsByLocalID,
+	getHeatBillingGeneralInfo,
 	MeterReadingType,
 } from "@/api";
 import type {
@@ -543,34 +540,23 @@ export async function POST(request: NextRequest) {
 
 		// 3. Fetch all required data in parallel using existing API methods
 		const [
-			settlementDoc,
-			building,
+			contractsWithContractors,
+			generalInfo,
 			apartment,
-			allApartments,
 			invoices,
 			costCategories,
-			contractsWithContractors,
 		] = await Promise.all([
-			getHeatingBillDocumentByID(documentId),
-			getObjectById(objektId),
+			getContractsWithContractorsByLocalID(apartmentId),
+			getHeatBillingGeneralInfo(documentId),
 			getLocalById(apartmentId),
-			getRelatedLocalsByObjektId(objektId),
 			getHeatingInvoicesByHeatingBillDocumentID(documentId),
 			getDocCostCategoryTypes("heizkostenabrechnung"),
-			getContractsWithContractorsByLocalID(apartmentId),
 		]);
 
 		// 4. Validate required data exists
-		if (!settlementDoc) {
+		if (!generalInfo) {
 			return NextResponse.json(
 				{ error: "Dokument nicht gefunden", code: "DOCUMENT_NOT_FOUND" },
-				{ status: 404 },
-			);
-		}
-
-		if (!building) {
-			return NextResponse.json(
-				{ error: "Objekt nicht gefunden", code: "BUILDING_NOT_FOUND" },
 				{ status: 404 },
 			);
 		}
@@ -581,22 +567,6 @@ export async function POST(request: NextRequest) {
 				{ status: 404 },
 			);
 		}
-
-		// 5. Fetch owner data (depends on building result)
-		const owner = await getAdminUserData(building.user_id);
-
-		if (!owner) {
-			return NextResponse.json(
-				{ error: "Benutzer nicht gefunden", code: "USER_NOT_FOUND" },
-				{ status: 404 },
-			);
-		}
-
-		// 6. Calculate total living space from all apartments
-		const totalLivingSpace = allApartments.reduce(
-			(sum, apt) => sum + (Number(apt.living_space) || 0),
-			0,
-		);
 
 		// 7. Get logo path for PDF
 		const logoSrc = path.join(process.cwd(), "public/admin_logo.png");
@@ -641,10 +611,12 @@ export async function POST(request: NextRequest) {
 		const mockConsumptionData = {
 			objektId,
 			period: {
-				start: settlementDoc.start_date
-					? new Date(settlementDoc.start_date)
+				start: generalInfo.billingStartDate
+					? new Date(generalInfo.billingStartDate)
 					: null,
-				end: settlementDoc.end_date ? new Date(settlementDoc.end_date) : null,
+				end: generalInfo.billingEndDate
+					? new Date(generalInfo.billingEndDate)
+					: null,
 			},
 			consumption: {
 				heat: {
@@ -684,11 +656,8 @@ export async function POST(request: NextRequest) {
 
 		// 10. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
-			mainDoc: settlementDoc as any,
+			generalInfo,
 			local: apartment as any,
-			user: owner as any,
-			objekt: building as any,
-			totalLivingSpace,
 			costCategories: costCategories as any[],
 			invoices: invoices as any[],
 			contracts: contractsWithContractors as any[],

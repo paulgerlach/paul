@@ -37,9 +37,9 @@ export default function HeatingBillPreviewOne({
                 {previewData.contractorsNames}
               </p>
               <p className="text-2xl font-bold">
-                {previewData.objektInfo.street}
+                {previewData.generalInfo.street}
               </p>
-              <p className="text-2xl font-bold">{previewData.objektInfo.zip}</p>
+              <p className="text-2xl font-bold">{previewData.generalInfo.zip}</p>
             </div>
           </div>
           <div>
@@ -60,28 +60,28 @@ export default function HeatingBillPreviewOne({
           <div className="grid grid-cols-[auto_1fr] gap-10">
             <p>Erstellt im Auftrag von</p>
             <p>
-              {previewData.userInfo.first_name} {previewData.userInfo.last_name}
+              {previewData.generalInfo.ownerFirstName} {previewData.generalInfo.ownerLastName}
               <br />
               Immobilienmanagement
               <br />
-              {previewData.objektInfo.street}
+              {previewData.generalInfo.street}
               <br />
-              {previewData.objektInfo.zip}
+              {previewData.generalInfo.zip}
             </p>
           </div>
           <div className="space-y-1 font-bold text-pdf-dark">
             <div className="grid grid-cols-[auto_1fr] gap-10">
               <p>Abrechnungszeitraum</p>
               <p>
-                {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-                {formatDateGerman(previewData.mainDocDates.end_date)}
+                {formatDateGerman(previewData.generalInfo.billingStartDate)}{" "}
+                {formatDateGerman(previewData.generalInfo.billingEndDate)}
               </p>
             </div>
             <div className="grid grid-cols-[auto_1fr] gap-10">
               <p>Ihr Nutzungszeitraum</p>
               <p>
-                {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-                {formatDateGerman(previewData.mainDocDates.end_date)}
+                {formatDateGerman(previewData.generalInfo.billingStartDate)}{" "}
+                {formatDateGerman(previewData.generalInfo.billingEndDate)}
               </p>
             </div>
           </div>
@@ -89,16 +89,16 @@ export default function HeatingBillPreviewOne({
         <div className="space-y-1">
           <div className="grid grid-cols-3 gap-10 text-pdf-text">
             <p className="col-span-2">Erstellt am</p>
-            <p>{formatDateGerman(previewData.mainDocDates.created_at)}</p>
+            <p>{formatDateGerman(previewData.generalInfo.documentCreationDate)}</p>
           </div>
           <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
             <p className="col-span-2">Liegenschaft</p>
             <p>
               {previewData.contractorsNames}
               <br />
-              {previewData.objektInfo.street}
+              {previewData.generalInfo.street}
               <br />
-              {previewData.objektInfo.zip}
+              {previewData.generalInfo.zip}
             </p>
           </div>
           <div className="grid grid-cols-3 gap-10 font-bold text-pdf-dark">
@@ -222,9 +222,9 @@ export default function HeatingBillPreviewOne({
               {contractor.first_name}
               {contractor.last_name}
               <br />
-              {previewData.objektInfo.street}
+              {previewData.generalInfo.street}
               <br />
-              {previewData.objektInfo.zip}
+              {previewData.generalInfo.zip}
             </p>
           ))}
         </div>

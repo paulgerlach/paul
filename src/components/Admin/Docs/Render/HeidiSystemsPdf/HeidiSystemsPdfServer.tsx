@@ -22,12 +22,9 @@ import { differenceInMonths, max, min } from "date-fns";
  */
 export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 	const {
-		mainDoc,
-		user,
-		objekt,
+		generalInfo,
 		contracts,
 		invoices,
-		totalLivingSpace,
 		costCategories,
 		logoSrc,
 		energyConsumption, // Calculated in route handler, passed as prop
@@ -37,10 +34,12 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		totalHeatingCosts,
 	} = props;
 
-	const periodStart = mainDoc?.start_date
-		? new Date(mainDoc.start_date)
+	const periodStart = generalInfo.billingStartDate
+		? new Date(generalInfo.billingStartDate)
 		: new Date();
-	const periodEnd = mainDoc?.end_date ? new Date(mainDoc.end_date) : new Date();
+	const periodEnd = generalInfo.billingEndDate
+		? new Date(generalInfo.billingEndDate)
+		: new Date();
 
 	const filteredContracts = contracts.filter((contract) => {
 		if (!contract.rental_start_date || !contract.rental_end_date) return false;
@@ -71,20 +70,7 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 	const contractors = contracts.flatMap((contract) => contract.contractors);
 
 	const previewData: HeatingBillPreviewData = {
-		mainDocDates: {
-			created_at: mainDoc?.created_at,
-			start_date: mainDoc?.start_date,
-			end_date: mainDoc?.end_date,
-		},
-		mainDocData: mainDoc,
-		userInfo: {
-			first_name: user?.first_name,
-			last_name: user?.last_name,
-		},
-		objektInfo: {
-			zip: objekt?.zip,
-			street: objekt?.street,
-		},
+		generalInfo,
 		contractorsNames: contractors
 			?.map((c) => `${c.first_name} ${c.last_name}`)
 			.join(", "),
@@ -92,7 +78,6 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 			(sum, invoice) => sum + Number(invoice.total_amount ?? 0),
 			0,
 		),
-		totalLivingSpace,
 		contracts,
 		totalDiff,
 		invoices,

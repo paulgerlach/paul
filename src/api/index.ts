@@ -195,6 +195,7 @@ export type HeatingInvoice = {
   totalAmount: number;
   invoiceDate: string;
   notes: string | null;
+  purpose: string | null;
 };
 
 export type GroupedHeatingInvoices = {
@@ -1159,7 +1160,9 @@ export async function getHeatingBillInvoices(
           'id', i.id,
           'costType', i.cost_type,
           'totalAmount', i.total_amount,
-          'notes', i.notes
+          'notes', i.notes,
+          'purpose', i.purpose,
+          'invoiceDate', i.invoice_date
         )
         ORDER BY i.invoice_date ASC
       ) FILTER (WHERE i.cost_type = 'fuel_costs'),
@@ -1179,7 +1182,9 @@ export async function getHeatingBillInvoices(
           'id', i.id,
           'costType', i.cost_type,
           'totalAmount', i.total_amount,
-          'notes', i.notes
+          'notes', i.notes,
+          'purpose', i.purpose,
+          'invoiceDate', i.invoice_date
         )
         ORDER BY i.invoice_date ASC
       ) FILTER (
@@ -1211,7 +1216,9 @@ export async function getHeatingBillInvoices(
           'id', i.id,
           'costType', i.cost_type,
           'totalAmount', i.total_amount,
-          'notes', i.notes
+          'notes', i.notes,
+          'purpose', i.purpose,
+          'invoiceDate', i.invoice_date
         )
         ORDER BY i.invoice_date ASC
       ) FILTER (

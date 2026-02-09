@@ -323,7 +323,7 @@ export default function HeatingBillPreviewTwoPDF({
 						{previewData.billingInvoices.operationalInvoices.map(
 							(item, index) => (
 								<View key={index} style={styles.tableRow}>
-									<Text style={styles.tableCell}>{item.costType}</Text>
+									<Text style={styles.tableCell}>{item.purpose}</Text>
 									<Text style={styles.tableCell}>
 										{item.invoiceDate ? formatDateGerman(item.invoiceDate) : ""}
 									</Text>
@@ -512,14 +512,17 @@ export default function HeatingBillPreviewTwoPDF({
 					<Text>69.780,93 €</Text>
 				</View>
 				<View style={styles.allocationGrid}>
-					<Text style={styles.allocationLabelBold}>davon 30 % Grundkosten</Text>
+					<Text style={styles.allocationLabelBold}>
+						davon {previewData.generalInfo.livingSpaceShare}% Grundkosten
+					</Text>
 					<Text>20.934,28 € :</Text>
 					<Text>11.196,40 m²</Text>
 					<Text>= 1,869733 €/m²</Text>
 				</View>
 				<View style={styles.allocationGrid}>
 					<Text style={styles.allocationLabelBold}>
-						davon 70 % Verbrauchskosten
+						davon {previewData.generalInfo.consumptionDependent}%
+						Verbrauchskosten
 					</Text>
 					<Text>48.846,65 € :</Text>
 					<Text>404,04 MWh</Text>

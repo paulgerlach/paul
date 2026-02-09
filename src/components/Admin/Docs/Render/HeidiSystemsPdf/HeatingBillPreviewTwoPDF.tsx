@@ -409,7 +409,7 @@ export default function HeatingBillPreviewTwoPDF({
 						</View>
 						<View style={styles.totalRow}>
 							<Text>Summe der zu verteilenden Kosten</Text>
-							<Text>165.485,59 €</Text>
+							<Text>{formatEuro(previewData.totalHeatingCosts || 0)}</Text>
 						</View>
 					</View>
 				</View>
@@ -430,7 +430,7 @@ export default function HeatingBillPreviewTwoPDF({
 								fontWeight: 400,
 							}}
 						>
-							2,5 kWh/m³/K x 3.148,25 m³ x (60-10°C)
+							2,5 kWh/m³/K x {previewData.totalLivingSpace} m³ x (60-10°C)
 						</Text>
 						<Text style={{ textAlign: "center" }}>1,15</Text>
 					</View>

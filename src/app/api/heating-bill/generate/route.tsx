@@ -429,6 +429,30 @@ async function buildConsumptionFromCsv(
 	};
 }
 
+const generateHotWaterAllocation = (
+	hotWaterConsumption: number,
+	totalGasConsumption: number,
+	totalGasCost: number,
+) => {
+	const metersRentingCost = 100;
+	const consumption = (2.5 * hotWaterConsumption * (60 - 10)) / 1.5;
+
+	const percentageOfGas = consumption / totalGasConsumption;
+
+	const heatingCost = percentageOfGas * totalGasCost;
+
+	return {
+		consumptionAllocation: {
+			consumption: consumption.toLocaleString("de-DE"),
+			percentageOfGas: percentageOfGas.toLocaleString("de-DE"),
+		},
+		costAllocation: {
+			cost: heatingCost,
+			metersRentingCost,
+		},
+	};
+};
+
 /**
  * Request validation schema for heating bill PDF generation.
  */
@@ -497,11 +521,40 @@ export async function POST(request: NextRequest) {
 		// 7. Get logo path for PDF
 		const logoSrc = path.join(process.cwd(), "public/admin_logo.png");
 
+		const mockConsumptionData = {
+			heat: {
+				consumption: 1000,
+				startValue: 1000,
+				endValue: 2000,
+				unit: "kWh",
+			},
+			hotWater: {
+				consumption: 1000,
+				startValue: 1000,
+				endValue: 2000,
+				unit: "m³",
+			},
+			coldWater: {
+				consumption: 1000,
+				startValue: 1000,
+				endValue: 2000,
+				unit: "m³",
+			},
+		};
+
+		const hotWaterHeatingAllocation = generateHotWaterAllocation(
+			mockConsumptionData.hotWater.consumption,
+			2000,
+			billingInvoices.fuelTotal + billingInvoices.operationalTotal,
+		);
+
 		const pdfProps = {
 			generalInfo,
 			billingInvoices,
 			contracts: contractsWithContractors as any[],
 			logoSrc,
+			consumptionData: mockConsumptionData,
+			hotWaterHeatingAllocation,
 		};
 
 		logger.info("Generating PDF server-side", {
@@ -584,6 +637,7 @@ export async function POST(request: NextRequest) {
 				publicUrl: urlData.signedUrl,
 				fileName,
 				billingInvoices,
+				consumptionData: mockConsumptionData,
 			},
 		});
 	} catch (error) {

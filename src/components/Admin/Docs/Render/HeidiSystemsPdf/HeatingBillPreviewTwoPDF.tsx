@@ -247,7 +247,7 @@ export default function HeatingBillPreviewTwoPDF({
 						{/* Dynamic energy line items */}
 						{previewData.billingInvoices.fuelInvoices.map((item, index) => (
 							<View key={index} style={styles.tableRow}>
-								<Text style={styles.tableCell}>{item.costType}</Text>
+								<Text style={styles.tableCell}>{item.purpose}</Text>
 								<Text style={styles.tableCell}>
 									{item.invoiceDate ? formatDateGerman(item.invoiceDate) : ""}
 								</Text>
@@ -439,33 +439,69 @@ export default function HeatingBillPreviewTwoPDF({
 								fontWeight: 400,
 							}}
 						>
-							2,5 kWh/m³/K x {previewData.generalInfo.totalLivingSpace} m³ x
-							(60-10°C)
+							2,5 kWh/m³/K x {previewData.consumptionData.hotWater.consumption}{" "}
+							m³ x (60-10°C)
 						</Text>
 						<Text style={{ textAlign: "center" }}>1,15</Text>
 					</View>
 					<Text style={{ color: "#FFFFFF" }}>
-						= 342.201,09 kWh Nah-/Fernwärme
+						=
+						{
+							previewData.hotWaterHeatingAllocation.consumptionAllocation
+								.consumption
+						}
+						kWh Nah-/Fernwärme
 					</Text>
-					<Text style={{ color: "#FFFFFF" }}>= 44,96 % d. Gesamtverbr.</Text>
+					<Text style={{ color: "#FFFFFF" }}>
+						={" "}
+						{
+							previewData.hotWaterHeatingAllocation.consumptionAllocation
+								.percentageOfGas
+						}{" "}
+						% d. Gesamtverbr.
+					</Text>
 				</View>
 			</View>
 			<View style={styles.allocationRow}>
 				<Text>
-					44,96 % aus 115.498,07 € Energie- und Heizungsbetriebskosten
-					entspricht Kosten für Erwärmung Warmwasser
+					{
+						previewData.hotWaterHeatingAllocation.consumptionAllocation
+							.percentageOfGas
+					}{" "}
+					% aus{" "}
+					{formatEuro(
+						previewData.billingInvoices.fuelTotal +
+							previewData.billingInvoices.operationalTotal || 0,
+					)}
+					Energie- und Heizungsbetriebskosten entspricht Kosten für Erwärmung
+					Warmwasser
 				</Text>
-				<Text>51.927,94 €</Text>
+				<Text>
+					{formatEuro(
+						previewData.hotWaterHeatingAllocation.costAllocation.cost || 0,
+					)}
+				</Text>
 			</View>
 			<View style={styles.allocationRow}>
 				<Text style={styles.allocationLabelBold}>
 					Gerätemiete Heizung/Warmwasser
 				</Text>
-				<Text>2.307,77 €</Text>
+				<Text>
+					{formatEuro(
+						previewData.hotWaterHeatingAllocation.costAllocation
+							.metersRentingCost || 0,
+					)}
+				</Text>
 			</View>
 			<View style={styles.allocationBox}>
 				<Text>Kosten für Warmwasser</Text>
-				<Text>54.235,71 €</Text>
+				<Text>
+					{formatEuro(
+						previewData.hotWaterHeatingAllocation.costAllocation.cost +
+							previewData.hotWaterHeatingAllocation.costAllocation
+								.metersRentingCost || 0,
+					)}
+				</Text>
 			</View>
 			<View style={styles.allocationGrid}>
 				<Text style={styles.allocationLabelBold}>
@@ -493,19 +529,29 @@ export default function HeatingBillPreviewTwoPDF({
 					<Text style={styles.allocationLabelBold}>
 						Summe Energie- und Heizungsbetriebskosten
 					</Text>
-					<Text>115.498,07 €</Text>
+					<Text>{`${formatEuro(previewData.billingInvoices.operationalTotal + previewData.billingInvoices.fuelTotal || 0)}`}</Text>
 				</View>
 				<View style={styles.allocationRow}>
 					<Text style={styles.allocationLabelBold}>
 						abzüglich Kosten für Erwärmung Warmwasser
 					</Text>
-					<Text>-51.927,94 €</Text>
+					<Text>
+						-
+						{formatEuro(
+							previewData.hotWaterHeatingAllocation.costAllocation.cost,
+						)}
+					</Text>
 				</View>
 				<View style={styles.allocationRow}>
 					<Text style={styles.allocationLabelBold}>
 						Gerätemiete Heizung/Warmwasser
 					</Text>
-					<Text>6.210,80 €</Text>
+					<Text>
+						{formatEuro(
+							previewData.hotWaterHeatingAllocation.costAllocation
+								.metersRentingCost,
+						)}
+					</Text>
 				</View>
 				<View style={styles.allocationBox}>
 					<Text>Kosten für Heizung</Text>

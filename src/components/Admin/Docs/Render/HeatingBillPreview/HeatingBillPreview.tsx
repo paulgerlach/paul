@@ -39,6 +39,36 @@ export type HeatingBillPreviewProps = {
 	contracts: (ContractType & { contractors: ContractorType[] })[];
 	billingInvoices: GroupedHeatingInvoices;
 	logoSrc?: string; // Optional logo source (file path or data URL)
+	consumptionData: {
+		heat: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+		hotWater: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+		coldWater: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+	};
+	hotWaterHeatingAllocation: {
+		consumptionAllocation: {
+			consumption: string;
+			percentageOfGas: string;
+		};
+		costAllocation: {
+			cost: number;
+			metersRentingCost: number;
+		};
+	};
 };
 
 /**
@@ -83,12 +113,44 @@ export type HeatingBillPreviewData = {
 	propertyNumber: string;
 	heidiCustomerNumber: string;
 	logoSrc?: string; // Optional logo source (file path or data URL)
+	consumptionData: {
+		heat: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+		hotWater: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+		coldWater: {
+			consumption: number;
+			startValue: number;
+			endValue: number;
+			unit: string;
+		};
+	};
+	hotWaterHeatingAllocation: {
+		consumptionAllocation: {
+			consumption: string;
+			percentageOfGas: string;
+		};
+		costAllocation: {
+			cost: number;
+			metersRentingCost: number;
+		};
+	};
 };
 
 export default function HeatingBillPreview({
 	contracts,
 	billingInvoices,
 	generalInfo,
+	consumptionData,
+	hotWaterHeatingAllocation,
 }: HeatingBillPreviewProps) {
 	const periodStart = generalInfo.billingStartDate
 		? new Date(generalInfo.billingStartDate)
@@ -138,6 +200,8 @@ export default function HeatingBillPreview({
 		totalDiff,
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
+		consumptionData,
+		hotWaterHeatingAllocation,
 	};
 
 	return (

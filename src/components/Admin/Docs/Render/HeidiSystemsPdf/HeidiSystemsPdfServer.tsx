@@ -70,6 +70,8 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
 		logoSrc,
+		consumptionData: props.consumptionData,
+		hotWaterHeatingAllocation: props.hotWaterHeatingAllocation,
 	};
 
 	return (

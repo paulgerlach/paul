@@ -363,16 +363,9 @@ export default function HeatingBillPreviewTwoPDF({
 						<View style={styles.tableHeader}>
 							<Text style={styles.tableHeaderCell}>VERTEILUNG NACH</Text>
 						</View>
-						{[
-							"Heizung",
-							"Warmwasser/Kaltwasser",
-							"Warmwasser/Kaltwasser",
-							"Warmwasser/Kaltwasser",
-							"Nutzeinheit",
-							"Warmwasser",
-						].map((v, i) => (
+						{(previewData.heatRelatedCosts?.lineItems || []).map((item, i) => (
 							<View style={styles.tableRow} key={i}>
-								<Text style={styles.tableCell}>{v}</Text>
+								<Text style={styles.tableCell}>{item.costType || "-"}</Text>
 							</View>
 						))}
 					</View>
@@ -384,42 +377,15 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableHeaderCell}>DATUM</Text>
 							<Text style={styles.tableHeaderCellRight}>BETRAG</Text>
 						</View>
-						{[
-							{
-								label: "Gerätemiete Heizung/Warmwasser",
-								date: formatDateGerman(previewData.mainDocDates.created_at),
-								amount: "6.210,80 €",
-							},
-							{
-								label: "Kaltwasser",
-								date: formatDateGerman(previewData.mainDocDates.created_at),
-								amount: "17.036,69 €",
-							},
-							{
-								label: "Abwasser",
-								date: formatDateGerman(previewData.mainDocDates.created_at),
-								amount: "20.030,62 €",
-							},
-							{
-								label: "Gerätemiete Kaltwasser",
-								date: formatDateGerman(previewData.mainDocDates.created_at),
-								amount: "2.274,90 €",
-							},
-							{
-								label: "Abrechnung Kaltwasser",
-								date: "",
-								amount: "2.126,74 €",
-							},
-							{
-								label: "Gerätemiete Heizung/Warmwasser",
-								date: formatDateGerman(previewData.mainDocDates.created_at),
-								amount: "2.307,77 €",
-							},
-						].map((r, i) => (
+						{(previewData.heatRelatedCosts?.lineItems || []).map((item, i) => (
 							<View style={styles.tableRow} key={i}>
-								<Text style={styles.tableCell}>{r.label}</Text>
-								<Text style={styles.tableCell}>{r.date}</Text>
-								<Text style={styles.tableCellRight}>{r.amount}</Text>
+								<Text style={styles.tableCell}>{item.position}</Text>
+								<Text style={styles.tableCell}>
+									{item.date ? formatDateGerman(item.date) : ""}
+								</Text>
+								<Text style={styles.tableCellRight}>
+									{formatEuro(item.amount)}
+								</Text>
 							</View>
 						))}
 						{/* Sum row */}
@@ -438,7 +404,7 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
-								49.987,52 €
+								{formatEuro(previewData.heatRelatedCosts?.totalAmount || 0)}
 							</Text>
 						</View>
 						<View style={styles.totalRow}>

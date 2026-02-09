@@ -32,6 +32,8 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		logoSrc,
 		energyConsumption, // Calculated in route handler, passed as prop
 		additionalCosts,
+		heatRelatedCosts,
+		otherOperatingCosts,
 		totalHeatingCosts,
 	} = props;
 
@@ -102,6 +104,8 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		energyConsumption,
 		// Iteration 3: Additional costs and grand total
 		additionalCosts,
+		heatRelatedCosts,
+		otherOperatingCosts,
 		totalHeatingCosts,
 	};
 

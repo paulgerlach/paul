@@ -70,6 +70,7 @@ function buildAdditionalCosts(
 		position: invoice.purpose || invoice.cost_type || "Sonstige Kosten",
 		date: invoice.invoice_date || undefined,
 		amount: Number(invoice.total_amount ?? 0),
+		costType: invoice.cost_type || undefined,
 	}));
 
 	const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
@@ -610,6 +611,24 @@ export async function POST(request: NextRequest) {
 
 		// 9. Build energy consumption and additional costs
 		const energyConsumption = buildEnergyConsumption(fuelInvoices);
+
+		// Split other invoices by cost_type
+		const HEAT_RELATED_TYPES = [
+			"hot_water_supply",
+			"hot_water",
+			"heating_costs",
+		];
+
+		const heatRelatedInvoices = otherInvoices.filter(
+			(inv) => inv.cost_type && HEAT_RELATED_TYPES.includes(inv.cost_type),
+		);
+		const otherOperatingInvoices = otherInvoices.filter(
+			(inv) => !inv.cost_type || !HEAT_RELATED_TYPES.includes(inv.cost_type),
+		);
+
+		const heatRelatedCosts = buildAdditionalCosts(heatRelatedInvoices);
+		const otherOperatingCosts = buildAdditionalCosts(otherOperatingInvoices);
+
 		// 11. Calculate Building-Level Consumption (Iteration 4)
 		// Experiment: Use CSV Data
 		// const consumptionData = await buildConsumptionFromCsv(
@@ -659,7 +678,9 @@ export async function POST(request: NextRequest) {
 		*/
 		const additionalCosts = buildAdditionalCosts(otherInvoices);
 		const totalHeatingCosts =
-			energyConsumption.totalAmount + additionalCosts.totalAmount;
+			energyConsumption.totalAmount +
+			heatRelatedCosts.totalAmount +
+			otherOperatingCosts.totalAmount;
 
 		// 10. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
@@ -673,7 +694,9 @@ export async function POST(request: NextRequest) {
 			contracts: contractsWithContractors as any[],
 			logoSrc,
 			energyConsumption,
-			additionalCosts,
+			additionalCosts, // Deprecated prop, kept for compatibility if needed
+			heatRelatedCosts,
+			otherOperatingCosts,
 			totalHeatingCosts,
 		};
 
@@ -757,6 +780,8 @@ export async function POST(request: NextRequest) {
 				publicUrl: urlData.signedUrl,
 				fileName,
 				consumptionData,
+				heatRelatedCosts,
+				otherOperatingCosts,
 			},
 		});
 	} catch (error) {

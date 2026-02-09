@@ -30,6 +30,8 @@ export type HeatingBillPreviewProps = {
 	// Iteration 2: Energy consumption calculations
 	energyConsumption?: EnergyConsumptionData; // Calculated server-side
 
+	heatRelatedCosts?: AdditionalCostsData;
+	otherOperatingCosts?: AdditionalCostsData;
 	// Iteration 3: Additional costs and grand total
 	additionalCosts?: AdditionalCostsData;
 	totalHeatingCosts?: number;
@@ -59,6 +61,7 @@ export type AdditionalCostLineItem = {
 	position: string;
 	date?: string;
 	amount: number;
+	costType?: string;
 };
 
 export type AdditionalCostsData = {
@@ -96,12 +99,15 @@ export type HeatingBillPreviewData = {
 
 	// Iteration 3: Additional costs and grand total
 	additionalCosts?: AdditionalCostsData;
+	heatRelatedCosts?: AdditionalCostsData;
+	otherOperatingCosts?: AdditionalCostsData;
 	totalHeatingCosts?: number; // Summe Energie- und Heizungsbetriebskosten
 };
 
 export default function HeatingBillPreview({
 	contracts,
 	costCategories,
+	heatRelatedCosts,
 	invoices,
 	mainDoc,
 	objekt,
@@ -161,10 +167,11 @@ export default function HeatingBillPreview({
 			.join(", "),
 		totalInvoicesAmount: totalAmount,
 		invoices,
+		costCategories,
 		totalLivingSpace,
 		contracts,
 		totalDiff,
-		costCategories,
+		heatRelatedCosts,
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
 	};

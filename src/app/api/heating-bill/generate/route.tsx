@@ -12,71 +12,11 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import HeidiSystemsPdfServer from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdfServer";
 import {
-	getLocalById,
-	getHeatingInvoicesByHeatingBillDocumentID,
-	getDocCostCategoryTypes,
 	getContractsWithContractorsByLocalID,
 	getHeatBillingGeneralInfo,
 	MeterReadingType,
+	getHeatingBillInvoices,
 } from "@/api";
-import type {
-	EnergyConsumptionData,
-	EnergyConsumptionLineItem,
-	AdditionalCostsData,
-	AdditionalCostLineItem,
-} from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
-import type { InvoiceDocumentType } from "@/types";
-
-/**
- * Build energy consumption data from fuel cost invoices for PDF display.
- * Invoices are pre-filtered by cost_type at query level.
- */
-function buildEnergyConsumption(
-	fuelInvoices: InvoiceDocumentType[],
-): EnergyConsumptionData {
-	// Create line items for each fuel invoice
-	const lineItems: EnergyConsumptionLineItem[] = fuelInvoices.map(
-		(invoice) => ({
-			position: invoice.document_name
-				? `Rechnung\n${invoice.document_name.split("-")[1]}`
-				: invoice.purpose || "Energiekosten",
-			date: invoice.invoice_date || undefined,
-			kwh: invoice.notes ?? "", // added as a remark on the invoice
-			amount: Number(invoice.total_amount ?? 0),
-		}),
-	);
-
-	// Calculate totals
-	const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
-
-	return {
-		energyType: "Nah-/Fernwärme kWh",
-		lineItems,
-		totalKwh: "",
-		totalAmount,
-	};
-}
-
-/**
- * Build additional costs data from non-fuel invoices.
- */
-function buildAdditionalCosts(
-	otherInvoices: InvoiceDocumentType[],
-): AdditionalCostsData {
-	const lineItems: AdditionalCostLineItem[] = otherInvoices.map((invoice) => ({
-		position: invoice.purpose || invoice.cost_type || "Sonstige Kosten",
-		date: invoice.invoice_date || undefined,
-		amount: Number(invoice.total_amount ?? 0),
-		costType: invoice.cost_type || undefined,
-	}));
-
-	const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
-
-	return {
-		lineItems,
-		totalAmount,
-	};
-}
 
 // Helper types for consumption calculation
 type DataPoint = {
@@ -539,12 +479,11 @@ export async function POST(request: NextRequest) {
 		const { documentId, objektId, apartmentId } = validation.data;
 
 		// 3. Fetch all required data in parallel using existing API methods
-		const [contractsWithContractors, generalInfo, invoices, costCategories] =
+		const [contractsWithContractors, generalInfo, billingInvoices] =
 			await Promise.all([
 				getContractsWithContractorsByLocalID(apartmentId),
 				getHeatBillingGeneralInfo(documentId),
-				getHeatingInvoicesByHeatingBillDocumentID(documentId),
-				getDocCostCategoryTypes("heizkostenabrechnung"),
+				getHeatingBillInvoices(documentId, objektId),
 			]);
 
 		// 4. Validate required data exists
@@ -558,107 +497,17 @@ export async function POST(request: NextRequest) {
 		// 7. Get logo path for PDF
 		const logoSrc = path.join(process.cwd(), "public/admin_logo.png");
 
-		// 8. Split invoices into fuel and non-fuel
-		const fuelInvoices = invoices.filter(
-			(inv) => inv.cost_type === "fuel_costs",
-		);
-		const otherInvoices = invoices.filter(
-			(inv) => inv.cost_type !== "fuel_costs",
-		);
-
-		// 9. Build energy consumption and additional costs
-		const energyConsumption = buildEnergyConsumption(fuelInvoices);
-
-		// Split other invoices by cost_type
-		const HEAT_RELATED_TYPES = [
-			"hot_water_supply",
-			"hot_water",
-			"heating_costs",
-		];
-
-		const heatRelatedInvoices = otherInvoices.filter(
-			(inv) => inv.cost_type && HEAT_RELATED_TYPES.includes(inv.cost_type),
-		);
-		const otherOperatingInvoices = otherInvoices.filter(
-			(inv) => !inv.cost_type || !HEAT_RELATED_TYPES.includes(inv.cost_type),
-		);
-
-		const heatRelatedCosts = buildAdditionalCosts(heatRelatedInvoices);
-		const otherOperatingCosts = buildAdditionalCosts(otherOperatingInvoices);
-
-		// 11. Calculate Building-Level Consumption (Iteration 4)
-		// Experiment: Use CSV Data
-		// const consumptionData = await buildConsumptionFromCsv(
-		// 	allApartments,
-		// 	settlementDoc,
-		// 	objektId,
-		// );
-
-		// Mock consumption data for now (No readings yet)
-		const mockConsumptionData = {
-			objektId,
-			period: {
-				start: generalInfo.billingStartDate
-					? new Date(generalInfo.billingStartDate)
-					: null,
-				end: generalInfo.billingEndDate
-					? new Date(generalInfo.billingEndDate)
-					: null,
-			},
-			consumption: {
-				heat: {
-					consumption: 15000,
-					startValue: 1000,
-					endValue: 16000,
-					unit: "kWh",
-				},
-				hotWater: {
-					consumption: 500,
-					startValue: 100,
-					endValue: 600,
-					unit: "m³",
-				},
-				coldWater: {
-					consumption: 800,
-					startValue: 200,
-					endValue: 1000,
-					unit: "m³",
-				},
-			},
-		};
-		const consumptionData = mockConsumptionData;
-
-		/*
-		const consumptionData = await buildConsumption(
-			allApartments,
-			settlementDoc,
-			objektId,
-		);
-		*/
-		const additionalCosts = buildAdditionalCosts(otherInvoices);
-		const totalHeatingCosts =
-			energyConsumption.totalAmount +
-			heatRelatedCosts.totalAmount +
-			otherOperatingCosts.totalAmount;
-
-		// 10. Build props for PDF component (matching HeatingBillPreviewProps)
 		const pdfProps = {
 			generalInfo,
-			costCategories: costCategories as any[],
-			invoices: invoices as any[],
+			billingInvoices,
 			contracts: contractsWithContractors as any[],
 			logoSrc,
-			energyConsumption,
-			additionalCosts, // Deprecated prop, kept for compatibility if needed
-			heatRelatedCosts,
-			otherOperatingCosts,
-			totalHeatingCosts,
 		};
 
 		logger.info("Generating PDF server-side", {
 			documentId,
 			apartmentId,
-			invoiceCount: invoices.length,
+			invoiceCount: billingInvoices,
 			contractCount: contractsWithContractors.length,
 		});
 
@@ -734,9 +583,7 @@ export async function POST(request: NextRequest) {
 				documentPath: storagePath,
 				publicUrl: urlData.signedUrl,
 				fileName,
-				consumptionData,
-				heatRelatedCosts,
-				otherOperatingCosts,
+				billingInvoices,
 			},
 		});
 	} catch (error) {

@@ -16,6 +16,7 @@ import type {
 } from "@/types";
 import { generateHeidiCustomerNumber, generatePropertyNumber } from "@/utils";
 import { differenceInMonths, max, min, parse } from "date-fns";
+import { GroupedHeatingInvoices } from "@/api";
 
 // ... imports
 
@@ -36,17 +37,8 @@ export type HeatingBillGeneralInfo = {
 export type HeatingBillPreviewProps = {
 	generalInfo: HeatingBillGeneralInfo;
 	contracts: (ContractType & { contractors: ContractorType[] })[];
-	costCategories: DocCostCategoryType[];
-	invoices: InvoiceDocumentType[];
+	billingInvoices: GroupedHeatingInvoices;
 	logoSrc?: string; // Optional logo source (file path or data URL)
-	// Iteration 2: Energy consumption calculations
-	energyConsumption?: EnergyConsumptionData; // Calculated server-side
-
-	heatRelatedCosts?: AdditionalCostsData;
-	otherOperatingCosts?: AdditionalCostsData;
-	// Iteration 3: Additional costs and grand total
-	additionalCosts?: AdditionalCostsData;
-	totalHeatingCosts?: number;
 };
 
 /**
@@ -87,26 +79,15 @@ export type HeatingBillPreviewData = {
 	totalInvoicesAmount: number;
 	totalDiff: number;
 	contracts: (ContractType & { contractors: ContractorType[] })[];
-	invoices: InvoiceDocumentType[];
-	costCategories: DocCostCategoryType[];
+	billingInvoices: GroupedHeatingInvoices;
 	propertyNumber: string;
 	heidiCustomerNumber: string;
 	logoSrc?: string; // Optional logo source (file path or data URL)
-	// Iteration 2: Energy consumption calculations
-	energyConsumption?: EnergyConsumptionData;
-
-	// Iteration 3: Additional costs and grand total
-	additionalCosts?: AdditionalCostsData;
-	heatRelatedCosts?: AdditionalCostsData;
-	otherOperatingCosts?: AdditionalCostsData;
-	totalHeatingCosts?: number; // Summe Energie- und Heizungsbetriebskosten
 };
 
 export default function HeatingBillPreview({
 	contracts,
-	costCategories,
-	heatRelatedCosts,
-	invoices,
+	billingInvoices,
 	generalInfo,
 }: HeatingBillPreviewProps) {
 	const periodStart = generalInfo.billingStartDate
@@ -137,10 +118,10 @@ export default function HeatingBillPreview({
 		return acc + overlapMonths * Number(contract.additional_costs ?? 0);
 	}, 0);
 
-	const totalAmount = invoices.reduce(
-		(sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-		0,
-	);
+	const totalAmount =
+		billingInvoices.fuelTotal +
+		billingInvoices.heatingTotal +
+		billingInvoices.operationalTotal;
 
 	const totalDiff = totalContractsAmount - totalAmount;
 
@@ -152,11 +133,9 @@ export default function HeatingBillPreview({
 			?.map((c) => `${c.first_name} ${c.last_name}`)
 			.join(", "),
 		totalInvoicesAmount: totalAmount,
-		invoices,
-		costCategories,
+		billingInvoices,
 		contracts,
 		totalDiff,
-		heatRelatedCosts,
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
 	};

@@ -21,18 +21,7 @@ import { differenceInMonths, max, min } from "date-fns";
  * Used with @react-pdf/renderer's renderToBuffer for server-side PDF generation.
  */
 export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
-	const {
-		generalInfo,
-		contracts,
-		invoices,
-		costCategories,
-		logoSrc,
-		energyConsumption, // Calculated in route handler, passed as prop
-		additionalCosts,
-		heatRelatedCosts,
-		otherOperatingCosts,
-		totalHeatingCosts,
-	} = props;
+	const { generalInfo, contracts, billingInvoices, logoSrc } = props;
 
 	const periodStart = generalInfo.billingStartDate
 		? new Date(generalInfo.billingStartDate)
@@ -60,10 +49,10 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		return acc + overlapMonths * Number(contract.additional_costs ?? 0);
 	}, 0);
 
-	const totalAmount = invoices.reduce(
-		(sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-		0,
-	);
+	const totalAmount =
+		billingInvoices.fuelTotal +
+		billingInvoices.heatingTotal +
+		billingInvoices.operationalTotal;
 
 	const totalDiff = totalContractsAmount - totalAmount;
 
@@ -74,24 +63,13 @@ export default function HeidiSystemsPdfServer(props: HeatingBillPreviewProps) {
 		contractorsNames: contractors
 			?.map((c) => `${c.first_name} ${c.last_name}`)
 			.join(", "),
-		totalInvoicesAmount: invoices.reduce(
-			(sum, invoice) => sum + Number(invoice.total_amount ?? 0),
-			0,
-		),
+		totalInvoicesAmount: totalAmount,
 		contracts,
 		totalDiff,
-		invoices,
-		costCategories,
+		billingInvoices,
 		propertyNumber: generatePropertyNumber(),
 		heidiCustomerNumber: generateHeidiCustomerNumber(),
 		logoSrc,
-		// Energy consumption calculated server-side in route handler
-		energyConsumption,
-		// Iteration 3: Additional costs and grand total
-		additionalCosts,
-		heatRelatedCosts,
-		otherOperatingCosts,
-		totalHeatingCosts,
 	};
 
 	return (

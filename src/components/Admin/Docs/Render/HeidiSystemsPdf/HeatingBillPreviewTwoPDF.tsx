@@ -236,9 +236,7 @@ export default function HeatingBillPreviewTwoPDF({
 								color: colors.dark,
 							}}
 						>
-							Energieart:{" "}
-							{previewData.energyConsumption?.energyType ||
-								"Nah-/Fernwärme kWh"}
+							Energieart: "Nah-/Fernwärme kWh"
 						</Text>
 						<View style={styles.tableHeader}>
 							<Text style={styles.tableHeaderCell}>POSITION</Text>
@@ -247,17 +245,17 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableHeaderCellRight}>BETRAG</Text>
 						</View>
 						{/* Dynamic energy line items */}
-						{previewData.energyConsumption?.lineItems.map((item, index) => (
+						{previewData.billingInvoices.fuelInvoices.map((item, index) => (
 							<View key={index} style={styles.tableRow}>
-								<Text style={styles.tableCell}>{item.position}</Text>
+								<Text style={styles.tableCell}>{item.costType}</Text>
 								<Text style={styles.tableCell}>
-									{item.date ? formatDateGerman(item.date) : ""}
+									{item.invoiceDate ? formatDateGerman(item.invoiceDate) : ""}
 								</Text>
 								<Text style={styles.tableCell}>
-									{item.kwh ? item?.kwh.toLocaleString() : ""}
+									{item.notes ? item?.notes.toLocaleString() : ""}
 								</Text>
 								<Text style={styles.tableCellRight}>
-									{formatEuro(item.amount)}
+									{formatEuro(item.totalAmount)}
 								</Text>
 							</View>
 						))}
@@ -278,9 +276,11 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
+								{/* 
+									TODO @KarimHesham:  this should be the total consumption amounts which currently is read from notes as a string 								
 								{previewData.energyConsumption?.totalKwh
 									? previewData.energyConsumption.totalKwh.toLocaleString()
-									: ""}
+									: ""} */}
 							</Text>
 							<Text
 								style={[
@@ -288,7 +288,7 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
-								{formatEuro(previewData.energyConsumption?.totalAmount ?? 0)}
+								{formatEuro(previewData.billingInvoices.fuelTotal ?? 0)}
 							</Text>
 						</View>
 					</View>
@@ -315,22 +315,24 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableCell}>Übertrag</Text>
 							<Text style={styles.tableCell}></Text>
 							<Text style={styles.tableCellRight}>
-								{formatEuro(previewData.energyConsumption?.totalAmount || 0)}
+								{formatEuro(previewData.billingInvoices.fuelTotal || 0)}
 							</Text>
 						</View>
 
 						{/* Dynamic additional cost line items */}
-						{previewData.additionalCosts?.lineItems.map((item, index) => (
-							<View key={index} style={styles.tableRow}>
-								<Text style={styles.tableCell}>{item.position}</Text>
-								<Text style={styles.tableCell}>
-									{item.date ? formatDateGerman(item.date) : ""}
-								</Text>
-								<Text style={styles.tableCellRight}>
-									{formatEuro(item.amount)}
-								</Text>
-							</View>
-						))}
+						{previewData.billingInvoices.operationalInvoices.map(
+							(item, index) => (
+								<View key={index} style={styles.tableRow}>
+									<Text style={styles.tableCell}>{item.costType}</Text>
+									<Text style={styles.tableCell}>
+										{item.invoiceDate ? formatDateGerman(item.invoiceDate) : ""}
+									</Text>
+									<Text style={styles.tableCellRight}>
+										{formatEuro(item.totalAmount)}
+									</Text>
+								</View>
+							),
+						)}
 
 						<View style={[styles.tableRow, styles.sumRow]}>
 							<Text
@@ -347,7 +349,7 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark })
 								}
 							>
-								{formatEuro(previewData.totalHeatingCosts || 0)}
+								{formatEuro(previewData.billingInvoices.operationalTotal || 0)}
 							</Text>
 						</View>
 					</View>
@@ -365,7 +367,7 @@ export default function HeatingBillPreviewTwoPDF({
 						<View style={styles.tableHeader}>
 							<Text style={styles.tableHeaderCell}>VERTEILUNG NACH</Text>
 						</View>
-						{(previewData.heatRelatedCosts?.lineItems || []).map((item, i) => (
+						{previewData.billingInvoices.heatingInvoices.map((item, i) => (
 							<View style={styles.tableRow} key={i}>
 								<Text style={styles.tableCell}>{item.costType || "-"}</Text>
 							</View>
@@ -379,14 +381,14 @@ export default function HeatingBillPreviewTwoPDF({
 							<Text style={styles.tableHeaderCell}>DATUM</Text>
 							<Text style={styles.tableHeaderCellRight}>BETRAG</Text>
 						</View>
-						{(previewData.heatRelatedCosts?.lineItems || []).map((item, i) => (
+						{previewData.billingInvoices.heatingInvoices.map((item, i) => (
 							<View style={styles.tableRow} key={i}>
-								<Text style={styles.tableCell}>{item.position}</Text>
+								<Text style={styles.tableCell}>{item.costType}</Text>
 								<Text style={styles.tableCell}>
-									{item.date ? formatDateGerman(item.date) : ""}
+									{item.invoiceDate ? formatDateGerman(item.invoiceDate) : ""}
 								</Text>
 								<Text style={styles.tableCellRight}>
-									{formatEuro(item.amount)}
+									{formatEuro(item.totalAmount)}
 								</Text>
 							</View>
 						))}
@@ -406,12 +408,17 @@ export default function HeatingBillPreviewTwoPDF({
 									{ fontWeight: "bold", color: colors.dark },
 								]}
 							>
-								{formatEuro(previewData.heatRelatedCosts?.totalAmount || 0)}
+								{formatEuro(previewData.billingInvoices.heatingTotal || 0)}
 							</Text>
 						</View>
 						<View style={styles.totalRow}>
 							<Text>Summe der zu verteilenden Kosten</Text>
-							<Text>{formatEuro(previewData.totalHeatingCosts || 0)}</Text>
+							<Text>
+								{formatEuro(
+									previewData.billingInvoices.heatingTotal +
+										previewData.billingInvoices.fuelTotal || 0,
+								)}
+							</Text>
 						</View>
 					</View>
 				</View>

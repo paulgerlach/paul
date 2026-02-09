@@ -13,7 +13,7 @@ import {
   local_meters,
   heating_invoices,
 } from "@/db/drizzle/schema";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql, or } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -188,6 +188,26 @@ export interface ParseResult {
   data: MeterReadingType[];
   errors: { row: number; error: string; rawRow: any }[];
 }
+
+export type HeatingInvoice = {
+  id: string;
+  costType: string | null;
+  totalAmount: number;
+  invoiceDate: string;
+  notes: string | null;
+};
+
+export type GroupedHeatingInvoices = {
+  fuelInvoices: HeatingInvoice[];
+  fuelTotal: number;
+
+  heatingInvoices: HeatingInvoice[];
+  heatingTotal: number;
+
+  operationalInvoices: HeatingInvoice[];
+  operationalTotal: number;
+};
+
 
 // Helper function to fetch and parse a single CSV file
 async function fetchAndParseCsv(url: string, fileName: string): Promise<ParseResult> {
@@ -1122,4 +1142,113 @@ export async function getHeatBillingGeneralInfo(docId: string) {
     .then((res) => res[0]);
 
   return result;
+}
+
+export async function getHeatingBillInvoices(
+  docId: string,
+  apartmentId: string
+) {
+  const user = await getAuthenticatedServerUser();
+
+  const result = await database.execute<GroupedHeatingInvoices>(sql`
+  SELECT
+    -- Fuel
+    COALESCE(
+      jsonb_agg(
+        jsonb_build_object(
+          'id', i.id,
+          'costType', i.cost_type,
+          'totalAmount', i.total_amount,
+          'notes', i.notes
+        )
+        ORDER BY i.invoice_date ASC
+      ) FILTER (WHERE i.cost_type = 'fuel_costs'),
+      '[]'::jsonb
+    ) AS "fuelInvoices",
+
+    COALESCE(
+      SUM(i.total_amount)
+        FILTER (WHERE i.cost_type = 'fuel_costs'),
+      0
+    ) AS "fuelTotal",
+
+    -- Heating
+    COALESCE(
+      jsonb_agg(
+        jsonb_build_object(
+          'id', i.id,
+          'costType', i.cost_type,
+          'totalAmount', i.total_amount,
+          'notes', i.notes
+        )
+        ORDER BY i.invoice_date ASC
+      ) FILTER (
+        WHERE i.cost_type IN (
+          'hot_water_supply',
+          'hot_water',
+          'heating_costs'
+        )
+      ),
+      '[]'::jsonb
+    ) AS "heatingInvoices",
+
+    COALESCE(
+      SUM(i.total_amount)
+        FILTER (
+          WHERE i.cost_type IN (
+            'hot_water_supply',
+            'hot_water',
+            'heating_costs'
+          )
+        ),
+      0
+    ) AS "heatingTotal",
+
+    -- Operational
+    COALESCE(
+      jsonb_agg(
+        jsonb_build_object(
+          'id', i.id,
+          'costType', i.cost_type,
+          'totalAmount', i.total_amount,
+          'notes', i.notes
+        )
+        ORDER BY i.invoice_date ASC
+      ) FILTER (
+        WHERE i.cost_type IS NULL
+           OR i.cost_type NOT IN (
+             'fuel_costs',
+             'hot_water_supply',
+             'hot_water',
+             'heating_costs'
+           )
+      ),
+      '[]'::jsonb
+    ) AS "operationalInvoices",
+
+    COALESCE(
+      SUM(i.total_amount)
+        FILTER (
+          WHERE i.cost_type IS NULL
+           OR i.cost_type NOT IN (
+             'fuel_costs',
+             'hot_water_supply',
+             'hot_water',
+             'heating_costs'
+           )
+        ),
+      0
+    ) AS "operationalTotal"
+
+  FROM heating_invoices i
+  WHERE
+    i.heating_doc_id = ${docId}
+    AND i.user_id = ${user.id}
+    AND (
+      i.for_all_tenants = true
+      OR ${apartmentId} = ANY(i.direct_local_id)
+    )
+`);
+
+  return result[0]
 }

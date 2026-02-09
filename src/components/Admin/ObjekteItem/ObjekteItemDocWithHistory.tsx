@@ -56,15 +56,12 @@ export default function ObjekteItemDocWithHistory({
 
   return (
     <div
-      className={` bg-white/50 max-xl:p-3 rounded-2xl max-xl:rounded-xl ${
-        isOpen ? `active` : ""
-      }`}
+      className={` bg-white/50 max-xl:p-3 rounded-2xl max-xl:rounded-xl ${isOpen ? `active` : ""
+        }`}
     >
       <ObjekteItemDocWithHistoryHeader
         item={item}
         isOpen={isOpen}
-        index={index}
-        onClick={onClick}
         link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${item.id}/abrechnungszeitraum`}
         onClickAccordion={() => onClick(index)}
         hasDocuments={!!relatedOpenedDocuments?.length}

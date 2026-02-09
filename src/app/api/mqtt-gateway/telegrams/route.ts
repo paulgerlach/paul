@@ -1,28 +1,62 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/utils/supabase/server";
-import type { FirmwareVersion } from "@/types";
-import { WmbusTelegram } from "@/types/WmbusTelegram";
+import { createClient } from "@supabase/supabase-js";
 
-export async function GET() {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+export async function GET(request: Request) {
   try {
-    const supabase = await supabaseServer();
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const pageSize = parseInt(searchParams.get("pageSize") || "10");
+    const sortBy = searchParams.get("sortBy") || "created_at";
+    const sortOrder = searchParams.get("sortOrder") || "desc";
+    const search = searchParams.get("search") || "";
 
-    const { data, error } = await supabase
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    let query = supabase
       .from("wmbus_telegrams")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .select("*", { count: "exact" });
 
-    if (error) {
-      console.error("Error fetching wmbus telegrams:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch wmbus telegrams" },
-        { status: 500 },
-      ); 
+    // Add search filter if provided
+    if (search) {
+      query = query.or(
+        `raw_telegram.ilike.%${search}%,device_id.ilike.%${search}%,telegram_type.ilike.%${search}%`
+      );
     }
 
-    return NextResponse.json(data as WmbusTelegram[]);
+    // Add sorting
+    query = query.order(sortBy, { ascending: sortOrder === "asc" });
+
+    // Add pagination
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    console.log("Fetched telegrams:", data?.length, "of", count, "records");
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({
+      data: data || [],
+      pagination: {
+        page,
+        pageSize,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+      },
+    });
   } catch (error) {
-    console.error("Unexpected error fetching wmbus telegrams:", error);
+    console.error("Unexpected error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

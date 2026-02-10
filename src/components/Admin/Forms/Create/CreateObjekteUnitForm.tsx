@@ -147,19 +147,19 @@ export default function CreateObjekteUnitForm({
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
   const usage_type = methods.watch("usage_type");
-  
+
   // Check if current type is non-residential
   const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
-  
+
   // Build display name based on usage type
   const displayName = isNonResidential
     ? usageTypeToName[usage_type] || usage_type
     : buildLocalName({
-        floor: floor ?? undefined,
-        house_location: house_location ?? undefined,
-        residential_area: residential_area ?? undefined,
-        living_space: String(living_space ?? 0),
-      });
+      floor: floor ?? undefined,
+      house_location: house_location ?? undefined,
+      residential_area: residential_area ?? undefined,
+      living_space: String(living_space ?? 0),
+    });
 
   return (
     <Form {...methods}>
@@ -278,7 +278,7 @@ export default function CreateObjekteUnitForm({
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
-                  <span className="absolute text-sm text-dark_green right-7 bottom-3">
+                  <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">
                     €
                   </span>
                 </div>

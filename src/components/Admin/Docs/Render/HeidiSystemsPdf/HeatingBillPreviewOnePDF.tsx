@@ -1,7 +1,8 @@
-"use client";
+
 import React from "react";
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+// import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { CalculatedBillData } from "@/actions/generate/generateHeatingBillPDF";
 import type { ContractorType } from "@/types";
 import { formatDateGerman, formatEuro, generateUserNumber } from "@/utils";
 
@@ -121,12 +122,18 @@ const mockData = {
 };
 
 export default function HeatingBillPreviewOnePDF({
-  previewData,
-  contractors,
+  data,
 }: {
-  previewData: HeatingBillPreviewData;
-  contractors: ContractorType[];
+  data: CalculatedBillData;
 }) {
+  // Helper to extract Contractors
+  const contractors = data.contracts.flatMap((c) => c.contractors);
+  const contractorsNames = contractors.map((c) => `${c.first_name} ${c.last_name}`).join(", ");
+
+  // Helper for Totals
+  // Assuming totalUnitCost is the sum of all distributions for this unit
+  const totalUnitCost = data.unitCostDistribution.reduce((sum, item) => sum + item.total, 0);
+
   return (
     // <Document>
     <Page size="A4" style={styles.page}>
@@ -134,13 +141,15 @@ export default function HeatingBillPreviewOnePDF({
       <View style={styles.headerBox}>
         <View style={styles.flexRow}>
           <Text style={{ fontSize: 8 }}>
-            1/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+            1/6 {data.objekt?.id.substring(0, 8)}/{data.user?.id.substring(0, 8)}
           </Text>
           <View>
-            <Image
-              style={{ width: 80, height: 20, alignSelf: "center" }}
-              src="/admin_logo.png"
-            />
+            {data.logoPath ? (
+              <Image
+                style={{ width: 80, height: 20, alignSelf: "center" }}
+                src={data.logoPath}
+              />
+            ) : null}
           </View>
           {/* Logo intentionally omitted in PDF to avoid bundling issues */}
         </View>
@@ -152,13 +161,13 @@ export default function HeatingBillPreviewOnePDF({
               Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
             </Text>
             <Text style={{ fontSize: 14, marginTop: 20, fontWeight: "bold" }}>
-              {previewData.contractorsNames}
+              {contractorsNames}
             </Text>
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              {previewData.objektInfo.street}
+              {data.objekt?.street}
             </Text>
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              {previewData.objektInfo.zip}
+              {data.objekt?.zip}
             </Text>
           </View>
 
@@ -179,26 +188,26 @@ export default function HeatingBillPreviewOnePDF({
           <View style={styles.gridRow}>
             <Text>Erstellt im Auftrag von</Text>
             <Text>
-              {previewData.userInfo.first_name} {previewData.userInfo.last_name}
+              {data.user?.first_name} {data.user?.last_name}
               {"\n"}
               Immobilienmanagement {"\n"}
-              {previewData.objektInfo.street}
+              {data.objekt?.street}
               {"\n"}
-              {previewData.objektInfo.zip}
+              {data.objekt?.zip}
             </Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Abrechnungszeitraum</Text>
             <Text>
-              {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-              {formatDateGerman(previewData.mainDocDates.end_date)}
+              {formatDateGerman(data.mainDoc?.start_date)}{" "}
+              {formatDateGerman(data.mainDoc?.end_date)}
             </Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Ihr Nutzungszeitraum</Text>
             <Text>
-              {formatDateGerman(previewData.mainDocDates.start_date)}{" "}
-              {formatDateGerman(previewData.mainDocDates.end_date)}
+              {formatDateGerman(data.mainDoc?.start_date)}{" "}
+              {formatDateGerman(data.mainDoc?.end_date)}
             </Text>
           </View>
         </View>
@@ -207,25 +216,25 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.colHalf}>
           <View style={styles.gridRow}>
             <Text>Erstellt am</Text>
-            <Text>{formatDateGerman(previewData.mainDocDates.created_at)}</Text>
+            <Text>{formatDateGerman(data.mainDoc?.created_at)}</Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Liegenschaft</Text>
             <Text>
-              {previewData.contractorsNames}
+              {contractorsNames}
               {"\n"}
-              {previewData.objektInfo.street}
+              {data.objekt?.street}
               {"\n"}
-              {previewData.objektInfo.zip}
+              {data.objekt?.zip}
             </Text>
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Liegenschaftsnummer</Text>
-            <Text>{mockData.propertyNumber}</Text>
+            <Text>{data.objekt?.id.substring(0, 8)}</Text>
           </View>
           <View style={styles.gridRow}>
             <Text>Heidi Nutzernummer</Text>
-            <Text>{mockData.heidiCustomerNumber}</Text>
+            <Text>{data.user?.id.substring(0, 8)}</Text>
           </View>
           <View style={styles.gridRow}>
             <Text>Ihre Nutzernummer</Text>
@@ -254,7 +263,7 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.flexRow}>
           <Text style={{ fontSize: 12 }}>Gesamtbetrag</Text>
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-            {formatEuro(previewData.totalDiff)}
+            {formatEuro(totalUnitCost)}
           </Text>
         </View>
       </View>
@@ -342,9 +351,9 @@ export default function HeatingBillPreviewOnePDF({
               <Text>
                 {contractor.first_name} {contractor.last_name}
                 {"\n"}
-                {previewData.objektInfo.street}
+                {data.objekt?.street}
                 {"\n"}
-                {previewData.objektInfo.zip}
+                {data.objekt?.zip}
               </Text>
             </View>
           ))}

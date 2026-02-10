@@ -12,8 +12,8 @@ export function usePasswordResetSession() {
     const checkPasswordResetSession = async () => {
       try {
         // Check if we have a valid session first
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
+        const { data: { user }, error: sessionError } = await supabase.auth.getUser();
+
         if (sessionError) {
           console.error("Session error:", sessionError);
           toast.error("Ungültiger oder abgelaufener Link");
@@ -21,15 +21,6 @@ export function usePasswordResetSession() {
           return;
         }
 
-        if (!session) {
-          toast.error("Ungültiger oder abgelaufener Link");
-          router.push("/");
-          return;
-        }
-
-        // Get the current user
-        const { data: { user } } = await supabase.auth.getUser();
-        
         if (!user) {
           toast.error("Ungültiger oder abgelaufener Link");
           router.push("/");

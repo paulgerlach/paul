@@ -1,5 +1,5 @@
 "use client";
-// DashboardCharts.tsx
+
 import dynamic from "next/dynamic";
 import { useMemo, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -10,14 +10,13 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useMeterHierarchy } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import DashboardTable from "./DashboardTable";
-import { useRef } from "react";
 
-import GridLayout, { Responsive, WidthProvider, } from 'react-grid-layout/legacy';
+import { Responsive, WidthProvider, } from 'react-grid-layout/legacy';
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 // Correct import for react-grid-layout
-import { Layout, LayoutItem } from "react-grid-layout";
+import { LayoutItem } from "react-grid-layout";
 
 // import { Layout } from "lucide-react";
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -117,34 +116,11 @@ export default function DashboardCharts() {
 		...heatData,
 	], [coldWaterData, hotWaterData, electricityData, heatData]);
 
-	const onLayoutChange = (newLayout: LayoutItem[]) => {
-    setLayout(newLayout);
-    // Optional: Save 'newLayout' to local storage or DB here for persistence
-  };
-
-    // Load saved layout from localStorage on component mount
-  useEffect(() => {
-    const savedLayout = localStorage.getItem('dashboard-layout');
-    if (savedLayout) {
-      try {
-        const parsedLayout = JSON.parse(savedLayout);
-        setLayout(parsedLayout);
-      } catch (error) {
-        console.error('Failed to parse saved layout:', error);
-      }
-    }
-  }, []);
-
-  // Save layout to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem('dashboard-layout', JSON.stringify(layout));
-  }, [layout]);
-
 
 	// Show message when no meter IDs are selected
 	if (!meterIds.length && !isLoading) {
 		return (
-			<ContentWrapper className="grid gap-3 grid gap-3 [grid-template-columns:repeat(3,minmax(0,1fr))] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
+			<ContentWrapper className="grid gap-3 [grid-template-columns:repeat(3,minmax(0,1fr))] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 				<div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
 					<div className="text-gray-400 mb-4">
 						<svg
@@ -204,7 +180,7 @@ return (
         rowHeight={45}
         margin={[20, 20]}
         isResizable={true}
-        isDraggable={true}
+        isDraggable={false}
         useCSSTransforms={true}
         // Compact type ensures items pack tightly without gaps
         compactType="vertical"
@@ -212,39 +188,85 @@ return (
         preventCollision={false}
       >
         <div key="coldWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <WaterChart
-            csvText={coldWaterData}
-            color="#6083CC"
-            title="Kaltwasser"
-            chartType="cold"
-          />
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<WaterChart
+				csvText={coldWaterData}
+				color="#6083CC"
+				title="Kaltwasser"
+				chartType="cold"
+				isEmpty={coldWaterData.length === 0}
+            	emptyTitle="Keine Daten verfügbar."
+            	emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
+			/>
+			)}
         </div>
 
         <div key="hotWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <WaterChart
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<WaterChart
             csvText={hotWaterData}
             color="#E74B3C"
             title="Warmwasser"
             chartType="hot"
-          />
+			isEmpty={hotWaterData.length === 0}
+            emptyTitle="Keine Daten verfügbar."
+            emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
+          	/>
+  			)}
         </div>
 
         <div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <ElectricityChart electricityReadings={electricityData} />
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<ElectricityChart 
+				electricityReadings={electricityData} 
+				isEmpty={electricityData.length === 0}
+            	emptyTitle="Keine Daten verfügbar."
+            	emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
+			/>
+  			)}
         </div>
 
         <div key="heating" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <HeatingCosts csvText={heatData} />
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<HeatingCosts csvText={heatData}
+				isEmpty={heatData.length === 0}
+				emptyTitle="Keine Daten verfügbar."
+				emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum." 
+			/>
+  			)}
         </div>
 
         <div key="notifications" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <NotificationsChart
-            parsedData={{ data: notificationsData, errors: [] }}
-          />
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<NotificationsChart
+				isEmpty={notificationsData.length === 0}
+				emptyTitle="Keine Daten verfügbar."
+				emptyDescription="Keine Daten im ausgewählten Zeitraum."
+            	parsedData={{ data: notificationsData, errors: [] }}
+          	/>
+  			)}
         </div>
 
         <div key="einsparung" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-          <EinsparungChart selectedData={allData} />
+			{isLoading ? (
+				<ChartCardSkeleton />
+			) : (
+				<EinsparungChart selectedData={allData} 
+				isEmpty={allData.length === 0}
+				emptyTitle="Keine Daten verfügbar."
+				emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
+			/>
+  			)}
         </div>
       </ResponsiveGridLayout>
     </ContentWrapper>

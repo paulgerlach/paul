@@ -145,32 +145,26 @@ export default function CreateContractForm({
           </div>
           <div className="space-y-4 max-medium:space-y-3">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
-            <div className="items-center gap-7 max-medium:gap-3 grid grid-cols-[1fr_auto_1fr] max-medium:grid-cols-1 w-full">
+            <div className={`items-center gap-7 max-medium:gap-3 grid max-medium:grid-cols-1 w-full ${isUnbefristet ? 'grid-cols-[1fr_auto_1fr]' : 'grid-cols-[1fr_auto_1fr_auto]'}`}>
               <FormDateInput<CreateContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
-                className="max-w-[300px]"
               />
-              <span className="mt-8 max-medium:hidden inline-block">-</span>
-              <div className="flex items-center gap-4">
-                {!isUnbefristet && (
-                  <FormDateInput<CreateContractFormValues>
-                    control={methods.control}
-                    label="Mietende"
-                    name="rental_end_date"
-                    className="max-w-[300px]"
-                  />
-                )}
-                <div className="flex items-center justify-center h-full">
-                  <FormRoundedCheckbox<CreateContractFormValues>
-                    control={methods.control}
-                    name="is_unbefristet"
-                    label="Unbefristet"
-                    className="!mt-0"
-                  />
-                </div>
-              </div>
+              <span className="mt-8 max-medium:hidden">-</span>
+              {!isUnbefristet && (
+                <FormDateInput<CreateContractFormValues>
+                  control={methods.control}
+                  label="Mietende"
+                  name="rental_end_date"
+                />
+              )}
+              <FormRoundedCheckbox<CreateContractFormValues>
+                control={methods.control}
+                name="is_unbefristet"
+                label="Unbefristet"
+                className="!mt-0 self-center"
+              />
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>

@@ -23,11 +23,11 @@ export default function InviteUserDialog() {
 			const response = await fetch("/api/invitations", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
+				body: JSON.stringify([{
 					email,
 					role,
 					agency_id: currentUser?.agency_id || null,
-				}),
+				}]),
 			});
 
 			const data = await response.json();

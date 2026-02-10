@@ -188,6 +188,9 @@ export default function EditContractForm({
                 label="Mietende"
                 name="rental_end_date"
                 placeholder="Unbefristet"
+                showClearButton={true}
+                clearLabel="Unbefristet"
+                onClear={() => methods.setValue("is_current", true)}
               />
             </div>
           </div>

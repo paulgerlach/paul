@@ -276,6 +276,7 @@ export default function AdminEditObjekteUnitForm({
               name="living_space"
               label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
               placeholder="Quadratmeter"
+              replaceDotWithComma
             />
             {/* Empty div to align grid when only 5 items */}
             <div className="hidden max-medium:hidden" />
@@ -289,6 +290,7 @@ export default function AdminEditObjekteUnitForm({
               label="Zimmeranzahl"
               placeholder="Anzahl der Zimmer"
               name="rooms"
+              replaceDotWithComma
             />
             <FormSelectField<AdminEditObjekteUnitFormValues>
               control={methods.control}
@@ -302,6 +304,7 @@ export default function AdminEditObjekteUnitForm({
               label="Fläche Außenbereich"
               placeholder="Quadratmeter"
               name="outdoor_area"
+              replaceDotWithComma
             />
           </div>
           <FormRoundedCheckbox<AdminEditObjekteUnitFormValues>
@@ -317,25 +320,13 @@ export default function AdminEditObjekteUnitForm({
           <h2 className="text-sm font-bold">
             Verwaltungstechnische Informationen
           </h2>
-          <FormField
+          <FormInputField<AdminEditObjekteUnitFormValues>
             control={methods.control}
             name="house_fee"
-            render={({ field }) => (
-              <FormItem className="relative">
-                <FormLabel className="text-[#757575] text-sm">
-                  Hausgeld
-                </FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ""} />
-                  </FormControl>
-                  <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">
-                    €
-                  </span>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Hausgeld"
+            placeholder="Euro"
+            replaceDotWithComma
+            unit="€"
           />
         </div>
         <FormMetersField control={methods.control} />

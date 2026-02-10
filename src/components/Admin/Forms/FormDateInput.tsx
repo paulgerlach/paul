@@ -27,6 +27,9 @@ export type FormDateInputProps<T extends FieldValues = FieldValues> = {
   disabled?: boolean;
   className?: string;
   placeholder?: string;
+  showClearButton?: boolean;
+  clearLabel?: string;
+  onClear?: () => void;
 };
 
 export default function FormDateInput<T extends FieldValues = FieldValues>({
@@ -36,6 +39,9 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
   disabled = false,
   className = "",
   placeholder = "Datum auswählen",
+  showClearButton = false,
+  clearLabel = "Löschen",
+  onClear,
 }: FormDateInputProps<T>) {
   return (
     <FormField
@@ -75,13 +81,29 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
               className="border-none shadow-none w-fit p-0 relative"
               align="start"
             >
-              <Calendar
-                mode="single"
-                selected={field.value}
-                onSelect={field.onChange}
-                disabled={disabled}
-                initialFocus
-              />
+              <div className="flex flex-col bg-white border border-black/20 rounded-md shadow-lg overflow-hidden">
+                <Calendar
+                  mode="single"
+                  selected={field.value}
+                  onSelect={(date) => {
+                    field.onChange(date);
+                  }}
+                  disabled={disabled}
+                  initialFocus
+                />
+                {showClearButton && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      field.onChange(null);
+                      onClear?.();
+                    }}
+                    className="w-full py-3 text-sm font-medium text-dark_green hover:bg-gray-50 border-t border-black/10 transition-colors cursor-pointer"
+                  >
+                    {clearLabel}
+                  </button>
+                )}
+              </div>
             </PopoverContent>
           </Popover>
           <FormMessage />

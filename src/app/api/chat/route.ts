@@ -10,16 +10,16 @@ export async function POST(req: Request) {
 
   // Check for authenticated session
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
 
   const { messages }: { messages: UIMessage[] } = await req.json();
-  
+
 
   const result = streamText({
     model: "xai/grok-4.1-fast-reasoning",
-    system: !session ?  salesPersona : supportPersona,
+    system: !user ? salesPersona : supportPersona,
     messages: convertToModelMessages(messages),
   });
 

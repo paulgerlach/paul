@@ -135,10 +135,10 @@ export default async function AdminLayout({
   const supabase = await supabaseServer();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const isExistingClient = !!session;
-  const userId = session?.user.id; 
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isExistingClient = !!user;
+  const userId = user?.id;
 
   return (
 		<Suspense fallback={<Loading />}>

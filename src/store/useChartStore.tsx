@@ -8,7 +8,7 @@ interface ChartState {
   setDates: (start: Date, end: Date) => void;
   meterIds: string[];
   setMeterIds: (id: string[]) => void;
-  chartHeights: Record<string, number>;
+  
 
   chartSizes: Record<string, { height: number; width?: number }>;
   setChartSize: (key: string, size: { width: number; height: number }) => void;
@@ -35,8 +35,6 @@ export const useChartStore = create<ChartState>()(
       startDate: null,
       endDate: null,
       meterIds: [],
-
-      chartHeights: {},
 
       chartSizes: {},
 

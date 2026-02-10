@@ -27,6 +27,7 @@ export function useContractsByLocalID(localID?: string) {
     queryKey: ["contracts", localID],
     queryFn: () => getContractsByLocalID(localID),
     refetchOnWindowFocus: false,
+    enabled: !!localID,
   });
 }
 
@@ -47,9 +48,10 @@ async function getAdminContractsByLocalID(localID?: string, userID?: string): Pr
 
 export function useAdminContractsByLocalID(localID?: string, userID?: string) {
   return useQuery({
-    queryKey: ["contracts", localID],
+    queryKey: ["contracts", localID, userID],
     queryFn: () => getAdminContractsByLocalID(localID, userID),
     refetchOnWindowFocus: false,
+    enabled: !!localID && !!userID,
   });
 }
 
@@ -72,6 +74,7 @@ export function useLocalsByObjektID(objektID?: string) {
     queryKey: ["locals", objektID],
     queryFn: () => getLocalsByObjektID(objektID),
     refetchOnWindowFocus: false,
+    enabled: !!objektID,
   });
 }
 
@@ -96,6 +99,7 @@ export function useContractorsByContractID(contractID?: string) {
     queryKey: ["contractors", contractID],
     queryFn: () => getContractorsByContractID(contractID),
     refetchOnWindowFocus: false,
+    enabled: !!contractID,
   });
 }
 
@@ -119,7 +123,7 @@ export function useAdminContractorsByContractID(contractID?: string, userID?: st
     queryKey: ["contractors", contractID, userID],
     queryFn: () => getAdminContractorsByContractID(contractID, userID),
     refetchOnWindowFocus: false,
-    enabled: !!contractID && !!userID && userID !== "undefined", // Prevent query with invalid IDs
+    enabled: !!contractID && !!userID,
   });
 }
 
@@ -296,7 +300,7 @@ export function useUsersObjektsWithLocals(user_id?: string) {
     queryKey: ["objekts_with_locals", user_id],
     queryFn: () => getUsersObjektsWithLocals(user_id),
     refetchOnWindowFocus: false,
-    enabled: !!user_id && user_id !== "undefined", // Prevent query when user_id is invalid
+    enabled: !!user_id,
   });
 }
 
@@ -341,11 +345,12 @@ async function getOperatingCostDocumentByID({ id }: { id: string }): Promise<Ope
   return data;
 }
 
-export function useOperatingCostDocumentByID(docId: string) {
+export function useOperatingCostDocumentByID(docId?: string) {
   return useQuery({
     queryKey: ["operating_cost_document", docId],
-    queryFn: () => getOperatingCostDocumentByID({ id: docId }),
+    queryFn: () => getOperatingCostDocumentByID({ id: docId! }),
     refetchOnWindowFocus: false,
+    enabled: !!docId,
   });
 }
 
@@ -389,11 +394,12 @@ async function getInvoicesByOperatingCostDocumentID({ id }: { id: string }): Pro
   return data;
 }
 
-export function useInvoicesByOperatingCostDocumentID(docId: string) {
+export function useInvoicesByOperatingCostDocumentID(docId?: string) {
   return useQuery({
     queryKey: ["invoice_documents", docId],
-    queryFn: () => getInvoicesByOperatingCostDocumentID({ id: docId }),
+    queryFn: () => getInvoicesByOperatingCostDocumentID({ id: docId! }),
     refetchOnWindowFocus: false,
+    enabled: !!docId,
   });
 }
 
@@ -469,6 +475,7 @@ export function useOperatingCostDocumentsByObjektID(objektID?: string) {
     queryKey: ["operating_cost_documents", objektID],
     queryFn: () => getOperatingCostDocumentsByObjektID(objektID),
     refetchOnWindowFocus: false,
+    enabled: !!objektID,
   });
 }
 
@@ -492,6 +499,7 @@ export function useHeatingBillDocumentsByLocalID(localID?: string) {
     queryKey: ["heating_bill_documents", localID],
     queryFn: () => getHeatingBillDocumentsByLocalID(localID),
     refetchOnWindowFocus: false,
+    enabled: !!localID,
   });
 }
 
@@ -515,6 +523,7 @@ export function useHeatingBillDocumentsByObjektID(objectID?: string) {
     queryKey: ["heating_bill_documents", objectID],
     queryFn: () => getHeatingBillDocumentsByObjektID(objectID),
     refetchOnWindowFocus: false,
+    enabled: !!objectID,
   });
 }
 

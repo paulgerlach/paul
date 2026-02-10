@@ -18,9 +18,10 @@ export default function AdminObjekteLocalItemHistoryItem({
 }) {
   const { openDialog, setItemID } = useDialogStore();
   const { user_id } = useParams();
+  const resolvedUserId = typeof user_id === "string" ? user_id : undefined;
   const { data: contractors } = useAdminContractorsByContractID(
     historyItem?.id,
-    String(user_id)
+    resolvedUserId
   );
 
   const editLink = useSubRouteLink(`${localID}/${historyItem?.id}/edit`);

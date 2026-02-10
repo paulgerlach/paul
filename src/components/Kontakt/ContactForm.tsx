@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(3, "Name muss mindestens 3 Zeichen lang sein"),
@@ -15,6 +15,8 @@ const formSchema = z.object({
       message: "Bitte akzeptieren Sie die Datenschutzbestimmungen",
     }),
   }),
+  // Honeypot field — invisible to real users, bots auto-fill it
+  website: z.string().max(0).optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -29,12 +31,23 @@ export default function ContactForm() {
     resolver: zodResolver(formSchema),
   });
   const [formMessage, setFormMessage] = useState({ text: "", type: "" });
+  const formLoadedAt = useRef<number>(Date.now());
+
+  useEffect(() => {
+    formLoadedAt.current = Date.now();
+  }, []);
+
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
+      const { website, ...formFields } = data;
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...formFields,
+          _hp: website || "",
+          _t: formLoadedAt.current,
+        }),
       });
 
       if (!response.ok) {
@@ -77,6 +90,19 @@ export default function ContactForm() {
         id="contactForm"
         className="space-y-4"
       >
+        {/* Honeypot — hidden from real users, bots auto-fill this */}
+        <div aria-hidden="true" className="absolute opacity-0 -z-10 h-0 w-0 overflow-hidden pointer-events-none" style={{ position: "absolute", left: "-9999px" }}>
+          <label>
+            Website
+            <input
+              {...register("website")}
+              tabIndex={-1}
+              autoComplete="off"
+              type="text"
+            />
+          </label>
+        </div>
+
         <label className="block">
           <input
             {...register("name")}

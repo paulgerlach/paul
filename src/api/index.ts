@@ -172,18 +172,6 @@ export type MeterReadingType = {
 
 }
 
-interface DeviceTypeSummary {
-  type: string;
-  count: number;
-  manufacturer: string;
-}
-
-interface ParsedDataState {
-  data: MeterReadingType[];
-  loading: boolean;
-  error: string | null;
-}
-
 export interface ParseResult {
   data: MeterReadingType[];
   errors: { row: number; error: string; rawRow: any }[];
@@ -191,7 +179,9 @@ export interface ParseResult {
 
 export type HeatingInvoice = {
   id: string;
+  name: string;
   costType: string | null;
+  allocationKey: string | null;
   totalAmount: number;
   invoiceDate: string;
   notes: string | null;
@@ -1159,6 +1149,7 @@ export async function getHeatingBillInvoices(
         jsonb_build_object(
           'id', i.id,
           'costType', i.cost_type,
+          'allocationKey', dcc.allocation_key,
           'totalAmount', i.total_amount,
           'notes', i.notes,
           'purpose', i.purpose,
@@ -1181,6 +1172,7 @@ export async function getHeatingBillInvoices(
         jsonb_build_object(
           'id', i.id,
           'costType', i.cost_type,
+          'allocationKey', dcc.allocation_key,
           'totalAmount', i.total_amount,
           'notes', i.notes,
           'purpose', i.purpose,
@@ -1214,7 +1206,9 @@ export async function getHeatingBillInvoices(
       jsonb_agg(
         jsonb_build_object(
           'id', i.id,
+          'name', dcc.name,
           'costType', i.cost_type,
+          'allocationKey', dcc.allocation_key,
           'totalAmount', i.total_amount,
           'notes', i.notes,
           'purpose', i.purpose,
@@ -1248,6 +1242,7 @@ export async function getHeatingBillInvoices(
     ) AS "operationalTotal"
 
   FROM heating_invoices i
+  LEFT JOIN doc_cost_category dcc ON dcc.type = i.cost_type AND dcc.user_id = i.user_id
   WHERE
     i.heating_doc_id = ${docId}
     AND i.user_id = ${user.id}

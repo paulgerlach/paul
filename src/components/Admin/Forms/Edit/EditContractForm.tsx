@@ -26,6 +26,7 @@ import FormContractorField from "../FormContractorFields";
 
 const contractSchema = z.object({
   is_current: z.boolean(),
+  is_unbefristet: z.boolean(),
   rental_start_date: z.coerce
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
@@ -35,7 +36,9 @@ const contractSchema = z.object({
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
     })
-    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" }),
+    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" })
+    .optional()
+    .nullable(),
   contractors: z
     .array(
       z.object({
@@ -76,8 +79,9 @@ export type EditContractFormValues = z.infer<typeof contractSchema>;
 
 const defaultValues: EditContractFormValues = {
   is_current: false,
+  is_unbefristet: true,
   rental_start_date: new Date(),
-  rental_end_date: new Date(),
+  rental_end_date: null,
   contractors: [
     {
       first_name: "",
@@ -121,6 +125,7 @@ export default function EditContractForm({
   const { addContractor } = useContractorActions(methods);
 
   const watchContractors = methods.watch("contractors");
+  const isUnbefristet = methods.watch("is_unbefristet");
 
   return (
     <Form {...methods}>
@@ -175,13 +180,27 @@ export default function EditContractForm({
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
+                className="max-w-[300px]"
               />
               <span className="mt-8 inline-block max-medium:hidden">-</span>
-              <FormDateInput<EditContractFormValues>
-                control={methods.control}
-                label="Mietende"
-                name="rental_end_date"
-              />
+              <div className="flex items-center gap-4">
+                {!isUnbefristet && (
+                  <FormDateInput<EditContractFormValues>
+                    control={methods.control}
+                    label="Mietende"
+                    name="rental_end_date"
+                    className="max-w-[300px]"
+                  />
+                )}
+                <div className="flex items-center justify-center h-full">
+                  <FormRoundedCheckbox<EditContractFormValues>
+                    control={methods.control}
+                    name="is_unbefristet"
+                    label="Unbefristet"
+                    className="!mt-0"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>

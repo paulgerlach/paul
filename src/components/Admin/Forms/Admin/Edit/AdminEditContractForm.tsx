@@ -86,7 +86,7 @@ const defaultValues: EditContractFormValues = {
     {
       first_name: "",
       last_name: "",
-      birth_date: new Date(),
+      birth_date: null,
       email: "",
       phone: "",
     },
@@ -194,12 +194,15 @@ export default function AdminEditContractForm({
                   name="rental_end_date"
                 />
               )}
-              <FormRoundedCheckbox<EditContractFormValues>
-                control={methods.control}
-                name="is_unbefristet"
-                label="Unbefristet"
-                className="!mt-0 self-center"
-              />
+              <div>
+                <div className="mt-8 max-medium:hidden"></div>
+                <FormRoundedCheckbox<EditContractFormValues>
+                  control={methods.control}
+                  name="is_unbefristet"
+                  label="Unbefristet"
+                  className="!mt-0 self-center"
+                />
+              </div>
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>

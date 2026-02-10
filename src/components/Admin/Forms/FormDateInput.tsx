@@ -54,7 +54,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                   {field.value ? (
                     format(field.value, "dd.MM.yyyy", { locale: de })
                   ) : (
-                    <span>-</span>
+                    <span className="text-gray-400">Datum auswählen</span>
                   )}
                   <Image
                     width={0}

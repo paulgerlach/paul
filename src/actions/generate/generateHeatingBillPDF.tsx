@@ -56,6 +56,40 @@ export interface CalculatedBillData {
     }[];
 
     logoPath?: string;
+
+    page2Data?: {
+        breakdowns: {
+            energy: (typeof invoice_documents.$inferSelect & { kwh: number })[];
+            operating: typeof invoice_documents.$inferSelect[];
+            separate: typeof invoice_documents.$inferSelect[];
+        };
+        sums: {
+            energy: number;
+            energyKwh: number;
+            operating: number;
+            separate: number;
+            totalHeatingSystemCost: number;
+        };
+        calculation: {
+            totalBuildingWaterVolume: number;
+            totalBuildingHeatConsumption: number;
+            Q_ww: number;
+            percentageWW: number;
+            costShareWW: number;
+            costShareHeating: number;
+            // New Unit Prices
+            wwFixedCostTotal: number;
+            wwVariableCostTotal: number;
+            wwFixedPricePerM2: number;
+            wwVariablePricePerM3: number;
+            heatFixedCostTotal: number;
+            heatVariableCostTotal: number;
+            heatFixedPricePerM2: number;
+            heatVariablePricePerMWh: number;
+            fixedSharePercent: number;
+            variableSharePercent: number;
+        };
+    };
 }
 
 
@@ -269,6 +303,146 @@ export async function generateHeatingBillPDF(heatingBillId: string, localId?: st
             }
         });
 
+
+        // --- Page 2 Calculations: Cost Breakdown & Q_ww ---
+
+        // Standard Cost Types Mapping
+        const COST_TYPES = {
+            ENERGY: ['gas', 'fernwaerme', 'heating_energy', 'oil', 'pellets'],
+            OPERATING: ['maintenance_heating', 'operating_electricity', 'chimney_sweep', 'measurement_service_heating'],
+            SEPARATE: ['cold_water', 'waste_water', 'rain_water', 'measurement_service_water']
+        };
+
+        // Helper to get kWh from notes (Mock fallback as requested)
+        const getInvoiceKwh = (invoice: typeof invoice_documents.$inferSelect): number => {
+            // user requirement: "kwh will be calculated from the notes field... put it in place to calculate but replace it with a mock value"
+            const notes = invoice.notes || "";
+            const parsed = parseFloat(notes); // Naive parsing check
+            if (!isNaN(parsed)) {
+                // console.log(`Parsed kWh from notes for invoice ${invoice.id}: ${parsed}`);
+                // return parsed; // Uncomment when data is clean
+            }
+            return 15000; // Mock Value 
+        };
+
+        // 1. Group Invoices for Tables
+        // Start with empty arrays to ensure types are correct
+        const breakdowns = {
+            energy: [] as (typeof invoice_documents.$inferSelect & { kwh: number })[],
+            operating: [] as typeof invoice_documents.$inferSelect[],
+            separate: [] as typeof invoice_documents.$inferSelect[]
+        };
+
+        invoices.forEach(inv => {
+            const type = inv.cost_type || '';
+            if (COST_TYPES.ENERGY.includes(type)) {
+                breakdowns.energy.push({ ...inv, kwh: getInvoiceKwh(inv) });
+            } else if (COST_TYPES.OPERATING.includes(type)) {
+                breakdowns.operating.push(inv);
+            } else if (COST_TYPES.SEPARATE.includes(type)) {
+                breakdowns.separate.push(inv);
+            } else {
+                // Fallback: Add to Operating or Separate? For now, ignore or log.
+                // console.warn(`Uncategorized invoice type: ${type}`);
+                // defaulting to operating for safety?
+                breakdowns.operating.push(inv);
+            }
+        });
+
+        // 2. Calculate Sums
+        const sums = {
+            energy: breakdowns.energy.reduce((acc, inv) => acc + Number(inv.total_amount || 0), 0),
+            energyKwh: breakdowns.energy.reduce((acc, inv) => acc + inv.kwh, 0),
+            operating: breakdowns.operating.reduce((acc, inv) => acc + Number(inv.total_amount || 0), 0),
+            separate: breakdowns.separate.reduce((acc, inv) => acc + Number(inv.total_amount || 0), 0),
+        };
+
+        const totalHeatingSystemCost = sums.energy + sums.operating;
+
+        // 3. Hot Water Energy Determination (Q_ww)
+        // Formula: Q_ww = 2.5 * V_ww * (Tw - 10)
+
+        // Calculate Total Building Water Consumption (V_ww)
+        const hotWaterMeters = allMeterIds; // TODO: Filter specifically for Hot Water meters from 'readings' or 'allLocals' metadata
+        // Since 'readings' might be empty mock data if no RPC, we need a robust way.
+        // Assuming 'readings' contains all building meters now (with mock override)
+
+        // Extract Hot Water Volume (m3)
+        // Filter readings for 'Water' or 'WWater' or 'Warmwasserzähler' AND specific hot water logic
+        // For MOCK:
+        const totalBuildingWaterVolume = 3148.25; // Mock Total V_ww (m3) MATCHING PDF EXAMPLE
+
+        // Extract Total Building Heat Consumption (Q_total)
+        // Filter readings for 'Heat' meters
+        const totalBuildingHeatConsumption = 761123; // Mock Total Q (kWh) MATCHING PDF EXAMPLE (Sum of Energy Invoices kWh usually tracks this or meter sum)
+
+        // Tw (Hot Water Temp)
+        const Tw = 60; // Standard
+
+        // Q_ww (Energy for Hot Water)
+        const Q_ww = 2.5 * totalBuildingWaterVolume * (Tw - 10); // kWh
+
+        // Share Calculation
+        // Logic: percentage of Total Heat Consumption used for Hot Water
+        // OR percentage of Total Cost? 
+        // Standard VDI 2077: Share is calculated on Energy
+
+        const percentageWW = totalBuildingHeatConsumption > 0 ? (Q_ww / totalBuildingHeatConsumption) * 100 : 0;
+
+
+        const costShareWW = totalHeatingSystemCost * (percentageWW / 100);
+        const costShareHeating = totalHeatingSystemCost - costShareWW;
+
+        // Split Percentages (Default 30/70 if not set)
+        const fixedSharePercent = Number(mainDoc.living_space_share || 30);
+        const variableSharePercent = Number(mainDoc.consumption_dependent || 70);
+
+        // --- Hot Water Unit Prices ---
+        // Fixed (Grundkosten) matches 30% of costShareWW, distributed by Area
+        const wwFixedCostTotal = costShareWW * (fixedSharePercent / 100);
+        const wwVariableCostTotal = costShareWW * (variableSharePercent / 100);
+
+        const wwFixedPricePerM2 = totalLivingSpace > 0 ? wwFixedCostTotal / totalLivingSpace : 0;
+        const wwVariablePricePerM3 = totalBuildingWaterVolume > 0 ? wwVariableCostTotal / totalBuildingWaterVolume : 0;
+
+        // --- Heating Unit Prices ---
+        // Fixed (Grundkosten) matches 30% of costShareHeating, distributed by Area
+        const heatFixedCostTotal = costShareHeating * (fixedSharePercent / 100);
+        const heatVariableCostTotal = costShareHeating * (variableSharePercent / 100);
+
+        const heatFixedPricePerM2 = totalLivingSpace > 0 ? heatFixedCostTotal / totalLivingSpace : 0;
+        // Total Heat Consumption (MWh) for price? Or kWh? PDF suggests MWh sometimes, but usually kWh per unit. 
+        // Let's stick to kWh for internal, display can format.
+        const heatVariablePricePerKwh = totalBuildingHeatConsumption > 0 ? heatVariableCostTotal / totalBuildingHeatConsumption : 0;
+        const heatVariablePricePerMWh = heatVariablePricePerKwh * 1000;
+
+        const page2Data = {
+            breakdowns,
+            sums: {
+                ...sums,
+                totalHeatingSystemCost
+            },
+            calculation: {
+                totalBuildingWaterVolume,
+                totalBuildingHeatConsumption,
+                Q_ww,
+                percentageWW,
+                costShareWW,
+                costShareHeating,
+                // New Unit Prices
+                wwFixedCostTotal,
+                wwVariableCostTotal,
+                wwFixedPricePerM2,
+                wwVariablePricePerM3,
+                heatFixedCostTotal,
+                heatVariableCostTotal,
+                heatFixedPricePerM2,
+                heatVariablePricePerMWh,
+                fixedSharePercent,
+                variableSharePercent
+            }
+        };
+
         // --- CALCULATIONS START HERE (Phase 2) ---
 
         // 1. Group Invoices by Cost Category
@@ -329,7 +503,8 @@ export async function generateHeatingBillPDF(heatingBillId: string, localId?: st
             totalLivingSpace,
             totalBuildingConsumption,
             unitCostDistribution,
-            logoPath: logoExists ? logoPath : undefined
+            logoPath: logoExists ? logoPath : undefined,
+            page2Data // attach new data
         };
 
         console.log("Calculated Data:", JSON.stringify(calculatedData, null, 2));

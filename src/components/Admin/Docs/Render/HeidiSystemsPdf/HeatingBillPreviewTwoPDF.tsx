@@ -1,8 +1,8 @@
-"use client";
+
 
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
-import { formatDateGerman } from "@/utils";
+import { formatDateGerman, formatEuro } from "@/utils";
+import type { CalculatedBillData } from "@/actions/generate/generateHeatingBillPDF";
 
 const colors = {
   accent: "#DDE9E0",
@@ -162,20 +162,39 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
+
 export default function HeatingBillPreviewTwoPDF({
-  previewData,
+  data,
 }: {
-  previewData: HeatingBillPreviewData;
+  data: CalculatedBillData;
 }) {
+  const { page2Data, mainDoc, objekt, user, contracts } = data;
+  const contractors = contracts.flatMap((c) => c.contractors);
+  const contractorsNames = contractors.map((c) => `${c.first_name} ${c.last_name}`).join(", ");
+
+  // Safe access to page2Data (it should be populated by the action)
+  if (!page2Data) return <Text>Loading Page 2 Data...</Text>;
+
+  const { breakdowns, sums, calculation } = page2Data;
+
   return (
     <Page size="A4" style={styles.page}>
       {/* Header */}
       <View style={styles.headerBox}>
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            2/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+            2/6 {objekt?.id.substring(0, 8)}/{user?.id.substring(0, 8)}
           </Text>
-          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+          <View>
+            {data.logoPath ? (
+              <Image
+                style={{ width: 80, height: 20 }}
+                src={data.logoPath}
+              />
+            ) : null}
+          </View>
         </View>
         <View style={styles.titleSection}>
           <View style={styles.titleLeft}>
@@ -192,27 +211,25 @@ export default function HeatingBillPreviewTwoPDF({
             <View style={styles.detailGrid}>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Liegenschaft</Text>
-                <Text>{previewData.contractorsNames}</Text>
-                <Text>{previewData.objektInfo.street}</Text>
-                <Text>{previewData.objektInfo.zip}</Text>
+                <Text>{contractorsNames}</Text>
+                <Text>{objekt?.street}</Text>
+                <Text>{objekt?.zip}</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Liegenschaftsnummer</Text>
-                <Text>{previewData.propertyNumber}</Text>
+                <Text>{objekt?.id.substring(0, 8)}</Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Abrechnungszeitraum</Text>
                 <Text>
-                  {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-                  {formatDateGerman(previewData.mainDocDates.end_date)}
+                  {formatDateGerman(mainDoc?.start_date)} -{" "}
+                  {formatDateGerman(mainDoc?.end_date)}
                 </Text>
               </View>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>erstellt am</Text>
                 <Text>
-                  {formatDateGerman(
-                    formatDateGerman(previewData.mainDocDates.created_at)
-                  )}
+                  {formatDateGerman(mainDoc?.created_at)}
                 </Text>
               </View>
             </View>
@@ -241,18 +258,16 @@ export default function HeatingBillPreviewTwoPDF({
               <Text style={styles.tableHeaderCell}>kWh</Text>
               <Text style={styles.tableHeaderCellRight}>BETRAG</Text>
             </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>Preisbremse Energie</Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCellRight}>-21.035,94 €</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>Rechnung{"\n"}260002673166</Text>
-              <Text style={styles.tableCell}>31.12.2023</Text>
-              <Text style={styles.tableCell}>761.123</Text>
-              <Text style={styles.tableCellRight}>124.242,47 €</Text>
-            </View>
+
+            {breakdowns.energy.map((inv, i) => (
+              <View style={styles.tableRow} key={i}>
+                <Text style={styles.tableCell}>{inv.purpose || 'Rechnung'}</Text>
+                <Text style={styles.tableCell}>{formatDateGerman(inv.invoice_date)}</Text>
+                <Text style={styles.tableCell}>{/* Individual kWh hidden usually, or show if parsed */}</Text>
+                <Text style={styles.tableCellRight}>{formatEuro(Number(inv.total_amount))}</Text>
+              </View>
+            ))}
+
             <View style={[styles.tableRow, styles.sumRow]}>
               <Text
                 style={[
@@ -269,7 +284,8 @@ export default function HeatingBillPreviewTwoPDF({
                   { fontWeight: "bold", color: colors.dark },
                 ]}
               >
-                761.123
+                {/* Total kWh Sum */}
+                {calculation.totalBuildingHeatConsumption.toLocaleString('de-DE')}
               </Text>
               <Text
                 style={[
@@ -277,7 +293,7 @@ export default function HeatingBillPreviewTwoPDF({
                   { fontWeight: "bold", color: colors.dark },
                 ]}
               >
-                103.206,53 €
+                {formatEuro(sums.energy)}
               </Text>
             </View>
           </View>
@@ -301,23 +317,17 @@ export default function HeatingBillPreviewTwoPDF({
             <View style={styles.tableRow}>
               <Text style={styles.tableCell}>Übertrag</Text>
               <Text style={styles.tableCell}></Text>
-              <Text style={styles.tableCellRight}>103.206,53 €</Text>
+              <Text style={styles.tableCellRight}>{formatEuro(sums.energy)}</Text>
             </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>Verbrauchsabrechnung</Text>
-              <Text style={styles.tableCell}>31.12.2023</Text>
-              <Text style={styles.tableCellRight}>7.155,11 €</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>Betriebsstrom</Text>
-              <Text style={styles.tableCell}>31.12.2023</Text>
-              <Text style={styles.tableCellRight}>4.128,26 €</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>Wartungskosten</Text>
-              <Text style={styles.tableCell}>31.12.2023</Text>
-              <Text style={styles.tableCellRight}>1.008,17 €</Text>
-            </View>
+
+            {breakdowns.operating.map((inv, i) => (
+              <View style={styles.tableRow} key={i}>
+                <Text style={styles.tableCell}>{inv.purpose || 'Betriebskosten'}</Text>
+                <Text style={styles.tableCell}>{formatDateGerman(inv.invoice_date)}</Text>
+                <Text style={styles.tableCellRight}>{formatEuro(Number(inv.total_amount))}</Text>
+              </View>
+            ))}
+
             <View style={[styles.tableRow, styles.sumRow]}>
               <Text
                 style={[
@@ -330,10 +340,10 @@ export default function HeatingBillPreviewTwoPDF({
               <Text
                 style={
                   (styles.tableCellRight,
-                  { fontWeight: "bold", color: colors.dark })
+                    { fontWeight: "bold", color: colors.dark })
                 }
               >
-                115.498,07 €
+                {formatEuro(sums.totalHeatingSystemCost)}
               </Text>
             </View>
           </View>
@@ -346,21 +356,14 @@ export default function HeatingBillPreviewTwoPDF({
           Kosten für gesonderte Verteilung
         </Text>
         <View style={styles.tableContainer}>
-          {/* Distribution types */}
+          {/* Distribution types - Static for now or derive from data */}
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderCell}>VERTEILUNG NACH</Text>
             </View>
-            {[
-              "Heizung",
-              "Warmwasser/Kaltwasser",
-              "Warmwasser/Kaltwasser",
-              "Warmwasser/Kaltwasser",
-              "Nutzeinheit",
-              "Warmwasser",
-            ].map((v, i) => (
+            {breakdowns.separate.map((inv, i) => (
               <View style={styles.tableRow} key={i}>
-                <Text style={styles.tableCell}>{v}</Text>
+                <Text style={styles.tableCell}>{inv.cost_type}</Text>
               </View>
             ))}
           </View>
@@ -372,44 +375,15 @@ export default function HeatingBillPreviewTwoPDF({
               <Text style={styles.tableHeaderCell}>DATUM</Text>
               <Text style={styles.tableHeaderCellRight}>BETRAG</Text>
             </View>
-            {[
-              {
-                label: "Gerätemiete Heizung/Warmwasser",
-                date: formatDateGerman(previewData.mainDocDates.created_at),
-                amount: "6.210,80 €",
-              },
-              {
-                label: "Kaltwasser",
-                date: formatDateGerman(previewData.mainDocDates.created_at),
-                amount: "17.036,69 €",
-              },
-              {
-                label: "Abwasser",
-                date: formatDateGerman(previewData.mainDocDates.created_at),
-                amount: "20.030,62 €",
-              },
-              {
-                label: "Gerätemiete Kaltwasser",
-                date: formatDateGerman(previewData.mainDocDates.created_at),
-                amount: "2.274,90 €",
-              },
-              {
-                label: "Abrechnung Kaltwasser",
-                date: "",
-                amount: "2.126,74 €",
-              },
-              {
-                label: "Gerätemiete Heizung/Warmwasser",
-                date: formatDateGerman(previewData.mainDocDates.created_at),
-                amount: "2.307,77 €",
-              },
-            ].map((r, i) => (
+
+            {breakdowns.separate.map((inv, i) => (
               <View style={styles.tableRow} key={i}>
-                <Text style={styles.tableCell}>{r.label}</Text>
-                <Text style={styles.tableCell}>{r.date}</Text>
-                <Text style={styles.tableCellRight}>{r.amount}</Text>
+                <Text style={styles.tableCell}>{inv.purpose || inv.cost_type}</Text>
+                <Text style={styles.tableCell}>{formatDateGerman(inv.invoice_date)}</Text>
+                <Text style={styles.tableCellRight}>{formatEuro(Number(inv.total_amount))}</Text>
               </View>
             ))}
+
             {/* Sum row */}
             <View style={[styles.sumRow]}>
               <Text
@@ -426,12 +400,12 @@ export default function HeatingBillPreviewTwoPDF({
                   { fontWeight: "bold", color: colors.dark },
                 ]}
               >
-                49.987,52 €
+                {formatEuro(sums.separate)}
               </Text>
             </View>
             <View style={styles.totalRow}>
               <Text>Summe der zu verteilenden Kosten</Text>
-              <Text>165.485,59 €</Text>
+              <Text>{formatEuro(sums.totalHeatingSystemCost + sums.separate)}</Text>
             </View>
           </View>
         </View>
@@ -452,50 +426,52 @@ export default function HeatingBillPreviewTwoPDF({
                 fontWeight: 400,
               }}
             >
-              2,5 kWh/m³/K x 3.148,25 m³ x (60-10°C)
+              2,5 kWh/m³/K x {calculation.totalBuildingWaterVolume.toLocaleString('de-DE')} m³ x (60-10°C)
             </Text>
-            <Text style={{ textAlign: "center" }}>1,15</Text>
+            <Text style={{ textAlign: "center" }}>1,15 ??</Text>
+            {/* TODO: What is 1,15? Factor? If formula is 2.5 * V * 50, where does 1.15 fit? Ignoring for now */}
           </View>
           <Text style={{ color: "#FFFFFF" }}>
-            = 342.201,09 kWh Nah-/Fernwärme
+            = {calculation.Q_ww.toLocaleString('de-DE')} kWh Nah-/Fernwärme
           </Text>
-          <Text style={{ color: "#FFFFFF" }}>= 44,96 % d. Gesamtverbr.</Text>
+          <Text style={{ color: "#FFFFFF" }}>= {calculation.percentageWW.toFixed(2)} % d. Gesamtverbr.</Text>
         </View>
       </View>
       <View style={styles.allocationRow}>
         <Text>
-          44,96 % aus 115.498,07 € Energie- und Heizungsbetriebskosten
+          {calculation.percentageWW.toFixed(2)} % aus {formatEuro(sums.totalHeatingSystemCost)} Energie- und Heizungsbetriebskosten
           entspricht Kosten für Erwärmung Warmwasser
         </Text>
-        <Text>51.927,94 €</Text>
-      </View>
-      <View style={styles.allocationRow}>
-        <Text style={styles.allocationLabelBold}>
-          Gerätemiete Heizung/Warmwasser
-        </Text>
-        <Text>2.307,77 €</Text>
+        <Text>{formatEuro(calculation.costShareWW)}</Text>
       </View>
       <View style={styles.allocationBox}>
         <Text>Kosten für Warmwasser</Text>
-        <Text>54.235,71 €</Text>
+        <Text>{formatEuro(calculation.costShareWW)}</Text>
       </View>
+
       <View style={styles.allocationGrid}>
         <Text style={styles.allocationLabelBold}>
-          davon {previewData.mainDocData.living_space_share}% Grundkosten
+          davon {calculation.fixedSharePercent}% Grundkosten
         </Text>
-        <Text>16.270,72 € :</Text>
-        <Text>11.196,40 m²</Text>
-        <Text>= 1,453210 €/m²</Text>
+        <Text>{formatEuro(calculation.wwFixedCostTotal)} :</Text>
+        <Text>{data.totalLivingSpace.toLocaleString('de-DE')} m²</Text>
+        <Text>= {formatEuro(calculation.wwFixedPricePerM2)}/m²</Text>
       </View>
       <View style={styles.allocationGrid}>
         <Text style={styles.allocationLabelBold}>
-          davon {previewData.mainDocData.consumption_dependent}%
+          davon {calculation.variableSharePercent}%
           Verbrauchskosten
         </Text>
-        <Text>37.964,99 € :</Text>
-        <Text>3.148,25 m³</Text>
-        <Text>= 12,059077 €/m³</Text>
+        <Text>{formatEuro(calculation.wwVariableCostTotal)} :</Text>
+        <Text>{calculation.totalBuildingWaterVolume.toLocaleString('de-DE')} m³</Text>
+        <Text>= {formatEuro(calculation.wwVariablePricePerM3)}/m³</Text>
       </View>
+
+      {/* 
+      TODO: Calculate Unit Prices (Price per m2 / Price per m3)
+      Currently hardcoded or derived from totals / living space.
+      We need data.totalLivingSpace and data.totalBuildingConsumption
+      */}
 
       {/* Cost allocation – Heizung */}
       <View style={styles.costBreakdown}>
@@ -506,37 +482,37 @@ export default function HeatingBillPreviewTwoPDF({
           <Text style={styles.allocationLabelBold}>
             Summe Energie- und Heizungsbetriebskosten
           </Text>
-          <Text>115.498,07 €</Text>
+          <Text>{formatEuro(sums.totalHeatingSystemCost)}</Text>
         </View>
         <View style={styles.allocationRow}>
           <Text style={styles.allocationLabelBold}>
             abzüglich Kosten für Erwärmung Warmwasser
           </Text>
-          <Text>-51.927,94 €</Text>
+          <Text>-{formatEuro(calculation.costShareWW)}</Text>
         </View>
         <View style={styles.allocationRow}>
           <Text style={styles.allocationLabelBold}>
             Gerätemiete Heizung/Warmwasser
           </Text>
-          <Text>6.210,80 €</Text>
+          <Text>0,00 €</Text>
         </View>
         <View style={styles.allocationBox}>
           <Text>Kosten für Heizung</Text>
-          <Text>69.780,93 €</Text>
+          <Text>{formatEuro(calculation.costShareHeating)}</Text>
         </View>
         <View style={styles.allocationGrid}>
-          <Text style={styles.allocationLabelBold}>davon 30 % Grundkosten</Text>
-          <Text>20.934,28 € :</Text>
-          <Text>11.196,40 m²</Text>
-          <Text>= 1,869733 €/m²</Text>
+          <Text style={styles.allocationLabelBold}>davon {calculation.fixedSharePercent} % Grundkosten</Text>
+          <Text>{formatEuro(calculation.heatFixedCostTotal)} :</Text>
+          <Text>{data.totalLivingSpace.toLocaleString('de-DE')} m²</Text>
+          <Text>= {formatEuro(calculation.heatFixedPricePerM2)}/m²</Text>
         </View>
         <View style={styles.allocationGrid}>
           <Text style={styles.allocationLabelBold}>
-            davon 70 % Verbrauchskosten
+            davon {calculation.variableSharePercent} % Verbrauchskosten
           </Text>
-          <Text>48.846,65 € :</Text>
-          <Text>404,04 MWh</Text>
-          <Text>= 120,895580 €/MWh</Text>
+          <Text>{formatEuro(calculation.heatVariableCostTotal)} :</Text>
+          <Text>{(calculation.totalBuildingHeatConsumption / 1000).toLocaleString('de-DE', { maximumFractionDigits: 2 })} MWh</Text>
+          <Text>= {formatEuro(calculation.heatVariablePricePerMWh)}/MWh</Text>
         </View>
       </View>
     </Page>

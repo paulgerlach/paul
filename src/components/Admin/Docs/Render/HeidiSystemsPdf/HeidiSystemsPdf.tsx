@@ -1,7 +1,7 @@
 import { Document } from "@react-pdf/renderer";
 // import HeatingBillPreviewFivePDF from "./HeatingBillPreviewFivePDF";
 import HeatingBillPreviewOnePDF from "./HeatingBillPreviewOnePDF";
-// import HeatingBillPreviewTwoPDF from "./HeatingBillPreviewTwoPDF";
+import HeatingBillPreviewTwoPDF from "./HeatingBillPreviewTwoPDF";
 // import HeatingBillPreviewThreePDF from "./HeatingBillPreviewThreePDF";
 // import HeatingBillPreviewFourPDF from "./HeatingBillPreviewFourPDF";
 // import HeatingBillPreviewSixPDF from "./HeatingBillPreviewSixPDF";
@@ -11,8 +11,8 @@ export default function HeidiSystemsPdf({ data }: { data: CalculatedBillData }) 
   return (
     <Document>
       <HeatingBillPreviewOnePDF data={data} />
+      <HeatingBillPreviewTwoPDF data={data} />
       {/* 
-      <HeatingBillPreviewTwoPDF previewData={previewData} />
       <HeatingBillPreviewThreePDF previewData={previewData} />
       <HeatingBillPreviewFourPDF previewData={previewData} />
       <HeatingBillPreviewFivePDF previewData={previewData} />

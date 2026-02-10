@@ -77,8 +77,19 @@ const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
     2: "Batterie schwach",                      // Power Low (Bit 2)
     3: "Gerätefehler dauerhaft",                // Permanent Error (Bit 3)
     4: "Gerätefehler temporär"                  // Temporary Error (Bit 4)
-  }
+  },
 
+  // Ei Electronics Smoke Detectors (EIE)
+  EIE: {
+    0: "Rauchalarm",                            // Smoke alarm detected!
+    1: "Verschmutzung",                         // Sensor dirty/contamination
+    2: "Batterie schwach",                      // Low battery
+    3: "Entnahme erkannt",                      // Device removal detected (tamper)
+    4: "Hindernis erkannt",                     // Obstacle detected
+    5: "Testalarm",                             // Test alarm
+    6: "Gerätestörung",                         // Device fault
+    7: "Funksignal schwach"                     // Weak radio signal
+  }
 
 };
 

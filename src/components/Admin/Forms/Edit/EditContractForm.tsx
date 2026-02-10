@@ -134,6 +134,7 @@ export default function EditContractForm({
         className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data: EditContractFormValues) => {
           try {
+            data.is_unbefristet = !data.rental_end_date;
             await editContract(contractID, localID, data);
 
             if (data.documents && data.documents.length > 0) {
@@ -175,29 +176,19 @@ export default function EditContractForm({
           </div>
           <div className="space-y-4 max-medium:space-y-3">
             <h2 className="text-sm font-bold">Mietzeitraum</h2>
-            <div className={`items-center gap-7 max-medium:gap-3 grid max-medium:grid-cols-1 w-full ${isUnbefristet ? 'grid-cols-[1fr_auto_1fr]' : 'grid-cols-[1fr_auto_1fr_auto]'}`}>
+            <div className="items-center gap-7 max-medium:gap-3 grid grid-cols-[1fr_auto_1fr] max-medium:grid-cols-1 w-full">
               <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietbeginn*"
                 name="rental_start_date"
               />
-              <span className="mt-8 max-medium:hidden">-</span>
-              {!isUnbefristet && (
-                <FormDateInput<EditContractFormValues>
-                  control={methods.control}
-                  label="Mietende"
-                  name="rental_end_date"
-                />
-              )}
-              <div>
-                <div className="mt-8 max-medium:hidden"></div>
-                <FormRoundedCheckbox<EditContractFormValues>
-                  control={methods.control}
-                  name="is_unbefristet"
-                  label="Unbefristet"
-                  className="!mt-0 self-center"
-                />
-              </div>
+              <span className="mt-8 max-medium:hidden inline-block">-</span>
+              <FormDateInput<EditContractFormValues>
+                control={methods.control}
+                label="Mietende"
+                name="rental_end_date"
+                placeholder="Unbefristet"
+              />
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>

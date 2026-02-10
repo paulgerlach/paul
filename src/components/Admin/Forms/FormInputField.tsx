@@ -47,6 +47,7 @@ export default function FormInputField<T extends FieldValues = FieldValues>({
               placeholder={placeholder}
               {...field}
               onChange={(e) => {
+                e.target.value = e.target.value.replace(/,/g, ".");
                 field.onChange(e);
                 onChange?.(e);
               }}

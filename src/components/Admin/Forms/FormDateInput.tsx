@@ -26,6 +26,7 @@ export type FormDateInputProps<T extends FieldValues = FieldValues> = {
   label: string;
   disabled?: boolean;
   className?: string;
+  placeholder?: string;
 };
 
 export default function FormDateInput<T extends FieldValues = FieldValues>({
@@ -34,6 +35,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
   label,
   disabled = false,
   className = "",
+  placeholder = "Datum auswählen",
 }: FormDateInputProps<T>) {
   return (
     <FormField
@@ -54,7 +56,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                   {field.value ? (
                     format(field.value, "dd.MM.yyyy", { locale: de })
                   ) : (
-                    <span className="text-gray-400">Datum auswählen</span>
+                    <span className="text-gray-400">{placeholder}</span>
                   )}
                   <Image
                     width={0}

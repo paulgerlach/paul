@@ -108,10 +108,10 @@ const LazyAdminOperatingCostDocumentDeleteDialog = lazy(
 const LazyDocumentDeleteDialog = lazy(
   () => import("@/components/Basic/Dialog/DocumentDeleteDialog")
 );
-const LazyAdminAddDocBetriebskostenabrechnungDialog = lazy(
+const LazyAdminAddDocHeizkostenabrechnungDialog = lazy(
   () =>
     import(
-      "@/components/Basic/Dialog/Admin/AdminAddDocBetriebskostenabrechnungDialog"
+      "@/components/Basic/Dialog/Admin/AdminAddDocHeizkostenabrechnungDialog"
     )
 );
 const LazyShareDashboardDialog = lazy(
@@ -218,7 +218,7 @@ export default async function AdminLayout({
           <LazyDocumentDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
-          <LazyAdminAddDocBetriebskostenabrechnungDialog />
+          <LazyAdminAddDocHeizkostenabrechnungDialog />
         </Suspense>
         <Suspense fallback={null}>
           <LazyShareDashboardDialog />

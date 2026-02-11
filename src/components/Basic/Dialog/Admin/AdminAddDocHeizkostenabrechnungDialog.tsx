@@ -1,10 +1,10 @@
 "use client";
 
 import { useDialogStore } from "@/store/useDIalogStore";
-import DialogBase from "../ui/DialogBase";
+import DialogBase from "../../ui/DialogBase";
 import { DialogStoreActionType } from "@/types";
-import { Button } from "../ui/Button";
-import { Form } from "../ui/Form";
+import { Button } from "../../ui/Button";
+import { Form } from "../../ui/Form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,21 +18,24 @@ import FormDocument from "@/components/Admin/Forms/FormDocument";
 import { format, parse } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
-import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
 import { buildLocalName } from "@/utils";
-import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
+import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
+import { useParams } from "next/navigation";
+import { adminCreateInvoiceDocument } from "@/actions/create/admin/adminCreateInvoiceDocument";
 import { useEffect, useMemo, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   buildInvoiceNotes,
   mapCostCategoryToPurpose,
   processInvoicesViaNext,
 } from "@/api/invoices";
 import FormTextareaField from "@/components/Admin/Forms/FormTextareaField";
-import { useMutation } from "@tanstack/react-query";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
-    .date({ errorMap: () => ({ message: "Ungültiges Datum" }) })
+    .date({
+      errorMap: () => ({ message: "Ungültiges Datum" }),
+    })
     .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" })
     .nullable(),
   total_amount: z.coerce.number().min(1, "Pflichtfeld").nullable(),
@@ -59,7 +62,7 @@ const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
   direct_local_id: null,
 };
 
-export default function AddDocHeizkostenabrechnungDialog() {
+export default function AdminAddDocHeizkostenabrechnungDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const {
     purposeOptions,
@@ -70,13 +73,14 @@ export default function AddDocHeizkostenabrechnungDialog() {
   } = useHeizkostenabrechnungStore();
 
   const { data: locals } = useLocalsByObjektID(objektID);
+  const { user_id } = useParams();
 
   const activeDialog = useMemo(() => {
     return Object.entries(openDialogByType).find(
       ([key, value]) =>
         key.endsWith("_heizkostenabrechnung_upload") &&
         value === true &&
-        !key.includes("admin_")
+        key.includes("admin_")
     )?.[0];
   }, [openDialogByType]);
 
@@ -89,9 +93,10 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
   const uploadDocuments = useUploadDocuments();
   const { deletedDocumentIds } = useDocumentDeletion([]);
+
+  const servicePeriod = methods.watch("service_period");
   const forAllTenants = methods.watch("for_all_tenants");
   const watchedDocs = methods.watch("document") ?? [];
-  const servicePeriod = methods.watch("service_period");
 
   const processedFilesRef = useRef<Set<string>>(new Set());
   const fileKey = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
@@ -187,27 +192,31 @@ export default function AddDocHeizkostenabrechnungDialog() {
       return;
     }
 
-    await createHeatingInvoice(
+    updateDocumentGroup(activeCostType, formattedPayload);
+
+    await adminCreateInvoiceDocument(
       {
         ...formattedPayload,
         invoice_date: rest.invoice_date,
         total_amount: rest.total_amount != null ? rest.total_amount : null,
       },
       objektID,
+      String(user_id),
       operatingDocID,
       activeCostType
     );
 
-    updateDocumentGroup(activeCostType, formattedPayload);
-
-    await uploadDocuments.mutateAsync({
-      files: document,
-      relatedId: operatingDocID ?? "",
-      relatedType: "heating_bill",
-    });
+    if (document && document.length > 0) {
+      await uploadDocuments.mutateAsync({
+        files: document,
+        relatedId: operatingDocID ?? "",
+        relatedType: "operating_costs",
+      });
+    }
 
     closeDialog(activeDialog as DialogStoreActionType);
     toast.success("Rechnung erfolgreich hinzugefügt");
+    methods.resetField("document");
     methods.reset(defaultValues);
     processedFilesRef.current.clear();
   };
@@ -286,7 +295,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
-            <div className="px-3.5 py-4 space-y-6 max-xl:p-2 border border-black/20 rounded-md">
+            <div className="px-3.5 py-4 grid grid-cols-2 gap-6 max-xl:p-2 border border-black/20 rounded-md">
               <FormRoundedCheckbox<AddDocHeizkostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"
@@ -294,7 +303,6 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 className="!mt-0 h-fit"
                 disabled={isProcessingInvoice}
               />
-
               {!forAllTenants && (
                 <FormLocalsultiselect<AddDocHeizkostenabrechnungDialogFormValues>
                   options={
@@ -328,7 +336,6 @@ export default function AddDocHeizkostenabrechnungDialog() {
             name="notes"
             label="Anmerkungen"
             placeholder=""
-            rows={4}
             disabled={isProcessingInvoice}
           />
 

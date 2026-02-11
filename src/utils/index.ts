@@ -225,14 +225,34 @@ export const formatDateGerman = (dateStr?: string | null) => {
   return format(date, "dd.MM.yyyy");
 };
 
+/** Simple hash of string to positive integer (for deterministic IDs) */
+function hashToNum(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h << 5) - h + s.charCodeAt(i);
+    h = h & 0x7fffffff;
+  }
+  return h;
+}
+
 export function generatePropertyNumber(): string {
-  // 6 random digits
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+/** Deterministic property number from objekt id */
+export function propertyNumberFromObjekt(objektId: string): string {
+  const n = hashToNum(objektId);
+  return String(100000 + (n % 900000)).slice(0, 6);
+}
+
 export function generateHeidiCustomerNumber(): string {
-  // 4-digit number padded with zeros
   return String(Math.floor(1 + Math.random() * 9999)).padStart(4, "0");
+}
+
+/** Deterministic heidi customer number from user id */
+export function heidiCustomerNumberFromUser(userId: string): string {
+  const n = hashToNum(userId);
+  return String((n % 9999) + 1).padStart(4, "0");
 }
 
 export function generateUserNumber(): string {
@@ -240,6 +260,32 @@ export function generateUserNumber(): string {
   const part2 = Math.floor(1000 + Math.random() * 9000);
   const part3 = Math.floor(100 + Math.random() * 900);
   return `W${part1}/${part2}/${part3}`;
+}
+
+/** Deterministic user number from user + local + doc ids */
+export function userNumberFromIds(
+  userId: string,
+  localId: string,
+  docId: string
+): string {
+  const p1 = 100 + (hashToNum(userId) % 900);
+  const p2 = 1000 + (hashToNum(localId) % 9000);
+  const p3 = 100 + (hashToNum(docId) % 900);
+  return `W${p1}/${p2}/${p3}`;
+}
+
+const ALPHANUM = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+/** Deterministic security code from user + doc ids (alphanumeric, 10 chars) */
+export function securityCodeFromIds(userId: string, docId: string): string {
+  const h = hashToNum(userId + docId);
+  let code = "";
+  let n = h;
+  for (let i = 0; i < 10; i++) {
+    n = (n * 1103515245 + 12345) & 0x7fffffff;
+    code += ALPHANUM[n % ALPHANUM.length];
+  }
+  return code;
 }
 
 // Helper function to parse German date format (DD.MM.YYYY)

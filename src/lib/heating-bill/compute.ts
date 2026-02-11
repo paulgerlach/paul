@@ -13,7 +13,15 @@ import { computeHeatingRates } from "./rates";
 import { computeReadingDeltas } from "./readings";
 import { computeColdWaterRates } from "./coldwater";
 import { computeUnitBreakdown } from "./unit-breakdown";
-import { formatEuro, formatDateGerman, formatGermanNumber } from "@/utils";
+import {
+  formatEuro,
+  formatDateGerman,
+  formatGermanNumber,
+  propertyNumberFromObjekt,
+  heidiCustomerNumberFromUser,
+  userNumberFromIds,
+  securityCodeFromIds,
+} from "@/utils";
 
 const HEAT_DEVICE_TYPES = [
   "Heat",
@@ -232,38 +240,6 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
     heating,
   };
 
-  if (raw.user) {
-    model.cover = {
-      ...model.cover,
-      ownerFirstName: raw.user.first_name ?? model.cover.ownerFirstName,
-      ownerLastName: raw.user.last_name ?? model.cover.ownerLastName,
-      contractorsNames:
-        raw.contractsWithContractors
-          ?.flatMap((c) => c.contractors)
-          .map((ct) => `${ct.first_name} ${ct.last_name}`)
-          .join(", ") ?? model.cover.contractorsNames,
-    };
-  }
-
-  if (raw.objekt) {
-    model.cover = {
-      ...model.cover,
-      street: raw.objekt.street,
-      zip: raw.objekt.zip,
-    };
-  }
-
-  if (raw.mainDoc) {
-    model.cover = {
-      ...model.cover,
-      createdAt: formatDateGerman(raw.mainDoc.created_at),
-      billingPeriodStart: formatDateGerman(raw.mainDoc.start_date) ?? "",
-      billingPeriodEnd: formatDateGerman(raw.mainDoc.end_date) ?? "",
-      usagePeriodStart: formatDateGerman(raw.mainDoc.start_date) ?? "",
-      usagePeriodEnd: formatDateGerman(raw.mainDoc.end_date) ?? "",
-    };
-  }
-
   const totalContractsAmount =
     raw.contractsWithContractors?.reduce((acc, c) => {
       const overlapMonths = 12;
@@ -274,8 +250,59 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
     0
   );
   const totalDiff = round2(totalContractsAmount - totalInvoicesAmount);
-  model.cover.totalAmount = totalDiff;
-  model.cover.totalAmountFormatted = formatEuro(totalDiff);
+
+  const contractorsList = raw.contractsWithContractors?.flatMap((c) => c.contractors) ?? [];
+  const portalLink = raw.user?.id
+    ? `https://heidi.systems/${raw.user.id}`
+    : model.cover.portalLink;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
+
+  model.cover = {
+    ...model.cover,
+    propertyNumber: raw.objekt?.id
+      ? propertyNumberFromObjekt(raw.objekt.id)
+      : model.cover.propertyNumber,
+    heidiCustomerNumber: raw.user?.id
+      ? heidiCustomerNumberFromUser(raw.user.id)
+      : model.cover.heidiCustomerNumber,
+    userNumber:
+      raw.user?.id && targetLocalId && raw.mainDoc?.id
+        ? userNumberFromIds(raw.user.id, targetLocalId, raw.mainDoc.id)
+        : model.cover.userNumber,
+    contractorsNames,
+    contractors:
+      contractorsList.length > 0
+        ? contractorsList.map((ct) => ({
+            id: ct.id,
+            firstName: ct.first_name,
+            lastName: ct.last_name,
+          }))
+        : model.cover.contractors,
+    street: raw.objekt?.street ?? model.cover.street,
+    zip: raw.objekt?.zip ?? model.cover.zip,
+    ownerFirstName: raw.user?.first_name ?? model.cover.ownerFirstName,
+    ownerLastName: raw.user?.last_name ?? model.cover.ownerLastName,
+    createdAt: raw.mainDoc
+      ? formatDateGerman(raw.mainDoc.created_at)
+      : model.cover.createdAt,
+    billingPeriodStart:
+      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.billingPeriodStart,
+    billingPeriodEnd:
+      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.billingPeriodEnd,
+    usagePeriodStart:
+      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
+    usagePeriodEnd:
+      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
+    totalAmount: totalDiff,
+    totalAmountFormatted: formatEuro(totalDiff),
+    portalLink,
+    userId: raw.user?.id ?? model.cover.userId,
+    securityCode:
+      raw.user?.id && raw.mainDoc?.id
+        ? securityCodeFromIds(raw.user.id, raw.mainDoc.id)
+        : model.cover.securityCode,
+    qrCodeUrl,
+  };
 
   return model;
 }

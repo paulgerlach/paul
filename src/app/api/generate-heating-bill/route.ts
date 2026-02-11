@@ -15,7 +15,7 @@ import { computeHeatingBill } from "@/lib/heating-bill/compute";
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
  *
- * Step 2–4: uses computed model (buildingCalc, cover, coldWater, unitBreakdown from real data).
+ * Step 2–5: uses computed model (all sections from real data, cover fully populated).
  */
 export async function POST(request: NextRequest) {
   try {

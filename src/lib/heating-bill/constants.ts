@@ -19,8 +19,28 @@ export const DISTRIBUTION_COST_TYPES = [
   "metering_service_costs", // Messdienstkosten
 ] as const;
 
-// Cold water costs -- Page 3
-export const COLD_WATER_COST_TYPES = ["cold_water"] as const;
+// Cold water costs -- Page 3 (all go to coldWaterInvoices for rate breakdown)
+export const COLD_WATER_COST_TYPES = [
+  "cold_water",
+  "cold_water_device_rental",
+  "abwasser",
+  "cold_water_billing",
+] as const;
+
+// Cold water subcategories for rate breakdown (cost_type or purpose keywords -> label, unit, allocation)
+export const COLD_WATER_SUBTYPE_MAP: Record<
+  string,
+  { label: string; unit: "m3" | "nutzeinh"; decimals: number }
+> = {
+  cold_water: { label: "Kaltwasser", unit: "m3", decimals: 6 },
+  kaltwasser: { label: "Kaltwasser", unit: "m3", decimals: 6 },
+  abwasser: { label: "Abwasser Gesamt", unit: "m3", decimals: 6 },
+  sewage: { label: "Abwasser Gesamt", unit: "m3", decimals: 6 },
+  cold_water_device_rental: { label: "Gerätemiete Kaltwasser", unit: "m3", decimals: 6 },
+  gerätemiete_kaltwasser: { label: "Gerätemiete Kaltwasser", unit: "m3", decimals: 6 },
+  cold_water_billing: { label: "Abrechnung Kaltwasser", unit: "nutzeinh", decimals: 2 },
+  abrechnung_kaltwasser: { label: "Abrechnung Kaltwasser", unit: "nutzeinh", decimals: 2 },
+};
 
 // Test types to ignore
 export const IGNORED_COST_TYPES = [

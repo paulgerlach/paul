@@ -11,6 +11,7 @@ import { aggregateInvoiceCosts } from "./costs";
 import { computeWarmWaterCosts } from "./warmwater";
 import { computeHeatingRates } from "./rates";
 import { computeReadingDeltas } from "./readings";
+import { computeColdWaterRates } from "./coldwater";
 import { formatEuro, formatDateGerman, formatGermanNumber } from "@/utils";
 
 const HEAT_DEVICE_TYPES = [
@@ -113,6 +114,23 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
       consumptionCostPercent: consumptionDependent,
     }
   );
+
+  const totalColdWaterM3 = readingsResult.totalColdWaterM3 || 9943.14;
+  const unitCount = raw.locals.length || 123;
+  const localForDoc = raw.mainDoc.local_id
+    ? raw.locals.find((l) => l.id === raw.mainDoc!.local_id)
+    : null;
+  const localLivingSpace = localForDoc ? Number(localForDoc.living_space ?? 0) : undefined;
+
+  const coldWater = computeColdWaterRates(
+    costAgg.coldWaterInvoices as any,
+    totalColdWaterM3,
+    unitCount,
+    totalLivingSpace || 11196.4,
+    localLivingSpace
+  );
+
+  model.coldWater = coldWater;
 
   model.buildingCalc = {
     energyInvoices: costAgg.energyInvoices.map((i) => ({

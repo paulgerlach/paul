@@ -15,7 +15,7 @@ import { computeHeatingBill } from "@/lib/heating-bill/compute";
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
  *
- * Step 2: uses computed model for rendering when available (Page 2 + cover from real data).
+ * Step 2–3: uses computed model (buildingCalc, cover, coldWater from real data).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -82,9 +82,6 @@ export async function POST(request: NextRequest) {
 
     // Resolve logo to absolute file path for server-side rendering
     model = { ...model, logoSrc: path.join(process.cwd(), "public", "admin_logo.png") };
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/2633cfaa-a884-4bda-8772-982a6335bc51', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'route.ts:84', message: 'logoSrc resolved', data: { logoSrc: model.logoSrc }, timestamp: Date.now(), hypothesisId: 'H1-logo' }) }).catch(() => { });
-    // #endregion
 
     // Render PDF to buffer (works in Node.js API route)
     const buffer = await renderToBuffer(

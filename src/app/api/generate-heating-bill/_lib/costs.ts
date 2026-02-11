@@ -127,7 +127,7 @@ export function aggregateInvoiceCosts(
     const amount = round2(Number(inv.total_amount ?? 0));
     const date = formatDateGerman(inv.invoice_date ?? undefined);
     const label =
-      inv.document_name || inv.purpose || `Rechnung ${inv.id?.slice(0, 8) ?? ""}`;
+      inv.purpose || inv.document_name || `Rechnung ${inv.id?.slice(0, 8) ?? ""}`;
 
     if (IGNORED_COST_TYPES.includes(ct as any)) continue;
 

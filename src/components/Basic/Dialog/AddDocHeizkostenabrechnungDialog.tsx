@@ -261,11 +261,8 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 type="button"
                 disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", false)}
-                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
-                  } ${isProcessingInvoice
-                    ? "opacity-60 cursor-not-allowed"
-                    : "cursor-pointer"
-                  } transition-all duration-300`}
+                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 max-xl: rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
+                  } cursor-pointer transition-all duration-300`}
               >
                 Nein
               </button>
@@ -274,10 +271,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", true)}
                 className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
-                  } ${isProcessingInvoice
-                    ? "opacity-60 cursor-not-allowed"
-                    : "cursor-pointer"
-                  } transition-all duration-300`}
+                  } cursor-pointer transition-all duration-300`}
               >
                 Ja
               </button>
@@ -326,7 +320,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label="Anmerkungen"
+            label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
             rows={4}
             disabled={isProcessingInvoice}

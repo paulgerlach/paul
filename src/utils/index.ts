@@ -188,18 +188,25 @@ export const buildLocalName = ({
 export function getCostTypeIconByKey(key?: string) {
   switch (key) {
     case "fuel_costs":
+    case "brennstoffkosten":
       return cost_type_fuel_costs_direct;
     case "operating_current":
+    case "betriebsstrom":
       return cost_type_operating_current;
     case "maintenance_costs":
+    case "wartungskosten":
       return cost_type_maintenance_costs;
     case "metering_service_costs":
+    case "messdienstkosten":
       return cost_type_metering_service_costs;
     case "metering_device_rental":
+    case "miete_der_messgeraete":
       return cost_type_metering_device_rental;
     case "chimney_sweep_costs":
+    case "schornsteinfegerkosten":
       return cost_type_chimney_sweep_costs;
     case "other_operating_costs":
+    case "sonstige_betriebskosten":
       return cost_type_other_operating_costs;
     default:
       return cost_type_fuel_costs;

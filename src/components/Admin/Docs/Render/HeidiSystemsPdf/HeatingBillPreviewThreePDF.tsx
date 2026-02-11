@@ -1,7 +1,5 @@
-"use client";
-
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
+import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",
@@ -68,18 +66,22 @@ const styles = StyleSheet.create({
 });
 
 export default function HeatingBillPreviewThreePDF({
-  previewData,
+  coldWater,
+  cover,
+  logoSrc = "/admin_logo.png",
 }: {
-  previewData: HeatingBillPreviewData;
+  coldWater: HeatingBillPdfModel["coldWater"];
+  cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   return (
     <Page size="A4" style={styles.page}>
       <View style={styles.headerBox}>
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            3/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+            3/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+          <Image style={{ width: 80, height: 20 }} src={logoSrc} />
         </View>
       </View>
 
@@ -91,47 +93,25 @@ export default function HeatingBillPreviewThreePDF({
 
       <View style={styles.summaryTopRow}>
         <Text>Kosten für Kaltwasser</Text>
-        <Text>41.468,88 €</Text>
+        <Text>{coldWater.totalCostFormatted}</Text>
       </View>
 
       <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
-            Kaltwasser
-          </Text>
-          <Text style={styles.cellRight}>17.036,69 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>1,713411 €/m³</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
-            Abwasser Gesamt
-          </Text>
-          <Text style={styles.cellRight}>20.030,62 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>2,014517 €/m³</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
-            Gerätemiete Kaltwasser
-          </Text>
-          <Text style={styles.cellRight}>2.274,90 € :</Text>
-          <Text style={styles.cellRight}>9.943,14 m³ =</Text>
-          <Text style={styles.cellRight}>0,228791 €/m³</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
-            Abrechnung Kaltwasser
-          </Text>
-          <Text style={styles.cellRight}>2.126,67 € :</Text>
-          <Text style={styles.cellRight}>123,00 Nutzeinh. =</Text>
-          <Text style={styles.cellRight}>17,290000 €/Nutzeinh.</Text>
-        </View>
+        {coldWater.rateItems.map((item, i) => (
+          <View key={i} style={styles.tableRow}>
+            <Text style={[styles.cell, { fontWeight: "bold", color: "#083123" }]}>
+              {item.label}
+            </Text>
+            <Text style={styles.cellRight}>{item.totalCostFormatted} :</Text>
+            <Text style={styles.cellRight}>{item.totalVolumeFormatted} {item.unit} =</Text>
+            <Text style={styles.cellRight}>{item.rateFormatted} {item.rateUnit}</Text>
+          </View>
+        ))}
       </View>
 
       <View style={styles.summaryRow}>
         <Text>Summe Ihrer Kosten für Kaltwasser</Text>
-        <Text>153,80 €</Text>
+        <Text>{coldWater.unitTotalCostFormatted}</Text>
       </View>
     </Page>
   );

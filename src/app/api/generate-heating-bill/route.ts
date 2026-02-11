@@ -5,12 +5,16 @@ import { pdf } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
 import { mockHeatingBillModel } from "@/lib/heating-bill/mock-model";
+import { fetchHeatingBillData } from "@/lib/heating-bill/data-fetcher";
+import { computeHeatingBill } from "@/lib/heating-bill/compute";
 
 /**
  * POST /api/generate-heating-bill
  * Server-side heating bill PDF generation.
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
+ *
+ * Step 1 shadow mode: computes real model from data, logs vs mock, still renders mock.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -53,8 +57,36 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    // Step 0: Use mock model. Later steps will compute from real data.
-    const model = mockHeatingBillModel;
+    // Step 1 shadow mode: compute real model from data, compare to mock, still render mock.
+    let model = mockHeatingBillModel;
+    let computedModel: typeof model | null = null;
+
+    try {
+      const raw = await fetchHeatingBillData(docId, user.id, {
+        useServiceRole: true,
+      });
+      computedModel = computeHeatingBill(raw);
+      if (process.env.NODE_ENV === "development" || debug) {
+        const mockGrandTotal = mockHeatingBillModel.buildingCalc?.grandTotal ?? 0;
+        const computedGrandTotal =
+          computedModel.buildingCalc?.grandTotal ?? 0;
+        const diff = Math.abs(computedGrandTotal - mockGrandTotal);
+        console.log(
+          "[HeatingBill] Shadow: mock grandTotal",
+          mockGrandTotal,
+          "computed",
+          computedGrandTotal,
+          "diff",
+          diff.toFixed(2)
+        );
+      }
+    } catch (fetchError) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("[HeatingBill] Shadow compute failed, using mock:", fetchError);
+      }
+    }
+
+    // Still render mock until Step 2+ migration; computedModel used only for logging/debug
 
     // Render PDF to buffer (works in Node.js API route)
     const pdfDoc = pdf(
@@ -119,6 +151,7 @@ export async function POST(request: NextRequest) {
       presignedUrl: string;
       metadata: { storagePath: string };
       debugModel?: typeof model;
+      debugComputedModel?: typeof model;
     } = {
       documentId: docRecord.id,
       presignedUrl: signedData.signedUrl,
@@ -127,6 +160,7 @@ export async function POST(request: NextRequest) {
 
     if (debug) {
       response.debugModel = model;
+      if (computedModel) response.debugComputedModel = computedModel;
     }
 
     return NextResponse.json(response);

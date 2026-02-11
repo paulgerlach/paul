@@ -1,5 +1,5 @@
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPdfModel } from "@/lib/heating-bill/types";
+import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",
@@ -320,7 +320,7 @@ export default function HeatingBillPreviewTwoPDF({
               <Text
                 style={
                   (styles.tableCellRight,
-                  { fontWeight: "bold", color: colors.dark })
+                    { fontWeight: "bold", color: colors.dark })
                 }
               >
                 {bc.heatingCostTotalFormatted}

@@ -1,5 +1,5 @@
 import { Page, Text, View, StyleSheet, Image, Link } from "@react-pdf/renderer";
-import type { HeatingBillPdfModel } from "@/lib/heating-bill/types";
+import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",

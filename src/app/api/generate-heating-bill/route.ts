@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "node:path";
-import { createClient } from "@supabase/supabase-js";
 import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
-import { mockHeatingBillModel } from "@/lib/heating-bill/mock-model";
-import { fetchHeatingBillData } from "@/lib/heating-bill/data-fetcher";
-import { computeHeatingBill } from "@/lib/heating-bill/compute";
-import { validateModel } from "@/lib/heating-bill/validation";
+import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/generate-heating-bill/_lib";
 
 /** When "true" or "1", always use mock model (for testing/rollback). Default: use computed model. */
 const HEATING_BILL_USE_MOCK =

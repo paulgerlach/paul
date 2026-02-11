@@ -253,7 +253,7 @@ export const objekte = pgTable("objekte", {
 		columns: [table.agency_id],
 		foreignColumns: [agencies.id],
 		name: "agency_id_fkey"
-	}).onDelete("cascade"),
+	}).onDelete("set null"),
 
 	pgPolicy("Users and Admins can access objects", { as: "permissive", for: "all", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())`, withCheck: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"] }),
@@ -322,7 +322,7 @@ export const users = pgTable("users", {
 		columns: [table.agency_id],
 		foreignColumns: [agencies.id],
 		name: "agency_id_fkey"
-	}).onDelete("cascade"),
+	}).onDelete("set null"),
 	pgPolicy("Users can insert their own record", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`(auth.uid() = id)` }),
 	pgPolicy("Users can read their own data", { as: "permissive", for: "select", to: ["public"] }),
 	pgPolicy("Users can update their own data", { as: "permissive", for: "update", to: ["public"] }),

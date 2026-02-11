@@ -150,18 +150,23 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
   const isProcessingInvoice = parseInvoicesMutation.isPending;
 
-  // ✅ run invoice parsing whenever new documents are added
   useEffect(() => {
     if (!watchedDocs.length) return;
 
-    const newFiles = watchedDocs.filter(
-      (f) => !processedFilesRef.current.has(fileKey(f))
-    );
+    const newFiles = watchedDocs.filter((f) => {
+      const key = fileKey(f);
+      return !processedFilesRef.current.has(key);
+    });
+
     if (!newFiles.length) return;
 
+    // mark immediately to avoid double-queue before mutation settles
+    newFiles.forEach((f) => processedFilesRef.current.add(fileKey(f)));
+
     parseInvoicesMutation.mutate(newFiles, {
-      onSettled: () => {
-        newFiles.forEach((f) => processedFilesRef.current.add(fileKey(f)));
+      onError: () => {
+        // optional: allow retry if parsing failed
+        newFiles.forEach((f) => processedFilesRef.current.delete(fileKey(f)));
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -295,7 +300,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
           <div className="space-y-1.5">
             <p className="text-[#757575] text-sm">Zahlungsempfänger</p>
-            <div className="px-3.5 py-4 grid grid-cols-2 gap-6 max-xl:p-2 border border-black/20 rounded-md">
+            <div className="px-3.5 py-4 space-y-6 max-xl:p-2 border border-black/20 rounded-md">
               <FormRoundedCheckbox<AddDocHeizkostenabrechnungDialogFormValues>
                 control={methods.control}
                 name="for_all_tenants"
@@ -334,8 +339,9 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label="Anmerkungen"
+            label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
+            rows={4}
             disabled={isProcessingInvoice}
           />
 

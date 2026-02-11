@@ -1,8 +1,5 @@
-"use client";
-
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
-import { formatDateGerman } from "@/utils";
+import type { HeatingBillPdfModel } from "@/lib/heating-bill/types";
 
 const colors = {
   accent: "#DDE9E0",
@@ -20,7 +17,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: colors.text,
   },
-  // Header
   headerBox: {
     backgroundColor: colors.accent,
     borderRadius: 12,
@@ -88,8 +84,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.dark,
   },
-
-  // Costs Section
   section: {
     marginBottom: 20,
   },
@@ -128,8 +122,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.dark,
   },
-
-  // Total Amount
   totalAmountBox: {
     backgroundColor: colors.accent2,
     borderRadius: 8,
@@ -150,8 +142,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
-
-  // State Relief
   reliefBox: {
     backgroundColor: colors.accent2,
     borderRadius: 8,
@@ -172,8 +162,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
   },
-
-  // Consumption Values
   consumptionTable: {
     width: "100%",
     marginTop: 5,
@@ -209,8 +197,6 @@ const styles = StyleSheet.create({
     color: colors.dark,
     marginTop: 4,
   },
-
-  // Footer
   footer: {
     marginTop: 32,
     fontSize: 9,
@@ -219,17 +205,20 @@ const styles = StyleSheet.create({
 });
 
 export default function HeatingBillPreviewFourPDF({
-  previewData,
+  unitBreakdown,
+  cover,
 }: {
-  previewData: HeatingBillPreviewData;
+  unitBreakdown: HeatingBillPdfModel["unitBreakdown"];
+  cover: HeatingBillPdfModel["cover"];
 }) {
+  const ub = unitBreakdown;
+
   return (
     <Page size="A4" style={styles.page}>
-      {/* Header */}
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            4/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+            4/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src="/admin_logo.png" />
         </View>
@@ -241,15 +230,13 @@ export default function HeatingBillPreviewFourPDF({
             </Text>
             <View style={styles.infoGrid}>
               <View style={styles.infoRow}>
-                <Text style={[styles.infoLabel, styles.bold]}>
-                  Liegenschaft
-                </Text>
+                <Text style={[styles.infoLabel, styles.bold]}>Liegenschaft</Text>
                 <Text style={styles.infoValue}>
-                  {previewData.contractorsNames}
+                  {ub.contractorsNames}
                   {"\n"}
-                  {previewData.objektInfo.street}
+                  {ub.street}
                   {"\n"}
-                  {previewData.objektInfo.zip}
+                  {ub.zip}
                 </Text>
               </View>
               <View style={styles.infoRow}>
@@ -257,11 +244,11 @@ export default function HeatingBillPreviewFourPDF({
                   Erstellt im Auftrag von
                 </Text>
                 <Text style={styles.infoValue}>
-                  {previewData.contractorsNames}
+                  {ub.contractorsNames}
                   {"\n"}
-                  {previewData.objektInfo.street}
+                  {ub.street}
                   {"\n"}
-                  {previewData.objektInfo.zip}
+                  {ub.zip}
                 </Text>
               </View>
             </View>
@@ -271,33 +258,28 @@ export default function HeatingBillPreviewFourPDF({
                   Liegenschaftsnummer
                 </Text>
                 <Text style={[styles.infoLabel, styles.bold]}>
-                  {previewData.propertyNumber}
+                  {cover.propertyNumber}
                 </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={[styles.infoLabel, styles.textMuted]}>
                   Heidi Nutzernummer
                 </Text>
-                <Text style={styles.infoValue}>
-                  {previewData.heidiCustomerNumber}
-                </Text>
+                <Text style={styles.infoValue}>{cover.heidiCustomerNumber}</Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={[styles.infoLabel, styles.textMuted]}>
                   Abrechnungszeitraum
                 </Text>
                 <Text style={styles.infoValue}>
-                  {formatDateGerman(previewData.mainDocDates.start_date)} -{" "}
-                  {formatDateGerman(previewData.mainDocDates.end_date)}
+                  {ub.billingPeriodStart} - {ub.billingPeriodEnd}
                 </Text>
               </View>
               <View style={styles.infoRow}>
                 <Text style={[styles.infoLabel, styles.textMuted]}>
                   erstellt am
                 </Text>
-                <Text style={styles.infoValue}>
-                  {formatDateGerman(previewData.mainDocDates.created_at)}
-                </Text>
+                <Text style={styles.infoValue}>{ub.createdAt}</Text>
               </View>
             </View>
           </View>
@@ -306,20 +288,18 @@ export default function HeatingBillPreviewFourPDF({
               <Text>Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin</Text>
             </View>
             <Text style={styles.recipientAddress}>
-              {previewData.contractorsNames}
+              {ub.contractorsNames}
               {"\n"}
-              {previewData.objektInfo.street}
+              {ub.street}
               {"\n"}
-              {previewData.objektInfo.zip}
+              {ub.zip}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* Costs */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ihre Kosten</Text>
-        {/* Heating Costs */}
         <Text style={styles.costTableTitle}>Kosten für Heizung</Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
@@ -329,13 +309,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              77,02 m² Wohnfläche
+              {ub.livingSpaceM2Formatted} m² Wohnfläche
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              1,869733 € je m²
+              {ub.heatingBaseCostCalc.split(" x ")[1] ?? ub.heatingBaseCostCalc}
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -345,7 +325,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              144,01 €
+              {ub.heatingBaseCostFormatted}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -355,13 +335,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              7,00 MWh
+              {ub.heatingConsumptionMwhFormatted} MWh
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              120,895580 € je MWh
+              {ub.heatingConsumptionCalc.split(" x ")[1] ?? ub.heatingConsumptionCalc}
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -371,12 +351,11 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              846,27 €
+              {ub.heatingConsumptionCostFormatted}
             </Text>
           </View>
         </View>
 
-        {/* Hot Water Costs */}
         <Text style={styles.costTableTitle}>Kosten für Warmwasser</Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
@@ -386,13 +365,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              77,02 m² Wohnfläche
+              {ub.livingSpaceM2Formatted} m² Wohnfläche
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              1,453210 € je m²
+              {ub.warmWaterBaseCostCalc.split(" x ")[1] ?? ub.warmWaterBaseCostCalc}
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -402,7 +381,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              111,93 €
+              {ub.warmWaterBaseCostFormatted}
             </Text>
           </View>
           <View style={styles.tableRow}>
@@ -412,13 +391,13 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              10,88 m³
+              {ub.warmWaterConsumptionM3Formatted} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              12,059077 € je m³
+              {ub.warmWaterConsumptionCalc.split(" x ")[1] ?? ub.warmWaterConsumptionCalc}
             </Text>
             <Text
               style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
@@ -428,203 +407,130 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
             >
-              131,20 €
+              {ub.warmWaterConsumptionCostFormatted}
             </Text>
           </View>
           <View style={[styles.sumRow, { marginTop: 4 }]}>
             <Text style={{ flex: 1 }}>
               Summe Kosten für Heizung und Warmwasser
             </Text>
-            <Text style={{ textAlign: "right" }}>1.233,41 €</Text>
+            <Text style={{ textAlign: "right" }}>
+              {ub.heatingAndWarmWaterTotalFormatted}
+            </Text>
           </View>
         </View>
 
-        {/* Cold Water Costs */}
         <Text style={styles.costTableTitle}>Kosten für Kaltwasser</Text>
         <View style={styles.table}>
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, styles.bold, { width: "25%" }]}>
-              Kaltwasser Gesamt
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              45,20 m³
-            </Text>
-            <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              1,713411 € je m³
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
-            >
-              =
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
-            >
-              77,45 €
-            </Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, styles.bold, { width: "25%" }]}>
-              Abwasser Gesamt
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              45,20 m³
-            </Text>
-            <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              2,014517 € je m³
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
-            >
-              =
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
-            >
-              91,06 €
-            </Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, styles.bold, { width: "25%" }]}>
-              Gerätemiete Kaltwasser
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              45,20 m³
-            </Text>
-            <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              0,228791 € je m³
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
-            >
-              =
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
-            >
-              10,34 €
-            </Text>
-          </View>
-          <View style={styles.tableRow}>
-            <Text style={[styles.tableCell, styles.bold, { width: "25%" }]}>
-              Abrechnung Kaltwasser
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              1,00 Nutzeinh.
-            </Text>
-            <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
-            <Text
-              style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
-            >
-              17,290569 € je Nutzeinh.
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
-            >
-              =
-            </Text>
-            <Text
-              style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
-            >
-              17,29 €
-            </Text>
-          </View>
+          {ub.coldWaterItems.map((item, i) => (
+            <View key={i} style={styles.tableRow}>
+              <Text style={[styles.tableCell, styles.bold, { width: "25%" }]}>
+                {item.label}
+              </Text>
+              <Text
+                style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
+              >
+                {item.volumeFormatted} {item.unit}
+              </Text>
+              <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
+              <Text
+                style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
+              >
+                {item.rateFormatted} {item.rateUnit}
+              </Text>
+              <Text
+                style={[styles.tableCell, { width: "5%", textAlign: "right" }]}
+              >
+                =
+              </Text>
+              <Text
+                style={[styles.tableCell, { width: "15%", textAlign: "right" }]}
+              >
+                {item.costFormatted}
+              </Text>
+            </View>
+          ))}
           <View style={[styles.sumRow, { marginTop: 4 }]}>
             <Text style={{ flex: 1 }}>Summe Kosten für Kaltwasser</Text>
-            <Text style={{ textAlign: "right" }}>1.233,41 €</Text>
+            <Text style={{ textAlign: "right" }}>{ub.coldWaterTotalFormatted}</Text>
           </View>
         </View>
 
-        {/* Total Amount */}
         <View style={styles.totalAmountBox}>
           <Text style={styles.totalAmountText}>Gesamtbetrag</Text>
-          <Text style={styles.totalAmountValue}>1.429,55 €</Text>
+          <Text style={styles.totalAmountValue}>{ub.grandTotalFormatted}</Text>
         </View>
       </View>
 
-      {/* State Relief */}
-      <View style={styles.reliefBox}>
-        <View style={styles.reliefGrid}>
-          <Text style={{ flex: 4, color: "white", fontWeight: "bold" }}>
-            Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)
-          </Text>
-          <Text style={{ flex: 1, color: "white" }}>Betrag</Text>
-          <Text style={{ flex: 1, textAlign: "right", color: "white" }}>
-            Ihr Anteil
-          </Text>
+      {ub.stateRelief && (
+        <View style={styles.reliefBox}>
+          <View style={styles.reliefGrid}>
+            <Text style={{ flex: 4, color: "white", fontWeight: "bold" }}>
+              Enthaltene staatliche Entlastungen (u. a. EWSG, EWPBG, StromPBG)
+            </Text>
+            <Text style={{ flex: 1, color: "white" }}>Betrag</Text>
+            <Text style={{ flex: 1, textAlign: "right", color: "white" }}>
+              Ihr Anteil
+            </Text>
+          </View>
+          <View style={styles.reliefDivider} />
+          <View style={styles.reliefGrid}>
+            <Text style={{ flex: 4, color: "white" }}>{ub.stateRelief.label}</Text>
+            <Text style={{ flex: 1, color: "white" }}>
+              {ub.stateRelief.buildingTotalFormatted}
+            </Text>
+            <Text style={{ flex: 1, textAlign: "right", color: "white" }}>
+              {ub.stateRelief.unitShareFormatted}
+            </Text>
+          </View>
         </View>
-        <View style={styles.reliefDivider} />
-        <View style={styles.reliefGrid}>
-          <Text style={{ flex: 4, color: "white" }}>Preisbremse Energie</Text>
-          <Text style={{ flex: 1, color: "white" }}>21.035,94 €</Text>
-          <Text style={{ flex: 1, textAlign: "right", color: "white" }}>
-            209,21 €
-          </Text>
-        </View>
-      </View>
+      )}
 
-      {/* Consumption Values */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ihre Verbrauchswerte</Text>
 
-        {/* Heating in MWh */}
         <Text style={styles.costTableTitle}>Heizung in MWh</Text>
         <View style={styles.consumptionTable}>
           <View style={styles.consumptionThead}>
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
               RAUMBEZEICHNUNG
             </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>
-              GERÄTENUMMER
-            </Text>
+            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>FAKTOR</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Flur</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                6EFE0121755587
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Wärmezähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {ub.heatingDevices.map((device, i) => (
+              <View key={i} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.location}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {device.deviceNumber}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.deviceType}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.startReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.endReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.consumptionFormatted}
+                </Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 8 }}>Summe Heizung</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
-              <Text style={{ flex: 1 }}></Text>
+              <Text style={{ flex: 5 }}>Summe Heizung</Text>
+              <Text style={{ flex: 1 }}>{ub.heatingDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>
 
-        {/* Hot water in m³ */}
         <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
           Warmwasser in m³
         </Text>
@@ -633,54 +539,42 @@ export default function HeatingBillPreviewFourPDF({
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
               RAUMBEZEICHNUNG
             </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>
-              GERÄTENUMMER
-            </Text>
+            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>FAKTOR</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                9DWZ0122156287
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Warmwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                9DWZ0122156287
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Warmwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {ub.warmWaterDevices.map((device, i) => (
+              <View key={i} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.location}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {device.deviceNumber}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.deviceType}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.startReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.endReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.consumptionFormatted}
+                </Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 8 }}>Summe Warmwasser</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
-              <Text style={{ flex: 1 }}></Text>
+              <Text style={{ flex: 5 }}>Summe Warmwasser</Text>
+              <Text style={{ flex: 1 }}>{ub.warmWaterDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>
 
-        {/* Cold water in m³ */}
         <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
           Kaltwasser in m³
         </Text>
@@ -689,55 +583,43 @@ export default function HeatingBillPreviewFourPDF({
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
               RAUMBEZEICHNUNG
             </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>
-              GERÄTENUMMER
-            </Text>
+            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
             <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>FAKTOR</Text>
             <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>BEMERKUNG</Text>
           </View>
           <View style={styles.consumptionTbody}>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                8DWZ0122033399
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Kaltwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
-            <View style={styles.consumptionTr}>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>Bad</Text>
-              <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                8DWZ0122033399
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                Kaltwasserzähler
-              </Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>1,918</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>8,916</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}>7,000</Text>
-              <Text style={[styles.consumptionTd, { flex: 1 }]}></Text>
-            </View>
+            {ub.coldWaterDevices.map((device, i) => (
+              <View key={i} style={styles.consumptionTr}>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.location}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                  {device.deviceNumber}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                  {device.deviceType}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.startReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.endReadingFormatted}
+                </Text>
+                <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                  {device.consumptionFormatted}
+                </Text>
+              </View>
+            ))}
             <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 8 }}>Summe Kaltwasser</Text>
-              <Text style={{ flex: 1 }}>7,000</Text>
-              <Text style={{ flex: 1 }}></Text>
+              <Text style={{ flex: 5 }}>Summe Kaltwasser</Text>
+              <Text style={{ flex: 1 }}>{ub.coldWaterDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>
       </View>
 
-      {/* Footer */}
       <View style={styles.footer}>
         <Text>
           Detaillierte Berechnung und Verteilung auf alle Nutzeinheiten des

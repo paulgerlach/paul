@@ -1,8 +1,5 @@
-"use client";
-
-import { Page, Text, View, StyleSheet, Image, Link } from "@react-pdf/renderer";
-import type { HeatingBillPreviewData } from "../HeatingBillPreview/HeatingBillPreview";
-import { formatDateGerman } from "@/utils";
+import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import type { HeatingBillPdfModel } from "@/lib/heating-bill/types";
 
 const colors = {
   accent: "#DDE9E0",
@@ -21,7 +18,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: colors.text,
   },
-  // Header
   headerBox: {
     backgroundColor: colors.accent,
     borderRadius: 12,
@@ -33,19 +29,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
-  pageNumber: {
-    fontSize: 8,
-    color: colors.text,
-  },
-  logo: {
-    width: 80,
-    height: 20,
-  },
-  paragraph: {
-    fontSize: 8,
-    marginBottom: 12,
-    color: colors.text,
-  },
+  pageNumber: { fontSize: 8, color: colors.text },
+  logo: { width: 80, height: 20 },
+  paragraph: { fontSize: 8, marginBottom: 12, color: colors.text },
   sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
@@ -55,15 +41,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  subTitle: {
-    fontWeight: "bold",
-    color: colors.dark,
-    marginBottom: 4,
-  },
-  table: {
-    width: "100%",
-    fontSize: 8,
-  },
+  subTitle: { fontWeight: "bold", color: colors.dark, marginBottom: 4 },
+  table: { width: "100%", fontSize: 8 },
   tableHeader: {
     flexDirection: "row",
     fontWeight: "bold",
@@ -76,13 +55,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accent,
     flex: 1,
   },
-  tableRow: {
-    flexDirection: "row",
-  },
-  tableCell: {
-    padding: 4,
-    flex: 1,
-  },
+  tableRow: { flexDirection: "row" },
+  tableCell: { padding: 4, flex: 1 },
   summaryRow: {
     flexDirection: "row",
     fontWeight: "bold",
@@ -91,19 +65,9 @@ const styles = StyleSheet.create({
     borderColor: colors.dark,
     borderRadius: 12,
   },
-  classificationTable: {
-    width: "100%",
-    fontSize: 8,
-    marginBottom: 8,
-  },
-  classificationRow: {
-    flexDirection: "row",
-  },
-  classificationCell: {
-    paddingVertical: 4,
-    paddingHorizontal: 2,
-    flex: 1,
-  },
+  classificationTable: { width: "100%", fontSize: 8, marginBottom: 8 },
+  classificationRow: { flexDirection: "row" },
+  classificationCell: { paddingVertical: 4, paddingHorizontal: 2, flex: 1 },
   classificationSummaryRow: {
     flexDirection: "row",
     fontWeight: "bold",
@@ -113,126 +77,34 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 4,
   },
-  levelsTable: {
-    width: "100%",
-    fontSize: 8,
-  },
+  levelsTable: { width: "100%", fontSize: 8 },
   levelsHeader: {
     flexDirection: "row",
     fontWeight: "bold",
     color: colors.dark,
     backgroundColor: colors.accent,
   },
-  levelsHeaderCell: {
-    padding: 4,
-    textAlign: "left",
-  },
-  levelsRow: {
-    flexDirection: "row",
-  },
-  levelsCell: {
-    padding: 4,
-  },
-  highlightedRow: {
-    backgroundColor: colors.accent2,
-    color: "white",
-  },
-  qrCode: {
-    width: 40,
-    height: 40,
-  },
-  link: {
-    color: colors.link,
-    textDecoration: "none",
-  },
+  levelsHeaderCell: { padding: 4, textAlign: "left" },
+  levelsRow: { flexDirection: "row" },
+  levelsCell: { padding: 4 },
+  highlightedRow: { backgroundColor: colors.accent2, color: "white" },
+  qrCode: { width: 40, height: 40 },
+  link: { color: colors.link, textDecoration: "none" },
 });
 
-const classificationData = [
-  {
-    bis: "",
-    range: "< 12",
-    co: "kg CO₂/m²/a",
-    mieter: "100 %",
-    vermieter: "0 %",
-  },
-  {
-    bis: "12 bis",
-    range: "< 17",
-    co: "kg CO₂/m²/a",
-    mieter: "90 %",
-    vermieter: "10 %",
-    highlight: true,
-  },
-  {
-    bis: "17 bis",
-    range: "< 22",
-    co: "kg CO₂/m²/a",
-    mieter: "80 %",
-    vermieter: "20 %",
-  },
-  {
-    bis: "22 bis",
-    range: "< 27",
-    co: "kg CO₂/m²/a",
-    mieter: "70 %",
-    vermieter: "30 %",
-  },
-  {
-    bis: "27 bis",
-    range: "< 32",
-    co: "kg CO₂/m²/a",
-    mieter: "60 %",
-    vermieter: "40 %",
-  },
-  {
-    bis: "32 bis",
-    range: "< 37",
-    co: "kg CO₂/m²/a",
-    mieter: "50 %",
-    vermieter: "50 %",
-  },
-  {
-    bis: "37 bis",
-    range: "< 42",
-    co: "kg CO₂/m²/a",
-    mieter: "40 %",
-    vermieter: "60 %",
-  },
-  {
-    bis: "42 bis",
-    range: "< 47",
-    co: "kg CO₂/m²/a",
-    mieter: "30 %",
-    vermieter: "70 %",
-  },
-  {
-    bis: "47 bis",
-    range: "< 52",
-    co: "kg CO₂/m²/a",
-    mieter: "20 %",
-    vermieter: "80 %",
-  },
-  {
-    bis: "",
-    range: ">= 52",
-    co: "kg CO₂/m²/a",
-    mieter: "5 %",
-    vermieter: "95 %",
-  },
-];
-
 export default function HeatingBillPreviewFivePDF({
-  previewData,
+  co2,
+  cover,
 }: {
-  previewData: HeatingBillPreviewData;
+  co2: HeatingBillPdfModel["co2"];
+  cover: HeatingBillPdfModel["cover"];
 }) {
   return (
     <Page size="A4" style={styles.page}>
-      {/* Header */}
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            5/6 {previewData.propertyNumber}/{previewData.heidiCustomerNumber}
+            5/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src="/admin_logo.png" />
         </View>
@@ -246,79 +118,47 @@ export default function HeatingBillPreviewFivePDF({
         der CO2-Kosten zwischen Mieter und Vermieter.
       </Text>
 
-      {/* Title */}
       <Text style={styles.sectionTitle}>CO2-Kostenaufteilung</Text>
       <Text style={styles.subTitle}>Energieart: Nah-/Fernwärme</Text>
 
-      {/* CO2 Costs of the Property */}
       <View style={[styles.table, { marginBottom: 24 }]}>
         <View style={styles.tableHeader}>
-          <Text
-            style={[
-              styles.tableHeaderCell,
-              { borderTopLeftRadius: 12, flex: 2 },
-            ]}
-          >
-            POSITION
-          </Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>POSITION</Text>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>DATUM</Text>
-          <Text
-            style={[styles.tableHeaderCell, { textAlign: "right", flex: 2 }]}
-          >
+          <Text style={[styles.tableHeaderCell, { flex: 2, textAlign: "right" }]}>
             Menge in kWh
           </Text>
-          <Text
-            style={[styles.tableHeaderCell, { textAlign: "right", flex: 3 }]}
-          >
+          <Text style={[styles.tableHeaderCell, { flex: 3, textAlign: "right" }]}>
             CO2-Emissionen in kg
           </Text>
-          <Text
-            style={[
-              styles.tableHeaderCell,
-              { textAlign: "right", borderTopRightRadius: 12, flex: 3 },
-            ]}
-          >
+          <Text style={[styles.tableHeaderCell, { flex: 3, textAlign: "right" }]}>
             CO2-Kosten in EUR
           </Text>
         </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableCell, { flex: 2 }]}>Bezug</Text>
-          <Text style={[styles.tableCell, { flex: 2 }]}>
-            {formatDateGerman(previewData.mainDocDates.created_at)}
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            761.123
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 3 }]}>
-            159.911,9
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 3 }]}>
-            14.318,13
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableCell, { flex: 2 }]}>Summe Verbrauch</Text>
-          <Text style={[styles.tableCell, { flex: 2 }]}></Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            761.123
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 3 }]}>
-            159.911,9
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 3 }]}>
-            14.318,13
-          </Text>
-        </View>
+        {co2.energyRows.map((row, i) => (
+          <View key={i} style={styles.tableRow}>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{row.label}</Text>
+            <Text style={[styles.tableCell, { flex: 2 }]}>{row.date}</Text>
+            <Text style={[styles.tableCell, { flex: 2, textAlign: "right" }]}>
+              {row.kWhFormatted}
+            </Text>
+            <Text style={[styles.tableCell, { flex: 3, textAlign: "right" }]}>
+              {row.co2KgFormatted}
+            </Text>
+            <Text style={[styles.tableCell, { flex: 3, textAlign: "right" }]}>
+              {row.costFormatted}
+            </Text>
+          </View>
+        ))}
         <View style={styles.summaryRow}>
           <Text style={[styles.tableCell, { flex: 2 }]}>Gesamt</Text>
           <Text style={[styles.tableCell, { flex: 2 }]}></Text>
-          <Text style={[styles.tableCell, { flex: 2 }]}>761.123</Text>
-          <Text style={[styles.tableCell, { flex: 3 }]}>159.911,9</Text>
-          <Text style={[styles.tableCell, { flex: 3 }]}>14.318,13</Text>
+          <Text style={[styles.tableCell, { flex: 2 }]}>{co2.totalKwhFormatted}</Text>
+          <Text style={[styles.tableCell, { flex: 3 }]}>{co2.totalCo2KgFormatted}</Text>
+          <Text style={[styles.tableCell, { flex: 3 }]}>{co2.totalCostFormatted}</Text>
         </View>
       </View>
 
-      {/* Classification of the Property */}
       <Text style={styles.sectionTitle}>
         Einstufung der Liegenschaft gemäß CO2KostAufG (Wohngebäude)
       </Text>
@@ -328,13 +168,13 @@ export default function HeatingBillPreviewFivePDF({
             CO2-Emissionen der Liegenschaft
           </Text>
           <Text style={[styles.classificationCell, { textAlign: "right" }]}>
-            159.912 kg CO2
+            {co2.totalCo2KgFormatted} kg CO2
           </Text>
           <Text style={[styles.classificationCell, { paddingLeft: 16 }]}>
             CO2-Kosten der Liegenschaft
           </Text>
           <Text style={[styles.classificationCell, { textAlign: "right" }]}>
-            14.318,13 €
+            {co2.totalCostFormatted}
           </Text>
         </View>
         <View style={styles.classificationRow}>
@@ -342,28 +182,25 @@ export default function HeatingBillPreviewFivePDF({
             Gesamtwohnfläche der Liegenschaft
           </Text>
           <Text style={[styles.classificationCell, { textAlign: "right" }]}>
-            11.196,4 m²
+            {co2.totalLivingSpaceM2Formatted} m²
           </Text>
           <Text style={[styles.classificationCell, { paddingLeft: 16 }]}>
             CO2-Emissionsfaktor
           </Text>
           <Text style={[styles.classificationCell, { textAlign: "right" }]}>
-            0,210 kg CO2/kWh
+            {co2.emissionFactorFormatted} kg CO2/kWh
           </Text>
         </View>
         <View style={styles.classificationSummaryRow}>
           <Text style={{ flex: 3 }}>CO²-Emission pro m² Wohnfläche</Text>
-          <Text style={{ flex: 1, textAlign: "right" }}>14,3 kg CO2/m²/a</Text>
+          <Text style={{ flex: 1, textAlign: "right" }}>
+            {co2.emissionPerM2Formatted} kg CO2/m²/a
+          </Text>
         </View>
       </View>
 
       <View style={[styles.levelsTable, { marginBottom: 24 }]}>
-        <View
-          style={[
-            styles.levelsHeader,
-            { borderTopLeftRadius: 12, borderTopRightRadius: 12 },
-          ]}
-        >
+        <View style={styles.levelsHeader}>
           <Text style={[styles.levelsHeaderCell, { flex: 6 }]}>
             CO2-Emission pro m² Wohnfläche und Jahr
           </Text>
@@ -374,158 +211,60 @@ export default function HeatingBillPreviewFivePDF({
             Anteil Vermieter
           </Text>
         </View>
-        {classificationData.map((item, index) => (
+        {co2.classificationTable.map((item, index) => (
           <View
             key={index}
             style={[
               styles.levelsRow,
-              item.highlight ? styles.highlightedRow : {},
-              item.highlight ? { borderRadius: 12 } : {},
-            ].filter(Boolean)}
+              item.isHighlighted ? styles.highlightedRow : {},
+            ]}
           >
-            <Text
-              style={[
-                styles.levelsCell,
-                { flex: 1.5, color: item.highlight ? "white" : colors.text },
-              ]}
-            >
-              {item.bis}
+            <Text style={[styles.levelsCell, { flex: 6 }]}>{item.rangeLabel}</Text>
+            <Text style={[styles.levelsCell, { flex: 2 }]}>
+              {item.tenantPercent} %
             </Text>
-            <Text
-              style={[
-                styles.levelsCell,
-                { flex: 1.5, color: item.highlight ? "white" : colors.text },
-              ]}
-            >
-              {item.range}
-            </Text>
-            <Text
-              style={[
-                styles.levelsCell,
-                { flex: 3, color: item.highlight ? "white" : colors.text },
-              ]}
-            >
-              {item.co}
-            </Text>
-            <Text
-              style={[
-                styles.levelsCell,
-                { flex: 2, color: item.highlight ? "white" : colors.text },
-              ]}
-            >
-              {item.mieter}
-            </Text>
-            <Text
-              style={[
-                styles.levelsCell,
-                { flex: 2, color: item.highlight ? "white" : colors.text },
-              ]}
-            >
-              {item.vermieter}
+            <Text style={[styles.levelsCell, { flex: 2 }]}>
+              {item.landlordPercent} %
             </Text>
           </View>
         ))}
       </View>
 
-      {/* CO2 Cost Allocation for Your Unit */}
-      <Text style={styles.sectionTitle}>
-        CO2-Kostenaufteilung für Ihre Nutzeinheit
-      </Text>
-      <View style={[styles.table, { marginBottom: 24 }]}>
-        <View style={styles.tableHeader}>
-          <Text
-            style={[
-              styles.tableHeaderCell,
-              { borderTopLeftRadius: 12, flex: 3 },
-            ]}
-          >
-            Aufteilung der CO2-Kosten
-          </Text>
-          <Text
-            style={[styles.tableHeaderCell, { textAlign: "right", flex: 2 }]}
-          >
-            Anteil Mieter
-          </Text>
-          <Text
-            style={[styles.tableHeaderCell, { textAlign: "right", flex: 2 }]}
-          >
-            Anteil Vermieter
-          </Text>
-          <Text
-            style={[
-              styles.tableHeaderCell,
-              { textAlign: "right", borderTopRightRadius: 12, flex: 2 },
-            ]}
-          >
-            Summe
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableCell, { flex: 3 }]}>
-            gemäß Einstufung (jeweils)
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            90 %
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            10 %
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            100 %
-          </Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={[styles.tableCell, { flex: 3 }]}>
-            für die Liegenschaft
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            12.886,32 €
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            1.431,81 €
-          </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            14.318,13 €
-          </Text>
-        </View>
+      <View style={styles.table}>
         <View style={styles.summaryRow}>
-          <Text style={[styles.tableCell, { flex: 3 }]}>
-            für Ihre Nutzeinheit (anteilig)
+          <Text style={[styles.tableCell, { flex: 2 }]}>
+            Gesamt CO2-Kosten der Liegenschaft
           </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            126,60 €
+          <Text style={[styles.tableCell, { flex: 1 }]}>
+            {co2.buildingTotalCostFormatted}
           </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            14,08 €
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={[styles.tableCell, { flex: 2 }]}>
+            Ihr Anteil ({co2.selectedTierTenantPercent} %)
           </Text>
-          <Text style={[styles.tableCell, { textAlign: "right", flex: 2 }]}>
-            140,68 €
+          <Text style={[styles.tableCell, { flex: 1 }]}>
+            {co2.unitTenantCostFormatted}
+          </Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={[styles.tableCell, { flex: 2 }]}>
+            Anteil Vermieter ({co2.selectedTierLandlordPercent} %)
+          </Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>
+            {co2.unitLandlordCostFormatted}
+          </Text>
+          <Text style={[styles.tableCell, { flex: 1 }]}>
+            {co2.unitTotalCostFormatted}
           </Text>
         </View>
       </View>
 
-      <Text style={[styles.paragraph, { marginBottom: 24 }]}>
-        Der Abzug des Vermieteranteils an den CO2-Kosten wurde in der
-        Heizkostenabrechnung noch nicht berücksichtigt.
-        {"\n"}
-        Im Falle einer Vermietung dieser Nutzeinheit ist gemäß CO2KostAufG noch
-        die Kostenübernahme durch den Vermieter in Höhe von 14,08 € zu leisten.
-      </Text>
-
-      {/* Further Information */}
-      <Text style={styles.sectionTitle}>
-        Weitere Informationen und Informationsquellen
-      </Text>
-      <View style={{ flexDirection: "row", gap: 40, alignItems: "center" }}>
-        <Image
-          style={styles.qrCode}
-          src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303"
-        />
-        <Text style={{ fontSize: 9 }}>
-          Informationen rund um das Thema CO2-Kostenaufteilung finden Sie unter{" "}
-          <Link src="www.heidisystems.de/co2" style={styles.link}>
-            www.heidisystems.de/co2.
-          </Link>
+      <View style={{ flexDirection: "row", gap: 16, alignItems: "flex-start", marginTop: 16 }}>
+        <Image style={styles.qrCode} src={co2.qrCodeUrl} />
+        <Text style={{ flex: 1 }}>
+          Weitere Informationen unter{" "}
+          <Text style={styles.link}>{co2.infoLink}</Text>
         </Text>
       </View>
     </Page>

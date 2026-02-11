@@ -212,6 +212,13 @@ export const formatEuro = (value: number) =>
     currency: "EUR",
   }).format(value);
 
+/** German number formatting without currency. Used for rates, kWh, m³, etc. */
+export const formatGermanNumber = (value: number, decimals = 2) =>
+  new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+
 export const formatDateGerman = (dateStr?: string | null) => {
   if (!dateStr) return "";
   const date = new Date(dateStr);

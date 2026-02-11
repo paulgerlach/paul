@@ -5,11 +5,13 @@ import { pdf } from "@react-pdf/renderer";
 import { doc_download } from "@/static/icons";
 import HeidiSystemsPdf from "./HeidiSystemsPdf";
 import { type HeatingBillPreviewProps } from "../HeatingBillPreview/HeatingBillPreview";
+import { previewPropsToModel } from "@/lib/heating-bill/preview-props-to-model";
 
 export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
   const handleDownload = async () => {
     try {
-      const blob = await pdf(<HeidiSystemsPdf {...props} />).toBlob();
+      const model = previewPropsToModel(props);
+      const blob = await pdf(<HeidiSystemsPdf model={model} />).toBlob();
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");

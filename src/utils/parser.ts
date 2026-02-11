@@ -321,7 +321,7 @@ export function parseCsv(csvText: string): ParseResult {
             pushError(line, "Missing Manufacturer", row, COLUMNS.MANU);
         } else {
             // Validate known manufacturers
-            const validManufacturers = ["EFE", "DWZ", "QDS", "MWU"];
+            const validManufacturers = ["EFE", "DWZ", "QDS", "MWU", "HAG", "EBZ"];
             if (!validManufacturers.includes(base[COLUMNS.MANU] as string)) {
                 pushError(line, `Unknown Manufacturer: ${base[COLUMNS.MANU]} (known: ${validManufacturers.join(", ")})`, row, COLUMNS.MANU);
             }
@@ -610,19 +610,27 @@ export function getHistoricalValues(
 ): { month: number; value: number }[] {
     const values: { month: number; value: number }[] = [];
 
-    for (let i = 0; i <= 31; i++) {
-        const key = `IV,${i},0,0,${valueType}` as keyof MeterReadingType;
-        const value = reading[key];
-
-        if (typeof value === "number") {
-            // For HCA, index represents the actual month
-            // For others, use i/2 for backwards compatibility
-            const monthIndex = valueType === ",Units HCA" ? i : i / 2;
-            values.push({ month: monthIndex, value });
+    if (valueType === ",Units HCA") {
+        // HCA uses all indices 0-31
+        for (let i = 0; i <= 31; i++) {
+            const key = `IV,${i},0,0,${valueType}` as keyof MeterReadingType;
+            const value = reading[key];
+            if (typeof value === "number") {
+                values.push({ month: i, value });
+            }
+        }
+    } else {
+        // Heat/Water use even indices only (0, 2, 4, ... 30)
+        for (let i = 0; i <= 30; i += 2) {
+            const key = `IV,${i},0,0,${valueType}` as keyof MeterReadingType;
+            const value = reading[key];
+            if (typeof value === "number") {
+                values.push({ month: i / 2, value });
+            }
         }
     }
 
-    return values.reverse(); // Most recent first
+    return values.reverse();
 }
 
 // Utility function to detect data anomalies

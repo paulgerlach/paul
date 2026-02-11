@@ -257,9 +257,9 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       };
     }) as MeterReadingType[];
 
-    // Filter by device types (Heat, Water, WWater, Elec) and ensure DateTime exists
+    // Filter by device types (Heat, Water, WWater, Elec, HCA) and ensure DateTime exists
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
+    const validDeviceTypes = ["Heat", "Water", "WWater", "HCA", "Gateway", "SmokeDetector", "Elec"];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
       (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
@@ -270,6 +270,7 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
     const coldwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'Water');
     const hotwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'WWater');
     const electricityMetersReadings = filteredData.filter(dt => dt['Device Type'] === 'Elec');
+    const hcaReadings = filteredData.filter(dt => dt['Device Type'] === 'HCA');
 
     // Combine all readings for charts (only those with valid DateTime)
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
@@ -277,7 +278,8 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       ...heatMetersReadings,
       ...coldwaterReadings,
       ...hotwaterReadings,
-      ...electricityMetersReadings
+      ...electricityMetersReadings,
+      ...hcaReadings
     ].filter(item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]);
 
     // Check if all items have DateTime (either old or new format)

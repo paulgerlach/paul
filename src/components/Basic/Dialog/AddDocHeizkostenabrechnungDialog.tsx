@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
-import { buildLocalName } from "@/utils";
+import { buildLocalName, isFuelCostType } from "@/utils";
 import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
@@ -80,9 +80,23 @@ export default function AddDocHeizkostenabrechnungDialog() {
   const forAllTenants = methods.watch("for_all_tenants");
 
   const servicePeriod = methods.watch("service_period");
+  const isFuelCost = isFuelCostType(activeCostType);
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
     if (!activeCostType) return;
+
+    if (isFuelCostType(activeCostType)) {
+      if (!data.notes || String(data.notes).trim() === "") {
+        methods.setError("notes", { message: "Pflichtfeld" });
+        return;
+      }
+      // Validate against the same regex pattern as the database constraint: positive numbers and decimals only
+      const notesString = String(data.notes).trim();
+      if (!/^\d+(\.\d+)?$/.test(notesString)) {
+        methods.setError("notes", { message: "Nur positive Zahlen erlaubt" });
+        return;
+      }
+    }
 
     const { document, ...rest } = data;
     const formattedPayload = {
@@ -216,8 +230,9 @@ export default function AddDocHeizkostenabrechnungDialog() {
           <FormInputField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
+            label={isFuelCost ? "Menge in kWh *" : "Anmerkungen"}
             placeholder=""
+            type={isFuelCost ? "number" : undefined}
           />
           <FormDocument<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}

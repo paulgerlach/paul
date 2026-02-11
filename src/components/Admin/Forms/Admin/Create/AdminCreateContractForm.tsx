@@ -30,7 +30,9 @@ const contractSchema = z.object({
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
     })
-    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" }),
+    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" })
+    .optional()
+    .nullable(),
   contractors: z
     .array(
       z.object({
@@ -72,12 +74,12 @@ export type CreateContractFormValues = z.infer<typeof contractSchema>;
 const defaultValues: CreateContractFormValues = {
   is_current: false,
   rental_start_date: new Date(),
-  rental_end_date: new Date(),
+  rental_end_date: null,
   contractors: [
     {
       first_name: "",
       last_name: "",
-      birth_date: new Date(),
+      birth_date: null,
       email: "",
       phone: "",
     },
@@ -104,6 +106,7 @@ export default function AdminCreateContractForm({
     defaultValues,
   });
   const { addContractor } = useContractorActions(methods);
+
 
   const watchContractors = methods.watch("contractors");
 
@@ -156,6 +159,10 @@ export default function AdminCreateContractForm({
                 control={methods.control}
                 label="Mietende"
                 name="rental_end_date"
+                placeholder="Unbefristet"
+                showClearButton={true}
+                clearLabel="Unbefristet"
+                onClear={() => methods.setValue("is_current", true)}
               />
             </div>
           </div>

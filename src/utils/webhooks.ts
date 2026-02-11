@@ -12,7 +12,7 @@ const MAKE_WEBHOOK_LEAK = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
 const MAKE_WEBHOOK_TENANT_INVITE = process.env.MAKE_WEBHOOK_TENANT_INVITE;
 const MAKE_WEBHOOK_PASSWORD_RESET = process.env.MAKE_WEBHOOK_PASSWORD_RESET;
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected' | 'invitation';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -22,6 +22,14 @@ interface WebhookPayload {
   [key: string]: any; // Additional data for complex events
 }
 
+export interface InvitationData {
+  inviter_name: string;
+  agency_name?: string;
+  role: string;
+  invitation_token: string;
+  expires_at: string;
+  invite_url: string; // Constructed frontend URL
+}
 /**
  * Route event to the correct Make.com webhook URL
  */
@@ -117,6 +125,21 @@ export async function sendOfferInquiryEvent(
 ): Promise<void> {
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
+
+export async function sendInvitationEvent(
+  email: string,
+  invitationData: InvitationData
+): Promise<void> {
+  await sendWebhookEvent('invitation', email, {
+    inviter_name: invitationData.inviter_name,
+    agency_name: invitationData.agency_name,
+    role: invitationData.role,
+    invitation_token: invitationData.invitation_token,
+    expires_at: invitationData.expires_at,
+    invite_url: `${process.env.NEXT_PUBLIC_APP_URL}/invitation/accept?token=${invitationData.invitation_token}`
+  });
+}
+
 
 /**
  * Send leak detected event

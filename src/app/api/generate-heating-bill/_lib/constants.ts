@@ -17,13 +17,7 @@ export const ENERGY_COST_TYPES = [
   "metering_device_rental", // Miete der Messgeräte
 ] as const;
 
-// Heating operating costs -- now empty, all moved to ENERGY_COST_TYPES
-export const HEATING_OPERATING_TYPES = [] as const;
-
-// Distribution/metering costs -- now empty, all moved to ENERGY_COST_TYPES
-export const DISTRIBUTION_COST_TYPES = [] as const;
-
-// Cold water costs -- Page 3 (all go to coldWaterInvoices for rate breakdown)
+// Cold water costs -- feed coldWaterInvoices (Page 3 rate breakdown) and distributionCostItems (Page 2)
 export const COLD_WATER_COST_TYPES = [
   "cold_water",
   "cold_water_device_rental",

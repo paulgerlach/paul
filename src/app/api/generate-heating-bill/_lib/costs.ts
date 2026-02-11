@@ -6,8 +6,6 @@ import type { HeatingInvoiceType } from "@/types";
 import {
   ENERGY_COST_TYPES,
   FUEL_COST_TYPES,
-  HEATING_OPERATING_TYPES,
-  DISTRIBUTION_COST_TYPES,
   COLD_WATER_COST_TYPES,
   IGNORED_COST_TYPES,
 } from "./constants";
@@ -164,20 +162,11 @@ export function aggregateInvoiceCosts(
       continue;
     }
 
-    if ((HEATING_OPERATING_TYPES as readonly string[]).includes(ct)) {
-      heatingCostItems.push({
-        label: inv.purpose || inv.document_name || ct,
-        date,
-        amount,
-        amountFormatted: formatEuro(amount),
-      });
-      heatingCostTotal += amount;
-      continue;
-    }
-
-    if ((DISTRIBUTION_COST_TYPES as readonly string[]).includes(ct)) {
+    if (COLD_WATER_COST_TYPES.includes(ct as any)) {
+      coldWaterInvoices.push(inv);
+      coldWaterTotal += amount;
       distributionCostItems.push({
-        label: inv.purpose || inv.document_name || ct,
+        label,
         amount,
         amountFormatted: formatEuro(amount),
       });
@@ -185,13 +174,7 @@ export function aggregateInvoiceCosts(
       continue;
     }
 
-    if (COLD_WATER_COST_TYPES.includes(ct as any)) {
-      coldWaterInvoices.push(inv);
-      coldWaterTotal += amount;
-      continue;
-    }
-
-    // Unknown type: place in heating operating as "Sonstige"
+    // Heat-related catch-all: unknown types go to "Weitere Heizungsbetriebskosten"
     heatingCostItems.push({
       label: inv.purpose || inv.document_name || ct || "Sonstige",
       date,

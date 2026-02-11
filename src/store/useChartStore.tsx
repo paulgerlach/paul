@@ -1,3 +1,4 @@
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -7,9 +8,11 @@ interface ChartState {
   setDates: (start: Date, end: Date) => void;
   meterIds: string[];
   setMeterIds: (id: string[]) => void;
-  chartHeights: Record<string, number>;
+  
 
-  setChartHeight: (key: string, height: number) => void;
+  chartSizes: Record<string, { height: number; width?: number }>;
+  setChartSize: (key: string, size: { width: number; height: number }) => void;
+
   isTableView: boolean;
   setIsTableView: (isTable: boolean) => void;
 }
@@ -33,13 +36,13 @@ export const useChartStore = create<ChartState>()(
       endDate: null,
       meterIds: [],
 
-      chartHeights: {},
+      chartSizes: {},
 
-      setChartHeight: (key, height) =>
+      setChartSize: (key, size) =>
         set((state) => ({
-          chartHeights: {
-            ...state.chartHeights,
-            [key]: height,
+          chartSizes: {
+            ...state.chartSizes,
+            [key]: size,
           },
         })),
 

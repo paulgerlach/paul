@@ -40,7 +40,7 @@ export default function FormSelectField<T extends FieldValues = FieldValues>({
             placeholder={placeholder}
             options={options}
           />
-          <FormMessage className="text-red-500 text-sm" />
+          <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
         </FormItem>
       )}
     />

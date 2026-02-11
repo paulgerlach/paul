@@ -9,8 +9,10 @@
 
 const MAKE_WEBHOOK_UNIFIED = process.env.MAKE_WEBHOOK_UNIFIED;
 const MAKE_WEBHOOK_LEAK = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
+const MAKE_WEBHOOK_TENANT_INVITE = process.env.MAKE_WEBHOOK_TENANT_INVITE;
+const MAKE_WEBHOOK_PASSWORD_RESET = process.env.MAKE_WEBHOOK_PASSWORD_RESET;
 
-type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected';
+type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected' | 'invitation';
 
 interface WebhookPayload {
   event_type: EventType;
@@ -20,6 +22,14 @@ interface WebhookPayload {
   [key: string]: any; // Additional data for complex events
 }
 
+export interface InvitationData {
+  inviter_name: string;
+  agency_name?: string;
+  role: string;
+  invitation_token: string;
+  expires_at: string;
+  invite_url: string; // Constructed frontend URL
+}
 /**
  * Route event to the correct Make.com webhook URL
  */
@@ -99,9 +109,11 @@ export async function sendNewsletterEvent(email: string, ipAddress?: string): Pr
 
 /**
  * Send password recovery event
+ * @param email - User email
+ * @param resetUrl - Optional reset URL for tenant password reset
  */
-export async function sendPasswordRecoveryEvent(email: string): Promise<void> {
-  await sendWebhookEvent('pwrecovery', email);
+export async function sendPasswordRecoveryEvent(email: string, resetUrl?: string): Promise<void> {
+  await sendWebhookEvent('pwrecovery', email, resetUrl ? { reset_url: resetUrl } : undefined);
 }
 
 /**
@@ -113,6 +125,21 @@ export async function sendOfferInquiryEvent(
 ): Promise<void> {
   await sendWebhookEvent('newinquiry', email, questionnaireData);
 }
+
+export async function sendInvitationEvent(
+  email: string,
+  invitationData: InvitationData
+): Promise<void> {
+  await sendWebhookEvent('invitation', email, {
+    inviter_name: invitationData.inviter_name,
+    agency_name: invitationData.agency_name,
+    role: invitationData.role,
+    invitation_token: invitationData.invitation_token,
+    expires_at: invitationData.expires_at,
+    invite_url: `${process.env.NEXT_PUBLIC_APP_URL}/invitation/accept?token=${invitationData.invitation_token}`
+  });
+}
+
 
 /**
  * Send leak detected event
@@ -140,4 +167,89 @@ export async function sendLeakDetectedEvent(
     apartment_info: apartmentInfo,
     severity: 'critical'
   });
+}
+
+// ============================================
+// TENANT LOGIN SYSTEM WEBHOOKS
+// ============================================
+
+/**
+ * Send tenant invite email via Make.com
+ * Triggered when landlord invites a tenant to access the dashboard
+ * 
+ * @param tenantMail - Tenant's email address
+ * @param tenantName - Tenant's full name
+ * @param setupURL - URL for tenant to set up their password
+ */
+export async function sendTenantInviteEmail(
+  tenantMail: string,
+  tenantName: string,
+  setupURL: string
+): Promise<void> {
+  if (!MAKE_WEBHOOK_TENANT_INVITE) {
+    console.warn('[WEBHOOK] MAKE_WEBHOOK_TENANT_INVITE not set. Skipping tenant invite email.');
+    return;
+  }
+
+  try {
+    console.log(`[WEBHOOK] Sending tenant invite email to ${tenantMail}`);
+
+    const response = await fetch(MAKE_WEBHOOK_TENANT_INVITE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tenantMail,
+        tenantName,
+        setupURL,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('[WEBHOOK] Failed to send tenant invite email:', response.statusText);
+    } else {
+      console.log('[WEBHOOK] Successfully sent tenant invite email');
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] Error sending tenant invite email:', error);
+    // Don't throw - webhook failures shouldn't break user flow
+  }
+}
+
+/**
+ * Send tenant password reset email via Make.com
+ * Triggered when tenant requests a password reset
+ * 
+ * @param tenantMail - Tenant's email address
+ * @param resetURL - URL for tenant to reset their password
+ */
+export async function sendTenantPasswordResetEmail(
+  tenantMail: string,
+  resetURL: string
+): Promise<void> {
+  if (!MAKE_WEBHOOK_PASSWORD_RESET) {
+    console.warn('[WEBHOOK] MAKE_WEBHOOK_PASSWORD_RESET not set. Skipping password reset email.');
+    return;
+  }
+
+  try {
+    console.log(`[WEBHOOK] Sending tenant password reset email to ${tenantMail}`);
+
+    const response = await fetch(MAKE_WEBHOOK_PASSWORD_RESET, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tenantMail,
+        resetURL,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('[WEBHOOK] Failed to send tenant password reset email:', response.statusText);
+    } else {
+      console.log('[WEBHOOK] Successfully sent tenant password reset email');
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] Error sending tenant password reset email:', error);
+    // Don't throw - webhook failures shouldn't break user flow
+  }
 }

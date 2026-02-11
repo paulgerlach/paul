@@ -161,19 +161,19 @@ export default function AdminCreateObjekteUnitForm({
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
   const usage_type = methods.watch("usage_type");
-  
+
   // Check if current type is non-residential
   const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
-  
+
   // Build display name based on usage type
   const displayName = isNonResidential
     ? usageTypeToName[usage_type] || usage_type
     : buildLocalName({
-        floor: floor ?? undefined,
-        house_location: house_location ?? undefined,
-        residential_area: residential_area ?? undefined,
-        living_space: String(living_space ?? 0),
-      });
+      floor: floor ?? undefined,
+      house_location: house_location ?? undefined,
+      residential_area: residential_area ?? undefined,
+      living_space: String(living_space ?? 0),
+    });
 
   return (
     <Form {...methods}>
@@ -247,6 +247,7 @@ export default function AdminCreateObjekteUnitForm({
               name="living_space"
               label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
               placeholder="Quadratmeter"
+              replaceDotWithComma
             />
             {/* Empty div to align grid when only 5 items */}
             <div className="hidden max-medium:hidden" />
@@ -260,6 +261,7 @@ export default function AdminCreateObjekteUnitForm({
               label="Zimmeranzahl"
               placeholder="Anzahl der Zimmer"
               name="rooms"
+              replaceDotWithComma
             />
             <FormSelectField<CreateObjekteUnitFormValues>
               control={methods.control}
@@ -273,6 +275,7 @@ export default function AdminCreateObjekteUnitForm({
               label="Fläche Außenbereich"
               placeholder="Quadratmeter"
               name="outdoor_area"
+              replaceDotWithComma
             />
           </div>
           <FormRoundedCheckbox<CreateObjekteUnitFormValues>
@@ -288,25 +291,13 @@ export default function AdminCreateObjekteUnitForm({
           <h2 className="text-sm font-bold">
             Verwaltungstechnische Informationen
           </h2>
-          <FormField
+          <FormInputField<CreateObjekteUnitFormValues>
             control={methods.control}
             name="house_fee"
-            render={({ field }) => (
-              <FormItem className="relative">
-                <FormLabel className="text-[#757575] text-sm">
-                  Hausgeld
-                </FormLabel>
-                <div className="relative">
-                  <FormControl>
-                    <Input {...field} value={field.value ?? ""} />
-                  </FormControl>
-                  <span className="absolute text-sm text-dark_green right-7 bottom-3">
-                    €
-                  </span>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Hausgeld"
+            placeholder="Euro"
+            replaceDotWithComma
+            unit="€"
           />
         </div>
         <FormMetersField control={methods.control} />

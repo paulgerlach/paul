@@ -1,25 +1,95 @@
-'use client'
+'use client';
 
-// --- 3. Team & Rolle Form ---
-// TODO(form): UI-only form. Submission + validation pending.
-export default function TeamMemberRow({ inputStyle, labelStyle }: { inputStyle: string, labelStyle: string }) {
-  const selectTriggerStyle = `${inputStyle} flex items-center justify-between text-gray-400 cursor-pointer hover:bg-gray-50`;
+import { useState } from 'react';
+import { TeamMember, Role } from './index';
+
+interface TeamMemberRowProps {
+  member: TeamMember;
+  index: number;
+  inputStyle: string;
+  labelStyle: string;
+  roles: Role[];
+  onUpdate: (field: keyof TeamMember, value: string) => void;
+  onRemove: () => void;
+  canRemove: boolean;
+}
+
+export default function TeamMemberRow({ 
+  member, 
+  index, 
+  inputStyle, 
+  labelStyle, 
+  roles,
+  onUpdate, 
+  onRemove,
+  canRemove 
+}: TeamMemberRowProps) {
+  const [emailError, setEmailError] = useState<string>('');
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      setEmailError('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    onUpdate('email', value);
+    validateEmail(value);
+  };
+
+  const handleRoleChange = (value: string) => {
+    onUpdate('role', value);
+  };
+
   return (
-    <div className="flex gap-4 w-full">
+    <div className="flex gap-4 w-full items-start">
       <div className="flex-1">
-        <label className={labelStyle}>Nutzer</label>
-        <div className={selectTriggerStyle}>
-          <span></span> {/* Empty state as shown in image */}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-        </div>
+        <label className={labelStyle}>
+          {index === 0 ? 'Nutzer' : ''}
+        </label>
+        <input
+          type="email"
+          value={member.email}
+          onChange={(e) => handleEmailChange(e.target.value)}
+          placeholder="E-Mail-Adresse"
+          className={`${inputStyle} ${emailError ? 'border-red-500' : ''}`}
+        />
+        {emailError && (
+          <span className="text-red-500 text-xs mt-1">{emailError}</span>
+        )}
       </div>
       <div className="flex-1">
-        <label className={labelStyle}>Rolle</label>
-        <div className={selectTriggerStyle}>
-          <span></span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-        </div>
+        <label className={labelStyle}>
+          {index === 0 ? 'Rolle' : ''}
+        </label>
+        <select
+          value={member.role}
+          onChange={(e) => handleRoleChange(e.target.value)}
+          aria-label="Rolle auswählen"
+          className={`${inputStyle} text-gray-700 bg-white`}
+        >
+          <option value="">Rolle auswählen</option>
+          {roles.map((role) => (
+            <option key={role.value} value={role.value}>
+              {role.label}
+            </option>
+          ))}
+        </select>
       </div>
+      {canRemove && (
+        <button
+          onClick={onRemove}
+          className="mt-6 p-2 text-gray-400 hover:text-red-500 transition-colors"
+          title="Nutzer entfernen"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+          </svg>
+        </button>
+      )}
     </div>
-  )
+  );
 }

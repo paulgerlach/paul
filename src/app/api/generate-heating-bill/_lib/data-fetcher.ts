@@ -159,42 +159,41 @@ export async function fetchHeatingBillData(
   ]);
 
   const localIdsForContracts = localsResult.map((l) => l.id);
-  const contractsResult =
-    localIdsForContracts.length > 0
-      ? await database
-        .select()
-        .from(contracts)
-        .where(inArray(contracts.local_id, localIdsForContracts))
-        .then(async (c) => {
-          if (c.length === 0) return [];
-          const withContractors = await Promise.all(
-            c.map(async (contract) => {
-              const ct = await database
-                .select()
-                .from(contractors)
-                .where(eq(contractors.contract_id, contract.id));
-              return {
-                ...contract,
-                contractors: ct,
-              };
-            })
-          );
-          return withContractors;
-        })
-      : [];
-
   const allLocals = localsResult;
   const localIds = allLocals.map((l) => l.id);
-  const localMetersRows = (
-    await Promise.all(
-      localIds.map((lid) =>
-        database
+
+  const [contractsResult, localMetersRows] = await Promise.all([
+    localIdsForContracts.length > 0
+      ? database
+          .select()
+          .from(contracts)
+          .where(inArray(contracts.local_id, localIdsForContracts))
+          .then(async (c) => {
+            if (c.length === 0) return [];
+            const contractIds = c.map((contract) => contract.id);
+            const allContractors = await database
+              .select()
+              .from(contractors)
+              .where(inArray(contractors.contract_id, contractIds));
+            const contractorsByContract = new Map<string, typeof allContractors>();
+            for (const ct of allContractors) {
+              const arr = contractorsByContract.get(ct.contract_id) ?? [];
+              arr.push(ct);
+              contractorsByContract.set(ct.contract_id, arr);
+            }
+            return c.map((contract) => ({
+              ...contract,
+              contractors: contractorsByContract.get(contract.id) ?? [],
+            }));
+          })
+      : [],
+    localIds.length > 0
+      ? database
           .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id })
           .from(local_meters)
-          .where(eq(local_meters.local_id, lid))
-      )
-    )
-  ).flat();
+          .where(inArray(local_meters.local_id, localIds))
+      : [],
+  ]);
   const meterIds = localMetersRows.map((m) => m.id).filter(Boolean);
   const localMeters = localMetersRows.map((m) => ({
     meter_number: m.meter_number,
@@ -203,10 +202,11 @@ export async function fetchHeatingBillData(
 
   let meterReadings: MeterReadingType[] = [];
   if (supabase && meterIds.length > 0 && mainDoc?.start_date && mainDoc?.end_date) {
+    const RPC_TIMEOUT_MS = 8_000;
     const startDate = new Date(mainDoc.start_date);
     const endDate = new Date(mainDoc.end_date);
     startDate.setDate(startDate.getDate() - 7);
-    const { data: rpcData, error } = await supabase.rpc("get_dashboard_data", {
+    const rpcPromise = supabase.rpc("get_dashboard_data", {
       p_local_meter_ids: meterIds,
       p_device_types: [
         "Heat",
@@ -219,17 +219,26 @@ export async function fetchHeatingBillData(
       p_start_date: startDate.toISOString().split("T")[0],
       p_end_date: endDate.toISOString().split("T")[0],
     });
-    if (!error && rpcData?.length) {
-      meterReadings = (rpcData as any[]).map((record: any) => {
-        const parsedDataJson = record.parsed_data || {};
-        return {
-          "Frame Type": record.frame_type || "",
-          Manufacturer: record.manufacturer || "",
-          ID: record.device_id,
-          "Device Type": record.device_type,
-          ...parsedDataJson,
-        } as MeterReadingType;
-      });
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Supabase RPC timeout")), RPC_TIMEOUT_MS)
+    );
+    try {
+      const result = await Promise.race([rpcPromise, timeoutPromise]);
+      const { data: rpcData, error } = result;
+      if (!error && rpcData?.length) {
+        meterReadings = (rpcData as any[]).map((record: any) => {
+          const parsedDataJson = record.parsed_data || {};
+          return {
+            "Frame Type": record.frame_type || "",
+            Manufacturer: record.manufacturer || "",
+            ID: record.device_id,
+            "Device Type": record.device_type,
+            ...parsedDataJson,
+          } as MeterReadingType;
+        });
+      }
+    } catch {
+      // Fall back to empty readings on timeout or RPC error (handler already does mock fallback)
     }
   }
 

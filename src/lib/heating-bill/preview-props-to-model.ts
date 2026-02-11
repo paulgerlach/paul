@@ -127,11 +127,13 @@ export function previewPropsToModel(
     ),
     contractors:
       contractors.length > 0
-        ? contractors.map((c) => ({
-            id: c.id,
-            firstName: c.first_name,
-            lastName: c.last_name,
-          }))
+        ? contractors
+            .filter((c): c is typeof c & { id: string } => Boolean(c.id))
+            .map((c) => ({
+              id: c.id,
+              firstName: c.first_name,
+              lastName: c.last_name,
+            }))
         : undefined,
   };
 

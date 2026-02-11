@@ -60,7 +60,7 @@ export default function FormRadioOptions<
                 ))}
               </RadioGroup>
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
           </FormItem>
         )}
       />

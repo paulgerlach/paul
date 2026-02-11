@@ -1,40 +1,101 @@
+"use client";
+
+import { updateUserAgency } from "@/actions/admin/updateUserAgency";
 import { ROUTE_ADMIN } from "@/routes/routes";
-import { admin_objekte } from "@/static/icons";
 import type { UserType } from "@/types";
-import Image from "next/image";
+import type { Agency } from "@/types/Agency";
 import Link from "next/link";
+import { useState } from "react";
+import AgencySelector from "./Admin/AgencySelector";
+import { updateUserPermission } from "@/actions/admin/updateUserPermission";
+import PermissionSelector from "./Admin/PermissionSelector";
 
-export default async function AdminUserItem({ item }: { item: UserType }) {
-  if (!item.id) {
-    throw new Error("Missing item.id");
-  }
+interface AdminUserItemProps {
+	item: UserType;
+	agencies: Agency[];
+	isSuperAdmin?: boolean;
+}
 
-  return (
-    <div className="bg-white p-5 max-xl:p-3 max-medium:p-3 rounded-2xl max-xl:rounded-xl max-medium:rounded-lg flex items-center justify-between">
-      <Link
-        href={`${ROUTE_ADMIN}/${item.id}/dashboard`}
-        className="flex items-center w-full justify-start gap-8 max-xl:gap-4 max-medium:gap-3"
-      >
-        <div className="w-20 h-20 max-xl:w-16 max-xl:h-16 max-medium:w-12 max-medium:h-12 flex items-center justify-center rounded-2xl max-xl:rounded-xl max-medium:rounded-lg bg-[#E0E0E0] flex-shrink-0">
-          <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            loading="lazy"
-            className="max-w-[38px] max-h-[38px] max-xl:max-w-[24px] max-xl:max-h-[24px] max-medium:max-w-[20px] max-medium:max-h-[20px]"
-            src={admin_objekte}
-            alt="admin_objekte"
-          />
-        </div>
-        <div className="flex flex-col items-between justify-start gap-2 max-xl:gap-1 min-h-full h-full min-w-0">
-          <p className="text-3xl max-xl:text-xl max-medium:text-base text-dark_green truncate">
-            {item.email}
-          </p>
-          <p className="text-xl max-xl:text-base max-medium:text-sm text-dark_green/50">
-            {item.first_name} {item.last_name}
-          </p>
-        </div>
-      </Link>
-    </div>
-  );
+
+export default function AdminUserItem({
+	item,
+	agencies,
+	isSuperAdmin = false,
+}: AdminUserItemProps) {
+	const [isEditingAgency, setIsEditingAgency] = useState(false);
+	const [isEditingPermission, setIsEditingPermission] = useState(false);
+	const [selectedAgencyId, setSelectedAgencyId] = useState(
+		item.agency_id || "",
+	);
+	const [selectedPermission, setSelectedPermission] = useState(item.permission);
+	const [isUpdating, setIsUpdating] = useState(false);
+
+	const currentAgency = agencies.find((a) => a.id === item.agency_id);
+	const agencyName = currentAgency?.name || "No agency";
+
+	const handleAgencySave = async () => {
+		setIsUpdating(true);
+		try {
+			await updateUserAgency(item.id!, selectedAgencyId || null);
+			setIsEditingAgency(false);
+		} finally {
+			setIsUpdating(false);
+		}
+	};
+
+	const handlePermissionSave = async () => {
+		setIsUpdating(true);
+		try {
+			await updateUserPermission(item.id!, selectedPermission ?? 'user');
+			setIsEditingPermission(false);
+		} finally {
+			setIsUpdating(false);
+		}
+	};
+
+	return (
+		<div className="bg-white p-5 rounded-2xl flex items-center justify-between">
+			<div className="flex items-center w-full justify-start gap-8">
+				<div className="flex flex-col items-between justify-start gap-2 min-w-0">
+					<AgencySelector
+						item={item}
+						agencies={agencies}
+						isEditingAgency={isEditingAgency}
+						setSelectedAgencyId={setSelectedAgencyId}
+						selectedAgencyId={selectedAgencyId}
+						setIsEditingAgency={setIsEditingAgency}
+						handleSave={handleAgencySave}
+						isUpdating={isUpdating}
+						agencyName={agencyName}
+					/>
+
+					{/* Permission Selector */}
+					{isSuperAdmin && (
+						<PermissionSelector 
+							isEditingPermission={isEditingPermission}
+							selectedPermission={selectedPermission ?? 'user'}
+							setSelectedPermission={setSelectedPermission}
+							handlePermissionSave={handlePermissionSave}
+							isUpdating={isUpdating}
+							user={item}
+							setIsEditingPermission={setIsEditingPermission}
+						/>
+					)}
+
+					<Link
+						href={`${ROUTE_ADMIN}/${item.id}/dashboard`}
+						className="text-3xl text-dark_green hover:underline cursor-pointer truncate hover:scale-105 transition ease-in-out"
+					>
+						{item.email}
+					</Link>
+					<Link
+						href={`${ROUTE_ADMIN}/${item.id}/dashboard`}
+						className="text-xl text-dark_green/50 hover:underline cursor-pointer truncate hover:scale-105 transition ease-in-out"
+					>
+						{item.first_name} {item.last_name}
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
 }

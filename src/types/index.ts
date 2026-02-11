@@ -176,7 +176,8 @@ export type DialogStoreActionType =
   | DialogDocumentActionType
   | DialogDocumentCostActionType
   | "shareModal"
-  | "shareExtendedModal";
+  | "shareExtendedModal"
+  | "invite_user";
 
 export type FirmwareType = 'boot' | 'modem' | 'application';
 export type DeploymentType = 'scheduled' | 'available' | 'force';

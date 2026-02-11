@@ -35,7 +35,9 @@ const contractSchema = z.object({
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
     })
-    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" }),
+    .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" })
+    .optional()
+    .nullable(),
   contractors: z
     .array(
       z.object({
@@ -77,12 +79,12 @@ export type EditContractFormValues = z.infer<typeof contractSchema>;
 const defaultValues: EditContractFormValues = {
   is_current: false,
   rental_start_date: new Date(),
-  rental_end_date: new Date(),
+  rental_end_date: null,
   contractors: [
     {
       first_name: "",
       last_name: "",
-      birth_date: new Date(),
+      birth_date: null,
       email: "",
       phone: "",
     },
@@ -176,11 +178,15 @@ export default function EditContractForm({
                 label="Mietbeginn*"
                 name="rental_start_date"
               />
-              <span className="mt-8 inline-block max-medium:hidden">-</span>
+              <span className="mt-8 max-medium:hidden inline-block">-</span>
               <FormDateInput<EditContractFormValues>
                 control={methods.control}
                 label="Mietende"
                 name="rental_end_date"
+                placeholder="Unbefristet"
+                showClearButton={true}
+                clearLabel="Unbefristet"
+                onClear={() => methods.setValue("is_current", true)}
               />
             </div>
           </div>

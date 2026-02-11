@@ -1,12 +1,14 @@
 'use server'
 
 import { isAdmin, isSuperAdmin } from "@/auth";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { supabaseServer } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateUserAgency(userId: string, agencyId: string | null) {
-  const isSuperAdminUser = await isSuperAdmin(userId);
-  const isAdminUser = await isAdmin(userId);
+    const authenticatedUser = await getAuthenticatedServerUser();
+    const isSuperAdminUser = await isSuperAdmin(authenticatedUser.id);
+    const isAdminUser = await isAdmin(authenticatedUser.id);
 
   if (!isSuperAdminUser && !isAdminUser) {
     return {
@@ -17,7 +19,6 @@ export async function updateUserAgency(userId: string, agencyId: string | null) 
   
   const supabase = await supabaseServer();
 
-  // Convert empty string to null for UUID field
   const updateData = agencyId === "" ? { agency_id: null } : { agency_id: agencyId };
 
   const { error } = await supabase

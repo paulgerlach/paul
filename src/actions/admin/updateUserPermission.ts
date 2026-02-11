@@ -1,19 +1,21 @@
 'use server'
 
 import { isAdmin, isSuperAdmin } from "@/auth";
+import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { supabaseServer } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateUserPermission(userId: string, permission: string) {
-    const isSuperAdminUser = await isSuperAdmin(userId);
-    const isAdminUser = await isAdmin(userId);
+  const authenticatedUser = await getAuthenticatedServerUser();
+  const isSuperAdminUser = await isSuperAdmin(authenticatedUser.id);
+  const isAdminUser = await isAdmin(authenticatedUser.id);
   
-    if (!isSuperAdminUser && !isAdminUser) {
-      return {
-        success: false,
-        error: "Only administrators can change registration settings",
-      };
-    }
+  if (!isSuperAdminUser && !isAdminUser) {
+    return {
+      success: false,
+      error: "Only administrators can change registration settings",
+    };
+  }
   const supabase = await supabaseServer();
 
   const { error } = await supabase

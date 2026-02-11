@@ -185,6 +185,10 @@ export const buildLocalName = ({
   return mainParts.join(" ") + livingSpacePart;
 };
 
+export const FUEL_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;
+export const isFuelCostType = (type?: string | null): boolean =>
+  FUEL_COST_TYPES.includes(type as (typeof FUEL_COST_TYPES)[number]);
+
 export function getCostTypeIconByKey(key?: string) {
   switch (key) {
     case "fuel_costs":

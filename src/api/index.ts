@@ -16,7 +16,7 @@ import {
 } from "@/db/drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
-import { getUserAgencyId, getUserRole, isAdminUser } from "@/auth";
+import {  isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import type {
   ContractorType,

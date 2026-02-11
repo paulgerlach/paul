@@ -39,14 +39,3 @@ export async function isAdmin(userId: string): Promise<boolean> {
   const role = await getUserRole(userId);
   return role === 'admin' || role === 'super_admin';
 }
-
-
-export async function getUserAgencyId(userId: string): Promise<string | null> {
-  const supabase = await supabaseServer();
-  const { data } = await supabase
-    .from("users")
-    .select("agency_id")
-    .eq("id", userId)
-    .single();
-  return data?.agency_id || null;
-}

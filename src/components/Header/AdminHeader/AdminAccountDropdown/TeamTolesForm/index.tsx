@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ModalFooter from '../ModalFooter';
 import TeamMemberRow from './TeamMemberRow';
+import { useAuthUser } from '@/apiClient';
 
 export interface TeamMember {
   id: string;
@@ -36,8 +37,11 @@ export default function TeamRolesForm({
   labelStyle, 
   roles = defaultRoles,
   initialMembers = [],
-  onSave 
 }: TeamRolesFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { data: currentUser, isLoading } = useAuthUser();
+
   const [members, setMembers] = useState<TeamMember[]>(
     initialMembers.length > 0 
       ? initialMembers 
@@ -60,7 +64,7 @@ export default function TeamRolesForm({
     ));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Validate all emails before saving
     const isValid = members.every(m => {
       if (!m.email) return false;
@@ -68,15 +72,31 @@ export default function TeamRolesForm({
       return emailRegex.test(m.email);
     });
 
-    if (!isValid) {
-      alert('Bitte füllen Sie alle E-Mail-Felder korrekt aus.');
-      return;
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/invitations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([{...members, agency_id: currentUser?.agency_id || null }]),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Failed to send invitation");
+        return;
+      }
+
+      console.log('Gespeicherte Mitglieder:', members);
+      onClose();
+    } catch (err) {
+      setError("An error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
 
-    if (onSave) {
-      onSave(members);
-    }
-    onClose();
   };
 
   return (
@@ -104,7 +124,8 @@ export default function TeamRolesForm({
           <span className="text-sm">Weiteren Nutzer hinzufügen</span>
         </button>
       </div>
-      <ModalFooter onClose={onClose} onSave={handleSave} />
+      <ModalFooter onClose={onClose} onSave={handleSave} loading={isSubmitting} isValid={members.every(m => m.email && m.role)} />
+      {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
     </div>
   );
 };

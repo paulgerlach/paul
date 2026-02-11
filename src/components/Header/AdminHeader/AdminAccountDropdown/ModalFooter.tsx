@@ -1,6 +1,6 @@
 'use client';
 
-export default function ModalFooter({ onClose, loading, onSave }: { onClose: () => void, loading?: boolean, onSave?: () => void   }) {
+export default function ModalFooter({ onClose, loading, onSave, isValid=true }: { onClose: () => void, loading?: boolean, onSave?: () => void, isValid?:boolean  }) {
   return (
     <div className="flex justify-between items-center pt-6 mt-2">
       <button
@@ -11,7 +11,7 @@ export default function ModalFooter({ onClose, loading, onSave }: { onClose: () 
         Abbrechen
       </button>
 
-      {onSave &&
+      {onSave && isValid &&
       <button
         type="button"
         onClick={onSave}

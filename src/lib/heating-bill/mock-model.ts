@@ -322,6 +322,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
   },
 
   co2: {
+    energyCarrier: "Nah-/Fernwärme",
     energyRows: [
       {
         label: "Rechnung 260002673166",

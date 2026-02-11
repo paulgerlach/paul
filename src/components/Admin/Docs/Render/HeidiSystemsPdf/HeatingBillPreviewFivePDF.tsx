@@ -121,7 +121,7 @@ export default function HeatingBillPreviewFivePDF({
       </Text>
 
       <Text style={styles.sectionTitle}>CO2-Kostenaufteilung</Text>
-      <Text style={styles.subTitle}>Energieart: Nah-/Fernwärme</Text>
+      <Text style={styles.subTitle}>Energieart: {co2.energyCarrier}</Text>
 
       <View style={[styles.table, { marginBottom: 24 }]}>
         <View style={styles.tableHeader}>

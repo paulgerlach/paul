@@ -13,6 +13,8 @@ import { computeHeatingRates } from "./rates";
 import { computeReadingDeltas } from "./readings";
 import { computeColdWaterRates } from "./coldwater";
 import { computeUnitBreakdown } from "./unit-breakdown";
+import { computeCo2Allocation } from "./co2";
+import { computeEnergySummary } from "./energy-summary";
 import {
   formatEuro,
   formatDateGerman,
@@ -34,6 +36,16 @@ const COLD_WATER_DEVICE_TYPES = ["Water", "Kaltwasserzähler"];
 
 function round2(v: number): number {
   return Math.round(v * 100) / 100;
+}
+
+/** Extract energy carrier from objekt.heating_systems (array of strings or single string). */
+function energyCarrierFromObjekt(heatingSystems: unknown): string {
+  if (Array.isArray(heatingSystems) && heatingSystems.length > 0) {
+    const first = heatingSystems[0];
+    return typeof first === "string" ? first : "Nah-/Fernwärme";
+  }
+  if (typeof heatingSystems === "string") return heatingSystems;
+  return "Nah-/Fernwärme";
 }
 
 /**
@@ -199,6 +211,45 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
       ? { label: costAgg.energyRelief.label, amount: costAgg.energyRelief.amount }
       : null,
     unitCount,
+  });
+
+  const energyCarrier = energyCarrierFromObjekt(raw.objekt?.heating_systems);
+  const totalLivingSpaceM2 = totalLivingSpace || 11196.4;
+  const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
+  const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
+
+  const portalLinkForQr =
+    raw.user?.id
+      ? `https://heidi.systems/${raw.user.id}`
+      : (model.cover.portalLink?.startsWith("http") ? model.cover.portalLink : `https://${model.cover.portalLink}`);
+
+  const co2EnergyInvoices =
+    costAgg.energyInvoices.length > 0
+      ? costAgg.energyInvoices.map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+      : [
+          {
+            label: "Energieverbrauch (Zähler)",
+            date: formatDateGerman(raw.mainDoc?.end_date ?? endDate.toISOString()) ?? "",
+            kWh: energyTotalKwh,
+          },
+        ];
+
+  model.co2 = computeCo2Allocation({
+    energyInvoices: co2EnergyInvoices,
+    totalLivingSpaceM2,
+    energyCarrier,
+    localLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    portalLink: portalLinkForQr,
+  });
+
+  model.energySummary = computeEnergySummary({
+    energyCarrier,
+    buildingTotalKwh: energyTotalKwh,
+    totalLivingSpaceM2,
+    unitHeatingMwh,
+    unitWarmWaterM3,
+    unitLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    portalLink: portalLinkForQr,
   });
 
   model.buildingCalc = {

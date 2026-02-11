@@ -213,6 +213,7 @@ export interface HeatingBillPdfModel {
 
   // --- Page 5: CO2 Allocation ---
   co2: {
+    energyCarrier: string;
     energyRows: Array<{
       label: string;
       date: string;

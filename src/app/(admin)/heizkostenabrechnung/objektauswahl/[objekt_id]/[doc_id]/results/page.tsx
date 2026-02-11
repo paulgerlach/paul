@@ -1,10 +1,12 @@
-import { getRelatedLocalsByObjektId } from "@/api";
+import { getHeatingBillDocumentByID, getRelatedLocalsByObjektId } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteObjektItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/ObjekteObjektItemHeatingBillDocResult";
 import SearchControls from "@/components/Admin/SearchControls";
 import { buildLocalName } from "@/utils";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import HeatingBillPendingModal from "@/components/Basic/Dialog/HeatingBillPendingModal";
+import { isWithin24Hours } from "@/lib/heating-bill";
 
 export default async function ResultLocalPDF({
   params,
@@ -15,6 +17,11 @@ export default async function ResultLocalPDF({
 }) {
   const { objekt_id, doc_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
+
+  const mainDoc = await getHeatingBillDocumentByID(doc_id);
+  const isPending =
+    mainDoc?.submited === true &&
+    isWithin24Hours(mainDoc?.created_at ?? null);
 
   let locals = await getRelatedLocalsByObjektId(objekt_id);
   const totalLocals = locals?.length || 0;
@@ -40,6 +47,7 @@ export default async function ResultLocalPDF({
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
+      {isPending && <HeatingBillPendingModal initiallyOpen />}
       <Breadcrumb
         backTitle="Objekte"
         link={ROUTE_HEIZKOSTENABRECHNUNG}
@@ -70,6 +78,7 @@ export default async function ResultLocalPDF({
                   item={local}
                   docType="objektauswahl"
                   docID={doc_id}
+                  disabled={isPending}
                 />
               ))
             )}

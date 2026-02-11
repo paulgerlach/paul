@@ -31,6 +31,7 @@ import type {
   UserType
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
+import { isWithin24Hours } from "@/lib/heating-bill";
 import { MASTER_DATA, MASTER_DATA_2 } from "./data";
 import { writeFileSync } from "fs";
 import { CSVParser } from "./parse_csv_to_json";
@@ -798,20 +799,39 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     .map(doc => doc.related_id);
 
   let heatingBillObjekts: Record<string, string> = {};
+  const pendingHeatingBillIds = new Set<string>();
   if (heatingBillIds.length > 0) {
     const heatingBills = await database
-      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .select({
+        id: heating_bill_documents.id,
+        objekt_id: heating_bill_documents.objekt_id,
+        submited: heating_bill_documents.submited,
+        created_at: heating_bill_documents.created_at,
+      })
       .from(heating_bill_documents)
       .where(inArray(heating_bill_documents.id, heatingBillIds));
 
-    heatingBillObjekts = heatingBills.reduce((acc, bill) => {
+    for (const bill of heatingBills) {
       if (bill.objekt_id) {
-        acc[bill.id] = bill.objekt_id;
+        heatingBillObjekts[bill.id] = bill.objekt_id;
       }
-      return acc;
-    }, {} as Record<string, string>);
+      if (
+        bill.submited === true &&
+        bill.created_at &&
+        isWithin24Hours(bill.created_at)
+      ) {
+        pendingHeatingBillIds.add(bill.id);
+      }
+    }
   }
-  const operatingCostIds = userDocuments
+
+  const filteredDocuments = userDocuments.filter(
+    (doc) =>
+      doc.related_type !== "heating_bill" ||
+      !pendingHeatingBillIds.has(doc.related_id)
+  );
+
+  const operatingCostIds = filteredDocuments
     .filter(doc => doc.related_type === "operating_costs")
     .map(doc => doc.related_id);
 
@@ -830,7 +850,7 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     }, {} as Record<string, string>);
   }
 
-  return userDocuments.map(doc => ({
+  return filteredDocuments.map(doc => ({
     ...doc,
     objekt_id: doc.related_type === "heating_bill"
       ? heatingBillObjekts[doc.related_id] || null

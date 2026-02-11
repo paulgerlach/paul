@@ -23,6 +23,7 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   id: string;
   docID?: string;
   docType: "localauswahl" | "objektauswahl";
+  disabled?: boolean;
 };
 
 export default async function ObjekteObjektItemHeatingBillDocResult({
@@ -30,6 +31,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
   id,
   docID,
   docType,
+  disabled = false,
 }: ObjekteLocalItemHeatingBillDocResultProps) {
   const contracts = await getContractsWithContractorsByLocalID(item.id);
 
@@ -125,9 +127,17 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
       </div>
       {/* Bottom row: Action buttons */}
       <div className="flex items-center justify-end max-medium:justify-center gap-12 max-medium:gap-4">
-        <div className="flex items-center justify-end max-medium:justify-center gap-4 max-medium:gap-3">
+        <div
+          className={`flex items-center justify-end max-medium:justify-center gap-4 max-medium:gap-3 ${
+            disabled ? "pointer-events-none opacity-50" : ""
+          }`}
+        >
           <Link
-            href={`${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${id}/${docID}/results/${item.id}/preview`}
+            href={
+              disabled
+                ? "#"
+                : `${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${id}/${docID}/results/${item.id}/preview`
+            }
           >
             <Image
               width={0}
@@ -149,6 +159,7 @@ export default async function ObjekteObjektItemHeatingBillDocResult({
             invoices={invoices}
             contracts={contracts}
             objekt={objekt}
+            disabled={disabled}
           />
           <button>
             <Image

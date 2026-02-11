@@ -291,6 +291,19 @@ export interface HeatingBillPdfModel {
     propertyAverageKwhPerM2: number;
     propertyAverageFormatted: string;
 
+    /** Chart comparison: estimated heating kWh for property average */
+    comparisonHeatingPropertyKwh: number;
+    comparisonHeatingPropertyKwhFormatted: string;
+    /** Chart comparison: estimated heating kWh for national average */
+    comparisonHeatingNationalKwh: number;
+    comparisonHeatingNationalKwhFormatted: string;
+    /** Chart comparison: estimated warm-water kWh for property average */
+    comparisonWarmWaterPropertyKwh: number;
+    comparisonWarmWaterPropertyKwhFormatted: string;
+    /** Chart comparison: estimated warm-water kWh for national average */
+    comparisonWarmWaterNationalKwh: number;
+    comparisonWarmWaterNationalKwhFormatted: string;
+
     qrCodeUrl: string;
     infoLink: string;
     energyAgencyLink: string;

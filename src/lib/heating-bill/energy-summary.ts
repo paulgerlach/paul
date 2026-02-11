@@ -65,6 +65,24 @@ export function computeEnergySummary(
       ? round2(buildingTotalKwh / totalLivingSpaceM2)
       : 0;
 
+  /* Chart comparison values: split property/national averages into
+     heating vs warm-water using the unit's own ratio as an estimate. */
+  const heatRatio = totalUnitKwh > 0 ? heatingKwh / totalUnitKwh : 0.75;
+  const wwRatio = 1 - heatRatio;
+
+  const comparisonHeatingPropertyKwh = round2(
+    propertyAverageKwhPerM2 * unitLivingSpaceM2 * heatRatio
+  );
+  const comparisonHeatingNationalKwh = round2(
+    NATIONAL_AVERAGE_KWH_PER_M2 * unitLivingSpaceM2 * heatRatio
+  );
+  const comparisonWarmWaterPropertyKwh = round2(
+    propertyAverageKwhPerM2 * unitLivingSpaceM2 * wwRatio
+  );
+  const comparisonWarmWaterNationalKwh = round2(
+    NATIONAL_AVERAGE_KWH_PER_M2 * unitLivingSpaceM2 * wwRatio
+  );
+
   const primaryEnergyFactors = PRIMARY_ENERGY_FACTORS.map((f) => ({
     label: f.label,
     value: f.value,
@@ -98,6 +116,15 @@ export function computeEnergySummary(
     nationalAverageFormatted: formatGermanNumber(NATIONAL_AVERAGE_KWH_PER_M2, 1),
     propertyAverageKwhPerM2,
     propertyAverageFormatted: formatGermanNumber(propertyAverageKwhPerM2, 2),
+
+    comparisonHeatingPropertyKwh,
+    comparisonHeatingPropertyKwhFormatted: formatGermanNumber(comparisonHeatingPropertyKwh, 0),
+    comparisonHeatingNationalKwh,
+    comparisonHeatingNationalKwhFormatted: formatGermanNumber(comparisonHeatingNationalKwh, 0),
+    comparisonWarmWaterPropertyKwh,
+    comparisonWarmWaterPropertyKwhFormatted: formatGermanNumber(comparisonWarmWaterPropertyKwh, 0),
+    comparisonWarmWaterNationalKwh,
+    comparisonWarmWaterNationalKwhFormatted: formatGermanNumber(comparisonWarmWaterNationalKwh, 0),
 
     qrCodeUrl,
     infoLink: "https://heidi.systems/energy",

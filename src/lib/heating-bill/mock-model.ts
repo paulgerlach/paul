@@ -409,6 +409,15 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     propertyAverageKwhPerM2: 67.98,
     propertyAverageFormatted: "67,98",
 
+    comparisonHeatingPropertyKwh: 3970.34,
+    comparisonHeatingPropertyKwhFormatted: "3.970",
+    comparisonHeatingNationalKwh: 5427.56,
+    comparisonHeatingNationalKwhFormatted: "5.428",
+    comparisonWarmWaterPropertyKwh: 1264.16,
+    comparisonWarmWaterPropertyKwhFormatted: "1.264",
+    comparisonWarmWaterNationalKwh: 1728.53,
+    comparisonWarmWaterNationalKwhFormatted: "1.729",
+
     qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303",
     infoLink: "https://heidi.systems/energy",
     energyAgencyLink: "https://www.deutschland-machts-effizient.de",

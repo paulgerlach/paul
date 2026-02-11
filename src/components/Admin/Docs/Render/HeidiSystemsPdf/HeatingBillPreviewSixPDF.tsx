@@ -10,6 +10,12 @@ const colors = {
   link: "#6BCAAA",
 };
 
+const chartColors = {
+  user: "#7F9D86",
+  property: "#B8C9BC",
+  national: "#D5DDD7",
+};
+
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "#ffffff",
@@ -61,12 +67,6 @@ const styles = StyleSheet.create({
   },
   chart: { flex: 1 },
   chartTitle: { fontWeight: "bold", textAlign: "center", marginBottom: 8 },
-  chartPlaceholder: {
-    height: 160,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   sideBySideTables: {
     flexDirection: "row",
     gap: 40,
@@ -79,15 +79,114 @@ const styles = StyleSheet.create({
   link: { color: colors.link, textDecoration: "none" },
 });
 
+/* ---------- helpers ---------- */
+
+/** Format a number with German thousand separators (e.g. 7000 -> "7.000") */
+function fmtDE(value: number): string {
+  const rounded = Math.round(value);
+  return rounded.toString().replaceAll(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+/* ---------- Bar chart built from react-pdf Views ---------- */
+
+type BarDatum = { label: string; value: number; color: string };
+
+function EnergyBarChart({ bars }: Readonly<{ bars: readonly BarDatum[] }>) {
+  const maxVal = Math.max(...bars.map((b) => b.value), 1);
+  const barAreaHeight = 110; // max bar height in pt
+
+  return (
+    <View style={{ height: 160, backgroundColor: "#FAFBFA", borderRadius: 8, padding: 8 }}>
+      {/* bars */}
+      <View
+        style={{
+          flexDirection: "row",
+          height: barAreaHeight,
+          justifyContent: "space-evenly",
+        }}
+      >
+        {bars.map((bar, i) => {
+          const barH = Math.max(
+            Math.round((bar.value / maxVal) * (barAreaHeight - 18)),
+            4
+          );
+          return (
+            <View
+              key={i}
+              style={{
+                justifyContent: "flex-end",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 7,
+                  fontWeight: "bold",
+                  color: colors.dark,
+                  marginBottom: 2,
+                }}
+              >
+                {fmtDE(bar.value)}
+              </Text>
+              <View
+                style={{
+                  width: 32,
+                  height: barH,
+                  backgroundColor: bar.color,
+                  borderTopLeftRadius: 4,
+                  borderTopRightRadius: 4,
+                }}
+              />
+            </View>
+          );
+        })}
+      </View>
+
+      {/* baseline */}
+      <View
+        style={{
+          height: 0.5,
+          backgroundColor: colors.dark,
+          opacity: 0.25,
+          marginBottom: 6,
+        }}
+      />
+
+      {/* labels */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {bars.map((bar, i) => (
+          <Text
+            key={i}
+            style={{
+              fontSize: 5.5,
+              textAlign: "center",
+              color: colors.text,
+              width: 52,
+            }}
+          >
+            {bar.label}
+          </Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export default function HeatingBillPreviewSixPDF({
   energySummary,
   cover,
   logoSrc = "/admin_logo.png",
-}: {
+}: Readonly<{
   energySummary: HeatingBillPdfModel["energySummary"];
   cover: HeatingBillPdfModel["cover"];
   logoSrc?: string;
-}) {
+}>) {
   const es = energySummary;
 
   return (
@@ -180,15 +279,23 @@ export default function HeatingBillPreviewSixPDF({
       <View style={styles.chartContainer}>
         <View style={styles.chart}>
           <Text style={styles.chartTitle}>Heizung in kWh</Text>
-          <View style={styles.chartPlaceholder}>
-            <Text>Chart Placeholder</Text>
-          </View>
+          <EnergyBarChart
+            bars={[
+              { label: "Ihr\nVerbrauch", value: es.heatingKwh, color: chartColors.user },
+              { label: "Liegenschafts-\ndurchschnitt", value: es.comparisonHeatingPropertyKwh, color: chartColors.property },
+              { label: "Bundesweiter\nDurchschnitt", value: es.comparisonHeatingNationalKwh, color: chartColors.national },
+            ]}
+          />
         </View>
         <View style={styles.chart}>
           <Text style={styles.chartTitle}>Warmwasser in kWh</Text>
-          <View style={styles.chartPlaceholder}>
-            <Text>Chart Placeholder</Text>
-          </View>
+          <EnergyBarChart
+            bars={[
+              { label: "Ihr\nVerbrauch", value: es.warmWaterKwh, color: chartColors.user },
+              { label: "Liegenschafts-\ndurchschnitt", value: es.comparisonWarmWaterPropertyKwh, color: chartColors.property },
+              { label: "Bundesweiter\nDurchschnitt", value: es.comparisonWarmWaterNationalKwh, color: chartColors.national },
+            ]}
+          />
         </View>
       </View>
 

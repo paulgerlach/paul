@@ -1,34 +1,13 @@
 'use client';
 
 import ModalFooter from '../ModalFooter';
+import TeamMemberRow from './TeamMemberRow';
 
 export default function TeamRolesForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
-  const selectTriggerStyle = `${inputStyle} flex items-center justify-between text-gray-400 cursor-pointer hover:bg-gray-50`;
-
-  const Row = () => (
-    <div className="flex gap-4 w-full">
-      <div className="flex-1">
-        <label className={labelStyle}>Nutzer</label>
-        <div className={selectTriggerStyle}>
-          <span></span> {/* Empty state as shown in image */}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
-      </div>
-      <div className="flex-1">
-        <label className={labelStyle}>Rolle</label>
-        <div className={selectTriggerStyle}>
-          <span></span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-5 mt-2">
-      <Row />
-      <Row />
-      <Row />
+      <TeamMemberRow inputStyle={inputStyle} labelStyle={labelStyle} />
       
       <div className="w-full">
         <label className={labelStyle}>Weitere Nutzer</label>

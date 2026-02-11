@@ -86,8 +86,10 @@ const styles = StyleSheet.create({
 
 export default function HeatingBillPreviewOnePDF({
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   const contractors = cover.contractors ?? [];
   const hasContractors = contractors.length > 0;
@@ -102,7 +104,7 @@ export default function HeatingBillPreviewOnePDF({
           <View>
             <Image
               style={{ width: 80, height: 20, alignSelf: "center" }}
-              src="/admin_logo.png"
+              src={logoSrc}
             />
           </View>
         </View>

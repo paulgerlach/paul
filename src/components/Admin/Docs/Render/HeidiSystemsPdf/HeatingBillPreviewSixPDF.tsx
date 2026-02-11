@@ -82,9 +82,11 @@ const styles = StyleSheet.create({
 export default function HeatingBillPreviewSixPDF({
   energySummary,
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   energySummary: HeatingBillPdfModel["energySummary"];
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   const es = energySummary;
 
@@ -95,7 +97,7 @@ export default function HeatingBillPreviewSixPDF({
           <Text style={styles.pageNumber}>
             6/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={styles.logo} src="/admin_logo.png" />
+          <Image style={styles.logo} src={logoSrc} />
         </View>
       </View>
 

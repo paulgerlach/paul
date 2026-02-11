@@ -17,7 +17,7 @@ import {
 import { eq, and, inArray } from "drizzle-orm";
 import type { MeterReadingType } from "@/api";
 
-export type HeatingBillRawData = {
+export interface HeatingBillRawData {
   mainDoc: {
     id: string;
     start_date: string | null;
@@ -56,7 +56,7 @@ export type HeatingBillRawData = {
     rental_start_date: string;
     rental_end_date: string | null;
     additional_costs: string | null;
-    contractors: Array<{ first_name: string; last_name: string; id: string };
+    contractors: Array<{ first_name: string; last_name: string; id: string }>;
   }>;
   user: {
     first_name: string | null;
@@ -64,7 +64,7 @@ export type HeatingBillRawData = {
     id: string;
   } | null;
   meterReadings: MeterReadingType[];
-};
+}
 
 export async function fetchHeatingBillData(
   docId: string,
@@ -157,10 +157,10 @@ export async function fetchHeatingBillData(
   const contractsResult =
     localIdsForContracts.length > 0
       ? await database
-          .select()
-          .from(contracts)
-          .where(inArray(contracts.local_id, localIdsForContracts))
-          .then(async (c) => {
+        .select()
+        .from(contracts)
+        .where(inArray(contracts.local_id, localIdsForContracts))
+        .then(async (c) => {
           if (c.length === 0) return [];
           const withContractors = await Promise.all(
             c.map(async (contract) => {
@@ -175,8 +175,8 @@ export async function fetchHeatingBillData(
             })
           );
           return withContractors;
-        }),
-    ]);
+        })
+      : [];
 
   const allLocals = localsResult;
   const localIds = allLocals.map((l) => l.id);
@@ -229,25 +229,25 @@ export async function fetchHeatingBillData(
   return {
     mainDoc: mainDoc
       ? {
-          id: mainDoc.id,
-          start_date: mainDoc.start_date,
-          end_date: mainDoc.end_date,
-          created_at: mainDoc.created_at,
-          living_space_share: mainDoc.living_space_share,
-          consumption_dependent: mainDoc.consumption_dependent,
-          objekt_id: mainDoc.objekt_id,
-          local_id: mainDoc.local_id,
-          user_id: mainDoc.user_id,
-        }
+        id: mainDoc.id,
+        start_date: mainDoc.start_date,
+        end_date: mainDoc.end_date,
+        created_at: mainDoc.created_at,
+        living_space_share: mainDoc.living_space_share,
+        consumption_dependent: mainDoc.consumption_dependent,
+        objekt_id: mainDoc.objekt_id,
+        local_id: mainDoc.local_id,
+        user_id: mainDoc.user_id,
+      }
       : null,
     objekt: objektResult
       ? {
-          id: objektResult.id,
-          street: objektResult.street,
-          zip: objektResult.zip,
-          user_id: objektResult.user_id,
-          heating_systems: objektResult.heating_systems,
-        }
+        id: objektResult.id,
+        street: objektResult.street,
+        zip: objektResult.zip,
+        user_id: objektResult.user_id,
+        heating_systems: objektResult.heating_systems,
+      }
       : null,
     locals: allLocals.map((l) => ({
       id: l.id,

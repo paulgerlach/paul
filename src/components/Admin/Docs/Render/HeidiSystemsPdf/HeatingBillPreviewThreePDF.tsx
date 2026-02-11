@@ -68,9 +68,11 @@ const styles = StyleSheet.create({
 export default function HeatingBillPreviewThreePDF({
   coldWater,
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   coldWater: HeatingBillPdfModel["coldWater"];
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   return (
     <Page size="A4" style={styles.page}>
@@ -79,7 +81,7 @@ export default function HeatingBillPreviewThreePDF({
           <Text style={styles.headerText}>
             3/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+          <Image style={{ width: 80, height: 20 }} src={logoSrc} />
         </View>
       </View>
 

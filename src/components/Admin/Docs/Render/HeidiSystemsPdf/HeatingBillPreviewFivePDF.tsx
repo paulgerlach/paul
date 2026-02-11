@@ -95,9 +95,11 @@ const styles = StyleSheet.create({
 export default function HeatingBillPreviewFivePDF({
   co2,
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   co2: HeatingBillPdfModel["co2"];
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   return (
     <Page size="A4" style={styles.page}>
@@ -106,7 +108,7 @@ export default function HeatingBillPreviewFivePDF({
           <Text style={styles.pageNumber}>
             5/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={styles.logo} src="/admin_logo.png" />
+          <Image style={styles.logo} src={logoSrc} />
         </View>
       </View>
 

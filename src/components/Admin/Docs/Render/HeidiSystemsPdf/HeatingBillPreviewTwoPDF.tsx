@@ -162,9 +162,11 @@ const styles = StyleSheet.create({
 export default function HeatingBillPreviewTwoPDF({
   buildingCalc,
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   buildingCalc: HeatingBillPdfModel["buildingCalc"];
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   const bc = buildingCalc;
 
@@ -175,7 +177,7 @@ export default function HeatingBillPreviewTwoPDF({
           <Text style={styles.headerText}>
             2/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={{ width: 80, height: 20 }} src="/admin_logo.png" />
+          <Image style={{ width: 80, height: 20 }} src={logoSrc} />
         </View>
         <View style={styles.titleSection}>
           <View style={styles.titleLeft}>

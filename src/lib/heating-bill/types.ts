@@ -1,5 +1,8 @@
 /** Every value the PDF needs. No computation in PDF components. */
 export interface HeatingBillPdfModel {
+  /** Resolved logo path – absolute file path (server) or URL (client). Defaults to "/admin_logo.png". */
+  logoSrc?: string;
+
   // --- Page 1: Cover ---
   cover: {
     propertyNumber: string;

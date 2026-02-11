@@ -207,9 +207,11 @@ const styles = StyleSheet.create({
 export default function HeatingBillPreviewFourPDF({
   unitBreakdown,
   cover,
+  logoSrc = "/admin_logo.png",
 }: {
   unitBreakdown: HeatingBillPdfModel["unitBreakdown"];
   cover: HeatingBillPdfModel["cover"];
+  logoSrc?: string;
 }) {
   const ub = unitBreakdown;
 
@@ -220,7 +222,7 @@ export default function HeatingBillPreviewFourPDF({
           <Text style={styles.pageNumber}>
             4/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
-          <Image style={styles.logo} src="/admin_logo.png" />
+          <Image style={styles.logo} src={logoSrc} />
         </View>
         <View style={styles.headerMain}>
           <View style={styles.headerMainCol}>

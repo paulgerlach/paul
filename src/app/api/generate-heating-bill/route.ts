@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseServer } from "@/utils/supabase/server";
-import { pdf } from "@react-pdf/renderer";
+import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
 import { mockHeatingBillModel } from "@/lib/heating-bill/mock-model";
@@ -14,7 +15,7 @@ import { computeHeatingBill } from "@/lib/heating-bill/compute";
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
  *
- * Step 1 shadow mode: computes real model from data, logs vs mock, still renders mock.
+ * Step 2: uses computed model for rendering when available (Page 2 + cover from real data).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    // Step 1 shadow mode: compute real model from data, compare to mock, still render mock.
+    // Step 2: use computed model (real buildingCalc + cover) when available; fallback to mock.
     let model = mockHeatingBillModel;
     let computedModel: typeof model | null = null;
 
@@ -66,33 +67,29 @@ export async function POST(request: NextRequest) {
         useServiceRole: true,
       });
       computedModel = computeHeatingBill(raw);
+      model = computedModel;
       if (process.env.NODE_ENV === "development" || debug) {
-        const mockGrandTotal = mockHeatingBillModel.buildingCalc?.grandTotal ?? 0;
-        const computedGrandTotal =
-          computedModel.buildingCalc?.grandTotal ?? 0;
-        const diff = Math.abs(computedGrandTotal - mockGrandTotal);
         console.log(
-          "[HeatingBill] Shadow: mock grandTotal",
-          mockGrandTotal,
-          "computed",
-          computedGrandTotal,
-          "diff",
-          diff.toFixed(2)
+          "[HeatingBill] Using computed model, grandTotal",
+          computedModel.buildingCalc?.grandTotal?.toFixed(2)
         );
       }
     } catch (fetchError) {
       if (process.env.NODE_ENV === "development") {
-        console.warn("[HeatingBill] Shadow compute failed, using mock:", fetchError);
+        console.warn("[HeatingBill] Compute failed, using mock:", fetchError);
       }
     }
 
-    // Still render mock until Step 2+ migration; computedModel used only for logging/debug
+    // Resolve logo to absolute file path for server-side rendering
+    model = { ...model, logoSrc: path.join(process.cwd(), "public", "admin_logo.png") };
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/2633cfaa-a884-4bda-8772-982a6335bc51', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'route.ts:84', message: 'logoSrc resolved', data: { logoSrc: model.logoSrc }, timestamp: Date.now(), hypothesisId: 'H1-logo' }) }).catch(() => { });
+    // #endregion
 
     // Render PDF to buffer (works in Node.js API route)
-    const pdfDoc = pdf(
-      React.createElement(HeidiSystemsPdf, { model })
+    const buffer = await renderToBuffer(
+      React.createElement(HeidiSystemsPdf, { model }) as any
     );
-    const buffer = await pdfDoc.toBuffer();
 
     // Upload path: {userId}/heating-bill_{docId}.pdf
     const storagePath = `${user.id}/${objektId}/${localId}/heating-bill_${docId}.pdf`;
@@ -103,6 +100,7 @@ export async function POST(request: NextRequest) {
         contentType: "application/pdf",
         upsert: true,
       });
+
 
     if (uploadError) {
       console.error("Heating bill PDF upload error:", uploadError);

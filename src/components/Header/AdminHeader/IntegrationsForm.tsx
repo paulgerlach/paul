@@ -1,5 +1,7 @@
 'use client';
 
+import ModalFooter from "./AdminAccountDropdown/ModalFooter";
+
 export default function IntegrationsForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
   return (
     <div className="flex flex-col gap-5 mt-2">

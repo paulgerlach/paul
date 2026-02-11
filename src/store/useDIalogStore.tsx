@@ -90,6 +90,8 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
     document_edit: false,
     shareModal: false,
     shareExtendedModal: false,
+    tenantLogin: false,
+    tenantForgotPassword: false,
   },
   setQueryKey: (keys) => set({ queryKey: keys }),
   setItemID: (id) => set({ itemID: id }),

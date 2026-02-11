@@ -9,6 +9,8 @@ import { Suspense, lazy } from "react";
 const LazyLoginDialog = lazy(() => import("@/components/Basic/Dialog/LoginDialog"));
 const LazyRegisterDialog = lazy(() => import("@/components/Basic/Dialog/RegisterDialog"));
 const LazyForgotPasswordDialog = lazy(() => import("@/components/Basic/Dialog/ForgotPasswordDialog"));
+const LazyTenantLoginDialog = lazy(() => import("@/components/Basic/Dialog/TenantLoginDialog"));
+const LazyTenantForgotPasswordDialog = lazy(() => import("@/components/Basic/Dialog/TenantForgotPasswordDialog"));
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -35,6 +37,12 @@ export default function BaseLayout({
       </Suspense>
       <Suspense fallback={null}>
         <LazyForgotPasswordDialog />
+      </Suspense>
+      <Suspense fallback={null}>
+        <LazyTenantLoginDialog />
+      </Suspense>
+      <Suspense fallback={null}>
+        <LazyTenantForgotPasswordDialog />
       </Suspense>
       <Toaster />
     </QueryProvider>

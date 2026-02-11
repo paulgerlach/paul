@@ -156,7 +156,9 @@ export type DialogDocumentActionType =
   | "register"
   | "share_dashboard"
   | "forgotPassword"
-  | "admin_objekte_image";
+  | "admin_objekte_image"
+  | "tenantLogin"
+  | "tenantForgotPassword";
 
 export type UploadedDocument = {
   id: string;

@@ -26,6 +26,7 @@ const HEATING_BILL_USE_MOCK =
 export async function POST(request: NextRequest) {
   try {
     const supabase = await supabaseServer();
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -52,17 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      return NextResponse.json(
-        { error: "Server configuration error - missing Supabase env" },
-        { status: 500 }
-      );
-    }
-
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Use computed model unless HEATING_BILL_USE_MOCK is set; fallback to mock on error.
     let model = mockHeatingBillModel;
@@ -109,7 +100,7 @@ export async function POST(request: NextRequest) {
     // Upload path: {userId}/heating-bill_{docId}.pdf
     const storagePath = `${user.id}/${objektId}/${localId}/heating-bill_${docId}.pdf`;
 
-    const { error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await supabase.storage
       .from("documents")
       .upload(storagePath, buffer, {
         contentType: "application/pdf",
@@ -126,7 +117,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert documents record
-    const { data: docRecord, error: insertError } = await supabaseAdmin
+    const { data: docRecord, error: insertError } = await supabase
       .from("documents")
       .insert({
         document_name: `Heizkostenabrechnung_${docId}.pdf`,
@@ -148,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     // Create signed URL (1 hour)
     const { data: signedData, error: signedError } =
-      await supabaseAdmin.storage
+      await supabase.storage
         .from("documents")
         .createSignedUrl(storagePath, 3600);
 

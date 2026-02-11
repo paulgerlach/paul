@@ -338,7 +338,6 @@ export default function AddDocHeizkostenabrechnungDialog() {
             placeholder=""
             rows={4}
             disabled={isProcessingInvoice}
-            type={isFuelCost ? "number" : undefined}
           />
 
           <FormDocument<AddDocHeizkostenabrechnungDialogFormValues>

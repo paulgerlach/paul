@@ -90,8 +90,10 @@ export default function AddDocHeizkostenabrechnungDialog() {
         methods.setError("notes", { message: "Pflichtfeld" });
         return;
       }
-      if (Number.isNaN(Number(data.notes))) {
-        methods.setError("notes", { message: "Nur numerische Werte erlaubt" });
+      // Validate against the same regex pattern as the database constraint: positive numbers and decimals only
+      const notesString = String(data.notes).trim();
+      if (!/^\d+(\.\d+)?$/.test(notesString)) {
+        methods.setError("notes", { message: "Nur positive Zahlen erlaubt" });
         return;
       }
     }

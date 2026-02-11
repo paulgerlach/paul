@@ -5,6 +5,7 @@
 import type { HeatingInvoiceType } from "@/types";
 import {
   ENERGY_COST_TYPES,
+  FUEL_COST_TYPES,
   HEATING_OPERATING_TYPES,
   DISTRIBUTION_COST_TYPES,
   COLD_WATER_COST_TYPES,
@@ -139,28 +140,31 @@ export function aggregateInvoiceCosts(
           amountFormatted: formatEuro(amount),
         };
       } else {
-        let kWh = parseKwhFromInvoice(inv);
-        if (kWh === 0 && readingsTotalKwh > 0 && energyInvoices.length === 0) {
+        const isFuel = FUEL_COST_TYPES.includes(ct as any);
+        let kWh = isFuel ? parseKwhFromInvoice(inv) : 0;
+        if (isFuel && kWh === 0 && readingsTotalKwh > 0 && energyInvoices.length === 0) {
           kWh = readingsTotalKwh;
         }
         energyInvoices.push({
           label,
           date,
           kWh,
-          kWhFormatted: new Intl.NumberFormat("de-DE", {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 3,
-          }).format(kWh),
+          kWhFormatted: isFuel
+            ? new Intl.NumberFormat("de-DE", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 3,
+              }).format(kWh)
+            : "",
           amount,
           amountFormatted: formatEuro(amount),
         });
-        energyTotalKwh += kWh;
+        if (isFuel) energyTotalKwh += kWh;
         energyTotalAmount += amount;
       }
       continue;
     }
 
-    if (HEATING_OPERATING_TYPES.includes(ct as any)) {
+    if ((HEATING_OPERATING_TYPES as readonly string[]).includes(ct)) {
       heatingCostItems.push({
         label: inv.purpose || inv.document_name || ct,
         date,
@@ -171,7 +175,7 @@ export function aggregateInvoiceCosts(
       continue;
     }
 
-    if (DISTRIBUTION_COST_TYPES.includes(ct as any)) {
+    if ((DISTRIBUTION_COST_TYPES as readonly string[]).includes(ct)) {
       distributionCostItems.push({
         label: inv.purpose || inv.document_name || ct,
         amount,

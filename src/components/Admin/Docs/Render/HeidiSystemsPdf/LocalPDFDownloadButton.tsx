@@ -5,8 +5,11 @@ import Image from "next/image";
 import { doc_download } from "@/static/icons";
 import { type HeatingBillPreviewProps } from "../HeatingBillPreview/HeatingBillPreview";
 
-export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
+export default function LocalPDFDownloadButton(
+  props: HeatingBillPreviewProps & { disabled?: boolean }
+) {
   const [loading, setLoading] = useState(false);
+  const { disabled = false } = props;
 
   const handleDownload = async () => {
     const { mainDoc, local, objekt } = props;
@@ -60,7 +63,7 @@ export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
     <button
       className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       onClick={handleDownload}
-      disabled={loading}
+      disabled={loading || disabled}
     >
       <Image
         width={0}

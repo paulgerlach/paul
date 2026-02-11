@@ -25,9 +25,12 @@ export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
           localId: local?.id,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data.error ?? "PDF konnte nicht erzeugt werden.");
+        throw new Error(
+          (typeof data?.error === "string" ? data.error : null) ??
+            "PDF konnte nicht erzeugt werden."
+        );
       }
       const presignedUrl = data.presignedUrl;
       if (!presignedUrl) {
@@ -45,7 +48,9 @@ export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error generating or downloading PDF:", error);
-      alert("Fehler beim Erzeugen oder Herunterladen der PDF.");
+      const message =
+        error instanceof Error ? error.message : "Fehler beim Erzeugen oder Herunterladen der PDF.";
+      alert(message);
     } finally {
       setLoading(false);
     }

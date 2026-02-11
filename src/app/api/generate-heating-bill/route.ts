@@ -8,6 +8,12 @@ import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/Heid
 import { mockHeatingBillModel } from "@/lib/heating-bill/mock-model";
 import { fetchHeatingBillData } from "@/lib/heating-bill/data-fetcher";
 import { computeHeatingBill } from "@/lib/heating-bill/compute";
+import { validateModel } from "@/lib/heating-bill/validation";
+
+/** When "true" or "1", always use mock model (for testing/rollback). Default: use computed model. */
+const HEATING_BILL_USE_MOCK =
+  process.env.HEATING_BILL_USE_MOCK === "true" ||
+  process.env.HEATING_BILL_USE_MOCK === "1";
 
 /**
  * POST /api/generate-heating-bill
@@ -15,7 +21,7 @@ import { computeHeatingBill } from "@/lib/heating-bill/compute";
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
  *
- * Step 2–5: uses computed model (all sections from real data, cover fully populated).
+ * Uses computed model from DB when HEATING_BILL_USE_MOCK is not set; falls back to mock on error.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -58,26 +64,38 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    // Step 2: use computed model (real buildingCalc + cover) when available; fallback to mock.
+    // Use computed model unless HEATING_BILL_USE_MOCK is set; fallback to mock on error.
     let model = mockHeatingBillModel;
     let computedModel: typeof model | null = null;
+    let validation: { valid: boolean; errors: string[]; warnings: string[] } | null = null;
 
-    try {
-      const raw = await fetchHeatingBillData(docId, user.id, {
-        useServiceRole: true,
-      });
-      computedModel = computeHeatingBill(raw);
-      model = computedModel;
-      if (process.env.NODE_ENV === "development" || debug) {
-        console.log(
-          "[HeatingBill] Using computed model, grandTotal",
-          computedModel.buildingCalc?.grandTotal?.toFixed(2)
-        );
+    if (!HEATING_BILL_USE_MOCK) {
+      try {
+        const raw = await fetchHeatingBillData(docId, user.id, {
+          useServiceRole: true,
+        });
+        computedModel = computeHeatingBill(raw);
+        model = computedModel;
+        validation = validateModel(computedModel);
+        if (!validation.valid && validation.errors.length > 0) {
+          console.warn("[HeatingBill] Validation errors:", validation.errors);
+        }
+        if (validation.warnings.length > 0) {
+          console.warn("[HeatingBill] Validation warnings:", validation.warnings);
+        }
+        if (process.env.NODE_ENV === "development" || debug) {
+          console.log(
+            "[HeatingBill] Using computed model, grandTotal",
+            computedModel.buildingCalc?.grandTotal?.toFixed(2)
+          );
+        }
+      } catch (fetchError) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("[HeatingBill] Compute failed, using mock:", fetchError);
+        }
       }
-    } catch (fetchError) {
-      if (process.env.NODE_ENV === "development") {
-        console.warn("[HeatingBill] Compute failed, using mock:", fetchError);
-      }
+    } else if (process.env.NODE_ENV === "development" || debug) {
+      console.log("[HeatingBill] HEATING_BILL_USE_MOCK enabled, using mock model");
     }
 
     // Resolve logo to absolute file path for server-side rendering
@@ -147,6 +165,7 @@ export async function POST(request: NextRequest) {
       metadata: { storagePath: string };
       debugModel?: typeof model;
       debugComputedModel?: typeof model;
+      debugValidation?: { valid: boolean; errors: string[]; warnings: string[] };
     } = {
       documentId: docRecord.id,
       presignedUrl: signedData.signedUrl,
@@ -156,6 +175,7 @@ export async function POST(request: NextRequest) {
     if (debug) {
       response.debugModel = model;
       if (computedModel) response.debugComputedModel = computedModel;
+      if (validation) response.debugValidation = validation;
     }
 
     return NextResponse.json(response);

@@ -12,6 +12,7 @@ import { computeWarmWaterCosts } from "./warmwater";
 import { computeHeatingRates } from "./rates";
 import { computeReadingDeltas } from "./readings";
 import { computeColdWaterRates } from "./coldwater";
+import { computeUnitBreakdown } from "./unit-breakdown";
 import { formatEuro, formatDateGerman, formatGermanNumber } from "@/utils";
 
 const HEAT_DEVICE_TYPES = [
@@ -131,6 +132,66 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   );
 
   model.coldWater = coldWater;
+
+  // Unit breakdown: filter device rows by local and compute unit costs
+  const deviceIdToLocalId = new Map<string, string>();
+  for (const lm of raw.localMeters ?? []) {
+    if (lm.meter_number && lm.local_id) {
+      deviceIdToLocalId.set(String(lm.meter_number), lm.local_id);
+    }
+  }
+
+  const targetLocalId = raw.mainDoc.local_id ?? raw.locals[0]?.id;
+  const targetLocal = targetLocalId
+    ? raw.locals.find((l) => l.id === targetLocalId)
+    : raw.locals[0];
+  const localLivingSpaceM2 = targetLocal ? Number(targetLocal.living_space ?? 0) : 0;
+  const localLabel = targetLocal?.house_location ?? targetLocal?.floor ?? "Wohnung";
+
+  const belongsToLocal = (deviceNumber: string) => {
+    if (!targetLocalId) return true;
+    const mapped = deviceIdToLocalId.get(deviceNumber);
+    if (mapped !== undefined) return mapped === targetLocalId;
+    return false;
+  };
+
+  const heatingDevicesForLocal = readingsResult.deviceRows.heat.filter((r) =>
+    belongsToLocal(r.deviceNumber)
+  );
+  const warmWaterDevicesForLocal = readingsResult.deviceRows.warmWater.filter((r) =>
+    belongsToLocal(r.deviceNumber)
+  );
+  const coldWaterDevicesForLocal = readingsResult.deviceRows.coldWater.filter((r) =>
+    belongsToLocal(r.deviceNumber)
+  );
+
+  const contractorsNames =
+    raw.contractsWithContractors
+      ?.flatMap((c) => c.contractors)
+      .map((ct) => `${ct.first_name} ${ct.last_name}`)
+      .join(", ") ?? model.cover.contractorsNames;
+
+  model.unitBreakdown = computeUnitBreakdown({
+    localId: targetLocalId ?? "",
+    livingSpaceM2: localLivingSpaceM2 || 77.02,
+    localLabel: localLabel || undefined,
+    heating,
+    warmWater,
+    coldWaterRateItems: coldWater.rateItems,
+    heatingDevices: heatingDevicesForLocal,
+    warmWaterDevices: warmWaterDevicesForLocal,
+    coldWaterDevices: coldWaterDevicesForLocal,
+    contractorsNames,
+    street: raw.objekt?.street ?? model.cover.street,
+    zip: raw.objekt?.zip ?? model.cover.zip,
+    billingPeriodStart: formatDateGerman(raw.mainDoc.start_date) ?? "",
+    billingPeriodEnd: formatDateGerman(raw.mainDoc.end_date) ?? "",
+    createdAt: formatDateGerman(raw.mainDoc.created_at) ?? "",
+    energyRelief: costAgg.energyRelief
+      ? { label: costAgg.energyRelief.label, amount: costAgg.energyRelief.amount }
+      : null,
+    unitCount,
+  });
 
   model.buildingCalc = {
     energyInvoices: costAgg.energyInvoices.map((i) => ({

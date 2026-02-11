@@ -40,6 +40,8 @@ export interface HeatingBillRawData {
     id: string;
     living_space: string;
     objekt_id: string;
+    floor?: string;
+    house_location?: string | null;
   }>;
   invoices: Array<{
     id: string;
@@ -64,6 +66,8 @@ export interface HeatingBillRawData {
     id: string;
   } | null;
   meterReadings: MeterReadingType[];
+  /** Maps device_id (meter_number) to local_id for filtering unit-level readings */
+  localMeters: Array<{ meter_number: string | null; local_id: string | null }>;
 }
 
 export async function fetchHeatingBillData(
@@ -145,12 +149,13 @@ export async function fetchHeatingBillData(
       contractsWithContractors: [],
       user: user ? { first_name: user.first_name, last_name: user.last_name, id: user.id } : null,
       meterReadings: [],
+      localMeters: [],
     };
   }
 
   const [objektResult, localsResult] = await Promise.all([
     database.select().from(objekte).where(eq(objekte.id, objektId)).then((r) => r[0] ?? null),
-    database.select({ id: locals.id, living_space: locals.living_space, objekt_id: locals.objekt_id }).from(locals).where(eq(locals.objekt_id, objektId)),
+    database.select({ id: locals.id, living_space: locals.living_space, objekt_id: locals.objekt_id, floor: locals.floor, house_location: locals.house_location }).from(locals).where(eq(locals.objekt_id, objektId)),
   ]);
 
   const localIdsForContracts = localsResult.map((l) => l.id);
@@ -180,16 +185,21 @@ export async function fetchHeatingBillData(
 
   const allLocals = localsResult;
   const localIds = allLocals.map((l) => l.id);
-  const meterIds = (
+  const localMetersRows = (
     await Promise.all(
       localIds.map((lid) =>
-        database.select().from(local_meters).where(eq(local_meters.local_id, lid))
+        database
+          .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id })
+          .from(local_meters)
+          .where(eq(local_meters.local_id, lid))
       )
     )
-  )
-    .flat()
-    .map((m) => m.id)
-    .filter(Boolean);
+  ).flat();
+  const meterIds = localMetersRows.map((m) => m.id).filter(Boolean);
+  const localMeters = localMetersRows.map((m) => ({
+    meter_number: m.meter_number,
+    local_id: m.local_id,
+  }));
 
   let meterReadings: MeterReadingType[] = [];
   if (supabase && meterIds.length > 0 && mainDoc?.start_date && mainDoc?.end_date) {
@@ -253,6 +263,8 @@ export async function fetchHeatingBillData(
       id: l.id,
       living_space: l.living_space,
       objekt_id: l.objekt_id,
+      floor: l.floor,
+      house_location: l.house_location,
     })),
     invoices: invoices.map((i) => ({
       id: i.id,
@@ -279,5 +291,6 @@ export async function fetchHeatingBillData(
       ? { first_name: user.first_name, last_name: user.last_name, id: user.id }
       : null,
     meterReadings,
+    localMeters,
   };
 }

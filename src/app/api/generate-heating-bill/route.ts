@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
+import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
@@ -15,7 +15,7 @@ import { computeHeatingBill } from "@/lib/heating-bill/compute";
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
  *
- * Step 2–3: uses computed model (buildingCalc, cover, coldWater from real data).
+ * Step 2–4: uses computed model (buildingCalc, cover, coldWater, unitBreakdown from real data).
  */
 export async function POST(request: NextRequest) {
   try {

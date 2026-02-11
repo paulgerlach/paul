@@ -84,7 +84,7 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
               </span>
             ))}
           </div>
-          <FormMessage />
+          <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
         </FormItem>
       )}
     />

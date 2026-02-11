@@ -38,7 +38,7 @@ export default function FormMoneyInput<T extends FieldValues = FieldValues>({
               €
             </span>
           </div>
-          <FormMessage className="text-red-500 text-sm" />
+          <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
         </FormItem>
       )}
     />

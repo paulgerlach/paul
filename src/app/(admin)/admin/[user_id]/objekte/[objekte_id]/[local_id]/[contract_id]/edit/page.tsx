@@ -53,7 +53,6 @@ export default async function EditContractPage({
             uploadedDocuments={documentFilesUrls}
             initialValues={{
               is_current: contract.is_current ? contract.is_current : false,
-              is_unbefristet: !contract.rental_end_date,
               additional_costs: Number(contract.additional_costs),
               cold_rent: Number(contract.cold_rent),
               deposit: Number(contract.deposit),

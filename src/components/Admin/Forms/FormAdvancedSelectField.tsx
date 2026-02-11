@@ -39,7 +39,7 @@ export default function FormAdvancedSelectField<T extends FieldValues = FieldVal
             placeholder={placeholder}
             options={options}
           />
-          <FormMessage className="text-red-500 text-sm" />
+          <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
         </FormItem>
       )}
     />

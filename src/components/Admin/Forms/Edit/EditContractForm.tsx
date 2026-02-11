@@ -26,7 +26,6 @@ import FormContractorField from "../FormContractorFields";
 
 const contractSchema = z.object({
   is_current: z.boolean(),
-  is_unbefristet: z.boolean(),
   rental_start_date: z.coerce
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
@@ -79,7 +78,6 @@ export type EditContractFormValues = z.infer<typeof contractSchema>;
 
 const defaultValues: EditContractFormValues = {
   is_current: false,
-  is_unbefristet: true,
   rental_start_date: new Date(),
   rental_end_date: null,
   contractors: [
@@ -125,7 +123,6 @@ export default function EditContractForm({
   const { addContractor } = useContractorActions(methods);
 
   const watchContractors = methods.watch("contractors");
-  const isUnbefristet = methods.watch("is_unbefristet");
 
   return (
     <Form {...methods}>
@@ -134,7 +131,6 @@ export default function EditContractForm({
         className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data: EditContractFormValues) => {
           try {
-            data.is_unbefristet = !data.rental_end_date;
             await editContract(contractID, localID, data);
 
             if (data.documents && data.documents.length > 0) {

@@ -21,7 +21,6 @@ import { adminCreateContract } from "@/actions/create/admin/adminCreateContract"
 
 const contractSchema = z.object({
   is_current: z.boolean(),
-  is_unbefristet: z.boolean(),
   rental_start_date: z.coerce
     .date({
       errorMap: () => ({ message: "Ungültiges Datum" }),
@@ -74,7 +73,6 @@ export type CreateContractFormValues = z.infer<typeof contractSchema>;
 
 const defaultValues: CreateContractFormValues = {
   is_current: false,
-  is_unbefristet: true,
   rental_start_date: new Date(),
   rental_end_date: null,
   contractors: [
@@ -109,8 +107,8 @@ export default function AdminCreateContractForm({
   });
   const { addContractor } = useContractorActions(methods);
 
+
   const watchContractors = methods.watch("contractors");
-  const isUnbefristet = methods.watch("is_unbefristet");
 
   return (
     <Form {...methods}>
@@ -119,7 +117,6 @@ export default function AdminCreateContractForm({
         className="w-10/12 max-medium:w-full"
         onSubmit={methods.handleSubmit(async (data) => {
           try {
-            data.is_unbefristet = !data.rental_end_date;
             await adminCreateContract(data, localID, userID);
             toast.success("Vertrag wurde erfolgreich erstellt.");
             router.push(

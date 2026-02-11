@@ -1085,6 +1085,45 @@ export async function getDocCostCategoryTypes(
       )
     );
 
+  if (documentType === "heizkostenabrechnung") {
+    const { DEFAULT_HEATING_COST_TYPES } = await import(
+      "@/constants/costTypes"
+    );
+
+    // Create a map of user's types by their 'type' key for quick lookup
+    const userTypesMap = new Map<string | null | undefined, DocCostCategoryType>(
+      types.map((t) => [t.type, t])
+    );
+
+    // Build the merged list: start with defaults, replace with user data if present
+    const mergedList: DocCostCategoryType[] = DEFAULT_HEATING_COST_TYPES.map(
+      (defaultType) => {
+        const userEntry = userTypesMap.get(defaultType.type);
+        if (userEntry) {
+          // User has this type - use their version (priority)
+          userTypesMap.delete(defaultType.type); // Mark as used
+          return userEntry;
+        }
+        // User doesn't have this type - use hardcoded default with virtual ID
+        return {
+          ...defaultType,
+          id: crypto.randomUUID(),
+          user_id: userIdToQuery,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          document_type: "heizkostenabrechnung",
+        } as DocCostCategoryType;
+      }
+    );
+
+    // Append any remaining user types that are NOT in the defaults list (custom types)
+    for (const customType of userTypesMap.values()) {
+      mergedList.push(customType);
+    }
+
+    return mergedList;
+  }
+
   return types;
 }
 

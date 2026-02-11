@@ -1,17 +1,18 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/Basic/ui/Dialog";
-import { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 interface MenuModalProps {
   title: string;
-  children?: ReactNode;
+  children: (onClose: () => void) => ReactNode;
   trigger: ReactNode;
 }
 
 export default function MenuModal({ title, children, trigger }: MenuModalProps) {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
@@ -30,7 +31,7 @@ export default function MenuModal({ title, children, trigger }: MenuModalProps) 
         </DialogTitle>
 
         <div className="mt-4 text-sm text-gray-600 leading-relaxed">
-          {children || <p>Content here</p>}
+          {children(() => setOpen(false))}
         </div>
       </DialogContent>
     </Dialog>

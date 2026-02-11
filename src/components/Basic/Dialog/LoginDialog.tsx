@@ -77,17 +77,18 @@ export default function LoginDialog() {
           return;
         }
 
+        // Send login event to Make.com webhook BEFORE navigation
+        // (router.push unmounts the component and cancels pending fetches)
+        sendLoginEvent(session.user.email || email);
+
+        toast.success("Login erfolgreich");
+        closeDialog("login");
+
         if (userData?.permission === "admin") {
           router.push("/admin");
         } else {
           router.push(ROUTE_DASHBOARD);
         }
-
-        // Send login event to Make.com webhook
-        sendLoginEvent(session.user.email || email);
-
-        toast.success("Login erfolgreich");
-        closeDialog("login");
       }
     } catch (e) {
       console.error("Unexpected login error:", e);

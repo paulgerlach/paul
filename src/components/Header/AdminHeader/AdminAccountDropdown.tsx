@@ -11,58 +11,76 @@ import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 // --- Shared Styles & Components ---
 const inputStyle = "w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm text-gray-900 focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors";
 const labelStyle = "text-xs font-medium text-gray-500";
 
-const ModalFooter = ({ onClose }: { onClose?: () => void }) => (
-  <div className="flex justify-between items-center pt-6 mt-2">
+const ModalFooter = ({ onClose, loading }: { onClose?: () => void, loading?: boolean }) => (
+<div className="flex justify-between items-center pt-6 mt-2">
     <button
+      type="button"
       onClick={onClose}
       className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
     >
       Abbrechen
     </button>
 
-    {/* TODO(form): UI-only – no submit logic yet, align with react-hook-form */}
+    
     <button
-      type="button"
-      className="px-6 py-2.5 text-sm font-medium text-white bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors"
+      type="submit"
+      disabled={loading}
+      className="px-6 py-2.5 text-sm font-medium text-white bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors disabled:opacity-50"
     >
-      Speichern
+      {loading ? "Lädt..." : "Speichern"}
     </button>
   </div>
 );
 
 
 // --- 1. Mein Profil Form ---
-// TODO(form): UI-only form, not wired up.
-// Align with react-hook-form (useForm / register / handleSubmit)
-const ProfileEditForm = ({ onClose }: { onClose?: () => void }) => {
+// TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
+const ProfileEditForm = ({ onClose }: { onClose: () => void }) => {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = async (data: any) => {
+  const { error } = await supabase
+    .from("contractors")
+    .update(data);
+    console.log("Profile Data:", data);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  onClose();
+  };
   return (
-    <div className="flex flex-col gap-5 mt-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 mt-2">
       <div className="flex gap-4 w-full">
         <div className="flex-1 space-y-1.5">
           <label className={labelStyle}>Vorname *</label>
-          <input type="text" className={inputStyle} />
+          <input {...register("firstName", { required: true })} type="text" className={inputStyle} />
         </div>
         <div className="flex-1 space-y-1.5">
           <label className={labelStyle}>Nachname *</label>
-          <input type="text" className={inputStyle} />
+          <input {...register("lastName", { required: true })} type="text" className={inputStyle} />
         </div>
       </div>
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Telefonnummer</label>
-        <input type="tel" className={inputStyle} />
+        <input {...register("phone")} type="tel" className={inputStyle} />
       </div>
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Rolle im Unternehmen</label>
         <div className="relative">
-          <select className={`${inputStyle} appearance-none cursor-pointer`} defaultValue="">
+          <select {...register("role")} className={`${inputStyle} appearance-none cursor-pointer`} defaultValue="">
             <option value="" disabled hidden></option>
-            <option value="admin">Admin</option>
-            <option value="manager">Manager</option>
+            <option value="admin">admin</option>
+            <option value="manager">user</option>
           </select>
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1L5 5L9 1" /></svg>
@@ -71,63 +89,139 @@ const ProfileEditForm = ({ onClose }: { onClose?: () => void }) => {
       </div>
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Anmerkungen</label>
-        <textarea rows={3} className={`${inputStyle} resize-none`} />
+        <textarea {...register("notes")} rows={1} className={`${inputStyle} resize-none`} />
       </div>
       <ModalFooter onClose={onClose} />
-    </div>
+    </form>
   );
 };
 
 // --- 2. Unternehmensdaten Form (Company Data) ---
-// TODO(form): UI-only form. Submission + validation pending.
-const CompanyDataForm = ({ onClose }: { onClose?: () => void }) => {
+// TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
+// TO DO: Create table for the company logos needed
+const CompanyDataForm = ({ onClose }: { onClose: () => void }) => {
+  const { register, handleSubmit, watch } = useForm();
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const logoFile = watch("logo");
+
+  useEffect(() => {
+    if (logoFile?.[0]) {
+      const file = logoFile[0];
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [logoFile]);
+
+   const onSubmit = async (data: any) => {
+    let logoUrl: string | null = null;
+
+    // Upload logo if present
+    if (data.logo?.[0]) {
+      const file = data.logo[0];
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("logos")
+        .upload(fileName, file);
+
+      if (uploadError) {
+        console.error("Logo upload failed:", uploadError);
+        return;
+      }
+
+      // Get public URL
+      const { data: publicData } = supabase.storage
+        .from("logos")
+        .getPublicUrl(fileName);
+
+      logoUrl = publicData.publicUrl;
+    }
+
+    // Save form + logo URL
+    const { error } = await supabase
+      .from("objekte")
+      .update({
+        company_name: data.companyName,
+        street: data.street,
+        zip: data.zip,
+        city: data.city,
+        vat_id: data.vatId,
+        logo_url: logoUrl,
+      });
+
+    if (error) {
+      console.error("DB update failed:", error);
+      return;
+    }
+
+    onClose();
+  };
   return (
-    <div className="flex flex-col gap-6 mt-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mt-4">
       {/* Top Row: Company Name & Logo */}
-      <div className="flex gap-6 items-start">
+      <div className="flex gap-10 items-start">
         <div className="flex-grow space-y-1.5">
           <label className={labelStyle}>Firmenname *</label>
-          <input type="text" className={inputStyle} />
+          <input {...register("companyName")} type="text" className={inputStyle} />
         </div>
         
         <div className="flex-shrink-0">
           <label className={labelStyle}>Firmenlogo</label>
-          <div className="w-[180px] h-[72px] border-2 border-dashed border-blue-200 rounded-xl flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-             <span className="text-[10px] text-blue-400 text-center px-4">
-                Logo hinzufügen<br/>(320 × 100 px)
-             </span>
-          </div>
+          <label className="w-[160px] h-[45px] border-2 border-dashed border-blue-200 flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
+              {preview ? (
+      <img
+        src={preview}
+        alt="Logo preview"
+        className="object-contain w-full h-full"
+      />
+    ) : (
+      <span className="text-[10px] text-blue-400 text-center px-4">
+        Logo hinzufügen<br />(320 × 100 px)
+      </span>
+    )}
+
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      {...register("logo")}
+    />
+          </label>
         </div>
       </div>
 
       {/* Rechnungsadresse Header */}
       <div className="space-y-4">
-        <h4 className="text-sm font-bold text-gray-900">Rechnungsadresse</h4>
+        <h4 className="text-sm font-bold text-gray-900 m-0">Rechnungsadresse</h4>
         
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
-          <input type="text" className={inputStyle} />
+          <input {...register("street")} type="text" className={inputStyle} />
         </div>
 
-        <div className="flex gap-4 w-full">
+        <div className="flex gap-8 w-full">
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Postleitzahl</label>
-            <input type="text" className={inputStyle} />
+            <input {...register("zip")} type="text" className={inputStyle} />
           </div>
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Stadt</label>
-            <input type="text" className={inputStyle} />
+            <input {...register("city")} type="text" className={inputStyle} />
           </div>
         </div>
       </div>
 
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Umsatzsteuer-ID</label>
-        <input type="text" className={inputStyle} />
+        <input {...register("vatId")} type="text" className={inputStyle} />
       </div>
 
       <ModalFooter onClose={onClose} />
-    </div>
+    </form>
   );
 };
 
@@ -193,18 +287,33 @@ const TeamRolesForm = ({ onClose }: { onClose?: () => void }) => {
 };
 
 // --- 4. Sicherheit (Security) ---
-// TODO(form): UI-only form. Submission + validation pending.
-const SecurityForm = ({ onClose }: { onClose?: () => void }) => {
+// TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
+const SecurityForm = ({ onClose }: { onClose: () => void }) => {
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = async (data: any) => {
+  const { error } = await supabase
+    .from("users")
+    .update(data);
+    console.log("Security Data:", data);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  onClose();
+  };
   return (
-    <div className="flex flex-col gap-6 mt-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mt-2">
       <div className="w-full">
         <label className={labelStyle}>Email Adresse *</label>
-        <input type="email" className={inputStyle} />
+        <input {...register("email")} type="email" className={inputStyle} />
       </div>
       
       <div className="w-full space-y-2">
         <label className={labelStyle}>Passwort</label>
-        <input type="password" className={inputStyle} />
+        <input {...register("password")} type="password" className={inputStyle} />
         <button 
           type="button" 
           className="text-xs text-[#6366F1] hover:underline block pt-1"
@@ -216,13 +325,13 @@ const SecurityForm = ({ onClose }: { onClose?: () => void }) => {
       <div className="pt-4">
         <ModalFooter onClose={onClose} />
       </div>
-    </div>
+    </form>
   );
 };
 
 // --- 5. Integrationen ---
 // TODO(form): Correct UI needed! + Submission + validation pending.
-const IntegrationsForm = ({ onClose }: { onClose?: () => void }) => {
+const IntegrationsForm = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">
@@ -263,7 +372,7 @@ const IntegrationsForm = ({ onClose }: { onClose?: () => void }) => {
 
 // --- 6. Support ---
 // TODO(form): TODO(form): Correct UI needed! + Submission + validation pending.
-const SupportForm = ({ onClose }: { onClose?: () => void }) => {
+const SupportForm = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">
@@ -301,14 +410,35 @@ export default function AdminAccountDropdown() {
     router.push("/");
   };
 
-  const menuItems: { title: string; component: ReactNode }[] = [
-    { title: "Mein Profil", component: <ProfileEditForm /> },
-    { title: "Unternehmensdaten", component: <CompanyDataForm /> },
-    { title: "Team & Rollen", component: <TeamRolesForm /> },
-    { title: "Sicherheit", component: <SecurityForm /> },
-    { title: "Integrationen", component: <IntegrationsForm /> },
-    { title: "Support", component: <SupportForm /> },
-  ];
+  const menuItems: {
+  title: string;
+  render: (onClose: () => void) => ReactNode;
+}[] = [
+  {
+    title: "Mein Profil",
+    render: (onClose) => <ProfileEditForm onClose={onClose} />,
+  },
+  {
+    title: "Unternehmensdaten",
+    render: (onClose) => <CompanyDataForm onClose={onClose} />,
+  },
+  {
+    title: "Team & Rollen",
+    render: (onClose) => <TeamRolesForm onClose={onClose} />,
+  },
+  {
+    title: "Sicherheit",
+    render: (onClose) => <SecurityForm onClose={onClose} />,
+  },
+  {
+    title: "Integrationen",
+    render: (onClose) => <IntegrationsForm onClose={onClose} />,
+  },
+  {
+    title: "Support",
+    render: (onClose) => <SupportForm onClose={onClose} />,
+  },
+];
 
   return (
     <Popover>
@@ -351,7 +481,7 @@ export default function AdminAccountDropdown() {
                 </button>
               }
             >
-              {item.component}
+              {(onClose) => item.render(onClose)}
             </MenuModal>
           ))}
 
@@ -368,7 +498,7 @@ export default function AdminAccountDropdown() {
                 </button>
               }
             >
-               {item.component}
+               {(onClose) => item.render(onClose)}
             </MenuModal>
           ))}
 

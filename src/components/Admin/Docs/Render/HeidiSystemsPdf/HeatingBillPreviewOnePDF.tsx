@@ -1,6 +1,5 @@
-import React from "react";
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPdfModel } from "@/lib/heating-bill/types";
+import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",
@@ -288,27 +287,27 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.contractorsGrid}>
           {hasContractors
             ? contractors.map((c) => (
-                <View key={c.id} style={styles.contractorItem}>
-                  <Text>
-                    {c.firstName} {c.lastName}
-                    {"\n"}
-                    {cover.street}
-                    {"\n"}
-                    {cover.zip}
-                  </Text>
-                </View>
-              ))
+              <View key={c.id} style={styles.contractorItem}>
+                <Text>
+                  {c.firstName} {c.lastName}
+                  {"\n"}
+                  {cover.street}
+                  {"\n"}
+                  {cover.zip}
+                </Text>
+              </View>
+            ))
             : (
-                <View style={styles.contractorItem}>
-                  <Text>
-                    {cover.contractorsNames}
-                    {"\n"}
-                    {cover.street}
-                    {"\n"}
-                    {cover.zip}
-                  </Text>
-                </View>
-              )}
+              <View style={styles.contractorItem}>
+                <Text>
+                  {cover.contractorsNames}
+                  {"\n"}
+                  {cover.street}
+                  {"\n"}
+                  {cover.zip}
+                </Text>
+              </View>
+            )}
         </View>
       </View>
     </Page>

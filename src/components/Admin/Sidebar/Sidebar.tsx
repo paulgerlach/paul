@@ -28,7 +28,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import TipsOfTheDay from "./TipsOfTheDay";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
@@ -44,14 +44,18 @@ export default function Sidebar() {
   const { user_id } = useParams();
   const { data: user } = useAuthUser();
   const [openLink, setOpenLink] = useState<string | null>(null);
+  
+  // Track selected user_id in state to persist across route navigations
+  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(undefined);
 
   const isAdmin = user?.permission === "admin";
-  const resolvedUserId = typeof user_id === "string" ? user_id : undefined;
+  // First check URL params (from route), then fall back to search params or state
+  const resolvedUserId = typeof user_id === "string" 
+    ? user_id 
+    : (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("user_id") : undefined) || selectedUserId;
   // Admin needs a selected user to navigate to user-specific pages
   const hasUserContext = isAdmin && !!resolvedUserId;
 
-
-  const isSuperAdmin = user?.permission === "super_admin";
 
   const withUserPrefix = (route: string) =>
     hasUserContext ? `${ROUTE_ADMIN}/${resolvedUserId}${route}` : route;
@@ -59,6 +63,13 @@ export default function Sidebar() {
   const handleClick = (link: string) => {
     setOpenLink((prev) => (prev === link ? null : link));
   };
+
+  // Sync selectedUserId with resolvedUserId when it changes
+  useEffect(() => {
+    if (resolvedUserId && resolvedUserId !== selectedUserId) {
+      setSelectedUserId(resolvedUserId);
+    }
+  }, [resolvedUserId, selectedUserId]);
 
   const dashboardLinks: SidebarLinkType[] = [
     {
@@ -94,6 +105,7 @@ export default function Sidebar() {
     },
   ];
 
+  const isSuperAdmin = user?.permission === "super_admin";
   // 🔒 SECURITY: Admin-only links
   if (isAdmin || isSuperAdmin) {
 		dashboardLinks.unshift({

@@ -151,9 +151,9 @@ export default function Sidebar() {
               onClick={handleClick}
               key={link.title}
               button={link}
-              disabled={isAdmin && !hasUserContext}
+              disabled={isSuperAdmin && !hasUserContext}
             />
-          ) : isAdmin && !hasUserContext && link.route !== ROUTE_ADMIN && !link.route.startsWith(`${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`) && link.route !== ROUTE_MQTT_GATEWAY ? (
+          ) : isSuperAdmin && !hasUserContext && link.route !== ROUTE_ADMIN && !link.route.startsWith(`${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`) && link.route !== ROUTE_MQTT_GATEWAY ? (
             <div
               key={link.title}
               className="flex py-3 px-5 max-xl:text-sm w-full items-center gap-3 rounded-base text-gray-400 cursor-not-allowed opacity-50"

@@ -2,16 +2,7 @@ import { blue_x, gmail, green_check_circle, pdf_icon } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
-import {
-  getContractsWithContractorsByLocalID,
-  getDocCostCategoryTypes,
-  getHeatingBillDocumentByID,
-  getHeatingInvoicesByHeatingBillDocumentID,
-  getLocalById,
-  getObjectById,
-  getRelatedLocalsByObjektId,
-  getUserData,
-} from "@/api";
+import { getContractsWithContractorsByLocalID } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
@@ -68,21 +59,6 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
         );
     }
   };
-
-  const objekt = await getObjectById(id);
-  const relatedLocals = await getRelatedLocalsByObjektId(id);
-  const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
-  const mainDoc = await getHeatingBillDocumentByID(docID ? docID : "");
-  const invoices = await getHeatingInvoicesByHeatingBillDocumentID(
-    docID ? docID : ""
-  );
-  const local = await getLocalById(item.id ?? "");
-  const user = await getUserData();
-
-  const totalLivingSpace =
-    relatedLocals?.reduce((sum, local) => {
-      return sum + (Number(local.living_space) || 0);
-    }, 0) || 0;
 
   return (
     <div
@@ -149,14 +125,9 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
             />
           </button>
           <LocalPDFDownloadButton
-            mainDoc={mainDoc}
-            local={local}
-            user={user}
-            totalLivingSpace={totalLivingSpace}
-            costCategories={costCategories}
-            invoices={invoices}
-            contracts={contracts}
-            objekt={objekt}
+            objektId={id}
+            localId={item.id ?? ""}
+            docId={docID ?? ""}
           />
           {/* Three dots - visible only on desktop */}
           <div className="max-medium:hidden">

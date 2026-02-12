@@ -3,35 +3,57 @@
 import { useState } from "react";
 import Image from "next/image";
 import { doc_download } from "@/static/icons";
-import { type HeatingBillPreviewProps } from "../HeatingBillPreview/HeatingBillPreview";
 
-export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
+export type LocalPDFDownloadButtonProps = {
+  objektId: string;
+  localId: string;
+  docId: string;
+};
+
+export default function LocalPDFDownloadButton({
+  objektId,
+  localId,
+  docId,
+}: Readonly<LocalPDFDownloadButtonProps>) {
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
-    const { mainDoc, local, objekt } = props;
-    if (!mainDoc?.id) {
+    if (!docId) {
       alert("Fehler: Keine Abrechnung ausgewählt.");
       return;
     }
     try {
       setLoading(true);
-      const res = await fetch("/api/generate-heating-bill", {
+      // Try download endpoint first (for pre-generated PDFs from objektauswahl batch)
+      let res = await fetch("/api/download-heating-bill", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          docId: mainDoc.id,
-          objektId: objekt?.id,
-          localId: local?.id,
-        }),
+        body: JSON.stringify({ objektId, localId, docId }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
+
+      // If PDF not found (404), fall back to generate on-demand (e.g. localauswahl flow)
+      if (res.status === 404) {
+        res = await fetch("/api/generate-heating-bill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ objektId, localId, docId }),
+        });
+        const generateData = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(
+            (typeof generateData?.error === "string" ? generateData.error : null) ??
+              "PDF konnte nicht erzeugt werden."
+          );
+        }
+        Object.assign(data, generateData);
+      } else if (!res.ok) {
         throw new Error(
           (typeof data?.error === "string" ? data.error : null) ??
-            "PDF konnte nicht erzeugt werden."
+            "PDF konnte nicht heruntergeladen werden."
         );
       }
+
       const presignedUrl = data.presignedUrl;
       if (!presignedUrl) {
         throw new Error("Kein Download-Link erhalten.");
@@ -49,7 +71,9 @@ export default function LocalPDFDownloadButton(props: HeatingBillPreviewProps) {
     } catch (error) {
       console.error("Error generating or downloading PDF:", error);
       const message =
-        error instanceof Error ? error.message : "Fehler beim Erzeugen oder Herunterladen der PDF.";
+        error instanceof Error
+          ? error.message
+          : "Fehler beim Erzeugen oder Herunterladen der PDF.";
       alert(message);
     } finally {
       setLoading(false);

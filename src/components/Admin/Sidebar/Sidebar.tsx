@@ -15,13 +15,13 @@ import {
   ROUTE_AGENCY_MANAGEMENT,
 } from "@/routes/routes";
 import {
-	abrechnung,
-	dashboard,
-	dokumente,
-	objekte,
-	caract_files,
-	caract_radio,
-	immobilien_1_50,
+  abrechnung,
+  dashboard,
+  dokumente,
+  objekte,
+  caract_files,
+  caract_radio,
+  immobilien_1_50,
 } from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
@@ -44,14 +44,14 @@ export default function Sidebar() {
   const { user_id } = useParams();
   const { data: user } = useAuthUser();
   const [openLink, setOpenLink] = useState<string | null>(null);
-  
+
   // Track selected user_id in state to persist across route navigations
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(undefined);
   const isSuperAdmin = user?.permission === "super_admin";
 
   // First check URL params (from route), then fall back to search params or state
-  const resolvedUserId = typeof user_id === "string" 
-    ? user_id 
+  const resolvedUserId = typeof user_id === "string"
+    ? user_id
     : (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("user_id") : undefined) || selectedUserId;
   // Admin needs a selected user to navigate to user-specific pages
   const hasUserContext = isSuperAdmin && !!resolvedUserId;
@@ -108,34 +108,34 @@ export default function Sidebar() {
   const isAdmin = user?.permission === "admin";
   // 🔒 SECURITY: Admin-only links
   if (isAdmin || isSuperAdmin) {
-		dashboardLinks.unshift({
-			title: "User Übersicht",
-			icon: dashboard,
-			route: ROUTE_ADMIN,
-		});
+    dashboardLinks.unshift({
+      title: "User Übersicht",
+      icon: dashboard,
+      route: ROUTE_ADMIN,
+    });
 
-		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
-		dashboardLinks.splice(3, 0, {
-			title: "CSV Upload",
-			icon: caract_files,
-			route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
-		});
-	}
-  
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(3, 0, {
+      title: "CSV Upload",
+      icon: caract_files,
+      route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
+    });
+  }
+
   if (isSuperAdmin) {
-		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
-		dashboardLinks.splice(4, 0, {
-			title: "Gateway Management",
-			icon: caract_radio,
-			route: `${ROUTE_MQTT_GATEWAY}`,
-		});
-		// CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
-		dashboardLinks.splice(4, 0, {
-			title: "Agency Management",
-			icon: immobilien_1_50,
-			route: `${ROUTE_AGENCY_MANAGEMENT}`,
-		});
-	}
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(4, 0, {
+      title: "Gateway Management",
+      icon: caract_radio,
+      route: `${ROUTE_MQTT_GATEWAY}`,
+    });
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(4, 0, {
+      title: "Agency Management",
+      icon: immobilien_1_50,
+      route: `${ROUTE_AGENCY_MANAGEMENT}`,
+    });
+  }
 
   const isRouteActive = (route: string) =>
     isAdmin ? pathname === route : pathname?.startsWith(route);

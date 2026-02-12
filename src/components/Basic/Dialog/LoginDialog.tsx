@@ -81,7 +81,7 @@ export default function LoginDialog() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: session.user.email || email }),
-        }).catch(() => {}); // await so request completes before navigation
+        }).catch((err) => console.error('[LOGIN] Webhook failed:', err)); // await so request completes before navigation
 
         toast.success("Login erfolgreich");
         closeDialog("login");

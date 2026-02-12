@@ -7,7 +7,6 @@ export async function POST(req: Request) {
     try {
         // ✅ NEW: Use unified webhook with event_type
         await sendNewsletterEvent(email);
-        
         console.log(`[NEWSLETTER] Sent newsletter signup event for ${email}`);
 
         return NextResponse.json({ success: true });

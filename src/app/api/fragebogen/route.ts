@@ -31,7 +31,6 @@ export async function POST(req: Request) {
             central_heating_system: data.central_heating_system,
             energy_sources: data.energy_sources,
         });
-        
         console.log(`[QUESTIONNAIRE] Sent offer inquiry event for ${data.email}`);
 
         return NextResponse.json({ success: true });

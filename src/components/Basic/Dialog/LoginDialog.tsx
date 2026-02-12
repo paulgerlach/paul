@@ -15,7 +15,6 @@ import Image from "next/image";
 import { domus, immoware24, matera } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
-import { sendLoginEvent } from "@/utils/webhooks";
 
 const LoginSchema = z.object({
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresseq  ein."),
@@ -77,9 +76,19 @@ export default function LoginDialog() {
           return;
         }
 
-        // Send login event to Make.com webhook BEFORE navigation
-        // (router.push unmounts the component and cancels pending fetches)
-        sendLoginEvent(session.user.email || email);
+        // Send login event to Make.com webhook via API (server has env var; client does not)
+        try {
+          const response = await fetch('/api/notify-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.user.email || email }),
+          });
+          if (!response.ok) {
+            console.error(`Failed to notify login: ${response.status} ${response.statusText}`);
+          }
+        } catch (err) {
+          console.error('Error notifying login:', err);
+        }
 
         toast.success("Login erfolgreich");
         closeDialog("login");

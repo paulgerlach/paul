@@ -2,16 +2,7 @@ import { blue_x, gmail, green_check_circle, pdf_icon } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
-import {
-  getAdminContractsWithContractorsByLocalID,
-  getAdminHeatingBillDocumentByID,
-  getAdminHeatingInvoicesByHeatingBillDocumentID,
-  getAdminUserData,
-  getDocCostCategoryTypes,
-  getLocalById,
-  getObjectById,
-  getRelatedLocalsByObjektId,
-} from "@/api";
+import { getAdminContractsWithContractorsByLocalID } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
@@ -73,25 +64,6 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
         );
     }
   };
-
-  const objekt = await getObjectById(objektID);
-  const relatedLocals = await getRelatedLocalsByObjektId(objektID);
-  const costCategories = await getDocCostCategoryTypes("heizkostenabrechnung");
-  const mainDoc = await getAdminHeatingBillDocumentByID(
-    docID ? docID : "",
-    userID
-  );
-  const invoices = await getAdminHeatingInvoicesByHeatingBillDocumentID(
-    docID ? docID : "",
-    userID
-  );
-  const local = await getLocalById(item.id ?? "");
-  const user = await getAdminUserData(userID);
-
-  const totalLivingSpace =
-    relatedLocals?.reduce((sum, local) => {
-      return sum + (Number(local.living_space) || 0);
-    }, 0) || 0;
 
   const previewLink =
     docType === "objektauswahl"
@@ -157,14 +129,9 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
             />
           </Link>
           <LocalPDFDownloadButton
-            mainDoc={mainDoc}
-            local={local}
-            totalLivingSpace={totalLivingSpace}
-            costCategories={costCategories}
-            invoices={invoices}
-            contracts={contracts}
-            user={user}
-            objekt={objekt}
+            objektId={objektID}
+            localId={item.id ?? ""}
+            docId={docID ?? ""}
           />
           <button>
             <Image

@@ -46,10 +46,12 @@ export async function updateSession(request: NextRequest) {
       .select("permission")
       .eq("id", user.id)
       .single();
+    
+    console.log('User Record', userRecord)
 
     if (!error && userRecord) {
       const url = request.nextUrl.clone();
-      if (userRecord.permission === "admin") {
+      if (userRecord.permission === "admin" || userRecord.permission === "super_admin") {
         url.pathname = "/admin";
       } else {
         url.pathname = ROUTE_DASHBOARD;
@@ -82,7 +84,7 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    if (error || !userRecord || userRecord.permission !== "admin") {
+    if (error || !userRecord || (userRecord.permission !== "admin" && userRecord.permission !== "super_admin")) {
       const url = request.nextUrl.clone();
       url.pathname = ROUTE_DASHBOARD;
       return NextResponse.redirect(url);

@@ -58,7 +58,7 @@ export default async function EditContractPage({
               deposit: Number(contract.deposit),
               rental_end_date: contract.rental_end_date
                 ? new Date(contract.rental_end_date)
-                : new Date(),
+                : null,
               rental_start_date: contract.rental_start_date
                 ? new Date(contract.rental_start_date)
                 : new Date(),

@@ -1,0 +1,1 @@
+export type UserRole = 'super_admin' | 'agency_admin' | 'admin' | 'user';

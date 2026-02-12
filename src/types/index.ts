@@ -156,7 +156,9 @@ export type DialogDocumentActionType =
   | "register"
   | "share_dashboard"
   | "forgotPassword"
-  | "admin_objekte_image";
+  | "admin_objekte_image"
+  | "tenantLogin"
+  | "tenantForgotPassword";
 
 export type UploadedDocument = {
   id: string;
@@ -176,7 +178,8 @@ export type DialogStoreActionType =
   | DialogDocumentActionType
   | DialogDocumentCostActionType
   | "shareModal"
-  | "shareExtendedModal";
+  | "shareExtendedModal"
+  | "invite_user";
 
 export type FirmwareType = 'boot' | 'modem' | 'application';
 export type DeploymentType = 'scheduled' | 'available' | 'force';
@@ -252,3 +255,16 @@ export interface FirmwareWithDownloadUrl extends FirmwareVersion {
   download_url?: string;
   signed_url?: string;
 }
+
+export type ProcessInvoiceResponse = {
+  invoices: Array<{
+    file: string;
+    validated: boolean;
+    cost_category?: string | null;
+    invoice_date?: string | null; // "11.04.2025"
+    gross_amount?: number | null;
+    period_start?: string | null;
+    period_end?: string | null;
+    building_check?: { is_whole_building?: boolean } | null;
+  }>;
+};

@@ -12,10 +12,11 @@ import {
   users,
   local_meters,
   heating_invoices,
+  agencies,   
 } from "@/db/drizzle/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
-import { isAdminUser } from "@/auth";
+import {  isAdminUser } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import type {
   ContractorType,
@@ -34,6 +35,7 @@ import { parseCsv } from "@/utils/parser";
 import { MASTER_DATA, MASTER_DATA_2 } from "./data";
 import { writeFileSync } from "fs";
 import { CSVParser } from "./parse_csv_to_json";
+import { Agency } from "@/types/Agency";
 
 export type MeterReadingType = {
   "Frame Type": string;
@@ -257,9 +259,9 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       };
     }) as MeterReadingType[];
 
-    // Filter by device types (Heat, Water, WWater, Elec) and ensure DateTime exists
+    // Filter by device types (Heat, Water, WWater, Elec, HCA) and ensure DateTime exists
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
+    const validDeviceTypes = ["Heat", "Water", "WWater", "HCA", "Gateway", "SmokeDetector", "Elec"];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
       (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])
@@ -270,6 +272,7 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
     const coldwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'Water');
     const hotwaterReadings = filteredData.filter(dt => dt['Device Type'] === 'WWater');
     const electricityMetersReadings = filteredData.filter(dt => dt['Device Type'] === 'Elec');
+    const hcaReadings = filteredData.filter(dt => dt['Device Type'] === 'HCA');
 
     // Combine all readings for charts (only those with valid DateTime)
     // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date or Raw Date)
@@ -277,7 +280,8 @@ export const parseCSVs = async (props?: { meterIds?: string[] }) => {
       ...heatMetersReadings,
       ...coldwaterReadings,
       ...hotwaterReadings,
-      ...electricityMetersReadings
+      ...electricityMetersReadings,
+      ...hcaReadings
     ].filter(item => item["IV,0,0,0,,Date/Time"] || item["Actual Date"] || item["Raw Date"]);
 
     // Check if all items have DateTime (either old or new format)
@@ -642,20 +646,35 @@ export async function getAdminRelatedContractors(contractID?: string, userID?: s
 export async function getObjekts(): Promise<ObjektType[]> {
   const user = await getAuthenticatedServerUser();
 
-  const [result] = await database
-    .select({ permission: users.permission })
+  // Get user role and agency_id
+  const [userResult] = await database
+    .select({
+      permission: users.permission,
+      agency_id: users.agency_id
+    })
     .from(users)
     .where(eq(users.id, user.id));
 
-  const userPermission = result?.permission;
+  const userRole = userResult?.permission || 'user';
+  const agencyId = userResult?.agency_id;
 
-  let objekts;
+  let objekts: ObjektType[];
 
-  if (userPermission === 'admin') {
+  if (userRole === 'super_admin') {
+    // Super admin: return ALL properties
     objekts = await database
       .select()
       .from(objekte);
-  } else {
+  }
+  else if ((userRole === 'agency_admin' || userRole === 'admin') && agencyId) {
+    // Agency admin & admin: return properties assigned to their agency or properties they own
+    objekts = await database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.agency_id, agencyId));
+  }
+  else {
+    // Regular user: return only their own properties
     objekts = await database
       .select()
       .from(objekte)
@@ -665,16 +684,43 @@ export async function getObjekts(): Promise<ObjektType[]> {
   return objekts;
 }
 
+
+
 export async function getObjektsByUserID(userID: string): Promise<ObjektType[]> {
+  const [userResult] = await database
+    .select({
+      permission: users.permission,
+      agency_id: users.agency_id
+    })
+    .from(users)
+    .where(eq(users.id, userID));
 
-  const objekts = await database
+  const userRole = userResult?.permission || 'user';
+  const agencyId = userResult?.agency_id;
+
+  // If querying own data, return owned properties
+  // If querying another user, only super/agency admin should call this
+  if (userRole === 'user') {
+    return database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.user_id, userID));
+  }
+
+  // Agency admin or admin: return their agency's or user's properties
+  if ((userRole === 'agency_admin' || userRole === 'admin') && agencyId) {
+    return database
+      .select()
+      .from(objekte)
+      .where(eq(objekte.agency_id, agencyId));
+  }
+
+  // Super admin: return all
+  return database
     .select()
-    .from(objekte)
-    .where(eq(objekte.user_id, userID));
-
-
-  return objekts;
+    .from(objekte);
 }
+
 
 export async function getObjektsWithLocalsByUserID(userID: string): Promise<any[]> {
   const objekts = await database
@@ -840,14 +886,54 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   }));
 }
 
-export async function getUsers(): Promise<UserType[]> {
+export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
+  try {
+    const allUsers = await database
+      .select()
+      .from(users)
+      .where(inArray(users.permission, permissions))
+      .orderBy(sql`LOWER(${users.email}) DESC`);
+    return allUsers;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    return [];
+  }
+}
 
-  const basicUsers = await database
-    .select()
-    .from(users)
-    .where(eq(users.permission, "user"));
+export async function getUsers(agency_id: string, permissions: string[]): Promise<UserType[]> {
+  try {
+    const allowedUsers = await database
+      .select()
+      .from(users)
+      .where(and(
+        eq(users.agency_id, agency_id),
+        inArray(users.permission, permissions)
+      ))
+      .orderBy(sql`LOWER(${users.email}) DESC`);
+    return allowedUsers;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+}
 
-  return basicUsers;
+export async function getAgencies(): Promise<Agency[]> {
+  try {
+    const result = await database.select().from(agencies);
+    let agenciesDB: Agency[] = [];
+    result.forEach((agency: any) => {
+      agenciesDB.push({
+        id: agency.id,
+        name: agency.name,
+        created_at: agency.created_at,
+        is_active: agency.is_active,
+      })
+    });
+    return agenciesDB;
+  } catch (error) {
+    console.error("Error fetching agencies:", error);
+    return [];
+  }
 }
 
 export async function getUserData(): Promise<UserType> {
@@ -1000,6 +1086,45 @@ export async function getDocCostCategoryTypes(
         eq(doc_cost_category.user_id, userIdToQuery)
       )
     );
+
+  if (documentType === "heizkostenabrechnung") {
+    const { DEFAULT_HEATING_COST_TYPES } = await import(
+      "@/constants/costTypes"
+    );
+
+    // Create a map of user's types by their 'type' key for quick lookup
+    const userTypesMap = new Map<string | null | undefined, DocCostCategoryType>(
+      types.map((t) => [t.type, t])
+    );
+
+    // Build the merged list: start with defaults, replace with user data if present
+    const mergedList: DocCostCategoryType[] = DEFAULT_HEATING_COST_TYPES.map(
+      (defaultType) => {
+        const userEntry = userTypesMap.get(defaultType.type);
+        if (userEntry) {
+          // User has this type - use their version (priority)
+          userTypesMap.delete(defaultType.type); // Mark as used
+          return userEntry;
+        }
+        // User doesn't have this type - use hardcoded default with virtual ID
+        return {
+          ...defaultType,
+          id: crypto.randomUUID(),
+          user_id: userIdToQuery,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          document_type: "heizkostenabrechnung",
+        } as DocCostCategoryType;
+      }
+    );
+
+    // Append any remaining user types that are NOT in the defaults list (custom types)
+    for (const customType of userTypesMap.values()) {
+      mergedList.push(customType);
+    }
+
+    return mergedList;
+  }
 
   return types;
 }

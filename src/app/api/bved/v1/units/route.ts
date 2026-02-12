@@ -114,6 +114,7 @@ export async function GET(request: Request) {
         property_tags: objekte.tags,
         property_created_at: objekte.created_at,
         property_user_id: objekte.user_id,
+        property_agency_id: objekte.agency_id,
       })
       .from(locals)
       .leftJoin(objekte, eq(locals.objekt_id, objekte.id))
@@ -186,6 +187,7 @@ export async function GET(request: Request) {
           created_at: unit.property_created_at || "",
           user_id: unit.property_user_id || "",
           image_url: null,
+          agency_id: unit.property_agency_id || null,
         };
 
         const floorValue: string = unit.floor ?? "";
@@ -248,6 +250,7 @@ export async function GET(request: Request) {
             created_at: unit.property_created_at || "",
             user_id: unit.property_user_id || "",
             image_url: null,
+            agency_id: unit.property_agency_id || null,
           };
           propertiesMap.set(propertyId, { ...property, units: [] });
         }

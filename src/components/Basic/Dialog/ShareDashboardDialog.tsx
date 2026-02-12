@@ -173,7 +173,11 @@ export default function ShareDashboardDialog() {
         
         console.log('[share-pin] 📤 Sending webhook payload:', webhookPayload);
         
-        const shareWebhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN || 'https://hook.eu2.make.com/0nabn3y343aq32nnvi2m1sd8u5k2k7yn';
+        const shareWebhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN;
+        if (!shareWebhookUrl) {
+          console.error('[share-pin] ❌ NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN not configured');
+          throw new Error('Share PIN webhook not configured');
+        }
         const webhookResponse = await fetch(shareWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

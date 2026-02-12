@@ -32,8 +32,6 @@ export async function POST(req: Request) {
             energy_sources: data.energy_sources,
         });
         
-        // 🚫 DEPRECATED: Old MAKE_FRAGEBOGEN_URL webhook removed
-        // Now using unified webhook: https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1
         console.log(`[QUESTIONNAIRE] Sent offer inquiry event for ${data.email}`);
 
         return NextResponse.json({ success: true });

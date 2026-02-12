@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { dots_button } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
@@ -20,17 +21,20 @@ export default function TheeDotsCostTypeButton({
   itemID,
   userID,
 }: TheeDotsCostTypeButtonProps) {
+  const [open, setOpen] = useState(false);
   const { openDialog, setItemID } = useDialogStore();
   const handleOpenEditDialog = () => {
     setItemID(itemID);
     openDialog(editDialogAction);
+    setOpen(false);
   };
   const handleOpenDeleteDialog = () => {
     setItemID(itemID);
     openDialog(deleteDialogAction);
+    setOpen(false);
   };
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"

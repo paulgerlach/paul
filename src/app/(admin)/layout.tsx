@@ -90,6 +90,12 @@ const LazyCostTypeHeizkostenabrechnungDeleteDialog = lazy(
   () =>
     import("@/components/Basic/Dialog/CostTypeHeizkostenabrechnungDeleteDialog")
 );
+const LazyAdminCostTypeHeizkostenabrechnungDeleteDialog = lazy(
+  () =>
+    import(
+      "@/components/Basic/Dialog/Admin/AdminCostTypeHeizkostenabrechnungDeleteDialog"
+    )
+);
 const LazyCostTypeBetriebskostenabrechnungDeleteDialog = lazy(
   () =>
     import(
@@ -207,6 +213,9 @@ export default async function AdminLayout({
         </Suspense>
         <Suspense fallback={null}>
           <LazyCostTypeHeizkostenabrechnungDeleteDialog />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazyAdminCostTypeHeizkostenabrechnungDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
           <LazyCostTypeBetriebskostenabrechnungDeleteDialog />

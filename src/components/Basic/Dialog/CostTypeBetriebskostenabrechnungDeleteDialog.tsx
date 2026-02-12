@@ -5,6 +5,7 @@ import { useDialogStore } from "@/store/useDIalogStore";
 import { useRouter } from "next/navigation";
 import DialogBase from "../ui/DialogBase";
 import { deleteCostType } from "@/actions/delete/deleteCostType";
+import { toast } from "sonner";
 
 export default function CostTypeBetriebskostenabrechnungDeleteDialog() {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -15,12 +16,20 @@ export default function CostTypeBetriebskostenabrechnungDeleteDialog() {
   const handleDelete = async () => {
     if (!itemID) return;
     setIsDeleting(true);
-    const res = await deleteCostType(itemID);
-    if (res.success) {
-      closeDialog("cost_type_betriebskostenabrechnung_delete");
-      router.refresh();
+    try {
+      const res = await deleteCostType(itemID);
+      if (res.success) {
+        closeDialog("cost_type_betriebskostenabrechnung_delete");
+        router.refresh();
+      } else {
+        toast.error("Kostenart konnte nicht gelöscht werden.");
+      }
+    } catch (error) {
+      toast.error("Fehler beim Löschen der Kostenart.");
+      console.error("Error deleting cost type:", error);
+    } finally {
+      setIsDeleting(false);
     }
-    setIsDeleting(false);
   };
 
   if (isOpen && !!itemID)

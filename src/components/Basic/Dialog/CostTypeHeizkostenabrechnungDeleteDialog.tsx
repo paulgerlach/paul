@@ -19,16 +19,22 @@ export default function CostTypeHeizkostenabrechnungDeleteDialog() {
   const handleDelete = async () => {
     if (!itemID) return;
     setIsDeleting(true);
-    const res = await deleteCostType(itemID);
-    if (res.success) {
-      const group = documentGroups.find((g) => g.id === itemID);
-      if (group?.type) removeDocumentGroup(group.type);
-      closeDialog("cost_type_heizkostenabrechnung_delete");
-      router.refresh();
-    } else {
-      toast.error("Kostenart konnte nicht gelöscht werden.");
+    try {
+      const res = await deleteCostType(itemID);
+      if (res.success) {
+        const group = documentGroups.find((g) => g.id === itemID);
+        if (group?.type) removeDocumentGroup(group.type);
+        closeDialog("cost_type_heizkostenabrechnung_delete");
+        router.refresh();
+      } else {
+        toast.error("Kostenart konnte nicht gelöscht werden.");
+      }
+    } catch (error) {
+      toast.error("Fehler beim Löschen der Kostenart.");
+      console.error("Error deleting cost type:", error);
+    } finally {
+      setIsDeleting(false);
     }
-    setIsDeleting(false);
   };
 
   if (isOpen && !!itemID)

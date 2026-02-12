@@ -224,8 +224,10 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
       : (model.cover.portalLink?.startsWith("http") ? model.cover.portalLink : `https://${model.cover.portalLink}`);
 
   const co2EnergyInvoices =
-    costAgg.energyInvoices.length > 0
-      ? costAgg.energyInvoices.map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+    costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
+      ? costAgg.energyInvoices
+          .filter((i) => i.kWh > 0)
+          .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
       : [
           {
             label: "Energieverbrauch (Zähler)",

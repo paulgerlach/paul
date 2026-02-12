@@ -109,7 +109,7 @@ export default function HeatingBillPreviewOnePDF({
         </View>
 
         <View style={[styles.flexRow, { marginTop: 20 }]}>
-          <View>
+          <View style={{ flex: 1, maxWidth: "55%" }}>
             <Text style={[styles.bold, { borderBottom: "1px solid #000" }]}>
               Heidi Systems GmbH · Rungestr. 21 · 10179 Berlin
             </Text>
@@ -124,7 +124,7 @@ export default function HeatingBillPreviewOnePDF({
             </Text>
           </View>
 
-          <View>
+          <View style={{ flexShrink: 0 }}>
             <Text style={[styles.title]}>Ihre Heidi Systems®</Text>
             <Text style={[styles.title]}>Abrechnung für Heizung,</Text>
             <Text style={[styles.title]}>Warmwasser, Kaltwasser</Text>
@@ -137,7 +137,7 @@ export default function HeatingBillPreviewOnePDF({
         <View style={styles.colHalf}>
           <View style={styles.gridRow}>
             <Text>Erstellt im Auftrag von</Text>
-            <Text>
+            <Text style={{ flex: 1, textAlign: "right" }}>
               {cover.ownerFirstName} {cover.ownerLastName}
               {"\n"}
               Immobilienmanagement {"\n"}
@@ -167,7 +167,7 @@ export default function HeatingBillPreviewOnePDF({
           </View>
           <View style={styles.gridRow}>
             <Text style={styles.bold as any}>Liegenschaft</Text>
-            <Text>
+            <Text style={{ flex: 1, textAlign: "right" }}>
               {cover.contractorsNames}
               {"\n"}
               {cover.street}

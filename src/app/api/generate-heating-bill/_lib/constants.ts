@@ -2,24 +2,22 @@
  * Physical constants, CO2 tier table, cost type mappings for Heizkostenabrechnung.
  */
 
-// Fuel/energy invoices (carry kWh data) -- Page 2 energy table
-export const ENERGY_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;
+// Fuel costs (carry kWh data) -- only these contribute to kWh total
+export const FUEL_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;
 
-// Heating operating costs -- Page 2 heating costs table
-export const HEATING_OPERATING_TYPES = [
+// All heating cost categories (Bucket 1) -- Page 2 energy table
+export const ENERGY_COST_TYPES = [
+  "fuel_costs",
+  "brennstoffkosten",
   "operating_current", // Betriebsstrom
   "maintenance_costs", // Wartungskosten
   "chimney_sweep_costs", // Schornsteinfegerkosten
   "other_operating_costs", // Sonstige Betriebskosten
-] as const;
-
-// Distribution/metering costs -- Page 2 distribution table
-export const DISTRIBUTION_COST_TYPES = [
-  "metering_device_rental", // Miete der Messgeräte
   "metering_service_costs", // Messdienstkosten
+  "metering_device_rental", // Miete der Messgeräte
 ] as const;
 
-// Cold water costs -- Page 3 (all go to coldWaterInvoices for rate breakdown)
+// Cold water costs -- feed coldWaterInvoices (Page 3 rate breakdown) and distributionCostItems (Page 2)
 export const COLD_WATER_COST_TYPES = [
   "cold_water",
   "cold_water_device_rental",

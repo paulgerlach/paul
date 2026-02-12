@@ -47,14 +47,14 @@ export default function Sidebar() {
   
   // Track selected user_id in state to persist across route navigations
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(undefined);
+  const isSuperAdmin = user?.permission === "super_admin";
 
-  const isAdmin = user?.permission === "admin";
   // First check URL params (from route), then fall back to search params or state
   const resolvedUserId = typeof user_id === "string" 
     ? user_id 
     : (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("user_id") : undefined) || selectedUserId;
   // Admin needs a selected user to navigate to user-specific pages
-  const hasUserContext = isAdmin && !!resolvedUserId;
+  const hasUserContext = isSuperAdmin && !!resolvedUserId;
 
 
   const withUserPrefix = (route: string) =>
@@ -105,7 +105,7 @@ export default function Sidebar() {
     },
   ];
 
-  const isSuperAdmin = user?.permission === "super_admin";
+  const isAdmin = user?.permission === "admin";
   // 🔒 SECURITY: Admin-only links
   if (isAdmin || isSuperAdmin) {
 		dashboardLinks.unshift({

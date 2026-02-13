@@ -204,7 +204,7 @@ export default function DashboardCharts() {
 					)}
 				</div>
 
-				<div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[] h-full">
+				<div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
 					{effectiveLoading ? (
 						<ChartCardSkeleton />
 					) : (

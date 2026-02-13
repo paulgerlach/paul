@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/utils/supabase/server';
-import { isAdminUser } from '@/auth';
+import { isAdmin } from '@/auth';
 
 /**
  * Manual CSV Upload API Route - SUPER ADMIN ONLY
@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isAdmin = await isAdminUser(user.id);
-    if (!isAdmin) {
+    const hasAdminAccess = await isAdmin(user.id);
+    if (!hasAdminAccess) {
       console.error(`Unauthorized CSV upload attempt by user: ${user.id}`);
       return NextResponse.json(
         { error: 'Unauthorized - Admin access required' },

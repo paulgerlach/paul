@@ -21,15 +21,15 @@ import { LayoutItem } from "react-grid-layout";
 // import { Layout } from "lucide-react";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout: LayoutItem[] = [
-  // Row 1
-  { i: "coldWater", x: 0, y: 0, w: 4, h: 4 },    // Column 1
-  { i: "electricity", x: 4, y: 0, w: 4, h: 3 },     // Column 2
-  { i: "notifications", x: 8, y: 0, w: 4, h: 5},  // Column 3
-  
-  // Row 2
-  { i: "hotWater", x: 0, y: 7, w: 4, h: 4 },      // Column 1
-  { i: "heating", x: 4, y: 7, w: 4, h: 5 }, // Column 2
-  { i: "einsparung", x: 8, y: 7, w: 4, h: 3 },    // Column 3
+	// Row 1
+	{ i: "coldWater", x: 0, y: 0, w: 4, h: 5 },    // Column 1
+	{ i: "electricity", x: 4, y: 0, w: 4, h: 4 },  // Column 2 
+	{ i: "notifications", x: 8, y: 0, w: 4, h: 5 },  // Column 3
+
+	// Row 2
+	{ i: "hotWater", x: 0, y: 7, w: 4, h: 4 },      // Column 1
+	{ i: "heating", x: 4, y: 7, w: 4, h: 5 }, // Column 2
+	{ i: "einsparung", x: 8, y: 7, w: 4, h: 4 },    // Column 3 
 ];
 
 
@@ -79,7 +79,7 @@ export default function DashboardCharts() {
 	const params = useParams();
 	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 	// Local state for layout to handle resizing updates
-  	const [layout, setLayout] = useState<LayoutItem[]>(defaultLayout);
+	const [layout, setLayout] = useState<LayoutItem[]>(defaultLayout);
 
 	// Get the effective user ID for metadata lookups (needed for Table View hierarchy)
 	useEffect(() => {
@@ -149,125 +149,125 @@ export default function DashboardCharts() {
 	}
 
 	// CHART VIEW (ORIGINAL)
-return (
-    <ContentWrapper className="p-0 overflow-hidden">
-      <ResponsiveGridLayout
-        className="layout"
-        layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
-        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{ lg: 12, md: 12, sm: 12, xs: 6, xxs: 2 }}
-        rowHeight={45}
-        margin={[20, 20]}
-        isResizable={true}
-        isDraggable={false}
-        useCSSTransforms={true}
-        // Compact type ensures items pack tightly without gaps
-        compactType="vertical"
-        // Prevent collisions
-        preventCollision={false}
-      >
-		<div key="coldWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<WaterChart
-				csvText={coldWaterData}
-				color="#6083CC"
-				title="Kaltwasser"
-				chartType="cold"
-				isEmpty={coldWaterData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine Daten für Kaltwasser im ausgewählten Zeitraum."
-				}
-			/>
-			)}
-        </div>
+	return (
+		<ContentWrapper className="p-0 overflow-hidden">
+			<ResponsiveGridLayout
+				className="layout"
+				layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
+				breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+				cols={{ lg: 12, md: 12, sm: 12, xs: 6, xxs: 2 }}
+				rowHeight={45}
+				margin={[20, 20]}
+				isResizable={true}
+				isDraggable={false}
+				useCSSTransforms={true}
+				// Compact type ensures items pack tightly without gaps
+				compactType="vertical"
+				// Prevent collisions
+				preventCollision={false}
+			>
+				<div key="coldWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<WaterChart
+							csvText={coldWaterData}
+							color="#6083CC"
+							title="Kaltwasser"
+							chartType="cold"
+							isEmpty={coldWaterData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten für Kaltwasser im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-        <div key="hotWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<WaterChart
-				csvText={hotWaterData}
-				color="#E74B3C"
-				title="Warmwasser"
-				chartType="hot"
-				isEmpty={hotWaterData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine Daten für Warmwasser im ausgewählten Zeitraum."
-				}
-			/>
-  			)}
-        </div>
+				<div key="hotWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<WaterChart
+							csvText={hotWaterData}
+							color="#E74B3C"
+							title="Warmwasser"
+							chartType="hot"
+							isEmpty={hotWaterData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten für Warmwasser im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-        <div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<ElectricityChart
-				electricityReadings={electricityData}
-				isEmpty={electricityData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine Stromdaten im ausgewählten Zeitraum."
-				}
-			/>
-  			)}
-        </div>
+				<div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[] h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<ElectricityChart
+							electricityReadings={electricityData}
+							isEmpty={electricityData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Stromdaten im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-        <div key="heating" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<HeatingCosts
-				csvText={heatData}
-				isEmpty={heatData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine Heizungsdaten im ausgewählten Zeitraum."
-				}
-			/>
-  			)}
-        </div>
+				<div key="heating" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<HeatingCosts
+							csvText={heatData}
+							isEmpty={heatData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Heizungsdaten im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-        <div key="notifications" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<NotificationsChart
-				isEmpty={notificationsData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine Daten im ausgewählten Zeitraum."
-				}
-				parsedData={{ data: notificationsData, errors: [] }}
-			/>
-  			)}
-        </div>
+				<div key="notifications" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<NotificationsChart
+							isEmpty={notificationsData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten im ausgewählten Zeitraum."
+							}
+							parsedData={{ data: notificationsData, errors: [] }}
+						/>
+					)}
+				</div>
 
-        <div key="einsparung" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-			{effectiveLoading ? (
-				<ChartCardSkeleton />
-			) : (
-				<EinsparungChart
-				selectedData={allData}
-				isEmpty={allData.length === 0}
-				emptyTitle={defaultEmptyTitle}
-				emptyDescription={
-					defaultEmptyDescription ??
-					"Keine CO₂-Einsparungen im ausgewählten Zeitraum."
-				}
-			/>
-  			)}
-        </div>
-      </ResponsiveGridLayout>
-    </ContentWrapper>
-  );
+				<div key="einsparung" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<EinsparungChart
+							selectedData={allData}
+							isEmpty={allData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine CO₂-Einsparungen im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
+			</ResponsiveGridLayout>
+		</ContentWrapper>
+	);
 }

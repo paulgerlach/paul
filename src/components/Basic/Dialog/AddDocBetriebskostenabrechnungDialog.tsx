@@ -232,16 +232,17 @@ export default function AddDocBetriebskostenabrechnungDialog() {
             title=""
           />
           <div className="flex items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
-              className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm border border-black/20 cursor-pointer rounded-md bg-white text-admin_dark_text text-lg font-medium shadow-xs transition-all duration-300 hover:opacity-80"
+              variant="outline"
+              className="!font-medium !text-lg max-xl:!text-sm !bg-white !border-black/20 !text-admin_dark_text hover:!bg-gray-100 hover:!text-admin_dark_text"
               onClick={() => {
                 methods.reset(defaultValues);
                 closeDialog(activeDialog as DialogStoreActionType);
               }}
             >
               Abbrechen
-            </button>
+            </Button>
             <Button
               type="submit"
               className="!font-medium !text-lg max-xl:!text-sm"

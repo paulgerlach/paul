@@ -95,7 +95,7 @@ export default function AdminCostTypeHeatObjektauswahlItem({
             editDialogAction="admin_cost_type_heizkostenabrechnung_edit"
             itemID={type.id ?? ""}
             userID={type.user_id}
-            deleteDialogAction="admin_cost_type_heizkostenabrechnung_create"
+            deleteDialogAction="admin_cost_type_heizkostenabrechnung_delete"
           />
         </div>
       </div>

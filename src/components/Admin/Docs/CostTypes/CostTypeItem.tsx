@@ -100,7 +100,7 @@ export default function CostTypeItem({
             editDialogAction="cost_type_heizkostenabrechnung_edit"
             itemID={type.id ?? ""}
             userID={type.user_id}
-            deleteDialogAction="cost_type_heizkostenabrechnung_create"
+            deleteDialogAction="cost_type_heizkostenabrechnung_delete"
           />
         </div>
       </div>

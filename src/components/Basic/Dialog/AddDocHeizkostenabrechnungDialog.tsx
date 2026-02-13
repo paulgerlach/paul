@@ -350,11 +350,11 @@ export default function AddDocHeizkostenabrechnungDialog() {
           />
 
           <div className="flex items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               disabled={isProcessingInvoice}
-              className={`px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm border border-black/20 rounded-md bg-white text-admin_dark_text text-lg font-medium shadow-xs transition-all duration-300 hover:opacity-80 ${isProcessingInvoice ? "opacity-60 cursor-not-allowed" : ""
-                }`}
+              className="!font-medium !text-lg max-xl:!text-sm !bg-white !border-black/20 !text-admin_dark_text hover:!bg-gray-100 hover:!text-admin_dark_text"
               onClick={() => {
                 if (isProcessingInvoice) return;
                 methods.reset(defaultValues);
@@ -363,7 +363,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
               }}
             >
               Abbrechen
-            </button>
+            </Button>
 
             <Button
               type="submit"

@@ -77,11 +77,18 @@ export default function LoginDialog() {
         }
 
         // Send login event to Make.com webhook via API (server has env var; client does not)
-        await fetch('/api/notify-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: session.user.email || email }),
-        }).catch((err) => console.error('[LOGIN] Webhook failed:', err)); // await so request completes before navigation
+        try {
+          const response = await fetch('/api/notify-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: session.user.email || email }),
+          });
+          if (!response.ok) {
+            console.error(`Failed to notify login: ${response.status} ${response.statusText}`);
+          }
+        } catch (err) {
+          console.error('Error notifying login:', err);
+        }
 
         toast.success("Login erfolgreich");
         closeDialog("login");

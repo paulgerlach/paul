@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { dots_button } from "@/static/icons";
 import Link from "next/link";
@@ -19,13 +20,15 @@ export default function ThreeDotsButton({
   dialogAction,
   itemID,
 }: ThreeDotsButtonProps) {
+  const [open, setOpen] = useState(false);
   const { setItemID, openDialog } = useDialogStore();
   const handleOpenDialog = () => {
     setItemID(itemID);
     openDialog(dialogAction);
+    setOpen(false);
   };
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
           className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
@@ -48,6 +51,7 @@ export default function ThreeDotsButton({
       >
         <Link
           href={editLink}
+          onClick={() => setOpen(false)}
           className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
         >
           <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" /> Bearbeiten

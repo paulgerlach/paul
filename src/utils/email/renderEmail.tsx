@@ -26,12 +26,14 @@ import HeidiPremiumTrial from '@/components/emails/HeidiPremiumTrial';
 import HeidiYearlyReview from '@/components/emails/HeidiYearlyReview';
 import CreatorCampEmail from '@/components/emails/CreatorCampEmail';
 import HeidiConfirmEmail from '@/components/emails/HediConfirmEmail';
+import TenantInviteEmail from '@/components/emails/TenantInviteEmail';
 
 const templates = {
   premiumTrial: HeidiPremiumTrial,
   yearlyReview: HeidiYearlyReview,
-   creatorCamp: CreatorCampEmail,
-   confirmEmail: HeidiConfirmEmail,
+  creatorCamp: CreatorCampEmail,
+  confirmEmail: HeidiConfirmEmail,
+  tenantInvite: TenantInviteEmail,
 };
 
 export type EmailTemplateKey = keyof typeof templates;

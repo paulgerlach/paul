@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import {
   findTenantByInviteToken,
   updateTenantPassword,
+  createSessionToken,
+  updateLastLogin,
+  TENANT_SESSION_COOKIE,
+  getSessionCookieOptions,
 } from '@/lib/tenantAuth';
 
 /**
@@ -53,9 +58,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Auto-login: Create session token
+    const sessionToken = createSessionToken({
+      id: tenant.id,
+      email: tenant.email,
+      contractor_id: tenant.contractor_id,
+    });
+
+    // Update last login timestamp
+    await updateLastLogin(tenant.id);
+
+    // Set session cookie
+    const cookieStore = await cookies();
+    cookieStore.set(TENANT_SESSION_COOKIE, sessionToken, getSessionCookieOptions());
+
     return NextResponse.json({
       success: true,
       message: 'Passwort erfolgreich eingerichtet',
+      autoLogin: true,
     });
 
   } catch (error) {

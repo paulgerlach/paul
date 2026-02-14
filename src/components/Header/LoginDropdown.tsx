@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { Building2, User } from "lucide-react";
 import { login } from "@/static/icons";
 import { useDialogStore } from "@/store/useDIalogStore";
 
@@ -128,38 +129,29 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
         </svg>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - Matches Heidi Design */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+        <div className="absolute right-0 mt-2 w-52 bg-white rounded-base shadow-2xl py-2 z-50">
           <button
             onClick={handleVermieterClick}
-            className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+            className="w-full px-4 py-3 text-left hover:bg-link/20 flex items-center gap-3 transition-colors duration-300"
           >
-            <Image
-              width={16}
-              height={16}
-              loading="lazy"
-              className="max-w-4 max-h-4 opacity-70"
-              style={{ width: "100%", height: "auto" }}
-              src={login}
-              alt="login"
-            />
-            Vermieter
+            <Building2 className="w-5 h-5 text-dark_text/50" />
+            <div>
+              <div className="text-dark_text text-sm font-medium">Vermieter</div>
+              <div className="text-dark_text/50 text-xs">Immobilien verwalten</div>
+            </div>
           </button>
+          
           <button
             onClick={handleMieterClick}
-            className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+            className="w-full px-4 py-3 text-left hover:bg-link/20 flex items-center gap-3 transition-colors duration-300"
           >
-            <Image
-              width={16}
-              height={16}
-              loading="lazy"
-              className="max-w-4 max-h-4 opacity-70"
-              style={{ width: "100%", height: "auto" }}
-              src={login}
-              alt="login"
-            />
-            Mieter
+            <User className="w-5 h-5 text-dark_text/50" />
+            <div>
+              <div className="text-dark_text text-sm font-medium">Mieter</div>
+              <div className="text-dark_text/50 text-xs">Dashboard ansehen</div>
+            </div>
           </button>
         </div>
       )}

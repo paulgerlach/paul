@@ -69,15 +69,17 @@ function SetupContent() {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        // Redirect to homepage - user can then click login popup
-        router.push('/?setup=success');
+        // Auto-login: redirect directly to tenant dashboard
+        // Keep loading state - don't reset until redirect completes
+        router.push('/mieter/dashboard');
+        return; // Don't run finally block
       } else {
         setError(result.error || "Einrichtung fehlgeschlagen");
+        setLoading(false);
       }
     } catch (err) {
       console.error("Setup error:", err);
       setError("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
-    } finally {
       setLoading(false);
     }
   };
@@ -192,7 +194,7 @@ function SetupContent() {
         {/* Help Text */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-400">
-            Nach der Einrichtung können Sie sich mit Ihrer E-Mail und diesem Passwort anmelden.
+            Nach der Einrichtung werden Sie automatisch zu Ihrem Dashboard weitergeleitet.
           </p>
         </div>
       </div>

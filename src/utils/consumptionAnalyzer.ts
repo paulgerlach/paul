@@ -134,8 +134,8 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
   const isIncrease = change.percentageChange > 0;
   const deviceTypeLabel = deviceType === "WWater" ? "Warmwasser" :
     deviceType === "Water" ? "Kaltwasser" :
-      deviceType === "Heat" || deviceType === "HCA" ? "Wärme" :
-        deviceType === "HCA" ? "Heizkostenverteiler" :
+      deviceType === "HCA" ? "Heizkostenverteiler" :
+        deviceType === "Heat" ? "Wärme" :
           deviceType;
 
   if (isIncrease) {
@@ -180,8 +180,8 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
       deviceType === "Water" ? "Kaltwasserzähler" :
-        deviceType === "Heat" || deviceType === "HCA" ? "Wärmezähler" :
-          deviceType === "HCA" ? "Heizkostenverteiler" :
+        deviceType === "HCA" ? "Heizkostenverteiler" :
+          deviceType === "Heat" ? "Wärmezähler" :
             deviceType;
 
     return {
@@ -221,8 +221,8 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
       deviceType === "Water" ? "Kaltwasserzähler" :
-        deviceType === "Heat" || deviceType === "HCA" ? "Wärmezähler" :
-          deviceType === "HCA" ? "Heizkostenverteiler" :
+        deviceType === "HCA" ? "Heizkostenverteiler" :
+          deviceType === "Heat" ? "Wärmezähler" :
             deviceType;
 
     return {

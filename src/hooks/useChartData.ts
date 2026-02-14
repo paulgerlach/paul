@@ -194,8 +194,8 @@ export const useNotificationsChartData = (): ChartDataHookResult => {
       const chartData = await fetchChartData(
         meterIds,
         [
-          'Heat', 'Water', 'WWater', 'Elec',  // OLD format
-          'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler'  // NEW format
+          'Heat', 'Water', 'WWater', 'Elec', 'HCA',  // OLD format
+          'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'  // NEW format
         ],
         startDate,
         endDate

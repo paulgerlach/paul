@@ -53,13 +53,14 @@ interface DatabaseRecord {
 
 /**
  * Extract date from filename pattern: Worringerestrasse86_YYYYMMDD_YYYYMMDD.csv
+ * Also supports .txt files (e.g. DeutschenGasse468307_20260211_20260212.txt)
  * Returns the FIRST date (start date) in YYYY-MM-DD format
  */
 function extractDateFromFilename(fileName: string): string | null {
     if (!fileName) return null;
 
-    // Match pattern: anything_YYYYMMDD_YYYYMMDD.csv or anything_YYYYMMDD.csv
-    const filenameMatch = fileName.match(/_(\d{8})(?:_\d{8})?\.csv$/i);
+    // Match pattern: anything_YYYYMMDD_YYYYMMDD.csv/.txt or anything_YYYYMMDD.csv/.txt
+    const filenameMatch = fileName.match(/_(\d{8})(?:_\d{8})?\.(?:csv|txt)$/i);
     if (filenameMatch) {
         const dateStr = filenameMatch[1]; // e.g., "20251104"
         const year = dateStr.substring(0, 4);
@@ -213,6 +214,18 @@ class Utils {
     }
 
     /**
+     * Fields that should ALWAYS be kept as strings to preserve formatting (e.g. leading zeros)
+     * Device IDs, meter numbers, and version/status fields must not be converted to numbers
+     */
+    static readonly KEEP_AS_STRING_FIELDS = new Set([
+        'ID', 'Number Meter', 'Number Meter:', 'Number Customer', 'Number Customer:',
+        'Version', 'Status', 'StatusByte', 'StatusByte:', 'AES Key', 'AESKey', 'AESKey:',
+        'Frame Type', 'Number Route', 'Number Route:', 'Number Estate', 'Number Estate:',
+        'Number Entrance', 'Number Entrance:', 'Number Building Unit', 'Number Building Unit:',
+        'Unit Number', 'Unitnumber', 'Unitnumber:'
+    ]);
+
+    /**
      * Parse a single CSV record from header and data lines
      */
     static parseRecord(headerLine: string, dataLine: string): ParsedRecord {
@@ -224,7 +237,12 @@ class Utils {
             if (index < values.length) {
                 const cleanHeader = header.trim();
                 const rawValue = values[index].trim();
-                record[cleanHeader] = this.convertValue(rawValue);
+                // Keep ID/meter fields as strings to preserve leading zeros
+                if (this.KEEP_AS_STRING_FIELDS.has(cleanHeader)) {
+                    record[cleanHeader] = rawValue;
+                } else {
+                    record[cleanHeader] = this.convertValue(rawValue);
+                }
             }
         });
 
@@ -311,6 +329,10 @@ class DatabaseHelper {
             // Get all unique device IDs
             const uniqueDeviceIds = [...new Set(deviceIds)];
 
+            // 🔍 DIAGNOSTIC: Log first 10 device IDs being looked up
+            console.log(`[METER LOOKUP] Looking up ${uniqueDeviceIds.length} unique device IDs`);
+            console.log(`[METER LOOKUP] First 10 device IDs from CSV:`, uniqueDeviceIds.slice(0, 10));
+
             // Create potential Elec device IDs with 1EMH00 prefix
             const elecDeviceIds = uniqueDeviceIds.map(id => `1EMH00${id}`);
             const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
@@ -323,7 +345,14 @@ class DatabaseHelper {
 
             if (error) {
                 console.error('Error batch fetching meter IDs:', error);
+                console.error('[METER LOOKUP] Query failed - ALL device IDs will show as unlinked');
                 return { meterIdMap, prefixedMatches };
+            }
+
+            // 🔍 DIAGNOSTIC: Log what the database returned
+            console.log(`[METER LOOKUP] Database returned ${meters?.length || 0} matching meters`);
+            if (meters && meters.length > 0) {
+                console.log(`[METER LOOKUP] Matched meter_numbers from DB:`, meters.map((m: { meter_number: string }) => m.meter_number).slice(0, 10));
             }
 
             if (meters) {
@@ -344,6 +373,14 @@ class DatabaseHelper {
                         prefixedMatches.add(deviceId);
                     }
                 });
+            }
+
+            // 🔍 DIAGNOSTIC: Log unmatched device IDs so we can debug
+            const unmatchedIds = uniqueDeviceIds.filter(id => !meterIdMap.has(id));
+            if (unmatchedIds.length > 0) {
+                console.warn(`[METER LOOKUP] ${unmatchedIds.length} device IDs NOT found in local_meters`);
+                console.warn(`[METER LOOKUP] First 10 unmatched IDs:`, unmatchedIds.slice(0, 10));
+                console.warn(`[METER LOOKUP] ⚠️ These meters may need to be registered in local_meters table, or the meter_number format may not match the CSV device ID`);
             }
 
         } catch (error) {
@@ -759,13 +796,14 @@ serve(async (req: Request) => {
 
         console.log(`Successfully parsed ${result.parsedData.length} records`)
 
-        // Count unique device IDs for logging
+        // Count unique device IDs for logging - support both old (ID) and new (Number Meter) CSV formats
         const uniqueDeviceIds = new Set(
             result.parsedData
-                .map(record => record['ID']?.toString())
+                .map(record => (record['ID'] || record['Number Meter'])?.toString())
                 .filter(id => id)
         );
         console.log(`Found ${uniqueDeviceIds.size} unique device IDs`)
+        console.log(`[DEBUG] First 5 device IDs from parsed CSV:`, [...uniqueDeviceIds].slice(0, 5))
 
         // Insert records into database with filename for date extraction
         const dbHelper = new DatabaseHelper();

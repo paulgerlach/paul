@@ -156,7 +156,7 @@ export async function fetchSharedDashboardData(
       p_local_meter_ids: allMeterIds,
       p_device_types: [
         // OLD format
-        'Heat', 'Water', 'WWater', 'Elec',
+        'Heat', 'Water', 'WWater', 'Elec', 'HCA',
         // NEW Engelmann format
         'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
         'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
@@ -215,7 +215,7 @@ export async function fetchSharedDashboardData(
     // Same logic as /api/dashboard-data/route.ts
     const validDeviceTypes = [
       // OLD format device types
-      'Heat', 'Water', 'WWater', 'Elec',
+      'Heat', 'Water', 'WWater', 'Elec', 'HCA',
       // NEW Engelmann format device types
       'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
       'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'

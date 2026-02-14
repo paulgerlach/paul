@@ -50,7 +50,7 @@ const fetchAllChartData = async (
       meterIds,
       deviceTypes: [
         // OLD format
-        'Heat', 'Water', 'WWater', 'Elec',
+        'Heat', 'Water', 'WWater', 'Elec', 'HCA',
         // NEW Engelmann format
         'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
         'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
@@ -119,7 +119,7 @@ export const useDashboardData = (): DashboardDataResult => {
   const heatData = useMemo(() => {
     if (!allData) return [];
     return allData.filter(d => 
-      ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'].includes(d['Device Type'])
+      ['Heat', 'HCA', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'].includes(d['Device Type'])
     );
   }, [allData]);
 

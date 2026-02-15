@@ -16,7 +16,7 @@ import {
 } from "@/db/drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
-import {  isAdminUser } from "@/auth";
+import { isAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import type {
   ContractorType,
@@ -1073,9 +1073,9 @@ export async function getDocCostCategoryTypes(
 ): Promise<DocCostCategoryType[]> {
   const user = await getAuthenticatedServerUser();
 
-  const isAdmin = await isAdminUser(user.id);
+  const hasAdminAccess = await isAdmin(user.id);
 
-  const userIdToQuery = isAdmin && userIdParam ? userIdParam : user.id;
+  const userIdToQuery = hasAdminAccess && userIdParam ? userIdParam : user.id;
 
   const types = await database
     .select()

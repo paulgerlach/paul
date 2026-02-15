@@ -1,11 +1,20 @@
 "use client";
 
 /**
- * BuildingSelector - Dropdown to select a building
+ * BuildingSelector - Custom dropdown to select a building
  * 
+ * Uses Headless UI Listbox for consistent styling with Heidi design.
  * Used in ShareDashboardDialog for tenant invite flow.
- * NEW COMPONENT - Does not modify any existing code.
  */
+
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 interface Building {
   id: string;
@@ -29,26 +38,49 @@ export function BuildingSelector({
   loading,
   disabled 
 }: BuildingSelectorProps) {
+  const selectedBuilding = buildings.find(b => b.id === value);
+  const displayText = selectedBuilding 
+    ? `${selectedBuilding.street}, ${selectedBuilding.zip} ${selectedBuilding.city || ""}`.trim()
+    : (loading ? "Lädt..." : "Bitte auswählen...");
+
   return (
     <div className="space-y-1.5">
       <label className="text-[#757575] text-sm block">
         Gebäude auswählen
       </label>
-      <select
-        value={value || ""}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={loading || disabled}
-        className="w-full p-3 pr-10 border border-black/20 rounded text-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed bg-white appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.75rem_center] bg-[length:1rem]"
-      >
-        <option value="">
-          {loading ? "Lädt..." : "Bitte auswählen..."}
-        </option>
-        {buildings.map((building) => (
-          <option key={building.id} value={building.id}>
-            {building.street}, {building.zip} {building.city || ""}
-          </option>
-        ))}
-      </select>
+      <Listbox value={value || ""} onChange={onChange} disabled={disabled || loading}>
+        <div className="relative">
+          <ListboxButton
+            className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green text-sm px-3 border border-black/20 rounded-md h-12 items-center disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className={`truncate pr-6 ${!selectedBuilding ? 'text-gray-400' : ''}`}>
+              {displayText}
+            </span>
+            <ChevronDownIcon
+              className="absolute right-2 top-1/2 -translate-y-1/2 size-5 text-gray-500"
+              aria-hidden="true"
+            />
+          </ListboxButton>
+
+          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black/5">
+            {buildings.map((building) => (
+              <ListboxOption
+                key={building.id}
+                value={building.id}
+                className="group relative select-none py-2.5 pl-3 pr-9 text-admin_dark_text cursor-pointer data-[focus]:bg-green/10 data-[focus]:text-admin_dark_text"
+              >
+                <span className="block truncate font-normal group-data-[selected]:font-semibold">
+                  {building.street}, {building.zip} {building.city || ""}
+                </span>
+
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-green group-[&:not([data-selected])]:hidden">
+                  <CheckIcon className="size-5" aria-hidden="true" />
+                </span>
+              </ListboxOption>
+            ))}
+          </ListboxOptions>
+        </div>
+      </Listbox>
     </div>
   );
 }

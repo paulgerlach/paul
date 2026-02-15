@@ -27,9 +27,10 @@ export default function EinsparungChart({
 
 	// Calculate CO₂ savings from the filtered data
 	const co2Result = filteredData ? calculateCO2Savings(filteredData) : null;
-	const co2Display = co2Result
-		? formatCO2Savings(co2Result.totalCO2SavedTons)
-		: "0t CO₂";
+	const co2Display =
+		co2Result && co2Result.totalCO2SavedTons > 0
+			? formatCO2Savings(co2Result.totalCO2SavedTons)
+			: "n/a";
 	const co2Context = co2Result
 		? getCO2Context(co2Result.totalCO2SavedTons)
 		: null;

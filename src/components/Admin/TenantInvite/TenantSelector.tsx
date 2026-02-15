@@ -1,12 +1,21 @@
 "use client";
 
 /**
- * TenantSelector - Dropdown to select a tenant from a building
+ * TenantSelector - Custom dropdown to select a tenant from a building
  * 
+ * Uses Headless UI Listbox for consistent styling with Heidi design.
  * Shows tenant name, apartment, and status.
- * Disables tenants without email or already active.
- * NEW COMPONENT - Does not modify any existing code.
+ * Disables tenants without email.
  */
+
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 export interface Tenant {
   contractor_id: string;
@@ -37,25 +46,38 @@ export function TenantSelector({
   disabled,
   loading 
 }: TenantSelectorProps) {
-  // Helper to get status label
-  const getStatusLabel = (tenant: Tenant): string => {
-    if (!tenant.email) return " - Keine Email";
+  const selectedTenant = tenants.find(t => t.contractor_id === value);
+
+  // Helper to get status badge
+  const getStatusBadge = (tenant: Tenant) => {
+    if (!tenant.email) {
+      return <span className="ml-2 text-xs text-gray-400">Keine Email</span>;
+    }
     switch (tenant.status) {
       case "active":
-        return " ✓ Aktiv";
+        return <span className="ml-2 text-xs text-green bg-green/10 px-1.5 py-0.5 rounded">Aktiv</span>;
       case "invited":
-        return " ◐ Eingeladen";
+        return <span className="ml-2 text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Eingeladen</span>;
       case "disabled":
-        return " ○ Deaktiviert";
+        return <span className="ml-2 text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">Deaktiviert</span>;
       default:
-        return "";
+        return null;
     }
   };
 
   // Helper to check if tenant should be disabled in dropdown
-  // Only disable if no email - allow selection of active/invited for status viewing
   const isTenantDisabled = (tenant: Tenant): boolean => {
     return !tenant.email;
+  };
+
+  // Display text for button
+  const getDisplayText = () => {
+    if (loading) return "Lädt...";
+    if (disabled) return "Erst Gebäude auswählen";
+    if (selectedTenant) {
+      return `${selectedTenant.first_name} ${selectedTenant.last_name} (${selectedTenant.apartment})`;
+    }
+    return "Bitte auswählen...";
   };
 
   return (
@@ -63,31 +85,49 @@ export function TenantSelector({
       <label className="text-[#757575] text-sm block">
         Mieter auswählen
       </label>
-      <select
-        value={value || ""}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled || loading}
-        className="w-full p-3 pr-10 border border-black/20 rounded text-sm focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed bg-white appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23666%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.75rem_center] bg-[length:1rem]"
-      >
-        <option value="">
-          {loading ? "Lädt..." : disabled ? "Erst Gebäude auswählen" : "Bitte auswählen..."}
-        </option>
-        {tenants.map((tenant) => (
-          <option 
-            key={tenant.contractor_id} 
-            value={tenant.contractor_id}
-            disabled={isTenantDisabled(tenant)}
+      <Listbox value={value || ""} onChange={onChange} disabled={disabled || loading}>
+        <div className="relative">
+          <ListboxButton
+            className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green text-sm px-3 border border-black/20 rounded-md h-12 items-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {tenant.first_name} {tenant.last_name} ({tenant.apartment})
-            {getStatusLabel(tenant)}
-          </option>
-        ))}
-      </select>
-      {tenants.length === 0 && !loading && !disabled && (
-        <p className="text-xs text-gray-500">
-          Keine Mieter für dieses Gebäude gefunden.
-        </p>
-      )}
+            <span className={`truncate pr-6 ${!selectedTenant ? 'text-gray-400' : ''}`}>
+              {getDisplayText()}
+            </span>
+            <ChevronDownIcon
+              className="absolute right-2 top-1/2 -translate-y-1/2 size-5 text-gray-500"
+              aria-hidden="true"
+            />
+          </ListboxButton>
+
+          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black/5">
+            {tenants.length === 0 ? (
+              <div className="py-2 px-3 text-gray-500 text-sm">
+                Keine Mieter für dieses Gebäude gefunden.
+              </div>
+            ) : (
+              tenants.map((tenant) => (
+                <ListboxOption
+                  key={tenant.contractor_id}
+                  value={tenant.contractor_id}
+                  disabled={isTenantDisabled(tenant)}
+                  className="group relative select-none py-2.5 pl-3 pr-9 text-admin_dark_text cursor-pointer data-[focus]:bg-green/10 data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+                >
+                  <div className="flex items-center">
+                    <span className="block truncate font-normal group-data-[selected]:font-semibold">
+                      {tenant.first_name} {tenant.last_name} ({tenant.apartment})
+                    </span>
+                    {getStatusBadge(tenant)}
+                  </div>
+
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-green group-[&:not([data-selected])]:hidden">
+                    <CheckIcon className="size-5" aria-hidden="true" />
+                  </span>
+                </ListboxOption>
+              ))
+            )}
+          </ListboxOptions>
+        </div>
+      </Listbox>
     </div>
   );
 }

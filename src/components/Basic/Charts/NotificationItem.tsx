@@ -51,7 +51,7 @@ export default function NotificationItem({
 			</div>
 			<div className="flex-1 min-w-0">
 				{/* <p className="text-sm max-md:text-xs text-black/50 font-medium leading-tight">{title}</p> */}
-				<p className="text-sm max-lg:text-xs text-black/50 leading-tight break-words whitespace-normal">
+				<p className="text-sm max-lg:text-xs text-black/50 leading-tight overflow-hidden text-ellipsis line-clamp-3">
 					{subtitle}
 				</p>
 			</div>

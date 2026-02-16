@@ -220,8 +220,6 @@ export default function AddDocHeizkostenabrechnungDialog() {
       relatedType: "heating_bill",
     });
 
-    console.log(res);
-
     closeDialog(activeDialog as DialogStoreActionType);
     toast.success("Rechnung erfolgreich hinzugefügt");
     methods.reset(defaultValues);

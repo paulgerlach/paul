@@ -2,6 +2,69 @@ import { WirelessMbusParser } from "wireless-mbus-parser";
 import databaseService from '../services/databaseService.js';
 import logger from '../utils/logger.js';
 
+/**
+ * Transform M-Bus readings array to web-compatible flat object format
+ * This ensures parsed_data matches the format expected by the web project's parser
+ * 
+ * @param {Array} readings - Raw M-Bus readings array from wireless-mbus-parser
+ * @param {string} meterId - Meter device ID
+ * @param {string} meterManufacturer - Meter manufacturer
+ * @param {string} meterDeviceType - Device type (Heat, Water, etc.)
+ * @param {number|string} version - Meter version
+ * @param {number|string} status - Meter status
+ * @param {number} accessNo - Access number
+ * @param {string|null} frameType - Frame type
+ * @returns {Object} Transformed readings in flat object format
+ */
+function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType) {
+  const result = {};
+  
+  // Map M-Bus descriptions to web format column names
+  const columnMap = {
+    'Time point': 'IV,0,0,0,,Date/Time',
+    'Energy': 'IV,0,0,0,Wh,E',
+    'Volume': 'IV,0,0,0,m^3,Vol',
+    'Units HCA': 'IV,0,0,0,,Units HCA',
+    'Date': 'IV,1,0,0,,Date',
+    'Energy 1': 'IV,1,0,0,Wh,E',
+    'Volume 1': 'IV,1,0,0,m^3,Vol',
+    'Units HCA 1': 'IV,1,0,0,,Units HCA',
+    'ErrorFlags': 'IV,0,0,0,,ErrorFlags(binary)(deviceType specific)',
+    'Model/Version': 'IV,0,0,0,Model/Version',
+    'Parameter set ident': 'IV,0,0,0,,Parameter set ident',
+  };
+  
+  // Transform array to flat object
+  if (Array.isArray(readings)) {
+    readings.forEach(item => {
+      if (item && item.description) {
+        const columnName = columnMap[item.description] || item.description;
+        result[columnName] = item.value;
+      }
+    });
+  } else if (typeof readings === 'object' && readings !== null) {
+    // Handle case where readings is already an object
+    Object.entries(readings).forEach(([key, value]) => {
+      const columnName = columnMap[key] || key;
+      result[columnName] = value;
+    });
+  }
+  
+  // Add metadata fields to parsed_data for web compatibility
+  // These fields are expected by the web project's transformation logic
+  result['Frame Type'] = frameType || 'SND_NR';
+  result['Manufacturer'] = meterManufacturer;
+  result['ID'] = String(meterId);
+  result['Version'] = version;
+  result['Device Type'] = meterDeviceType;
+  result['Access Number'] = accessNo;
+  result['Status'] = status;
+  result['Encryption'] = 0;
+  result['TPL-Config'] = '';
+  
+  return result;
+}
+
 class DataHandler {
   constructor() {
     this.name = 'data';
@@ -18,7 +81,6 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    console.log('PARSED USAGE DATA =====>>', data);
     if (data && data.batch && Array.isArray(data.batch)) {
     // Handle batch of telegrams
     for (const item of data.batch) {
@@ -80,7 +142,6 @@ class DataHandler {
   }
 
   async processParsedResult(gatewayEui, telegram, result) {
-  console.log("RESULT OF PROCESSING====>", result);
   
   const meterId = result.meter.id;
   const meterManufacturer = result.meter.manufacturer;
@@ -140,7 +201,19 @@ class DataHandler {
       return null;
     }
 
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.id, frame_type, encryption);
+    // Transform readings to web-compatible format before storing
+    const transformedReadings = transformMbusToWebFormat(
+      readings,
+      meterId,
+      meterManufacturer,
+      meterDeviceType,
+      version,
+      status,
+      accessNo,
+      frame_type
+    );
+
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter.id, frame_type, encryption);
 
     return {
       success: true,

@@ -38,8 +38,6 @@ export async function GET(request: Request) {
 
     const { data, error, count } = await query;
 
-    console.log("Fetched gateway devices:", data?.length, "of", count, "records");
-
     if (error) {
       console.error("Supabase error:", error);
       return NextResponse.json(

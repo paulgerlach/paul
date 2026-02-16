@@ -124,6 +124,12 @@ export default function AdminCostTypeItem({
                     />
                     {item.document_name ?? item.document?.[0]?.name}
                   </span>
+                  <TheeDotsCostTypeButton
+                    editDialogAction="admin_invoice_edit"
+                    itemID={item.id ?? ""}
+                    userID={type.user_id}
+                    deleteDialogAction="admin_invoice_delete"
+                  />
                 </li>
               </ul>
             );

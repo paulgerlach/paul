@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import CostTypeItem from "./CostTypeItem";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import AddCostTypeButton from "./AddCostTypeButton";
 import CostTypeHeatObjektauswahlItem from "./CostTypeHeatObjektauswahlItem";

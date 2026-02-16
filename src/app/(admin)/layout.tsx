@@ -127,6 +127,14 @@ const LazyInviteUserDialog = lazy(
   () => import("@/components/Basic/Dialog/Admin/InviteUserDialog")
 );
 
+const LazyInvoiceDeleteDialog = lazy(
+  () => import("@/components/Basic/Dialog/InvoiceDeleteDIalog")
+);
+const LazyAdminInvoiceDeleteDialog = lazy(
+  () =>
+    import("@/components/Basic/Dialog/Admin/AdminInvoiceDeleteDIalog")
+);
+
 export const metadata: Metadata = {
   title: "Heidi Systems",
   description:
@@ -237,6 +245,12 @@ export default async function AdminLayout({
         </Suspense>
         <Suspense fallback={null}>
           <LazyInviteUserDialog />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazyInvoiceDeleteDialog />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazyAdminInvoiceDeleteDialog />
         </Suspense>
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />

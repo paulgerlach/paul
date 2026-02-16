@@ -1,7 +1,7 @@
 import {
   getDocCostCategoryTypes,
   getHeatingBillDocumentByID,
-  getInvoicesByHeatingBillDocumentID,
+  getHeatingInvoicesByHeatingBillDocumentID,
   getObjectById,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
@@ -23,7 +23,7 @@ export default async function GesamtkostenEditPage({
     "heizkostenabrechnung"
   );
 
-  const relatedToDocInvoices = await getInvoicesByHeatingBillDocumentID(doc_id);
+  const relatedToDocInvoices = await getHeatingInvoicesByHeatingBillDocumentID(doc_id);
 
   const objekt = await getObjectById(doc.objekt_id ?? "");
   const locals = await getRelatedLocalsWithContractsByObjektId(

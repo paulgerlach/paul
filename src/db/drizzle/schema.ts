@@ -225,7 +225,7 @@ export const invoice_documents = pgTable("invoice_documents", {
 	pgPolicy("Allow users to SELECT their own heating bill documents", { as: "permissive", for: "select", to: ["public"], using: sql`(user_id = auth.uid())` }),
 	pgPolicy("Allow users to INSERT their own heating bill documents", { as: "permissive", for: "insert", to: ["public"] }),
 	pgPolicy("Allow users to UPDATE their own heating bill documents", { as: "permissive", for: "update", to: ["public"] }),
-	pgPolicy("Allow users to DELETE their own heating bill documents", { as: "permissive", for: "delete", to: ["public"] }),
+	pgPolicy("Allow users to DELETE their own heating bill documents", { as: "permissive", for: "delete", to: ["public"], using: sql`(user_id = auth.uid())` }),
 	pgPolicy("Admins can all, users only their own", { as: "permissive", for: "all", to: ["public"] }),
 ]);
 
@@ -247,7 +247,7 @@ export const objekte = pgTable("objekte", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 	image_url: text(),
 	agency_id: uuid(),
-	
+
 }, (table) => [
 	foreignKey({
 		columns: [table.agency_id],
@@ -394,12 +394,12 @@ export const bved_api_tokens = pgTable("bved_api_tokens", {
 		name: "bved_api_tokens_user_id_fkey"
 	}).onDelete("cascade"),
 	index("bved_api_tokens_access_token_prefix_idx").on(table.access_token_prefix),
-	pgPolicy("Users can access their own tokens or admins can access all", { 
-		as: "permissive", 
-		for: "all", 
-		to: ["public"], 
-		using: sql`(user_id = auth.uid() OR is_admin())`, 
-		withCheck: sql`(user_id = auth.uid() OR is_admin())` 
+	pgPolicy("Users can access their own tokens or admins can access all", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`(user_id = auth.uid() OR is_admin())`,
+		withCheck: sql`(user_id = auth.uid() OR is_admin())`
 	}),
 	// Note: Token validation in requireExternalAuth() uses service role connection
 	// which bypasses RLS. No policy needed for service role access.
@@ -419,19 +419,19 @@ export const bved_platform_credentials = pgTable("bved_platform_credentials", {
 		foreignColumns: [objekte.id],
 		name: "bved_platform_credentials_property_id_fkey"
 	}).onDelete("cascade"),
-	pgPolicy("Users can access credentials for their properties", { 
-		as: "permissive", 
-		for: "all", 
-		to: ["public"], 
+	pgPolicy("Users can access credentials for their properties", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
 		using: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`,
 		withCheck: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`
 	}),
-	pgPolicy("Admins can manage all credentials", { 
-		as: "permissive", 
-		for: "all", 
-		to: ["public"], 
-		using: sql`is_admin()`, 
-		withCheck: sql`is_admin()` 
+	pgPolicy("Admins can manage all credentials", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`is_admin()`,
+		withCheck: sql`is_admin()`
 	}),
 ]);
 
@@ -449,19 +449,19 @@ export const bved_cost_categories_cache = pgTable("bved_cost_categories_cache", 
 		name: "bved_cost_categories_cache_property_id_fkey"
 	}).onDelete("cascade"),
 	unique("bved_cost_categories_cache_cache_key_key").on(table.cache_key),
-	pgPolicy("Users can access cache for their properties", { 
-		as: "permissive", 
-		for: "all", 
-		to: ["public"], 
+	pgPolicy("Users can access cache for their properties", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
 		using: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`,
 		withCheck: sql`(EXISTS (SELECT 1 FROM objekte WHERE objekte.id = property_id AND objekte.user_id = auth.uid()))`
 	}),
-	pgPolicy("Admins can manage all cache", { 
-		as: "permissive", 
-		for: "all", 
-		to: ["public"], 
-		using: sql`is_admin()`, 
-		withCheck: sql`is_admin()` 
+	pgPolicy("Admins can manage all cache", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`is_admin()`,
+		withCheck: sql`is_admin()`
 	}),
 ]);
 
@@ -609,7 +609,7 @@ export const gateway_status = pgTable("gateway_status", {
 	uploading_count: integer(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-		pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
 
 // Gateway devices (from device uplink)
@@ -675,6 +675,6 @@ export const gatewayAlerts = pgTable('gateway_alerts', {
 	createdAt: timestamp('created_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
 	resolvedAt: timestamp('resolved_at', { mode: 'string', withTimezone: true }),
 	updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
-}, (table) =>[
+}, (table) => [
 	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
 ]);

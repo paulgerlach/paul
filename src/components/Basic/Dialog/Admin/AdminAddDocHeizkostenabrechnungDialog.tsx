@@ -30,6 +30,7 @@ import {
   processInvoicesViaNext,
 } from "@/api/invoices";
 import FormTextareaField from "@/components/Admin/Forms/FormTextareaField";
+import { residentialAreaOptions } from "@/static/formSelectOptions";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
@@ -197,9 +198,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
       return;
     }
 
-    updateDocumentGroup(activeCostType, formattedPayload);
-
-    await adminCreateInvoiceDocument(
+    const res = await adminCreateInvoiceDocument(
       {
         ...formattedPayload,
         invoice_date: rest.invoice_date,
@@ -210,6 +209,8 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
       operatingDocID,
       activeCostType
     );
+
+    updateDocumentGroup(activeCostType, res);
 
     if (document && document.length > 0) {
       await uploadDocuments.mutateAsync({

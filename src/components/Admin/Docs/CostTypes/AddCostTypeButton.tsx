@@ -12,7 +12,7 @@ export default function AddCostTypeButton({
   return (
     <button
       onClick={() => openDialog(dialogType)}
-      className="border-dashed w-full cursor-pointer flex py-3 px-16 max-xl:px-10 items-center justify-start text-base text-dark_green/50 border border-dark_green gap-5 rounded max-xl:text-sm"
+      className="border-dashed border-[0.5px] w-full cursor-pointer flex py-3 px-16 max-xl:px-10 items-center justify-start text-base text-dark_green/50 border-dark_green/50 gap-5 rounded max-xl:text-sm"
     >
       <span className="flex items-center justify-center size-12 max-w-12 max-h-12 min-h-12 min-w-12 bg-[#E7F2E8] rounded-full">
         <Image

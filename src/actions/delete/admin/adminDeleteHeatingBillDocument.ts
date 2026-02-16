@@ -25,7 +25,7 @@ export async function adminDeleteHeatingBillDocument(
     .returning();
 
   if (result.length === 0) {
-    throw new Error("Mieter nicht gefunden oder keine Berechtigung");
+    throw new Error("Dokument nicht gefunden oder keine Berechtigung");
   }
 
   revalidatePath(`${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`);

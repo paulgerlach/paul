@@ -30,7 +30,6 @@ export default function AdminPageContent({
 			/>
 			<ContentWrapper className="space-y-4 grid grid-rows-[1fr_auto]">
 				<div className="overflow-y-auto space-y-4 max-medium:space-y-3">
-					<AdminTipInput />
 
 					{/* Registration Control */}
 					<RegistrationToggle />
@@ -41,6 +40,9 @@ export default function AdminPageContent({
 						agencies={agencies}
 						isSuperAdmin={permission === "super_admin"}
 					/>
+
+					{/* Tip Input */}
+					<AdminTipInput />
 				</div>
 			</ContentWrapper>
 		</div>

@@ -33,7 +33,7 @@ export const EmailLayout = ({ previewText, children, variant = 'dark' }: EmailLa
             {/* Header */}
             <Section className="mt-[32px]">
               <Img
-                src="https://heidisystems.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffooter_logo.187aba8a.png&w=1920&q=75&dpl=dpl_neB6SDUKBMXWaQ6k7GXPgMrUYD9Q"
+                src="https://heidisystems.com/admin_logo.png"
                 alt="Heidi Systems"
                 width="120"
                 height="auto"

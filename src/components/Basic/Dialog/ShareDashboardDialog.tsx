@@ -7,6 +7,7 @@ import { useShareStore } from "@/store/useShareStore";
 import { useChartStore } from "@/store/useChartStore";
 import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { Button } from "../ui/Button";
+import { TenantInviteSection } from "@/components/Admin/TenantInvite";
 
 export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
@@ -172,7 +173,11 @@ export default function ShareDashboardDialog() {
         
         console.log('[share-pin] 📤 Sending webhook payload:', webhookPayload);
         
-        const shareWebhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN || 'https://hook.eu2.make.com/0nabn3y343aq32nnvi2m1sd8u5k2k7yn';
+        const shareWebhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN;
+        if (!shareWebhookUrl) {
+          console.error('[share-pin] ❌ NEXT_PUBLIC_MAKE_WEBHOOK_SHARE_PIN not configured');
+          throw new Error('Share PIN webhook not configured');
+        }
         const webhookResponse = await fetch(shareWebhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -209,110 +214,134 @@ export default function ShareDashboardDialog() {
 
   if (isOpen)
     return (
-      <DialogBase dialogName="share_dashboard" maxHeight={850}>
-        <h3 className="text-xl font-bold text-dark_text">Dashbboard teilen</h3>
+      <DialogBase dialogName="share_dashboard" maxHeight={850} size={900}>
+        <h3 className="text-xl font-bold text-dark_text">Dashboard teilen</h3>
 
-        {/* Description with better styling */}
-        <div className="mb-6">
-          <p className="text-sm text-dark_text/80 max-w-10/12 mb-4 leading-relaxed">
-            Dashboard direkt an Mieter teilen und die Verbrauchsdaten
-            übersichtlich zur Verfügung stellen.
-          </p>
+        {/* Description */}
+        <p className="text-sm text-dark_text/80 mb-6 leading-relaxed">
+          Dashboard direkt an Mieter teilen und die Verbrauchsdaten
+          übersichtlich zur Verfügung stellen.
+        </p>
 
-          {/* Enhanced URL input with copy functionality */}
-          <div className="flex gap-2 items-end">
-            <div className="flex-1">
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-2 gap-8 pb-4">
+          
+          {/* LEFT COLUMN - NEW Section */}
+          <div>
+            <div className="text-xs font-medium text-blue-600 mb-2 uppercase tracking-wide">
+              ★ Neue Funktion
+            </div>
+            <TenantInviteSection />
+          </div>
+
+          {/* RIGHT COLUMN - EXISTING Sections */}
+          <div className="space-y-4">
+            
+            {/* Divider text */}
+            <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">
+              Oder: Einmaliger Zugang
+            </div>
+
+            {/* Share URL Section */}
+            <div>
               <label
                 htmlFor="shareable_url"
                 className="text-[#757575] mb-1.5 text-sm block"
               >
                 Link mit Mietern teilen
               </label>
-              <input
-                type="text"
-                id="shareable_url"
-                name="shareable_url"
-                value={shareUrl}
-                readOnly
-                className="w-full focus:outline-none p-3 h-[46px] border border-black/20 rounded text-sm"
-              />
-            </div>
-            <Button
-              onClick={copyToClipboard}
-              className="text-sm font-medium h-[46px] px-6"
-            >
-              {copied ? "Kopiert!" : "Kopieren"}
-            </Button>
-          </div>
-        </div>
-
-        {/* NEW: Send Access Code Section */}
-        <div className="mb-6 p-4 bg-green/10 rounded-lg border border-green/20">
-          <p className="text-sm font-medium text-dark_text mb-3">
-            🔐 Zugangscode per E-Mail senden
-          </p>
-          
-          {!codeSent ? (
-            <>
-              <div className="mb-3">
-                <label
-                  htmlFor="tenant_email"
-                  className="text-[#757575] mb-1.5 text-sm block"
-                >
-                  E-Mail-Adresse des Mieters
-                </label>
+              <div className="flex gap-2">
                 <input
-                  type="email"
-                  id="tenant_email"
-                  name="tenant_email"
-                  value={tenantEmail}
-                  onChange={handleEmailChange}
-                  placeholder="mieter@beispiel.de"
-                  className="w-full focus:outline-none p-3 border border-black/20 rounded text-sm"
+                  type="text"
+                  id="shareable_url"
+                  name="shareable_url"
+                  value={shareUrl}
+                  readOnly
+                  className="flex-1 focus:outline-none p-3 border border-black/20 rounded text-sm bg-gray-50"
                 />
+                <Button
+                  onClick={copyToClipboard}
+                  className="text-sm font-medium px-5"
+                >
+                  {copied ? "Kopiert!" : "Kopieren"}
+                </Button>
               </div>
-              <Button
-                onClick={handleSendAccessCode}
-                disabled={sendingCode || !tenantEmail}
-                className="w-full text-white disabled:opacity-50"
-              >
-                {sendingCode ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="animate-spin">⏳</span> Wird gesendet...
-                  </span>
-                ) : (
-<span className="flex items-center justify-center">
-                    Zugangscode senden
-                  </span>
-                )}
-              </Button>
-            </>
-          ) : (
-            <div className="text-center py-2">
-              <div className="text-green font-medium text-lg mb-2">✅ Zugangscode gesendet!</div>
-              <p className="text-sm text-dark_text/80 mb-2">
-                E-Mail: <strong>{tenantEmail}</strong>
-              </p>
-              <p className="text-sm text-dark_text/80 mb-3">
-                Code: <strong className="font-mono text-lg">{generatedPin}</strong>
-                <span className="text-xs text-gray-500 ml-2">(Für Ihre Referenz)</span>
-              </p>
-              <p className="text-xs text-gray-500">
-                Der Mieter erhält eine E-Mail mit dem Zugangscode und dem Link zum Dashboard.
-              </p>
-              <button
-                onClick={() => {
-                  setCodeSent(false);
-                  setTenantEmail("");
-                  setGeneratedPin("");
-                }}
-                className="mt-3 text-sm text-green underline hover:no-underline"
-              >
-                Weiteren Code senden
-              </button>
             </div>
-          )}
+
+            {/* PIN Access Code Section */}
+            <div className="p-4 bg-green/10 rounded-lg border border-green/20">
+              <p className="text-sm font-medium text-dark_text mb-3">
+                🔐 Zugangscode per E-Mail senden
+              </p>
+              
+              {!codeSent ? (
+                <>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="tenant_email"
+                      className="text-[#757575] mb-1.5 text-sm block"
+                    >
+                      E-Mail-Adresse des Mieters
+                    </label>
+                    <input
+                      type="email"
+                      id="tenant_email"
+                      name="tenant_email"
+                      value={tenantEmail}
+                      onChange={handleEmailChange}
+                      placeholder="mieter@beispiel.de"
+                      className="w-full focus:outline-none p-3 border border-black/20 rounded text-sm"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSendAccessCode}
+                    disabled={sendingCode || !tenantEmail}
+                    className="w-full text-white disabled:opacity-50"
+                  >
+                    {sendingCode ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="animate-spin">⏳</span> Wird gesendet...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center">
+                        Zugangscode senden
+                      </span>
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <div className="text-center py-2">
+                  <div className="text-green font-medium text-lg mb-2">✅ Zugangscode gesendet!</div>
+                  <p className="text-sm text-dark_text/80 mb-2">
+                    E-Mail: <strong>{tenantEmail}</strong>
+                  </p>
+                  <p className="text-sm text-dark_text/80 mb-3">
+                    Code: <strong className="font-mono text-lg">{generatedPin}</strong>
+                    <span className="text-xs text-gray-500 ml-2">(Für Ihre Referenz)</span>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Der Mieter erhält eine E-Mail mit dem Zugangscode und dem Link zum Dashboard.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setCodeSent(false);
+                      setTenantEmail("");
+                      setGeneratedPin("");
+                    }}
+                    className="mt-3 text-sm text-green underline hover:no-underline"
+                  >
+                    Weiteren Code senden
+                  </button>
+                </div>
+              )}
+            </div>
+
+          </div>
+          {/* End RIGHT COLUMN */}
+
         </div>
+        {/* End Two Column Layout */}
+
       </DialogBase>
     );
 }

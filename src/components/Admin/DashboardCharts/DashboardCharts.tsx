@@ -10,7 +10,28 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useMeterHierarchy } from "@/hooks/useChartData";
 import ChartCardSkeleton from "@/components/Basic/ui/ChartCardSkeleton";
 import DashboardTable from "./DashboardTable";
-import { useRef } from "react";
+
+import { Responsive, WidthProvider, } from 'react-grid-layout/legacy';
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
+// Correct import for react-grid-layout
+import { LayoutItem } from "react-grid-layout";
+
+// import { Layout } from "lucide-react";
+const ResponsiveGridLayout = WidthProvider(Responsive);
+const defaultLayout: LayoutItem[] = [
+	// Row 1
+	{ i: "coldWater", x: 0, y: 0, w: 4, h: 5 },    // Column 1
+	{ i: "electricity", x: 4, y: 0, w: 4, h: 4 },  // Column 2 
+	{ i: "notifications", x: 8, y: 0, w: 4, h: 5 },  // Column 3
+
+	// Row 2
+	{ i: "hotWater", x: 0, y: 7, w: 4, h: 4 },      // Column 1
+	{ i: "heating", x: 4, y: 7, w: 4, h: 5 }, // Column 2
+	{ i: "einsparung", x: 8, y: 7, w: 4, h: 4 },    // Column 3 
+];
+
 
 
 const WaterChart = dynamic(
@@ -53,58 +74,12 @@ const EinsparungChart = dynamic(
 	},
 );
 
-function ResizableChart({
-  id,
-  defaultHeight,
-  minHeight,
-  children,
-}: {
-  id: string;
-  defaultHeight: number;
-  minHeight: number;
-  children: React.ReactNode;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { chartHeights, setChartHeight } = useChartStore();
-
-  const height = chartHeights[id] ?? defaultHeight;
-
-  useEffect(() => {
-    if (!ref.current) return;
-
-    const element = ref.current;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const newHeight = Math.round(entry.contentRect.height);
-        setChartHeight(id, newHeight);
-      }
-    });
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, [id, setChartHeight]);
-
-  return (
-    <div
-      ref={ref}
-      className="resize overflow-hidden rounded-lg w-full max-w-full min-w-0"
-      style={{
-        height,
-        minHeight,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-
 export default function DashboardCharts() {
 	const { meterIds, isTableView } = useChartStore();
 	const params = useParams();
 	const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+	// Local state for layout to handle resizing updates
+	const [layout, setLayout] = useState<LayoutItem[]>(defaultLayout);
 
 	// Get the effective user ID for metadata lookups (needed for Table View hierarchy)
 	useEffect(() => {
@@ -141,40 +116,20 @@ export default function DashboardCharts() {
 		...heatData,
 	], [coldWaterData, hotWaterData, electricityData, heatData]);
 
-	// Show message when no meter IDs are selected
-	if (!meterIds.length && !isLoading) {
-		return (
-			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
-				<div className="col-span-full flex flex-col items-center justify-center p-8 text-center">
-					<div className="text-gray-400 mb-4">
-						<svg
-							className="w-16 h-16 mx-auto"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-							/>
-						</svg>
-					</div>
-					<h3 className="text-lg font-semibold text-gray-900 mb-2">
-						Keine Wohnungen ausgewählt
-					</h3>
-					<p className="text-gray-600">
-						Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten anzuzeigen.
-					</p>
-				</div>
-			</ContentWrapper>
-		);
-	}
+
+	// When no meters selected, charts show their default empty states (no early return)
+	const effectiveLoading = meterIds.length > 0 && isLoading;
+	const noMetersSelected = meterIds.length === 0;
+	const defaultEmptyTitle = noMetersSelected
+		? "Keine Wohnungen ausgewählt"
+		: "Keine Daten verfügbar.";
+	const defaultEmptyDescription = noMetersSelected
+		? "Bitte wählen Sie Wohnungen aus, um die Verbrauchsdaten anzuzeigen."
+		: undefined;
 
 	// TABLE VIEW
 	if (isTableView) {
-		const isTableLoading = isLoading || hierarchy.loading;
+		const isTableLoading = effectiveLoading || hierarchy.loading;
 		return (
 			<ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
 				<div className="col-span-full h-[492px]">
@@ -194,102 +149,125 @@ export default function DashboardCharts() {
 	}
 
 	// CHART VIEW (ORIGINAL)
-return (
-  <ContentWrapper className="grid gap-3 [grid-template-columns:minmax(0,1fr)_minmax(0,1fr)_400px] max-[1300px]:[grid-template-columns:repeat(2,minmax(0,1fr))] max-medium:flex max-medium:flex-col">
-    
-    {/* Column 1: Kaltwasser + Warmwasser */}
-    <div className="flex flex-col gap-3">
-      <ResizableChart id="coldWater" defaultHeight={240} minHeight={160}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <WaterChart
-            csvText={coldWaterData}
-            color="#6083CC"
-            title="Kaltwasser"
-            chartType="cold"
-            isEmpty={coldWaterData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine Daten für Kaltwasser im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
+	return (
+		<ContentWrapper className="p-0 overflow-hidden">
+			<ResponsiveGridLayout
+				className="layout"
+				layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
+				breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+				cols={{ lg: 12, md: 12, sm: 12, xs: 6, xxs: 2 }}
+				rowHeight={45}
+				margin={[20, 20]}
+				isResizable={true}
+				isDraggable={false}
+				useCSSTransforms={true}
+				// Compact type ensures items pack tightly without gaps
+				compactType="vertical"
+				// Prevent collisions
+				preventCollision={false}
+			>
+				<div key="coldWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<WaterChart
+							csvText={coldWaterData}
+							color="#6083CC"
+							title="Kaltwasser"
+							chartType="cold"
+							isEmpty={coldWaterData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten für Kaltwasser im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-      <ResizableChart id="hotWater" defaultHeight={240} minHeight={160}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <WaterChart
-            csvText={hotWaterData}
-            color="#E74B3C"
-            title="Warmwasser"
-            chartType="hot"
-            isEmpty={hotWaterData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine Daten für Warmwasser im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
-    </div>
+				<div key="hotWater" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<WaterChart
+							csvText={hotWaterData}
+							color="#E74B3C"
+							title="Warmwasser"
+							chartType="hot"
+							isEmpty={hotWaterData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten für Warmwasser im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-    {/* Column 2: Strom + Heizung */}
-    <div className="flex flex-col gap-3">
-      <ResizableChart id="electricity" defaultHeight={200} minHeight={160}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <ElectricityChart
-            electricityReadings={electricityData}
-            isEmpty={electricityData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine Stromdaten im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
+				<div key="electricity" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<ElectricityChart
+							electricityReadings={electricityData}
+							isEmpty={electricityData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Stromdaten im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-      <ResizableChart id="heating" defaultHeight={280} minHeight={180}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <HeatingCosts
-            csvText={heatData}
-            isEmpty={heatData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine Heizungsdaten im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
-    </div>
+				<div key="heating" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<HeatingCosts
+							csvText={heatData}
+							isEmpty={heatData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Heizungsdaten im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
 
-    {/* Column 3: Notifications + Einsparung */}
-    <div className="flex flex-col gap-3 max-[1300px]:col-span-2 max-medium:col-span-1">
-      <ResizableChart id="notifications" defaultHeight={300} minHeight={200}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <NotificationsChart
-            parsedData={{ data: notificationsData, errors: [] }}
-            isEmpty={notificationsData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine Daten im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
+				<div key="notifications" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<NotificationsChart
+							isEmpty={notificationsData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine Daten im ausgewählten Zeitraum."
+							}
+							parsedData={{ data: notificationsData, errors: [] }}
+						/>
+					)}
+				</div>
 
-      <ResizableChart id="einsparung" defaultHeight={180} minHeight={140}>
-        {isLoading ? (
-          <ChartCardSkeleton />
-        ) : (
-          <EinsparungChart
-            selectedData={allData}
-            isEmpty={allData.length === 0}
-            emptyTitle="Keine Daten verfügbar."
-            emptyDescription="Keine CO₂-Einsparungen im ausgewählten Zeitraum."
-          />
-        )}
-      </ResizableChart>
-    </div>
-  </ContentWrapper>
-);
-
+				<div key="einsparung" className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
+					{effectiveLoading ? (
+						<ChartCardSkeleton />
+					) : (
+						<EinsparungChart
+							selectedData={allData}
+							isEmpty={allData.length === 0}
+							emptyTitle={defaultEmptyTitle}
+							emptyDescription={
+								defaultEmptyDescription ??
+								"Keine CO₂-Einsparungen im ausgewählten Zeitraum."
+							}
+						/>
+					)}
+				</div>
+			</ResponsiveGridLayout>
+		</ContentWrapper>
+	);
 }

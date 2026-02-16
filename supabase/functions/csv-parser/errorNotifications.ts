@@ -61,6 +61,17 @@ const MANUFACTURER_ERROR_MAPPINGS: Record<string, Record<number, string>> = {
         2: "Batterie schwach",
         3: "Gerätefehler dauerhaft",
         4: "Gerätefehler temporär"
+    },
+    // Ei Electronics Smoke Detectors (EIE)
+    EIE: {
+        0: "Rauchalarm",
+        1: "Verschmutzung",
+        2: "Batterie schwach",
+        3: "Entnahme erkannt",
+        4: "Hindernis erkannt",
+        5: "Testalarm",
+        6: "Gerätestörung",
+        7: "Funksignal schwach"
     }
 };
 

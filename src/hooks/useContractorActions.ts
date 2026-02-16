@@ -21,7 +21,7 @@ export function useContractorActions<T extends FieldValues>(
     const newContractor: Partial<ContractorType> = {
       first_name: "",
       last_name: "",
-      birth_date: new Date().toISOString(),
+      birth_date: null,
       email: "",
       phone: "",
     };

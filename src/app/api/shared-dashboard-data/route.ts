@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Filter by valid device types and ensure date exists
-    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec'];
+    const validDeviceTypes = ['Heat', 'Water', 'WWater', 'Elec', 'HCA', 'Heizkostenverteiler', 'Wärmemengenzähler'];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&
       (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date'])

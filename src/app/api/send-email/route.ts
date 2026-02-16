@@ -7,9 +7,6 @@ export async function POST(req: Request) {
     try {
         // ✅ NEW: Use unified webhook with event_type
         await sendNewsletterEvent(email);
-        
-        // 🚫 DEPRECATED: Old MAKE_EMAIL_URL webhook removed
-        // Now using unified webhook: https://hook.eu2.make.com/rfagboxirpwkbck0wkax3qh9nqum12g1
         console.log(`[NEWSLETTER] Sent newsletter signup event for ${email}`);
 
         return NextResponse.json({ success: true });

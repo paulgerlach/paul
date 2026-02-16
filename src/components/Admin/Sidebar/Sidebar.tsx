@@ -12,14 +12,23 @@ import {
   ROUTE_ADMIN,
   ROUTE_CSV_UPLOAD,
   ROUTE_MQTT_GATEWAY,
+  ROUTE_AGENCY_MANAGEMENT,
 } from "@/routes/routes";
-import { abrechnung, dashboard, dokumente, objekte, caract_files, caract_radio } from "@/static/icons";
+import {
+  abrechnung,
+  dashboard,
+  dokumente,
+  objekte,
+  caract_files,
+  caract_radio,
+  immobilien_1_50,
+} from "@/static/icons";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 import TipsOfTheDay from "./TipsOfTheDay";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthUser } from "@/apiClient";
 
 export type SidebarLinkType = {
@@ -36,10 +45,17 @@ export default function Sidebar() {
   const { data: user } = useAuthUser();
   const [openLink, setOpenLink] = useState<string | null>(null);
 
-  const isAdmin = user?.permission === "admin";
-  const resolvedUserId = typeof user_id === "string" ? user_id : undefined;
+  // Track selected user_id in state to persist across route navigations
+  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(undefined);
+  const isSuperAdmin = user?.permission === "super_admin";
+
+  // First check URL params (from route), then fall back to search params or state
+  const resolvedUserId = typeof user_id === "string"
+    ? user_id
+    : (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("user_id") : undefined) || selectedUserId;
   // Admin needs a selected user to navigate to user-specific pages
-  const hasUserContext = isAdmin && !!resolvedUserId;
+  const hasUserContext = isSuperAdmin && !!resolvedUserId;
+
 
   const withUserPrefix = (route: string) =>
     hasUserContext ? `${ROUTE_ADMIN}/${resolvedUserId}${route}` : route;
@@ -47,6 +63,13 @@ export default function Sidebar() {
   const handleClick = (link: string) => {
     setOpenLink((prev) => (prev === link ? null : link));
   };
+
+  // Sync selectedUserId with resolvedUserId when it changes
+  useEffect(() => {
+    if (resolvedUserId && resolvedUserId !== selectedUserId) {
+      setSelectedUserId(resolvedUserId);
+    }
+  }, [resolvedUserId, selectedUserId]);
 
   const dashboardLinks: SidebarLinkType[] = [
     {
@@ -82,8 +105,9 @@ export default function Sidebar() {
     },
   ];
 
+  const isAdmin = user?.permission === "admin";
   // 🔒 SECURITY: Admin-only links
-  if (isAdmin) {
+  if (isAdmin || isSuperAdmin) {
     dashboardLinks.unshift({
       title: "User Übersicht",
       icon: dashboard,
@@ -96,11 +120,20 @@ export default function Sidebar() {
       icon: caract_files,
       route: `${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`,
     });
+  }
+
+  if (isSuperAdmin) {
     // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
     dashboardLinks.splice(4, 0, {
       title: "Gateway Management",
       icon: caract_radio,
       route: `${ROUTE_MQTT_GATEWAY}`,
+    });
+    // CSV Upload - Super Admin only (insert after Dokumente, before Abrechnung)
+    dashboardLinks.splice(4, 0, {
+      title: "Agency Management",
+      icon: immobilien_1_50,
+      route: `${ROUTE_AGENCY_MANAGEMENT}`,
     });
   }
 
@@ -118,9 +151,9 @@ export default function Sidebar() {
               onClick={handleClick}
               key={link.title}
               button={link}
-              disabled={isAdmin && !hasUserContext}
+              disabled={isSuperAdmin && !hasUserContext}
             />
-          ) : isAdmin && !hasUserContext && link.route !== ROUTE_ADMIN && !link.route.startsWith(`${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`) && link.route !== ROUTE_MQTT_GATEWAY ? (
+          ) : isSuperAdmin && !hasUserContext && link.route !== ROUTE_ADMIN && !link.route.startsWith(`${ROUTE_ADMIN}${ROUTE_CSV_UPLOAD}`) && link.route !== ROUTE_MQTT_GATEWAY ? (
             <div
               key={link.title}
               className="flex py-3 px-5 max-xl:text-sm w-full items-center gap-3 rounded-base text-gray-400 cursor-not-allowed opacity-50"

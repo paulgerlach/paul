@@ -78,7 +78,7 @@ function parseGermanDate(dateStr: string | undefined): Date | null {
 function getDeviceIcon(deviceType: string): StaticImageData {
   const type = deviceType.toLowerCase();
 
-  if (type.includes("heat") || type.includes("wärme") || type.includes("wmz")) {
+  if (type.includes("heat") || type.includes("wärme") || type.includes("wmz") || type.includes("hca")) {
     return heater;
   }
   if (type.includes("wwat") || type.includes("warmwasser")) {
@@ -134,8 +134,9 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
   const isIncrease = change.percentageChange > 0;
   const deviceTypeLabel = deviceType === "WWater" ? "Warmwasser" :
     deviceType === "Water" ? "Kaltwasser" :
-      deviceType === "Heat" ? "Wärme" :
-        deviceType;
+      deviceType === "HCA" ? "Heizkostenverteiler" :
+        deviceType === "Heat" ? "Wärme" :
+          deviceType;
 
   if (isIncrease) {
     return {
@@ -179,8 +180,9 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
       deviceType === "Water" ? "Kaltwasserzähler" :
-        deviceType === "Heat" ? "Wärmezähler" :
-          deviceType;
+        deviceType === "HCA" ? "Heizkostenverteiler" :
+          deviceType === "Heat" ? "Wärmezähler" :
+            deviceType;
 
     return {
       leftIcon: getDeviceIcon(deviceType),
@@ -219,8 +221,9 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
     const deviceType = device["Device Type"];
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
       deviceType === "Water" ? "Kaltwasserzähler" :
-        deviceType === "Heat" ? "Wärmezähler" :
-          deviceType;
+        deviceType === "HCA" ? "Heizkostenverteiler" :
+          deviceType === "Heat" ? "Wärmezähler" :
+            deviceType;
 
     return {
       leftIcon: getDeviceIcon(deviceType),

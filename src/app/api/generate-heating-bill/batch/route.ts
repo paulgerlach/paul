@@ -145,15 +145,18 @@ async function processBatchInBackground(
     }
 
     let userName = userId;
+    let customerName = userId;
+    let hasOwnerName = false;
     let buildingStreet = "";
     let buildingZip = "";
+    let totalTenants: number | undefined;
     try {
-        const [objektRow, userRow] = await Promise.all([
-            database
-                .select()
-                .from(objekte)
-                .where(eq(objekte.id, objektId))
-                .then((r) => r[0] ?? null),
+        const objektRow = await database
+            .select()
+            .from(objekte)
+            .where(eq(objekte.id, objektId))
+            .then((r) => r[0] ?? null);
+        const [initiatorRow, ownerRow] = await Promise.all([
             database
                 .select({
                     first_name: users.first_name,
@@ -162,20 +165,83 @@ async function processBatchInBackground(
                 .from(users)
                 .where(eq(users.id, userId))
                 .then((r) => r[0] ?? null),
+            objektRow?.user_id
+                ? database
+                      .select({
+                          first_name: users.first_name,
+                          last_name: users.last_name,
+                      })
+                      .from(users)
+                      .where(eq(users.id, objektRow.user_id))
+                      .then((r) => r[0] ?? null)
+                : Promise.resolve(null),
         ]);
         if (raw?.user) {
             userName =
                 `${raw.user.first_name ?? ""} ${raw.user.last_name ?? ""}`.trim() ||
                 userName;
-        } else if (userRow) {
+        } else if (initiatorRow) {
             userName =
-                `${userRow.first_name ?? ""} ${userRow.last_name ?? ""}`.trim() ||
+                `${initiatorRow.first_name ?? ""} ${initiatorRow.last_name ?? ""}`.trim() ||
                 userName;
+        }
+        if (ownerRow) {
+            const ownerName = `${ownerRow.first_name ?? ""} ${ownerRow.last_name ?? ""}`.trim();
+            if (ownerName) {
+                customerName = ownerName;
+                hasOwnerName = true;
+            }
+        }
+        if (!hasOwnerName) {
+            customerName = userName;
         }
         buildingStreet = raw?.objekt?.street ?? objektRow?.street ?? "";
         buildingZip = raw?.objekt?.zip ?? objektRow?.zip ?? "";
+        if (raw?.mainDoc?.start_date && raw?.mainDoc?.end_date && raw?.contractsWithContractors) {
+            const periodStart = new Date(raw.mainDoc.start_date);
+            const periodEnd = new Date(raw.mainDoc.end_date);
+            const overlapping = raw.contractsWithContractors.filter((c) => {
+                const start = new Date(c.rental_start_date);
+                const end = c.rental_end_date ? new Date(c.rental_end_date) : null;
+                return start <= periodEnd && (!end || end >= periodStart);
+            });
+            totalTenants = overlapping.reduce((sum, c) => sum + (c.contractors?.length ?? 0), 0);
+        }
     } catch (dbErr) {
         console.warn("[HeatingBillBatch] Enrichment fetch failed (non-fatal):", dbErr);
+    }
+
+    for (let i = 0; i < apartments.length; i += UPLOAD_BATCH_SIZE) {
+        const batch = apartments.slice(i, i + UPLOAD_BATCH_SIZE);
+        const signedResults = await Promise.allSettled(
+            batch.map(async (apt) => {
+                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}.pdf`;
+                const signOnce = async () =>
+                    supabase.storage
+                        .from("documents")
+                        .createSignedUrl(storagePath, 3600, { download: true });
+                let response = await signOnce();
+                if (response.error || !response.data?.signedUrl) {
+                    // One lightweight retry helps with transient storage signing failures.
+                    response = await signOnce();
+                }
+                if (response.error || !response.data?.signedUrl) {
+                    throw response.error ?? new Error("Failed to create signed URL");
+                }
+                // Mutate source apartment object directly so ordering/replacement can't drift.
+                apt.presignedUrl = response.data.signedUrl;
+            })
+        );
+        for (let j = 0; j < signedResults.length; j++) {
+            const r = signedResults[j];
+            if (r.status === "rejected") {
+                const localId = batch[j]?.localId ?? "unknown";
+                console.warn(
+                    `[HeatingBillBatch] Signed URL generation failed for local ${localId}:`,
+                    r.reason
+                );
+            }
+        }
     }
 
     await sendHeatingBillNotification(
@@ -183,11 +249,14 @@ async function processBatchInBackground(
             docId,
             userId,
             userName: userName || userId,
+            customerName: customerName || userId,
             buildingStreet,
             buildingZip,
             objektId,
             useMock: HEATING_BILL_USE_MOCK,
             timestamp: new Date().toISOString(),
+            totalApartments: locals.length,
+            totalTenants,
         },
         "batch",
         generated,

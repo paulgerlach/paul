@@ -11,17 +11,22 @@
  */
 import { buildLocalName } from "@/utils";
 
-const MAX_APARTMENT_ROWS = 25;
-
 export interface HeatingBillNotificationMetadata {
   docId: string;
   userId: string;
+  /** Generator user display name (initiated by). */
   userName: string;
+  /** Building owner name (from objekte.user_id); falls back to userName if omitted. */
+  customerName?: string;
   buildingStreet: string;
   buildingZip: string;
   objektId: string;
   useMock: boolean;
   timestamp: string;
+  /** Total apartments in the building. */
+  totalApartments?: number;
+  /** Total tenants (contractors from contracts overlapping bill period). */
+  totalTenants?: number;
 }
 
 export interface HeatingBillApartmentResult {
@@ -52,7 +57,20 @@ type SlackWebhookPayload = {
   icon_emoji?: string;
 };
 
-function buildApartmentLabel(apt: {
+/** Label for hyperlinks: floor + living space concatenated. */
+function buildApartmentLinkLabel(apt: {
+  floor?: string | null;
+  living_space?: string | null;
+  localId: string;
+}): string {
+  const floor = apt.floor ?? "";
+  const livingSpace = apt.living_space != null ? String(apt.living_space) : "";
+  const parts = [floor, livingSpace].filter(Boolean);
+  return parts.length > 0 ? parts.join(" • ") : apt.localId;
+}
+
+/** Full descriptive label for failed entries (uses buildLocalName when available). */
+function buildApartmentDisplayLabel(apt: {
   floor?: string | null;
   house_location?: string | null;
   residential_area?: string | null;
@@ -97,60 +115,63 @@ export async function sendHeatingBillNotification(
       : (failedInput as string[]).map((id) => ({ localId: id }))
     : [];
 
+  const customerName = metadata.customerName ?? metadata.userName;
+  const totalApts = metadata.totalApartments ?? apartments.length + failedEntries.length;
+  const totalTenants = metadata.totalTenants;
+
   const lines: string[] = [];
-  lines.push("*Heating Bill Generation Completed*");
-  lines.push("");
-  lines.push("*Summary:*");
-  lines.push(`• Mode: ${mode === "single" ? "Single" : "Batch"}`);
-  lines.push(`• Doc ID: \`${metadata.docId}\``);
-  lines.push(`• Building: ${metadata.buildingStreet}, ${metadata.buildingZip}`);
-  lines.push(`• Object ID: \`${metadata.objektId}\``);
-  lines.push(`• Initiated by: ${metadata.userName} (\`${metadata.userId}\`)`);
-  lines.push(`• Timestamp: ${metadata.timestamp}`);
-  if (metadata.useMock) {
-    lines.push(`• _Using mock model (HEATING_BILL_USE_MOCK)_`);
-  }
-  lines.push("");
-  lines.push("*Totals:*");
-  lines.push(`• Generated: ${generated}`);
-  if (failed > 0) {
-    lines.push(`• Failed: ${failed}`);
-  }
+
+  // Header
+  lines.push("📄 *Heating Bill Generation Completed*");
   lines.push("");
 
+  // Summary compact rows
+  const tenantsPart =
+    totalTenants != null ? ` | 👥 *Tenants:* ${totalTenants}` : "";
+  lines.push(`👤 *Customer:* ${customerName}`)
+  lines.push(`📍 *Street:* ${metadata.buildingStreet}, ${metadata.buildingZip}`);
+  lines.push(`🏢 *Apartments:* ${totalApts}${tenantsPart}`);
+  lines.push(`🔧 *Initiated by:* ${metadata.userName}`);
+  lines.push(`🕐 *Timestamp:* ${metadata.timestamp}`);
+  if (metadata.useMock) {
+    lines.push("");
+    lines.push("⚠️ _Using mock model (HEATING_BILL_USE_MOCK)_");
+  }
+  lines.push("");
+  lines.push("");
+
+  // Totals
+  const failedSummary = failed > 0 ? ` | ❌ *Failed:* ${failed}` : "";
+  lines.push(`📊 *Totals:* ✅ *Generated:* ${generated}${failedSummary}`);
+  lines.push("");
+
+  // Results (hyperlinks with floor + living_space as label)
   const hasPerApartment = apartments.length > 0 || failedEntries.length > 0;
   if (hasPerApartment && (mode === "batch" || failedEntries.length > 0)) {
-    lines.push("*Apartment Results:*");
-    const generatedRows = apartments.slice(0, MAX_APARTMENT_ROWS).map((apt) => {
-      const label = buildApartmentLabel(apt);
+    lines.push("🏠 *Apartment Bills*");
+    lines.push("");
+    const generatedRows = apartments.map((apt) => {
+      const label = buildApartmentLinkLabel(apt);
       return apt.presignedUrl
-        ? `• *Generated*: <${apt.presignedUrl}|${label}>`
-        : `• *Generated*: ${label}`;
+        ? `• <${apt.presignedUrl}|${label}>`
+        : `• ${label}`;
     });
-    const failedRows = failedEntries.slice(0, MAX_APARTMENT_ROWS).map((apt) => {
-      const label = buildApartmentLabel(apt);
+    const failedRows = failedEntries.map((apt) => {
+      const label = buildApartmentDisplayLabel(apt);
       const reason = apt.errorMessage ? ` – ${apt.errorMessage}` : "";
-      return `• *Failed*: ${label}${reason}`;
+      return `• Failed: ${label}${reason}`;
     });
     lines.push(...generatedRows, ...failedRows);
-    const extraGenerated = apartments.length - generatedRows.length;
-    const extraFailed = failedEntries.length - failedRows.length;
-    if (extraGenerated > 0 || extraFailed > 0) {
-      lines.push(`• _... and ${extraGenerated + extraFailed} more_`);
-    }
   } else if (apartments.length > 0) {
-    lines.push("*PDF Links:*");
-    const toShow = apartments.slice(0, MAX_APARTMENT_ROWS);
-    for (const apt of toShow) {
-      const label = buildApartmentLabel(apt);
-      const link = apt.presignedUrl
+    lines.push("🔗 *PDF Links*");
+    lines.push("");
+    const links = apartments.map((apt) => {
+      const label = buildApartmentLinkLabel(apt);
+      return apt.presignedUrl
         ? `<${apt.presignedUrl}|${label}>`
         : label;
-      lines.push(`• ${link}`);
-    }
-    if (apartments.length > MAX_APARTMENT_ROWS) {
-      lines.push(`• _... and ${apartments.length - MAX_APARTMENT_ROWS} more_`);
-    }
+    });
+    lines.push(...links.map((link) => `• ${link}`));
   }
 
   const text = lines.join("\n");

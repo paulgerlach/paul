@@ -6,6 +6,9 @@ import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
 import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/generate-heating-bill/_lib";
 import { sendHeatingBillNotification } from "@/lib/slackNotifications";
+import database from "@/db";
+import { users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 /** When "true" or "1", always use mock model (for testing/rollback). Default: use computed model. */
 const HEATING_BILL_USE_MOCK =
@@ -172,16 +175,48 @@ export async function POST(request: NextRequest) {
     const apartmentLabel = matchedLocal
       ? { floor: matchedLocal.floor, house_location: matchedLocal.house_location, living_space: String(matchedLocal.living_space ?? ""), residential_area: undefined }
       : undefined;
+    const displayName = rawData?.user
+      ? `${rawData.user.first_name ?? ""} ${rawData.user.last_name ?? ""}`.trim() || user.email || user.id
+      : user.email ?? user.id;
+    let customerName = displayName;
+    let totalTenants: number | undefined;
+    if (rawData?.objekt?.user_id) {
+      try {
+        const ownerRow = await database
+          .select({ first_name: users.first_name, last_name: users.last_name })
+          .from(users)
+          .where(eq(users.id, rawData.objekt.user_id))
+          .then((r) => r[0] ?? null);
+        if (ownerRow) {
+          customerName = `${ownerRow.first_name ?? ""} ${ownerRow.last_name ?? ""}`.trim() || customerName;
+        }
+      } catch {
+        // Non-fatal; keep displayName as customer
+      }
+    }
+    if (rawData?.mainDoc?.start_date && rawData?.mainDoc?.end_date && rawData?.contractsWithContractors) {
+      const periodStart = new Date(rawData.mainDoc.start_date);
+      const periodEnd = new Date(rawData.mainDoc.end_date);
+      const overlapping = rawData.contractsWithContractors.filter((c) => {
+        const start = new Date(c.rental_start_date);
+        const end = c.rental_end_date ? new Date(c.rental_end_date) : null;
+        return start <= periodEnd && (!end || end >= periodStart);
+      });
+      totalTenants = overlapping.reduce((sum, c) => sum + (c.contractors?.length ?? 0), 0);
+    }
     await sendHeatingBillNotification(
       {
         docId,
         userId: user.id,
-        userName: rawData?.user ? `${rawData.user.first_name ?? ""} ${rawData.user.last_name ?? ""}`.trim() || user.email || user.id : user.email ?? user.id,
+        userName: displayName,
+        customerName,
         buildingStreet: rawData?.objekt?.street ?? "",
         buildingZip: rawData?.objekt?.zip ?? "",
         objektId: objektId ?? "",
         useMock: HEATING_BILL_USE_MOCK,
         timestamp: new Date().toISOString(),
+        totalApartments: rawData?.locals?.length ?? 1,
+        totalTenants,
       },
       "single",
       1,

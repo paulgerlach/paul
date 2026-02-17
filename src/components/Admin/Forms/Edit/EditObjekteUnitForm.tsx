@@ -166,6 +166,8 @@ export default function EditObjekteUnitForm({
   // Check if current type is non-residential
   const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
 
+  const adjustedLivingSpace = isNonResidential ? undefined : living_space;
+
   // Build display name based on usage type
   const displayName = isNonResidential
     ? usageTypeToName[usage_type] || usage_type
@@ -173,7 +175,7 @@ export default function EditObjekteUnitForm({
       floor: floor ?? undefined,
       house_location: house_location ?? undefined,
       residential_area: residential_area ?? undefined,
-      living_space: String(living_space ?? 0),
+      living_space: adjustedLivingSpace !== undefined ? String(adjustedLivingSpace) : undefined,
     });
 
   return (

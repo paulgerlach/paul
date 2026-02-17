@@ -11,6 +11,10 @@ import {
     validateModel,
 } from "@/app/api/generate-heating-bill/_lib";
 import { getRelatedLocalsByObjektId } from "@/api";
+import { sendHeatingBillNotification } from "@/lib/slackNotifications";
+import database from "@/db";
+import { objekte, users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 /** When "true" or "1", always use mock model (for testing/rollback). */
 const HEATING_BILL_USE_MOCK =
@@ -60,9 +64,10 @@ export async function POST(request: NextRequest) {
 
         // Fetch and compute once (building-level data shared across all locals)
         let model = mockHeatingBillModel;
+        let raw: Awaited<ReturnType<typeof fetchHeatingBillData>> | null = null;
         if (!HEATING_BILL_USE_MOCK) {
             try {
-                const raw = await fetchHeatingBillData(docId, user.id, {
+                raw = await fetchHeatingBillData(docId, user.id, {
                     useServiceRole: true,
                 });
                 model = computeHeatingBill(raw);
@@ -96,6 +101,15 @@ export async function POST(request: NextRequest) {
 
         let generated = 0;
         let failed = 0;
+        const apartments: Array<{
+            localId: string;
+            presignedUrl: string;
+            floor?: string | null;
+            house_location?: string | null;
+            living_space?: string | null;
+            residential_area?: string | null;
+        }> = [];
+        const failedLocalIds: string[] = [];
 
         for (const local of locals) {
             const localId = local.id;
@@ -119,10 +133,58 @@ export async function POST(request: NextRequest) {
                     uploadError
                 );
                 failed++;
+                failedLocalIds.push(localId);
             } else {
+                const { data: signedData, error: signedError } =
+                    await supabase.storage
+                        .from("documents")
+                        .createSignedUrl(storagePath, 3600);
+
+                if (!signedError && signedData?.signedUrl) {
+                    apartments.push({
+                        localId,
+                        presignedUrl: signedData.signedUrl,
+                        floor: local.floor ?? null,
+                        house_location: local.house_location ?? null,
+                        living_space: local.living_space ? String(local.living_space) : null,
+                        residential_area: local.residential_area ?? null,
+                    });
+                }
                 generated++;
             }
         }
+
+        // Slack notification (non-blocking; never fails PDF response)
+        const [objektRow, userRow] = await Promise.all([
+            database.select().from(objekte).where(eq(objekte.id, objektId)).then((r) => r[0] ?? null),
+            database.select({ first_name: users.first_name, last_name: users.last_name }).from(users).where(eq(users.id, user.id)).then((r) => r[0] ?? null),
+        ]);
+        let userName = user.email ?? user.id;
+        if (raw?.user) {
+            userName = `${raw.user.first_name ?? ""} ${raw.user.last_name ?? ""}`.trim() || userName;
+        } else if (userRow) {
+            userName = `${userRow.first_name ?? ""} ${userRow.last_name ?? ""}`.trim() || userName;
+        }
+        const buildingStreet = raw?.objekt?.street ?? objektRow?.street ?? "";
+        const buildingZip = raw?.objekt?.zip ?? objektRow?.zip ?? "";
+
+        await sendHeatingBillNotification(
+            {
+                docId,
+                userId: user.id,
+                userName: userName || user.id,
+                buildingStreet,
+                buildingZip,
+                objektId,
+                useMock: HEATING_BILL_USE_MOCK,
+                timestamp: new Date().toISOString(),
+            },
+            "batch",
+            generated,
+            failed,
+            apartments,
+            failedLocalIds.length > 0 ? failedLocalIds : undefined
+        ).catch((err) => console.error("[HeatingBillBatch] Slack notification error:", err));
 
         return NextResponse.json({
             success: true,

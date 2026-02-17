@@ -5,6 +5,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
 import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/generate-heating-bill/_lib";
+import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 
 /** When "true" or "1", always use mock model (for testing/rollback). Default: use computed model. */
 const HEATING_BILL_USE_MOCK =
@@ -55,13 +56,14 @@ export async function POST(request: NextRequest) {
     let model = mockHeatingBillModel;
     let computedModel: typeof model | null = null;
     let validation: { valid: boolean; errors: string[]; warnings: string[] } | null = null;
+    let rawData: Awaited<ReturnType<typeof fetchHeatingBillData>> | null = null;
 
     if (!HEATING_BILL_USE_MOCK) {
       try {
-        const raw = await fetchHeatingBillData(docId, user.id, {
+        rawData = await fetchHeatingBillData(docId, user.id, {
           useServiceRole: true,
         });
-        computedModel = computeHeatingBill(raw);
+        computedModel = computeHeatingBill(rawData);
         model = computedModel;
         validation = validateModel(computedModel);
         if (!validation.valid && validation.errors.length > 0) {
@@ -164,6 +166,37 @@ export async function POST(request: NextRequest) {
       if (computedModel) response.debugComputedModel = computedModel;
       if (validation) response.debugValidation = validation;
     }
+
+    // Slack notification (never fails PDF response)
+    const matchedLocal = rawData?.locals?.find((l) => l.id === localId);
+    const apartmentLabel = matchedLocal
+      ? { floor: matchedLocal.floor, house_location: matchedLocal.house_location, living_space: String(matchedLocal.living_space ?? ""), residential_area: undefined }
+      : undefined;
+    await sendHeatingBillNotification(
+      {
+        docId,
+        userId: user.id,
+        userName: rawData?.user ? `${rawData.user.first_name ?? ""} ${rawData.user.last_name ?? ""}`.trim() || user.email || user.id : user.email ?? user.id,
+        buildingStreet: rawData?.objekt?.street ?? "",
+        buildingZip: rawData?.objekt?.zip ?? "",
+        objektId: objektId ?? "",
+        useMock: HEATING_BILL_USE_MOCK,
+        timestamp: new Date().toISOString(),
+      },
+      "single",
+      1,
+      0,
+      [
+        {
+          localId: localId ?? "",
+          presignedUrl: signedData.signedUrl,
+          floor: apartmentLabel?.floor ?? null,
+          house_location: apartmentLabel?.house_location ?? null,
+          living_space: apartmentLabel?.living_space ?? null,
+          residential_area: apartmentLabel?.residential_area ?? null,
+        },
+      ]
+    ).catch((err) => console.error("[HeatingBill] Slack notification error:", err));
 
     return NextResponse.json(response);
   } catch (error: unknown) {

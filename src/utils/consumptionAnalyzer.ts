@@ -206,28 +206,28 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
  * 2. Specific error flags indicating pipe break
  * 
  * NOTE: Consumption spikes are handled separately by detectConsumptionAnomaly
+ * Works for all meter types that can produce leakage errors
  */
 export function detectBurstPipe(device: MeterReadingType): ConsumptionNotification | null {
   const meterId = device.ID || device["Number Meter"];
   const deviceType = device["Device Type"];
   const hintCode = device["Hint Code"];
 
-  // Only check water meters for burst pipes
-  const isWaterMeter = deviceType === "Water" ||
-    deviceType === "WWater" ||
-    deviceType === "Kaltwasserzähler" ||
-    deviceType === "Warmwasserzähler";
-
-  if (!isWaterMeter) return null;
+  // Determine device type label for display
+  const deviceTypeLabel = deviceType === "WWater" || deviceType === "Warmwasserzähler"
+    ? "Warmwasser"
+    : deviceType === "Water" || deviceType === "Kaltwasserzähler"
+      ? "Kaltwasser"
+      : deviceType === "Heat" || deviceType === "Wärme"
+        ? "Wärme"
+        : deviceType === "HCA"
+          ? "Heizkostenverteiler"
+          : deviceType;
 
   // CHECK 1: Hint Code Bit 5 indicates leakage
   if (hintCode) {
     const hintCodeStr = String(hintCode).toLowerCase();
     if (hintCodeStr.includes("5") || hintCodeStr.includes("bit 5") || hintCodeStr.includes("leckage")) {
-      const deviceTypeLabel = deviceType === "WWater" || deviceType === "Warmwasserzähler"
-        ? "Warmwasser"
-        : "Kaltwasser";
-
       return {
         leftIcon: pipe_water,
         rightIcon: alert_triangle,
@@ -248,10 +248,6 @@ export function detectBurstPipe(device: MeterReadingType): ConsumptionNotificati
     // This is a placeholder - actual patterns would need to be determined from manufacturer docs
     const errorStr = String(errorFlag).toLowerCase();
     if (errorStr.includes("leak") || errorStr.includes("burst") || errorStr.includes("pipe")) {
-      const deviceTypeLabel = deviceType === "WWater" || deviceType === "Warmwasserzähler"
-        ? "Warmwasser"
-        : "Kaltwasser";
-
       return {
         leftIcon: pipe_water,
         rightIcon: alert_triangle,

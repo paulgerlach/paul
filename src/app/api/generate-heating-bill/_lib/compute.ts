@@ -33,6 +33,7 @@ const HEAT_DEVICE_TYPES = [
 ];
 const WARM_WATER_DEVICE_TYPES = ["WWater", "Warmwasserzähler"];
 const COLD_WATER_DEVICE_TYPES = ["Water", "Kaltwasserzähler"];
+const LOGIN_ENTRY_URL = "https://heidisystems.com/";
 
 function round2(v: number): number {
   return Math.round(v * 100) / 100;
@@ -218,10 +219,7 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
   const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
 
-  const portalLinkForQr =
-    raw.user?.id
-      ? `https://heidi.systems/${raw.user.id}`
-      : (model.cover.portalLink?.startsWith("http") ? model.cover.portalLink : `https://${model.cover.portalLink}`);
+  const portalLinkForQr = LOGIN_ENTRY_URL;
 
   const co2EnergyInvoices =
     costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
@@ -305,9 +303,7 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   const totalDiff = round2(totalContractsAmount - totalInvoicesAmount);
 
   const contractorsList = raw.contractsWithContractors?.flatMap((c) => c.contractors) ?? [];
-  const portalLink = raw.user?.id
-    ? `https://heidi.systems/${raw.user.id}`
-    : model.cover.portalLink;
+  const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
 
   model.cover = {

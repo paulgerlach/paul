@@ -24,10 +24,10 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     usagePeriodEnd: "31.12.2023",
     totalAmount: 1429.55,
     totalAmountFormatted: "1.429,55 €",
-    portalLink: "heidi.systems/3303",
+    portalLink: "https://heidisystems.com/",
     userId: "1901913711",
     securityCode: "QNQH27LF1j",
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
   },
 
   buildingCalc: {
@@ -377,7 +377,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     unitTotalCost: 0,
     unitTotalCostFormatted: "0,00 €",
 
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
     infoLink: "https://heidi.systems/co2",
   },
 
@@ -418,7 +418,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     comparisonWarmWaterNationalKwh: 1728.53,
     comparisonWarmWaterNationalKwhFormatted: "1.729",
 
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidi.systems/3303",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
     infoLink: "https://heidi.systems/energy",
     energyAgencyLink: "https://www.deutschland-machts-effizient.de",
   },

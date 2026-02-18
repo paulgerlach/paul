@@ -26,19 +26,25 @@ export default function AdminObjekteLocalItemHistoryItem({
 
   const editLink = useSubRouteLink(`${localID}/${historyItem?.id}/edit`);
 
-  const duration =
-    differenceInMonths(
-      historyItem?.rental_end_date || "",
+  const hasEndDate = !!historyItem?.rental_end_date;
+
+  const duration = hasEndDate
+    ? differenceInMonths(
+      historyItem!.rental_end_date!,
       historyItem?.rental_start_date || ""
-    ) + 1;
+    ) + 1
+    : null;
 
   const pricePerMonth = Number(historyItem?.cold_rent) || 0;
-  const totalAmount = duration * pricePerMonth;
+  const totalAmount = duration !== null ? duration * pricePerMonth : null;
 
-  const formattedAmount = new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: "EUR",
-  }).format(totalAmount);
+  const formattedAmount =
+    totalAmount !== null
+      ? new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+      }).format(totalAmount)
+      : null;
 
   const formattedRate = new Intl.NumberFormat("de-DE", {
     style: "currency",
@@ -48,9 +54,9 @@ export default function AdminObjekteLocalItemHistoryItem({
   const days =
     historyItem?.rental_start_date && historyItem?.rental_end_date
       ? differenceInCalendarDays(
-          new Date(historyItem.rental_end_date),
-          new Date(historyItem.rental_start_date)
-        ) + 1
+        new Date(historyItem.rental_end_date),
+        new Date(historyItem.rental_start_date)
+      ) + 1
       : 0;
 
   return (
@@ -107,7 +113,9 @@ export default function AdminObjekteLocalItemHistoryItem({
                 .join(", ")}
             </p>
             <p className="text-[#757575] max-xl:text-xs">
-              {formattedAmount} {formattedRate} x {duration}
+              {formattedAmount !== null
+                ? `${formattedAmount} (${formattedRate} x ${duration})`
+                : `${formattedRate} / Monat · unbefristet`}
             </p>
           </div>
         </div>

@@ -166,6 +166,7 @@ export default function AdminCreateContractForm({
                 showClearButton={true}
                 clearLabel="Unbefristet"
                 onClear={() => methods.setValue("is_current", true)}
+                onSelect={() => methods.setValue("is_current", false)}
               />
             </div>
           </div>

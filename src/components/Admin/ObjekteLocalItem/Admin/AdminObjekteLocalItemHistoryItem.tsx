@@ -28,23 +28,20 @@ export default function AdminObjekteLocalItemHistoryItem({
 
   const hasEndDate = !!historyItem?.rental_end_date;
 
-  const duration = hasEndDate
+  const duration = historyItem?.rental_start_date
     ? differenceInMonths(
-      historyItem!.rental_end_date!,
-      historyItem?.rental_start_date || ""
+      hasEndDate ? new Date(historyItem!.rental_end_date!) : new Date(),
+      new Date(historyItem.rental_start_date)
     ) + 1
-    : null;
+    : 0;
 
   const pricePerMonth = Number(historyItem?.cold_rent) || 0;
-  const totalAmount = duration !== null ? duration * pricePerMonth : null;
+  const totalAmount = duration * pricePerMonth;
 
-  const formattedAmount =
-    totalAmount !== null
-      ? new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
-      }).format(totalAmount)
-      : null;
+  const formattedAmount = new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(totalAmount);
 
   const formattedRate = new Intl.NumberFormat("de-DE", {
     style: "currency",
@@ -113,9 +110,7 @@ export default function AdminObjekteLocalItemHistoryItem({
                 .join(", ")}
             </p>
             <p className="text-[#757575] max-xl:text-xs">
-              {formattedAmount !== null
-                ? `${formattedAmount} (${formattedRate} x ${duration})`
-                : `${formattedRate} / Monat · unbefristet`}
+              {formattedAmount} ({formattedRate} x {duration}{!hasEndDate ? "+" : ""})
             </p>
           </div>
         </div>

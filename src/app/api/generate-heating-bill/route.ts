@@ -66,6 +66,12 @@ export async function POST(request: NextRequest) {
         rawData = await fetchHeatingBillData(docId, user.id, {
           useServiceRole: true,
         });
+        if (!rawData.mainDoc || !rawData.objekt) {
+          console.warn(
+            "[HeatingBill] mainDoc or objekt missing — computed model will use mock data",
+            { docId, initiatorUserId: user.id, mainDocUserId: rawData.mainDoc?.user_id ?? null }
+          );
+        }
         computedModel = computeHeatingBill(rawData);
         model = computedModel;
         validation = validateModel(computedModel);
@@ -82,9 +88,10 @@ export async function POST(request: NextRequest) {
           );
         }
       } catch (fetchError) {
-        if (process.env.NODE_ENV === "development") {
-          console.warn("[HeatingBill] Compute failed, using mock:", fetchError);
-        }
+        console.warn(
+          "[HeatingBill] Compute failed, using mock:",
+          process.env.NODE_ENV === "development" ? fetchError : (fetchError instanceof Error ? fetchError.message : String(fetchError))
+        );
       }
     } else if (process.env.NODE_ENV === "development" || debug) {
       console.log("[HeatingBill] HEATING_BILL_USE_MOCK enabled, using mock model");

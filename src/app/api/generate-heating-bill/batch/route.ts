@@ -53,15 +53,22 @@ async function processBatchInBackground(
             raw = await fetchHeatingBillData(docId, userId, {
                 useServiceRole: true,
             });
+            if (!raw.mainDoc || !raw.objekt) {
+                console.warn(
+                    "[HeatingBillBatch] mainDoc or objekt missing — computed model will use mock data",
+                    { docId, initiatorUserId: userId, mainDocUserId: raw.mainDoc?.user_id ?? null }
+                );
+            }
             model = computeHeatingBill(raw);
             const validation = validateModel(model);
             if (!validation.valid && validation.errors.length > 0) {
                 console.warn("[HeatingBillBatch] Validation errors:", validation.errors);
             }
         } catch (fetchError) {
-            if (process.env.NODE_ENV === "development") {
-                console.warn("[HeatingBillBatch] Compute failed, using mock:", fetchError);
-            }
+            console.warn(
+                "[HeatingBillBatch] Compute failed, using mock:",
+                process.env.NODE_ENV === "development" ? fetchError : (fetchError instanceof Error ? fetchError.message : String(fetchError))
+            );
         }
     }
 
@@ -167,13 +174,13 @@ async function processBatchInBackground(
                 .then((r) => r[0] ?? null),
             objektRow?.user_id
                 ? database
-                      .select({
-                          first_name: users.first_name,
-                          last_name: users.last_name,
-                      })
-                      .from(users)
-                      .where(eq(users.id, objektRow.user_id))
-                      .then((r) => r[0] ?? null)
+                    .select({
+                        first_name: users.first_name,
+                        last_name: users.last_name,
+                    })
+                    .from(users)
+                    .where(eq(users.id, objektRow.user_id))
+                    .then((r) => r[0] ?? null)
                 : Promise.resolve(null),
         ]);
         if (raw?.user) {

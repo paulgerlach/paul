@@ -15,7 +15,7 @@ import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 import { supabaseServer } from "@/utils/supabase/server";
 import database from "@/db";
 import { objekte, users } from "@/db/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { LocalType } from "@/types";
 
 /** Explicit timeout for route; 202 is returned quickly, background work runs outside request lifecycle. */
@@ -65,9 +65,14 @@ async function processBatchInBackground(
                 console.warn("[HeatingBillBatch] Validation errors:", validation.errors);
             }
         } catch (fetchError) {
+            let errorForLog: unknown = fetchError;
+            if (process.env.NODE_ENV !== "development") {
+                errorForLog =
+                    fetchError instanceof Error ? fetchError.message : String(fetchError);
+            }
             console.warn(
                 "[HeatingBillBatch] Compute failed, using mock:",
-                process.env.NODE_ENV === "development" ? fetchError : (fetchError instanceof Error ? fetchError.message : String(fetchError))
+                errorForLog
             );
         }
     }
@@ -82,8 +87,8 @@ async function processBatchInBackground(
         buffer = await renderToBuffer(
             React.createElement(HeidiSystemsPdf, { model }) as any
         );
-    } catch (renderErr) {
-        console.error("[HeatingBillBatch] PDF render failed:", renderErr);
+    } catch (error_) {
+        console.error("[HeatingBillBatch] PDF render failed:", error_);
         return;
     }
 
@@ -158,31 +163,54 @@ async function processBatchInBackground(
     let buildingZip = "";
     let totalTenants: number | undefined;
     try {
-        const objektRow = await database
-            .select()
-            .from(objekte)
-            .where(eq(objekte.id, objektId))
-            .then((r) => r[0] ?? null);
-        const [initiatorRow, ownerRow] = await Promise.all([
-            database
+        const objektRow =
+            raw?.objekt ??
+            (await database
                 .select({
+                    id: objekte.id,
+                    street: objekte.street,
+                    zip: objekte.zip,
+                    user_id: objekte.user_id,
+                })
+                .from(objekte)
+                .where(eq(objekte.id, objektId))
+                .then((r) => r[0] ?? null));
+        const ownerUserId = objektRow?.user_id ?? null;
+        const rawUserId = raw?.user?.id;
+        const needsInitiatorLookup = !raw?.user;
+        const needsOwnerLookup = Boolean(
+            ownerUserId && rawUserId !== ownerUserId
+        );
+        const userIdsToFetch = Array.from(
+            new Set(
+                [
+                    needsInitiatorLookup ? userId : null,
+                    needsOwnerLookup ? ownerUserId : null,
+                ].filter((id): id is string => Boolean(id))
+            )
+        );
+        const userRows = userIdsToFetch.length
+            ? await database
+                .select({
+                    id: users.id,
                     first_name: users.first_name,
                     last_name: users.last_name,
                 })
                 .from(users)
-                .where(eq(users.id, userId))
-                .then((r) => r[0] ?? null),
-            objektRow?.user_id
-                ? database
-                    .select({
-                        first_name: users.first_name,
-                        last_name: users.last_name,
-                    })
-                    .from(users)
-                    .where(eq(users.id, objektRow.user_id))
-                    .then((r) => r[0] ?? null)
-                : Promise.resolve(null),
-        ]);
+                .where(inArray(users.id, userIdsToFetch))
+            : [];
+        const userRowsById = new Map(userRows.map((row) => [row.id, row]));
+        const initiatorRow = needsInitiatorLookup
+            ? userRowsById.get(userId) ?? null
+            : null;
+        let ownerRow: { first_name: string | null; last_name: string | null } | null = null;
+        if (ownerUserId) {
+            if (rawUserId === ownerUserId && raw?.user) {
+                ownerRow = raw.user;
+            } else {
+                ownerRow = userRowsById.get(ownerUserId) ?? null;
+            }
+        }
         if (raw?.user) {
             userName =
                 `${raw.user.first_name ?? ""} ${raw.user.last_name ?? ""}`.trim() ||
@@ -214,8 +242,8 @@ async function processBatchInBackground(
             });
             totalTenants = overlapping.reduce((sum, c) => sum + (c.contractors?.length ?? 0), 0);
         }
-    } catch (dbErr) {
-        console.warn("[HeatingBillBatch] Enrichment fetch failed (non-fatal):", dbErr);
+    } catch (error_) {
+        console.warn("[HeatingBillBatch] Enrichment fetch failed (non-fatal):", error_);
     }
 
     for (let i = 0; i < apartments.length; i += UPLOAD_BATCH_SIZE) {

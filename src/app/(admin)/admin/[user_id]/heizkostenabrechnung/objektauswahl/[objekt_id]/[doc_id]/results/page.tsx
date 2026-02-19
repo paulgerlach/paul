@@ -1,4 +1,7 @@
-import { getRelatedLocalsByObjektId } from "@/api";
+import {
+  getAdminContractsWithContractorsByLocalIDs,
+  getRelatedLocalsByObjektId,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminObjekteLocalItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/Admin/AdminObjekteLocalItemHeatingBillDocResult";
@@ -34,6 +37,17 @@ export default async function ResultLocalPDF({
       ? nameA.localeCompare(nameB)
       : nameB.localeCompare(nameA);
   });
+  const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
+    locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
+    user_id
+  );
+  const localsWithStatus = locals.map((local) => {
+    const contracts = contractsByLocalId[local.id] ?? [];
+    const status = contracts.some((contract) => contract.is_current)
+      ? "renting"
+      : "vacancy";
+    return { local, status } as const;
+  });
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
@@ -59,7 +73,7 @@ export default async function ResultLocalPDF({
                 </p>
               </div>
             ) : (
-              locals.map((local) => (
+              localsWithStatus.map(({ local, status }) => (
                 <AdminObjekteLocalItemHeatingBillDocResult
                   objektID={objekt_id}
                   key={local.id}
@@ -67,6 +81,7 @@ export default async function ResultLocalPDF({
                   item={local}
                   docType="objektauswahl"
                   docID={doc_id}
+                  status={status}
                 />
               ))
             )}

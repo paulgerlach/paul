@@ -582,6 +582,55 @@ export async function getAdminContractsWithContractorsByLocalID(
   return Object.values(contractsWithContractors);
 }
 
+export async function getAdminContractsWithContractorsByLocalIDs(
+  localIDs: string[],
+  userID: string,
+): Promise<Record<string, (ContractType & { contractors: ContractorType[] })[]>> {
+  const validLocalIDs = Array.from(new Set(localIDs.filter(Boolean)));
+  if (validLocalIDs.length === 0 || !userID) {
+    return {};
+  }
+
+  const results = await database
+    .select()
+    .from(contracts)
+    .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
+    .where(
+      and(
+        inArray(contracts.local_id, validLocalIDs),
+        eq(contracts.user_id, userID)
+      )
+    );
+
+  const contractsByLocal: Record<string, Record<string, ContractType & { contractors: ContractorType[] }>> = {};
+  for (const row of results) {
+    const contract = row.contracts;
+    const contractor = row.contractors;
+    const localId = contract.local_id;
+    if (!localId) continue;
+
+    if (!contractsByLocal[localId]) {
+      contractsByLocal[localId] = {};
+    }
+    if (!contractsByLocal[localId][contract.id]) {
+      contractsByLocal[localId][contract.id] = {
+        ...contract,
+        contractors: [],
+      };
+    }
+    if (contractor) {
+      contractsByLocal[localId][contract.id].contractors.push(contractor);
+    }
+  }
+
+  return Object.fromEntries(
+    Object.entries(contractsByLocal).map(([localId, contractsMap]) => [
+      localId,
+      Object.values(contractsMap),
+    ])
+  );
+}
+
 export async function getActiveContractByLocalID(
   localID?: string,
 ): Promise<ContractType> {

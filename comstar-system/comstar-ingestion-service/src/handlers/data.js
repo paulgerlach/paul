@@ -37,6 +37,7 @@ function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDev
   // Transform array to flat object
   if (Array.isArray(readings)) {
     readings.forEach(item => {
+      console.log('Processing reading item======>:', item);
       if (item && item.description) {
         const columnName = columnMap[item.description] || item.description;
         result[columnName] = item.value;

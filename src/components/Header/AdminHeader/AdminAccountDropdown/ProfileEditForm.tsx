@@ -51,7 +51,7 @@ export default function ProfileEditForm({ onClose, inputStyle, labelStyle }
     onClose();
   };
 
-  const bigInputStyle = `${inputStyle} h-12 py-3 px-4 text-base`;
+  const bigInputStyle = `${inputStyle} h-14 py-3 px-4 text-base`;
 
   return (
     <div className="w-full max-w-[670px] mx-auto">

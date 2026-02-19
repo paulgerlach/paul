@@ -142,6 +142,8 @@ const usageTypeToName: Record<string, string> = {
   hallway: "Hausflur",
 };
 
+const HIDE_DETAIL_TYPES = ["warehouse", "basement", "hallway"];
+
 export default function EditObjekteUnitForm({
   objektID,
   localID,
@@ -162,6 +164,7 @@ export default function EditObjekteUnitForm({
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
   const usage_type = methods.watch("usage_type");
+  const shouldHideDetails = HIDE_DETAIL_TYPES.includes(usage_type);
 
   // Check if current type is non-residential
   const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
@@ -218,94 +221,106 @@ export default function EditObjekteUnitForm({
             label="Nutzungsart auswählen"
             name="usage_type"
           />
-          <h2 className="text-sm font-bold">Wohnungsdetails</h2>
-          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
-            <FormSelectField<EditObjekteUnitFormValues>
+          {!shouldHideDetails && (
+            <>
+              <h2 className="text-sm font-bold">Wohnungsdetails</h2>
+              <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+                <FormSelectField<EditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="floor"
+                  label={isNonResidential ? "Etage" : "Etage*"}
+                  placeholder={isNonResidential ? "Etage" : "Etage*"}
+                  options={floorOptions}
+                />
+                <FormSelectField<EditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="house_location"
+                  label="Hauslage"
+                  placeholder="Hauslage"
+                  options={houseLocatonOptions}
+                />
+                <FormSelectField<EditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="residential_area"
+                  label="Wohnlage"
+                  placeholder="Wohnlage"
+                  options={residentialAreaOptions}
+                />
+                <FormSelectField<EditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="apartment_type"
+                  label="Wohnungstyp"
+                  placeholder="Wohnungstyp"
+                  options={apartmentTypeOptions}
+                />
+                <FormInputField<EditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="living_space"
+                  label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
+                  placeholder="Quadratmeter"
+                  replaceDotWithComma
+                />
+                {/* Empty div to align grid when only 5 items */}
+                <div className="hidden max-medium:hidden" />
+              </div>
+            </>
+          )}
+        </div>
+        {!shouldHideDetails && (
+
+          <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
+            <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
+            <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+              <FormInputField<EditObjekteUnitFormValues>
+                control={methods.control}
+                label="Zimmeranzahl"
+                placeholder="Anzahl der Zimmer"
+                name="rooms"
+                replaceDotWithComma
+              />
+              <FormSelectField<EditObjekteUnitFormValues>
+                control={methods.control}
+                name="outdoor"
+                label="Außenbereich"
+                placeholder="Außenbereich"
+                options={outdoorOptions}
+              />
+              <FormInputField<EditObjekteUnitFormValues>
+                control={methods.control}
+                label="Fläche Außenbereich"
+                placeholder="Quadratmeter"
+                name="outdoor_area"
+                replaceDotWithComma
+              />
+            </div>
+            <FormRoundedCheckbox<EditObjekteUnitFormValues>
               control={methods.control}
-              name="floor"
-              label={isNonResidential ? "Etage" : "Etage*"}
-              placeholder={isNonResidential ? "Etage" : "Etage*"}
-              options={floorOptions}
+              name="cellar_available"
+              label="Keller vorhanden"
             />
-            <FormSelectField<EditObjekteUnitFormValues>
-              control={methods.control}
-              name="house_location"
-              label="Hauslage"
-              placeholder="Hauslage"
-              options={houseLocatonOptions}
-            />
-            <FormSelectField<EditObjekteUnitFormValues>
-              control={methods.control}
-              name="residential_area"
-              label="Wohnlage"
-              placeholder="Wohnlage"
-              options={residentialAreaOptions}
-            />
-            <FormSelectField<EditObjekteUnitFormValues>
-              control={methods.control}
-              name="apartment_type"
-              label="Wohnungstyp"
-              placeholder="Wohnungstyp"
-              options={apartmentTypeOptions}
-            />
-            <FormInputField<EditObjekteUnitFormValues>
-              control={methods.control}
-              name="living_space"
-              label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
-              placeholder="Quadratmeter"
-              replaceDotWithComma
-            />
-            {/* Empty div to align grid when only 5 items */}
-            <div className="hidden max-medium:hidden" />
           </div>
-        </div>
-        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
-          <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
-          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+        )}
+        {!shouldHideDetails && (
+          <FormTechnicalEquipment<EditObjekteUnitFormValues>
+            control={methods.control}
+          />
+        )}
+        {!shouldHideDetails && (
+
+          <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
+            <h2 className="text-sm font-bold">
+              Verwaltungstechnische Informationen
+            </h2>
             <FormInputField<EditObjekteUnitFormValues>
               control={methods.control}
-              label="Zimmeranzahl"
-              placeholder="Anzahl der Zimmer"
-              name="rooms"
+              name="house_fee"
+              label="Hausgeld"
+              placeholder="Euro"
               replaceDotWithComma
-            />
-            <FormSelectField<EditObjekteUnitFormValues>
-              control={methods.control}
-              name="outdoor"
-              label="Außenbereich"
-              placeholder="Außenbereich"
-              options={outdoorOptions}
-            />
-            <FormInputField<EditObjekteUnitFormValues>
-              control={methods.control}
-              label="Fläche Außenbereich"
-              placeholder="Quadratmeter"
-              name="outdoor_area"
-              replaceDotWithComma
+              unit="€"
             />
           </div>
-          <FormRoundedCheckbox<EditObjekteUnitFormValues>
-            control={methods.control}
-            name="cellar_available"
-            label="Keller vorhanden"
-          />
-        </div>
-        <FormTechnicalEquipment<EditObjekteUnitFormValues>
-          control={methods.control}
-        />
-        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
-          <h2 className="text-sm font-bold">
-            Verwaltungstechnische Informationen
-          </h2>
-          <FormInputField<EditObjekteUnitFormValues>
-            control={methods.control}
-            name="house_fee"
-            label="Hausgeld"
-            placeholder="Euro"
-            replaceDotWithComma
-            unit="€"
-          />
-        </div>
+        )}
         <FormDocuments<EditObjekteUnitFormValues>
           control={methods.control}
           name="documents"

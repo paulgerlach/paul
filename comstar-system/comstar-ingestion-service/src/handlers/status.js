@@ -77,7 +77,6 @@ class StatusHandler {
   }
   
   parseStatusData(data, gatewayEui) {
-    console.log("PARSE STATUS DATA====>", data)
     // Basic validation
     if (!data || typeof data !== 'object') {
       throw new Error('Invalid status data format');
@@ -160,7 +159,8 @@ class StatusHandler {
         raw_data: data,
         parsed_at: now,
         gateway_eui: gatewayEui
-      }
+      },
+      time: data.time
     };
   }
   
@@ -280,7 +280,8 @@ class StatusHandler {
         +status.temperature.celsius,  //temperature
         !status.collection.active, //Collected
         status.collection.telegrams_collected, //telegram count
-        status.collection.telegrams_uploading //uploading_count
+        status.collection.telegrams_uploading, //uploading_count
+         status.time//time
       )
       
       console.log('✅ Status stored in database');

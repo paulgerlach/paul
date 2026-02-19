@@ -176,7 +176,7 @@ export default function EditObjekteUnitForm({
       floor: floor ?? undefined,
       house_location: house_location ?? undefined,
       residential_area: residential_area ?? undefined,
-      living_space: String(living_space ?? 0),
+      living_space: living_space != null ? String(living_space) : undefined,
     });
 
   return (

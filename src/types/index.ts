@@ -148,6 +148,8 @@ export type DocumentType =
   | "admin_cost_type_heizkostenabrechnung"
   | "operating_costs"
   | "admin_operating_costs"
+  | "invoice"
+  | "admin_invoice"
   | "document";
 
 export type DialogDocumentActionType =

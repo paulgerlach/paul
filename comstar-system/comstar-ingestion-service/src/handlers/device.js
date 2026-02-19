@@ -1,5 +1,6 @@
 import config from '../config/environment.js';
 import databaseService from '../services/databaseService.js';
+import logger from '../utils/logger.js';
 
 class DeviceHandler {
   constructor() {
@@ -26,8 +27,6 @@ class DeviceHandler {
     try {
       if(data.reboot_reason === 'power_on') 
         this.validateDeviceBootData(data, gatewayEui);
-      else
-        this.validateDeviceConfigData(data, gatewayEui);
 
       console.log('Device uplink data validated successfully');
 
@@ -67,8 +66,7 @@ class DeviceHandler {
         data: JSON.stringify(data)
       }, 'Failed to process device uplink');
       
-      //TODO: Possibly store failed attempt      
-      throw error;
+      return null
     }
   }
 
@@ -289,7 +287,12 @@ class DeviceHandler {
       return await databaseService.insertGatewayDeviceDetails(gatewayEui, model, metadata, data);
     } catch (error) {
       console.error(error);
-      throw error;
+      logger.error({
+        gatewayEui,
+        etag: data?.etag || null,
+        error: error.message
+      }, 'Error inserting gateway device details');
+      return null;
     }
   }
 

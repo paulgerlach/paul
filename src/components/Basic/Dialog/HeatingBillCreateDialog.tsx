@@ -22,6 +22,10 @@ export default function HeatingBillCreateDialog() {
     "objektauswahl"
   );
 
+  const actionBtn =
+  "h-12 px-8 max-xl:px-3.5 max-xl:text-sm max-medium:w-full rounded-lg flex items-center justify-center font-medium";
+
+
   const handleNavigate = (type: "objektauswahl" | "localauswahl") => {
     closeDialog("heating_bill_create");
     router.push(ROUTE_HEIZKOSTENABRECHNUNG + `/zwischenstand/${type}`);
@@ -29,7 +33,7 @@ export default function HeatingBillCreateDialog() {
 
   if (isOpen)
     return (
-      <DialogBase size={768} dialogName="heating_bill_create">
+      <DialogBase size={780} dialogName="heating_bill_create">
         <div className="py-6 max-medium:py-3">
           <h2 className="text-center mb-4 max-medium:mb-2 font-bold text-admin_dark_text text-lg max-medium:text-base">
             Auswahl der Objektart
@@ -194,14 +198,20 @@ export default function HeatingBillCreateDialog() {
           </div>
         </div>
         <div className="flex items-center justify-between max-medium:flex-col max-medium:gap-3">
-          <button
-            onClick={() => closeDialog("heating_bill_create")}
-            className="py-2 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:w-full max-medium:order-2 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] cursor-pointer font-medium hover:bg-[#d0d0d0] transition-colors duration-300"
-          >
-            Zurück
-          </button>
-          <Button onClick={() => handleNavigate(docFor)} className="max-medium:w-full max-medium:order-1">Loslegen</Button>
-        </div>
+  <button
+    onClick={() => closeDialog("heating_bill_create")}
+    className={`${actionBtn} border border-admin_dark_text/50 text-admin_dark_text bg-[#e0e0e0] hover:bg-[#d0d0d0] transition-colors duration-300 max-medium:order-2`}
+  >
+    Zurück
+  </button>
+
+  <Button
+    onClick={() => handleNavigate(docFor)}
+    className={`${actionBtn} max-medium:order-1`}
+  >
+    Loslegen
+  </Button>
+</div>
       </DialogBase>
     );
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { invoice_documents } from "@/db/drizzle/schema";
+import { heating_invoices } from "@/db/drizzle/schema";
 import database from "@/db";
 import { type AddDocBetriebskostenabrechnungDialogFormValues } from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
 import type { HeatingInvoiceType } from "@/types";
@@ -38,7 +38,7 @@ export async function adminCreateInvoiceDocument(
     };
 
     const [insertedInvoice] = await database
-        .insert(invoice_documents)
+        .insert(heating_invoices)
         .values(insertData)
         .returning();
 

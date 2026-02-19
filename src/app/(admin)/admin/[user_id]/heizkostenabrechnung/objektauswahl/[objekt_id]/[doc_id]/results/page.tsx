@@ -1,10 +1,19 @@
-import { getRelatedLocalsByObjektId } from "@/api";
+import {
+  getAdminContractsWithContractorsByLocalIDs,
+  getRelatedLocalsByObjektId,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminObjekteLocalItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/Admin/AdminObjekteLocalItemHeatingBillDocResult";
 import SearchControls from "@/components/Admin/SearchControls";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
+import type { UnitType } from "@/types";
+
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+  "residential",
+  "commercial",
+]);
 
 export default async function ResultLocalPDF({
   params,
@@ -16,7 +25,9 @@ export default async function ResultLocalPDF({
   const { objekt_id, doc_id, user_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
 
-  let locals = await getRelatedLocalsByObjektId(objekt_id);
+  let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
+    ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+  );
   const totalLocals = locals.length;
 
   // Filter by search query
@@ -33,6 +44,18 @@ export default async function ResultLocalPDF({
     return sort === "asc"
       ? nameA.localeCompare(nameB)
       : nameB.localeCompare(nameA);
+  });
+  const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
+    locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
+    user_id
+  );
+  const localsWithStatus = locals.map((local) => {
+    const localId = local.id ?? "";
+    const contracts = contractsByLocalId[localId] ?? [];
+    const status = contracts.some((contract) => contract.is_current)
+      ? "renting"
+      : "vacancy";
+    return { local, status } as const;
   });
 
   return (
@@ -59,7 +82,7 @@ export default async function ResultLocalPDF({
                 </p>
               </div>
             ) : (
-              locals.map((local) => (
+              localsWithStatus.map(({ local, status }) => (
                 <AdminObjekteLocalItemHeatingBillDocResult
                   objektID={objekt_id}
                   key={local.id}
@@ -67,6 +90,7 @@ export default async function ResultLocalPDF({
                   item={local}
                   docType="objektauswahl"
                   docID={doc_id}
+                  status={status}
                 />
               ))
             )}

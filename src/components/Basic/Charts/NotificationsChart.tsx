@@ -14,7 +14,9 @@ import {
 	notification,
 	pipe_water,
 	cold_water,
+
 	smoke_detector,
+	electricity,
 } from "@/static/icons";
 import Image from "next/image";
 import NotificationItem from "./NotificationItem";
@@ -208,6 +210,16 @@ export default function NotificationsChart({
 			return blue_info; // fallback for general consumption
 		}
 
+
+
+		if (
+			type.includes("strom") ||
+			type.includes("electricity") ||
+			type.includes("elec")
+		) {
+			return electricity;
+		}
+
 		// Default icons based on device type if no specific notification type match
 		if (deviceType) {
 			const dType = deviceType.toLowerCase();
@@ -262,24 +274,24 @@ export default function NotificationsChart({
 			const selectedMeters = isUuidFormat
 				? parsedData.data // Main dashboard: data is already filtered by API using UUIDs
 				: parsedData.data.filter((device) => {
-						// Shared dashboard: filter by serial number
-						const meterId =
-							device.ID?.toString() ||
-							device["Number Meter"]?.toString();
-						return meterId && meterIds.includes(meterId);
-				  });
+					// Shared dashboard: filter by serial number
+					const meterId =
+						device.ID?.toString() ||
+						device["Number Meter"]?.toString();
+					return meterId && meterIds.includes(meterId);
+				});
 
 			// GROUP 1: Check for error flags
 			const selectedMetersWithErrors = selectedMeters.filter((device) => {
 				const hasErrorFlag =
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] &&
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] !== "0b" &&
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] !== "";
 				return hasErrorFlag;
 			});
@@ -450,10 +462,12 @@ export default function NotificationsChart({
 					deviceType === "Heat"
 						? heater
 						: deviceType === "WWater"
-						? hot_water
-						: deviceType === "Water"
-						? cold_water
-						: pipe_water;
+							? hot_water
+							: deviceType === "Water"
+								? cold_water
+								: deviceType === "Elec" || deviceType === "Stromzähler"
+									? electricity
+									: pipe_water;
 
 				dynamicNotifications.push({
 					leftIcon: leftIcon,
@@ -748,15 +762,15 @@ export default function NotificationsChart({
 						notification.Severity === "critical"
 							? alert_triangle
 							: notification.Severity === "high"
-							? alert_triangle
-							: blue_info;
+								? alert_triangle
+								: blue_info;
 
 					const rightBg =
 						notification.Severity === "critical"
 							? "#FFE5E5"
 							: notification.Severity === "high"
-							? "#F7E7D5"
-							: "#E5EBF5";
+								? "#F7E7D5"
+								: "#E5EBF5";
 
 					// Pass the full message to get the correct icon for consumption notifications
 					const notificationTypeWithMessage =
@@ -826,9 +840,8 @@ export default function NotificationsChart({
 
 	return (
 		<div
-			className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${
-				isEmpty ? "flex flex-col" : ""
-			}`}
+			className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""
+				}`}
 		>
 			<div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-2">
 				<div className="flex items-center gap-2">
@@ -852,21 +865,19 @@ export default function NotificationsChart({
 				/>
 			</div>
 			<div
-				className={`flex-1 overflow-y-auto ${
-					showAllNotifications ? "max-h-[280px]" : "max-h-[270px]"
-				} pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`}
+				className={`flex-1 overflow-y-auto ${showAllNotifications ? "max-h-[280px]" : "max-h-[270px]"
+					} pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`}
 			>
 				{notifications.length === 0 ? (
 					hasDismissedNotifications &&
-					originalNotificationCount > 0 ? (
+						originalNotificationCount > 0 ? (
 						// User dismissed all notifications - show success state
 						<EmptyState
 							title="Alle Warnungen gelöscht"
-							description={`${originalNotificationCount} ${
-								originalNotificationCount === 1
-									? "Warnung wurde"
-									: "Warnungen wurden"
-							} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
+							description={`${originalNotificationCount} ${originalNotificationCount === 1
+								? "Warnung wurde"
+								: "Warnungen wurden"
+								} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
 							imageSrc={notification.src}
 							imageAlt="Benachrichtigungen"
 						/>

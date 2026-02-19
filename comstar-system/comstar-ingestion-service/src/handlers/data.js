@@ -197,7 +197,7 @@ class DataHandler {
     }
 
     if (meter) {
-      const exists = await databaseService.checkExistingReading(meter.id, timestamp);
+      const exists = await databaseService.checkExistingReading(meterId, timestamp);
       if (exists) {
         console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
         return null;

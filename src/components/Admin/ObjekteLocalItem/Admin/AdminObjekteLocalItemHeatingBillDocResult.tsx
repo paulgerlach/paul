@@ -1,12 +1,11 @@
-import { blue_x, gmail, green_check_circle, pdf_icon } from "@/static/icons";
+import { blue_x, green_check_circle } from "@/static/icons";
 import { UnitType, type LocalType } from "@/types";
 import { buildLocalName, handleLocalTypeIcon } from "@/utils";
 import Image from "next/image";
 import { getAdminContractsWithContractorsByLocalID } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
-import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-import LocalPDFDownloadButton from "../../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
+import HeatingBillActionButtons from "../HeatingBillActionButtons";
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
   item: LocalType;
@@ -65,16 +64,16 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
     }
   };
 
-  const previewLink =
+  const previewHref =
     docType === "objektauswahl"
       ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/${item.id}/preview`
       : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`;
+  const editLink = `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`;
 
   return (
     <div
-      className={`bg-white p-2 max-medium:p-3 rounded-2xl max-medium:rounded-xl ${
-        status === "vacancy" && "available"
-      } flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-3`}
+      className={`bg-white p-2 max-medium:p-3 rounded-2xl max-medium:rounded-xl ${status === "vacancy" && "available"
+        } flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-3`}
     >
       <div className="flex items-center justify-start gap-8 max-medium:gap-3 max-medium:w-full max-medium:justify-between">
         <div className="flex items-center gap-8 max-medium:gap-3">
@@ -103,7 +102,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
         <div className="hidden max-medium:block">
           <ThreeDotsButton
             dialogAction="admin_heating_bill_delete"
-            editLink={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}
+            editLink={editLink}
           />
         </div>
       </div>
@@ -116,42 +115,15 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
             -124,56 €
           </span>
         </div> */}
-        <div className="flex items-center justify-end max-medium:justify-center gap-4 max-medium:gap-3">
-          <Link href={previewLink}>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-10 max-h-10 max-xl:max-w-6 max-xl:max-h-6 max-medium:max-w-8 max-medium:max-h-8"
-              src={pdf_icon}
-              alt={"pdf_icon"}
-            />
-          </Link>
-          <LocalPDFDownloadButton
-            objektId={objektID}
-            localId={item.id ?? ""}
-            docId={docID ?? ""}
-          />
-          <button>
-            <Image
-              width={0}
-              height={0}
-              sizes="100vw"
-              loading="lazy"
-              className="max-w-[35px] max-h-[35px] max-xl:max-w-6 max-xl:max-h-6 max-medium:max-w-8 max-medium:max-h-8"
-              src={gmail}
-              alt={"gmail_icon"}
-            />
-          </button>
-          {/* Three dots on desktop - with action icons */}
-          <div className="max-medium:hidden">
-            <ThreeDotsButton
-              dialogAction="admin_heating_bill_delete"
-              editLink={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/weitermachen/${docID}/abrechnungszeitraum`}
-            />
-          </div>
-        </div>
+        <HeatingBillActionButtons
+          objektId={objektID}
+          localId={item.id ?? ""}
+          docId={docID ?? ""}
+          previewHref={previewHref}
+          editLink={editLink}
+          docType={docType}
+          dialogAction="admin_heating_bill_delete"
+        />
       </div>
     </div>
   );

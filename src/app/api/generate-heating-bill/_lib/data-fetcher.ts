@@ -14,7 +14,7 @@ import {
   local_meters,
   users,
 } from "@/db/drizzle/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { MeterReadingType } from "@/api";
 
 export interface HeatingBillRawData {
@@ -80,45 +80,37 @@ export async function fetchHeatingBillData(
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  if (useServiceRole && (!serviceRoleKey || !supabaseUrl)) {
+    const missing = supabaseUrl ? "SUPABASE_SERVICE_ROLE_KEY" : "NEXT_PUBLIC_SUPABASE_URL";
+    throw new Error(`Missing Supabase config for heating bill: ${missing}`);
+  }
+
   const supabase =
-    useServiceRole && serviceRoleKey
-      ? createClient(supabaseUrl!, serviceRoleKey)
+    useServiceRole && serviceRoleKey && supabaseUrl
+      ? createClient(supabaseUrl, serviceRoleKey)
       : null;
 
-  const [
-    mainDocResult,
-    invoicesResult,
-    userResult,
-  ] = await Promise.all([
-    database
-      .select()
-      .from(heating_bill_documents)
-      .where(
-        and(
-          eq(heating_bill_documents.id, docId),
-          eq(heating_bill_documents.user_id, userId)
-        )
-      )
-      .then((r) => r[0] ?? null),
+  const mainDoc = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(eq(heating_bill_documents.id, docId))
+    .then((r) => r[0] ?? null);
+
+  const ownerUserId = mainDoc?.user_id ?? userId;
+
+  const [invoices, user] = await Promise.all([
     database
       .select()
       .from(heating_invoices)
-      .where(
-        and(
-          eq(heating_invoices.heating_doc_id, docId),
-          eq(heating_invoices.user_id, userId)
-        )
-      ),
-    database
-      .select({ first_name: users.first_name, last_name: users.last_name, id: users.id })
-      .from(users)
-      .where(eq(users.id, userId))
-      .then((r) => r[0] ?? null),
+      .where(eq(heating_invoices.heating_doc_id, docId)),
+    ownerUserId
+      ? database
+          .select({ first_name: users.first_name, last_name: users.last_name, id: users.id })
+          .from(users)
+          .where(eq(users.id, ownerUserId))
+          .then((r) => r[0] ?? null)
+      : Promise.resolve(null),
   ]);
-
-  const mainDoc = mainDocResult;
-  const invoices = invoicesResult;
-  const user = userResult;
   const objektId = mainDoc?.objekt_id;
 
   if (!objektId) {

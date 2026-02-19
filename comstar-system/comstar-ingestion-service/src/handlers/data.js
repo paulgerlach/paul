@@ -116,33 +116,48 @@ class DataHandler {
 }
 
   async handleTelegramData(gatewayEui, telegram) {
-    const telegramBuffer = Buffer.from(telegram, 'hex');
-     
-  // Validate first
-  const validation = validateTelegram(telegramBuffer);
-  if (!validation.valid) {
-    console.warn({ gatewayEui, reason: validation.reason }, 'Invalid telegram');
+  let telegramBuffer;
+  
+  if (Buffer.isBuffer(telegram)) {
+    telegramBuffer = telegram;
+  } 
+  else if (telegram && telegram.type === 'Buffer' && Array.isArray(telegram.data)) {
+    telegramBuffer = Buffer.from(telegram.data);
+  }
+  // If telegram is a hex string
+  else if (typeof telegram === 'string') {
+    telegramBuffer = Buffer.from(telegram, 'hex');
+  }
+  else {
+    console.error('Unknown telegram format:', typeof telegram);
     return null;
   }
-    const parser = new WirelessMbusParser();
-    
-    try {
+
+  // Validate first
+  // const validation = validateTelegram(telegramBuffer);
+  // if (!validation.valid) {
+  //   console.warn({ gatewayEui, reason: validation.reason }, 'Invalid telegram');
+  //   return null;
+  // }
+  
+  const parser = new WirelessMbusParser();
+  
+  try {
     const result = await parser.parse(telegramBuffer, {
       key: Buffer.from(this.key, "hex")
     });
-      return await this.processParsedResult(gatewayEui, telegram, result);
-    } catch (error) {
-      if (!error.message.includes('Wrong key')) {
-        console.error({
-          gatewayEui,
-          error: error.message,
-          telegramLength: telegramBuffer.length
-        }, 'Parse error');
-      }
-      
-      return null;
+    return await this.processParsedResult(gatewayEui, telegramBuffer.toString('hex'), result);
+  } catch (error) {
+    if (!error.message.includes('Wrong key')) {
+      console.error({
+        gatewayEui,
+        error: error.message,
+        telegramLength: telegramBuffer.length
+      }, 'Parse error');
     }
+    return null;
   }
+}
 
   async processParsedResult(gatewayEui, telegram, result) {
   

@@ -16,7 +16,7 @@ export default function ModalFooter({ onClose, loading, onSave, isValid=true }: 
         type="button"
         onClick={onSave}
         disabled={loading}
-        className="px-6 py-2.5 text-sm font-medium text-white bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors disabled:opacity-50"
+        className="px-6 py-2.5 text-sm font-medium text-black bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors disabled:opacity-50"
       >
         {loading ? "Lädt..." : "Speichern"}
       </button>

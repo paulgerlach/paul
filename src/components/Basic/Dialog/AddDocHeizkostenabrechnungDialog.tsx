@@ -201,7 +201,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
       return;
     }
 
-    await createHeatingInvoice(
+    const res = await createHeatingInvoice(
       {
         ...formattedPayload,
         invoice_date: rest.invoice_date,
@@ -212,7 +212,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
       activeCostType
     );
 
-    updateDocumentGroup(activeCostType, formattedPayload);
+    updateDocumentGroup(activeCostType, res);
 
     await uploadDocuments.mutateAsync({
       files: document,

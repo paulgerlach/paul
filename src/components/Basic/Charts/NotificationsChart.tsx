@@ -14,7 +14,9 @@ import {
 	notification,
 	pipe_water,
 	cold_water,
+
 	smoke_detector,
+	electricity,
 } from "@/static/icons";
 import Image from "next/image";
 import NotificationItem from "./NotificationItem";
@@ -211,6 +213,16 @@ export default function NotificationsChart({
 				return cold_water; // cold water icon for cold water consumption
 			}
 			return blue_info; // fallback for general consumption
+		}
+
+
+
+		if (
+			type.includes("strom") ||
+			type.includes("electricity") ||
+			type.includes("elec")
+		) {
+			return electricity;
 		}
 
 		// Default icons based on device type if no specific notification type match
@@ -458,7 +470,9 @@ export default function NotificationsChart({
 							? hot_water
 							: deviceType === "Water"
 								? cold_water
-								: pipe_water;
+								: deviceType === "Elec" || deviceType === "Stromzähler"
+									? electricity
+									: pipe_water;
 
 				dynamicNotifications.push({
 					leftIcon: leftIcon,

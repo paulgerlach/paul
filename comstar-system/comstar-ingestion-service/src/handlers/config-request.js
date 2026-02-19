@@ -131,15 +131,21 @@ class ConfigRequestHandler {
       FROM config_versions 
       WHERE etag = $1
     `;
+    try {
+      const result = await databaseService.query(query, [etag]);
     
-    const result = await databaseService.query(query, [etag]);
+      if (result.rows.length === 0) {
+        return null;
+      }
     
-    if (result.rows.length === 0) {
-      return null;
+      // Config is stored as JSONB in database
+      return result.rows[0].config;
+    } catch (error) {
+      logger.error({
+        etag,
+        error: error.message
+      }, 'Error fetching base configuration');
     }
-    
-    // Config is stored as JSONB in database
-    return result.rows[0].config;
   }
   
   async getGatewayOverrides(gatewayEui) {
@@ -149,16 +155,22 @@ class ConfigRequestHandler {
       FROM gateway_config_overrides 
       WHERE gateway_eui = $1
     `;
+    try {
+      const result = await databaseService.query(query, [gatewayEui]);
     
-    const result = await databaseService.query(query, [gatewayEui]);
+      // Convert array of key-value pairs to object
+      const overrides = {};
+      result.rows.forEach(row => {
+        overrides[row.config_key] = this.parseConfigValue(row.config_value);
+      });
     
-    // Convert array of key-value pairs to object
-    const overrides = {};
-    result.rows.forEach(row => {
-      overrides[row.config_key] = this.parseConfigValue(row.config_value);
-    });
-    
-    return overrides;
+      return overrides;
+    } catch (error) {
+      logger.error({
+        etag,
+        error: error.message
+      }, 'Error fetching base configuration');
+    }
   }
   
   parseConfigValue(value) {
@@ -283,21 +295,27 @@ class ConfigRequestHandler {
       VALUES ($1, $2, $3, $4)
       RETURNING etag
     `;
-    
-    const result = await databaseService.query(query, [
-      etag,
-      JSON.stringify(config),
-      description,
-      createdBy
-    ]);
-    
-    logger.info({
-      etag,
-      configKeys: Object.keys(config),
-      description
-    }, 'New configuration created');
-    
-    return result.rows[0].etag;
+    try {
+      const result = await databaseService.query(query, [
+        etag,
+        JSON.stringify(config),
+        description,
+        createdBy
+      ]);
+
+      logger.info({
+        etag,
+        configKeys: Object.keys(config),
+        description
+      }, 'New configuration created');
+
+      return result.rows[0].etag;
+    } catch (error) {
+      logger.error({
+        etag,
+        error: error.message
+      }, 'Error fetching base configuration');
+    }
   }
   
   generateEtag(config) {
@@ -325,39 +343,56 @@ class ConfigRequestHandler {
         updated_at = NOW()
       RETURNING gateway_eui
     `;
+    try {
+      const result = await databaseService.query(query, [gatewayEui, etag]);
     
-    const result = await databaseService.query(query, [gatewayEui, etag]);
+      // Clear cache for this gateway
+      this.clearGatewayCache(gatewayEui);
     
-    // Clear cache for this gateway
-    this.clearGatewayCache(gatewayEui);
+      logger.info({
+        gatewayEui,
+        etag
+      }, 'Configuration assigned to gateway');
     
-    logger.info({
-      gatewayEui,
-      etag
-    }, 'Configuration assigned to gateway');
-    
-    return result.rows[0];
+      return result.rows[0];
+    } catch (error) {
+      logger.error({
+        gatewayEui,
+        etag,
+        error: error.message
+      }, 'Error fetching base configuration');
+    }
   }
   
+  
   async setGatewayOverride(gatewayEui, key, value) {
-    const query = `
-      INSERT INTO gateway_config_overrides (gateway_eui, config_key, config_value)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (gateway_eui, config_key) 
-      DO UPDATE SET config_value = EXCLUDED.config_value
-      RETURNING id
-    `;
-    
-    await databaseService.query(query, [gatewayEui, key, String(value)]);
-    
-    // Clear cache for this gateway
-    this.clearGatewayCache(gatewayEui);
-    
-    logger.info({
-      gatewayEui,
-      key,
-      value
-    }, 'Gateway config override set');
+    try{
+      const query = `
+        INSERT INTO gateway_config_overrides (gateway_eui, config_key, config_value)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (gateway_eui, config_key) 
+        DO UPDATE SET config_value = EXCLUDED.config_value
+        RETURNING id
+      `;
+      
+      await databaseService.query(query, [gatewayEui, key, String(value)]);
+      
+      // Clear cache for this gateway
+      this.clearGatewayCache(gatewayEui);
+      
+      logger.info({
+        gatewayEui,
+        key,
+        value
+      }, 'Gateway config override set');
+    } catch (error) {
+      logger.error({
+        gatewayEui,
+        key,
+        value,
+        error: error.message
+      }, 'Error setting gateway config override');
+    }
   }
   
   clearGatewayCache(gatewayEui) {

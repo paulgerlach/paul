@@ -6,7 +6,9 @@ import {
   hot_water,
   cold_water,
   heater,
+
   pipe_water,
+  electricity,
 } from "@/static/icons";
 
 export interface ConsumptionNotification {
@@ -86,6 +88,9 @@ function getDeviceIcon(deviceType: string): StaticImageData {
   }
   if (type.includes("water") || type.includes("wasser") || type.includes("kaltwasser")) {
     return cold_water;
+  }
+  if (type.includes("elec") || type.includes("strom")) {
+    return electricity;
   }
 
   return pipe_water;

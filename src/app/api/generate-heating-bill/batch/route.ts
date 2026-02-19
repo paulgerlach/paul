@@ -18,7 +18,7 @@ import { objekte, users } from "@/db/drizzle/schema";
 import { eq, inArray } from "drizzle-orm";
 import type { LocalType, UnitType } from "@/types";
 
-/** Explicit timeout for route; 202 is returned quickly, background work runs outside request lifecycle. */
+/** Explicit timeout for route; request waits for full batch generation. */
 export const maxDuration = 60;
 
 /** When "true" or "1", always use mock model (for testing/rollback). */
@@ -41,12 +41,23 @@ async function processBatchInBackground(
     objektId: string,
     docId: string,
     locals: LocalType[]
-): Promise<void> {
+): Promise<{
+    generated: number;
+    failed: number;
+    totalLocals: number;
+    failedEntries: Array<{
+        localId: string;
+        floor?: string | null;
+        house_location?: string | null;
+        living_space?: string | null;
+        residential_area?: string | null;
+        errorMessage?: string;
+    }>;
+}> {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseUrl || !serviceRoleKey) {
-        console.error("[HeatingBillBatch] Missing Supabase config for background run");
-        return;
+        throw new Error("Missing Supabase config for batch generation");
     }
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
@@ -93,7 +104,7 @@ async function processBatchInBackground(
         );
     } catch (error_) {
         console.error("[HeatingBillBatch] PDF render failed:", error_);
-        return;
+        throw new Error("PDF render failed");
     }
 
     const apartments: Array<{
@@ -305,13 +316,20 @@ async function processBatchInBackground(
     ).catch((err) =>
         console.error("[HeatingBillBatch] Slack notification error:", err)
     );
+
+    return {
+        generated,
+        failed,
+        totalLocals: locals.length,
+        failedEntries,
+    };
 }
 
 /**
  * POST /api/generate-heating-bill/batch
  * Generates heating bill PDFs for all locals in a building.
  * Accepts: { objektId, docId }
- * Returns immediately with 202 { started, totalLocals }; generation runs in background.
+ * Returns after generation with 200 { success, totalLocals, generated, failed }.
  */
 export async function POST(request: NextRequest) {
     try {
@@ -343,22 +361,35 @@ export async function POST(request: NextRequest) {
         );
         if (eligibleLocals.length === 0) {
             return NextResponse.json(
-                { success: true, started: false, totalLocals: 0, generated: 0, failed: 0 },
+                {
+                    success: true,
+                    completed: true,
+                    totalLocals: 0,
+                    generated: 0,
+                    failed: 0,
+                    failedEntries: [],
+                },
                 { status: 200 }
             );
         }
 
-        processBatchInBackground(user.id, objektId, docId, eligibleLocals).catch((err) =>
-            console.error("[HeatingBillBatch] Background processing error:", err)
+        const result = await processBatchInBackground(
+            user.id,
+            objektId,
+            docId,
+            eligibleLocals
         );
 
         return NextResponse.json(
             {
                 success: true,
-                started: true,
-                totalLocals: eligibleLocals.length,
+                completed: true,
+                totalLocals: result.totalLocals,
+                generated: result.generated,
+                failed: result.failed,
+                failedEntries: result.failedEntries,
             },
-            { status: 202 }
+            { status: 200 }
         );
     } catch (error: unknown) {
         console.error("Generate heating bills batch error:", error);

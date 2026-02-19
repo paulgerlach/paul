@@ -5,6 +5,12 @@ import ObjekteObjektItemHeatingBillDocResult from "@/components/Admin/ObjekteLoc
 import SearchControls from "@/components/Admin/SearchControls";
 import { buildLocalName } from "@/utils";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import type { UnitType } from "@/types";
+
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+  "residential",
+  "commercial",
+]);
 
 export default async function ResultLocalPDF({
   params,
@@ -16,7 +22,9 @@ export default async function ResultLocalPDF({
   const { objekt_id, doc_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
 
-  let locals = await getRelatedLocalsByObjektId(objekt_id);
+  let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
+    ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+  );
   const totalLocals = locals?.length || 0;
 
   // Filter by search query

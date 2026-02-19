@@ -8,6 +8,12 @@ import AdminObjekteLocalItemHeatingBillDocResult from "@/components/Admin/Objekt
 import SearchControls from "@/components/Admin/SearchControls";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
+import type { UnitType } from "@/types";
+
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+  "residential",
+  "commercial",
+]);
 
 export default async function ResultLocalPDF({
   params,
@@ -19,7 +25,9 @@ export default async function ResultLocalPDF({
   const { objekt_id, doc_id, user_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
 
-  let locals = await getRelatedLocalsByObjektId(objekt_id);
+  let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
+    ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+  );
   const totalLocals = locals.length;
 
   // Filter by search query
@@ -42,7 +50,8 @@ export default async function ResultLocalPDF({
     user_id
   );
   const localsWithStatus = locals.map((local) => {
-    const contracts = contractsByLocalId[local.id] ?? [];
+    const localId = local.id ?? "";
+    const contracts = contractsByLocalId[localId] ?? [];
     const status = contracts.some((contract) => contract.is_current)
       ? "renting"
       : "vacancy";

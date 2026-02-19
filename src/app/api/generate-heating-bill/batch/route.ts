@@ -16,7 +16,7 @@ import { supabaseServer } from "@/utils/supabase/server";
 import database from "@/db";
 import { objekte, users } from "@/db/drizzle/schema";
 import { eq, inArray } from "drizzle-orm";
-import type { LocalType } from "@/types";
+import type { LocalType, UnitType } from "@/types";
 
 /** Explicit timeout for route; 202 is returned quickly, background work runs outside request lifecycle. */
 export const maxDuration = 60;
@@ -27,6 +27,10 @@ const HEATING_BILL_USE_MOCK =
     process.env.HEATING_BILL_USE_MOCK === "1";
 
 const UPLOAD_BATCH_SIZE = 5;
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+    "residential",
+    "commercial",
+]);
 
 /**
  * Background worker: computes model, renders PDF, uploads per local with error isolation.
@@ -334,14 +338,17 @@ export async function POST(request: NextRequest) {
         }
 
         const locals = await getRelatedLocalsByObjektId(objektId);
-        if (!locals || locals.length === 0) {
+        const eligibleLocals = (locals ?? []).filter((local) =>
+            ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+        );
+        if (eligibleLocals.length === 0) {
             return NextResponse.json(
                 { success: true, started: false, totalLocals: 0, generated: 0, failed: 0 },
                 { status: 200 }
             );
         }
 
-        processBatchInBackground(user.id, objektId, docId, locals).catch((err) =>
+        processBatchInBackground(user.id, objektId, docId, eligibleLocals).catch((err) =>
             console.error("[HeatingBillBatch] Background processing error:", err)
         );
 
@@ -349,7 +356,7 @@ export async function POST(request: NextRequest) {
             {
                 success: true,
                 started: true,
-                totalLocals: locals.length,
+                totalLocals: eligibleLocals.length,
             },
             { status: 202 }
         );

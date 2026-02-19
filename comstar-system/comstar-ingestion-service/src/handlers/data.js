@@ -238,55 +238,6 @@ class DataHandler {
   }
 }
 
-async handleTelegramData(gatewayEui, telegram) {
-  const telegramBuffer = Buffer.from(telegram, 'hex');
-  const parser = new WirelessMbusParser();
-  
-  try {
-    // Try with original buffer
-    const result = await parser.parse(telegramBuffer, {
-      containsCrc: undefined,
-      key: Buffer.from(this.key, "hex")     
-    });
-    return await this.processParsedResult(gatewayEui, telegram, result);
-  } catch (error) {
-    if (error.message.includes('too short') || error.message.includes('DIF extension')) {
-      console.warn({ 
-        gatewayEui, 
-        length: telegramBuffer.length,
-        errorMsg: error.message 
-      }, 'Parse error, attempting recovery');
-      
-      try {
-        // Only pad if telegram is genuinely short
-        if (telegramBuffer.length < 169) {
-          const paddedBuffer = Buffer.alloc(169);
-          telegramBuffer.copy(paddedBuffer);
-          
-          const result = await parser.parse(paddedBuffer, {
-            containsCrc: false,
-            key: Buffer.from(this.key, "hex")     
-          });
-          return await this.processParsedResult(gatewayEui, telegram, result);
-        }
-      } catch (paddingError) {
-        console.error({ 
-          gatewayEui, 
-          error: paddingError.message 
-        }, 'Padded parse also failed');
-        return null;
-      }
-    }
-    
-    console.error({ 
-      gatewayEui, 
-      error: error.message,
-      telegramLength: telegramBuffer.length
-    }, 'Unrecoverable parse error');
-    return null;
-  }
-}
-
   async getLocalMeter(meterId) {
     try {
       const meter = await databaseService.getLocalMeterById(meterId);

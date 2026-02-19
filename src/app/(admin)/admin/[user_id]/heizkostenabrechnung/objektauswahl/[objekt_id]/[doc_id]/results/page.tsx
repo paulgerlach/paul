@@ -49,27 +49,27 @@ export default async function ResultLocalPDF({
           currentResults={locals.length}
         />
         <div className="overflow-y-auto space-y-4">
-          {locals.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 text-center">
-              <p className="text-dark_green/50 text-lg">
-                Keine Ergebnisse gefunden
-              </p>
-              <p className="text-dark_green/30 text-sm mt-2">
-                Versuchen Sie einen anderen Suchbegriff
-              </p>
-            </div>
-          ) : (
-            locals.map((local) => (
-              <AdminObjekteLocalItemHeatingBillDocResult
-                objektID={objekt_id}
-                key={local.id}
-                userID={user_id}
-                item={local}
-                docType="objektauswahl"
-                docID={doc_id}
-              />
-            ))
-          )}
+            {locals.length === 0 ? (
+              <div className="bg-white rounded-2xl p-8 text-center">
+                <p className="text-dark_green/50 text-lg">
+                  Keine Ergebnisse gefunden
+                </p>
+                <p className="text-dark_green/30 text-sm mt-2">
+                  Versuchen Sie einen anderen Suchbegriff
+                </p>
+              </div>
+            ) : (
+              locals.map((local) => (
+                <AdminObjekteLocalItemHeatingBillDocResult
+                  objektID={objekt_id}
+                  key={local.id}
+                  userID={user_id}
+                  item={local}
+                  docType="objektauswahl"
+                  docID={doc_id}
+                />
+              ))
+            )}
         </div>
       </ContentWrapper>
     </div>

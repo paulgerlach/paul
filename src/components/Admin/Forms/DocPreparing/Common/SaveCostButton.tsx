@@ -75,7 +75,7 @@ export default function SaveCostButton({
         } else {
           redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
           // Fire-and-forget: trigger batch PDF generation for all locals
-          fetch("/api/generate-heating-bills-batch", {
+          fetch("/api/generate-heating-bill/batch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -83,7 +83,7 @@ export default function SaveCostButton({
               docId: operatingDocId,
             }),
             keepalive: true,
-          }).catch(() => {});
+          }).catch(() => { });
         }
       }
       router.push(redirectUrl);

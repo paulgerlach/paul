@@ -167,8 +167,8 @@ class DataHandler {
   
   try {
     await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
-    console.log('Telegram saved');
-    // const meter = await this.getLocalMeter(meterId);
+    
+    const meter = await this.getLocalMeter(meterId);
     // if (!meter) {
     //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
     //   return null;
@@ -197,7 +197,7 @@ class DataHandler {
     }
 
     if (meter) {
-      const exists = await databaseService.checkExistingReading(meterId, timestamp);
+      const exists = await databaseService.checkExistingReading(meter.id, timestamp);
       if (exists) {
         console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
         return null;
@@ -290,7 +290,6 @@ async handleTelegramData(gatewayEui, telegram) {
       return meter;
     }
     catch (error) {
-      console.error(error)
       throw error;
     }
   }

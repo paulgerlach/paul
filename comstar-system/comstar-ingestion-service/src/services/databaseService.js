@@ -71,7 +71,6 @@ class DatabaseService {
       }
 
       if (!data) {
-        console.error({ meterId }, 'Unknown meter ID, skipping');
         return null;
       }
 

@@ -16,10 +16,10 @@ import logger from '../utils/logger.js';
  * @param {string|null} frameType - Frame type
  * @returns {Object} Transformed readings in flat object format
  */
+
 function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType) {
   const result = {};
-  
-  // Map M-Bus descriptions to web format column names
+
   const columnMap = {
     'Time point': 'IV,0,0,0,,Date/Time',
     'Energy': 'IV,0,0,0,Wh,E',
@@ -32,38 +32,44 @@ function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDev
     'ErrorFlags': 'IV,0,0,0,,ErrorFlags(binary)(deviceType specific)',
     'Model/Version': 'IV,0,0,0,Model/Version',
     'Parameter set ident': 'IV,0,0,0,,Parameter set ident',
+
+    // Catch the long-form volume description the parser returns for new meters
+    'Volume; Accumulation of abs value only if negative contributions': 'IV,0,0,0,m^3,Vol',
   };
-  
-  // Transform array to flat object
+
   if (Array.isArray(readings)) {
     readings.forEach(item => {
-      console.log('Processing reading item======>:', item);
       if (item && item.description) {
         const columnName = columnMap[item.description] || item.description;
-        result[columnName] = item.value;
+        const existing = result[columnName];
+
+        // If this column is already set, only overwrite if the existing value
+        // is a sentinel and the new one isn't
+        if (existing !== undefined) {
+          if (isSentinel(existing) && !isSentinel(item.value)) {
+            result[columnName] = item.value;
+          }
+          // otherwise keep the existing (non-sentinel) value
+        } else {
+          result[columnName] = isSentinel(item.value) ? 0 : item.value;
+        }
       }
     });
   } else if (typeof readings === 'object' && readings !== null) {
-    // Handle case where readings is already an object
     Object.entries(readings).forEach(([key, value]) => {
       const columnName = columnMap[key] || key;
-      result[columnName] = value;
+      result[columnName] = isSentinel(value) ? null : value;
     });
   }
-  
-  // Add metadata fields to parsed_data for web compatibility
-  // These fields are expected by the web project's transformation logic
-  result['Frame Type'] = frameType || 'SND_NR';
-  result['Manufacturer'] = meterManufacturer;
-  result['ID'] = String(meterId);
-  result['Version'] = version;
-  result['Device Type'] = meterDeviceType;
-  result['Access Number'] = accessNo;
-  result['Status'] = status;
-  result['Encryption'] = 0;
-  result['TPL-Config'] = '';
-  
+
   return result;
+}
+
+// Sentinel value: 0xFFFFFFFF scaled by any VIF factor means "no data"
+function isSentinel(value) {
+  if (value === null || value === undefined) return true;
+  const raw = Math.round(value * 1000);
+  return raw === 0xFFFFFFFF;
 }
 
 class DataHandler {

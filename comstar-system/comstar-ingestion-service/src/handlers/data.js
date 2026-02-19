@@ -96,6 +96,7 @@ class DataHandler {
       return null;
     }
   }
+
   validateTelegram(buffer) {
   if (buffer.length < 10) {
     return { valid: false, reason: 'Too short (minimum 10 bytes)' };
@@ -116,7 +117,7 @@ class DataHandler {
 }
 
   async handleTelegramData(gatewayEui, telegram) {
-    console.log({ gatewayEui, telegram }, 'Received telegram data');
+    console.log({ gatewayEui, telegram }, '<=========Received telegram data');
     const telegramBuffer = Buffer.from(telegram, 'hex');
 
   // // Validate first
@@ -131,6 +132,7 @@ class DataHandler {
     const result = await parser.parse(telegramBuffer, {
       key: Buffer.from(this.key, "hex")
     });
+      console.log({ gatewayEui, result }, '<===========Parsed telegram data');
       return await this.processParsedResult(gatewayEui, telegram, result);
     } catch (error) {
       if (!error.message.includes('Wrong key')) {

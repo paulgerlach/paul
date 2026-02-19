@@ -166,10 +166,10 @@ class DataHandler {
     await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
     console.log('Telegram saved');
     const meter = await this.getLocalMeter(meterId);
-    if (!meter) {
-      console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
-      return null;
-    }
+    // if (!meter) {
+    //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
+    //   return null;
+    // }
 
     // ... rest of validations ...
 
@@ -193,10 +193,12 @@ class DataHandler {
       return null;
     }
 
-    const exists = await databaseService.checkExistingReading(meter.id, timestamp);
-    if (exists) {
-      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
-      return null;
+    if (meter) {
+      const exists = await databaseService.checkExistingReading(meter.id, timestamp);
+      if (exists) {
+        console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+        return null;
+      }
     }
 
     // Transform readings to web-compatible format before storing
@@ -211,7 +213,7 @@ class DataHandler {
       frame_type
     );
 
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter.id, frame_type, encryption);
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter ? meter.id : null, frame_type, encryption);
 
     return {
       success: true,

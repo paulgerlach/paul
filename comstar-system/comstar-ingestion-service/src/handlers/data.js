@@ -132,11 +132,13 @@ class DataHandler {
     });
       return await this.processParsedResult(gatewayEui, telegram, result);
     } catch (error) {
-      console.error({
-        gatewayEui,
-        error: error.message,
-        telegramLength: telegramBuffer.length
-      }, 'Parse error');
+      if (!error.message.includes('Wrong key')) {
+        console.error({
+          gatewayEui,
+          error: error.message,
+          telegramLength: telegramBuffer.length
+        }, 'Parse error');
+      }
       
       return null;
     }

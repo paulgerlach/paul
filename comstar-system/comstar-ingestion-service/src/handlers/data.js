@@ -152,6 +152,9 @@ class DataHandler {
   const accessNo = result.meter.accessNo;
   const rssi = result.meter.rssi;
   const mode = result.meter.mode;
+  // Extract these from result if available, otherwise use null
+  const frame_type = result.frame_type ?? null;
+  const encryption = result.encryption ?? null;
 
   // Validation for meter metadata
   if (typeof meterId !== 'string' || meterId.trim() === '') {
@@ -160,15 +163,13 @@ class DataHandler {
   }
   
   try {
+    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+    console.log('Telegram saved');
     const meter = await this.getLocalMeter(meterId);
     if (!meter) {
       console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
       return null;
     }
-
-    // Extract these from result if available, otherwise use null
-    const frame_type = result.frame_type ?? null;
-    const encryption = result.encryption ?? null;
 
     // ... rest of validations ...
 
@@ -191,9 +192,6 @@ class DataHandler {
       console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
       return null;
     }
-
-    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
-    console.log('Telegram saved');
 
     const exists = await databaseService.checkExistingReading(meter.id, timestamp);
     if (exists) {

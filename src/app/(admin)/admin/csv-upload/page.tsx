@@ -62,7 +62,7 @@ export default function CSVUploadPage() {
         .eq("id", user.id)
         .single();
 
-      if (error || !userData || userData.permission !== "admin") {
+      if (error || !userData || (userData.permission !== "admin" && userData.permission !== "super_admin")) {
         console.error("Unauthorized access attempt to CSV Upload");
         router.push(ROUTE_ADMIN);
         return;

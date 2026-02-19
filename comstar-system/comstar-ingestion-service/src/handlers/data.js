@@ -165,7 +165,7 @@ class DataHandler {
   try {
     await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
     console.log('Telegram saved');
-    const meter = await this.getLocalMeter(meterId);
+    // const meter = await this.getLocalMeter(meterId);
     // if (!meter) {
     //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
     //   return null;

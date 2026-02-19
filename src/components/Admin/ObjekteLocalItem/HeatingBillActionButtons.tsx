@@ -16,6 +16,8 @@ export type HeatingBillActionButtonsProps = {
   previewHref: string;
   editLink: string;
   docType: "localauswahl" | "objektauswahl";
+  /** Optional: use "admin_heating_bill_delete" for admin view */
+  dialogAction?: "heating_bill_delete" | "admin_heating_bill_delete";
 };
 
 export default function HeatingBillActionButtons({
@@ -25,34 +27,42 @@ export default function HeatingBillActionButtons({
   previewHref,
   editLink,
   docType,
+  dialogAction = "heating_bill_delete",
 }: Readonly<HeatingBillActionButtonsProps>) {
-  const [pdfReady, setPdfReady] = useState<boolean | null>(null);
+  const [ready, setReady] = useState<boolean | null>(null);
 
-  const checkPdfReady = useCallback(async () => {
+  const checkReady = useCallback(async () => {
     if (!docId || !objektId || !localId) return;
     try {
-      const res = await fetch("/api/download-heating-bill", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objektId, localId, docId }),
+      const params = new URLSearchParams({
+        objektId,
+        docId,
+        localId,
       });
-      setPdfReady(res.ok);
+      const res = await fetch(
+        `/api/generate-heating-bill/batch/status?${params.toString()}`
+      );
+      const data = (await res.json().catch(() => ({}))) as {
+        localId?: string;
+        ready?: boolean;
+      };
+      setReady(data.ready === true);
     } catch {
-      setPdfReady(false);
+      setReady(false);
     }
   }, [objektId, localId, docId]);
 
   useEffect(() => {
-    checkPdfReady();
-  }, [checkPdfReady]);
+    checkReady();
+  }, [checkReady]);
 
   useEffect(() => {
-    if (pdfReady === true || pdfReady === null) return;
-    const interval = setInterval(checkPdfReady, POLL_INTERVAL_MS);
+    if (ready === true || ready === null) return;
+    const interval = setInterval(checkReady, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [pdfReady, checkPdfReady]);
+  }, [ready, checkReady]);
 
-  const isDisabled = pdfReady !== true;
+  const isDisabled = ready !== true;
   const disabledTooltip = "Wird generiert...";
 
   return (
@@ -131,7 +141,7 @@ export default function HeatingBillActionButtons({
 
         <div className="max-medium:hidden">
           <ThreeDotsButton
-            dialogAction="heating_bill_delete"
+            dialogAction={dialogAction}
             editLink={editLink}
           />
         </div>

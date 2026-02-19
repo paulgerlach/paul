@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Authorization': `Bearer ${serviceRoleKey}`,
         'Content-Type': 'text/plain',
-        'x-filename': fileName
+        'x-filename': encodeURIComponent(fileName)
       },
       body: csvContent
     });

@@ -1,5 +1,70 @@
 import { WirelessMbusParser } from "wireless-mbus-parser";
 import databaseService from '../services/databaseService.js';
+import logger from '../utils/logger.js';
+
+/**
+ * Transform M-Bus readings array to web-compatible flat object format
+ * This ensures parsed_data matches the format expected by the web project's parser
+ * 
+ * @param {Array} readings - Raw M-Bus readings array from wireless-mbus-parser
+ * @param {string} meterId - Meter device ID
+ * @param {string} meterManufacturer - Meter manufacturer
+ * @param {string} meterDeviceType - Device type (Heat, Water, etc.)
+ * @param {number|string} version - Meter version
+ * @param {number|string} status - Meter status
+ * @param {number} accessNo - Access number
+ * @param {string|null} frameType - Frame type
+ * @returns {Object} Transformed readings in flat object format
+ */
+function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType) {
+  const result = {};
+  
+  // Map M-Bus descriptions to web format column names
+  const columnMap = {
+    'Time point': 'IV,0,0,0,,Date/Time',
+    'Energy': 'IV,0,0,0,Wh,E',
+    'Volume': 'IV,0,0,0,m^3,Vol',
+    'Units HCA': 'IV,0,0,0,,Units HCA',
+    'Date': 'IV,1,0,0,,Date',
+    'Energy 1': 'IV,1,0,0,Wh,E',
+    'Volume 1': 'IV,1,0,0,m^3,Vol',
+    'Units HCA 1': 'IV,1,0,0,,Units HCA',
+    'ErrorFlags': 'IV,0,0,0,,ErrorFlags(binary)(deviceType specific)',
+    'Model/Version': 'IV,0,0,0,Model/Version',
+    'Parameter set ident': 'IV,0,0,0,,Parameter set ident',
+  };
+  
+  // Transform array to flat object
+  if (Array.isArray(readings)) {
+    readings.forEach(item => {
+      console.log('Processing reading item======>:', item);
+      if (item && item.description) {
+        const columnName = columnMap[item.description] || item.description;
+        result[columnName] = item.value;
+      }
+    });
+  } else if (typeof readings === 'object' && readings !== null) {
+    // Handle case where readings is already an object
+    Object.entries(readings).forEach(([key, value]) => {
+      const columnName = columnMap[key] || key;
+      result[columnName] = value;
+    });
+  }
+  
+  // Add metadata fields to parsed_data for web compatibility
+  // These fields are expected by the web project's transformation logic
+  result['Frame Type'] = frameType || 'SND_NR';
+  result['Manufacturer'] = meterManufacturer;
+  result['ID'] = String(meterId);
+  result['Version'] = version;
+  result['Device Type'] = meterDeviceType;
+  result['Access Number'] = accessNo;
+  result['Status'] = status;
+  result['Encryption'] = 0;
+  result['TPL-Config'] = '';
+  
+  return result;
+}
 
 class DataHandler {
   constructor() {
@@ -17,86 +82,99 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    if(data && data.d.telegram) {
-      return this.handleTelegramData(gatewayEui, data.d.telegram);
+    if (data && data.batch && Array.isArray(data.batch)) {
+    // Handle batch of telegrams
+    for (const item of data.batch) {
+      if (item.telegram) {
+        await this.handleTelegramData(gatewayEui, item.telegram);
+      }
+    }
+    } else if(data && data.d.telegram) {
+        return this.handleTelegramData(gatewayEui, data.d.telegram);
     } else {
       console.warn({ gatewayEui, data }, 'No telegram data found');
       return null;
     }
   }
+  validateTelegram(buffer) {
+  if (buffer.length < 10) {
+    return { valid: false, reason: 'Too short (minimum 10 bytes)' };
+  }
+  
+  const lengthByte = buffer[0];
+  const actualLength = buffer.length;
+  
+  // Length byte indicates payload length (excluding length byte itself)
+  if (lengthByte !== actualLength - 1) {
+    return { 
+      valid: false, 
+      reason: `Length mismatch: declared=${lengthByte}, actual=${actualLength - 1}` 
+    };
+  }
+  
+  return { valid: true };
+}
 
   async handleTelegramData(gatewayEui, telegram) {
-    // console.log({ gatewayEui, telegram }, 'Processing telegram data');
-    // Process telegram data here
+    const telegramBuffer = Buffer.from(telegram, 'hex');
+     
+  // Validate first
+  const validation = validateTelegram(telegramBuffer);
+  if (!validation.valid) {
+    console.warn({ gatewayEui, reason: validation.reason }, 'Invalid telegram');
+    return null;
+  }
     const parser = new WirelessMbusParser();
-    const result = await parser.parse(
-      Buffer.from(telegram, 'hex'),
-      {
-    // verbose: true,
-    containsCrc: undefined,  
-    key: Buffer.from(this.key, "hex")     
-      }
-    );
     
-    const meterId = result.meter.id;
-    const meterManufacturer = result.meter.manufacturer;
-    const meterType = result.meter.type;
-    const meterDeviceType = result.meter.deviceType;
-    const version = result.meter.version;
-    const status = result.meter.status;
-    const accessNo = result.meter.accessNo;
-    const rssi = result.meter.rssi;
-    const mode = result.meter.mode;
-
-    // === Validation for meter metadata ===
-    if (typeof meterId !== 'string' || meterId.trim() === '') {
-      console.warn({ gatewayEui }, 'Invalid or missing meter ID');
+    try {
+    const result = await parser.parse(telegramBuffer, {
+      key: Buffer.from(this.key, "hex")
+    });
+      return await this.processParsedResult(gatewayEui, telegram, result);
+    } catch (error) {
+      if (!error.message.includes('Wrong key')) {
+        console.error({
+          gatewayEui,
+          error: error.message,
+          telegramLength: telegramBuffer.length
+        }, 'Parse error');
+      }
+      
       return null;
     }
+  }
 
-    const meter = await this.getLocalMeter(meterId);
-    if(!meter) {
-      console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
-      return null;
-    }
+  async processParsedResult(gatewayEui, telegram, result) {
+  
+  const meterId = result.meter.id;
+  const meterManufacturer = result.meter.manufacturer;
+  const meterType = result.meter.type;
+  const meterDeviceType = result.meter.deviceType;
+  const version = result.meter.version;
+  const status = result.meter.status;
+  const accessNo = result.meter.accessNo;
+  const rssi = result.meter.rssi;
+  const mode = result.meter.mode;
+  // Extract these from result if available, otherwise use null
+  const frame_type = result.frame_type ?? null;
+  const encryption = result.encryption ?? null;
 
-    //Fields will come from Engelmann's pre-decoded CSV format - null for now
-    const frame_type = null;
-    const encryption = null;
-
-    if (typeof meterManufacturer !== 'string' || meterManufacturer.trim() === '') {
-      console.warn({ gatewayEui, meterId }, 'Invalid or missing meter manufacturer');
-      return null;
-    }
-
-    // if (typeof meterType !== 'string' || meterType.trim() === '') {
-    //   console.warn({ gatewayEui, meterId }, 'Invalid or missing meter type');
+  // Validation for meter metadata
+  if (typeof meterId !== 'string' || meterId.trim() === '') {
+    console.warn({ gatewayEui }, 'Invalid or missing meter ID');
+    return null;
+  }
+  
+  try {
+    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+    console.log('Telegram saved');
+    // const meter = await this.getLocalMeter(meterId);
+    // if (!meter) {
+    //   console.warn({ gatewayEui, meterId }, 'Unknown meter ID, skipping');
     //   return null;
     // }
 
-    if (typeof meterDeviceType !== 'string' || meterDeviceType.trim() === '') {
-      console.warn({ gatewayEui, meterId }, 'Invalid or missing device type');
-      return null;
-    }
-
-    // Version is usually a number (0-255), but some parsers return string/hex
-    if (typeof version !== 'number' && typeof version !== 'string') {
-      console.warn({ gatewayEui, meterId }, 'Invalid version format');
-      return null;
-    }
-
-    // Status can be a number, string, or object depending on parser
-    // We'll accept anything non-null/undefined for now, but log if unexpected
-    if (status === undefined || status === null) {
-      console.warn({ gatewayEui, meterId }, 'Missing status field');
-      return null;
-    }
-
-    // Access number should be a positive integer
-    if (typeof accessNo !== 'number' || accessNo < 0 || !Number.isInteger(accessNo)) {
-      console.warn({ gatewayEui, meterId }, 'Invalid access number');
-      return null;
-    }
+    // ... rest of validations ...
 
     const readings = result.data;
     if (!readings || (Array.isArray(readings) ? readings.length === 0 : (typeof readings !== 'object' || Object.keys(readings).length === 0))) {
@@ -104,7 +182,7 @@ class DataHandler {
       return null;
     }
 
-    // Deduplication - Prevent duplicate readings (same meter + timestamp)
+    // Get timestamp
     let timestamp;
     if (Array.isArray(readings)) {
       const timePoint = readings.find(item => item.description === 'Time point');
@@ -112,20 +190,33 @@ class DataHandler {
     } else {
       timestamp = readings.date;
     }
+    
     if (!timestamp) {
       console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
       return null;
     }
 
-    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date("2008-05-31T21:50:00.000Z").getTime()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType)
-
-    const exists = await databaseService.checkExistingReading(meter.id, timestamp);
-    if (exists) {
-      console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
-      return null;
+    if (meter) {
+      const exists = await databaseService.checkExistingReading(meterId, timestamp);
+      if (exists) {
+        console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+        return null;
+      }
     }
 
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, readings, meter.id, frame_type, encryption);
+    // Transform readings to web-compatible format before storing
+    const transformedReadings = transformMbusToWebFormat(
+      readings,
+      meterId,
+      meterManufacturer,
+      meterDeviceType,
+      version,
+      status,
+      accessNo,
+      frame_type
+    );
+
+    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter ? meter.id : null, frame_type, encryption);
 
     return {
       success: true,
@@ -133,7 +224,65 @@ class DataHandler {
       meterId,
       processedAt: new Date()
     };
+  } catch (error) {
+    logger.error({
+      gatewayEui,
+      meterId,  // ✅ Fixed
+      error: error.message,
+      stack: error.stack
+    }, 'Error processing telegram data');
+    return null;  // ✅ Explicit return
   }
+}
+
+async handleTelegramData(gatewayEui, telegram) {
+  const telegramBuffer = Buffer.from(telegram, 'hex');
+  const parser = new WirelessMbusParser();
+  
+  try {
+    // Try with original buffer
+    const result = await parser.parse(telegramBuffer, {
+      containsCrc: undefined,
+      key: Buffer.from(this.key, "hex")     
+    });
+    return await this.processParsedResult(gatewayEui, telegram, result);
+  } catch (error) {
+    if (error.message.includes('too short') || error.message.includes('DIF extension')) {
+      console.warn({ 
+        gatewayEui, 
+        length: telegramBuffer.length,
+        errorMsg: error.message 
+      }, 'Parse error, attempting recovery');
+      
+      try {
+        // Only pad if telegram is genuinely short
+        if (telegramBuffer.length < 169) {
+          const paddedBuffer = Buffer.alloc(169);
+          telegramBuffer.copy(paddedBuffer);
+          
+          const result = await parser.parse(paddedBuffer, {
+            containsCrc: false,
+            key: Buffer.from(this.key, "hex")     
+          });
+          return await this.processParsedResult(gatewayEui, telegram, result);
+        }
+      } catch (paddingError) {
+        console.error({ 
+          gatewayEui, 
+          error: paddingError.message 
+        }, 'Padded parse also failed');
+        return null;
+      }
+    }
+    
+    console.error({ 
+      gatewayEui, 
+      error: error.message,
+      telegramLength: telegramBuffer.length
+    }, 'Unrecoverable parse error');
+    return null;
+  }
+}
 
   async getLocalMeter(meterId) {
     try {

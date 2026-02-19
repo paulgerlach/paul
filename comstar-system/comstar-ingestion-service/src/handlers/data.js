@@ -116,29 +116,42 @@ class DataHandler {
 }
 
   async handleTelegramData(gatewayEui, telegram) {
+  // telegram could be:
+  // 1. A Buffer (from decoded MQTT)
+  // 2. An object with { type: 'Buffer', data: [...] } (from JSON serialization)
+  // 3. A hex string (for testing)
+  
   let telegramBuffer;
   
   if (Buffer.isBuffer(telegram)) {
+    // Case 1: Already a Buffer (from MQTT)
     telegramBuffer = telegram;
   } 
   else if (telegram && telegram.type === 'Buffer' && Array.isArray(telegram.data)) {
+    // Case 2: Serialized Buffer object (your current case)
     telegramBuffer = Buffer.from(telegram.data);
   }
-  // If telegram is a hex string
   else if (typeof telegram === 'string') {
-    telegramBuffer = Buffer.from(telegram, 'hex');
+    // Case 3: Hex string for testing
+    // Validate it's a proper hex string (even length, only hex chars)
+    if (/^[0-9A-Fa-f]+$/.test(telegram) && telegram.length % 2 === 0) {
+      telegramBuffer = Buffer.from(telegram, 'hex');
+    } else {
+      console.error('Invalid hex string:', telegram.substring(0, 50));
+      return null;
+    }
   }
   else {
     console.error('Unknown telegram format:', typeof telegram);
     return null;
   }
 
-  // Validate first
-  // const validation = validateTelegram(telegramBuffer);
-  // if (!validation.valid) {
-  //   console.warn({ gatewayEui, reason: validation.reason }, 'Invalid telegram');
-  //   return null;
-  // }
+  // Now validate with the proper binary buffer
+  const validation = validateTelegram(telegramBuffer);
+  if (!validation.valid) {
+    console.warn({ gatewayEui, reason: validation.reason }, 'Invalid telegram');
+    return null;
+  }
   
   const parser = new WirelessMbusParser();
   
@@ -146,7 +159,11 @@ class DataHandler {
     const result = await parser.parse(telegramBuffer, {
       key: Buffer.from(this.key, "hex")
     });
-    return await this.processParsedResult(gatewayEui, telegramBuffer.toString('hex'), result);
+    
+    // For logging/storage, you might want the hex representation
+    const telegramHex = telegramBuffer.toString('hex').toUpperCase();
+    
+    return await this.processParsedResult(gatewayEui, telegramHex, result);
   } catch (error) {
     if (!error.message.includes('Wrong key')) {
       console.error({

@@ -27,8 +27,6 @@ class DeviceHandler {
     try {
       if(data.reboot_reason === 'power_on') 
         this.validateDeviceBootData(data, gatewayEui);
-      else
-        this.validateDeviceConfigData(data, gatewayEui);
 
       console.log('Device uplink data validated successfully');
 

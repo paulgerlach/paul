@@ -26,11 +26,15 @@ export default function AdminObjekteLocalItemHistoryItem({
 
   const editLink = useSubRouteLink(`${localID}/${historyItem?.id}/edit`);
 
-  const duration =
-    differenceInMonths(
-      historyItem?.rental_end_date || "",
-      historyItem?.rental_start_date || ""
-    ) + 1;
+  const today = new Date();
+  const yearStart = new Date(today.getFullYear(), 0, 1);
+
+  // Months elapsed in the current year (Jan=1, Feb=2, ...), clamped by contract end date
+  const currentMonth = today.getMonth() + 1; // 1-indexed
+  const endMonth = historyItem?.rental_end_date
+    ? new Date(historyItem.rental_end_date).getMonth() + 1
+    : currentMonth;
+  const duration = Math.min(currentMonth, endMonth);
 
   const pricePerMonth = Number(historyItem?.cold_rent) || 0;
   const totalAmount = duration * pricePerMonth;
@@ -45,13 +49,7 @@ export default function AdminObjekteLocalItemHistoryItem({
     currency: "EUR",
   }).format(pricePerMonth);
 
-  const days =
-    historyItem?.rental_start_date && historyItem?.rental_end_date
-      ? differenceInCalendarDays(
-          new Date(historyItem.rental_end_date),
-          new Date(historyItem.rental_start_date)
-        ) + 1
-      : 0;
+  const days = differenceInCalendarDays(today, yearStart) + 1;
 
   return (
     <div
@@ -82,7 +80,7 @@ export default function AdminObjekteLocalItemHistoryItem({
             -{" "}
             {historyItem?.rental_end_date
               ? format(new Date(historyItem.rental_end_date), "dd.MM.yyyy")
-              : "-"}
+              : "Unbefristet"}
           </span>
         </div>
         <div className="h-px w-full bg-[#E0E0E0]" />
@@ -107,7 +105,7 @@ export default function AdminObjekteLocalItemHistoryItem({
                 .join(", ")}
             </p>
             <p className="text-[#757575] max-xl:text-xs">
-              {formattedAmount} {formattedRate} x {duration}
+              {formattedAmount} ({formattedRate} x {duration}{!historyItem?.rental_end_date ? "+" : ""})
             </p>
           </div>
         </div>

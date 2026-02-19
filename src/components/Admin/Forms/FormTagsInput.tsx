@@ -71,7 +71,7 @@ export default function FormTagsInput<T extends FieldValues = FieldValues>({
           <div className="flex items-center flex-wrap gap-2 mb-2">
             {tags.map((tag, index) => (
               <span
-                key={index}
+                key={tag}
                 className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs">
                 {tag}
                 <button

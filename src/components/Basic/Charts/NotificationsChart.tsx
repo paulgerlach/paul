@@ -27,6 +27,7 @@ import {
 	getDevicesWithErrors,
 	groupErrorsBySeverity,
 	groupErrorsByDeviceType,
+	interpretErrorFlags,
 } from "@/utils/errorFlagInterpreter";
 import { interpretHintCode } from "@/utils/hintCodeInterpreter";
 import { checkRSSI } from "@/utils/rssiChecker";
@@ -39,6 +40,7 @@ import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { useAuthUser } from "@/apiClient";
+import { useTenantNotifications } from "@/hooks/useTenantNotifications";
 
 interface NotificationItem {
 	leftIcon: StaticImageData;
@@ -58,6 +60,7 @@ interface NotificationsChartProps {
 		data: MeterReadingType[];
 		errors?: { row: number; error: string; rawRow: any }[];
 	};
+	userId?: string;
 }
 
 const dummy_notifications = [
@@ -116,6 +119,7 @@ export default function NotificationsChart({
 	emptyTitle,
 	emptyDescription,
 	parsedData,
+	userId,
 }: NotificationsChartProps) {
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 	const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(
@@ -128,6 +132,7 @@ export default function NotificationsChart({
 	>([]);
 	const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 	const { data: user } = useAuthUser();
+	const { notifications: tenantNotifications } = useTenantNotifications(userId || user?.id);
 
 	// Track if user has dismissed notifications (for better UX when all are dismissed)
 	const [hasDismissedNotifications, setHasDismissedNotifications] =
@@ -501,9 +506,50 @@ export default function NotificationsChart({
 			//   }
 			// });
 
-			// GROUP 3: Add consumption notifications (already generated above before success check)
+			// GROUP 3: Add consumption notifications
 			if (consumptionNotificationsGenerated.length > 0) {
 				dynamicNotifications.push(...consumptionNotificationsGenerated);
+			}
+
+			// GROUP 4: Add tenant/apartment notifications
+			if (tenantNotifications && tenantNotifications.length > 0) {
+				dynamicNotifications.push(...tenantNotifications);
+			}
+
+			// GROUP 5: Admin-only notifications (Battery Warning)
+			const isAdmin = user?.permission === "admin" || user?.permission === "super_admin" || user?.permission === "agency_admin";
+
+			if (isAdmin) {
+				selectedMeters.forEach(device => {
+					const errorInterpretation = interpretErrorFlags(device);
+					if (errorInterpretation?.errors) {
+						// Check for battery issues
+						const hasBatteryIssue = errorInterpretation.errors.some(e =>
+							e.includes("Batterie") || e.includes("battery")
+						);
+
+						if (hasBatteryIssue) {
+							const meterId = device.ID || device["Number Meter"];
+							const deviceType = device["Device Type"];
+
+							// Get appropriate left icon based on device type
+							let leftIcon = notification;
+							if (deviceType === "Heat" || deviceType === "Wärme") leftIcon = heater;
+							else if (deviceType === "WWater" || deviceType === "Warmwasser") leftIcon = hot_water;
+							else if (deviceType === "Water" || deviceType === "Kaltwasser") leftIcon = cold_water;
+
+							dynamicNotifications.push({
+								leftIcon: leftIcon,
+								rightIcon: caract_battery,
+								leftBg: "#E7E8EA",
+								rightBg: "#F7E7D5", // Orange
+								title: "Schwache Batterie",
+								subtitle: `${deviceType}zähler ${meterId} - Batterie bald wechseln`,
+								meterId: typeof meterId === "string" ? parseInt(meterId) : meterId
+							});
+						}
+					}
+				});
 			}
 
 			// Sort by severity (critical > high > medium > low)

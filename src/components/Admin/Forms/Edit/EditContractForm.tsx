@@ -189,8 +189,8 @@ export default function EditContractForm({
                 placeholder="Unbefristet"
                 showClearButton={true}
                 clearLabel="Unbefristet"
-                onClear={() => methods.setValue("is_current", true)}
-                onSelect={() => methods.setValue("is_current", false)}
+                onClear={() => methods.setValue("is_current", true, { shouldDirty: true })}
+                onSelect={() => methods.setValue("is_current", true, { shouldDirty: true })}
               />
             </div>
           </div>

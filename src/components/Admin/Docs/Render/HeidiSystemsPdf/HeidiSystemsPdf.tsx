@@ -1,11 +1,11 @@
 import { Document } from "@react-pdf/renderer";
 import HeatingBillPreviewFivePDF from "./HeatingBillPreviewFivePDF";
 import HeatingBillPreviewOnePDF from "./HeatingBillPreviewOnePDF";
-import HeatingBillPreviewTwoPDF from "./HeatingBillPreviewTwoPDF";
 import HeatingBillPreviewThreePDF from "./HeatingBillPreviewThreePDF";
 import HeatingBillPreviewFourPDF from "./HeatingBillPreviewFourPDF";
 import HeatingBillPreviewSixPDF from "./HeatingBillPreviewSixPDF";
 import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
+import HeatingBillPreviewTwoPDF from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeatingBillPreviewTwoPDF";
 
 export default function HeidiSystemsPdf({
   model,

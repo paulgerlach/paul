@@ -55,6 +55,7 @@ export type CostAggregation = {
 
   coldWaterInvoices: HeatingInvoiceType[];
   coldWaterTotal: number;
+  meteringDeviceRentalTotal: number;
 };
 
 /** Round to 2 decimals for currency */
@@ -117,6 +118,7 @@ export function aggregateInvoiceCosts(
 
   const coldWaterInvoices: HeatingInvoiceType[] = [];
   let coldWaterTotal = 0;
+  let meteringDeviceRentalTotal = 0;
 
   const costTypeMap = (ct: string | null | undefined): string =>
     (ct ?? "").toLowerCase().replace(/\s/g, "_");
@@ -127,6 +129,10 @@ export function aggregateInvoiceCosts(
     const date = formatDateGerman(inv.invoice_date ?? undefined);
     const label =
       inv.purpose || inv.document_name || `Rechnung ${inv.id?.slice(0, 8) ?? ""}`;
+
+    if (ct === "metering_device_rental" || ct === "metering_service_costs") {
+      meteringDeviceRentalTotal += amount;
+    }
 
     if (IGNORED_COST_TYPES.includes(ct as any)) continue;
 
@@ -210,5 +216,6 @@ export function aggregateInvoiceCosts(
     grandTotal,
     coldWaterInvoices,
     coldWaterTotal,
+    meteringDeviceRentalTotal: round2(meteringDeviceRentalTotal),
   };
 }

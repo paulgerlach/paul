@@ -2,15 +2,15 @@ import type { DialogStoreActionType } from "@/types";
 import { create } from "zustand";
 
 export type DialogStoreType = {
-  openDialogByType: Record<DialogStoreActionType, boolean>;
-  itemID: string | undefined;
-  setItemID: (id: string | undefined) => void;
-  isOpen: boolean;
-  queryKey?: string[];
-  setQueryKey: (keys: string[]) => void;
-  openDialog: (type: DialogStoreActionType) => void;
-  closeDialog: (type: DialogStoreActionType) => void;
-  toggleDialog: (type: DialogStoreActionType) => void;
+	openDialogByType: Record<DialogStoreActionType, boolean>;
+	itemID: string | undefined;
+	setItemID: (id: string | undefined) => void;
+	isOpen: boolean;
+	queryKey?: string[];
+	setQueryKey: (keys: string[]) => void;
+	openDialog: (type: DialogStoreActionType) => void;
+	closeDialog: (type: DialogStoreActionType) => void;
+	toggleDialog: (type: DialogStoreActionType) => void;
 };
 
 export const useDialogStore = create<DialogStoreType>((set) => ({
@@ -93,6 +93,12 @@ export const useDialogStore = create<DialogStoreType>((set) => ({
 		invite_user: false,
 		tenantLogin: false,
 		tenantForgotPassword: false,
+		admin_invoice_delete: false,
+		admin_invoice_edit: false,
+		admin_invoice_create: false,
+		invoice_create: false,
+		invoice_edit: false,
+		invoice_delete: false,
 	},
 	setQueryKey: (keys) => set({ queryKey: keys }),
 	setItemID: (id) => set({ itemID: id }),

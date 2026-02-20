@@ -302,7 +302,7 @@ export function computeHeatingBill(
       ...i,
       kWhFormatted:
         i.kWhFormatted ||
-        formatGermanNumber(i.kWh, 3),
+        (i.kWh > 0 ? formatGermanNumber(i.kWh, 3) : ""),
       amountFormatted: i.amountFormatted || formatEuro(i.amount),
     })),
     energyRelief: costAgg.energyRelief,

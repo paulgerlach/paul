@@ -318,9 +318,12 @@ import zufrieden_check from "@/asset/zufrieden_check.png";
 import teils_teils_scale from "@/asset/teils_teils_scale.png";
 import unzufrieden_x from "@/asset/unzufrieden_x.png";
 
+import ai_starts from "@/asset/ai_stars.png";
+
 export {
   accentro_colored,
   berlinBear,
+  ai_starts,
   werne_green,
   wagner_green,
   vitec_green,

@@ -5,6 +5,7 @@ import CostTypeItem from "./CostTypeItem";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import AddCostTypeButton from "./AddCostTypeButton";
 import CostTypeHeatObjektauswahlItem from "./CostTypeHeatObjektauswahlItem";
+import AddCostTypeInvoiceButton from "./AddCostTypeInvoiceButton";
 
 export default function CostTypesHeatObjektauswahlAccordion({
   objektId,
@@ -34,6 +35,7 @@ export default function CostTypesHeatObjektauswahlAccordion({
         />
       ))}
       <AddCostTypeButton dialogType="cost_type_heizkostenabrechnung_create" />
+      <AddCostTypeInvoiceButton dialogType="cost_type_heizkostenabrechnung_create" />
     </div>
   );
 }

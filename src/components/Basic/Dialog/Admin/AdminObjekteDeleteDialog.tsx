@@ -13,7 +13,7 @@ export default function AdminObjekteDeleteDialog() {
 
   const handleDelete = async () => {
     if (!!itemID) {
-      const res = await adminDeleteObjekt(itemID, String(user_id));
+      const res = await adminDeleteObjekt(itemID);
       if (res.success) {
         closeDialog("admin_object_delete");
         router.refresh();

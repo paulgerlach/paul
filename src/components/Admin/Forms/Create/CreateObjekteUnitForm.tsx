@@ -226,6 +226,7 @@ export default function CreateObjekteUnitForm({
               label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
               placeholder="Quadratmeter"
               replaceDotWithComma
+              unit="qm"
             />
             {/* Empty div to align grid when only 5 items */}
             <div className="hidden max-medium:hidden" />

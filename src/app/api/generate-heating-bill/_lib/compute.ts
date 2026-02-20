@@ -39,6 +39,10 @@ function round2(v: number): number {
   return Math.round(v * 100) / 100;
 }
 
+function normalizeDeviceId(id: string | null | undefined): string {
+  return String(id ?? "").trim().replace(/^0+/, "");
+}
+
 /** Extract energy carrier from objekt.heating_systems (array of strings or single string). */
 function energyCarrierFromObjekt(heatingSystems: unknown): string {
   if (Array.isArray(heatingSystems) && heatingSystems.length > 0) {
@@ -162,7 +166,10 @@ export function computeHeatingBill(
   const deviceIdToLocalId = new Map<string, string>();
   for (const lm of raw.localMeters ?? []) {
     if (lm.meter_number && lm.local_id) {
-      deviceIdToLocalId.set(String(lm.meter_number), lm.local_id);
+      const normalizedMeterId = normalizeDeviceId(lm.meter_number);
+      if (normalizedMeterId) {
+        deviceIdToLocalId.set(normalizedMeterId, lm.local_id);
+      }
     }
   }
 
@@ -176,7 +183,9 @@ export function computeHeatingBill(
 
   const belongsToLocal = (deviceNumber: string) => {
     if (!targetLocalId) return true;
-    const mapped = deviceIdToLocalId.get(deviceNumber);
+    const normalizedDeviceNumber = normalizeDeviceId(deviceNumber);
+    if (!normalizedDeviceNumber) return false;
+    const mapped = deviceIdToLocalId.get(normalizedDeviceNumber);
     if (mapped !== undefined) return mapped === targetLocalId;
     return false;
   };
@@ -190,6 +199,30 @@ export function computeHeatingBill(
   const coldWaterDevicesForLocal = readingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
+  if (
+    process.env.NODE_ENV !== "production" &&
+    (raw.localMeters?.length ?? 0) > 0 &&
+    deviceIdToLocalId.size === 0
+  ) {
+    console.warn("[HeatingBill] local meter mapping is empty after normalization", {
+      localMetersCount: raw.localMeters.length,
+      targetLocalId: targetLocalId ?? null,
+    });
+  }
+  if (
+    process.env.NODE_ENV !== "production" &&
+    targetLocalId &&
+    readingsResult.deviceRows.heat.length + readingsResult.deviceRows.warmWater.length + readingsResult.deviceRows.coldWater.length > 0 &&
+    heatingDevicesForLocal.length + warmWaterDevicesForLocal.length + coldWaterDevicesForLocal.length === 0
+  ) {
+    console.warn("[HeatingBill] no device rows matched target local after filtering", {
+      targetLocalId,
+      allHeatDevices: readingsResult.deviceRows.heat.length,
+      allWarmWaterDevices: readingsResult.deviceRows.warmWater.length,
+      allColdWaterDevices: readingsResult.deviceRows.coldWater.length,
+      mappedMeters: deviceIdToLocalId.size,
+    });
+  }
 
   const contractsForTenantDisplay =
     raw.contractsWithContractors?.filter((c) => {

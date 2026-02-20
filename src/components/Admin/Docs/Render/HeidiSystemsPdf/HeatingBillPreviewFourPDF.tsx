@@ -337,7 +337,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              {ub.heatingConsumptionMwhFormatted} MWh
+              {ub.heatingDevicesTotalFormatted} MWh
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
@@ -393,7 +393,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              {ub.warmWaterConsumptionM3Formatted} m³
+              {ub.warmWaterDevicesTotalFormatted} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text

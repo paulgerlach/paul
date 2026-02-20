@@ -65,6 +65,7 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   const locationLabel = localLabel ?? "Wohnung";
 
   const heatingBaseCost = round2(livingSpaceM2 * heating.baseCostRatePerM2);
+  // Local-only meter readings for this apartment
   const heatingConsumptionMwh = heatingDevices.reduce((s, d) => s + d.consumption, 0);
   const heatingConsumptionCost = round2(heatingConsumptionMwh * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionMwh)));
 
@@ -105,9 +106,9 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   const deviceRowsWithLocation = (rows: DeviceReadingRow[]) =>
     rows.map((r) => ({ ...r, location: r.location || locationLabel }));
 
-  const heatingTotal = heatingDevices.reduce((s, d) => s + d.consumption, 0);
-  const warmWaterTotal = warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
-  const coldWaterTotalM3 = coldWaterDevices.reduce((s, d) => s + d.consumption, 0);
+  const heatingTotal = heatingConsumptionMwh;
+  const warmWaterTotal = warmWaterConsumptionM3;
+  const coldWaterTotalM3 = unitColdWaterM3;
 
   const unitCountSafe = Math.max(1, unitCount);
   const reliefUnitShare = energyRelief

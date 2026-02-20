@@ -180,7 +180,7 @@ export const buildLocalName = ({
     Boolean
   );
 
-  const livingSpacePart = living_space ? `, ${living_space}qm` : "";
+  const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
 
   return mainParts.join(" ") + livingSpacePart;
 };

@@ -196,6 +196,7 @@ export default function CreateObjekteForm() {
               type="number"
               placeholder="Quadratmeter"
               className="col-span-3 max-medium:col-span-1"
+              unit="qm"
             />
             <FormInputField<CreateObjekteFormValues>
               control={methods.control}

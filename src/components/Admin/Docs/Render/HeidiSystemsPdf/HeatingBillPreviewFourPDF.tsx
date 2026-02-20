@@ -220,7 +220,7 @@ export default function HeatingBillPreviewFourPDF({
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            4/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            3/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src={logoSrc} />
         </View>

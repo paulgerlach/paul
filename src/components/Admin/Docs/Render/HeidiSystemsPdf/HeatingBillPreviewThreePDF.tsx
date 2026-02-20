@@ -79,7 +79,7 @@ export default function HeatingBillPreviewThreePDF({
       <View style={styles.headerBox}>
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            3/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            2/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={{ width: 80, height: 20 }} src={logoSrc} />
         </View>

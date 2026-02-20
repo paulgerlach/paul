@@ -98,7 +98,7 @@ export default function HeatingBillPreviewOnePDF({
       <View style={styles.headerBox}>
         <View style={styles.flexRow}>
           <Text style={{ fontSize: 8 }}>
-            1/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            1/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <View>
             <Image

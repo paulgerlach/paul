@@ -53,7 +53,10 @@ function energyCarrierFromObjekt(heatingSystems: unknown): string {
  * Compute full HeatingBillPdfModel from raw data.
  * Step 1: buildingCalc is computed; cover, coldWater, unitBreakdown, co2, energySummary use mock.
  */
-export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel {
+export function computeHeatingBill(
+  raw: HeatingBillRawData,
+  options?: { targetLocalId?: string }
+): HeatingBillPdfModel {
   const model = JSON.parse(
     JSON.stringify(mockHeatingBillModel)
   ) as HeatingBillPdfModel;
@@ -162,7 +165,8 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
     }
   }
 
-  const targetLocalId = raw.mainDoc.local_id ?? raw.locals[0]?.id;
+  const targetLocalId =
+    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
   const targetLocal = targetLocalId
     ? raw.locals.find((l) => l.id === targetLocalId)
     : raw.locals[0];
@@ -186,11 +190,18 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
     belongsToLocal(r.deviceNumber)
   );
 
+  const contractsForTenantDisplay =
+    raw.contractsWithContractors?.filter((c) => {
+      if (targetLocalId && c.local_id !== targetLocalId) return false;
+      const contractStart = new Date(c.rental_start_date);
+      const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+      return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
+    }) ?? [];
   const contractorsNames =
-    raw.contractsWithContractors
-      ?.flatMap((c) => c.contractors)
+    contractsForTenantDisplay
+      .flatMap((c) => c.contractors)
       .map((ct) => `${ct.first_name} ${ct.last_name}`)
-      .join(", ") ?? model.cover.contractorsNames;
+      .join(", ") || model.cover.contractorsNames;
 
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
@@ -302,7 +313,7 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   );
   const totalDiff = round2(totalContractsAmount - totalInvoicesAmount);
 
-  const contractorsList = raw.contractsWithContractors?.flatMap((c) => c.contractors) ?? [];
+  const contractorsList = contractsForTenantDisplay.flatMap((c) => c.contractors);
   const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
 

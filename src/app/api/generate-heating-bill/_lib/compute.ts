@@ -106,8 +106,9 @@ export function computeHeatingBill(
   const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 3148.25;
   const heatingMwh = readingsResult.totalHeatMwh || 404.04;
 
-  const wwDeviceRental = 2307.77;
-  const heatingDeviceRental = 6210.8;
+  const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
+  const wwDeviceRental = combinedDeviceRental;
+  const heatingDeviceRental = 0;
 
   const livingSpaceShare = Number(
     raw.mainDoc.living_space_share ?? 30

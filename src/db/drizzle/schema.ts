@@ -97,6 +97,7 @@ export const locals = pgTable("locals", {
 	usage_type: text().notNull(),
 	floor: text().notNull(),
 	living_space: numeric().notNull(),
+	heating_area: numeric(),
 	house_location: text(),
 	outdoor: text(),
 	rooms: numeric(),

@@ -336,17 +336,6 @@ export function computeHeatingBill(
     heating,
   };
 
-  const totalContractsAmount =
-    raw.contractsWithContractors?.reduce((acc, c) => {
-      const overlapMonths = 12;
-      return acc + overlapMonths * Number(c.additional_costs ?? 0);
-    }, 0) ?? 0;
-  const totalInvoicesAmount = raw.invoices.reduce(
-    (s, i) => s + Number(i.total_amount ?? 0),
-    0
-  );
-  const totalDiff = round2(totalContractsAmount - totalInvoicesAmount);
-
   const contractorsList = contractsForTenantDisplay.flatMap((c) => c.contractors);
   const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
@@ -387,8 +376,8 @@ export function computeHeatingBill(
       formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
     usagePeriodEnd:
       formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
-    totalAmount: totalDiff,
-    totalAmountFormatted: formatEuro(totalDiff),
+    totalAmount: model.unitBreakdown.grandTotal,
+    totalAmountFormatted: model.unitBreakdown.grandTotalFormatted,
     portalLink,
     userId: raw.user?.id ?? model.cover.userId,
     securityCode:

@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/Basic/ui/Form";
 import { Button } from "@/components/Basic/ui/Button";
@@ -11,7 +11,7 @@ import { ROUTE_ADMIN, ROUTE_OBJEKTE } from "@/routes/routes";
 import { toast } from "sonner";
 import Image from "next/image";
 import { admin_plus } from "@/static/icons";
-import { useContractorActions } from "@/hooks/useContractorActions";
+
 import FormRoundedCheckbox from "../../FormRoundedCheckbox";
 import FormDateInput from "../../FormDateInput";
 import FormContractorField from "../../FormContractorFields";
@@ -105,8 +105,11 @@ export default function AdminCreateContractForm({
     resolver: zodResolver(contractSchema),
     defaultValues,
   });
-  const { addContractor } = useContractorActions(methods);
 
+  const { fields, append, remove } = useFieldArray({
+    control: methods.control,
+    name: "contractors",
+  });
 
   const watchContractors = methods.watch("contractors");
 
@@ -162,22 +165,32 @@ export default function AdminCreateContractForm({
                 placeholder="Unbefristet"
                 showClearButton={true}
                 clearLabel="Unbefristet"
-                onClear={() => methods.setValue("is_current", true)}
+                onClear={() => methods.setValue("is_current", true, { shouldDirty: true })}
+                onSelect={() => methods.setValue("is_current", true, { shouldDirty: true })}
               />
             </div>
           </div>
           <h2 className="text-sm font-bold">Mietverhältnis</h2>
-          {methods.watch("contractors").map((_, index) => (
+          {fields.map((field, index) => (
             <FormContractorField<CreateContractFormValues>
-              key={index}
+              key={field.id}
               control={methods.control}
               index={index}
               methods={methods}
+              onRemove={remove}
             />
           ))}
           <button
             type="button"
-            onClick={addContractor}
+            onClick={() =>
+              append({
+                first_name: "",
+                last_name: "",
+                birth_date: null,
+                email: "",
+                phone: "",
+              })
+            }
             className="flex items-center w-fit max-medium:w-full justify-center gap-2 px-6 py-5 max-medium:px-4 max-medium:py-3 border border-dark_green/50 rounded-md text-sm font-medium text-dark_green/50"
           >
             <Image

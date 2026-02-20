@@ -1,10 +1,19 @@
-import { getRelatedLocalsByObjektId } from "@/api";
+import {
+  getAdminContractsWithContractorsByLocalIDs,
+  getRelatedLocalsByObjektId,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminObjekteLocalItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/Admin/AdminObjekteLocalItemHeatingBillDocResult";
 import SearchControls from "@/components/Admin/SearchControls";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
+import type { UnitType } from "@/types";
+
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+  "residential",
+  "commercial",
+]);
 
 export default async function ResultLocalPDF({
   params,
@@ -16,7 +25,9 @@ export default async function ResultLocalPDF({
   const { objekt_id, doc_id, user_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
 
-  let locals = await getRelatedLocalsByObjektId(objekt_id);
+  let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
+    ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+  );
   const totalLocals = locals.length;
 
   // Filter by search query
@@ -34,6 +45,18 @@ export default async function ResultLocalPDF({
       ? nameA.localeCompare(nameB)
       : nameB.localeCompare(nameA);
   });
+  const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
+    locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
+    user_id
+  );
+  const localsWithStatus = locals.map((local) => {
+    const localId = local.id ?? "";
+    const contracts = contractsByLocalId[localId] ?? [];
+    const status = contracts.some((contract) => contract.is_current)
+      ? "renting"
+      : "vacancy";
+    return { local, status } as const;
+  });
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
@@ -49,27 +72,28 @@ export default async function ResultLocalPDF({
           currentResults={locals.length}
         />
         <div className="overflow-y-auto space-y-4">
-          {locals.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 text-center">
-              <p className="text-dark_green/50 text-lg">
-                Keine Ergebnisse gefunden
-              </p>
-              <p className="text-dark_green/30 text-sm mt-2">
-                Versuchen Sie einen anderen Suchbegriff
-              </p>
-            </div>
-          ) : (
-            locals.map((local) => (
-              <AdminObjekteLocalItemHeatingBillDocResult
-                objektID={objekt_id}
-                key={local.id}
-                userID={user_id}
-                item={local}
-                docType="objektauswahl"
-                docID={doc_id}
-              />
-            ))
-          )}
+            {locals.length === 0 ? (
+              <div className="bg-white rounded-2xl p-8 text-center">
+                <p className="text-dark_green/50 text-lg">
+                  Keine Ergebnisse gefunden
+                </p>
+                <p className="text-dark_green/30 text-sm mt-2">
+                  Versuchen Sie einen anderen Suchbegriff
+                </p>
+              </div>
+            ) : (
+              localsWithStatus.map(({ local, status }) => (
+                <AdminObjekteLocalItemHeatingBillDocResult
+                  objektID={objekt_id}
+                  key={local.id}
+                  userID={user_id}
+                  item={local}
+                  docType="objektauswahl"
+                  docID={doc_id}
+                  status={status}
+                />
+              ))
+            )}
         </div>
       </ContentWrapper>
     </div>

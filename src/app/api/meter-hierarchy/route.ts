@@ -28,10 +28,17 @@ export async function GET(request: NextRequest) {
                 id: locals.id,
                 objekt_id: locals.objekt_id,
                 floor: locals.floor,
-                location: locals.house_location
+                location: locals.house_location,
+                usage_type: locals.usage_type,
             })
             .from(locals)
-            .where(inArray(locals.objekt_id, objektIds));
+            .where(
+                and(
+                    inArray(locals.objekt_id, objektIds),
+                    inArray(locals.usage_type, ['Wohneinheit', 'Gewerbeeinheit'])
+                )
+            );
+
 
         if (objektLocals.length === 0) return NextResponse.json({});
 

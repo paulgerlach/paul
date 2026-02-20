@@ -6,7 +6,9 @@ import {
   hot_water,
   cold_water,
   heater,
+
   pipe_water,
+  electricity,
 } from "@/static/icons";
 
 export interface ConsumptionNotification {
@@ -87,6 +89,9 @@ function getDeviceIcon(deviceType: string): StaticImageData {
   if (type.includes("water") || type.includes("wasser") || type.includes("kaltwasser")) {
     return cold_water;
   }
+  if (type.includes("elec") || type.includes("strom")) {
+    return electricity;
+  }
 
   return pipe_water;
 }
@@ -116,7 +121,7 @@ export function calculateConsumptionChange(device: MeterReadingType): {
 }
 
 /**
- * Detect consumption anomalies (±30% change)
+ * Detect consumption anomalies (±15% change)
  */
 export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionNotification | null {
   const change = calculateConsumptionChange(device);
@@ -128,8 +133,8 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
   const deviceType = device["Device Type"];
   const unit = device["Monthly Unit 1"] || "MWh";
 
-  // Only alert if change is >= 30%
-  if (absChange < 30) return null;
+  // Only alert if change is >= 15%
+  if (absChange < 15) return null;
 
   const isIncrease = change.percentageChange > 0;
   const deviceTypeLabel = deviceType === "WWater" ? "Warmwasser" :
@@ -200,6 +205,71 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
 }
 
 /**
+ * Detect burst pipe / leakage
+ * Triggers on:
+ * 1. Hint Code Bit 5 (leakage detected by gateway)
+ * 2. Specific error flags indicating pipe break
+ * 
+ * NOTE: Consumption spikes are handled separately by detectConsumptionAnomaly
+ * Works for all meter types that can produce leakage errors
+ */
+export function detectBurstPipe(device: MeterReadingType): ConsumptionNotification | null {
+  const meterId = device.ID || device["Number Meter"];
+  const deviceType = device["Device Type"];
+  const hintCode = device["Hint Code"];
+
+  // Determine device type label for display
+  const deviceTypeLabel = deviceType === "WWater" || deviceType === "Warmwasserzähler"
+    ? "Warmwasser"
+    : deviceType === "Water" || deviceType === "Kaltwasserzähler"
+      ? "Kaltwasser"
+      : deviceType === "Heat" || deviceType === "Wärme"
+        ? "Wärme"
+        : deviceType === "HCA"
+          ? "Heizkostenverteiler"
+          : deviceType;
+
+  // CHECK 1: Hint Code Bit 5 indicates leakage
+  if (hintCode) {
+    const hintCodeStr = String(hintCode).toLowerCase();
+    if (hintCodeStr.includes("5") || hintCodeStr.includes("bit 5") || hintCodeStr.includes("leckage")) {
+      return {
+        leftIcon: pipe_water,
+        rightIcon: alert_triangle,
+        leftBg: "#E7E8EA",
+        rightBg: "#FFE5E5", // Critical red
+        title: "Leckage erkannt",
+        subtitle: `Rohrbruch bei ${deviceTypeLabel}zähler ${meterId} - Sofort handeln!`,
+        meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
+        severity: "critical"
+      };
+    }
+  }
+
+  // CHECK 2: Error flags indicating pipe issues
+  const errorFlag = device["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
+  if (errorFlag && errorFlag !== "0" && errorFlag !== "0b" && errorFlag !== "") {
+    // Specific error patterns that indicate leakage (manufacturer-specific)
+    // This is a placeholder - actual patterns would need to be determined from manufacturer docs
+    const errorStr = String(errorFlag).toLowerCase();
+    if (errorStr.includes("leak") || errorStr.includes("burst") || errorStr.includes("pipe")) {
+      return {
+        leftIcon: pipe_water,
+        rightIcon: alert_triangle,
+        leftBg: "#E7E8EA",
+        rightBg: "#FFE5E5",
+        title: "Leckage erkannt",
+        subtitle: `${deviceTypeLabel}zähler ${meterId} meldet Leckage - Sofort prüfen!`,
+        meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
+        severity: "critical"
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
  * Detect missing data (no recent readings)
  */
 export function detectNoData(device: MeterReadingType): ConsumptionNotification | null {
@@ -246,13 +316,21 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
 export function analyzeConsumption(device: MeterReadingType): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
 
-  // Check for consumption anomalies (±30%)
+  // PRIORITY 1: Check for burst pipe / leakage (CRITICAL)
+  const burstPipe = detectBurstPipe(device);
+  if (burstPipe) {
+    notifications.push(burstPipe);
+    // If burst pipe detected, skip other checks to avoid noise
+    return notifications;
+  }
+
+  // PRIORITY 2: Check for consumption anomalies (±30%)
   const anomaly = detectConsumptionAnomaly(device);
   if (anomaly) {
     notifications.push(anomaly);
   }
 
-  // Check for zero consumption (only if no anomaly detected)
+  // PRIORITY 3: Check for zero consumption (only if no anomaly detected)
   if (!anomaly) {
     const zeroConsumption = detectZeroConsumption(device);
     if (zeroConsumption) {
@@ -260,7 +338,7 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
     }
   }
 
-  // Check for missing data
+  // PRIORITY 4: Check for missing data
   const noData = detectNoData(device);
   if (noData) {
     notifications.push(noData);

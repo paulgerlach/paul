@@ -146,7 +146,7 @@ export default function CSVUploadPage() {
           method: "POST",
           headers: {
             "Content-Type": "text/plain",
-            "x-filename": file.name,
+            "x-filename": encodeURIComponent(file.name),
           },
           body: content,
         }

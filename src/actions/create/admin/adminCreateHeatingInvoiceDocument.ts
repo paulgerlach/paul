@@ -6,7 +6,7 @@ import { type AddDocBetriebskostenabrechnungDialogFormValues } from "@/component
 import type { HeatingInvoiceType } from "@/types";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
-export async function adminCreateInvoiceDocument(
+export async function adminCreateHeatingInvoiceDocument(
     formData: AddDocBetriebskostenabrechnungDialogFormValues,
     objectID?: string,
     userID?: string,

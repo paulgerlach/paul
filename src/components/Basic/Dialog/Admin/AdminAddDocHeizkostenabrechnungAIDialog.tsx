@@ -1,9 +1,8 @@
 "use client";
 
 import { useDialogStore } from "@/store/useDIalogStore";
-import DialogBase from "../ui/DialogBase";
-import { DialogStoreActionType } from "@/types";
-import { Button } from "../ui/Button";
+import DialogBase from "../../ui/DialogBase";
+import { Button } from "../../ui/Button";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { toast } from "sonner";
 import { useUploadDocuments } from "@/apiClient";
@@ -18,6 +17,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useDropzone } from "react-dropzone";
 import { parse } from "date-fns";
 import { UploadCloud, X, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { adminCreateHeatingInvoiceDocument } from "@/actions/create/admin/adminCreateHeatingInvoiceDocument";
+import { useParams } from "next/navigation";
 
 // ─── types ────────────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ type DialogStep = "upload" | "review";
 
 // ─── component ────────────────────────────────────────────────────────────────
 
-export default function AddDocHeizkostenabrechnungAIDialog() {
+export default function AdminAddDocHeizkostenabrechnungAIDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const {
     documentGroups,
@@ -50,8 +51,9 @@ export default function AddDocHeizkostenabrechnungAIDialog() {
   } = useHeizkostenabrechnungStore();
 
   const uploadDocuments = useUploadDocuments();
+  const { user_id } = useParams();
 
-  const isOpen = openDialogByType.ai_invoice_create;
+  const isOpen = openDialogByType.admin_ai_invoice_create;
 
   const [entries, setEntries] = useState<FileEntry[]>([]);
   const [step, setStep] = useState<DialogStep>("upload");
@@ -94,7 +96,7 @@ export default function AddDocHeizkostenabrechnungAIDialog() {
               status: "error" as const,
               error: invoice.cost_category
                 ? `Kostenart „${invoice.cost_category}" keiner Kostenkategorie zugeordnet.`
-                : "Kostenart konnte nicht erkannt werden – Rechnung ungültig.",
+                : "Kostenart konnte nicht erkannt werden - Rechnung ungültig.",
             };
           }
 
@@ -170,9 +172,10 @@ export default function AddDocHeizkostenabrechnungAIDialog() {
           direct_local_id: null,
         };
 
-        await createHeatingInvoice(
+        await adminCreateHeatingInvoiceDocument(
           formPayload,
           objektID,
+          String(user_id),
           operatingDocID,
           costType
         );
@@ -221,7 +224,7 @@ export default function AddDocHeizkostenabrechnungAIDialog() {
 
   // ─── helpers ─────────────────────────────────────────────────────────────────
   const handleClose = () => {
-    closeDialog("ai_invoice_create");
+    closeDialog("admin_ai_invoice_create");
     setEntries([]);
     setStep("upload");
   };
@@ -250,7 +253,7 @@ export default function AddDocHeizkostenabrechnungAIDialog() {
   const hasSuccess = entries.some((e) => e.status === "success");
 
   return (
-    <DialogBase dialogName={"ai_invoice_create"}>
+    <DialogBase dialogName={"admin_ai_invoice_create"}>
       <p className="font-bold text-lg text-admin_dark_text -mt-6">
         Rechnungen automatisch zuordnen
       </p>

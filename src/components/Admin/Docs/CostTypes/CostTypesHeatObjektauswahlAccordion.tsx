@@ -34,7 +34,7 @@ export default function CostTypesHeatObjektauswahlAccordion({
         />
       ))}
       <AddCostTypeButton dialogType="cost_type_heizkostenabrechnung_create" />
-      <AddCostTypeInvoiceButton dialogType="cost_type_heizkostenabrechnung_create" />
+      <AddCostTypeInvoiceButton dialogType="ai_invoice_create" />
     </div>
   );
 }

@@ -150,6 +150,8 @@ export type DocumentType =
   | "admin_operating_costs"
   | "invoice"
   | "admin_invoice"
+  | "ai_invoice"
+  | "admin_ai_invoice"
   | "document";
 
 export type DialogDocumentActionType =

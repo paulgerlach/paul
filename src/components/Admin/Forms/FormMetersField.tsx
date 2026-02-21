@@ -61,6 +61,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
               "Heizkostenverteiler",
               "Stromzähler",
               "Rauchwarnmelder",
+              "Gateway",
             ]}
             placeholder="Zählerart auswählen"
           />

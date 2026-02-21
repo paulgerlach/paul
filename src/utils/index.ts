@@ -171,6 +171,7 @@ export const buildLocalName = ({
   house_location,
   residential_area,
   living_space,
+  heating_area,
 }: Partial<LocalType>) => {
   const floorShortcut = floor
     ? (floorShortcuts[floor as keyof typeof floorShortcuts] ?? floor)
@@ -181,8 +182,9 @@ export const buildLocalName = ({
   );
 
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
+  const heatingSpacePart = heating_area ? `, HF: ${heating_area}qm` : "";
 
-  return mainParts.join(" ") + livingSpacePart;
+  return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
 };
 
 export const FUEL_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;

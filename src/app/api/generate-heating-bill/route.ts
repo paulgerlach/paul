@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             { docId, initiatorUserId: user.id, mainDocUserId: rawData.mainDoc?.user_id ?? null }
           );
         }
-        computedModel = computeHeatingBill(rawData);
+        computedModel = computeHeatingBill(rawData, { targetLocalId: localId });
         model = computedModel;
         validation = validateModel(computedModel);
         if (!validation.valid && validation.errors.length > 0) {

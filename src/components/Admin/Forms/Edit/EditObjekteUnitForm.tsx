@@ -72,6 +72,7 @@ const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
   floor: z.string().nullable(),
   living_space: z.coerce.number().nullable(),
+  heating_area: z.coerce.number().nullable(),
   house_location: z.string().nullable(),
   outdoor: z.string().nullable(),
   rooms: z.coerce.number().nullable(),
@@ -114,6 +115,7 @@ const defaultValues: EditObjekteUnitFormValues = {
   usage_type: "residential",
   floor: "",
   living_space: 0,
+  heating_area: 0,
   house_location: "",
   outdoor: "",
   rooms: null,
@@ -254,6 +256,7 @@ export default function EditObjekteUnitForm({
               label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
               placeholder="Quadratmeter"
               replaceDotWithComma
+              unit="qm"
             />
             {/* Empty div to align grid when only 5 items */}
             <div className="hidden max-medium:hidden" />

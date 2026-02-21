@@ -61,7 +61,7 @@ async function processBatchInBackground(
     }
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    let model = mockHeatingBillModel;
+    const logoSrc = path.join(process.cwd(), "public", "admin_logo.png");
     let raw: Awaited<ReturnType<typeof fetchHeatingBillData>> | null = null;
     if (!HEATING_BILL_USE_MOCK) {
         try {
@@ -74,11 +74,6 @@ async function processBatchInBackground(
                     { docId, initiatorUserId: userId, mainDocUserId: raw.mainDoc?.user_id ?? null }
                 );
             }
-            model = computeHeatingBill(raw);
-            const validation = validateModel(model);
-            if (!validation.valid && validation.errors.length > 0) {
-                console.warn("[HeatingBillBatch] Validation errors:", validation.errors);
-            }
         } catch (fetchError) {
             let errorForLog: unknown = fetchError;
             if (process.env.NODE_ENV !== "development") {
@@ -90,21 +85,6 @@ async function processBatchInBackground(
                 errorForLog
             );
         }
-    }
-
-    model = {
-        ...model,
-        logoSrc: path.join(process.cwd(), "public", "admin_logo.png"),
-    };
-
-    let buffer: Buffer;
-    try {
-        buffer = await renderToBuffer(
-            React.createElement(HeidiSystemsPdf, { model }) as any
-        );
-    } catch (error_) {
-        console.error("[HeatingBillBatch] PDF render failed:", error_);
-        throw new Error("PDF render failed");
     }
 
     const apartments: Array<{
@@ -134,6 +114,28 @@ async function processBatchInBackground(
                 if (!localId) {
                     throw new Error("Missing local id");
                 }
+                const computedModel = raw
+                    ? computeHeatingBill(raw, { targetLocalId: localId })
+                    : mockHeatingBillModel;
+                const validation = validateModel(computedModel);
+                if (!validation.valid && validation.errors.length > 0) {
+                    console.warn("[HeatingBillBatch] Validation errors:", {
+                        localId,
+                        errors: validation.errors,
+                    });
+                }
+                const model = { ...computedModel, logoSrc };
+
+                let buffer: Buffer;
+                try {
+                    buffer = await renderToBuffer(
+                        React.createElement(HeidiSystemsPdf, { model }) as any
+                    );
+                } catch (error_) {
+                    console.error("[HeatingBillBatch] PDF render failed:", { localId, error: error_ });
+                    throw new Error("PDF render failed");
+                }
+
                 const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}.pdf`;
                 const { error: uploadError } = await supabase.storage
                     .from("documents")

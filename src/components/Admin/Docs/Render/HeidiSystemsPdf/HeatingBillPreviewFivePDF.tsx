@@ -106,7 +106,7 @@ export default function HeatingBillPreviewFivePDF({
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            5/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            4/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src={logoSrc} />
         </View>

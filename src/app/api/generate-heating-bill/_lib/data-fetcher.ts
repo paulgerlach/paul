@@ -55,6 +55,7 @@ export interface HeatingBillRawData {
   }>;
   contractsWithContractors: Array<{
     id: string;
+    local_id: string | null;
     rental_start_date: string;
     rental_end_date: string | null;
     additional_costs: string | null;
@@ -150,6 +151,7 @@ export async function fetchHeatingBillData(
     database.select({ id: locals.id, living_space: locals.living_space, objekt_id: locals.objekt_id, floor: locals.floor, house_location: locals.house_location }).from(locals).where(eq(locals.objekt_id, objektId)),
   ]);
 
+  // Keep all building contracts in raw data; per-apartment selection is applied in compute.
   const localIdsForContracts = localsResult.map((l) => l.id);
   const allLocals = localsResult;
   const localIds = allLocals.map((l) => l.id);
@@ -281,6 +283,7 @@ export async function fetchHeatingBillData(
     })),
     contractsWithContractors: contractsWithContractors.map((c) => ({
       id: c.id,
+      local_id: c.local_id,
       rental_start_date: c.rental_start_date,
       rental_end_date: c.rental_end_date,
       additional_costs: c.additional_costs,

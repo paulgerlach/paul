@@ -48,7 +48,12 @@ export default function Select({
             <ListboxOption
               key={option}
               value={option}
-              className="group relative select-none py-2 max-xl:py-1 max-xl:text-sm pl-3 pr-9 text-admin_dark_text cursor-pointer data-focus:bg-green/50 data-focus:text-white">
+              className="group relative select-none py-2 max-xl:py-1 max-xl:text-sm pl-3 pr-9 text-admin_dark_text cursor-pointer data-focus:bg-green/50 data-focus:text-white"
+              onClick={() => {
+                if (selectedValue === option) {
+                  setTimeout(() => onChange(""), 0);
+                }
+              }}>
               <span className="block truncate font-normal group-data-selected:font-semibold">
                 {option}
               </span>

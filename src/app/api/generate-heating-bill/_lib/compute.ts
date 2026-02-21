@@ -39,6 +39,10 @@ function round2(v: number): number {
   return Math.round(v * 100) / 100;
 }
 
+function normalizeDeviceId(id: string | null | undefined): string {
+  return String(id ?? "").trim().replace(/^0+/, "");
+}
+
 /** Extract energy carrier from objekt.heating_systems (array of strings or single string). */
 function energyCarrierFromObjekt(heatingSystems: unknown): string {
   if (Array.isArray(heatingSystems) && heatingSystems.length > 0) {
@@ -53,7 +57,10 @@ function energyCarrierFromObjekt(heatingSystems: unknown): string {
  * Compute full HeatingBillPdfModel from raw data.
  * Step 1: buildingCalc is computed; cover, coldWater, unitBreakdown, co2, energySummary use mock.
  */
-export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel {
+export function computeHeatingBill(
+  raw: HeatingBillRawData,
+  options?: { targetLocalId?: string }
+): HeatingBillPdfModel {
   const model = JSON.parse(
     JSON.stringify(mockHeatingBillModel)
   ) as HeatingBillPdfModel;
@@ -103,8 +110,9 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 3148.25;
   const heatingMwh = readingsResult.totalHeatMwh || 404.04;
 
-  const wwDeviceRental = 2307.77;
-  const heatingDeviceRental = 6210.8;
+  const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
+  const wwDeviceRental = combinedDeviceRental;
+  const heatingDeviceRental = 0;
 
   const livingSpaceShare = Number(
     raw.mainDoc.living_space_share ?? 30
@@ -158,11 +166,15 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   const deviceIdToLocalId = new Map<string, string>();
   for (const lm of raw.localMeters ?? []) {
     if (lm.meter_number && lm.local_id) {
-      deviceIdToLocalId.set(String(lm.meter_number), lm.local_id);
+      const normalizedMeterId = normalizeDeviceId(lm.meter_number);
+      if (normalizedMeterId) {
+        deviceIdToLocalId.set(normalizedMeterId, lm.local_id);
+      }
     }
   }
 
-  const targetLocalId = raw.mainDoc.local_id ?? raw.locals[0]?.id;
+  const targetLocalId =
+    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
   const targetLocal = targetLocalId
     ? raw.locals.find((l) => l.id === targetLocalId)
     : raw.locals[0];
@@ -171,7 +183,9 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
 
   const belongsToLocal = (deviceNumber: string) => {
     if (!targetLocalId) return true;
-    const mapped = deviceIdToLocalId.get(deviceNumber);
+    const normalizedDeviceNumber = normalizeDeviceId(deviceNumber);
+    if (!normalizedDeviceNumber) return false;
+    const mapped = deviceIdToLocalId.get(normalizedDeviceNumber);
     if (mapped !== undefined) return mapped === targetLocalId;
     return false;
   };
@@ -185,12 +199,43 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
   const coldWaterDevicesForLocal = readingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
+  if (
+    process.env.NODE_ENV !== "production" &&
+    (raw.localMeters?.length ?? 0) > 0 &&
+    deviceIdToLocalId.size === 0
+  ) {
+    console.warn("[HeatingBill] local meter mapping is empty after normalization", {
+      localMetersCount: raw.localMeters.length,
+      targetLocalId: targetLocalId ?? null,
+    });
+  }
+  if (
+    process.env.NODE_ENV !== "production" &&
+    targetLocalId &&
+    readingsResult.deviceRows.heat.length + readingsResult.deviceRows.warmWater.length + readingsResult.deviceRows.coldWater.length > 0 &&
+    heatingDevicesForLocal.length + warmWaterDevicesForLocal.length + coldWaterDevicesForLocal.length === 0
+  ) {
+    console.warn("[HeatingBill] no device rows matched target local after filtering", {
+      targetLocalId,
+      allHeatDevices: readingsResult.deviceRows.heat.length,
+      allWarmWaterDevices: readingsResult.deviceRows.warmWater.length,
+      allColdWaterDevices: readingsResult.deviceRows.coldWater.length,
+      mappedMeters: deviceIdToLocalId.size,
+    });
+  }
 
+  const contractsForTenantDisplay =
+    raw.contractsWithContractors?.filter((c) => {
+      if (targetLocalId && c.local_id !== targetLocalId) return false;
+      const contractStart = new Date(c.rental_start_date);
+      const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+      return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
+    }) ?? [];
   const contractorsNames =
-    raw.contractsWithContractors
-      ?.flatMap((c) => c.contractors)
+    contractsForTenantDisplay
+      .flatMap((c) => c.contractors)
       .map((ct) => `${ct.first_name} ${ct.last_name}`)
-      .join(", ") ?? model.cover.contractorsNames;
+      .join(", ") || model.cover.contractorsNames;
 
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
@@ -257,7 +302,7 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
       ...i,
       kWhFormatted:
         i.kWhFormatted ||
-        formatGermanNumber(i.kWh, 3),
+        (i.kWh > 0 ? formatGermanNumber(i.kWh, 3) : ""),
       amountFormatted: i.amountFormatted || formatEuro(i.amount),
     })),
     energyRelief: costAgg.energyRelief,
@@ -291,18 +336,7 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
     heating,
   };
 
-  const totalContractsAmount =
-    raw.contractsWithContractors?.reduce((acc, c) => {
-      const overlapMonths = 12;
-      return acc + overlapMonths * Number(c.additional_costs ?? 0);
-    }, 0) ?? 0;
-  const totalInvoicesAmount = raw.invoices.reduce(
-    (s, i) => s + Number(i.total_amount ?? 0),
-    0
-  );
-  const totalDiff = round2(totalContractsAmount - totalInvoicesAmount);
-
-  const contractorsList = raw.contractsWithContractors?.flatMap((c) => c.contractors) ?? [];
+  const contractorsList = contractsForTenantDisplay.flatMap((c) => c.contractors);
   const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
 
@@ -342,8 +376,8 @@ export function computeHeatingBill(raw: HeatingBillRawData): HeatingBillPdfModel
       formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
     usagePeriodEnd:
       formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
-    totalAmount: totalDiff,
-    totalAmountFormatted: formatEuro(totalDiff),
+    totalAmount: model.unitBreakdown.grandTotal,
+    totalAmountFormatted: model.unitBreakdown.grandTotalFormatted,
     portalLink,
     userId: raw.user?.id ?? model.cover.userId,
     securityCode:

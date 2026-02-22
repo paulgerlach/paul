@@ -53,13 +53,25 @@ function energyCarrierFromObjekt(heatingSystems: unknown): string {
   return "Nah-/Fernwärme";
 }
 
+export type TenantOverride = {
+  contractId: string;
+  contractorsNames: string;
+  timeFraction: number;
+  overlapStart: Date;
+  overlapEnd: Date;
+  usagePeriodStart: string;
+  usagePeriodEnd: string;
+};
+
 /**
  * Compute full HeatingBillPdfModel from raw data.
- * Step 1: buildingCalc is computed; cover, coldWater, unitBreakdown, co2, energySummary use mock.
+ * When tenantOverride is provided, unit-level readings are scoped to the
+ * tenant's contract overlap period, and base/invoice costs are prorated
+ * by the time fraction.
  */
 export function computeHeatingBill(
   raw: HeatingBillRawData,
-  options?: { targetLocalId?: string }
+  options?: { targetLocalId?: string; tenantOverride?: TenantOverride }
 ): HeatingBillPdfModel {
   const model = JSON.parse(
     JSON.stringify(mockHeatingBillModel)
@@ -190,13 +202,26 @@ export function computeHeatingBill(
     return false;
   };
 
-  const heatingDevicesForLocal = readingsResult.deviceRows.heat.filter((r) =>
+  // When tenantOverride is provided, re-compute readings scoped to the tenant's
+  // overlap period so consumption values reflect only that tenant's occupancy.
+  const tenantOverride = options?.tenantOverride;
+  const unitReadingsResult = tenantOverride
+    ? computeReadingDeltas({
+      heatReadings,
+      warmWaterReadings,
+      coldWaterReadings,
+      startDate: tenantOverride.overlapStart,
+      endDate: tenantOverride.overlapEnd,
+    })
+    : readingsResult;
+
+  const heatingDevicesForLocal = unitReadingsResult.deviceRows.heat.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
-  const warmWaterDevicesForLocal = readingsResult.deviceRows.warmWater.filter((r) =>
+  const warmWaterDevicesForLocal = unitReadingsResult.deviceRows.warmWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
-  const coldWaterDevicesForLocal = readingsResult.deviceRows.coldWater.filter((r) =>
+  const coldWaterDevicesForLocal = unitReadingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
   if (
@@ -212,30 +237,36 @@ export function computeHeatingBill(
   if (
     process.env.NODE_ENV !== "production" &&
     targetLocalId &&
-    readingsResult.deviceRows.heat.length + readingsResult.deviceRows.warmWater.length + readingsResult.deviceRows.coldWater.length > 0 &&
+    unitReadingsResult.deviceRows.heat.length + unitReadingsResult.deviceRows.warmWater.length + unitReadingsResult.deviceRows.coldWater.length > 0 &&
     heatingDevicesForLocal.length + warmWaterDevicesForLocal.length + coldWaterDevicesForLocal.length === 0
   ) {
     console.warn("[HeatingBill] no device rows matched target local after filtering", {
       targetLocalId,
-      allHeatDevices: readingsResult.deviceRows.heat.length,
-      allWarmWaterDevices: readingsResult.deviceRows.warmWater.length,
-      allColdWaterDevices: readingsResult.deviceRows.coldWater.length,
+      allHeatDevices: unitReadingsResult.deviceRows.heat.length,
+      allWarmWaterDevices: unitReadingsResult.deviceRows.warmWater.length,
+      allColdWaterDevices: unitReadingsResult.deviceRows.coldWater.length,
       mappedMeters: deviceIdToLocalId.size,
     });
   }
 
-  const contractsForTenantDisplay =
-    raw.contractsWithContractors?.filter((c) => {
-      if (targetLocalId && c.local_id !== targetLocalId) return false;
-      const contractStart = new Date(c.rental_start_date);
-      const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
-      return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
-    }) ?? [];
-  const contractorsNames =
-    contractsForTenantDisplay
-      .flatMap((c) => c.contractors)
-      .map((ct) => `${ct.first_name} ${ct.last_name}`)
-      .join(", ") || model.cover.contractorsNames;
+  // Tenant override replaces contractor name resolution
+  const contractorsNames = tenantOverride
+    ? tenantOverride.contractorsNames
+    : (() => {
+      const contractsForTenantDisplay =
+        raw.contractsWithContractors?.filter((c) => {
+          if (targetLocalId && c.local_id !== targetLocalId) return false;
+          const contractStart = new Date(c.rental_start_date);
+          const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+          return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
+        }) ?? [];
+      return (
+        contractsForTenantDisplay
+          .flatMap((c) => c.contractors)
+          .map((ct) => `${ct.first_name} ${ct.last_name}`)
+          .join(", ") || model.cover.contractorsNames
+      );
+    })();
 
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
@@ -257,6 +288,7 @@ export function computeHeatingBill(
       ? { label: costAgg.energyRelief.label, amount: costAgg.energyRelief.amount }
       : null,
     unitCount,
+    timeFraction: tenantOverride?.timeFraction,
   });
 
   const energyCarrier = energyCarrierFromObjekt(raw.objekt?.heating_systems);
@@ -336,9 +368,18 @@ export function computeHeatingBill(
     heating,
   };
 
-  const contractorsList = contractsForTenantDisplay.flatMap((c) => c.contractors);
   const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
+
+  // Build contractors list for cover page (empty for tenant override)
+  const contractorsList = tenantOverride
+    ? []
+    : (raw.contractsWithContractors?.filter((c) => {
+      if (targetLocalId && c.local_id !== targetLocalId) return false;
+      const cStart = new Date(c.rental_start_date);
+      const cEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+      return cStart <= endDate && (!cEnd || cEnd >= startDate);
+    }) ?? []).flatMap((c) => c.contractors);
 
   model.cover = {
     ...model.cover,
@@ -372,9 +413,12 @@ export function computeHeatingBill(
       formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.billingPeriodStart,
     billingPeriodEnd:
       formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.billingPeriodEnd,
+    // Usage period: tenant-specific when override is present
     usagePeriodStart:
+      tenantOverride?.usagePeriodStart ??
       formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
     usagePeriodEnd:
+      tenantOverride?.usagePeriodEnd ??
       formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
     totalAmount: model.unitBreakdown.grandTotal,
     totalAmountFormatted: model.unitBreakdown.grandTotalFormatted,

@@ -29,14 +29,22 @@ export interface HeatingBillNotificationMetadata {
   totalTenants?: number;
 }
 
+export interface HeatingBillTenantResult {
+  contractId: string;
+  contractorsNames: string;
+  presignedUrl?: string;
+}
+
 export interface HeatingBillApartmentResult {
   localId: string;
-  /** Optional; omitted in batch mode to avoid per-local signed URL generation. */
+  /** @deprecated Use tenants array instead for multi-tenant support */
   presignedUrl?: string;
   floor?: string | null;
   house_location?: string | null;
   living_space?: string | null;
   residential_area?: string | null;
+  /** Per-tenant PDFs for this apartment */
+  tenants?: HeatingBillTenantResult[];
 }
 
 export interface HeatingBillFailedEntry {
@@ -119,6 +127,12 @@ export async function sendHeatingBillNotification(
   const totalApts = metadata.totalApartments ?? apartments.length + failedEntries.length;
   const totalTenants = metadata.totalTenants;
 
+  // Count total PDFs generated (including per-tenant and Leerstand)
+  const totalPdfs = apartments.reduce((sum, apt) => {
+    if (apt.tenants && apt.tenants.length > 0) return sum + apt.tenants.length;
+    return sum + 1; // legacy single-PDF apartment
+  }, 0);
+
   const lines: string[] = [];
 
   // Header
@@ -131,7 +145,8 @@ export async function sendHeatingBillNotification(
   lines.push(`👤 *Customer:* ${customerName}`)
   lines.push(`📍 *Street:* ${metadata.buildingStreet}, ${metadata.buildingZip}`);
   lines.push(`🏢 *Apartments:* ${totalApts}${tenantsPart}`);
-  lines.push(`🔧 *Initiated by:* ${metadata.userName}`);
+  lines.push(`� *Total PDFs:* ${totalPdfs}`);
+  lines.push(`�🔧 *Initiated by:* ${metadata.userName}`);
   lines.push(`🕐 *Timestamp:* ${metadata.timestamp}`);
   if (metadata.useMock) {
     lines.push("");
@@ -145,64 +160,109 @@ export async function sendHeatingBillNotification(
   lines.push(`📊 *Totals:* ✅ *Generated:* ${generated}${failedSummary}`);
   lines.push("");
 
-  // Results (hyperlinks with floor + living_space as label)
+  // Results — show per-apartment with tenant sub-items
   const hasPerApartment = apartments.length > 0 || failedEntries.length > 0;
   if (hasPerApartment && (mode === "batch" || failedEntries.length > 0)) {
     lines.push("🏠 *Apartment Bills*");
     lines.push("");
-    const generatedRows = apartments.map((apt) => {
-      const label = buildApartmentLinkLabel(apt);
-      return apt.presignedUrl
-        ? `• <${apt.presignedUrl}|${label}>`
-        : `• ${label}`;
-    });
-    const failedRows = failedEntries.map((apt) => {
+
+    for (const apt of apartments) {
+      const aptLabel = buildApartmentLinkLabel(apt);
+
+      if (apt.tenants && apt.tenants.length > 0) {
+        lines.push(`• *${aptLabel}* (${apt.tenants.length} PDF${apt.tenants.length > 1 ? "s" : ""})`);
+        for (const tenant of apt.tenants) {
+          const isLeerstand = tenant.contractId.startsWith("leerstand_");
+          const tenantIcon = isLeerstand ? "🏚️" : "👤";
+          if (tenant.presignedUrl) {
+            lines.push(`${tenantIcon} <${tenant.presignedUrl}|${tenant.contractorsNames}>`);
+          } else {
+            lines.push(`${tenantIcon} ${tenant.contractorsNames}`);
+          }
+        }
+      } else {
+        if (apt.presignedUrl) {
+          lines.push(`• <${apt.presignedUrl}|${aptLabel}>`);
+        } else {
+          lines.push(`• ${aptLabel}`);
+        }
+      }
+    }
+
+    for (const apt of failedEntries) {
       const label = buildApartmentDisplayLabel(apt);
       const reason = apt.errorMessage ? ` – ${apt.errorMessage}` : "";
-      return `• Failed: ${label}${reason}`;
-    });
-    lines.push(...generatedRows, ...failedRows);
+      lines.push(`• ❌ Failed: ${label}${reason}`);
+    }
   } else if (apartments.length > 0) {
     lines.push("🔗 *PDF Links*");
     lines.push("");
-    const links = apartments.map((apt) => {
+    for (const apt of apartments) {
       const label = buildApartmentLinkLabel(apt);
-      return apt.presignedUrl
-        ? `<${apt.presignedUrl}|${label}>`
-        : label;
-    });
-    lines.push(...links.map((link) => `• ${link}`));
+      if (apt.tenants && apt.tenants.length > 0) {
+        lines.push(`• *${label}*`);
+        for (const tenant of apt.tenants) {
+          if (tenant.presignedUrl) {
+            lines.push(`<${tenant.presignedUrl}|${tenant.contractorsNames}>`);
+          } else {
+            lines.push(`${tenant.contractorsNames}`);
+          }
+        }
+      } else if (apt.presignedUrl) {
+        lines.push(`• <${apt.presignedUrl}|${label}>`);
+      } else {
+        lines.push(`• ${label}`);
+      }
+    }
   }
 
-  const text = lines.join("\n");
+  // Slack truncates messages over ~4000 chars. Split into chunks and send
+  // each as a separate webhook call to avoid losing tenant PDF links.
+  const fullText = lines.join("\n");
+  const MAX_CHUNK = 3900;
+  const chunks: string[] = [];
 
-  const payload: SlackWebhookPayload = {
-    text,
-    unfurl_links: false,
-    unfurl_media: false,
-  };
-
-  try {
-    const resp = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!resp.ok) {
-      const body = await resp.text().catch(() => "");
-      console.error("[SlackNotifications] Webhook failed:", resp.status, body);
-      return;
+  if (fullText.length <= MAX_CHUNK) {
+    chunks.push(fullText);
+  } else {
+    // Split on line boundaries, keeping each chunk under the limit
+    let current = "";
+    for (const line of lines) {
+      const candidate = current ? `${current}\n${line}` : line;
+      if (candidate.length > MAX_CHUNK && current) {
+        chunks.push(current);
+        current = line;
+      } else {
+        current = candidate;
+      }
     }
+    if (current) chunks.push(current);
+  }
 
-    const body = await resp.text().catch(() => "");
-    if (body && body.trim().toLowerCase() !== "ok") {
-      console.warn("[SlackNotifications] Webhook non-ok response:", body);
+  for (const chunk of chunks) {
+    const payload: SlackWebhookPayload = {
+      text: chunk,
+      unfurl_links: false,
+      unfurl_media: false,
+    };
+
+    try {
+      const resp = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!resp.ok) {
+        const body = await resp.text().catch(() => "");
+        console.error("[SlackNotifications] Webhook failed:", resp.status, body);
+        return;
+      }
+    } catch (error) {
+      console.error(
+        "[SlackNotifications] Failed to send heating bill notification:",
+        error
+      );
     }
-  } catch (error) {
-    console.error(
-      "[SlackNotifications] Failed to send heating bill notification:",
-      error
-    );
   }
 }

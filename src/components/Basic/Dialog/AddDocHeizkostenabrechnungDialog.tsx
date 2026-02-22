@@ -130,13 +130,15 @@ export default function AddDocHeizkostenabrechnungDialog() {
         methods.setValue("direct_local_id", null);
       }
 
-      const autoNotes = buildInvoiceNotes(invoice);
-      if (autoNotes) {
-        const currentNotes = methods.getValues("notes") ?? "";
-        const nextNotes = currentNotes
-          ? `${currentNotes}${autoNotes}`
-          : autoNotes.trimStart();
-        methods.setValue("notes", nextNotes, { shouldValidate: false });
+      if (!isFuelCost) {
+        const autoNotes = buildInvoiceNotes(invoice);
+        if (autoNotes) {
+          const currentNotes = methods.getValues("notes") ?? "";
+          const nextNotes = currentNotes
+            ? `${currentNotes}${autoNotes}`
+            : autoNotes.trimStart();
+          methods.setValue("notes", nextNotes, { shouldValidate: false });
+        }
       }
     },
     onError: (e: any) => {
@@ -146,8 +148,9 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
   const isProcessingInvoice = parseInvoicesMutation.isPending;
 
-  // ✅ run invoice parsing whenever new documents are added
+  // ✅ run invoice parsing whenever new documents are added (skip for fuel costs)
   useEffect(() => {
+    if (isFuelCost) return;
     if (!watchedDocs.length) return;
 
     const newFiles = watchedDocs.filter(
@@ -161,7 +164,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedDocs]);
+  }, [watchedDocs, isFuelCost]);
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
     if (isProcessingInvoice) return; // ✅ don't submit while parsing

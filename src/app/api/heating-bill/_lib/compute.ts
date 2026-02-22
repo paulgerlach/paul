@@ -269,15 +269,15 @@ export function computeHeatingBill(
   const co2EnergyInvoices =
     costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
       ? costAgg.energyInvoices
-          .filter((i) => i.kWh > 0)
-          .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+        .filter((i) => i.kWh > 0)
+        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
       : [
-          {
-            label: "Energieverbrauch (Zähler)",
-            date: formatDateGerman(raw.mainDoc?.end_date ?? endDate.toISOString()) ?? "",
-            kWh: energyTotalKwh,
-          },
-        ];
+        {
+          label: "Energieverbrauch (Zähler)",
+          date: formatDateGerman(raw.mainDoc?.end_date ?? endDate.toISOString()) ?? "",
+          kWh: energyTotalKwh,
+        },
+      ];
 
   model.co2 = computeCo2Allocation({
     energyInvoices: co2EnergyInvoices,
@@ -356,15 +356,15 @@ export function computeHeatingBill(
     contractors:
       contractorsList.length > 0
         ? contractorsList.map((ct) => ({
-            id: ct.id,
-            firstName: ct.first_name,
-            lastName: ct.last_name,
-          }))
+          id: ct.id,
+          firstName: ct.first_name,
+          lastName: ct.last_name,
+        }))
         : model.cover.contractors,
     street: raw.objekt?.street ?? model.cover.street,
     zip: raw.objekt?.zip ?? model.cover.zip,
-    ownerFirstName: raw.user?.first_name ?? model.cover.ownerFirstName,
-    ownerLastName: raw.user?.last_name ?? model.cover.ownerLastName,
+    ownerFirstName: raw.objektOwner?.first_name ?? model.cover.ownerFirstName,
+    ownerLastName: raw.objektOwner?.last_name ?? model.cover.ownerLastName,
     createdAt: raw.mainDoc
       ? formatDateGerman(raw.mainDoc.created_at)
       : model.cover.createdAt,

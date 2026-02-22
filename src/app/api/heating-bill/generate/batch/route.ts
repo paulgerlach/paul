@@ -9,7 +9,7 @@ import {
     fetchHeatingBillData,
     computeHeatingBill,
     validateModel,
-} from "@/app/api/generate-heating-bill/_lib";
+} from "@/app/api/heating-bill/_lib";
 import { getRelatedLocalsByObjektId } from "@/api";
 import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -328,7 +328,7 @@ async function processBatchInBackground(
 }
 
 /**
- * POST /api/generate-heating-bill/batch
+ * POST /api/heating-bill/generate/batch
  * Generates heating bill PDFs for all locals in a building.
  * Accepts: { objektId, docId }
  * Returns after generation with 200 { success, totalLocals, generated, failed }.

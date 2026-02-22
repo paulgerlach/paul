@@ -15,22 +15,15 @@ import FormSelectField from "@/components/Admin/Forms/FormSelectField";
 import FormRoundedCheckbox from "@/components/Admin/Forms/FormRoundedCheckbox";
 import { useDocumentDeletion } from "@/hooks/useDocumentDeletion";
 import FormDocument from "@/components/Admin/Forms/FormDocument";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
 import { buildLocalName } from "@/utils";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
 import { useParams } from "next/navigation";
-import { adminCreateInvoiceDocument } from "@/actions/create/admin/adminCreateInvoiceDocument";
-import { useEffect, useMemo, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
-import {
-  buildInvoiceNotes,
-  mapCostCategoryToPurpose,
-  processInvoicesViaNext,
-} from "@/api/invoices";
+import { adminCreateHeatingInvoiceDocument } from "@/actions/create/admin/adminCreateHeatingInvoiceDocument";
+import { useMemo } from "react";
 import FormTextareaField from "@/components/Admin/Forms/FormTextareaField";
-import { residentialAreaOptions } from "@/static/formSelectOptions";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
@@ -97,84 +90,8 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
   const servicePeriod = methods.watch("service_period");
   const forAllTenants = methods.watch("for_all_tenants");
-  const watchedDocs = methods.watch("document") ?? [];
-
-  const processedFilesRef = useRef<Set<string>>(new Set());
-  const fileKey = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
-
-  // ✅ TanStack mutation for invoice processing
-  const parseInvoicesMutation = useMutation({
-    mutationFn: async (files: File[]) => processInvoicesViaNext(files),
-    onSuccess: (result) => {
-      const invoice = result.invoices?.[0];
-      if (!invoice) return;
-
-      if (invoice.invoice_date) {
-        const d = parse(invoice.invoice_date, "dd.MM.yyyy", new Date());
-        if (!isNaN(d.getTime())) {
-          methods.setValue("invoice_date", d, { shouldValidate: true });
-        }
-      }
-
-      if (typeof invoice.gross_amount === "number") {
-        methods.setValue("total_amount", invoice.gross_amount, {
-          shouldValidate: true,
-        });
-      }
-
-      const mappedPurpose = mapCostCategoryToPurpose(
-        invoice.cost_category,
-        purposeOptions
-      );
-      if (mappedPurpose) {
-        methods.setValue("purpose", mappedPurpose, { shouldValidate: true });
-      }
-
-      if (invoice.building_check?.is_whole_building === true) {
-        methods.setValue("for_all_tenants", true);
-        methods.setValue("direct_local_id", null);
-      }
-
-      const autoNotes = buildInvoiceNotes(invoice);
-      if (autoNotes) {
-        const currentNotes = methods.getValues("notes") ?? "";
-        const nextNotes = currentNotes
-          ? `${currentNotes}${autoNotes}`
-          : autoNotes.trimStart();
-        methods.setValue("notes", nextNotes, { shouldValidate: false });
-      }
-    },
-    onError: (e: any) => {
-      toast.error(e?.message || "Invoice parsing failed");
-    },
-  });
-
-  const isProcessingInvoice = parseInvoicesMutation.isPending;
-
-  useEffect(() => {
-    if (!watchedDocs.length) return;
-
-    const newFiles = watchedDocs.filter((f) => {
-      const key = fileKey(f);
-      return !processedFilesRef.current.has(key);
-    });
-
-    if (!newFiles.length) return;
-
-    // mark immediately to avoid double-queue before mutation settles
-    newFiles.forEach((f) => processedFilesRef.current.add(fileKey(f)));
-
-    parseInvoicesMutation.mutate(newFiles, {
-      onError: () => {
-        // optional: allow retry if parsing failed
-        newFiles.forEach((f) => processedFilesRef.current.delete(fileKey(f)));
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedDocs]);
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
-    if (isProcessingInvoice) return; // ✅ don't submit while parsing
     if (!activeCostType || !activeDialog) return;
 
     const { document, ...rest } = data;
@@ -198,7 +115,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
       return;
     }
 
-    const res = await adminCreateInvoiceDocument(
+    const res = await adminCreateHeatingInvoiceDocument(
       {
         ...formattedPayload,
         invoice_date: rest.invoice_date,
@@ -224,7 +141,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
     toast.success("Rechnung erfolgreich hinzugefügt");
     methods.resetField("document");
     methods.reset(defaultValues);
-    processedFilesRef.current.clear();
   };
 
   if (!isOpen) return null;
@@ -241,28 +157,17 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
           id="heizkostenabrechnung-dialog-form"
           onSubmit={methods.handleSubmit(onSubmit)}
         >
-          {/* ✅ Loader overlay while invoice processing */}
-          {isProcessingInvoice && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/70">
-              <div className="flex items-center gap-3 text-admin_dark_text">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black/70" />
-                <span className="text-sm">Rechnung wird verarbeitet…</span>
-              </div>
-            </div>
-          )}
 
           <div className="items-start gap-7 grid grid-cols-2 w-full">
             <FormDateInput<AddDocHeizkostenabrechnungDialogFormValues>
               control={methods.control}
               label="Rechnungsdatum"
               name="invoice_date"
-              disabled={isProcessingInvoice}
             />
             <FormMoneyInput<AddDocHeizkostenabrechnungDialogFormValues>
               control={methods.control}
               label="Gesamtbetrag *"
               name="total_amount"
-              disabled={isProcessingInvoice}
             />
           </div>
 
@@ -274,24 +179,16 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
             <div className="rounded-full h-fit w-fit p-0.5 bg-[#EAEAEA] flex items-center justify-center mr-0 ml-auto">
               <button
                 type="button"
-                disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", false)}
                 className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
-                  } ${isProcessingInvoice
-                    ? "opacity-60 cursor-not-allowed"
-                    : "cursor-pointer"
                   } transition-all duration-300`}
               >
                 Nein
               </button>
               <button
                 type="button"
-                disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", true)}
                 className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
-                  } ${isProcessingInvoice
-                    ? "opacity-60 cursor-not-allowed"
-                    : "cursor-pointer"
                   } transition-all duration-300`}
               >
                 Ja
@@ -307,7 +204,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
                 name="for_all_tenants"
                 label="Für Alle Mieter der Leigenschaft"
                 className="!mt-0 h-fit"
-                disabled={isProcessingInvoice}
               />
               {!forAllTenants && (
                 <FormLocalsultiselect<AddDocHeizkostenabrechnungDialogFormValues>
@@ -322,7 +218,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
                   control={methods.control}
                   name="direct_local_id"
                   label="Mieter auswählen *"
-                  disabled={isProcessingInvoice}
                 />
               )}
             </div>
@@ -334,7 +229,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
             label="Zweck auswählen *"
             placeholder=""
             options={purposeOptions}
-            disabled={isProcessingInvoice}
           />
 
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
@@ -343,7 +237,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
             label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
             rows={4}
-            disabled={isProcessingInvoice}
           />
 
           <FormDocument<AddDocHeizkostenabrechnungDialogFormValues>
@@ -352,19 +245,15 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
             deletedFileIds={deletedDocumentIds}
             label=""
             title=""
-            disabled={isProcessingInvoice}
           />
 
           <div className="flex items-center justify-between gap-4">
             <Button
               type="button"
               variant="outline"
-              disabled={isProcessingInvoice}
               className="!font-medium !text-lg max-xl:!text-sm !bg-white !border-black/20 !text-admin_dark_text hover:!bg-gray-100 hover:!text-admin_dark_text"
               onClick={() => {
-                if (isProcessingInvoice) return;
                 methods.reset(defaultValues);
-                processedFilesRef.current.clear();
                 closeDialog(activeDialog as DialogStoreActionType);
               }}
             >
@@ -373,7 +262,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
             <Button
               type="submit"
-              disabled={isProcessingInvoice}
               className="!font-medium !text-lg max-xl:!text-sm"
             >
               Speichern

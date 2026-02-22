@@ -4,18 +4,39 @@ import { useState } from "react";
 import Image from "next/image";
 import { doc_download } from "@/static/icons";
 
+export type TenantDownloadInfo = {
+  contractId: string;
+  contractorsNames: string;
+};
+
 export type LocalPDFDownloadButtonProps = {
   objektId: string;
   localId: string;
   docId: string;
+  /** When provided, downloads all tenant PDFs for the locale */
+  tenants?: TenantDownloadInfo[];
 };
 
 export default function LocalPDFDownloadButton({
   objektId,
   localId,
   docId,
+  tenants,
 }: Readonly<LocalPDFDownloadButtonProps>) {
   const [loading, setLoading] = useState(false);
+
+  const downloadBlob = async (url: string, filename: string) => {
+    const pdfRes = await fetch(url);
+    const blob = await pdfRes.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  };
 
   const handleDownload = async () => {
     if (!docId) {
@@ -24,50 +45,72 @@ export default function LocalPDFDownloadButton({
     }
     try {
       setLoading(true);
-      // Try download endpoint first (for pre-generated PDFs from objektauswahl batch)
-      let res = await fetch("/api/download-heating-bill", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objektId, localId, docId }),
-      });
-      const data = await res.json().catch(() => ({}));
 
-      // If PDF not found (404), fall back to generate on-demand (e.g. localauswahl flow)
-      if (res.status === 404) {
-        res = await fetch("/api/heating-bill/generate", {
+      if (tenants && tenants.length > 0) {
+        // Multi-tenant: download each tenant's PDF
+        for (const tenant of tenants) {
+          const res = await fetch("/api/heating-bill/download", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ objektId, localId, docId, contractId: tenant.contractId }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.presignedUrl) {
+            console.warn(`PDF not found for tenant ${tenant.contractorsNames}, trying fallback`);
+            continue;
+          }
+          const safeName = tenant.contractorsNames.replace(/[^a-zA-ZäöüÄÖÜß\s-]/g, "").trim() || "Mieter";
+          await downloadBlob(data.presignedUrl, `Heizkostenabrechnung_${safeName}.pdf`);
+          // Small delay between downloads to avoid browser blocking
+          if (tenants.length > 1) {
+            await new Promise((r) => setTimeout(r, 500));
+          }
+        }
+      } else {
+        // Single/legacy download
+        let res = await fetch("/api/heating-bill/download", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ objektId, localId, docId }),
         });
-        const generateData = await res.json().catch(() => ({}));
-        if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+
+        if (res.status === 404) {
+          // Fall back to on-demand generation
+          res = await fetch("/api/heating-bill/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ objektId, localId, docId }),
+          });
+          const generateData = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            throw new Error(
+              (typeof generateData?.error === "string" ? generateData.error : null) ??
+              "PDF konnte nicht erzeugt werden."
+            );
+          }
+          Object.assign(data, generateData);
+        } else if (!res.ok) {
           throw new Error(
-            (typeof generateData?.error === "string" ? generateData.error : null) ??
-            "PDF konnte nicht erzeugt werden."
+            (typeof data?.error === "string" ? data.error : null) ??
+            "PDF konnte nicht heruntergeladen werden."
           );
         }
-        Object.assign(data, generateData);
-      } else if (!res.ok) {
-        throw new Error(
-          (typeof data?.error === "string" ? data.error : null) ??
-          "PDF konnte nicht heruntergeladen werden."
-        );
-      }
 
-      const presignedUrl = data.presignedUrl;
-      if (!presignedUrl) {
-        throw new Error("Kein Download-Link erhalten.");
+        // If multi-tenant URLs were returned, download all
+        if (data.tenantUrls && data.tenantUrls.length > 1) {
+          for (const tu of data.tenantUrls) {
+            await downloadBlob(tu.presignedUrl, `Heizkostenabrechnung_${tu.contractId}.pdf`);
+            await new Promise((r) => setTimeout(r, 500));
+          }
+        } else {
+          const presignedUrl = data.presignedUrl;
+          if (!presignedUrl) {
+            throw new Error("Kein Download-Link erhalten.");
+          }
+          await downloadBlob(presignedUrl, "Heizkostenabrechnung.pdf");
+        }
       }
-      const pdfRes = await fetch(presignedUrl);
-      const blob = await pdfRes.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Heizkostenabrechnung.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error generating or downloading PDF:", error);
       const message =

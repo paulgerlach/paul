@@ -6,6 +6,9 @@ import SearchControls from "@/components/Admin/SearchControls";
 import { buildLocalName } from "@/utils";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { UnitType } from "@/types";
+import database from "@/db";
+import { heating_bill_documents, contracts, contractors } from "@/db/drizzle/schema";
+import { eq, inArray } from "drizzle-orm";
 
 const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
   "residential",
@@ -26,6 +29,79 @@ export default async function ResultLocalPDF({
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
   );
   const totalLocals = locals?.length || 0;
+
+  // Fetch billing period from the heating bill document
+  const doc = await database
+    .select({
+      start_date: heating_bill_documents.start_date,
+      end_date: heating_bill_documents.end_date,
+    })
+    .from(heating_bill_documents)
+    .where(eq(heating_bill_documents.id, doc_id))
+    .then((r) => r[0] ?? null);
+
+  // Fetch all contracts for the building's locals with their contractors
+  const localIds = locals.map((l) => l.id).filter(Boolean) as string[];
+  let allContracts: Array<{
+    id: string;
+    local_id: string | null;
+    rental_start_date: string;
+    rental_end_date: string | null;
+    contractorNames: string;
+  }> = [];
+
+  if (localIds.length > 0 && doc?.start_date && doc?.end_date) {
+    const periodStart = new Date(doc.start_date);
+    const periodEnd = new Date(doc.end_date);
+
+    const contractRows = await database
+      .select()
+      .from(contracts)
+      .where(inArray(contracts.local_id, localIds));
+
+    if (contractRows.length > 0) {
+      const contractIds = contractRows.map((c) => c.id);
+      const contractorRows = await database
+        .select()
+        .from(contractors)
+        .where(inArray(contractors.contract_id, contractIds));
+
+      const contractorsByContract = new Map<string, typeof contractorRows>();
+      for (const ct of contractorRows) {
+        const arr = contractorsByContract.get(ct.contract_id) ?? [];
+        arr.push(ct);
+        contractorsByContract.set(ct.contract_id, arr);
+      }
+
+      allContracts = contractRows
+        .filter((c) => {
+          const cStart = new Date(c.rental_start_date);
+          const cEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+          return cStart <= periodEnd && (!cEnd || cEnd >= periodStart);
+        })
+        .map((c) => {
+          const cts = contractorsByContract.get(c.id) ?? [];
+          return {
+            id: c.id,
+            local_id: c.local_id,
+            rental_start_date: c.rental_start_date,
+            rental_end_date: c.rental_end_date,
+            contractorNames: cts.length > 0
+              ? cts.map((ct) => `${ct.first_name} ${ct.last_name}`).join(", ")
+              : "Leerstand",
+          };
+        });
+    }
+  }
+
+  // Build per-locale tenant map
+  const tenantsByLocal = new Map<string, Array<{ contractId: string; contractorsNames: string }>>();
+  for (const c of allContracts) {
+    if (!c.local_id) continue;
+    const existing = tenantsByLocal.get(c.local_id) ?? [];
+    existing.push({ contractId: c.id, contractorsNames: c.contractorNames });
+    tenantsByLocal.set(c.local_id, existing);
+  }
 
   // Filter by search query
   if (search.trim() && locals) {
@@ -78,6 +154,7 @@ export default async function ResultLocalPDF({
                   item={local}
                   docType="objektauswahl"
                   docID={doc_id}
+                  tenants={tenantsByLocal.get(local.id ?? "") ?? undefined}
                 />
               ))
             )}

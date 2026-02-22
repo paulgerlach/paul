@@ -6,6 +6,11 @@ import { gmail, pdf_icon } from "@/static/icons";
 import LocalPDFDownloadButton from "../Docs/Render/HeidiSystemsPdf/LocalPDFDownloadButton";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 
+export type TenantDownloadInfo = {
+  contractId: string;
+  contractorsNames: string;
+};
+
 export type HeatingBillActionButtonsProps = {
   objektId: string;
   localId: string;
@@ -15,6 +20,8 @@ export type HeatingBillActionButtonsProps = {
   docType: "localauswahl" | "objektauswahl";
   /** Optional: use "admin_heating_bill_delete" for admin view */
   dialogAction?: "heating_bill_delete" | "admin_heating_bill_delete";
+  /** Tenant list for multi-tenant locales */
+  tenants?: TenantDownloadInfo[];
 };
 
 export default function HeatingBillActionButtons({
@@ -25,6 +32,7 @@ export default function HeatingBillActionButtons({
   editLink,
   docType: _docType,
   dialogAction = "heating_bill_delete",
+  tenants,
 }: Readonly<HeatingBillActionButtonsProps>) {
   return (
     <div className="flex items-center justify-end max-medium:justify-center gap-12 max-medium:gap-4">
@@ -48,6 +56,7 @@ export default function HeatingBillActionButtons({
             objektId={objektId}
             localId={localId}
             docId={docId}
+            tenants={tenants}
           />
         </span>
 

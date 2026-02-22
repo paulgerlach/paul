@@ -98,6 +98,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
   const servicePeriod = methods.watch("service_period");
   const forAllTenants = methods.watch("for_all_tenants");
   const watchedDocs = methods.watch("document") ?? [];
+  const isFuelCost = activeCostType === "fuel_costs";
 
   const processedFilesRef = useRef<Set<string>>(new Set());
   const fileKey = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
@@ -135,13 +136,15 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
         methods.setValue("direct_local_id", null);
       }
 
-      const autoNotes = buildInvoiceNotes(invoice);
-      if (autoNotes) {
-        const currentNotes = methods.getValues("notes") ?? "";
-        const nextNotes = currentNotes
-          ? `${currentNotes}${autoNotes}`
-          : autoNotes.trimStart();
-        methods.setValue("notes", nextNotes, { shouldValidate: false });
+      if (!isFuelCost) {
+        const autoNotes = buildInvoiceNotes(invoice);
+        if (autoNotes) {
+          const currentNotes = methods.getValues("notes") ?? "";
+          const nextNotes = currentNotes
+            ? `${currentNotes}${autoNotes}`
+            : autoNotes.trimStart();
+          methods.setValue("notes", nextNotes, { shouldValidate: false });
+        }
       }
     },
     onError: (e: any) => {
@@ -152,6 +155,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
   const isProcessingInvoice = parseInvoicesMutation.isPending;
 
   useEffect(() => {
+    if (isFuelCost) return;
     if (!watchedDocs.length) return;
 
     const newFiles = watchedDocs.filter((f) => {
@@ -171,7 +175,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedDocs]);
+  }, [watchedDocs, isFuelCost]);
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
     if (isProcessingInvoice) return; // ✅ don't submit while parsing
@@ -340,7 +344,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
+            label={isFuelCost ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
             rows={4}
             disabled={isProcessingInvoice}

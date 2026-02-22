@@ -72,7 +72,7 @@ function buildApartmentLinkLabel(apt: {
   localId: string;
 }): string {
   const floor = apt.floor ?? "";
-  const livingSpace = apt.living_space != null ? String(apt.living_space) : "";
+  const livingSpace = apt.living_space != null ? `${String(apt.living_space)} qm` : "";
   const parts = [floor, livingSpace].filter(Boolean);
   return parts.length > 0 ? parts.join(" • ") : apt.localId;
 }

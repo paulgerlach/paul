@@ -154,8 +154,22 @@ const styles = StyleSheet.create({
   },
   allocationGrid: {
     flexDirection: "row",
-    justifyContent: "space-between",
     marginTop: 2,
+  },
+  allocationGridLabel: {
+    width: "45%",
+    fontWeight: "700",
+    color: "#083123",
+  },
+  allocationGridAmount: {
+    width: "20%",
+  },
+  allocationGridUnit: {
+    width: "17%",
+  },
+  allocationGridRate: {
+    width: "18%",
+    textAlign: "right",
   },
 });
 
@@ -434,21 +448,21 @@ export default function HeatingBillPreviewTwoPDF({
         <Text>{bc.warmWater.totalCostFormatted}</Text>
       </View>
       <View style={styles.allocationGrid}>
-        <Text style={styles.allocationLabelBold}>
+        <Text style={styles.allocationGridLabel}>
           davon {bc.warmWater.baseCostPercent}% Grundkosten
         </Text>
-        <Text>{bc.warmWater.baseCostAmountFormatted} :</Text>
-        <Text>{bc.warmWater.baseCostAreaFormatted} m²</Text>
-        <Text>= {bc.warmWater.baseCostRatePerM2Formatted} €/m²</Text>
+        <Text style={styles.allocationGridAmount}>{bc.warmWater.baseCostAmountFormatted} :</Text>
+        <Text style={styles.allocationGridUnit}>{bc.warmWater.baseCostAreaFormatted} m²</Text>
+        <Text style={styles.allocationGridRate}>= {bc.warmWater.baseCostRatePerM2Formatted} €/m²</Text>
       </View>
       <View style={styles.allocationGrid}>
-        <Text style={styles.allocationLabelBold}>
+        <Text style={styles.allocationGridLabel}>
           davon {bc.warmWater.consumptionCostPercent}%
           Verbrauchskosten
         </Text>
-        <Text>{bc.warmWater.consumptionCostAmountFormatted} :</Text>
-        <Text>{bc.warmWater.consumptionCostVolumeFormatted} m³</Text>
-        <Text>= {bc.warmWater.consumptionCostRatePerM3Formatted} €/m³</Text>
+        <Text style={styles.allocationGridAmount}>{bc.warmWater.consumptionCostAmountFormatted} :</Text>
+        <Text style={styles.allocationGridUnit}>{bc.warmWater.consumptionCostVolumeFormatted} m³</Text>
+        <Text style={styles.allocationGridRate}>= {bc.warmWater.consumptionCostRatePerM3Formatted} €/m³</Text>
       </View>
 
       <View style={styles.costBreakdown}>
@@ -478,18 +492,18 @@ export default function HeatingBillPreviewTwoPDF({
           <Text>{bc.heating.totalCostFormatted}</Text>
         </View>
         <View style={styles.allocationGrid}>
-          <Text style={styles.allocationLabelBold}>davon {bc.heating.baseCostPercent} % Grundkosten</Text>
-          <Text>{bc.heating.baseCostAmountFormatted} :</Text>
-          <Text>{bc.heating.baseCostAreaFormatted} m²</Text>
-          <Text>= {bc.heating.baseCostRatePerM2Formatted} €/m²</Text>
+          <Text style={styles.allocationGridLabel}>davon {bc.heating.baseCostPercent} % Grundkosten</Text>
+          <Text style={styles.allocationGridAmount}>{bc.heating.baseCostAmountFormatted} :</Text>
+          <Text style={styles.allocationGridUnit}>{bc.heating.baseCostAreaFormatted} m²</Text>
+          <Text style={styles.allocationGridRate}>= {bc.heating.baseCostRatePerM2Formatted} €/m²</Text>
         </View>
         <View style={styles.allocationGrid}>
-          <Text style={styles.allocationLabelBold}>
+          <Text style={styles.allocationGridLabel}>
             davon {bc.heating.consumptionCostPercent} % Verbrauchskosten
           </Text>
-          <Text>{bc.heating.consumptionCostAmountFormatted} :</Text>
-          <Text>{bc.heating.consumptionMwhFormatted} MWh</Text>
-          <Text>= {bc.heating.consumptionCostRatePerMwhFormatted} €/MWh</Text>
+          <Text style={styles.allocationGridAmount}>{bc.heating.consumptionCostAmountFormatted} :</Text>
+          <Text style={styles.allocationGridUnit}>{bc.heating.consumptionMwhFormatted} MWh</Text>
+          <Text style={styles.allocationGridRate}>= {bc.heating.consumptionCostRatePerMwhFormatted} €/MWh</Text>
         </View>
       </View>
     </Page>

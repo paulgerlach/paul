@@ -159,7 +159,8 @@ export async function fetchSharedDashboardData(
         'Heat', 'Water', 'WWater', 'Elec', 'HCA',
         // NEW Engelmann format
         'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
-        'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
+        'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler',
+        'Gateway'
       ],
       p_start_date: adjustedStartDate || null,
       p_end_date: endDate || null
@@ -218,7 +219,8 @@ export async function fetchSharedDashboardData(
       'Heat', 'Water', 'WWater', 'Elec', 'HCA',
       // NEW Engelmann format device types
       'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
-      'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
+      'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler',
+      'Gateway'
     ];
     const filteredData = transformedData.filter(item =>
       validDeviceTypes.includes(item['Device Type']) &&

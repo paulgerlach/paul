@@ -4,7 +4,7 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
-import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/generate-heating-bill/_lib";
+import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/heating-bill/_lib";
 import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 import database from "@/db";
 import { users } from "@/db/drizzle/schema";
@@ -16,7 +16,7 @@ const HEATING_BILL_USE_MOCK =
   process.env.HEATING_BILL_USE_MOCK === "1";
 
 /**
- * POST /api/generate-heating-bill
+ * POST /api/heating-bill/generate
  * Server-side heating bill PDF generation.
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             { docId, initiatorUserId: user.id, mainDocUserId: rawData.mainDoc?.user_id ?? null }
           );
         }
-        computedModel = computeHeatingBill(rawData);
+        computedModel = computeHeatingBill(rawData, { targetLocalId: localId });
         model = computedModel;
         validation = validateModel(computedModel);
         if (!validation.valid && validation.errors.length > 0) {

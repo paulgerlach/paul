@@ -55,12 +55,18 @@ export interface HeatingBillRawData {
   }>;
   contractsWithContractors: Array<{
     id: string;
+    local_id: string | null;
     rental_start_date: string;
     rental_end_date: string | null;
     additional_costs: string | null;
     contractors: Array<{ first_name: string; last_name: string; id: string }>;
   }>;
   user: {
+    first_name: string | null;
+    last_name: string | null;
+    id: string;
+  } | null;
+  objektOwner?: {
     first_name: string | null;
     last_name: string | null;
     id: string;
@@ -105,10 +111,10 @@ export async function fetchHeatingBillData(
       .where(eq(heating_invoices.heating_doc_id, docId)),
     ownerUserId
       ? database
-          .select({ first_name: users.first_name, last_name: users.last_name, id: users.id })
-          .from(users)
-          .where(eq(users.id, ownerUserId))
-          .then((r) => r[0] ?? null)
+        .select({ first_name: users.first_name, last_name: users.last_name, id: users.id })
+        .from(users)
+        .where(eq(users.id, ownerUserId))
+        .then((r) => r[0] ?? null)
       : Promise.resolve(null),
   ]);
   const objektId = mainDoc?.objekt_id;
@@ -150,6 +156,15 @@ export async function fetchHeatingBillData(
     database.select({ id: locals.id, living_space: locals.living_space, objekt_id: locals.objekt_id, floor: locals.floor, house_location: locals.house_location }).from(locals).where(eq(locals.objekt_id, objektId)),
   ]);
 
+  const objektOwner = objektResult?.user_id
+    ? await database
+      .select({ first_name: users.first_name, last_name: users.last_name, id: users.id })
+      .from(users)
+      .where(eq(users.id, objektResult.user_id))
+      .then((r) => r[0] ?? null)
+    : null;
+
+  // Keep all building contracts in raw data; per-apartment selection is applied in compute.
   const localIdsForContracts = localsResult.map((l) => l.id);
   const allLocals = localsResult;
   const localIds = allLocals.map((l) => l.id);
@@ -157,33 +172,33 @@ export async function fetchHeatingBillData(
   const [contractsResult, localMetersRows] = await Promise.all([
     localIdsForContracts.length > 0
       ? database
-          .select()
-          .from(contracts)
-          .where(inArray(contracts.local_id, localIdsForContracts))
-          .then(async (c) => {
-            if (c.length === 0) return [];
-            const contractIds = c.map((contract) => contract.id);
-            const allContractors = await database
-              .select()
-              .from(contractors)
-              .where(inArray(contractors.contract_id, contractIds));
-            const contractorsByContract = new Map<string, typeof allContractors>();
-            for (const ct of allContractors) {
-              const arr = contractorsByContract.get(ct.contract_id) ?? [];
-              arr.push(ct);
-              contractorsByContract.set(ct.contract_id, arr);
-            }
-            return c.map((contract) => ({
-              ...contract,
-              contractors: contractorsByContract.get(contract.id) ?? [],
-            }));
-          })
+        .select()
+        .from(contracts)
+        .where(inArray(contracts.local_id, localIdsForContracts))
+        .then(async (c) => {
+          if (c.length === 0) return [];
+          const contractIds = c.map((contract) => contract.id);
+          const allContractors = await database
+            .select()
+            .from(contractors)
+            .where(inArray(contractors.contract_id, contractIds));
+          const contractorsByContract = new Map<string, typeof allContractors>();
+          for (const ct of allContractors) {
+            const arr = contractorsByContract.get(ct.contract_id) ?? [];
+            arr.push(ct);
+            contractorsByContract.set(ct.contract_id, arr);
+          }
+          return c.map((contract) => ({
+            ...contract,
+            contractors: contractorsByContract.get(contract.id) ?? [],
+          }));
+        })
       : [],
     localIds.length > 0
       ? database
-          .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id })
-          .from(local_meters)
-          .where(inArray(local_meters.local_id, localIds))
+        .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id })
+        .from(local_meters)
+        .where(inArray(local_meters.local_id, localIds))
       : [],
   ]);
   const meterIds = localMetersRows.map((m) => m.id).filter(Boolean);
@@ -281,6 +296,7 @@ export async function fetchHeatingBillData(
     })),
     contractsWithContractors: contractsWithContractors.map((c) => ({
       id: c.id,
+      local_id: c.local_id,
       rental_start_date: c.rental_start_date,
       rental_end_date: c.rental_end_date,
       additional_costs: c.additional_costs,
@@ -293,6 +309,7 @@ export async function fetchHeatingBillData(
     user: user
       ? { first_name: user.first_name, last_name: user.last_name, id: user.id }
       : null,
+    objektOwner,
     meterReadings,
     localMeters,
   };

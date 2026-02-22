@@ -1,5 +1,5 @@
 import { Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
+import type { HeatingBillPdfModel } from "@/app/api/heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",
@@ -220,7 +220,7 @@ export default function HeatingBillPreviewFourPDF({
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            4/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            3/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src={logoSrc} />
         </View>
@@ -337,7 +337,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              {ub.heatingConsumptionMwhFormatted} MWh
+              {ub.heatingDevicesTotalFormatted} MWh
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text
@@ -393,7 +393,7 @@ export default function HeatingBillPreviewFourPDF({
             <Text
               style={[styles.tableCell, { width: "25%", textAlign: "right" }]}
             >
-              {ub.warmWaterConsumptionM3Formatted} m³
+              {ub.warmWaterDevicesTotalFormatted} m³
             </Text>
             <Text style={[styles.tableCell, { width: "5%" }]}>x</Text>
             <Text

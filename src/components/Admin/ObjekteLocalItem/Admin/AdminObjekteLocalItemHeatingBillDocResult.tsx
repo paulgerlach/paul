@@ -13,6 +13,7 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   userID: string;
   docID?: string;
   docType: "localauswahl" | "objektauswahl";
+  status?: "renting" | "vacancy";
 };
 
 export default async function AdminObjekteLocalItemHeatingBillDocResult({
@@ -21,15 +22,18 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   userID,
   docID,
   docType,
+  status: statusFromProps,
 }: ObjekteLocalItemHeatingBillDocResultProps) {
-  const contracts = await getAdminContractsWithContractorsByLocalID(
-    item.id,
-    userID
-  );
-
-  const status = contracts?.some((contract) => contract.is_current)
-    ? "renting"
-    : "vacancy";
+  let status = statusFromProps;
+  if (!status) {
+    const contracts = await getAdminContractsWithContractorsByLocalID(
+      item.id,
+      userID
+    );
+    status = contracts?.some((contract) => contract.is_current)
+      ? "renting"
+      : "vacancy";
+  }
 
   const handleStatusImage = () => {
     switch (status) {

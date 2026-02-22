@@ -42,7 +42,7 @@ export default function AdminSaveCostButton({
       : heizkostenGroups;
 
   const runBatchGeneration = async (objektId: string, docId: string) => {
-    const res = await fetch("/api/generate-heating-bill/batch", {
+    const res = await fetch("/api/heating-bill/generate/batch", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ objektId, docId }),

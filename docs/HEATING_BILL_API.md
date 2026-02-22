@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-`POST /api/generate-heating-bill`
+`POST /api/heating-bill/generate`
 
 Generates a Heizkostenabrechnung PDF from the database and uploads it to Supabase storage. Returns a presigned download URL.
 

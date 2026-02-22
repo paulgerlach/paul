@@ -34,7 +34,7 @@ export default function LocalPDFDownloadButton({
 
       // If PDF not found (404), fall back to generate on-demand (e.g. localauswahl flow)
       if (res.status === 404) {
-        res = await fetch("/api/generate-heating-bill", {
+        res = await fetch("/api/heating-bill/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ objektId, localId, docId }),
@@ -43,14 +43,14 @@ export default function LocalPDFDownloadButton({
         if (!res.ok) {
           throw new Error(
             (typeof generateData?.error === "string" ? generateData.error : null) ??
-              "PDF konnte nicht erzeugt werden."
+            "PDF konnte nicht erzeugt werden."
           );
         }
         Object.assign(data, generateData);
       } else if (!res.ok) {
         throw new Error(
           (typeof data?.error === "string" ? data.error : null) ??
-            "PDF konnte nicht heruntergeladen werden."
+          "PDF konnte nicht heruntergeladen werden."
         );
       }
 

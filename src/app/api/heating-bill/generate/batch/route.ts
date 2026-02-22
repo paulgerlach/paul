@@ -10,9 +10,11 @@ import {
     computeHeatingBill,
     validateModel,
 } from "@/app/api/heating-bill/_lib";
+import type { TenantOverride } from "@/app/api/heating-bill/_lib";
 import { getRelatedLocalsByObjektId } from "@/api";
 import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 import { supabaseServer } from "@/utils/supabase/server";
+import { formatDateGerman } from "@/utils";
 import database from "@/db";
 import { objekte, users } from "@/db/drizzle/schema";
 import { eq, inArray } from "drizzle-orm";
@@ -32,9 +34,142 @@ const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
     "commercial",
 ]);
 
+/* ------------------------------------------------------------------ */
+/*  Tenant‑segment helpers                                            */
+/* ------------------------------------------------------------------ */
+
+type TenantSegment = {
+    contractId: string;           // contract id, or "leerstand_<idx>" for vacancy
+    contractorsNames: string;
+    overlapStart: Date;
+    overlapEnd: Date;
+    timeFraction: number;         // days overlap / total billing days
+};
+
 /**
- * Background worker: computes model, renders PDF, uploads per local with error isolation.
- * Uses service-role Supabase so it runs without request context.
+ * Compute ordered, non-overlapping tenant segments for one locale within
+ * the billing period.  Gaps are filled with "Leerstand" segments.
+ */
+function computeTenantSegments(
+    contracts: Array<{
+        id: string;
+        local_id: string | null;
+        rental_start_date: string;
+        rental_end_date: string | null;
+        contractors: Array<{ first_name: string; last_name: string; id: string }>;
+    }>,
+    localId: string,
+    periodStart: Date,
+    periodEnd: Date,
+): TenantSegment[] {
+    const totalDays = Math.max(1, diffDays(periodStart, periodEnd));
+
+    // Only contracts that overlap the billing period and belong to this local
+    const overlapping = contracts
+        .filter((c) => {
+            if (c.local_id !== localId) return false;
+            const cStart = new Date(c.rental_start_date);
+            const cEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+            return cStart <= periodEnd && (!cEnd || cEnd >= periodStart);
+        })
+        .map((c) => ({
+            ...c,
+            overlapStart: maxDate(new Date(c.rental_start_date), periodStart),
+            overlapEnd: minDate(
+                c.rental_end_date ? new Date(c.rental_end_date) : periodEnd,
+                periodEnd
+            ),
+        }))
+        .sort((a, b) => a.overlapStart.getTime() - b.overlapStart.getTime());
+
+    if (overlapping.length === 0) {
+        // Entire period is vacant
+        return [{
+            contractId: "leerstand_0",
+            contractorsNames: "Leerstand",
+            overlapStart: periodStart,
+            overlapEnd: periodEnd,
+            timeFraction: 1,
+        }];
+    }
+
+    const segments: TenantSegment[] = [];
+    let cursor = periodStart;
+    let leerstandIdx = 0;
+
+    for (const c of overlapping) {
+        // Gap before this contract?
+        if (c.overlapStart > cursor) {
+            const gapDays = diffDays(cursor, c.overlapStart);
+            if (gapDays > 0) {
+                segments.push({
+                    contractId: `leerstand_${leerstandIdx++}`,
+                    contractorsNames: "Leerstand",
+                    overlapStart: cursor,
+                    overlapEnd: new Date(c.overlapStart.getTime() - 86400000), // day before
+                    timeFraction: gapDays / totalDays,
+                });
+            }
+        }
+        const overlapDays = diffDays(c.overlapStart, c.overlapEnd);
+        const names = c.contractors.length > 0
+            ? c.contractors.map((ct) => `${ct.first_name} ${ct.last_name}`).join(", ")
+            : "Leerstand";
+        segments.push({
+            contractId: c.id,
+            contractorsNames: names,
+            overlapStart: c.overlapStart,
+            overlapEnd: c.overlapEnd,
+            timeFraction: Math.max(0.001, overlapDays / totalDays),
+        });
+        // Move cursor past this contract
+        cursor = new Date(c.overlapEnd.getTime() + 86400000); // day after
+    }
+
+    // Gap after the last contract?
+    if (cursor <= periodEnd) {
+        const gapDays = diffDays(cursor, periodEnd);
+        if (gapDays > 0) {
+            segments.push({
+                contractId: `leerstand_${leerstandIdx}`,
+                contractorsNames: "Leerstand",
+                overlapStart: cursor,
+                overlapEnd: periodEnd,
+                timeFraction: gapDays / totalDays,
+            });
+        }
+    }
+
+    return segments;
+}
+
+function diffDays(a: Date, b: Date): number {
+    return Math.max(0, Math.round((b.getTime() - a.getTime()) / 86400000) + 1);
+}
+
+function maxDate(a: Date, b: Date): Date { return a > b ? a : b; }
+function minDate(a: Date, b: Date): Date { return a < b ? a : b; }
+
+/* ------------------------------------------------------------------ */
+/*  Batch processor                                                   */
+/* ------------------------------------------------------------------ */
+
+type ApartmentEntry = {
+    localId: string;
+    floor?: string | null;
+    house_location?: string | null;
+    living_space?: string | null;
+    residential_area?: string | null;
+    tenants: Array<{
+        contractId: string;
+        contractorsNames: string;
+        presignedUrl?: string;
+    }>;
+};
+
+/**
+ * Background worker: computes model, renders PDF, uploads per local+tenant
+ * with error isolation.  Uses service-role Supabase.
  */
 async function processBatchInBackground(
     userId: string,
@@ -45,6 +180,7 @@ async function processBatchInBackground(
     generated: number;
     failed: number;
     totalLocals: number;
+    apartments: ApartmentEntry[];
     failedEntries: Array<{
         localId: string;
         floor?: string | null;
@@ -87,14 +223,15 @@ async function processBatchInBackground(
         }
     }
 
-    const apartments: Array<{
-        localId: string;
-        presignedUrl?: string;
-        floor?: string | null;
-        house_location?: string | null;
-        living_space?: string | null;
-        residential_area?: string | null;
-    }> = [];
+    // Compute billing period from document
+    const periodStart = raw?.mainDoc?.start_date
+        ? new Date(raw.mainDoc.start_date)
+        : new Date();
+    const periodEnd = raw?.mainDoc?.end_date
+        ? new Date(raw.mainDoc.end_date)
+        : new Date();
+
+    const apartments: ApartmentEntry[] = [];
     const failedEntries: Array<{
         localId: string;
         floor?: string | null;
@@ -114,46 +251,85 @@ async function processBatchInBackground(
                 if (!localId) {
                     throw new Error("Missing local id");
                 }
-                const computedModel = raw
-                    ? computeHeatingBill(raw, { targetLocalId: localId })
-                    : mockHeatingBillModel;
-                const validation = validateModel(computedModel);
-                if (!validation.valid && validation.errors.length > 0) {
-                    console.warn("[HeatingBillBatch] Validation errors:", {
-                        localId,
-                        errors: validation.errors,
-                    });
-                }
-                const model = { ...computedModel, logoSrc };
 
-                let buffer: Buffer;
-                try {
-                    buffer = await renderToBuffer(
-                        React.createElement(HeidiSystemsPdf, { model }) as any
-                    );
-                } catch (error_) {
-                    console.error("[HeatingBillBatch] PDF render failed:", { localId, error: error_ });
-                    throw new Error("PDF render failed");
+                // Determine tenant segments for this locale
+                const segments: TenantSegment[] =
+                    raw?.contractsWithContractors && raw.mainDoc
+                        ? computeTenantSegments(
+                            raw.contractsWithContractors,
+                            localId,
+                            periodStart,
+                            periodEnd,
+                        )
+                        : []; // empty means mock mode — will produce single PDF
+
+                const tenantEntries: ApartmentEntry["tenants"] = [];
+
+                if (segments.length === 0) {
+                    // Mock mode or no contract data — generate single PDF as before
+                    const computedModel = raw
+                        ? computeHeatingBill(raw, { targetLocalId: localId })
+                        : mockHeatingBillModel;
+                    const validation = validateModel(computedModel);
+                    if (!validation.valid && validation.errors.length > 0) {
+                        console.warn("[HeatingBillBatch] Validation errors:", {
+                            localId,
+                            errors: validation.errors,
+                        });
+                    }
+                    const model = { ...computedModel, logoSrc };
+                    const buffer = await renderPdf(model);
+                    const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
+                    await uploadPdf(supabase, storagePath, buffer);
+                    tenantEntries.push({
+                        contractId: "default",
+                        contractorsNames: model.cover.contractorsNames,
+                    });
+                    generated++;
+                } else {
+                    // Generate one PDF per tenant segment
+                    for (const seg of segments) {
+                        const tenantOverride: TenantOverride = {
+                            contractId: seg.contractId,
+                            contractorsNames: seg.contractorsNames,
+                            timeFraction: seg.timeFraction,
+                            overlapStart: seg.overlapStart,
+                            overlapEnd: seg.overlapEnd,
+                            usagePeriodStart: formatDateGerman(seg.overlapStart.toISOString()) ?? "",
+                            usagePeriodEnd: formatDateGerman(seg.overlapEnd.toISOString()) ?? "",
+                        };
+                        const computedModel = computeHeatingBill(raw!, {
+                            targetLocalId: localId,
+                            tenantOverride,
+                        });
+                        const validation = validateModel(computedModel);
+                        if (!validation.valid && validation.errors.length > 0) {
+                            console.warn("[HeatingBillBatch] Validation errors:", {
+                                localId,
+                                contractId: seg.contractId,
+                                errors: validation.errors,
+                            });
+                        }
+                        const model = { ...computedModel, logoSrc };
+                        const buffer = await renderPdf(model);
+                        const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
+                        await uploadPdf(supabase, storagePath, buffer);
+                        tenantEntries.push({
+                            contractId: seg.contractId,
+                            contractorsNames: seg.contractorsNames,
+                        });
+                        generated++;
+                    }
                 }
 
-                const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}.pdf`;
-                const { error: uploadError } = await supabase.storage
-                    .from("documents")
-                    .upload(storagePath, buffer, {
-                        contentType: "application/pdf",
-                        upsert: true,
-                    });
-                if (uploadError) {
-                    throw uploadError;
-                }
                 apartments.push({
                     localId,
                     floor: local.floor ?? null,
                     house_location: local.house_location ?? null,
                     living_space: local.living_space ? String(local.living_space) : null,
                     residential_area: local.residential_area ?? null,
+                    tenants: tenantEntries,
                 });
-                generated++;
             })
         );
         for (let j = 0; j < results.length; j++) {
@@ -173,6 +349,7 @@ async function processBatchInBackground(
         }
     }
 
+    // ---- Enrichment for Slack notification ----
     let userName = userId;
     let customerName = userId;
     let hasOwnerName = false;
@@ -249,47 +426,40 @@ async function processBatchInBackground(
         }
         buildingStreet = raw?.objekt?.street ?? objektRow?.street ?? "";
         buildingZip = raw?.objekt?.zip ?? objektRow?.zip ?? "";
-        if (raw?.mainDoc?.start_date && raw?.mainDoc?.end_date && raw?.contractsWithContractors) {
-            const periodStart = new Date(raw.mainDoc.start_date);
-            const periodEnd = new Date(raw.mainDoc.end_date);
-            const overlapping = raw.contractsWithContractors.filter((c) => {
-                const start = new Date(c.rental_start_date);
-                const end = c.rental_end_date ? new Date(c.rental_end_date) : null;
-                return start <= periodEnd && (!end || end >= periodStart);
-            });
-            totalTenants = overlapping.reduce((sum, c) => sum + (c.contractors?.length ?? 0), 0);
-        }
+        totalTenants = apartments.reduce((sum, a) => sum + a.tenants.length, 0);
     } catch (error_) {
         console.warn("[HeatingBillBatch] Enrichment fetch failed (non-fatal):", error_);
     }
 
-    for (let i = 0; i < apartments.length; i += UPLOAD_BATCH_SIZE) {
-        const batch = apartments.slice(i, i + UPLOAD_BATCH_SIZE);
+    // ---- Generate presigned URLs for all uploaded PDFs ----
+    const allTenantPdfs = apartments.flatMap((apt) =>
+        apt.tenants.map((t) => ({ apt, tenant: t }))
+    );
+    for (let i = 0; i < allTenantPdfs.length; i += UPLOAD_BATCH_SIZE) {
+        const batch = allTenantPdfs.slice(i, i + UPLOAD_BATCH_SIZE);
         const signedResults = await Promise.allSettled(
-            batch.map(async (apt) => {
-                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}.pdf`;
+            batch.map(async ({ apt, tenant }) => {
+                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}_${tenant.contractId}.pdf`;
                 const signOnce = async () =>
                     supabase.storage
                         .from("documents")
-                        .createSignedUrl(storagePath, 3600, { download: true });
+                        .createSignedUrl(storagePath, 172800, { download: true });
                 let response = await signOnce();
                 if (response.error || !response.data?.signedUrl) {
-                    // One lightweight retry helps with transient storage signing failures.
                     response = await signOnce();
                 }
                 if (response.error || !response.data?.signedUrl) {
                     throw response.error ?? new Error("Failed to create signed URL");
                 }
-                // Mutate source apartment object directly so ordering/replacement can't drift.
-                apt.presignedUrl = response.data.signedUrl;
+                tenant.presignedUrl = response.data.signedUrl;
             })
         );
         for (let j = 0; j < signedResults.length; j++) {
             const r = signedResults[j];
             if (r.status === "rejected") {
-                const localId = batch[j]?.localId ?? "unknown";
+                const entry = batch[j];
                 console.warn(
-                    `[HeatingBillBatch] Signed URL generation failed for local ${localId}:`,
+                    `[HeatingBillBatch] Signed URL generation failed for local ${entry?.apt.localId}/${entry?.tenant.contractId}:`,
                     r.reason
                 );
             }
@@ -323,9 +493,38 @@ async function processBatchInBackground(
         generated,
         failed,
         totalLocals: locals.length,
+        apartments,
         failedEntries,
     };
 }
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                           */
+/* ------------------------------------------------------------------ */
+
+async function renderPdf(model: any): Promise<Buffer> {
+    return renderToBuffer(
+        React.createElement(HeidiSystemsPdf, { model }) as any
+    );
+}
+
+async function uploadPdf(
+    supabase: any,
+    storagePath: string,
+    buffer: Buffer
+): Promise<void> {
+    const { error } = await supabase.storage
+        .from("documents")
+        .upload(storagePath, buffer, {
+            contentType: "application/pdf",
+            upsert: true,
+        });
+    if (error) throw error;
+}
+
+/* ------------------------------------------------------------------ */
+/*  POST handler                                                      */
+/* ------------------------------------------------------------------ */
 
 /**
  * POST /api/heating-bill/generate/batch
@@ -389,6 +588,7 @@ export async function POST(request: NextRequest) {
                 totalLocals: result.totalLocals,
                 generated: result.generated,
                 failed: result.failed,
+                apartments: result.apartments,
                 failedEntries: result.failedEntries,
             },
             { status: 200 }

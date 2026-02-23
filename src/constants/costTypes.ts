@@ -29,7 +29,7 @@ export const DEFAULT_HEATING_COST_TYPES: Partial<DocCostCategoryType>[] = [
         name: "Miete der Messgeräte",
         type: "metering_device_rental",
         document_type: "heizkostenabrechnung",
-        options: ["Für Heizkostenverteiler", "Wärmemengenzähler", "Warmwasserzähler", "Kaltwasserzähler", "Kältezähler"],
+        options: ["Heizkostenverteiler", "Wärmemengenzähler", "Warmwasserzähler", "Kaltwasserzähler", "Kältezähler"],
     },
     {
         name: "Schornsteinfegerkosten",

@@ -112,8 +112,22 @@ export function computeHeatingBill(
   });
 
   const readingsTotalKwh = readingsResult.totalHeatKwh || 0;
+
+  const targetLocalId =
+    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
+
+  // Filter invoices by locale scope:
+  // - for_all_tenants === true (or null/undefined): include for all locales
+  // - for_all_tenants === false: only include if targetLocalId is in direct_local_id array
+  const filteredInvoices = raw.invoices.filter((inv) => {
+    if (inv.for_all_tenants !== false) return true;
+    if (!targetLocalId) return true; // no target = include everything
+    const linkedLocals = inv.direct_local_id ?? [];
+    return linkedLocals.includes(targetLocalId);
+  });
+
   const costAgg = aggregateInvoiceCosts(
-    raw.invoices as any,
+    filteredInvoices as any,
     { readingsTotalKwh }
   );
   const energyTotalKwh =
@@ -185,8 +199,7 @@ export function computeHeatingBill(
     }
   }
 
-  const targetLocalId =
-    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
+
   const targetLocal = targetLocalId
     ? raw.locals.find((l) => l.id === targetLocalId)
     : raw.locals[0];

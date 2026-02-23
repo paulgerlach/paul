@@ -5,7 +5,7 @@
  * Other sections use mock until later steps.
  */
 import type { HeatingBillPdfModel } from "./types";
-import { mockHeatingBillModel } from "./mock-model";
+import { emptyHeatingBillModel } from "./empty-model";
 import type { HeatingBillRawData } from "./data-fetcher";
 import { aggregateInvoiceCosts } from "./costs";
 import { computeWarmWaterCosts } from "./warmwater";
@@ -53,16 +53,28 @@ function energyCarrierFromObjekt(heatingSystems: unknown): string {
   return "Nah-/Fernwärme";
 }
 
+export type TenantOverride = {
+  contractId: string;
+  contractorsNames: string;
+  timeFraction: number;
+  overlapStart: Date;
+  overlapEnd: Date;
+  usagePeriodStart: string;
+  usagePeriodEnd: string;
+};
+
 /**
  * Compute full HeatingBillPdfModel from raw data.
- * Step 1: buildingCalc is computed; cover, coldWater, unitBreakdown, co2, energySummary use mock.
+ * When tenantOverride is provided, unit-level readings are scoped to the
+ * tenant's contract overlap period, and base/invoice costs are prorated
+ * by the time fraction.
  */
 export function computeHeatingBill(
   raw: HeatingBillRawData,
-  options?: { targetLocalId?: string }
+  options?: { targetLocalId?: string; tenantOverride?: TenantOverride }
 ): HeatingBillPdfModel {
   const model = JSON.parse(
-    JSON.stringify(mockHeatingBillModel)
+    JSON.stringify(emptyHeatingBillModel)
   ) as HeatingBillPdfModel;
 
   if (!raw.mainDoc || !raw.objekt) {
@@ -100,15 +112,29 @@ export function computeHeatingBill(
   });
 
   const readingsTotalKwh = readingsResult.totalHeatKwh || 0;
+
+  const targetLocalId =
+    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
+
+  // Filter invoices by locale scope:
+  // - for_all_tenants === true (or null/undefined): include for all locales
+  // - for_all_tenants === false: only include if targetLocalId is in direct_local_id array
+  const filteredInvoices = raw.invoices.filter((inv) => {
+    if (inv.for_all_tenants !== false) return true;
+    if (!targetLocalId) return true; // no target = include everything
+    const linkedLocals = inv.direct_local_id ?? [];
+    return linkedLocals.includes(targetLocalId);
+  });
+
   const costAgg = aggregateInvoiceCosts(
-    raw.invoices as any,
+    filteredInvoices as any,
     { readingsTotalKwh }
   );
   const energyTotalKwh =
-    costAgg.energyInvoices.reduce((s, i) => s + i.kWh, 0) || readingsTotalKwh || 761123;
+    costAgg.energyInvoices.reduce((s, i) => s + i.kWh, 0) || readingsTotalKwh || 0;
 
-  const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 3148.25;
-  const heatingMwh = readingsResult.totalHeatMwh || 404.04;
+  const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 0;
+  const heatingMwh = readingsResult.totalHeatMwh || 0;
 
   const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
   const wwDeviceRental = combinedDeviceRental;
@@ -126,7 +152,7 @@ export function computeHeatingBill(
     energyTotalKwh,
     costAgg.heatingCostTotal,
     wwDeviceRental,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
@@ -138,15 +164,15 @@ export function computeHeatingBill(
     warmWater,
     heatingDeviceRental,
     heatingMwh,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
     }
   );
 
-  const totalColdWaterM3 = readingsResult.totalColdWaterM3 || 9943.14;
-  const unitCount = raw.locals.length || 123;
+  const totalColdWaterM3 = readingsResult.totalColdWaterM3 || 0;
+  const unitCount = raw.locals.length || 1;
   const localForDoc = raw.mainDoc.local_id
     ? raw.locals.find((l) => l.id === raw.mainDoc!.local_id)
     : null;
@@ -156,7 +182,7 @@ export function computeHeatingBill(
     costAgg.coldWaterInvoices as any,
     totalColdWaterM3,
     unitCount,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     localLivingSpace
   );
 
@@ -173,8 +199,7 @@ export function computeHeatingBill(
     }
   }
 
-  const targetLocalId =
-    options?.targetLocalId ?? raw.mainDoc.local_id ?? raw.locals[0]?.id;
+
   const targetLocal = targetLocalId
     ? raw.locals.find((l) => l.id === targetLocalId)
     : raw.locals[0];
@@ -190,13 +215,26 @@ export function computeHeatingBill(
     return false;
   };
 
-  const heatingDevicesForLocal = readingsResult.deviceRows.heat.filter((r) =>
+  // When tenantOverride is provided, re-compute readings scoped to the tenant's
+  // overlap period so consumption values reflect only that tenant's occupancy.
+  const tenantOverride = options?.tenantOverride;
+  const unitReadingsResult = tenantOverride
+    ? computeReadingDeltas({
+      heatReadings,
+      warmWaterReadings,
+      coldWaterReadings,
+      startDate: tenantOverride.overlapStart,
+      endDate: tenantOverride.overlapEnd,
+    })
+    : readingsResult;
+
+  const heatingDevicesForLocal = unitReadingsResult.deviceRows.heat.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
-  const warmWaterDevicesForLocal = readingsResult.deviceRows.warmWater.filter((r) =>
+  const warmWaterDevicesForLocal = unitReadingsResult.deviceRows.warmWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
-  const coldWaterDevicesForLocal = readingsResult.deviceRows.coldWater.filter((r) =>
+  const coldWaterDevicesForLocal = unitReadingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
   if (
@@ -212,34 +250,40 @@ export function computeHeatingBill(
   if (
     process.env.NODE_ENV !== "production" &&
     targetLocalId &&
-    readingsResult.deviceRows.heat.length + readingsResult.deviceRows.warmWater.length + readingsResult.deviceRows.coldWater.length > 0 &&
+    unitReadingsResult.deviceRows.heat.length + unitReadingsResult.deviceRows.warmWater.length + unitReadingsResult.deviceRows.coldWater.length > 0 &&
     heatingDevicesForLocal.length + warmWaterDevicesForLocal.length + coldWaterDevicesForLocal.length === 0
   ) {
     console.warn("[HeatingBill] no device rows matched target local after filtering", {
       targetLocalId,
-      allHeatDevices: readingsResult.deviceRows.heat.length,
-      allWarmWaterDevices: readingsResult.deviceRows.warmWater.length,
-      allColdWaterDevices: readingsResult.deviceRows.coldWater.length,
+      allHeatDevices: unitReadingsResult.deviceRows.heat.length,
+      allWarmWaterDevices: unitReadingsResult.deviceRows.warmWater.length,
+      allColdWaterDevices: unitReadingsResult.deviceRows.coldWater.length,
       mappedMeters: deviceIdToLocalId.size,
     });
   }
 
-  const contractsForTenantDisplay =
-    raw.contractsWithContractors?.filter((c) => {
-      if (targetLocalId && c.local_id !== targetLocalId) return false;
-      const contractStart = new Date(c.rental_start_date);
-      const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
-      return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
-    }) ?? [];
-  const contractorsNames =
-    contractsForTenantDisplay
-      .flatMap((c) => c.contractors)
-      .map((ct) => `${ct.first_name} ${ct.last_name}`)
-      .join(", ") || model.cover.contractorsNames;
+  // Tenant override replaces contractor name resolution
+  const contractorsNames = tenantOverride
+    ? tenantOverride.contractorsNames
+    : (() => {
+      const contractsForTenantDisplay =
+        raw.contractsWithContractors?.filter((c) => {
+          if (targetLocalId && c.local_id !== targetLocalId) return false;
+          const contractStart = new Date(c.rental_start_date);
+          const contractEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+          return contractStart <= endDate && (!contractEnd || contractEnd >= startDate);
+        }) ?? [];
+      return (
+        contractsForTenantDisplay
+          .flatMap((c) => c.contractors)
+          .map((ct) => `${ct.first_name} ${ct.last_name}`)
+          .join(", ") || ""
+      );
+    })();
 
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
-    livingSpaceM2: localLivingSpaceM2 || 77.02,
+    livingSpaceM2: localLivingSpaceM2 || 0,
     localLabel: localLabel || undefined,
     heating,
     warmWater,
@@ -248,8 +292,8 @@ export function computeHeatingBill(
     warmWaterDevices: warmWaterDevicesForLocal,
     coldWaterDevices: coldWaterDevicesForLocal,
     contractorsNames,
-    street: raw.objekt?.street ?? model.cover.street,
-    zip: raw.objekt?.zip ?? model.cover.zip,
+    street: raw.objekt?.street ?? "",
+    zip: raw.objekt?.zip ?? "",
     billingPeriodStart: formatDateGerman(raw.mainDoc.start_date) ?? "",
     billingPeriodEnd: formatDateGerman(raw.mainDoc.end_date) ?? "",
     createdAt: formatDateGerman(raw.mainDoc.created_at) ?? "",
@@ -257,10 +301,11 @@ export function computeHeatingBill(
       ? { label: costAgg.energyRelief.label, amount: costAgg.energyRelief.amount }
       : null,
     unitCount,
+    timeFraction: tenantOverride?.timeFraction,
   });
 
   const energyCarrier = energyCarrierFromObjekt(raw.objekt?.heating_systems);
-  const totalLivingSpaceM2 = totalLivingSpace || 11196.4;
+  const totalLivingSpaceM2 = totalLivingSpace || 0;
   const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
   const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
 
@@ -269,21 +314,21 @@ export function computeHeatingBill(
   const co2EnergyInvoices =
     costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
       ? costAgg.energyInvoices
-          .filter((i) => i.kWh > 0)
-          .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+        .filter((i) => i.kWh > 0)
+        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
       : [
-          {
-            label: "Energieverbrauch (Zähler)",
-            date: formatDateGerman(raw.mainDoc?.end_date ?? endDate.toISOString()) ?? "",
-            kWh: energyTotalKwh,
-          },
-        ];
+        {
+          label: "Energieverbrauch (Zähler)",
+          date: formatDateGerman(raw.mainDoc?.end_date ?? endDate.toISOString()) ?? "",
+          kWh: energyTotalKwh,
+        },
+      ];
 
   model.co2 = computeCo2Allocation({
     energyInvoices: co2EnergyInvoices,
     totalLivingSpaceM2,
     energyCarrier,
-    localLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    localLivingSpaceM2: localLivingSpaceM2 || 0,
     portalLink: portalLinkForQr,
   });
 
@@ -293,7 +338,7 @@ export function computeHeatingBill(
     totalLivingSpaceM2,
     unitHeatingMwh,
     unitWarmWaterM3,
-    unitLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    unitLivingSpaceM2: localLivingSpaceM2 || 0,
     portalLink: portalLinkForQr,
   });
 
@@ -336,54 +381,65 @@ export function computeHeatingBill(
     heating,
   };
 
-  const contractorsList = contractsForTenantDisplay.flatMap((c) => c.contractors);
   const portalLink = LOGIN_ENTRY_URL;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;
+
+  // Build contractors list for cover page (empty for tenant override)
+  const contractorsList = tenantOverride
+    ? []
+    : (raw.contractsWithContractors?.filter((c) => {
+      if (targetLocalId && c.local_id !== targetLocalId) return false;
+      const cStart = new Date(c.rental_start_date);
+      const cEnd = c.rental_end_date ? new Date(c.rental_end_date) : null;
+      return cStart <= endDate && (!cEnd || cEnd >= startDate);
+    }) ?? []).flatMap((c) => c.contractors);
 
   model.cover = {
     ...model.cover,
     propertyNumber: raw.objekt?.id
       ? propertyNumberFromObjekt(raw.objekt.id)
-      : model.cover.propertyNumber,
+      : "",
     heidiCustomerNumber: raw.user?.id
       ? heidiCustomerNumberFromUser(raw.user.id)
-      : model.cover.heidiCustomerNumber,
+      : "",
     userNumber:
       raw.user?.id && targetLocalId && raw.mainDoc?.id
         ? userNumberFromIds(raw.user.id, targetLocalId, raw.mainDoc.id)
-        : model.cover.userNumber,
+        : "",
     contractorsNames,
     contractors:
       contractorsList.length > 0
         ? contractorsList.map((ct) => ({
-            id: ct.id,
-            firstName: ct.first_name,
-            lastName: ct.last_name,
-          }))
-        : model.cover.contractors,
-    street: raw.objekt?.street ?? model.cover.street,
-    zip: raw.objekt?.zip ?? model.cover.zip,
-    ownerFirstName: raw.user?.first_name ?? model.cover.ownerFirstName,
-    ownerLastName: raw.user?.last_name ?? model.cover.ownerLastName,
+          id: ct.id,
+          firstName: ct.first_name,
+          lastName: ct.last_name,
+        }))
+        : [],
+    street: raw.objekt?.street ?? "",
+    zip: raw.objekt?.zip ?? "",
+    ownerFirstName: raw.objektOwner?.first_name ?? "",
+    ownerLastName: raw.objektOwner?.last_name ?? "",
     createdAt: raw.mainDoc
-      ? formatDateGerman(raw.mainDoc.created_at)
-      : model.cover.createdAt,
+      ? formatDateGerman(raw.mainDoc.created_at) ?? ""
+      : "",
     billingPeriodStart:
-      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.billingPeriodStart,
+      formatDateGerman(raw.mainDoc?.start_date) ?? "",
     billingPeriodEnd:
-      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.billingPeriodEnd,
+      formatDateGerman(raw.mainDoc?.end_date) ?? "",
     usagePeriodStart:
-      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
+      tenantOverride?.usagePeriodStart ??
+      formatDateGerman(raw.mainDoc?.start_date) ?? "",
     usagePeriodEnd:
-      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
+      tenantOverride?.usagePeriodEnd ??
+      formatDateGerman(raw.mainDoc?.end_date) ?? "",
     totalAmount: model.unitBreakdown.grandTotal,
     totalAmountFormatted: model.unitBreakdown.grandTotalFormatted,
     portalLink,
-    userId: raw.user?.id ?? model.cover.userId,
+    userId: raw.user?.id ?? "",
     securityCode:
       raw.user?.id && raw.mainDoc?.id
         ? securityCodeFromIds(raw.user.id, raw.mainDoc.id)
-        : model.cover.securityCode,
+        : "",
     qrCodeUrl,
   };
 

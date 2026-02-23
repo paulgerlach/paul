@@ -4,7 +4,7 @@ import HeatingBillPreviewOnePDF from "./HeatingBillPreviewOnePDF";
 import HeatingBillPreviewThreePDF from "./HeatingBillPreviewThreePDF";
 import HeatingBillPreviewFourPDF from "./HeatingBillPreviewFourPDF";
 import HeatingBillPreviewSixPDF from "./HeatingBillPreviewSixPDF";
-import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
+import type { HeatingBillPdfModel } from "@/app/api/heating-bill/_lib";
 import HeatingBillPreviewTwoPDF from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeatingBillPreviewTwoPDF";
 
 export default function HeidiSystemsPdf({

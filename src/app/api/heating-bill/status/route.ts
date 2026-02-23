@@ -3,7 +3,7 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { getRelatedLocalsByObjektId } from "@/api";
 
 /**
- * GET /api/generate-heating-bill/batch/status
+ * GET /api/heating-bill/status
  * Query params: objektId, docId, localId (optional), localIds (optional, comma-separated), allowDbFallback (optional)
  *
  * Single-local mode (localId provided): returns { localId, ready } for that local only.

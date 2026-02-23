@@ -234,7 +234,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label={activeCostType === "fuel_costs" ? "Menge in kWh" : "Anmerkungen"}
+            label={isFuelCost ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
             rows={4}
           />

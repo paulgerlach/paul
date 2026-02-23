@@ -4,7 +4,7 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
-import { mockHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/generate-heating-bill/_lib";
+import { emptyHeatingBillModel, fetchHeatingBillData, computeHeatingBill, validateModel } from "@/app/api/heating-bill/_lib";
 import { sendHeatingBillNotification } from "@/lib/slackNotifications";
 import database from "@/db";
 import { users } from "@/db/drizzle/schema";
@@ -16,7 +16,7 @@ const HEATING_BILL_USE_MOCK =
   process.env.HEATING_BILL_USE_MOCK === "1";
 
 /**
- * POST /api/generate-heating-bill
+ * POST /api/heating-bill/generate
  * Server-side heating bill PDF generation.
  * Accepts: { objektId, localId, docId, debug?: boolean }
  * Returns: { documentId, presignedUrl, metadata }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
 
     // Use computed model unless HEATING_BILL_USE_MOCK is set; fallback to mock on error.
-    let model = mockHeatingBillModel;
+    let model = emptyHeatingBillModel;
     let computedModel: typeof model | null = null;
     let validation: { valid: boolean; errors: string[]; warnings: string[] } | null = null;
     let rawData: Awaited<ReturnType<typeof fetchHeatingBillData>> | null = null;

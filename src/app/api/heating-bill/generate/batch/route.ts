@@ -5,7 +5,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import React from "react";
 import HeidiSystemsPdf from "@/components/Admin/Docs/Render/HeidiSystemsPdf/HeidiSystemsPdf";
 import {
-    mockHeatingBillModel,
+    emptyHeatingBillModel,
     fetchHeatingBillData,
     computeHeatingBill,
     validateModel,
@@ -269,7 +269,7 @@ async function processBatchInBackground(
                     // Mock mode or no contract data — generate single PDF as before
                     const computedModel = raw
                         ? computeHeatingBill(raw, { targetLocalId: localId })
-                        : mockHeatingBillModel;
+                        : emptyHeatingBillModel;
                     const validation = validateModel(computedModel);
                     if (!validation.valid && validation.errors.length > 0) {
                         console.warn("[HeatingBillBatch] Validation errors:", {

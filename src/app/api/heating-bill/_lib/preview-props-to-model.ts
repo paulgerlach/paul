@@ -1,5 +1,5 @@
 import type { HeatingBillPdfModel } from "./types";
-import { mockHeatingBillModel } from "./mock-model";
+import { emptyHeatingBillModel } from "./empty-model";
 import type {
   HeatingBillPreviewData,
   HeatingBillPreviewProps,
@@ -92,7 +92,7 @@ export function previewPropsToModel(
 ): HeatingBillPdfModel {
   const { previewData, contractors } = buildPreviewData(props);
   const model = JSON.parse(
-    JSON.stringify(mockHeatingBillModel)
+    JSON.stringify(emptyHeatingBillModel)
   ) as HeatingBillPdfModel;
 
   const propertyNumber = previewData.propertyNumber;
@@ -103,58 +103,51 @@ export function previewPropsToModel(
     propertyNumber,
     heidiCustomerNumber,
     userNumber: generateUserNumber(),
-    contractorsNames: previewData.contractorsNames || model.cover.contractorsNames,
-    street: previewData.objektInfo?.street || model.cover.street,
-    zip: previewData.objektInfo?.zip || model.cover.zip,
-    ownerFirstName: previewData.userInfo?.first_name || model.cover.ownerFirstName,
-    ownerLastName: previewData.userInfo?.last_name || model.cover.ownerLastName,
-    createdAt: formatDateGerman(previewData.mainDocDates?.created_at) || model.cover.createdAt,
+    contractorsNames: previewData.contractorsNames || "",
+    street: previewData.objektInfo?.street || "",
+    zip: previewData.objektInfo?.zip || "",
+    ownerFirstName: previewData.userInfo?.first_name || "",
+    ownerLastName: previewData.userInfo?.last_name || "",
+    createdAt: formatDateGerman(previewData.mainDocDates?.created_at) || "",
     billingPeriodStart:
-      formatDateGerman(previewData.mainDocDates?.start_date) ||
-      model.cover.billingPeriodStart,
+      formatDateGerman(previewData.mainDocDates?.start_date) || "",
     billingPeriodEnd:
-      formatDateGerman(previewData.mainDocDates?.end_date) ||
-      model.cover.billingPeriodEnd,
+      formatDateGerman(previewData.mainDocDates?.end_date) || "",
     usagePeriodStart:
-      formatDateGerman(previewData.mainDocDates?.start_date) ||
-      model.cover.usagePeriodStart,
+      formatDateGerman(previewData.mainDocDates?.start_date) || "",
     usagePeriodEnd:
-      formatDateGerman(previewData.mainDocDates?.end_date) ||
-      model.cover.usagePeriodEnd,
-    totalAmount: previewData.totalDiff ?? model.cover.totalAmount,
+      formatDateGerman(previewData.mainDocDates?.end_date) || "",
+    totalAmount: previewData.totalDiff ?? 0,
     totalAmountFormatted: formatEuro(
-      previewData.totalDiff ?? model.cover.totalAmount
+      previewData.totalDiff ?? 0
     ),
     contractors:
       contractors.length > 0
         ? contractors
-            .filter((c): c is typeof c & { id: string } => Boolean(c.id))
-            .map((c) => ({
-              id: c.id,
-              firstName: c.first_name,
-              lastName: c.last_name,
-            }))
+          .filter((c): c is typeof c & { id: string } => Boolean(c.id))
+          .map((c) => ({
+            id: c.id,
+            firstName: c.first_name,
+            lastName: c.last_name,
+          }))
         : undefined,
   };
 
   model.unitBreakdown = {
     ...model.unitBreakdown,
     contractorsNames:
-      previewData.contractorsNames || model.unitBreakdown.contractorsNames,
-    street: previewData.objektInfo?.street || model.unitBreakdown.street,
-    zip: previewData.objektInfo?.zip || model.unitBreakdown.zip,
+      previewData.contractorsNames || "",
+    street: previewData.objektInfo?.street || "",
+    zip: previewData.objektInfo?.zip || "",
     billingPeriodStart:
-      formatDateGerman(previewData.mainDocDates?.start_date) ||
-      model.unitBreakdown.billingPeriodStart,
+      formatDateGerman(previewData.mainDocDates?.start_date) || "",
     billingPeriodEnd:
-      formatDateGerman(previewData.mainDocDates?.end_date) ||
-      model.unitBreakdown.billingPeriodEnd,
+      formatDateGerman(previewData.mainDocDates?.end_date) || "",
     createdAt:
-      formatDateGerman(previewData.mainDocDates?.created_at) ||
-      model.unitBreakdown.createdAt,
-    grandTotal: previewData.totalDiff ?? model.unitBreakdown.grandTotal,
+      formatDateGerman(previewData.mainDocDates?.created_at) || "",
+    grandTotal: previewData.totalDiff ?? 0,
     grandTotalFormatted: formatEuro(
-      previewData.totalDiff ?? model.unitBreakdown.grandTotal
+      previewData.totalDiff ?? 0
     ),
   };
 

@@ -5,7 +5,7 @@
  * Other sections use mock until later steps.
  */
 import type { HeatingBillPdfModel } from "./types";
-import { mockHeatingBillModel } from "./mock-model";
+import { emptyHeatingBillModel } from "./empty-model";
 import type { HeatingBillRawData } from "./data-fetcher";
 import { aggregateInvoiceCosts } from "./costs";
 import { computeWarmWaterCosts } from "./warmwater";
@@ -74,7 +74,7 @@ export function computeHeatingBill(
   options?: { targetLocalId?: string; tenantOverride?: TenantOverride }
 ): HeatingBillPdfModel {
   const model = JSON.parse(
-    JSON.stringify(mockHeatingBillModel)
+    JSON.stringify(emptyHeatingBillModel)
   ) as HeatingBillPdfModel;
 
   if (!raw.mainDoc || !raw.objekt) {
@@ -117,10 +117,10 @@ export function computeHeatingBill(
     { readingsTotalKwh }
   );
   const energyTotalKwh =
-    costAgg.energyInvoices.reduce((s, i) => s + i.kWh, 0) || readingsTotalKwh || 761123;
+    costAgg.energyInvoices.reduce((s, i) => s + i.kWh, 0) || readingsTotalKwh || 0;
 
-  const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 3148.25;
-  const heatingMwh = readingsResult.totalHeatMwh || 404.04;
+  const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 0;
+  const heatingMwh = readingsResult.totalHeatMwh || 0;
 
   const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
   const wwDeviceRental = combinedDeviceRental;
@@ -138,7 +138,7 @@ export function computeHeatingBill(
     energyTotalKwh,
     costAgg.heatingCostTotal,
     wwDeviceRental,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
@@ -150,15 +150,15 @@ export function computeHeatingBill(
     warmWater,
     heatingDeviceRental,
     heatingMwh,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
     }
   );
 
-  const totalColdWaterM3 = readingsResult.totalColdWaterM3 || 9943.14;
-  const unitCount = raw.locals.length || 123;
+  const totalColdWaterM3 = readingsResult.totalColdWaterM3 || 0;
+  const unitCount = raw.locals.length || 1;
   const localForDoc = raw.mainDoc.local_id
     ? raw.locals.find((l) => l.id === raw.mainDoc!.local_id)
     : null;
@@ -168,7 +168,7 @@ export function computeHeatingBill(
     costAgg.coldWaterInvoices as any,
     totalColdWaterM3,
     unitCount,
-    totalLivingSpace || 11196.4,
+    totalLivingSpace || 0,
     localLivingSpace
   );
 
@@ -264,13 +264,13 @@ export function computeHeatingBill(
         contractsForTenantDisplay
           .flatMap((c) => c.contractors)
           .map((ct) => `${ct.first_name} ${ct.last_name}`)
-          .join(", ") || model.cover.contractorsNames
+          .join(", ") || ""
       );
     })();
 
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
-    livingSpaceM2: localLivingSpaceM2 || 77.02,
+    livingSpaceM2: localLivingSpaceM2 || 0,
     localLabel: localLabel || undefined,
     heating,
     warmWater,
@@ -279,8 +279,8 @@ export function computeHeatingBill(
     warmWaterDevices: warmWaterDevicesForLocal,
     coldWaterDevices: coldWaterDevicesForLocal,
     contractorsNames,
-    street: raw.objekt?.street ?? model.cover.street,
-    zip: raw.objekt?.zip ?? model.cover.zip,
+    street: raw.objekt?.street ?? "",
+    zip: raw.objekt?.zip ?? "",
     billingPeriodStart: formatDateGerman(raw.mainDoc.start_date) ?? "",
     billingPeriodEnd: formatDateGerman(raw.mainDoc.end_date) ?? "",
     createdAt: formatDateGerman(raw.mainDoc.created_at) ?? "",
@@ -292,7 +292,7 @@ export function computeHeatingBill(
   });
 
   const energyCarrier = energyCarrierFromObjekt(raw.objekt?.heating_systems);
-  const totalLivingSpaceM2 = totalLivingSpace || 11196.4;
+  const totalLivingSpaceM2 = totalLivingSpace || 0;
   const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
   const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
 
@@ -315,7 +315,7 @@ export function computeHeatingBill(
     energyInvoices: co2EnergyInvoices,
     totalLivingSpaceM2,
     energyCarrier,
-    localLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    localLivingSpaceM2: localLivingSpaceM2 || 0,
     portalLink: portalLinkForQr,
   });
 
@@ -325,7 +325,7 @@ export function computeHeatingBill(
     totalLivingSpaceM2,
     unitHeatingMwh,
     unitWarmWaterM3,
-    unitLivingSpaceM2: localLivingSpaceM2 || 77.02,
+    unitLivingSpaceM2: localLivingSpaceM2 || 0,
     portalLink: portalLinkForQr,
   });
 
@@ -385,14 +385,14 @@ export function computeHeatingBill(
     ...model.cover,
     propertyNumber: raw.objekt?.id
       ? propertyNumberFromObjekt(raw.objekt.id)
-      : model.cover.propertyNumber,
+      : "",
     heidiCustomerNumber: raw.user?.id
       ? heidiCustomerNumberFromUser(raw.user.id)
-      : model.cover.heidiCustomerNumber,
+      : "",
     userNumber:
       raw.user?.id && targetLocalId && raw.mainDoc?.id
         ? userNumberFromIds(raw.user.id, targetLocalId, raw.mainDoc.id)
-        : model.cover.userNumber,
+        : "",
     contractorsNames,
     contractors:
       contractorsList.length > 0
@@ -401,33 +401,32 @@ export function computeHeatingBill(
           firstName: ct.first_name,
           lastName: ct.last_name,
         }))
-        : model.cover.contractors,
-    street: raw.objekt?.street ?? model.cover.street,
-    zip: raw.objekt?.zip ?? model.cover.zip,
-    ownerFirstName: raw.objektOwner?.first_name ?? model.cover.ownerFirstName,
-    ownerLastName: raw.objektOwner?.last_name ?? model.cover.ownerLastName,
+        : [],
+    street: raw.objekt?.street ?? "",
+    zip: raw.objekt?.zip ?? "",
+    ownerFirstName: raw.objektOwner?.first_name ?? "",
+    ownerLastName: raw.objektOwner?.last_name ?? "",
     createdAt: raw.mainDoc
-      ? formatDateGerman(raw.mainDoc.created_at)
-      : model.cover.createdAt,
+      ? formatDateGerman(raw.mainDoc.created_at) ?? ""
+      : "",
     billingPeriodStart:
-      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.billingPeriodStart,
+      formatDateGerman(raw.mainDoc?.start_date) ?? "",
     billingPeriodEnd:
-      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.billingPeriodEnd,
-    // Usage period: tenant-specific when override is present
+      formatDateGerman(raw.mainDoc?.end_date) ?? "",
     usagePeriodStart:
       tenantOverride?.usagePeriodStart ??
-      formatDateGerman(raw.mainDoc?.start_date) ?? model.cover.usagePeriodStart,
+      formatDateGerman(raw.mainDoc?.start_date) ?? "",
     usagePeriodEnd:
       tenantOverride?.usagePeriodEnd ??
-      formatDateGerman(raw.mainDoc?.end_date) ?? model.cover.usagePeriodEnd,
+      formatDateGerman(raw.mainDoc?.end_date) ?? "",
     totalAmount: model.unitBreakdown.grandTotal,
     totalAmountFormatted: model.unitBreakdown.grandTotalFormatted,
     portalLink,
-    userId: raw.user?.id ?? model.cover.userId,
+    userId: raw.user?.id ?? "",
     securityCode:
       raw.user?.id && raw.mainDoc?.id
         ? securityCodeFromIds(raw.user.id, raw.mainDoc.id)
-        : model.cover.securityCode,
+        : "",
     qrCodeUrl,
   };
 

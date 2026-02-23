@@ -92,6 +92,8 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
     defaultValues,
   });
 
+  const { isSubmitting } = methods.formState;
+
   const uploadDocuments = useUploadDocuments();
   const { deletedDocumentIds } = useDocumentDeletion([]);
 
@@ -183,46 +185,52 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
     const { document, ...rest } = data;
 
-    const formattedPayload = {
-      invoice_date: rest.invoice_date
-        ? format(rest.invoice_date, "yyyy-MM-dd")
-        : null,
-      total_amount: rest.total_amount != null ? String(rest.total_amount) : null,
-      service_period: rest.service_period,
-      for_all_tenants: rest.for_all_tenants,
-      purpose: rest.purpose,
-      notes: rest.notes,
-      direct_local_id:
-        rest.for_all_tenants === false ? rest.direct_local_id : null,
-      document,
-    };
-
     if (!document?.length) {
       toast.error("Rechnung beifügen");
       return;
     }
 
-    const res = await adminCreateInvoiceDocument(
-      {
-        ...formattedPayload,
-        invoice_date: rest.invoice_date,
-        total_amount: rest.total_amount != null ? rest.total_amount : null,
-      },
-      objektID,
-      String(user_id),
-      operatingDocID,
-      activeCostType
-    );
+    const delayPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
-    updateDocumentGroup(activeCostType, res);
+    const submitProcess = async () => {
+      const formattedPayload = {
+        invoice_date: rest.invoice_date
+          ? format(rest.invoice_date, "yyyy-MM-dd")
+          : null,
+        total_amount: rest.total_amount != null ? String(rest.total_amount) : null,
+        service_period: rest.service_period,
+        for_all_tenants: rest.for_all_tenants,
+        purpose: rest.purpose,
+        notes: rest.notes,
+        direct_local_id:
+          rest.for_all_tenants === false ? rest.direct_local_id : null,
+        document,
+      };
 
-    if (document && document.length > 0) {
-      await uploadDocuments.mutateAsync({
-        files: document,
-        relatedId: operatingDocID ?? "",
-        relatedType: "operating_costs",
-      });
-    }
+      const res = await adminCreateInvoiceDocument(
+        {
+          ...formattedPayload,
+          invoice_date: rest.invoice_date,
+          total_amount: rest.total_amount != null ? rest.total_amount : null,
+        },
+        objektID,
+        String(user_id),
+        operatingDocID,
+        activeCostType
+      );
+
+      updateDocumentGroup(activeCostType, res);
+
+      if (document && document.length > 0) {
+        await uploadDocuments.mutateAsync({
+          files: document,
+          relatedId: operatingDocID ?? "",
+          relatedType: "operating_costs",
+        });
+      }
+    };
+
+    await Promise.all([submitProcess(), delayPromise]);
 
     closeDialog(activeDialog as DialogStoreActionType);
     toast.success("Rechnung erfolgreich hinzugefügt");
@@ -377,10 +385,17 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
             <Button
               type="submit"
-              disabled={isProcessingInvoice}
+              disabled={isProcessingInvoice || isSubmitting}
               className="!font-medium !text-lg max-xl:!text-sm"
             >
-              Speichern
+              {isSubmitting ? (
+                <>
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  Speichern...
+                </>
+              ) : (
+                "Speichern"
+              )}
             </Button>
           </div>
         </form>

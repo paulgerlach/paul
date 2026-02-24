@@ -1309,3 +1309,54 @@ export async function getDocumentsByRelatedIds(
 
   return grouped;
 }
+
+/**
+ * Get all documents linked to the given objekt IDs.
+ * Resolves through heating_bill_documents and operating_cost_documents.
+ */
+export async function getDocumentsByObjektIds(
+  objektIds: string[],
+): Promise<any[]> {
+  if (objektIds.length === 0) return [];
+
+  // Find all heating bill doc IDs for these objekts
+  const hbDocs = await database
+    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+    .from(heating_bill_documents)
+    .where(inArray(heating_bill_documents.objekt_id, objektIds));
+
+  const hbObjektMap: Record<string, string> = {};
+  for (const hb of hbDocs) {
+    if (hb.objekt_id) hbObjektMap[hb.id] = hb.objekt_id;
+  }
+
+  // Find all operating cost doc IDs for these objekts
+  const ocDocs = await database
+    .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+    .from(operating_cost_documents)
+    .where(inArray(operating_cost_documents.objekt_id, objektIds));
+
+  const ocObjektMap: Record<string, string> = {};
+  for (const oc of ocDocs) {
+    if (oc.objekt_id) ocObjektMap[oc.id] = oc.objekt_id;
+  }
+
+  const allParentIds = [
+    ...hbDocs.map((d) => d.id),
+    ...ocDocs.map((d) => d.id),
+  ];
+
+  if (allParentIds.length === 0) return [];
+
+  // Fetch documents linked to these parent records
+  const allDocs = await database
+    .select()
+    .from(documents)
+    .where(inArray(documents.related_id, allParentIds))
+    .orderBy(documents.created_at);
+
+  return allDocs.map((doc) => ({
+    ...doc,
+    objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
+  }));
+}

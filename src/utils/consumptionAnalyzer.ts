@@ -9,6 +9,7 @@ import {
 
   pipe_water,
   electricity,
+  smoke_detector,
 } from "@/static/icons";
 
 export interface ConsumptionNotification {
@@ -105,6 +106,9 @@ function getDeviceIcon(deviceType?: string): StaticImageData {
   }
   if (type.includes("elec") || type.includes("elek") || type.includes("strom") || type.includes("power") || type.includes("energy") || type.includes("energie") || type.includes("e-meter")) {
     return electricity;
+  }
+  if (type === "andere" || type.includes("smoke") || type.includes("rauch")) {
+    return smoke_detector;
   }
 
   return pipe_water;

@@ -1,6 +1,8 @@
 import {
   getAdminContractsWithContractorsByLocalIDs,
   getRelatedLocalsByObjektId,
+  getHeatingBillDocsByObjektId,
+  getDocumentsByRelatedIds,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
@@ -49,6 +51,50 @@ export default async function ResultLocalPDF({
     locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
     user_id
   );
+
+  // Fetch per-locale heating bill docs and their tenant documents
+  const perLocaleDocs = await getHeatingBillDocsByObjektId(objekt_id);
+  const perLocaleDocIds = perLocaleDocs
+    .map((d) => d.id)
+    .filter((id): id is string => Boolean(id));
+  const documentsByRelatedId = await getDocumentsByRelatedIds(perLocaleDocIds);
+
+  // Build a contract_id → tenant name map from the already-fetched contracts
+  const contractIdToTenantName: Record<string, string> = {};
+  for (const localContracts of Object.values(contractsByLocalId)) {
+    for (const contract of localContracts) {
+      const names = contract.contractors
+        ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
+        .filter(Boolean)
+        .join(", ");
+      if (contract.id && names) {
+        contractIdToTenantName[contract.id] = names;
+      }
+    }
+  }
+
+  // Build a map: localId → tenant document records with resolved tenant names
+  const tenantDocsByLocalId: Record<
+    string,
+    { id: string; document_name: string; document_url: string; tenantName: string }[]
+  > = {};
+  for (const hbDoc of perLocaleDocs) {
+    const localId = hbDoc.local_id;
+    if (!localId || !hbDoc.id) continue;
+    const tenantDocs = (documentsByRelatedId[hbDoc.id] ?? []).map((doc) => {
+      // Extract contract_id from document_name pattern: ..._<contractId>.pdf
+      const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+      const contractId = contractIdMatch?.[1] ?? "";
+      const isVacancy = doc.document_name.includes("leerstand");
+      const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
+      return { ...doc, tenantName };
+    });
+    if (!tenantDocsByLocalId[localId]) {
+      tenantDocsByLocalId[localId] = [];
+    }
+    tenantDocsByLocalId[localId].push(...tenantDocs);
+  }
+
   const localsWithStatus = locals.map((local) => {
     const localId = local.id ?? "";
     const contracts = contractsByLocalId[localId] ?? [];
@@ -72,28 +118,29 @@ export default async function ResultLocalPDF({
           currentResults={locals.length}
         />
         <div className="overflow-y-auto space-y-4">
-            {locals.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center">
-                <p className="text-dark_green/50 text-lg">
-                  Keine Ergebnisse gefunden
-                </p>
-                <p className="text-dark_green/30 text-sm mt-2">
-                  Versuchen Sie einen anderen Suchbegriff
-                </p>
-              </div>
-            ) : (
-              localsWithStatus.map(({ local, status }) => (
-                <AdminObjekteLocalItemHeatingBillDocResult
-                  objektID={objekt_id}
-                  key={local.id}
-                  userID={user_id}
-                  item={local}
-                  docType="objektauswahl"
-                  docID={doc_id}
-                  status={status}
-                />
-              ))
-            )}
+          {locals.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center">
+              <p className="text-dark_green/50 text-lg">
+                Keine Ergebnisse gefunden
+              </p>
+              <p className="text-dark_green/30 text-sm mt-2">
+                Versuchen Sie einen anderen Suchbegriff
+              </p>
+            </div>
+          ) : (
+            localsWithStatus.map(({ local, status }) => (
+              <AdminObjekteLocalItemHeatingBillDocResult
+                objektID={objekt_id}
+                key={local.id}
+                userID={user_id}
+                item={local}
+                docType="objektauswahl"
+                docID={doc_id}
+                status={status}
+                tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
+              />
+            ))
+          )}
         </div>
       </ContentWrapper>
     </div>

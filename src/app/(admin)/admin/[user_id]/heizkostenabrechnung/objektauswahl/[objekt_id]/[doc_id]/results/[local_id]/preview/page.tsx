@@ -1,16 +1,10 @@
 import {
-  getAdminContractsWithContractorsByLocalID,
-  getAdminHeatingBillDocumentByID,
-  getAdminHeatingInvoicesByHeatingBillDocumentID,
-  getAdminUserData,
-  getDocCostCategoryTypes,
-  getLocalById,
-  getObjectById,
-  getRelatedLocalsByObjektId,
-} from "@/api";
+  fetchHeatingBillData,
+  computeHeatingBill,
+} from "@/app/api/heating-bill/_lib";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
-import HeatingBillPreview from "@/components/Admin/Docs/Render/HeatingBillPreview/HeatingBillPreview";
+import HeatingBillPDFViewer from "@/components/Admin/Docs/Render/HeatingBillPDFViewer";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function ResultLocalPreview({
@@ -25,30 +19,11 @@ export default async function ResultLocalPreview({
 }) {
   const { objekt_id, doc_id, local_id, user_id } = await params;
 
-  const [
-    objekt,
-    relatedLocals,
-    costCategories,
-    mainDoc,
-    contracts,
-    invoices,
-    local,
-    user,
-  ] = await Promise.all([
-    getObjectById(objekt_id),
-    getRelatedLocalsByObjektId(objekt_id),
-    getDocCostCategoryTypes("heizkostenabrechnung"),
-    getAdminHeatingBillDocumentByID(doc_id, user_id),
-    getAdminContractsWithContractorsByLocalID(local_id, user_id),
-    getAdminHeatingInvoicesByHeatingBillDocumentID(doc_id, user_id),
-    getLocalById(local_id),
-    getAdminUserData(user_id),
-  ]);
-
-  const totalLivingSpace =
-    relatedLocals?.reduce((sum, local) => {
-      return sum + (Number(local.living_space) || 0);
-    }, 0) || 0;
+  // Compute the PDF model server-side
+  const rawData = await fetchHeatingBillData(doc_id, user_id, {
+    useServiceRole: true,
+  });
+  const model = computeHeatingBill(rawData, { targetLocalId: local_id });
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
@@ -59,17 +34,9 @@ export default async function ResultLocalPreview({
         subtitle="Die fertig erstellten Heizkostenabrechnung können nun die "
       />
       <ContentWrapper className="space-y-4">
-        <HeatingBillPreview
-          mainDoc={mainDoc}
-          local={local}
-          user={user}
-          totalLivingSpace={totalLivingSpace}
-          costCategories={costCategories}
-          invoices={invoices}
-          contracts={contracts}
-          objekt={objekt}
-        />
+        <HeatingBillPDFViewer model={model} />
       </ContentWrapper>
     </div>
   );
 }
+

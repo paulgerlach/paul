@@ -163,6 +163,7 @@ type ApartmentEntry = {
     tenants: Array<{
         contractId: string;
         contractorsNames: string;
+        documentId?: string;
         presignedUrl?: string;
     }>;
 };
@@ -263,6 +264,26 @@ async function processBatchInBackground(
                         )
                         : []; // empty means mock mode — will produce single PDF
 
+                // Create a per-locale heating_bill_documents record
+                const { data: perLocaleDoc, error: hbInsertError } = await supabase
+                    .from("heating_bill_documents")
+                    .insert({
+                        objekt_id: objektId,
+                        local_id: localId,
+                        user_id: userId,
+                        start_date: raw?.mainDoc?.start_date ?? null,
+                        end_date: raw?.mainDoc?.end_date ?? null,
+                    })
+                    .select("id")
+                    .single();
+
+                if (hbInsertError || !perLocaleDoc) {
+                    throw new Error(
+                        `Failed to create per-locale heating bill doc: ${hbInsertError?.message ?? "unknown"}`
+                    );
+                }
+                const perLocaleDocId = perLocaleDoc.id;
+
                 const tenantEntries: ApartmentEntry["tenants"] = [];
 
                 if (segments.length === 0) {
@@ -281,9 +302,34 @@ async function processBatchInBackground(
                     const buffer = await renderPdf(model);
                     const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
                     await uploadPdf(supabase, storagePath, buffer);
+
+                    // Insert document record linked to per-locale heating bill doc
+                    let documentId: string | undefined;
+                    try {
+                        const { data: docRecord, error: insertError } = await supabase
+                            .from("documents")
+                            .insert({
+                                document_name: `Heizkostenabrechnung_${docId}_default.pdf`,
+                                document_url: storagePath,
+                                related_id: perLocaleDocId,
+                                related_type: "heating_bill",
+                                user_id: userId,
+                            })
+                            .select("id")
+                            .single();
+                        if (insertError) {
+                            console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, insertError });
+                        } else {
+                            documentId = docRecord?.id;
+                        }
+                    } catch (error_) {
+                        console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, error_ });
+                    }
+
                     tenantEntries.push({
                         contractId: "default",
                         contractorsNames: model.cover.contractorsNames,
+                        documentId,
                     });
                     generated++;
                 } else {
@@ -314,9 +360,34 @@ async function processBatchInBackground(
                         const buffer = await renderPdf(model);
                         const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
                         await uploadPdf(supabase, storagePath, buffer);
+
+                        // Insert document record linked to per-locale heating bill doc
+                        let documentId: string | undefined;
+                        try {
+                            const { data: docRecord, error: insertError } = await supabase
+                                .from("documents")
+                                .insert({
+                                    document_name: `Heizkostenabrechnung_${docId}_${seg.contractId}.pdf`,
+                                    document_url: storagePath,
+                                    related_id: perLocaleDocId,
+                                    related_type: "heating_bill",
+                                    user_id: userId,
+                                })
+                                .select("id")
+                                .single();
+                            if (insertError) {
+                                console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, contractId: seg.contractId, insertError });
+                            } else {
+                                documentId = docRecord?.id;
+                            }
+                        } catch (error_) {
+                            console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, contractId: seg.contractId, error_ });
+                        }
+
                         tenantEntries.push({
                             contractId: seg.contractId,
                             contractorsNames: seg.contractorsNames,
+                            documentId,
                         });
                         generated++;
                     }

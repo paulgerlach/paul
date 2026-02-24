@@ -12,7 +12,7 @@ import {
   users,
   local_meters,
   heating_invoices,
-  agencies,   
+  agencies,
 } from "@/db/drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -1264,4 +1264,48 @@ export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: stri
     .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
 
   return invoices;
+}
+
+/**
+ * Get per-locale heating bill documents for an objekt (where local_id is set).
+ */
+export async function getHeatingBillDocsByObjektId(
+  objektId: string,
+): Promise<HeatingBillDocumentType[]> {
+  const docs = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(
+      and(
+        eq(heating_bill_documents.objekt_id, objektId),
+        sql`${heating_bill_documents.local_id} IS NOT NULL`,
+      )
+    );
+
+  return docs;
+}
+
+/**
+ * Get all document records whose related_id is in the given set of IDs.
+ * Returns a map of related_id → document records.
+ */
+export async function getDocumentsByRelatedIds(
+  relatedIds: string[],
+): Promise<Record<string, { id: string; document_name: string; document_url: string; related_id: string; user_id: string; created_at: string | null }[]>> {
+  if (relatedIds.length === 0) return {};
+
+  const docs = await database
+    .select()
+    .from(documents)
+    .where(inArray(documents.related_id, relatedIds));
+
+  const grouped: Record<string, typeof docs> = {};
+  for (const doc of docs) {
+    if (!grouped[doc.related_id]) {
+      grouped[doc.related_id] = [];
+    }
+    grouped[doc.related_id].push(doc);
+  }
+
+  return grouped;
 }

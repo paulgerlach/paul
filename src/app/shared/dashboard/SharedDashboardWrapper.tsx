@@ -49,7 +49,7 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
           acc.heatDevices.push(item);
         } else if (deviceType === "Water" || deviceType === "Kaltwasserzähler") {
           acc.coldWaterDevices.push(item);
-        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler") {
+        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler"|| deviceType === "HCA") {
           acc.hotWaterDevices.push(item);
         } else if (deviceType === "Elec" || deviceType === "Stromzähler") {
           acc.electricityDevices.push(item);

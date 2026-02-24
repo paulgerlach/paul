@@ -191,6 +191,13 @@ const parseGermanNumber = (value: string | number | undefined): number | null =>
   return isNaN(parsed) ? null : parsed;
 };
 
+const parseHCADate = (dateStr: string | undefined): Date => {
+  if (!dateStr) return new Date(0);
+  const [day, month, year] = dateStr.split(".").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+
 // Helper function to aggregate data by actual date ranges
 // Uses IV historical columns to calculate CONSUMPTION (not cumulative sums)
 const aggregateDataByTimeRange = (
@@ -204,6 +211,10 @@ const aggregateDataByTimeRange = (
   const validReadings = readings.filter(isValidReading);
   if (validReadings.length === 0) return [];
 
+  // Detect device type
+  const deviceType = validReadings[0]?.["Device Type"];
+  const isHCA = deviceType === "HCA";
+
   // Determine date range for display
   const now = endDate || new Date();
   const rangeStart = startDate || new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
@@ -212,89 +223,132 @@ const aggregateDataByTimeRange = (
 
   // STEP 1: Get most recent reading per device
   const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
-  
+
   validReadings.forEach((reading) => {
     const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
-    
-    // Get date from reading
-    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
-    const newActualDate = reading["Actual Date"];
-    const newRawDate = reading["Raw Date"];
-    
+
     let dateString: string | null = null;
-    if (oldFormatDate && typeof oldFormatDate === "string") {
-      dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate && typeof newActualDate === "string") {
-      dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate && typeof newRawDate === "string") {
-      dateString = newRawDate.replace(/-/g, ".");
+
+    if (isHCA) {
+      // HCA uses IV,1,0,0,,Date format
+      const hcaDate = reading["IV,1,0,0,,Date"];
+      if (hcaDate && typeof hcaDate === "string") {
+        dateString = hcaDate;
+      }
+    } else {
+      // Standard meter date parsing
+      const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+      const newFormatDate = reading["IV,1,0,0,,Date"];
+      const newActualDate = reading["Actual Date"];
+      const newRawDate = reading["Raw Date"];
+
+      if (newFormatDate && typeof newFormatDate === "string") {
+        dateString = newFormatDate;
+      } else if (oldFormatDate && typeof oldFormatDate === "string") {
+        dateString = oldFormatDate.split(" ")[0];
+      } else if (newActualDate && typeof newActualDate === "string") {
+        dateString = newActualDate.split(" ")[0];
+      } else if (newRawDate && typeof newRawDate === "string") {
+        dateString = newRawDate.replace(/-/g, ".");
+      }
     }
-    
+
     let readingDate = new Date(0);
     if (dateString && dateString !== "00.00.00") {
       const [day, month, year] = dateString.split(".").map(Number);
       const fullYear = year < 100 ? 2000 + year : year;
       readingDate = new Date(fullYear, month - 1, day);
     }
-    
+
     const existing = deviceLatestReading.get(deviceId);
     if (!existing || readingDate > existing.date) {
       deviceLatestReading.set(deviceId, { reading, date: readingDate });
     }
   });
 
-  // STEP 2: Calculate monthly consumption from IV columns for each device
-  // IV columns: IV,0 = current, IV,1 = last month end, IV,3 = 2 months ago end
-  // Consumption = IV[n] - IV[n+1]
+  // STEP 2: Calculate monthly consumption from IV columns
   const monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
-  
+
   deviceLatestReading.forEach(({ reading }) => {
-    // Get cumulative values from IV columns (try multiple patterns)
-    const iv0 = parseGermanNumber(reading["IV,0,0,0,Wh,E"]);
-    const iv1 = parseGermanNumber(reading["IV,1,0,0,Wh,E"]);
-    const iv2 = parseGermanNumber(reading["IV,2,0,0,Wh,E"]);
-    const iv3 = parseGermanNumber(reading["IV,3,0,0,Wh,E"]);
-    const iv5 = parseGermanNumber(reading["IV,5,0,0,Wh,E"]);
-    
-    // Build array of valid cumulative values
-    const cumulativeValues: number[] = [];
-    if (iv0 !== null && iv0 > 0) cumulativeValues.push(iv0);
-    
-    // IV,1 is last month - only include if > 0 (0 means no data)
-    const lastMonth = iv1 !== null && iv1 > 0 ? iv1 : null;
-    if (lastMonth !== null) cumulativeValues.push(lastMonth);
-    
-    // Try IV,3 first (more common), fall back to IV,2
-    const twoMonthsAgo = (iv3 !== null && iv3 > 0) ? iv3 : (iv2 !== null && iv2 > 0 ? iv2 : null);
-    if (twoMonthsAgo !== null) cumulativeValues.push(twoMonthsAgo);
-    
-    // IV,5 for 3 months ago
-    if (iv5 !== null && iv5 > 0) cumulativeValues.push(iv5);
-    
-    // Calculate consumption for each month (delta between consecutive values)
-    for (let i = 0; i < cumulativeValues.length - 1; i++) {
-      const consumption = cumulativeValues[i] - cumulativeValues[i + 1];
-      if (consumption >= 0) {
-        monthlyConsumption.set(i, (monthlyConsumption.get(i) || 0) + consumption);
+    if (isHCA) {
+      // HCA: Values are direct monthly readings (not cumulative)
+      // IV,0 = current, IV,1 = last month, IV,2 = 2 months ago, etc.
+      for (let offset = 0; offset <= 31; offset++) {
+        const value = parseGermanNumber(reading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]);
+        if (value !== null && value > 0) {
+          monthlyConsumption.set(offset, (monthlyConsumption.get(offset) || 0) + value);
+        }
+      }
+    } else {
+      // Standard meters: Calculate deltas from cumulative IV values
+      const iv0 = parseGermanNumber(reading["IV,0,0,0,Wh,E"]);
+      const iv1 = parseGermanNumber(reading["IV,1,0,0,Wh,E"]);
+      const iv2 = parseGermanNumber(reading["IV,2,0,0,Wh,E"]);
+      const iv3 = parseGermanNumber(reading["IV,3,0,0,Wh,E"]);
+      const iv5 = parseGermanNumber(reading["IV,5,0,0,Wh,E"]);
+
+      const cumulativeValues: number[] = [];
+      if (iv0 !== null && iv0 > 0) cumulativeValues.push(iv0);
+
+      const lastMonth = iv1 !== null && iv1 > 0 ? iv1 : null;
+      if (lastMonth !== null) cumulativeValues.push(lastMonth);
+
+      const twoMonthsAgo = (iv3 !== null && iv3 > 0) ? iv3 : (iv2 !== null && iv2 > 0 ? iv2 : null);
+      if (twoMonthsAgo !== null) cumulativeValues.push(twoMonthsAgo);
+
+      if (iv5 !== null && iv5 > 0) cumulativeValues.push(iv5);
+
+      // Calculate consumption for each month (delta between consecutive values)
+      for (let i = 0; i < cumulativeValues.length - 1; i++) {
+        const consumption = cumulativeValues[i] - cumulativeValues[i + 1];
+        if (consumption >= 0) {
+          monthlyConsumption.set(i, (monthlyConsumption.get(i) || 0) + consumption);
+        }
       }
     }
   });
 
   // STEP 3: Convert month offsets to actual labels
   const result: { label: string; value: number }[] = [];
-  
-  // monthOffset 0 = current month, 1 = last month, etc.
-  for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
-    const consumption = monthlyConsumption.get(offset) || 0;
-    if (consumption > 0 || offset < 2) { // Always show at least 2 months
-      const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-      result.push({
-        label: monthNames[monthDate.getMonth()],
-        value: Math.round(consumption),
-      });
+
+  if (isHCA) {
+    // For HCA, use date columns to determine labels
+    // IV,1 = last month, IV,2 = 2 months ago, etc.
+    for (let offset = 0; offset < monthsToShow && offset < 6; offset++) {
+      const consumption = monthlyConsumption.get(offset) || 0;
+
+      if (consumption > 0 || offset < 2) {
+        // Get date from first reading (IV,{offset+1},0,0,,Date)
+        const dateKey = `IV,${offset + 1},0,0,,Date` as keyof MeterReadingType;
+        const dateStr = readings[0]?.[dateKey] as string | undefined;
+
+        let label: string;
+        if (dateStr) {
+          const date = parseHCADate(dateStr);
+          label = monthNames[date.getMonth()];
+        } else {
+          // Fallback: use offset to generate label
+          const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+          label = monthNames[monthDate.getMonth()];
+        }
+
+        result.push({ label, value: Math.round(consumption) });
+      }
+    }
+  } else {
+    // Standard meters: use calculated month offsets
+    for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
+      const consumption = monthlyConsumption.get(offset) || 0;
+      if (consumption > 0 || offset < 2) {
+        const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+        result.push({
+          label: monthNames[monthDate.getMonth()],
+          value: Math.round(consumption),
+        });
+      }
     }
   }
-  
+
   // Return in chronological order (oldest first)
   return result.reverse();
 };

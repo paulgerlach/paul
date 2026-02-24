@@ -51,6 +51,8 @@ export type MeterReadingType = {
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
   "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
   "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
+  "IV,0,0,0,W,Power"?: number | string; // Instantaneous power - OLD format
+  "IV,0,0,0,Wh,E accumulation of abs value only if negative contributions (Backward flow)"?: number | string; // Backward flow E
 
   // NEW Engelmann CSV format fields
   "Number Meter"?: string | number; // NEW format device ID

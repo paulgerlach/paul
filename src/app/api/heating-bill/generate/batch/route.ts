@@ -163,6 +163,7 @@ type ApartmentEntry = {
     tenants: Array<{
         contractId: string;
         contractorsNames: string;
+        documentId?: string;
         presignedUrl?: string;
     }>;
 };
@@ -281,9 +282,34 @@ async function processBatchInBackground(
                     const buffer = await renderPdf(model);
                     const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
                     await uploadPdf(supabase, storagePath, buffer);
+
+                    // Insert document record into DB
+                    let documentId: string | undefined;
+                    try {
+                        const { data: docRecord, error: insertError } = await supabase
+                            .from("documents")
+                            .insert({
+                                document_name: `Heizkostenabrechnung_${docId}_default.pdf`,
+                                document_url: storagePath,
+                                related_id: docId,
+                                related_type: "heating_bill",
+                                user_id: userId,
+                            })
+                            .select("id")
+                            .single();
+                        if (insertError) {
+                            console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, insertError });
+                        } else {
+                            documentId = docRecord?.id;
+                        }
+                    } catch (error_) {
+                        console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, error_ });
+                    }
+
                     tenantEntries.push({
                         contractId: "default",
                         contractorsNames: model.cover.contractorsNames,
+                        documentId,
                     });
                     generated++;
                 } else {
@@ -314,9 +340,34 @@ async function processBatchInBackground(
                         const buffer = await renderPdf(model);
                         const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
                         await uploadPdf(supabase, storagePath, buffer);
+
+                        // Insert document record into DB
+                        let documentId: string | undefined;
+                        try {
+                            const { data: docRecord, error: insertError } = await supabase
+                                .from("documents")
+                                .insert({
+                                    document_name: `Heizkostenabrechnung_${docId}_${seg.contractId}.pdf`,
+                                    document_url: storagePath,
+                                    related_id: docId,
+                                    related_type: "heating_bill",
+                                    user_id: userId,
+                                })
+                                .select("id")
+                                .single();
+                            if (insertError) {
+                                console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, contractId: seg.contractId, insertError });
+                            } else {
+                                documentId = docRecord?.id;
+                            }
+                        } catch (error_) {
+                            console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, contractId: seg.contractId, error_ });
+                        }
+
                         tenantEntries.push({
                             contractId: seg.contractId,
                             contractorsNames: seg.contractorsNames,
+                            documentId,
                         });
                         generated++;
                     }

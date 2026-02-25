@@ -1,14 +1,14 @@
 import {
   getAdminContractsByLocalID,
   getDocCostCategoryTypes,
-  getHeatingBillDocumentByID,
+  getAdminHeatingBillDocumentByID,
   getLocalById,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungReceipt";
 import AdminUmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/Admin/AdminLocalForm";
-import UmlageschlüsselLocalForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/LocalForm";
+
 import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
 
@@ -19,17 +19,17 @@ export default async function UmlageschlüsselEditPage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
     "heizkostenabrechnung",
     user_id
   );
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId
+    ? await getAdminContractsByLocalID(localId, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 

@@ -2,6 +2,7 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
+import { getMappedRecords } from "./services/parser-service.ts";
 import { ParseResult } from "./types.ts";
 import { CSVParser } from "./utils/csvParser.ts";
 
@@ -83,10 +84,35 @@ Deno.serve(async (req) => {
       );
     };
 
+    console.log(`Successfully parsed ${result.parsedData.length} records`)
+
+    // Count unique device IDs for logging - support both old (ID) and new (Number Meter) CSV formats
+    const uniqueDeviceIds = new Set(
+      result.parsedData
+        .map(record => (record['ID'] || record['Number Meter'])?.toString())
+        .filter(id => id)
+    );
+        const recordsToDb = await getMappedRecords([...uniqueDeviceIds]);
+        // const { insertedCount, errors, meterIdStats, skippedDuplicates, skippedHeaders } = await insertParsedRecords(recordsToDb, fileName);
+    
+        // console.log(`Inserted ${insertedCount} records into database`)
+        // console.log(`Skipped ${skippedDuplicates} duplicate records`)
+        // console.log(`Skipped ${skippedHeaders} header rows`)
+        // console.log(`Unique Meter ID matches - Found: ${meterIdStats.found}, Not Found: ${meterIdStats.notFound}`)
+        // if (errors.length > 0) {
+        //     console.warn('Database insertion errors:', errors);
+        // }
+
     return new Response(
-      JSON.stringify(data),
-      { headers: { "Content-Type": "application/json" } },
-    )
+      JSON.stringify({
+        message: "CSV Parser function is working!",
+        method: requestMethod,
+        url: requestUrl
+      }),
+      {
+        headers: { "Content-Type": "application/json" }
+      },
+    );
   } catch (error) {
     console.error('Error processing CSV:', error)
 

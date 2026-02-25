@@ -1235,12 +1235,12 @@ export async function getInvoicesByOperatingCostDocumentID(docId: string): Promi
 }
 
 export async function getHeatingBillDocumentByID(docId: string): Promise<HeatingBillDocumentType> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const document = await database
     .select()
     .from(heating_bill_documents)
-    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .where(eq(heating_bill_documents.id, docId))
     .then((res) => res[0]);
 
   return document;
@@ -1279,12 +1279,12 @@ export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, use
 }
 
 export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+    .where(eq(heating_invoices.heating_doc_id, docId));
 
   return invoices;
 }

@@ -23,10 +23,9 @@ export default async function UmlageschlüsselEditPage({
     "heizkostenabrechnung"
   );
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getContractsByLocalID(
-    doc.local_id ? doc.local_id : ""
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId ? await getContractsByLocalID(localId) : [];
 
   const localWithContacts = { ...localData, contracts };
 
@@ -34,14 +33,14 @@ export default async function UmlageschlüsselEditPage({
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
       <Breadcrumb
         backTitle="Abrechnung"
-        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.objekt_id}/gesamtkosten`}
+        link={`${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc?.objekt_id}/gesamtkosten`}
         title={`Umlageschlüssel erstellen`}
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
         <UmlageschlüsselLocalForm
-          objektId={doc.objekt_id ?? ""}
-          localId={doc.local_id ?? ""}
+          objektId={doc?.objekt_id ?? ""}
+          localId={doc?.local_id ?? ""}
           docId={doc_id}
           initialDocumentGroups={userDocCostCategories}
           isEditMode

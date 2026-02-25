@@ -19,10 +19,9 @@ export default async function AbrechnungszeitraumContinuePage({
 
   const doc = await getHeatingBillDocumentByID(doc_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getContractsByLocalID(
-    doc.local_id ? doc.local_id : ""
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId ? await getContractsByLocalID(localId) : [];
 
   const localWithContacts = { ...localData, contracts };
 
@@ -36,8 +35,8 @@ export default async function AbrechnungszeitraumContinuePage({
       />
       <CreateDocContentWrapper>
         <AbrechnungszeitraumLocalForm
-          id={doc.objekt_id ?? ""}
-          localId={doc.local_id ?? ""}
+          id={doc?.objekt_id ?? ""}
+          localId={doc?.local_id ?? ""}
           docValues={doc}
         />
         <HeizkostenabrechnungReceipt

@@ -13,8 +13,6 @@ export const ENERGY_COST_TYPES = [
   "maintenance_costs", // Wartungskosten
   "chimney_sweep_costs", // Schornsteinfegerkosten
   "other_operating_costs", // Sonstige Betriebskosten
-  "metering_service_costs", // Messdienstkosten
-  "metering_device_rental", // Miete der Messgeräte
 ] as const;
 
 // Cold water costs -- feed coldWaterInvoices (Page 3 rate breakdown) and distributionCostItems (Page 2)
@@ -64,17 +62,17 @@ export const CO2_TIER_TABLE: Array<{
   tenantPercent: number;
   landlordPercent: number;
 }> = [
-  { minEmissionPerM2: 0, maxEmissionPerM2: 12, tenantPercent: 100, landlordPercent: 0 },
-  { minEmissionPerM2: 12, maxEmissionPerM2: 17, tenantPercent: 90, landlordPercent: 10 },
-  { minEmissionPerM2: 17, maxEmissionPerM2: 22, tenantPercent: 80, landlordPercent: 20 },
-  { minEmissionPerM2: 22, maxEmissionPerM2: 27, tenantPercent: 70, landlordPercent: 30 },
-  { minEmissionPerM2: 27, maxEmissionPerM2: 32, tenantPercent: 60, landlordPercent: 40 },
-  { minEmissionPerM2: 32, maxEmissionPerM2: 37, tenantPercent: 50, landlordPercent: 50 },
-  { minEmissionPerM2: 37, maxEmissionPerM2: 42, tenantPercent: 40, landlordPercent: 60 },
-  { minEmissionPerM2: 42, maxEmissionPerM2: 47, tenantPercent: 30, landlordPercent: 70 },
-  { minEmissionPerM2: 47, maxEmissionPerM2: 52, tenantPercent: 20, landlordPercent: 80 },
-  { minEmissionPerM2: 52, maxEmissionPerM2: Infinity, tenantPercent: 5, landlordPercent: 95 },
-];
+    { minEmissionPerM2: 0, maxEmissionPerM2: 12, tenantPercent: 100, landlordPercent: 0 },
+    { minEmissionPerM2: 12, maxEmissionPerM2: 17, tenantPercent: 90, landlordPercent: 10 },
+    { minEmissionPerM2: 17, maxEmissionPerM2: 22, tenantPercent: 80, landlordPercent: 20 },
+    { minEmissionPerM2: 22, maxEmissionPerM2: 27, tenantPercent: 70, landlordPercent: 30 },
+    { minEmissionPerM2: 27, maxEmissionPerM2: 32, tenantPercent: 60, landlordPercent: 40 },
+    { minEmissionPerM2: 32, maxEmissionPerM2: 37, tenantPercent: 50, landlordPercent: 50 },
+    { minEmissionPerM2: 37, maxEmissionPerM2: 42, tenantPercent: 40, landlordPercent: 60 },
+    { minEmissionPerM2: 42, maxEmissionPerM2: 47, tenantPercent: 30, landlordPercent: 70 },
+    { minEmissionPerM2: 47, maxEmissionPerM2: 52, tenantPercent: 20, landlordPercent: 80 },
+    { minEmissionPerM2: 52, maxEmissionPerM2: Infinity, tenantPercent: 5, landlordPercent: 95 },
+  ];
 
 // CO2 emission factors by energy carrier (kg CO2/kWh)
 export const CO2_EMISSION_FACTORS: Record<string, number> = {

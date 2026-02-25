@@ -679,7 +679,6 @@ export const gatewayAlerts = pgTable('gateway_alerts', {
 	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
 ]);
 
-
 export const gateway_telegrams = pgTable("gateway_telegrams", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	gateway_eui: text().notNull().references(() => gateway_devices.eui),
@@ -688,4 +687,15 @@ export const gateway_telegrams = pgTable("gateway_telegrams", {
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	pgPolicy("Admins can manage gateway telegrams", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+export const gateway_telegram_parser_errors = pgTable("gateway_telegram_parser_errors", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	telegram: text().notNull(), 
+	error: text().notNull(),
+	telegram_length: text().notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Admins can manage gateway telegram parser errors", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);

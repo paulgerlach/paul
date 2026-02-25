@@ -85,9 +85,12 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
       ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/${item.id}/preview`
       : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`;
 
+  const singleDoc = tenantDocuments.length === 1 ? tenantDocuments[0] : null;
+  const hasMultipleDocs = tenantDocuments.length > 1;
+
   return (
     <div className="bg-white rounded-2xl max-medium:rounded-xl overflow-hidden">
-      {/* Main row: locale info + three-dots */}
+      {/* Main row: locale info + actions */}
       <div
         className={`p-2 max-medium:p-3 ${status === "vacancy" && "available"
           } flex items-center justify-between max-medium:flex-col max-medium:items-start max-medium:gap-3`}
@@ -116,14 +119,23 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
             </div>
           </div>
         </div>
-        <ThreeDotsButton
-          dialogAction="admin_heating_bill_delete"
-          editLink={editLink}
-        />
+        <div className="flex items-center gap-4">
+          {/* Inline action buttons when single document */}
+          {singleDoc && (
+            <TenantDocumentActions
+              documentId={singleDoc.id}
+              previewHref={`${previewBaseHref}?documentId=${singleDoc.id}`}
+            />
+          )}
+          <ThreeDotsButton
+            dialogAction="admin_heating_bill_delete"
+            editLink={editLink}
+          />
+        </div>
       </div>
 
-      {/* Tenant documents sublist */}
-      {tenantDocuments.length > 0 && (
+      {/* Tenant documents sublist — only for multiple documents */}
+      {hasMultipleDocs && (
         <div className="border-t border-gray-100 ml-6 max-medium:ml-4 border-l-2 border-l-gray-50 bg-gray-50/30">
           {tenantDocuments.map((doc) => {
             const previewHref = `${previewBaseHref}?documentId=${doc.id}`;

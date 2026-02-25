@@ -21,6 +21,11 @@ export interface ConsumptionNotification {
   subtitle: string;
   meterId?: number;
   severity: "low" | "medium" | "high" | "critical";
+  deviceType?: string;
+  manufacturer?: string;
+  building?: string;
+  unit?: string;
+  tenant?: string;
 }
 
 /**
@@ -141,7 +146,7 @@ export function calculateConsumptionChange(device: MeterReadingType): {
 /**
  * Detect consumption anomalies (±15% change)
  */
-export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionNotification | null {
+export function detectConsumptionAnomaly(device: MeterReadingType, meterMeta?: any): ConsumptionNotification | null {
   const change = calculateConsumptionChange(device);
 
   if (!change) return null;
@@ -171,7 +176,12 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       title: `Verbrauchsanstieg - Zähler ${meterId}`,
       subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% angestiegen (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: absChange >= 50 ? "high" : "medium"
+      severity: absChange >= 50 ? "high" : "medium",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   } else {
     return {
@@ -182,7 +192,12 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
       title: `Verbrauchsrückgang - Zähler ${meterId}`,
       subtitle: `${deviceTypeLabel}verbrauch ist um ${absChange.toFixed(0)}% gesunken (von ${change.previousValue.toFixed(3)} auf ${change.currentValue.toFixed(3)} ${unit})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: absChange >= 50 ? "medium" : "low"
+      severity: absChange >= 50 ? "medium" : "low",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 }
@@ -190,7 +205,7 @@ export function detectConsumptionAnomaly(device: MeterReadingType): ConsumptionN
 /**
  * Detect zero consumption (3+ months with no usage)
  */
-export function detectZeroConsumption(device: MeterReadingType): ConsumptionNotification | null {
+export function detectZeroConsumption(device: MeterReadingType, meterMeta?: any): ConsumptionNotification | null {
   // Check last 3 months
   const value1 = parseGermanNumber(device["Monthly Value 1"]);
   const value2 = parseGermanNumber(device["Monthly Value 2"]);
@@ -217,7 +232,12 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
       title: `Kein Verbrauch - Zähler ${meterId}`,
       subtitle: `${deviceTypeLabel} meldet seit 3 Monaten keinen Verbrauch - mögliche Blockade oder Defekt`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "high"
+      severity: "high",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -233,7 +253,7 @@ export function detectZeroConsumption(device: MeterReadingType): ConsumptionNoti
  * NOTE: Consumption spikes are handled separately by detectConsumptionAnomaly
  * Works for all meter types that can produce leakage errors
  */
-export function detectBurstPipe(device: MeterReadingType): ConsumptionNotification | null {
+export function detectBurstPipe(device: MeterReadingType, meterMeta?: any): ConsumptionNotification | null {
   const meterId = device.ID || device["Number Meter"];
   const deviceType = device["Device Type"];
   const hintCode = device["Hint Code"];
@@ -294,7 +314,7 @@ export function detectBurstPipe(device: MeterReadingType): ConsumptionNotificati
 /**
  * Detect missing data (no recent readings)
  */
-export function detectNoData(device: MeterReadingType): ConsumptionNotification | null {
+export function detectNoData(device: MeterReadingType, meterMeta?: any): ConsumptionNotification | null {
   // Check Actual Date (NEW format) or IV,0,0,0,,Date/Time (OLD format)
   // Elec meters use both "Actual Date" (DD.MM.YYYY) and "Raw Date" (DD-MM-YYYY)
   const actualDate = device["Actual Date"] || device["Raw Date"] || device["IV,0,0,0,,Date/Time"];
@@ -327,7 +347,12 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
       title: `Keine Daten - Zähler ${meterId}`,
       subtitle: `${deviceTypeLabel} sendet seit ${daysSinceReading} Tagen keine Daten`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: daysSinceReading >= 30 ? "critical" : "high"
+      severity: daysSinceReading >= 30 ? "critical" : "high",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -351,7 +376,7 @@ export function detectNoData(device: MeterReadingType): ConsumptionNotification 
  * Detect anomalies specific to Elec (electricity) meters from EMH/Supabase data.
  * Called only when Device Type is "Elec" or "Stromzähler".
  */
-export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotification | null {
+export function detectElecAnomalies(device: MeterReadingType, meterMeta?: any): ConsumptionNotification | null {
   const deviceType = device["Device Type"];
   if (deviceType !== "Elec" && deviceType !== "Stromzähler") return null;
 
@@ -372,7 +397,12 @@ export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotifi
       title: `Rückspeisung erkannt - Zähler ${meterId}`,
       subtitle: `Stromzähler meldet Rückwärtsfluss (${backwardFlow.toFixed(2)} Wh) – mögliche Rückspeisung oder Manipulationsversuch`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "high"
+      severity: "high",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -388,7 +418,12 @@ export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotifi
       title: `Sehr hohe Last - Zähler ${meterId}`,
       subtitle: `Stromzähler meldet ungewöhnlich hohe Momentanleistung: ${power.toLocaleString("de-DE")} W`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "critical"
+      severity: "critical",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -404,7 +439,12 @@ export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotifi
       title: `Gerätefehler - Stromzähler ${meterId}`,
       subtitle: `Stromzähler meldet Fehlerflags: ${errorFlag} (${device.Manufacturer ?? "EMH"})`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "critical"
+      severity: "critical",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -419,7 +459,12 @@ export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotifi
       title: `Kein Verbrauch - Stromzähler ${meterId}`,
       subtitle: `Stromzähler meldet 0 Wh Gesamtenergie – Gerät möglicherweise defekt oder nicht angeschlossen`,
       meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-      severity: "high"
+      severity: "high",
+      deviceType: device["Device Type"],
+      manufacturer: device.Manufacturer,
+      building: meterMeta?.building,
+      unit: meterMeta?.unit,
+      tenant: meterMeta?.tenant
     };
   }
 
@@ -429,11 +474,11 @@ export function detectElecAnomalies(device: MeterReadingType): ConsumptionNotifi
 /**
  * Get all consumption-related notifications for a device
  */
-export function analyzeConsumption(device: MeterReadingType): ConsumptionNotification[] {
+export function analyzeConsumption(device: MeterReadingType, meterMeta?: any): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
 
   // PRIORITY 1: Check for burst pipe / leakage (CRITICAL)
-  const burstPipe = detectBurstPipe(device);
+  const burstPipe = detectBurstPipe(device, meterMeta);
   if (burstPipe) {
     notifications.push(burstPipe);
     // If burst pipe detected, skip other checks to avoid noise
@@ -441,7 +486,7 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
   }
 
   // PRIORITY 2a: Elec-specific anomalies (backward flow, high power, error flags, zero energy)
-  const elecAnomaly = detectElecAnomalies(device);
+  const elecAnomaly = detectElecAnomalies(device, meterMeta);
   if (elecAnomaly) {
     notifications.push(elecAnomaly);
     // Don't return early — still check for missing data below
@@ -449,14 +494,14 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
 
   // PRIORITY 2b: Standard consumption anomaly (returns null for Elec since no Monthly Values)
   if (!elecAnomaly) {
-    const anomaly = detectConsumptionAnomaly(device);
+    const anomaly = detectConsumptionAnomaly(device, meterMeta);
     if (anomaly) {
       notifications.push(anomaly);
     }
 
     // PRIORITY 3: Zero consumption (only if no anomaly; also returns null for Elec)
     if (!anomaly) {
-      const zeroConsumption = detectZeroConsumption(device);
+      const zeroConsumption = detectZeroConsumption(device, meterMeta);
       if (zeroConsumption) {
         notifications.push(zeroConsumption);
       }
@@ -464,7 +509,7 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
   }
 
   // PRIORITY 4: Missing data (all types — Elec uses Actual Date / Raw Date)
-  const noData = detectNoData(device);
+  const noData = detectNoData(device, meterMeta);
   if (noData) {
     notifications.push(noData);
   }
@@ -479,7 +524,7 @@ export function analyzeConsumption(device: MeterReadingType): ConsumptionNotific
  */
 export function getConsumptionNotifications(parsedData: {
   data: MeterReadingType[];
-}): ConsumptionNotification[] {
+}, hierarchy?: Record<string, any>): ConsumptionNotification[] {
   const notifications: ConsumptionNotification[] = [];
 
   // Group records by meter ID and keep only the most recent one per meter
@@ -513,7 +558,9 @@ export function getConsumptionNotifications(parsedData: {
 
   // Now analyze only the most recent record per meter
   for (const device of meterMap.values()) {
-    const deviceNotifications = analyzeConsumption(device);
+    const meterIdStr = device.ID?.toString() || device["Number Meter"]?.toString() || "";
+    const meterMeta = hierarchy?.[meterIdStr];
+    const deviceNotifications = analyzeConsumption(device, meterMeta);
     notifications.push(...deviceNotifications);
   }
 

@@ -365,7 +365,8 @@ export default function NotificationsChart({
 				consumptionNotificationsGenerated = getConsumptionNotifications(
 					{
 						data: selectedMeters,
-					}
+					},
+					hierarchy
 				);
 			}
 

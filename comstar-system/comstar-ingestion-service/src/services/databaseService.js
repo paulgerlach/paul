@@ -335,8 +335,25 @@ class DatabaseService {
     }
   }
 
-}
+  async saveTelegramParserError(gateway_eui, telegram, messageNumber) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_telegram_parser_errors')
+        .insert({
+          gateway_eui, telegram, messageNumber
+        })
 
+      if (error) {
+        console.error('Error inserting telegram parser error data:', error);
+        throw error;
+      }
+
+    } catch (error) {
+      console.error('Error inserting parser telegram error:', error);
+      throw error;
+    }
+  }
+}
 
 const databaseService = new DatabaseService();
 export default databaseService;

@@ -93,11 +93,11 @@ class DataHandler {
     // Handle batch of telegrams
     for (const item of data.batch) {
       if (item.telegram) {
-        await this.handleTelegramData(gatewayEui, item.telegram);
+        await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);
       }
     }
     } else if(data && data.d.telegram) {
-        return this.handleTelegramData(gatewayEui, data.d.telegram);
+        return this.handleTelegramData(gatewayEui, data.d.telegram, messageNumber);
     } else {
       console.warn({ gatewayEui, data }, 'No telegram data found');
       return null;
@@ -123,7 +123,7 @@ class DataHandler {
   return { valid: true };
 }
 
-  async handleTelegramData(gatewayEui, telegram) {
+  async handleTelegramData(gatewayEui, telegram, messageNumber) {
   console.log({ gatewayEui, telegram }, '<=========Received telegram data');
   const telegramBuffer = Buffer.from(telegram, 'hex');
 
@@ -156,6 +156,17 @@ class DataHandler {
         error: error.message,
         telegramLength: telegramBuffer.length
       }, 'Parse error');
+    } else {
+      try {
+        await databaseService.saveTelegramParserError(gatewayEui, telegram, messageNumber)
+      } catch (error) {
+        console.error({
+        gatewayEui,
+        error: error.message,
+        telegram
+        }, 'Error saving telegram error');
+        return null;
+      }
     }
     return null;
   }

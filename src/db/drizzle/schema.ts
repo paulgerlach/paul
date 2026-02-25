@@ -645,7 +645,7 @@ export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 	processed: boolean().default(false),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+	pgPolicy("Admins can manage wmbus_telgrams", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
 
 // Firmware history
@@ -677,4 +677,15 @@ export const gatewayAlerts = pgTable('gateway_alerts', {
 	updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
 	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+
+export const gateway_telegrams = pgTable("gateway_telegrams", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	telegram: text().notNull(),  
+	messageNumber: text().notNull(),  
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Admins can manage gateway telegrams", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);

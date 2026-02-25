@@ -45,10 +45,38 @@ Deno.serve(async (req) => {
     )
   }
 
-  return new Response(
-    JSON.stringify(data),
-    { headers: { "Content-Type": "application/json" } },
-  )
+
+  try {
+    // Extract filename from headers (sent by email automation) or query params
+    const fileName = req.headers.get('x-filename') ||
+      requestUrl.searchParams.get('fileName') ||
+      requestUrl.searchParams.get('filename') ||
+      'csv-content';
+    console.log('Extracted filename:', fileName);
+
+    // Parse request body
+    console.log('Parsing request body...')
+    console.log('Request content-length:', req.headers.get('content-length'))
+    console.log('Request content-type:', req.headers.get('content-type'))
+
+    return new Response(
+      JSON.stringify(data),
+      { headers: { "Content-Type": "application/json" } },
+    )
+  } catch (error) {
+    console.error('Error processing CSV:', error)
+
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'An unknown error occurred',
+        timestamp: new Date().toISOString()
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    )
+  }
 })
 
 /* To invoke locally:

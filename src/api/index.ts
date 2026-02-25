@@ -1441,3 +1441,16 @@ export async function getDocumentsByObjektIds(
     objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
   }));
 }
+
+/**
+ * Get a single document record by ID.
+ */
+export async function getDocumentById(
+  docId: string,
+): Promise<{ id: string; document_name: string; document_url: string; related_id: string; user_id: string } | null> {
+  const rows = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.id, docId));
+  return rows[0] ?? null;
+}

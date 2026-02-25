@@ -2,6 +2,9 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
+import { ParseResult } from "./types.ts";
+import { CSVParser } from "./utils/csvParser.ts";
+
 
 console.log("Hello from CSV PARSER!")
 
@@ -58,6 +61,27 @@ Deno.serve(async (req) => {
     console.log('Parsing request body...')
     console.log('Request content-length:', req.headers.get('content-length'))
     console.log('Request content-type:', req.headers.get('content-type'))
+    // First get the raw body text to debug JSON parsing issues
+    const rawBody = await req.text()
+    console.log('Raw body length:', rawBody.length)
+
+
+    let result: ParseResult;
+    
+    // Determine if the request body is a URL or raw CSV content
+    const csvUrl = requestUrl.searchParams.get('csvUrl'); // Assuming csvUrl can be passed as a query parameter
+
+    if (csvUrl) {
+      console.log('Parsing CSV from URL:', csvUrl);
+      result = await CSVParser.parseCSVFromURL(csvUrl, fileName);
+    } else {
+      console.log('Parsing CSV from content');
+      // Parse CSV from content
+      result = CSVParser.parseCSVFromContent(
+        rawBody as string,
+        fileName
+      );
+    };
 
     return new Response(
       JSON.stringify(data),

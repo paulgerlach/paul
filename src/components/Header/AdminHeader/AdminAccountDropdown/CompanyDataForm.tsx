@@ -24,7 +24,7 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
     }
   }, [logoFile]);
 
-   const onSubmit = async (data: any) => {
+  const onSubmit = async (data: any) => {
     let logoUrl: string | null = null;
 
     // Upload logo if present
@@ -50,21 +50,58 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       logoUrl = publicData.publicUrl;
     }
 
-    // Save form + logo URL
-    const { error } = await supabase
-      .from("objekte")
-      .update({
-        company_name: data.companyName,
-        street: data.street,
-        zip: data.zip,
-        city: data.city,
-        vat_id: data.vatId,
-        logo_url: logoUrl,
-      });
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (error) {
-      console.error("DB update failed:", error);
+    if (!user || userError) {
+      console.error("No logged-in user", userError);
       return;
+    }
+
+    const { data: companyData, error: fetchError } = await supabase
+      .from("objekte")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!companyData) {
+      const { error: insertError } = await supabase
+        .from("objekte")
+        .insert({
+          user_id: user.id,
+          company_name: data.companyName,
+          street: data.street,
+          zip: data.zip,
+          city: data.city,
+          vat_id: data.vatId,
+          logo_url: logoUrl,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Failed to create company for user", insertError);
+        return;
+      }
+    } else {
+      const { error: updateError } = await supabase
+        .from("objekte")
+        .update({
+          company_name: data.companyName,
+          street: data.street,
+          zip: data.zip,
+          city: data.city,
+          vat_id: data.vatId,
+          logo_url: logoUrl,
+        })
+        .eq("id", companyData.id);
+
+      if (updateError) {
+        console.error("DB update failed:", updateError);
+        return;
+      }
     }
 
     onClose();
@@ -77,28 +114,28 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
           <label className={labelStyle}>Firmenname *</label>
           <input {...register("companyName")} type="text" className={inputStyle} />
         </div>
-        
+
         <div className="flex-shrink-0">
           <label className={labelStyle}>Firmenlogo</label>
           <label className="w-[160px] h-[45px] border-2 border-dashed border-blue-200 flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-              {preview ? (
-      <img
-        src={preview}
-        alt="Logo preview"
-        className="object-contain w-full h-full"
-      />
-    ) : (
-      <span className="text-[10px] text-blue-400 text-center px-4">
-        Logo hinzufügen<br />(320 × 100 px)
-      </span>
-    )}
+            {preview ? (
+              <img
+                src={preview}
+                alt="Logo preview"
+                className="object-contain w-full h-full"
+              />
+            ) : (
+              <span className="text-[10px] text-blue-400 text-center px-4">
+                Logo hinzufügen<br />(320 × 100 px)
+              </span>
+            )}
 
-    <input
-      type="file"
-      accept="image/*"
-      className="hidden"
-      {...register("logo")}
-    />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              {...register("logo")}
+            />
           </label>
         </div>
       </div>
@@ -106,7 +143,7 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       {/* Rechnungsadresse Header */}
       <div className="space-y-4">
         <h4 className="text-sm font-bold text-gray-900 m-0">Rechnungsadresse</h4>
-        
+
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
           <input {...register("street")} type="text" className={inputStyle} />

@@ -244,6 +244,20 @@ async function processBatchInBackground(
     let generated = 0;
     let failed = 0;
 
+    // Clean up old documents from prior batch runs for this doc
+    try {
+        const { error: cleanupError } = await supabase
+            .from("documents")
+            .delete()
+            .eq("related_id", docId)
+            .eq("related_type", "heating_bill");
+        if (cleanupError) {
+            console.warn("[HeatingBillBatch] Cleanup of old documents failed (non-fatal):", cleanupError);
+        }
+    } catch (error_) {
+        console.warn("[HeatingBillBatch] Cleanup error (non-fatal):", error_);
+    }
+
     for (let i = 0; i < locals.length; i += UPLOAD_BATCH_SIZE) {
         const batch = locals.slice(i, i + UPLOAD_BATCH_SIZE);
         const results = await Promise.allSettled(
@@ -264,26 +278,6 @@ async function processBatchInBackground(
                         )
                         : []; // empty means mock mode — will produce single PDF
 
-                // Create a per-locale heating_bill_documents record
-                const { data: perLocaleDoc, error: hbInsertError } = await supabase
-                    .from("heating_bill_documents")
-                    .insert({
-                        objekt_id: objektId,
-                        local_id: localId,
-                        user_id: userId,
-                        start_date: raw?.mainDoc?.start_date ?? null,
-                        end_date: raw?.mainDoc?.end_date ?? null,
-                    })
-                    .select("id")
-                    .single();
-
-                if (hbInsertError || !perLocaleDoc) {
-                    throw new Error(
-                        `Failed to create per-locale heating bill doc: ${hbInsertError?.message ?? "unknown"}`
-                    );
-                }
-                const perLocaleDocId = perLocaleDoc.id;
-
                 const tenantEntries: ApartmentEntry["tenants"] = [];
 
                 if (segments.length === 0) {
@@ -303,7 +297,7 @@ async function processBatchInBackground(
                     const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
                     await uploadPdf(supabase, storagePath, buffer);
 
-                    // Insert document record linked to per-locale heating bill doc
+                    // Insert document record linked to parent heating bill doc
                     let documentId: string | undefined;
                     try {
                         const { data: docRecord, error: insertError } = await supabase
@@ -311,9 +305,10 @@ async function processBatchInBackground(
                             .insert({
                                 document_name: `Heizkostenabrechnung_${docId}_default.pdf`,
                                 document_url: storagePath,
-                                related_id: perLocaleDocId,
+                                related_id: docId,
                                 related_type: "heating_bill",
                                 user_id: userId,
+                                local_id: localId,
                             })
                             .select("id")
                             .single();
@@ -361,7 +356,7 @@ async function processBatchInBackground(
                         const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
                         await uploadPdf(supabase, storagePath, buffer);
 
-                        // Insert document record linked to per-locale heating bill doc
+                        // Insert document record linked to parent heating bill doc
                         let documentId: string | undefined;
                         try {
                             const { data: docRecord, error: insertError } = await supabase
@@ -369,9 +364,10 @@ async function processBatchInBackground(
                                 .insert({
                                     document_name: `Heizkostenabrechnung_${docId}_${seg.contractId}.pdf`,
                                     document_url: storagePath,
-                                    related_id: perLocaleDocId,
+                                    related_id: docId,
                                     related_type: "heating_bill",
                                     user_id: userId,
+                                    local_id: localId,
                                 })
                                 .select("id")
                                 .single();

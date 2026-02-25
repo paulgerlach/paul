@@ -1301,6 +1301,8 @@ export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: stri
 
 /**
  * Get per-locale heating bill documents for an objekt (where local_id is set).
+ * Returns only the most recent record per local_id to avoid duplicates from
+ * multiple batch runs.
  */
 export async function getHeatingBillDocsByObjektId(
   objektId: string,
@@ -1315,7 +1317,53 @@ export async function getHeatingBillDocsByObjektId(
       )
     );
 
-  return docs;
+  // Deduplicate: keep only the latest record per local_id
+  const latestByLocalId = new Map<string, (typeof docs)[0]>();
+  for (const doc of docs) {
+    if (!doc.local_id) continue;
+    const existing = latestByLocalId.get(doc.local_id);
+    if (!existing || new Date(doc.created_at) > new Date(existing.created_at)) {
+      latestByLocalId.set(doc.local_id, doc);
+    }
+  }
+
+  return Array.from(latestByLocalId.values());
+}
+
+/**
+ * Get all documents for a heating bill, grouped by local_id.
+ * Documents are linked directly to the parent heating_bill_documents.id via related_id.
+ */
+export async function getDocumentsByHeatingBillDocId(
+  docId: string,
+): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]>> {
+  const docs = await database
+    .select()
+    .from(documents)
+    .where(
+      and(
+        eq(documents.related_id, docId),
+        eq(documents.related_type, "heating_bill"),
+      )
+    )
+    .orderBy(documents.created_at);
+
+  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]> = {};
+  for (const doc of docs) {
+    const localId = doc.local_id;
+    if (!localId) continue;
+    if (!grouped[localId]) {
+      grouped[localId] = [];
+    }
+    grouped[localId].push({
+      id: doc.id,
+      document_name: doc.document_name,
+      document_url: doc.document_url,
+      local_id: localId,
+    });
+  }
+
+  return grouped;
 }
 
 /**

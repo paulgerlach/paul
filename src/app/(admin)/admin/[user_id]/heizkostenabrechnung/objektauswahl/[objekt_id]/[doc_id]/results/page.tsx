@@ -1,8 +1,7 @@
 import {
   getAdminContractsWithContractorsByLocalIDs,
   getRelatedLocalsByObjektId,
-  getHeatingBillDocsByObjektId,
-  getDocumentsByRelatedIds,
+  getDocumentsByHeatingBillDocId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
@@ -52,12 +51,8 @@ export default async function ResultLocalPDF({
     user_id
   );
 
-  // Fetch per-locale heating bill docs and their tenant documents
-  const perLocaleDocs = await getHeatingBillDocsByObjektId(objekt_id);
-  const perLocaleDocIds = perLocaleDocs
-    .map((d) => d.id)
-    .filter((id): id is string => Boolean(id));
-  const documentsByRelatedId = await getDocumentsByRelatedIds(perLocaleDocIds);
+  // Fetch tenant documents linked directly to this heating bill doc
+  const documentsByLocalId = await getDocumentsByHeatingBillDocId(doc_id);
 
   // Build a contract_id → tenant name map from the already-fetched contracts
   const contractIdToTenantName: Record<string, string> = {};
@@ -73,26 +68,19 @@ export default async function ResultLocalPDF({
     }
   }
 
-  // Build a map: localId → tenant document records with resolved tenant names
+  // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
     { id: string; document_name: string; document_url: string; tenantName: string }[]
   > = {};
-  for (const hbDoc of perLocaleDocs) {
-    const localId = hbDoc.local_id;
-    if (!localId || !hbDoc.id) continue;
-    const tenantDocs = (documentsByRelatedId[hbDoc.id] ?? []).map((doc) => {
-      // Extract contract_id from document_name pattern: ..._<contractId>.pdf
+  for (const [localId, docs] of Object.entries(documentsByLocalId)) {
+    tenantDocsByLocalId[localId] = docs.map((doc) => {
       const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
       const isVacancy = doc.document_name.includes("leerstand");
       const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
       return { ...doc, tenantName };
     });
-    if (!tenantDocsByLocalId[localId]) {
-      tenantDocsByLocalId[localId] = [];
-    }
-    tenantDocsByLocalId[localId].push(...tenantDocs);
   }
 
   const localsWithStatus = locals.map((local) => {

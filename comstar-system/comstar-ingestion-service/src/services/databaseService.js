@@ -335,12 +335,31 @@ class DatabaseService {
     }
   }
 
-  async saveTelegramParserError(gateway_eui, telegram, messageNumber) {
+  async saveTelegramParserError(gateway_eui, telegram, message_number) {
     try {
       const { data, error } = await supabase
         .from('gateway_telegram_parser_errors')
         .insert({
-          gateway_eui, telegram, messageNumber
+          gateway_eui, telegram, message_number
+        })
+
+      if (error) {
+        console.error('Error inserting telegram parser error data:', error);
+        throw error;
+      }
+
+    } catch (error) {
+      console.error('Error inserting parser telegram error:', error);
+      throw error;
+    }
+  }
+
+  async saveTelegram(gateway_eui, telegram, message_number) {
+    try {
+      const { data, error } = await supabase
+        .from('gateway_telegrams')
+        .insert({
+          gateway_eui, telegram, message_number
         })
 
       if (error) {

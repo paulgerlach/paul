@@ -124,8 +124,8 @@ class DataHandler {
 }
 
   async handleTelegramData(gatewayEui, telegram, messageNumber) {
-  console.log({ gatewayEui, telegram }, '<=========Received telegram data');
-  const telegramBuffer = Buffer.from(telegram, 'hex');
+    //TODO: Re-add Save every telegram
+    const telegramBuffer = Buffer.from(telegram, 'hex');
 
   // Filter non-EFE manufacturers silently
   const manufacturer = telegramBuffer.readUInt16LE(2);
@@ -142,11 +142,8 @@ class DataHandler {
     const EFE = 0x14C5;
     if (manufacturer === EFE) {
       const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);
-
-      console.log(JSON.stringify(result, null, 2), '<===========Parsed telegram data');
       return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
     } else {
-      console.log(JSON.stringify(result, null, 2), '<===========Parsed telegram data');
       return await this.processParsedResult(gatewayEui, telegram, result);
     }
   } catch (error) {
@@ -158,7 +155,7 @@ class DataHandler {
       }, 'Parse error');
     } else {
       try {
-        await databaseService.saveTelegramParserError(gatewayEui, telegram, messageNumber)
+        await databaseService.saveTelegramParserError(gatewayEui, telegram, messageNumber);
       } catch (error) {
         console.error({
         gatewayEui,

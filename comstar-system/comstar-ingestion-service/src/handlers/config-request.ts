@@ -2,6 +2,12 @@ import logger from '../utils/logger.js';
 import databaseService from '../services/databaseService.js';
 
 class ConfigRequestHandler {
+  name:string;
+  isUrgent: boolean;
+  // gatewayCache: Map<any,any>
+  configCache: Map<any,any>
+  cacheTTL: number
+
   constructor() {
     this.name = 'config-request';
     this.isUrgent = true; // 🚨 MUST respond within 5 seconds!
@@ -167,7 +173,7 @@ class ConfigRequestHandler {
       return overrides;
     } catch (error) {
       logger.error({
-        etag,
+        etag, // where is this coming from?
         error: error.message
       }, 'Error fetching base configuration');
     }

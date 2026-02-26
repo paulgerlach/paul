@@ -3,6 +3,7 @@ import databaseService from '../services/databaseService.js';
 import logger from '../utils/logger.js';
 import fs from 'fs';
 import path from 'path';
+import { exitAppWithError } from "../errors/generalError.js";
 
 const TELEGRAM_DIR = process.env.TELEGRAM_DIR || '.';
 
@@ -78,12 +79,18 @@ function isSentinel(value) {
 }
 
 class DataHandler {
+
+  name:string;
+  isUrgent: boolean;
+  // cacheTTL: number
+  key: string;
+
   constructor() {
     this.name = 'data';
     this.isUrgent = false;
-    this.meterMapping = null;
-    this.parser = null;
-    this.key = process.env.COMSTAR_ENCRYPTION_KEY;
+    //this.meterMapping = null; // this is never used, commented to highlight
+    //this.parser = null; // this is also never used??
+    this.key = process.env.COMSTAR_ENCRYPTION_KEY ?? exitAppWithError("Missing COMSTAR_ENCRYPTION_KEY") ;
   }
 
   async initialize() {

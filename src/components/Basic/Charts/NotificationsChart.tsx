@@ -89,7 +89,7 @@ const dummy_notifications = [
 		Building: "Friedrichstr. 15",
 		Unit: "1. OG rechts",
 		Tenant: "Peter Hoffmann",
-		Severity: "medium",
+		Severity: "high",
 		Category: "heatMeters",
 		"Notification Type": "Rauchwarnmelder",
 		"Notification Message":
@@ -125,6 +125,19 @@ const dummy_notifications = [
 		"Hint Code": "",
 		"Hint Code Description": "",
 	},
+	...Array.from({ length: 13 }).map((_, i) => ({
+		Date: "05.09.2025",
+		ID: 60000000 + i,
+		Building: `Musterstraße ${10 + (i % 5)}`,
+		Unit: `${(i % 3) + 1}. OG`,
+		Tenant: `Mieter ${i}`,
+		Severity: "high",
+		Category: "coldwater",
+		"Notification Type": "Leckage",
+		"Notification Message": `Leckage erkannt - Rohrbruch bei Kaltwasserzähler ${60000000 + i}. Sofortiger Handlungsbedarf!`,
+		"Hint Code": "Bit 5",
+		"Hint Code Description": "Leckage erkannt",
+	})),
 ];
 
 export default function NotificationsChart({
@@ -153,7 +166,15 @@ export default function NotificationsChart({
 		useState(0);
 	const [showAllNotifications, setShowAllNotifications] = useState(false);
 	const [selectedNotification, setSelectedNotification] = useState<NotificationDetail | null>(null);
-	const [selectedGroup, setSelectedGroup] = useState<{ label: string; color: string; items: GroupNotificationItem[] } | null>(null);
+	const [selectedGroup, setSelectedGroup] = useState<{
+		label: string;
+		title: string;
+		color: string;
+		icon: StaticImageData;
+		rightIcon: StaticImageData;
+		rightBg: string;
+		items: GroupNotificationItem[]
+	} | null>(null);
 
 	// Fetch dynamic data from store
 	const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -185,7 +206,7 @@ export default function NotificationsChart({
 		});
 	};
 
-	// Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
+	// Check if current user is the demo account (heidi@hausverwaltung.com)
 	const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
 	const openErrorModal = (meterId?: number) => {
@@ -768,8 +789,11 @@ export default function NotificationsChart({
 						" " +
 						notification["Notification Message"];
 
+					const calculatedLeftIcon = getLeftIconForNotificationType(notificationTypeWithMessage, notification.Category);
+					console.log("DUMMY NOTIF ICONS:", { leftIcon: calculatedLeftIcon, rightIcon });
+
 					notifications.push({
-						leftIcon: getLeftIconForNotificationType(notificationTypeWithMessage),
+						leftIcon: calculatedLeftIcon,
 						rightIcon: rightIcon,
 						leftBg: "#E7E8EA",
 						rightBg: rightBg,
@@ -826,43 +850,73 @@ export default function NotificationsChart({
 	// ── Grouping logic ───────────────────────────────────────────────────────
 	const shouldGroup = notifications.length > GROUPING_THRESHOLD;
 
-	type SeverityGroup = {
+	type IssueGroup = {
 		key: string;
-		label: string;
+		label: string; // The text to display e.g. "Wasserzähler"
+		title: string; // Original title describing the issue
 		items: NotificationItem[];
 		color: string;
+		icon: StaticImageData; // leftIcon (device)
+		rightIcon: StaticImageData; // rightIcon (issue)
+		rightBg: string; // background color for the right icon
+		order: number;
 	};
 
-	const severityGroups: SeverityGroup[] = [];
+	const issueGroups: IssueGroup[] = [];
 	if (shouldGroup) {
 		const groupMap = new Map<string, NotificationItem[]>();
 		for (const n of notifications) {
-			const key = n.severity || "low";
+			// Group by the localized title (which combines issue and meter ID, we'll strip the meter ID)
+			// e.g. "Keine Daten - Zähler 12345" -> "Keine Daten"
+			const baseTitle = n.title.split(" - Zähler")[0].split(" - Stromzähler")[0];
+			// Combine with device type to get unique groups per device and issue
+			const key = `${n.deviceType || 'unknown'}_${baseTitle}`;
+
 			if (!groupMap.has(key)) groupMap.set(key, []);
 			groupMap.get(key)!.push(n);
 		}
 
-		const severityDetails: Record<string, { label: string; bg: string; order: number }> = {
-			critical: { label: "Kritisch", bg: "#FFE5E5", order: 0 },
-			high: { label: "Hoch", bg: "#F7E7D5", order: 1 },
-			medium: { label: "Mittel", bg: "#FEF3C7", order: 2 },
-			low: { label: "Niedrig", bg: "#E5EBF5", order: 3 },
-		};
-
 		groupMap.forEach((items, key) => {
-			const details = severityDetails[key] || severityDetails.low;
-			severityGroups.push({
+			const firstItem = items[0];
+			const baseTitle = firstItem.title.split(" - Zähler")[0].split(" - Stromzähler")[0];
+
+			// Determine a nice label for the device based on deviceType
+			const deviceType = firstItem.deviceType?.toLowerCase() ?? "";
+			let deviceLabel = "Gerät";
+			if (["wwwater", "warmwasserzähler", "warmwasser", "warmwater", "wwater", "wwwater"].some(v => deviceType.includes(v))) deviceLabel = "Warmwasserzähler";
+			else if (["water", "kaltwasserzähler", "kaltwasser", "cold", "coldwater"].some(v => deviceType.includes(v))) deviceLabel = "Kaltwasserzähler";
+			else if (["heat", "wärmezähler", "wärme", "warmth", "heatmeter", "heatmeters", "wmz"].some(v => deviceType.includes(v))) deviceLabel = "Wärmezähler";
+			else if (["hca", "heizkostenverteiler", "heizkosten"].some(v => deviceType.includes(v))) deviceLabel = "Heizkostenverteiler";
+			else if (["elec", "stromzähler", "strom", "electricity", "electric"].some(v => deviceType.includes(v))) deviceLabel = "Stromzähler";
+			else if (["gas", "gas"].some(v => deviceType.includes(v))) deviceLabel = "Gaszähler";
+			else if (["smoke", "rauch", "rauchwarnmelder"].some(v => deviceType.includes(v))) deviceLabel = "Rauchwarnmelder";
+			else if (["room", "temp", "temperatur"].some(v => deviceType.includes(v))) deviceLabel = "Temperatursensor";
+			else if (deviceType) deviceLabel = firstItem.deviceType!;
+
+			// Determine sort order based on severity
+			const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+			const order = severityOrder[firstItem.severity as keyof typeof severityOrder] ?? 3;
+
+			issueGroups.push({
 				key,
-				label: details.label,
+				label: deviceLabel,
+				title: baseTitle,
 				items,
-				color: details.bg,
+				color: firstItem.leftBg,
+				icon: firstItem.leftIcon,
+				rightIcon: firstItem.rightIcon,
+				rightBg: firstItem.rightBg,
+				order,
 			});
 		});
 
-		severityGroups.sort((a, b) => {
-			const ao = severityDetails[a.key]?.order ?? 3;
-			const bo = severityDetails[b.key]?.order ?? 3;
-			return ao - bo;
+		issueGroups.sort((a, b) => {
+			// Sort by severity first
+			if (a.order !== b.order) {
+				return a.order - b.order;
+			}
+			// Then sort by descending count
+			return b.items.length - a.items.length;
 		});
 	}
 	// ─────────────────────────────────────────────────────────────────────────
@@ -923,22 +977,116 @@ export default function NotificationsChart({
 					)
 				) : (
 					shouldGroup ? (
-						// Render Severity Groups
-						severityGroups.map((group, idx) => (
+						// Render Issue Groups
+						issueGroups.map((group, idx) => (
 							<div
 								key={group.key}
-								onClick={() => setSelectedGroup(group as any)}
-								className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg cursor-pointer p-1 transition-colors"
+								className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg cursor-pointer transition-colors"
+								onClick={() => setSelectedGroup({
+									key: group.key,
+									label: group.title,
+									items: group.items,
+									color: group.color,
+									icon: group.icon,
+									rightBg: group.rightBg,
+									rightIcon: group.rightIcon,
+								} as any)}
 							>
-								<div className="flex-shrink-0 flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm mr-2" style={{ backgroundColor: group.color }}>
-									<Image src={notification} alt="group" width={28} height={28} className="w-6 h-6 opacity-70" />
+								{/* Identical Layout to NotificationItem.tsx */}
+								<div className="flex-1 min-w-0">
+									<div className="flex items-start justify-start gap-2 w-full p-1">
+										<div className="flex items-center justify-start gap-2 flex-shrink-0">
+											<span
+												className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
+												style={{ backgroundColor: group.color }}
+											>
+												<Image
+													width={28}
+													height={28}
+													sizes="100vw"
+													loading="lazy"
+													className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6 opacity-90"
+													src={(group.icon && typeof group.icon !== "string") ? group.icon : notification}
+													alt="device"
+												/>
+											</span>
+											<span
+												className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
+												style={{ backgroundColor: group.rightBg }}
+											>
+												<Image
+													width={28}
+													height={28}
+													sizes="100vw"
+													loading="lazy"
+													className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6"
+													src={(group.rightIcon && typeof group.rightIcon !== "string") ? group.rightIcon : alert_triangle}
+													alt="issue"
+												/>
+											</span>
+										</div>
+										<div className="flex-1 min-w-0 py-1">
+											<p className="text-sm font-medium text-gray-800 leading-tight truncate">
+												{group.items.length}x {group.label}...
+											</p>
+											<p className="text-sm max-lg:text-xs text-black/50 leading-tight truncate line-clamp-1 mt-0.5">
+												{group.title}
+											</p>
+										</div>
+									</div>
 								</div>
-								<div className="flex-1 min-w-0 flex flex-col justify-center">
-									<h3 className="text-sm font-semibold text-gray-800 truncate">Schweregrad: {group.label}</h3>
-									<p className="text-[10px] text-gray-500 truncate">{group.items.length} {group.items.length === 1 ? 'Benachrichtigung' : 'Benachrichtigungen'}</p>
-								</div>
-								<div className="text-xs font-semibold text-dark_green/80 bg-green/10 px-2.5 py-1 rounded-sm ml-2">
-									öffnen
+
+								{/* The 3 dots popover block (same as single notifications) */}
+								<div className="flex items-center flex-shrink-0 ml-1">
+									<Popover
+										open={openPopoverId === `group-${idx}` as any}
+										onOpenChange={(open) =>
+											setOpenPopoverId(open ? `group-${idx}` as any : null)
+										}
+									>
+										<PopoverTrigger asChild>
+											<button
+												className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
+												onClick={(e) => {
+													e.stopPropagation();
+												}}
+											>
+												<Image
+													width={0}
+													height={0}
+													sizes="100vw"
+													loading="lazy"
+													className="max-w-4 max-h-4"
+													src={dots_button}
+													alt="dots button"
+												/>
+											</button>
+										</PopoverTrigger>
+										<PopoverContent
+											className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
+											onClick={(e) => e.stopPropagation()}
+										>
+											<button
+												onClick={(e) => {
+													e.stopPropagation();
+													setSelectedGroup({
+														key: group.key,
+														label: group.title,
+														items: group.items,
+														color: group.color,
+														icon: group.icon,
+														rightBg: group.rightBg,
+														rightIcon: group.rightIcon,
+													} as any);
+													setOpenPopoverId(null);
+												}}
+												className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+											>
+												<Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+												öffnen
+											</button>
+										</PopoverContent>
+									</Popover>
 								</div>
 							</div>
 						))

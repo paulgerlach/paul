@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Pencil, Trash } from "lucide-react";
 import Image, { StaticImageData } from "next/image";
+import { notification, alert_triangle } from "@/static/icons";
 
 export interface GroupNotificationItem {
     leftIcon: StaticImageData;
@@ -22,7 +23,15 @@ export interface GroupNotificationItem {
 }
 
 interface NotificationGroupModalProps {
-    group: { label: string; color: string; items: GroupNotificationItem[] } | null;
+    group: {
+        label: string;
+        title: string;
+        color: string;
+        icon: StaticImageData;
+        rightIcon: StaticImageData;
+        rightBg: string;
+        items: GroupNotificationItem[]
+    } | null;
     onClose: () => void;
     onOpenDetail: (item: GroupNotificationItem) => void;
     onDelete: (item: GroupNotificationItem) => void;
@@ -59,18 +68,30 @@ export default function NotificationGroupModal({
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[80vh]">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100 flex-shrink-0">
-                    <div className="flex items-center gap-2.5">
-                        <span
-                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: group.color }}
-                        />
-                        <div>
-                            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Schweregrad</p>
-                            <h2 className="text-base font-semibold text-gray-800 leading-tight">{group.label}</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-start gap-2 flex-shrink-0">
+                            <span
+                                className="flex items-center justify-center w-12 h-12 rounded-xl"
+                                style={{ backgroundColor: group.color }}
+                            >
+                                <Image src={(group.icon && typeof group.icon !== "string") ? group.icon : notification} alt="device" width={24} height={24} className="w-6 h-6 opacity-90" />
+                            </span>
+                            <span
+                                className="flex items-center justify-center w-12 h-12 rounded-xl"
+                                style={{ backgroundColor: group.rightBg }}
+                            >
+                                <Image src={(group.rightIcon && typeof group.rightIcon !== "string") ? group.rightIcon : alert_triangle} alt="issue" width={24} height={24} className="w-6 h-6" />
+                            </span>
                         </div>
-                        <span className="ml-1 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                            {group.items.length} Warnungen
-                        </span>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h2 className="text-base font-semibold text-gray-800 leading-tight">{group.label}</h2>
+                                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                                    {group.items.length} Warnungen
+                                </span>
+                            </div>
+                            <p className="text-xs text-gray-500 font-medium mt-0.5">{group.title}</p>
+                        </div>
                     </div>
                     <button
                         onClick={onClose}
@@ -85,21 +106,21 @@ export default function NotificationGroupModal({
                     {group.items.map((item, idx) => (
                         <div
                             key={idx}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                            className="flex items-center gap-3 px-6 py-3 hover:bg-gray-50 transition-colors group"
                         >
                             {/* Icons */}
-                            <div className="relative flex-shrink-0">
+                            <div className="flex items-center justify-start gap-2 flex-shrink-0 ml-2">
                                 <span
-                                    className="flex items-center justify-center w-9 h-9 rounded-xl"
+                                    className="flex items-center justify-center w-9 h-9 rounded-sm"
                                     style={{ backgroundColor: item.leftBg }}
                                 >
-                                    <Image src={item.leftIcon} alt="" width={18} height={18} className="w-4 h-4" />
+                                    <Image src={(item.leftIcon && typeof item.leftIcon !== "string") ? item.leftIcon : notification} alt="device icon" width={18} height={18} className="w-4 h-4" />
                                 </span>
                                 <span
-                                    className="absolute -bottom-1 -right-1 flex items-center justify-center w-4 h-4 rounded-full border-2 border-white"
+                                    className="flex items-center justify-center w-9 h-9 rounded-sm"
                                     style={{ backgroundColor: item.rightBg }}
                                 >
-                                    <Image src={item.rightIcon} alt="" width={10} height={10} className="w-2.5 h-2.5" />
+                                    <Image src={(item.rightIcon && typeof item.rightIcon !== "string") ? item.rightIcon : alert_triangle} alt="issue icon" width={18} height={18} className="w-4 h-4" />
                                 </span>
                             </div>
 

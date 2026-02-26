@@ -1398,6 +1398,7 @@ export async function getDocumentsByRelatedIds(
  */
 export async function getDocumentsByObjektIds(
   objektIds: string[],
+  includeHistory: boolean = false
 ): Promise<any[]> {
   if (objektIds.length === 0) return [];
 
@@ -1431,10 +1432,16 @@ export async function getDocumentsByObjektIds(
   if (allParentIds.length === 0) return [];
 
   // Fetch documents linked to these parent records
+  const conditions = [inArray(documents.related_id, allParentIds)];
+
+  if (!includeHistory) {
+    conditions.push(eq(documents.current_document, true));
+  }
+
   const allDocs = await database
     .select()
     .from(documents)
-    .where(inArray(documents.related_id, allParentIds))
+    .where(and(...conditions))
     .orderBy(documents.created_at);
 
   return allDocs.map((doc) => ({

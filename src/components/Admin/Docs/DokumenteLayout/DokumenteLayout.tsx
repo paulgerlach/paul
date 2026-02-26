@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useTransition } from "react";
 import { useDocumentService, DocumentMetadata } from "@/hooks/useDocumentService";
 import { pdf_icon, building } from "@/static/icons";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Exo_2 } from "next/font/google";
 import { useDialogStore } from "@/store/useDIalogStore";
 import { Trash2, Eye, FolderOpen, X } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { useUploadDocuments } from "@/apiClient";
 
@@ -53,10 +53,28 @@ type FileWithPreview = File & { preview: string };
 export default function DokumenteLayout({ userId, objektsWithLocals, documents: serverDocuments }: DokumenteLayoutProps) {
   const [fileSizes, setFileSizes] = useState<Record<string, string>>({});
   const [selectedObjekt, setSelectedObjekt] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const uploadDocuments = useUploadDocuments();
+
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [pendingFiles, setPendingFiles] = useState<FileWithPreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [showOverwritten, setShowOverwritten] = useState(false);
+  const showOverwritten = searchParams.get("includeHistory") === "true";
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggleHistory = (checked: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (checked) {
+      params.set("includeHistory", "true");
+    } else {
+      params.delete("includeHistory");
+    }
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
+  };
 
   const {
     getDocumentFileSize,
@@ -65,10 +83,6 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   } = useDocumentService();
 
   const { setItemID, openDialog } = useDialogStore();
-  const router = useRouter();
-  const pathname = usePathname();
-  const uploadDocuments = useUploadDocuments();
-
   // Detect if we're in admin context
   const isAdmin = pathname.startsWith('/admin');
   const adminUserId = isAdmin ? pathname.split('/')[2] : null;
@@ -145,15 +159,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
   const filteredDocuments = useMemo(() => {
     if (!documents) return [];
-
-    let docs = documents;
-    if (!showOverwritten) {
-      docs = docs.filter(doc => doc.current_document !== false);
-    }
-
-    if (!selectedObjekt) return docs;
-    return docs.filter(doc => doc.objekt_id === selectedObjekt);
-  }, [documents, selectedObjekt, showOverwritten]);
+    if (!selectedObjekt) return documents;
+    return documents.filter(doc => doc.objekt_id === selectedObjekt);
+  }, [documents, selectedObjekt]);
 
   // Group documents by type into folders
   const documentFolders = useMemo(() => {
@@ -399,13 +407,19 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   }
                 </h2>
                 <label className="flex items-center cursor-pointer gap-2">
+                  {isPending && (
+                    <svg className="animate-spin h-4 w-4 text-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
                   <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
                   <div className="relative">
                     <input
                       type="checkbox"
                       className="sr-only"
                       checked={showOverwritten}
-                      onChange={() => setShowOverwritten(!showOverwritten)}
+                      onChange={(e) => handleToggleHistory(e.target.checked)}
                     />
                     <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
                     <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>
@@ -482,13 +496,19 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   </span>
                 </h2>
                 <label className="flex items-center cursor-pointer gap-2">
+                  {isPending && (
+                    <svg className="animate-spin h-4 w-4 text-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
                   <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
                   <div className="relative">
                     <input
                       type="checkbox"
                       className="sr-only"
                       checked={showOverwritten}
-                      onChange={() => setShowOverwritten(!showOverwritten)}
+                      onChange={(e) => handleToggleHistory(e.target.checked)}
                     />
                     <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
                     <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>

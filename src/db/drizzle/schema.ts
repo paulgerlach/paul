@@ -82,6 +82,8 @@ export const documents = pgTable("documents", {
 	related_type: text().notNull(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 	user_id: uuid().notNull(),
+	local_id: uuid(),
+	current_document: boolean().default(true).notNull(),
 }, (table) => [
 	pgPolicy("Admins can update all, users only their own", { as: "permissive", for: "update", to: ["public"], using: sql`((user_id = auth.uid()) OR is_admin())` }),
 	pgPolicy("Users can insert their own documents", { as: "permissive", for: "insert", to: ["public"] }),
@@ -97,6 +99,7 @@ export const locals = pgTable("locals", {
 	usage_type: text().notNull(),
 	floor: text().notNull(),
 	living_space: numeric().notNull(),
+	heating_area: numeric(),
 	house_location: text(),
 	outdoor: text(),
 	rooms: numeric(),

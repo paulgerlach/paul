@@ -101,7 +101,28 @@ function extractDateOnly(record: ParsedRecord, fileName?: string): string | null
             console.error(`[DATE FAIL] No filename provided for Electricity!`);
         }
         // If filename fails, fall through to try CSV dates (unlikely to exist but worth trying)
+    } else if (deviceType === 'HCA') {
+        const hcaDateTime = record['IV,0,0,0,,Date/Time'];
+        if (hcaDateTime && typeof hcaDateTime === 'string') {
+            console.log(`[HCA DATE] Found IV,0,0,0,,Date/Time: "${hcaDateTime}"`);
+
+            // Extract the date part (before any space)
+            const datePart = hcaDateTime.split(' ')[0].trim();
+            console.log(`[HCA DATE] Extracted date part: "${datePart}"`);
+
+            // Parse DD.MM.YYYY format
+            const dotMatch = datePart.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+            if (dotMatch) {
+                const [_, day, month, year] = dotMatch;
+                const result = `${year}-${month}-${day}`;
+                console.log(`[HCA DATE SUCCESS] Using date from IV,0,0,0,,Date/Time: ${result}`);
+                return result;
+            }
+        }
+        console.log(`[HCA DATE] No valid date in IV,0,0,0,,Date/Time, falling back to filename`);
     }
+
+
 
     // Try different date field names from CSV content
     const dateFields = [
@@ -584,7 +605,10 @@ class DatabaseHelper {
 
                 // SURGICAL FIX: Inject filename date into JSONB if it was extracted from filename
                 // This ensures chart filters work correctly by having dates in both places
-                if (!record['Actual Date'] && !record['Raw Date']) {
+                const usedFilenameDate = dateOnlyYYYYMMDD === extractDateFromFilename(  fileName || '');
+                const hasNoDateFields = !record['Actual Date'] && !record['Raw Date'] && !record['IV,0,0,0,,Date/Time'];
+
+                if (usedFilenameDate && hasNoDateFields) {
                     // Convert YYYY-MM-DD to DD.MM.YYYY for Actual Date
                     const [year, month, day] = dateOnlyYYYYMMDD.split('-');
                     updatedRecord['Actual Date'] = `${day}.${month}.${year}`;

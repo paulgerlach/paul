@@ -1,5 +1,5 @@
 import { Page, Text, View, StyleSheet, Image, Link } from "@react-pdf/renderer";
-import type { HeatingBillPdfModel } from "@/app/api/generate-heating-bill/_lib";
+import type { HeatingBillPdfModel } from "@/app/api/heating-bill/_lib";
 
 const colors = {
   accent: "#DDE9E0",
@@ -194,7 +194,7 @@ export default function HeatingBillPreviewSixPDF({
       <View style={styles.headerBox}>
         <View style={styles.headerTop}>
           <Text style={styles.pageNumber}>
-            6/6 {cover.propertyNumber}/{cover.heidiCustomerNumber}
+            5/5 {cover.propertyNumber}/{cover.heidiCustomerNumber}
           </Text>
           <Image style={styles.logo} src={logoSrc} />
         </View>

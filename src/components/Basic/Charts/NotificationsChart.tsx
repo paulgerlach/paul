@@ -14,7 +14,9 @@ import {
 	notification,
 	pipe_water,
 	cold_water,
+
 	smoke_detector,
+	electricity,
 } from "@/static/icons";
 import Image from "next/image";
 import NotificationItem from "./NotificationItem";
@@ -25,6 +27,7 @@ import {
 	getDevicesWithErrors,
 	groupErrorsBySeverity,
 	groupErrorsByDeviceType,
+	interpretErrorFlags,
 } from "@/utils/errorFlagInterpreter";
 import { interpretHintCode } from "@/utils/hintCodeInterpreter";
 import { checkRSSI } from "@/utils/rssiChecker";
@@ -37,6 +40,7 @@ import { useChartStore } from "@/store/useChartStore";
 import { Pencil, Trash } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { useAuthUser } from "@/apiClient";
+import { useTenantNotifications } from "@/hooks/useTenantNotifications";
 
 interface NotificationItem {
 	leftIcon: StaticImageData;
@@ -56,6 +60,7 @@ interface NotificationsChartProps {
 		data: MeterReadingType[];
 		errors?: { row: number; error: string; rawRow: any }[];
 	};
+	userId?: string;
 }
 
 const dummy_notifications = [
@@ -114,6 +119,7 @@ export default function NotificationsChart({
 	emptyTitle,
 	emptyDescription,
 	parsedData,
+	userId,
 }: NotificationsChartProps) {
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 	const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(
@@ -126,6 +132,7 @@ export default function NotificationsChart({
 	>([]);
 	const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 	const { data: user } = useAuthUser();
+	const { notifications: tenantNotifications } = useTenantNotifications(userId || user?.id);
 
 	// Track if user has dismissed notifications (for better UX when all are dismissed)
 	const [hasDismissedNotifications, setHasDismissedNotifications] =
@@ -208,6 +215,16 @@ export default function NotificationsChart({
 			return blue_info; // fallback for general consumption
 		}
 
+
+
+		if (
+			type.includes("strom") ||
+			type.includes("electricity") ||
+			type.includes("elec")
+		) {
+			return electricity;
+		}
+
 		// Default icons based on device type if no specific notification type match
 		if (deviceType) {
 			const dType = deviceType.toLowerCase();
@@ -262,24 +279,24 @@ export default function NotificationsChart({
 			const selectedMeters = isUuidFormat
 				? parsedData.data // Main dashboard: data is already filtered by API using UUIDs
 				: parsedData.data.filter((device) => {
-						// Shared dashboard: filter by serial number
-						const meterId =
-							device.ID?.toString() ||
-							device["Number Meter"]?.toString();
-						return meterId && meterIds.includes(meterId);
-				  });
+					// Shared dashboard: filter by serial number
+					const meterId =
+						device.ID?.toString() ||
+						device["Number Meter"]?.toString();
+					return meterId && meterIds.includes(meterId);
+				});
 
 			// GROUP 1: Check for error flags
 			const selectedMetersWithErrors = selectedMeters.filter((device) => {
 				const hasErrorFlag =
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] &&
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] !== "0b" &&
 					device[
-						"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
+					"IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"
 					] !== "";
 				return hasErrorFlag;
 			});
@@ -450,10 +467,12 @@ export default function NotificationsChart({
 					deviceType === "Heat"
 						? heater
 						: deviceType === "WWater"
-						? hot_water
-						: deviceType === "Water"
-						? cold_water
-						: pipe_water;
+							? hot_water
+							: deviceType === "Water"
+								? cold_water
+								: deviceType === "Elec" || deviceType === "Stromzähler"
+									? electricity
+									: pipe_water;
 
 				dynamicNotifications.push({
 					leftIcon: leftIcon,
@@ -487,9 +506,50 @@ export default function NotificationsChart({
 			//   }
 			// });
 
-			// GROUP 3: Add consumption notifications (already generated above before success check)
+			// GROUP 3: Add consumption notifications
 			if (consumptionNotificationsGenerated.length > 0) {
 				dynamicNotifications.push(...consumptionNotificationsGenerated);
+			}
+
+			// GROUP 4: Add tenant/apartment notifications
+			if (tenantNotifications && tenantNotifications.length > 0) {
+				dynamicNotifications.push(...tenantNotifications);
+			}
+
+			// GROUP 5: Admin-only notifications (Battery Warning)
+			const isAdmin = user?.permission === "admin" || user?.permission === "super_admin" || user?.permission === "agency_admin";
+
+			if (isAdmin) {
+				selectedMeters.forEach(device => {
+					const errorInterpretation = interpretErrorFlags(device);
+					if (errorInterpretation?.errors) {
+						// Check for battery issues
+						const hasBatteryIssue = errorInterpretation.errors.some(e =>
+							e.includes("Batterie") || e.includes("battery")
+						);
+
+						if (hasBatteryIssue) {
+							const meterId = device.ID || device["Number Meter"];
+							const deviceType = device["Device Type"];
+
+							// Get appropriate left icon based on device type
+							let leftIcon = notification;
+							if (deviceType === "Heat" || deviceType === "Wärme") leftIcon = heater;
+							else if (deviceType === "WWater" || deviceType === "Warmwasser") leftIcon = hot_water;
+							else if (deviceType === "Water" || deviceType === "Kaltwasser") leftIcon = cold_water;
+
+							dynamicNotifications.push({
+								leftIcon: leftIcon,
+								rightIcon: caract_battery,
+								leftBg: "#E7E8EA",
+								rightBg: "#F7E7D5", // Orange
+								title: "Schwache Batterie",
+								subtitle: `${deviceType}zähler ${meterId} - Batterie bald wechseln`,
+								meterId: typeof meterId === "string" ? parseInt(meterId) : meterId
+							});
+						}
+					}
+				});
 			}
 
 			// Sort by severity (critical > high > medium > low)
@@ -748,15 +808,15 @@ export default function NotificationsChart({
 						notification.Severity === "critical"
 							? alert_triangle
 							: notification.Severity === "high"
-							? alert_triangle
-							: blue_info;
+								? alert_triangle
+								: blue_info;
 
 					const rightBg =
 						notification.Severity === "critical"
 							? "#FFE5E5"
 							: notification.Severity === "high"
-							? "#F7E7D5"
-							: "#E5EBF5";
+								? "#F7E7D5"
+								: "#E5EBF5";
 
 					// Pass the full message to get the correct icon for consumption notifications
 					const notificationTypeWithMessage =
@@ -826,9 +886,8 @@ export default function NotificationsChart({
 
 	return (
 		<div
-			className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${
-				isEmpty ? "flex flex-col" : ""
-			}`}
+			className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""
+				}`}
 		>
 			<div className="flex pb-3 border-b border-b-dark_green/10 items-center justify-between mb-2">
 				<div className="flex items-center gap-2">
@@ -852,21 +911,19 @@ export default function NotificationsChart({
 				/>
 			</div>
 			<div
-				className={`flex-1 overflow-y-auto ${
-					showAllNotifications ? "max-h-[280px]" : "max-h-[270px]"
-				} pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`}
+				className={`flex-1 overflow-y-auto ${showAllNotifications ? "max-h-[280px]" : "max-h-[270px]"
+					} pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent`}
 			>
 				{notifications.length === 0 ? (
 					hasDismissedNotifications &&
-					originalNotificationCount > 0 ? (
+						originalNotificationCount > 0 ? (
 						// User dismissed all notifications - show success state
 						<EmptyState
 							title="Alle Warnungen gelöscht"
-							description={`${originalNotificationCount} ${
-								originalNotificationCount === 1
-									? "Warnung wurde"
-									: "Warnungen wurden"
-							} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
+							description={`${originalNotificationCount} ${originalNotificationCount === 1
+								? "Warnung wurde"
+								: "Warnungen wurden"
+								} bestätigt. Bei Aktualisierung werden offene Probleme erneut angezeigt.`}
 							imageSrc={notification.src}
 							imageAlt="Benachrichtigungen"
 						/>

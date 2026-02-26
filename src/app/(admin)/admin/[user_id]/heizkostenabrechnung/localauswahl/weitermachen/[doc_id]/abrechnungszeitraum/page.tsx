@@ -1,6 +1,6 @@
 import {
   getAdminContractsByLocalID,
-  getHeatingBillDocumentByID,
+  getAdminHeatingBillDocumentByID,
   getLocalById,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
@@ -17,13 +17,13 @@ export default async function AbrechnungszeitraumContinuePage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId
+    ? await getAdminContractsByLocalID(localId, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 

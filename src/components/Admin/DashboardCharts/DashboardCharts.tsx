@@ -248,6 +248,7 @@ export default function DashboardCharts() {
 								"Keine Daten im ausgewählten Zeitraum."
 							}
 							parsedData={{ data: notificationsData, errors: [] }}
+							userId={currentUserId || undefined}
 						/>
 					)}
 				</div>

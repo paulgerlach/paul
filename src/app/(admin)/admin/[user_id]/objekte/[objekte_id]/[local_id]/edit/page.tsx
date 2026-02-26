@@ -48,6 +48,7 @@ export default async function AdminEditLocalPage({
               house_fee: Number(local.house_fee),
               house_location: local.house_location ?? null,
               living_space: Number(local.living_space),
+              heating_area: local.heating_area ? Number(local.heating_area) : 0,
               outdoor: local.outdoor ?? null,
               outdoor_area: Number(local.outdoor_area),
               residential_area: local.residential_area ?? null,

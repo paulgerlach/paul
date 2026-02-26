@@ -7,7 +7,7 @@ import { objekte } from "@/db/drizzle/schema";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
-export async function adminDeleteObjekt(objektId: string, userId: string) {
+export async function adminDeleteObjekt(objektId: string) {
   const user = await getAuthenticatedServerUser();
 
   if (!user) {
@@ -19,7 +19,7 @@ export async function adminDeleteObjekt(objektId: string, userId: string) {
 
   const result = await database
     .delete(objekte)
-    .where(and(eq(objekte.id, objektId), eq(objekte.user_id, userId)))
+    .where(eq(objekte.id, objektId))
     .returning();
 
   if (result.length === 0) {

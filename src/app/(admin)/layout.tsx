@@ -120,6 +120,12 @@ const LazyAdminAddDocHeizkostenabrechnungDialog = lazy(
       "@/components/Basic/Dialog/Admin/AdminAddDocHeizkostenabrechnungDialog"
     )
 );
+const LazyAdminEditDocHeizkostenabrechnungDialog = lazy(
+  () =>
+    import(
+      "@/components/Basic/Dialog/Admin/AdminEditDocHeizkostenabrechnungDialog"
+    )
+);
 const LazyShareDashboardDialog = lazy(
   () => import("@/components/Basic/Dialog/ShareDashboardDialog")
 );
@@ -239,6 +245,9 @@ export default async function AdminLayout({
         </Suspense>
         <Suspense fallback={null}>
           <LazyAdminAddDocHeizkostenabrechnungDialog />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazyAdminEditDocHeizkostenabrechnungDialog />
         </Suspense>
         <Suspense fallback={null}>
           <LazyShareDashboardDialog />

@@ -78,20 +78,28 @@ function FormInnerInput({
 }) {
   const [displayValue, setDisplayValue] = useState("");
 
+  const isNumericProp = type === "number" || replaceDotWithComma;
+
   useEffect(() => {
-    if (
-      replaceDotWithComma &&
-      field.value !== undefined &&
-      field.value !== null
-    ) {
-      const val = String(field.value).replace(/\./g, ",");
-      if (val !== displayValue) {
-        setDisplayValue(val);
-      }
-    } else {
-      setDisplayValue(String(field.value ?? ""));
+    let strVal = "";
+    if (field.value !== undefined && field.value !== null) {
+      strVal = String(field.value);
+    }
+
+    if (replaceDotWithComma) {
+      strVal = strVal.replace(/\./g, ",");
+    }
+
+    if (strVal !== displayValue) {
+      setDisplayValue(strVal);
     }
   }, [field.value, replaceDotWithComma]);
+
+  // Just show the placeholder if the value is "0"
+  let finalDisplayValue = displayValue;
+  if (isNumericProp && displayValue === "0") {
+    finalDisplayValue = "";
+  }
 
   return (
     <FormItem className={className}>
@@ -101,25 +109,36 @@ function FormInnerInput({
       <FormControl>
         <div className="relative">
           <Input
-            min={0}
+            min={isNumericProp ? 0 : undefined}
             disabled={disabled}
-            type={type}
+            type={isNumericProp && replaceDotWithComma ? "text" : type}
             placeholder={placeholder}
             {...field}
+            onKeyDown={(e) => {
+              if (isNumericProp && ["e", "E", "+", "-"].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
             onChange={(e) => {
               let value = e.target.value;
+
+              if (isNumericProp) {
+                // only allow numbers and decimals
+                value = value.replace(/[^0-9.,]/g, "");
+              }
+
               if (replaceDotWithComma) {
                 value = value.replace(/\./g, ",");
                 setDisplayValue(value);
-                // Pass dot-version to react-hook-form for validation
                 const logicValue = value.replace(/,/g, ".");
-                field.onChange(logicValue);
+                field.onChange(logicValue ? logicValue : "");
               } else {
-                field.onChange(e);
+                setDisplayValue(value);
+                field.onChange(value);
               }
               onChange?.(e);
             }}
-            value={displayValue}
+            value={finalDisplayValue}
           />
           {unit && (
             <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">

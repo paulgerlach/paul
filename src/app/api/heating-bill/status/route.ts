@@ -3,12 +3,12 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { getRelatedLocalsByObjektId } from "@/api";
 
 /**
- * GET /api/generate-heating-bill/batch/status
- * Query params: objektId, docId, localId (optional), localIds (optional, comma-separated)
+ * GET /api/heating-bill/status
+ * Query params: objektId, docId, localId (optional), localIds (optional, comma-separated), allowDbFallback (optional)
  *
  * Single-local mode (localId provided): returns { localId, ready } for that local only.
- * Aggregate mode (no localId): returns storage-based readiness for all locals in the building.
- * When localIds is provided in aggregate mode, skips DB lookup and only checks storage.
+ * Aggregate mode (no localId): returns storage-based readiness for provided localIds.
+ * DB fallback for localIds lookup is disabled by default to avoid DB pressure in polling and can be enabled with allowDbFallback=1.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     const docId = searchParams.get("docId");
     const singleLocalId = searchParams.get("localId");
     const localIdsParam = searchParams.get("localIds");
+    const allowDbFallback = searchParams.get("allowDbFallback") === "1";
 
     if (!docId || !objektId) {
       return NextResponse.json(
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Single-local mode: minimal payload for per-row polling
-    if (singleLocalId && singleLocalId.trim()) {
+    if (singleLocalId?.trim()) {
       const storagePath = `${user.id}/${objektId}/${singleLocalId.trim()}/heating-bill_${docId}.pdf`;
       const { error } = await supabase.storage
         .from("documents")
@@ -51,11 +52,16 @@ export async function GET(request: NextRequest) {
     }
 
     let localIds: string[];
-    if (localIdsParam && localIdsParam.trim()) {
+    if (localIdsParam?.trim()) {
       localIds = localIdsParam.split(",").map((id) => id.trim()).filter(Boolean);
-    } else {
+    } else if (allowDbFallback) {
       const locals = await getRelatedLocalsByObjektId(objektId);
       localIds = (locals ?? []).map((l) => l.id).filter((id): id is string => Boolean(id));
+    } else {
+      return NextResponse.json(
+        { error: "Missing required query param for aggregate mode: localIds" },
+        { status: 400 }
+      );
     }
 
     if (localIds.length === 0) {

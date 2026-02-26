@@ -30,6 +30,7 @@ export type FormDateInputProps<T extends FieldValues = FieldValues> = {
   showClearButton?: boolean;
   clearLabel?: string;
   onClear?: () => void;
+  onSelect?: (date: Date | undefined) => void;
 };
 
 export default function FormDateInput<T extends FieldValues = FieldValues>({
@@ -42,6 +43,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
   showClearButton = false,
   clearLabel = "Löschen",
   onClear,
+  onSelect,
 }: FormDateInputProps<T>) {
   return (
     <FormField
@@ -87,6 +89,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                   selected={field.value}
                   onSelect={(date) => {
                     field.onChange(date);
+                    onSelect?.(date);
                   }}
                   disabled={disabled}
                   initialFocus

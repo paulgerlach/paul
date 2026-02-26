@@ -1,10 +1,20 @@
-import { getRelatedLocalsByObjektId } from "@/api";
+import {
+  getRelatedLocalsByObjektId,
+  getDocumentsByHeatingBillDocId,
+  getContractsWithContractorsByLocalID,
+} from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import ObjekteObjektItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/ObjekteObjektItemHeatingBillDocResult";
 import SearchControls from "@/components/Admin/SearchControls";
 import { buildLocalName } from "@/utils";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import type { UnitType } from "@/types";
+
+const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
+  "residential",
+  "commercial",
+]);
 
 export default async function ResultLocalPDF({
   params,
@@ -16,8 +26,58 @@ export default async function ResultLocalPDF({
   const { objekt_id, doc_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
 
-  let locals = await getRelatedLocalsByObjektId(objekt_id);
+  let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
+    ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
+  );
   const totalLocals = locals?.length || 0;
+
+  // Fetch tenant documents linked directly to this heating bill doc
+  const documentsByLocalId = await getDocumentsByHeatingBillDocId(doc_id);
+
+  // Fetch contracts for tenant name resolution
+  const localIds = locals.map((l) => l.id).filter((id): id is string => Boolean(id));
+  const contractsByLocalId: Record<string, Awaited<ReturnType<typeof getContractsWithContractorsByLocalID>>> = {};
+  if (localIds.length > 0) {
+    const results = await Promise.all(
+      localIds.map(async (id) => ({
+        id,
+        contracts: await getContractsWithContractorsByLocalID(id),
+      }))
+    );
+    for (const { id, contracts: c } of results) {
+      contractsByLocalId[id] = c;
+    }
+  }
+
+  // Build a contract_id → tenant name map
+  const contractIdToTenantName: Record<string, string> = {};
+  for (const localContracts of Object.values(contractsByLocalId)) {
+    if (!localContracts) continue;
+    for (const contract of localContracts) {
+      const names = contract.contractors
+        ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
+        .filter(Boolean)
+        .join(", ");
+      if (contract.id && names) {
+        contractIdToTenantName[contract.id] = names;
+      }
+    }
+  }
+
+  // Resolve tenant names for each document
+  const tenantDocsByLocalId: Record<
+    string,
+    { id: string; document_name: string; document_url: string; tenantName: string }[]
+  > = {};
+  for (const [localId, docs] of Object.entries(documentsByLocalId)) {
+    tenantDocsByLocalId[localId] = docs.map((doc) => {
+      const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+      const contractId = contractIdMatch?.[1] ?? "";
+      const isVacancy = doc.document_name.includes("leerstand");
+      const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
+      return { ...doc, tenantName };
+    });
+  }
 
   // Filter by search query
   if (search.trim() && locals) {
@@ -37,6 +97,16 @@ export default async function ResultLocalPDF({
         : nameB.localeCompare(nameA);
     });
   }
+
+  // Determine status per locale
+  const localsWithStatus = locals.map((local) => {
+    const localId = local.id ?? "";
+    const localContracts = contractsByLocalId[localId] ?? [];
+    const status = localContracts.some((c) => c.is_current)
+      ? "renting"
+      : "vacancy";
+    return { local, status } as const;
+  });
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
@@ -63,13 +133,15 @@ export default async function ResultLocalPDF({
                 </p>
               </div>
             ) : (
-              locals.map((local) => (
+              localsWithStatus.map(({ local, status }) => (
                 <ObjekteObjektItemHeatingBillDocResult
-                  id={objekt_id}
+                  objektID={objekt_id}
                   key={local.id}
                   item={local}
                   docType="objektauswahl"
                   docID={doc_id}
+                  status={status}
+                  tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
                 />
               ))
             )}

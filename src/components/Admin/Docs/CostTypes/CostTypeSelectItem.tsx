@@ -46,7 +46,7 @@ export default function CostTypeSelectItem({ type }: CostTypeItemProps) {
           label=""
           placeholder=""
           options={["Verbrauch", "m2 Wohnfläche", "Wohneinheiten"]}
-          selectedValue={type.allocation_key ? type.allocation_key : ""}
+          selectedValue={type.allocation_key ? type.allocation_key : "Verbrauch"}
           onChange={(val) =>
             updateAllocationKey(
               type.type,

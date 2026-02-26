@@ -30,23 +30,23 @@ const objektTypeOptions: {
   type: BuildingType;
   name: string;
 }[] = [
-  {
-    type: "condominium",
-    name: "Eigentumswohnung",
-  },
-  {
-    type: "multi_family",
-    name: "Mehrfamilienhaus",
-  },
-  {
-    type: "commercial",
-    name: "Gewerbeimmobilie",
-  },
-  {
-    type: "special_purpose",
-    name: "Sonderimmobilie",
-  },
-];
+    {
+      type: "condominium",
+      name: "Eigentumswohnung",
+    },
+    {
+      type: "multi_family",
+      name: "Mehrfamilienhaus",
+    },
+    {
+      type: "commercial",
+      name: "Gewerbeimmobilie",
+    },
+    {
+      type: "special_purpose",
+      name: "Sonderimmobilie",
+    },
+  ];
 
 const objectSchema = z.object({
   objekt_type: z.string().min(1, "Pflichtfeld"),
@@ -197,6 +197,7 @@ export default function AdminCreateObjekteForm({ userID }: { userID: string }) {
               type="number"
               placeholder="Quadratmeter"
               className="col-span-3 max-medium:col-span-1"
+              unit="qm"
             />
             <FormInputField<CreateObjekteFormValues>
               control={methods.control}

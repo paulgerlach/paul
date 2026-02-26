@@ -50,10 +50,22 @@ export default function FormRadioOptions<
                     <RadioGroupItem
                       value={String(option.type)}
                       id={String(option.type)}
+                      onClick={() => {
+                        if (field.value === String(option.type)) {
+                          setTimeout(() => field.onChange(""), 0);
+                        }
+                      }}
                     />
                     <FormLabel
                       htmlFor={String(option.type)}
-                      className="text-xs py-2 font-medium cursor-pointer text-admin_dark_text">
+                      className="text-xs py-2 font-medium cursor-pointer text-admin_dark_text"
+                      onClick={(e) => {
+                        if (field.value === String(option.type)) {
+                          e.preventDefault();
+                          setTimeout(() => field.onChange(""), 0);
+                        }
+                      }}
+                    >
                       {option.name}
                     </FormLabel>
                   </FormItem>

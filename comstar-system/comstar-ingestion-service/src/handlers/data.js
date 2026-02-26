@@ -281,6 +281,17 @@ class DataHandler {
       error: error.message,
       stack: error.stack
     }, 'Error processing telegram data');
+
+      try {
+        await databaseService.saveTelegramParserError(gatewayEui, telegram, error.message);
+      } catch (error) {
+        console.error({
+        gatewayEui,
+        error: error.message,
+        telegram
+        }, 'Error saving telegram error');
+        return null;
+      }
     return null;
   }
 }

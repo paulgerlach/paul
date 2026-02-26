@@ -56,6 +56,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [pendingFiles, setPendingFiles] = useState<FileWithPreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [showOverwritten, setShowOverwritten] = useState(false);
 
   const {
     getDocumentFileSize,
@@ -144,9 +145,15 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
 
   const filteredDocuments = useMemo(() => {
     if (!documents) return [];
-    if (!selectedObjekt) return documents;
-    return documents.filter(doc => doc.objekt_id === selectedObjekt);
-  }, [documents, selectedObjekt]);
+
+    let docs = documents;
+    if (!showOverwritten) {
+      docs = docs.filter(doc => doc.current_document !== false);
+    }
+
+    if (!selectedObjekt) return docs;
+    return docs.filter(doc => doc.objekt_id === selectedObjekt);
+  }, [documents, selectedObjekt, showOverwritten]);
 
   // Group documents by type into folders
   const documentFolders = useMemo(() => {
@@ -320,8 +327,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   setSelectedFolder(null);
                 }}
                 className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all flex-shrink-0 ${selectedObjekt === objekt.id
-                    ? "border-green bg-green-50 text-green-800"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                  ? "border-green bg-green-50 text-green-800"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                   }`}
               >
                 <Image
@@ -330,8 +337,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   src={building}
                   alt="building"
                   className={`h-10 w-10 transition-all ${selectedObjekt === objekt.id
-                      ? "filter brightness-0"
-                      : "filter brightness-0 opacity-40"
+                    ? "filter brightness-0"
+                    : "filter brightness-0 opacity-40"
                     }`}
                 />
                 <span className="text-xs font-light whitespace-nowrap">
@@ -354,8 +361,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   setSelectedFolder(null);
                 }}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all w-full ${selectedObjekt === objekt.id
-                    ? "border-green bg-green-50 text-green-800"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                  ? "border-green bg-green-50 text-green-800"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                   }`}
               >
                 <Image
@@ -364,8 +371,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   src={building}
                   alt="building"
                   className={`h-8 w-8 transition-all ${selectedObjekt === objekt.id
-                      ? "filter brightness-0"
-                      : "filter brightness-0 opacity-40"
+                    ? "filter brightness-0"
+                    : "filter brightness-0 opacity-40"
                     }`}
                 />
                 <span className="text-sm font-light">
@@ -381,15 +388,30 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
           {!selectedFolder ? (
             // FOLDER VIEW
             <div>
-              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
-                {selectedObjekt === null
-                  ? "Dokumente"
-                  : (() => {
-                    const objekt = objektsToUse?.find(o => o.id === selectedObjekt);
-                    return objekt ? getObjektDisplayName(objekt) : "Unbekanntes Objekt";
-                  })()
-                }
-              </h2>
+              <div className="flex justify-between items-center mb-6 max-medium:mb-4">
+                <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-0">
+                  {selectedObjekt === null
+                    ? "Dokumente"
+                    : (() => {
+                      const objekt = objektsToUse?.find(o => o.id === selectedObjekt);
+                      return objekt ? getObjektDisplayName(objekt) : "Unbekanntes Objekt";
+                    })()
+                  }
+                </h2>
+                <label className="flex items-center cursor-pointer gap-2">
+                  <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={showOverwritten}
+                      onChange={() => setShowOverwritten(!showOverwritten)}
+                    />
+                    <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>
+                  </div>
+                </label>
+              </div>
 
               {documentFolders.length > 0 ? (
                 <div className="flex flex-col gap-4 w-full">
@@ -452,12 +474,27 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               </button>
 
               {/* Folder Header */}
-              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
-                {documentFolders.find(f => f.type === selectedFolder)?.name}
-                <span className="text-gray-500 ml-2 text-lg max-medium:text-base">
-                  ({currentFolderDocuments.length} {currentFolderDocuments.length === 1 ? 'Dokument' : 'Dokumente'})
-                </span>
-              </h2>
+              <div className="flex justify-between items-center mb-6 max-medium:mb-4">
+                <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-0">
+                  {documentFolders.find(f => f.type === selectedFolder)?.name}
+                  <span className="text-gray-500 ml-2 text-lg max-medium:text-base">
+                    ({currentFolderDocuments.length} {currentFolderDocuments.length === 1 ? 'Dokument' : 'Dokumente'})
+                  </span>
+                </h2>
+                <label className="flex items-center cursor-pointer gap-2">
+                  <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={showOverwritten}
+                      onChange={() => setShowOverwritten(!showOverwritten)}
+                    />
+                    <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>
+                  </div>
+                </label>
+              </div>
 
               {/* Documents Table */}
               <div className="overflow-auto">
@@ -584,8 +621,8 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
           <div
             {...getRootProps()}
             className={`w-full py-4 max-medium:py-3 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors text-base max-medium:text-sm ${isDragActive
-                ? "border-green bg-green/10 text-green"
-                : "border-blue-300 text-blue-500 hover:border-blue-400 hover:text-blue-600"
+              ? "border-green bg-green/10 text-green"
+              : "border-blue-300 text-blue-500 hover:border-blue-400 hover:text-blue-600"
               } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />

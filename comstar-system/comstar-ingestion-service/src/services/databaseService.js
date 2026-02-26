@@ -350,7 +350,7 @@ class DatabaseService {
         console.error('Error inserting telegram parser error data:', error);
         throw error;
       }
-
+      console.log('Telegram Parser Error saved⚠️')
     } catch (error) {
       console.error('Error inserting parser telegram error:', error);
       throw error;
@@ -364,7 +364,7 @@ class DatabaseService {
         .insert({
           gateway_eui, telegram, message_number
         })
-
+        
       if (error) {
         console.error('Error inserting telegram parser error data:', error);
         throw error;

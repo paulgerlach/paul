@@ -407,12 +407,6 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   }
                 </h2>
                 <label className="flex items-center cursor-pointer gap-2">
-                  {isPending && (
-                    <svg className="animate-spin h-4 w-4 text-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  )}
                   <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
                   <div className="relative">
                     <input
@@ -422,7 +416,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                       onChange={(e) => handleToggleHistory(e.target.checked)}
                     />
                     <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
-                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform flex items-center justify-center ${showOverwritten ? 'transform translate-x-4' : ''}`}>
+                      {isPending && (
+                        <svg className={`animate-spin h-3 w-3 ${showOverwritten ? 'text-green' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      )}
+                    </div>
                   </div>
                 </label>
               </div>
@@ -496,12 +497,6 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   </span>
                 </h2>
                 <label className="flex items-center cursor-pointer gap-2">
-                  {isPending && (
-                    <svg className="animate-spin h-4 w-4 text-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  )}
                   <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
                   <div className="relative">
                     <input
@@ -511,7 +506,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                       onChange={(e) => handleToggleHistory(e.target.checked)}
                     />
                     <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
-                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showOverwritten ? 'transform translate-x-4' : ''}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform flex items-center justify-center ${showOverwritten ? 'transform translate-x-4' : ''}`}>
+                      {isPending && (
+                        <svg className={`animate-spin h-3 w-3 ${showOverwritten ? 'text-green' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      )}
+                    </div>
                   </div>
                 </label>
               </div>

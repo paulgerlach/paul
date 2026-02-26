@@ -1,6 +1,12 @@
 import databaseService from '../services/databaseService.js'
 
 class StatusHandler {
+  name:string
+  isUrgent: boolean
+
+  lastStatusUpdate: Map<any, any>
+  minUpdateInterval: number
+  thresholds: any
   constructor() {
     this.name = 'status';
     this.isUrgent = false;
@@ -293,7 +299,7 @@ class StatusHandler {
   }
   
   async checkAlerts(gatewayEui, status) {
-    const alerts = [];
+    const alerts:any[] = [];
     
     // Check battery
     if (status.battery.voltage < this.thresholds.battery.critical) {

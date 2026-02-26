@@ -1,42 +1,58 @@
 import { ParserResult, WirelessMbusParser } from "wireless-mbus-parser";
 
 
-export const handleTelegramData = async (gatewayEui: string, telegram: string) => { 
+export const handleTelegramData = async (gatewayEui: string, telegramBuffer: Buffer<ArrayBuffer>) => { 
   try {
-    const telegramBuffer = Buffer.from(telegram, 'hex');
-    // Filter non-EFE manufacturers silently
-    const manufacturer = telegramBuffer.readUInt16LE(2);
+    console.log('[handleTelegramData] Starting parse for gateway:', gatewayEui);
+    console.log('[handleTelegramData] Telegram buffer type:', Object.prototype.toString.call(telegramBuffer));
+    console.log('[handleTelegramData] Is Buffer:', Buffer.isBuffer(telegramBuffer));
+    console.log('[handleTelegramData] Telegram buffer length:', telegramBuffer.length);
+    console.log('[handleTelegramData] First 20 bytes:', Array.from(telegramBuffer.slice(0, 20)));
+    
+    // Basic validation
+    if (telegramBuffer.length < 16) {
+      throw new Error(`Telegram too short: ${telegramBuffer.length} bytes (minimum 16 required)`);
+    }
 
-    const parser = new WirelessMbusParser();
     const comstarKey = process.env.COMSTAR_ENCRYPTION_KEY;
 
-    if (!comstarKey)
+    if (!comstarKey) {
+      console.error('[handleTelegramData] Comstar Encryption Key not found');
       throw new Error('Comstar Encryption Key not found')
-    
-    
+    }
+
+    console.log('[handleTelegramData] Using encryption key:', comstarKey.substring(0, 8) + '...');
+
+    const parser = new WirelessMbusParser();    
+    console.log('[handleTelegramData] About to parse telegram...');
     const result = await parser.parse(telegramBuffer, {
       key: Buffer.from(comstarKey, 'hex')
     });
+    console.log('[handleTelegramData] Parse succeeded');
+    console.log('[handleTelegramData] Parse result:', JSON.stringify(result, null, 2));
 
     // Decrypt independently to extract Engelmann-specific volume encoding
     // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
     const EFE = 0x14C5;
-    if (manufacturer !== EFE) {
-      return await processParsedResult(gatewayEui, telegram, result);
-    }
-    else {
+    // if (manufacturer !== EFE) {
+    //   console.log('[handleTelegramData] Non-EFE manufacturer, using standard processing');
+    //   return await processParsedResult(result);
+    // }
+    // else {
+      console.log('[handleTelegramData] EFE manufacturer detected, extracting Engelmann volume');
       const engelmannVolume = extractEngelmannVolume(telegramBuffer, comstarKey);
-      console.log('Engelman Volume ====>: ', engelmannVolume)
-      return await processParsedResult(gatewayEui, telegram, result, engelmannVolume ?? undefined);
-    }
+      console.log('[handleTelegramData] Engelmann Volume:', engelmannVolume);
+      return await processParsedResult(result, engelmannVolume ?? undefined);
+    // }
 
   } catch (error:any) {
-    console.error(error.message);
+    console.error('[handleTelegramData] Error:', error.message);
+    console.error('[handleTelegramData] Error stack:', error.stack);
     throw new Error(error.message)
   }
 }
 
-const processParsedResult = (gatewayEui: string, telegram: string, result: ParserResult, engelmannVolume?:number) => {
+const processParsedResult = (result: ParserResult, engelmannVolume?:number) => {
   try {
     const readings = result.data;
     const meterId = result.meter.id;

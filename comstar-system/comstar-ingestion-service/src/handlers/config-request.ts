@@ -173,7 +173,8 @@ class ConfigRequestHandler {
       return overrides;
     } catch (error) {
       logger.error({
-        etag, // where is this coming from?
+        // etag, // where is this coming from - changed to gatewayEui
+        gatewayEui,
         error: error.message
       }, 'Error fetching base configuration');
     }

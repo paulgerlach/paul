@@ -273,7 +273,7 @@ class DataHandler {
     
   if (typeof meterId !== 'string' || meterId.trim() === '') {
     console.warn({ gatewayEui }, 'Invalid or missing meter ID');
-    throw new Error({message: 'Invalid or missing meter ID'})
+    throw new Error('Invalid or missing meter ID')
   }
     
 

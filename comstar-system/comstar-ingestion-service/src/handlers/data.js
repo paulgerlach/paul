@@ -1,6 +1,10 @@
 import { WirelessMbusParser } from "wireless-mbus-parser";
 import databaseService from '../services/databaseService.js';
 import logger from '../utils/logger.js';
+import fs from 'fs';
+import path from 'path';
+
+const TELEGRAM_DIR = process.env.TELEGRAM_DIR || './telegrams';
 
 /**
  * Transform M-Bus readings array to web-compatible flat object format
@@ -89,10 +93,14 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
+    // Save each telegram to text file
+    await this.writeTelegramToText(gatewayEui, data, messageNumber);
+    
     if (data && data.batch && Array.isArray(data.batch)) {
     // Handle batch of telegrams
-    for (const item of data.batch) {
-      if (item.telegram) {
+      for (const item of data.batch) {writeTelegramToText
+        if (item.telegram) {
+          await databaseService.saveTelegram(gatewayEui, item.telegram, messageNumber);
         await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);
       }
     }
@@ -123,9 +131,31 @@ class DataHandler {
   return { valid: true };
 }
 
+  async writeTelegramToText(gatewayEui, data, messageNumber) {
+    try {
+      // Ensure directory exists
+      if (!fs.existsSync(TELEGRAM_DIR)) {
+        fs.mkdirSync(TELEGRAM_DIR, { recursive: true });
+      }
+
+      const filepath = path.join(TELEGRAM_DIR, 'all_telegrams.txt');
+
+      const entry = JSON.stringify({
+        gatewayEui,
+        messageNumber,
+        timestamp: new Date().toISOString(),
+        data: data
+      }) + '\n';
+
+      fs.appendFileSync(filepath, entry, 'utf8');
+      console.log(`Telegram appended to: ${filepath}`);
+    } catch (error) {
+      console.error('Error writing telegram to file:', error.message);
+    }
+  }
+
   async handleTelegramData(gatewayEui, telegram, messageNumber) {
     try {
-      //TODO: Re-add Save every telegram
       const telegramBuffer = Buffer.from(telegram, 'hex');
       // Filter non-EFE manufacturers silently
       const manufacturer = telegramBuffer.readUInt16LE(2);

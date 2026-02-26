@@ -139,7 +139,7 @@ class DataHandler {
       // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
       const EFE = 0x14C5;
       if (manufacturer !== EFE) {
-        return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
+        return await this.processParsedResult(gatewayEui, telegram, result);
       }
       else{
         const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);

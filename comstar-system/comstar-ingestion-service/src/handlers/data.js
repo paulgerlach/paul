@@ -139,7 +139,7 @@ class DataHandler {
       // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
       const EFE = 0x14C5;
       if (manufacturer !== EFE) {
-        return;
+        return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
       }
       else{
         const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);
@@ -217,10 +217,16 @@ class DataHandler {
   const frame_type = result.frame_type ?? null;
   const encryption = result.encryption ?? null;
 
+  if (meterManufacturer !== 'EFE') {
+    console.warning('Invalid manufacturer (not EFE). Skipping');
+    return null;
+  }
+    
   if (typeof meterId !== 'string' || meterId.trim() === '') {
     console.warn({ gatewayEui }, 'Invalid or missing meter ID');
     throw new Error({message: 'Invalid or missing meter ID'})
   }
+    
 
   try {
     await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);

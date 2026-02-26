@@ -1,19 +1,18 @@
-"use client";
+'use client';
 
-import React, { useState, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { TelegramsResponse } from '@/types/Telegram';
+import { TelegramsParserErrorResponse } from "@/types/GateTelegramRecord";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
 
-
-export default function TelegramsContent() {
+export default function ParserErrorTelegramsContent() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortBy, setSortBy] = useState('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [search, setSearch] = useState('');
 
-  const { data, isLoading, error } = useQuery<TelegramsResponse>({
-    queryKey: ["telegrams", page, pageSize, sortBy, sortOrder, search],
+  const { data, isLoading, error } = useQuery<TelegramsParserErrorResponse>({
+    queryKey: ["parserErrorTelegrams", page, pageSize, sortBy, sortOrder, search],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -22,9 +21,9 @@ export default function TelegramsContent() {
         sortOrder,
         search,
       });
-      const response = await fetch(`/api/mqtt-gateway/telegrams?${params}`);
+      const response = await fetch(`/api/mqtt-gateway/telegrams/parserErrorTelegrams?${params}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch telegrams");
+        throw new Error("Failed to fetch parserErrorTelegrams");
       }
       return response.json();
     },
@@ -69,7 +68,6 @@ export default function TelegramsContent() {
 
   const telegrams = data?.data || [];
   const pagination = data?.pagination;
-
   return (
     <div className="space-y-4">
       {/* Search and Page Size Controls */}
@@ -119,21 +117,21 @@ export default function TelegramsContent() {
             <tr>
               <th
                 className="px-4 py-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('device_id')}
+                onClick={() => handleSort('gateway_eui')}
               >
-                Device ID {sortBy === 'device_id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Device ID {sortBy === 'gateway_eui' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th
                 className="px-4 py-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('telegram_type')}
+                onClick={() => handleSort('error')}
               >
-                Type {sortBy === 'telegram_type' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Error {sortBy === 'error' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th
                 className="px-4 py-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('rssi')}
+                onClick={() => handleSort('telegramLength')}
               >
-                RSSI {sortBy === 'rssi' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Length {sortBy === 'telegramLength' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th
                 className="px-4 py-3 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100"
@@ -148,7 +146,7 @@ export default function TelegramsContent() {
             {telegrams.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                  No telegrams found.
+                  No parser errors found.
                 </td>
               </tr>
             ) : (
@@ -157,13 +155,15 @@ export default function TelegramsContent() {
                   <td className="px-4 py-3 font-mono text-xs truncate max-w-[150px]">
                     {telegram.gateway_eui}
                   </td>
-                  <td className="px-4 py-3">{telegram.type}</td>
-                  <td className="px-4 py-3">{telegram.rssi} dBm</td>
+                  <td className="px-4 py-3 text-red-600 font-medium">
+                    {telegram.error}
+                  </td>
+                  <td className="px-4 py-3">{telegram.telegramLength}</td>
                   <td className="px-4 py-3 text-gray-500">
                     {new Date(telegram.created_at).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs truncate max-w-[200px]" title={telegram.telegram_hex}>
-                    {telegram.telegram_hex}
+                  <td className="px-4 py-3 font-mono text-xs truncate max-w-[200px]" title={telegram.telegram}>
+                    {telegram.telegram}
                   </td>
                 </tr>
               ))
@@ -171,6 +171,7 @@ export default function TelegramsContent() {
           </tbody>
         </table>
       </div>
+
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (

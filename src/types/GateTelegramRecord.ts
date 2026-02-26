@@ -17,3 +17,15 @@ export interface GatewayTelegramParserError extends BaseGatewayTelegramRecord {
   error: string;
   telegramLength: string;
 }
+
+export interface Pagination {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface TelegramsParserErrorResponse {
+  data: GatewayTelegramParserError[];
+  pagination: Pagination;
+}

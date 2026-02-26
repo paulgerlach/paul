@@ -125,25 +125,26 @@ class DataHandler {
 
   async handleTelegramData(gatewayEui, telegram, messageNumber) {
     try {
-    //TODO: Re-add Save every telegram
-    const telegramBuffer = Buffer.from(telegram, 'hex');
-    // Filter non-EFE manufacturers silently
-    const manufacturer = telegramBuffer.readUInt16LE(2);
+      //TODO: Re-add Save every telegram
+      const telegramBuffer = Buffer.from(telegram, 'hex');
+      // Filter non-EFE manufacturers silently
+      const manufacturer = telegramBuffer.readUInt16LE(2);
     
-    const parser = new WirelessMbusParser();
-    const result = await parser.parse(telegramBuffer, {
-      key: Buffer.from(this.key, 'hex')
-    });
+      const parser = new WirelessMbusParser();
+      const result = await parser.parse(telegramBuffer, {
+        key: Buffer.from(this.key, 'hex')
+      });
 
-    // Decrypt independently to extract Engelmann-specific volume encoding
-    // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
-    const EFE = 0x14C5;
-    if (manufacturer === EFE) {
-      const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);
-      return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
-    } else {
-      return await this.processParsedResult(gatewayEui, telegram, result);
-    }
+      // Decrypt independently to extract Engelmann-specific volume encoding
+      // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
+      const EFE = 0x14C5;
+      if (manufacturer !== EFE) {
+        return;
+      }
+      else{
+        const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);
+        return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
+      }
   } catch (error) {
     if (!error.message.includes('Wrong key')) {
       console.error({

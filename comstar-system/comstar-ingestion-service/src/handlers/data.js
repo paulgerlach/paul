@@ -142,7 +142,7 @@ class DataHandler {
         return await this.processParsedResult(gatewayEui, telegram, result);
       }
       else{
-        const engelmannVolume = extractEngelmannVolume(telegramBuffer, this.key);
+        const engelmannVolume = this.extractEngelmannVolume(telegramBuffer, this.key);
         return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
       }
   } catch (error) {

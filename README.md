@@ -8,6 +8,10 @@
     3. mqtt-broker -> 1G/10G ssd -> Scaled Load
 2.  
 
+## Infrastructure
+1. Supabase - Primary Database
+2. Vercel - Main App
+3. DigitalOcean - Droplet for running MQTT service
 
 ## Setup for dev
 

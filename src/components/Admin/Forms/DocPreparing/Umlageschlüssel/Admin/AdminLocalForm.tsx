@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { DocCostCategoryType } from "@/types";
-import SaveLocalCostButton from "../../Common/SaveCostButton";
 import CostTypesSelects from "@/components/Admin/Docs/CostTypes/CostTypesSelects";
 import AdminSaveCostButton from "../../Common/AdminSaveCostButton";
 
@@ -10,6 +9,7 @@ export default function AdminUmlageschlüsselLocalForm({
   localId,
   docId,
   userId,
+  pathSlug,
   initialDocumentGroups,
   isEditMode,
 }: {
@@ -17,12 +17,13 @@ export default function AdminUmlageschlüsselLocalForm({
   localId: string;
   docId: string;
   userId: string;
+  pathSlug: string;
   initialDocumentGroups: DocCostCategoryType[];
   isEditMode?: boolean;
 }) {
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/gesamtkosten`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/gesamtkosten`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/gesamtkosten`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">

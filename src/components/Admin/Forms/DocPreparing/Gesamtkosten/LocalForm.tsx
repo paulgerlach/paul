@@ -13,12 +13,14 @@ export default function GesamtkostenLocalForm({
   objektId,
   localId,
   docId,
+  pathSlug,
   userDocCostCategories,
   relatedInvoices,
 }: {
   objektId: string;
   localId: string;
   docId: string;
+  pathSlug: string;
   userDocCostCategories: DocCostCategoryType[];
   relatedInvoices?: InvoiceDocumentType[];
 }) {
@@ -45,12 +47,12 @@ export default function GesamtkostenLocalForm({
   }, 0);
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/abrechnungszeitraum`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/abrechnungszeitraum`;
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`
+    : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`;
 
   const nextLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/umlageschlussel`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/umlageschlussel`;
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/umlageschlussel`
+    : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/umlageschlussel`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] max-medium:border-y-[10px] border-[#EFEEEC] col-span-2 max-medium:col-span-1 rounded-2xl max-medium:rounded-xl px-4 max-medium:px-2 flex items-start justify-center">

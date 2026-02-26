@@ -2,7 +2,6 @@
 
 import { useDialogStore } from "@/store/useDIalogStore";
 import DialogBase from "../ui/DialogBase";
-import { DialogStoreActionType } from "@/types";
 import { Button } from "../ui/Button";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { toast } from "sonner";

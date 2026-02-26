@@ -14,6 +14,7 @@ export default function AdminGesamtkostenLocalForm({
   localId,
   docId,
   userId,
+  pathSlug,
   userDocCostCategories,
   relatedInvoices,
 }: {
@@ -21,6 +22,7 @@ export default function AdminGesamtkostenLocalForm({
   localId: string;
   docId: string;
   userId: string;
+  pathSlug: string;
   userDocCostCategories: DocCostCategoryType[];
   relatedInvoices?: InvoiceDocumentType[];
 }) {
@@ -47,12 +49,12 @@ export default function AdminGesamtkostenLocalForm({
   }, 0);
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/abrechnungszeitraum`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/abrechnungszeitraum`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`;
 
   const nextLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/umlageschlussel`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/umlageschlussel`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/umlageschlussel`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/umlageschlussel`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-2 rounded-2xl px-4 flex items-start justify-center">

@@ -264,6 +264,7 @@ export default async function AdminLayout({
         <Suspense fallback={null}>
           <LazyAdminInvoiceDeleteDialog />
         </Suspense>
+
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
       </QueryProvider>

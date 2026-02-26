@@ -319,11 +319,21 @@ import teils_teils_scale from "@/asset/teils_teils_scale.png";
 import unzufrieden_x from "@/asset/unzufrieden_x.png";
 
 import ai_starts from "@/asset/ai_stars.png";
+import blue_corner_check from "@/asset/blue_corner_check.png";
+import manuell from "@/asset/manuell.png";
+import ai_api from "@/asset/ai_api.png";
+import ai_keys from "@/asset/ai_keys.png";
+import ai_konto from "@/asset/ai_konto.png";
 
 export {
   accentro_colored,
   berlinBear,
+  manuell,
+  ai_api,
+  ai_keys,
+  ai_konto,
   ai_starts,
+  blue_corner_check,
   werne_green,
   wagner_green,
   vitec_green,

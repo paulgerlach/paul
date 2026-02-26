@@ -10,16 +10,18 @@ export default function AdminUmlageschlüsselHeatObjektauswahlForm({
   userId,
   initialDocumentGroups,
   isEditMode,
+  pathSlug,
 }: {
   objektId: string;
   docId: string;
   userId: string;
   initialDocumentGroups: DocCostCategoryType[];
   isEditMode?: boolean;
+  pathSlug: string;
 }) {
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/gesamtkosten`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/gesamtkosten`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/gesamtkosten`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">

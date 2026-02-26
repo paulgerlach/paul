@@ -13,12 +13,14 @@ export default function AdminGesamtkostenHeatObjektauswahlForm({
   objektId,
   docId,
   userId,
+  pathSlug,
   userDocCostCategories,
   relatedInvoices,
 }: {
   objektId: string;
   docId: string;
   userId: string;
+  pathSlug: string;
   userDocCostCategories: DocCostCategoryType[];
   relatedInvoices?: InvoiceDocumentType[];
 }) {
@@ -45,12 +47,12 @@ export default function AdminGesamtkostenHeatObjektauswahlForm({
   }, 0);
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/abrechnungszeitraum`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`;
 
   const nextLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/umlageschlussel`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/umlageschlussel`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/umlageschlussel`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/umlageschlussel`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-2 rounded-2xl px-4 flex items-start justify-center">

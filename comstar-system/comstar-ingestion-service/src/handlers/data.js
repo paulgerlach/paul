@@ -124,15 +124,13 @@ class DataHandler {
 }
 
   async handleTelegramData(gatewayEui, telegram, messageNumber) {
+    try {
     //TODO: Re-add Save every telegram
     const telegramBuffer = Buffer.from(telegram, 'hex');
-
-  // Filter non-EFE manufacturers silently
-  const manufacturer = telegramBuffer.readUInt16LE(2);
-
-  const parser = new WirelessMbusParser();
-
-  try {
+    // Filter non-EFE manufacturers silently
+    const manufacturer = telegramBuffer.readUInt16LE(2);
+    
+    const parser = new WirelessMbusParser();
     const result = await parser.parse(telegramBuffer, {
       key: Buffer.from(this.key, 'hex')
     });

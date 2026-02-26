@@ -366,7 +366,7 @@ class DatabaseService {
         })
         
       if (error) {
-        console.error('Error inserting telegram parser error data:', error);
+        console.error('Error inserting telegram  data:', error);
         throw error;
       }
 

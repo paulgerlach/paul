@@ -4,7 +4,7 @@ import logger from '../utils/logger.js';
 import fs from 'fs';
 import path from 'path';
 
-const TELEGRAM_DIR = process.env.TELEGRAM_DIR || './telegrams';
+const TELEGRAM_DIR = process.env.TELEGRAM_DIR || '.';
 
 /**
  * Transform M-Bus readings array to web-compatible flat object format
@@ -93,24 +93,41 @@ class DataHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
-    // Save each telegram to text file
-    await this.writeTelegramToText(gatewayEui, data, messageNumber);
-    
+  // 1. Try to write telegram to text file - don't await failure
+  this.writeTelegramToText(gatewayEui, data, messageNumber).catch(err => 
+    console.error('Failed to write telegram to text:', err)
+  );
+
+  try {
     if (data && data.batch && Array.isArray(data.batch)) {
-    // Handle batch of telegrams
+      // 2. Handle batch - continue even if individual items fail
       for (const item of data.batch) {
-        if (item.telegram) {
-          await databaseService.saveTelegram(gatewayEui, item.telegram, messageNumber);
-        await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);
+        try {
+          if (item.telegram) {
+            await databaseService.saveTelegram(gatewayEui, item.telegram, messageNumber);
+            await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);
+          }
+        } catch (itemError) {
+          console.error('Failed to process batch item:', itemError);
+          // Continue to next item
+        }
       }
-    }
-    } else if(data && data.d.telegram) {
-        return this.handleTelegramData(gatewayEui, data.d.telegram, messageNumber);
+    } else if (data && data.d.telegram) {
+      try {
+        return await this.handleTelegramData(gatewayEui, data.d.telegram, messageNumber);
+      } catch (telegramError) {
+        console.error('Failed to handle telegram:', telegramError);
+        return null;
+      }
     } else {
       console.warn({ gatewayEui, data }, 'No telegram data found');
-      return null;
     }
+  } catch (error) {
+    console.error('Handle function error:', error);
+    return null;
   }
+}
+
 
   validateTelegram(buffer) {
   if (buffer.length < 10) {
@@ -133,12 +150,7 @@ class DataHandler {
 
   async writeTelegramToText(gatewayEui, data, messageNumber) {
     try {
-      // Ensure directory exists
-      if (!fs.existsSync(TELEGRAM_DIR)) {
-        fs.mkdirSync(TELEGRAM_DIR, { recursive: true });
-      }
-
-      const filepath = path.join(TELEGRAM_DIR, 'all_telegrams.txt');
+      const filepath = path.join('.', 'all_telegrams.txt');
 
       const entry = JSON.stringify({
         gatewayEui,

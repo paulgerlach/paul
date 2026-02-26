@@ -150,7 +150,6 @@ class DataHandler {
       console.error({
         gatewayEui,
         error: error.message,
-        telegramLength: telegramBuffer.length
       }, 'Parse error');
     } else {
       try {

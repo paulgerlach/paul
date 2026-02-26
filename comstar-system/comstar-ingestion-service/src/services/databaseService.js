@@ -342,7 +342,7 @@ class DatabaseService {
         .insert({
           gateway_eui,
           telegram,
-          telegram_length: telegram.length(),
+          telegram_length: telegram.length,
           error: parserError
         })
 

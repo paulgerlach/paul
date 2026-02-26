@@ -188,26 +188,58 @@ export default function ParserErrorTelegramsContent() {
             ) : parseResult ? (
               <div>
                 <h4 className="font-medium text-green-700 mb-2">Parse Result:</h4>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-green-100">
-                      <tr>
-                        <th className="px-3 py-2 text-left font-medium text-green-800">Field</th>
-                        <th className="px-3 py-2 text-left font-medium text-green-800">Value</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-green-200">
-                      {Object.entries(parseResult).map(([key, value]) => (
-                        <tr key={key}>
-                          <td className="px-3 py-2 font-mono text-xs text-green-700">{key}</td>
-                          <td className="px-3 py-2 text-green-900">
-                            {value === null ? <span className="text-gray-400">null</span> : String(value)}
-                          </td>
+                
+                {/* Meter Info Section */}
+                <div className="mb-4">
+                  <h5 className="text-sm font-semibold text-green-800 mb-1">Meter Information</h5>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-green-100">
+                        <tr>
+                          <th className="px-3 py-2 text-left font-medium text-green-800">Field</th>
+                          <th className="px-3 py-2 text-left font-medium text-green-800">Value</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-green-200">
+                        {Object.entries(parseResult).filter(([key]) => key !== 'readings').map(([key, value]) => (
+                          <tr key={key}>
+                            <td className="px-3 py-2 font-mono text-xs text-green-700">{key}</td>
+                            <td className="px-3 py-2 text-green-900">
+                              {value === null ? <span className="text-gray-400">null</span> : String(value)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+                
+                {/* Readings Section */}
+                {parseResult.readings && (
+                  <div>
+                    <h5 className="text-sm font-semibold text-green-800 mb-1">Readings</h5>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-green-100">
+                          <tr>
+                            <th className="px-3 py-2 text-left font-medium text-green-800">Field</th>
+                            <th className="px-3 py-2 text-left font-medium text-green-800">Value</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-green-200">
+                          {Object.entries(parseResult.readings).map(([key, value]) => (
+                            <tr key={key}>
+                              <td className="px-3 py-2 font-mono text-xs text-green-700">{key}</td>
+                              <td className="px-3 py-2 text-green-900">
+                                {value === null ? <span className="text-gray-400">null</span> : String(value)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : null}
           </div>

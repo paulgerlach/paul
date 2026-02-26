@@ -68,9 +68,20 @@ const processParsedResult = (result: ParserResult, engelmannVolume?:number) => {
       readings,
       engelmannVolume  // <-- pass through the corrected volume
     );
-    return transformedReadings;
-  } catch (error) {
     
+    return {
+      meterId,
+      meterManufacturer,
+      meterType,
+      meterDeviceType,
+      version,
+      status,
+      accessNo,
+      readings: transformedReadings
+    };
+  } catch (error) {
+    console.error('[processParsedResult] Error:', error);
+    return null;
   }
 }
 

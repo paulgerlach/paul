@@ -98,7 +98,7 @@ class DataHandler {
     
     if (data && data.batch && Array.isArray(data.batch)) {
     // Handle batch of telegrams
-      for (const item of data.batch) {writeTelegramToText
+      for (const item of data.batch) {
         if (item.telegram) {
           await databaseService.saveTelegram(gatewayEui, item.telegram, messageNumber);
         await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);

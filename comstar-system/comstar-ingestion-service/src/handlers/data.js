@@ -260,7 +260,7 @@ class DataHandler {
   const encryption = result.encryption ?? null;
 
   if (meterManufacturer !== 'EFE') {
-    console.warning('Invalid manufacturer (not EFE). Skipping');
+    console.warn('Invalid manufacturer (not EFE). Skipping'); 
     return null;
   }
     

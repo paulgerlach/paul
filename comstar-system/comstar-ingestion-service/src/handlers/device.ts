@@ -3,6 +3,12 @@ import databaseService from '../services/databaseService.js';
 import logger from '../utils/logger.js';
 
 class DeviceHandler {
+  name:string;
+  isUrgent: boolean;
+  gatewayCache: Map<any,any>
+  lastDeviceUpdate: Map<any,any>
+  cacheTTL: number
+
   constructor() {
     this.name = 'device';
     this.isUrgent = false;
@@ -80,7 +86,7 @@ class DeviceHandler {
       'app'
     ];
     
-    const missingFields = [];
+    const missingFields:any[] = [];
     
     for (const field of requiredFields) {
       if (!data[field] && data[field] !== '') {

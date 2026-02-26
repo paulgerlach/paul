@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import ProfileEditForm from "./ProfileEditForm";
 import CompanyDataForm from "./CompanyDataForm";
-import TeamRolesForm from "./TeamTolesForm";
+import TeamRolesForm from "./TeamRolesForm";
 import SecurityForm from "./SecurityForm";
 import IntegrationsForm from "../IntegrationsForm";
 import SupportForm from "./SupportForm";

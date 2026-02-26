@@ -9,7 +9,7 @@ import ModalFooter from './ModalFooter';
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
 // TO DO: Create table for the company logos needed
 export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, reset } = useForm();
   const [preview, setPreview] = useState<string | null>(null);
 
   const logoFile = watch("logo");
@@ -23,6 +23,39 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       return () => URL.revokeObjectURL(url);
     }
   }, [logoFile]);
+
+useEffect(() => {
+  const loadExistingData = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: userData } = await supabase
+      .from("users")
+      .select("agency_id")
+      .eq("id", user.id)
+      .single();
+
+    if (userData?.agency_id) {
+      const { data: agency } = await supabase
+        .from("agencies")
+        .select("*")
+        .eq("id", userData.agency_id)
+        .single();
+
+      if (agency) {
+        reset({
+          companyName: agency.name,
+          street: agency.street,
+          zip: agency.zip,
+          city: agency.city,
+          vatId: agency.vat_id,
+        });
+        if (agency.logo_url) setPreview(agency.logo_url);
+      }
+    }
+  };
+  loadExistingData();
+}, [reset]);
 
   const onSubmit = async (data: any) => {
     let logoUrl: string | null = null;
@@ -60,46 +93,39 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       return;
     }
 
-    const { data: companyData, error: fetchError } = await supabase
-      .from("objekte")
-      .select("*")
-      .eq("user_id", user.id)
+    const { data: userData } = await supabase
+      .from("users")
+      .select("agency_id")
+      .eq("id", user.id)
       .single();
 
-    if (!companyData) {
-      const { error: insertError } = await supabase
-        .from("objekte")
-        .insert({
-          user_id: user.id,
-          company_name: data.companyName,
-          street: data.street,
-          zip: data.zip,
-          city: data.city,
-          vat_id: data.vatId,
-          logo_url: logoUrl,
-        })
-        .select()
-        .single();
+    const { data: agencyData, error: agencyError } = await supabase
+      .from("agencies")
+      .upsert({
+        id: userData?.agency_id || undefined,
+        name: data.companyName,
+        street: data.street,
+        zip: data.zip,
+        city: data.city,
+        vat_id: data.vatId,
+        logo_url: logoUrl,
+      })
+      .select()
+      .single();
 
-      if (insertError) {
-        console.error("Failed to create company for user", insertError);
-        return;
-      }
-    } else {
-      const { error: updateError } = await supabase
-        .from("objekte")
-        .update({
-          company_name: data.companyName,
-          street: data.street,
-          zip: data.zip,
-          city: data.city,
-          vat_id: data.vatId,
-          logo_url: logoUrl,
-        })
-        .eq("id", companyData.id);
+    if (agencyError || !agencyData) {
+      console.error("Failed to save agency data. Check if columns exist in Supabase:", agencyError);
+      return;
+    }
 
-      if (updateError) {
-        console.error("DB update failed:", updateError);
+    if (!userData?.agency_id) {
+      const { error: linkError } = await supabase
+        .from("users")
+        .update({ agency_id: agencyData.id })
+        .eq("id", user.id);
+
+      if (linkError) {
+        console.error("Failed to link user to agency:", linkError);
         return;
       }
     }

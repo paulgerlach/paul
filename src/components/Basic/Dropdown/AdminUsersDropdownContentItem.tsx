@@ -27,6 +27,7 @@ export default function AdminUsersDropdownContentItem({
         checked={user_id === item.id}
         name={item.id}
         className="sr-only peer"
+        readOnly
       />
       <label
         htmlFor={item.id}

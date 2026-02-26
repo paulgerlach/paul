@@ -1184,7 +1184,17 @@ export async function getDocCostCategoryTypes(
       (defaultType) => {
         const userEntry = userTypesMap.get(defaultType.type);
         if (userEntry) {
-          // User has this type - use their version (priority)
+          // User has this type - use their version (priority), but merge any newly added default options
+          if (defaultType.options && userEntry.options) {
+            const existingOptions = new Set(userEntry.options);
+            const missingOptions = defaultType.options.filter(opt => !existingOptions.has(opt));
+            if (missingOptions.length > 0) {
+              userEntry.options = [...userEntry.options, ...missingOptions];
+            }
+          } else if (defaultType.options && !userEntry.options) {
+            userEntry.options = [...defaultType.options];
+          }
+
           userTypesMap.delete(defaultType.type); // Mark as used
           return userEntry;
         }

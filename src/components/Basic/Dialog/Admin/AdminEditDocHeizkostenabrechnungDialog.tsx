@@ -21,7 +21,7 @@ import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
 import { buildLocalName } from "@/utils";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
 import { useParams } from "next/navigation";
-import { adminCreateInvoiceDocument } from "@/actions/create/admin/adminCreateInvoiceDocument";
+import { adminEditInvoiceDocument } from "@/actions/edit/admin/adminEditInvoiceDocument";
 import { useEffect, useMemo, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -63,15 +63,18 @@ const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
   direct_local_id: null,
 };
 
-export default function AdminAddDocHeizkostenabrechnungDialog() {
+export default function AdminEditDocHeizkostenabrechnungDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const {
     purposeOptions,
     activeCostType,
-    updateDocumentGroup,
+    editDocumentGroup,
     objektID,
     operatingDocID,
+    documentGroups,
   } = useHeizkostenabrechnungStore();
+
+  const { itemID } = useDialogStore();
 
   const { data: locals } = useLocalsByObjektID(objektID);
   const { user_id } = useParams();
@@ -79,13 +82,21 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
   const activeDialog = useMemo(() => {
     return Object.entries(openDialogByType).find(
       ([key, value]) =>
-        key.endsWith("_heizkostenabrechnung_upload") &&
-        value === true &&
-        key.includes("admin_")
+        key === "admin_invoice_edit" && value === true
     )?.[0];
   }, [openDialogByType]);
 
   const isOpen = Boolean(activeDialog);
+
+  // Extract existing invoice from store
+  const { existingInvoice, targetCostType } = useMemo(() => {
+    if (!itemID || !documentGroups) return { existingInvoice: null, targetCostType: null };
+    for (const group of documentGroups) {
+      const found = group.data.find((item) => String(item.id) === String(itemID));
+      if (found) return { existingInvoice: found, targetCostType: group.type };
+    }
+    return { existingInvoice: null, targetCostType: null };
+  }, [itemID, documentGroups]);
 
   const methods = useForm<AddDocHeizkostenabrechnungDialogFormValues>({
     resolver: zodResolver(addDocHeizkostenabrechnungDialogSchema),
@@ -94,13 +105,27 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
   const { isSubmitting } = methods.formState;
 
+  useEffect(() => {
+    if (existingInvoice && isOpen) {
+      methods.reset({
+        invoice_date: existingInvoice.invoice_date ? new Date(existingInvoice.invoice_date) : null,
+        total_amount: existingInvoice.total_amount ? Number(existingInvoice.total_amount) : null,
+        service_period: existingInvoice.service_period ?? false,
+        for_all_tenants: existingInvoice.for_all_tenants ?? true,
+        purpose: existingInvoice.purpose ?? "",
+        notes: existingInvoice.notes ?? "",
+        direct_local_id: existingInvoice.direct_local_id ?? null,
+      });
+    }
+  }, [existingInvoice, isOpen, methods]);
+
   const uploadDocuments = useUploadDocuments();
   const { deletedDocumentIds } = useDocumentDeletion([]);
 
   const servicePeriod = methods.watch("service_period");
   const forAllTenants = methods.watch("for_all_tenants");
   const watchedDocs = methods.watch("document") ?? [];
-  const isFuelCost = activeCostType === "fuel_costs";
+  const isFuelCost = targetCostType === "fuel_costs";
 
   const processedFilesRef = useRef<Set<string>>(new Set());
   const fileKey = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
@@ -181,45 +206,28 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
     if (isProcessingInvoice) return; // ✅ don't submit while parsing
-    if (!activeCostType || !activeDialog) return;
+    if (!targetCostType || !activeDialog) return;
 
     const { document, ...rest } = data;
 
-    if (!document?.length) {
-      toast.error("Rechnung beifügen");
-      return;
-    }
+    // Optional: we don't strictly *require* a new document if we're editing
+    // if (!document?.length && !existingInvoice?.document_name) {
+    //   toast.error("Rechnung beifügen");
+    //   return;
+    // }
 
     const delayPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
     const submitProcess = async () => {
-      const formattedPayload = {
-        invoice_date: rest.invoice_date
-          ? format(rest.invoice_date, "yyyy-MM-dd")
-          : null,
-        total_amount: rest.total_amount != null ? String(rest.total_amount) : null,
-        service_period: rest.service_period,
-        for_all_tenants: rest.for_all_tenants,
-        purpose: rest.purpose,
-        notes: rest.notes,
-        direct_local_id:
-          rest.for_all_tenants === false ? rest.direct_local_id : null,
-        document,
-      };
+      const formattedPayload = { ...rest, document };
 
-      const res = await adminCreateInvoiceDocument(
-        {
-          ...formattedPayload,
-          invoice_date: rest.invoice_date,
-          total_amount: rest.total_amount != null ? rest.total_amount : null,
-        },
-        objektID,
-        String(user_id),
-        operatingDocID,
-        activeCostType
-      );
+      if (!itemID) {
+        toast.error("Missing Item ID");
+        return;
+      }
+      const res = await adminEditInvoiceDocument(itemID, formattedPayload);
 
-      updateDocumentGroup(activeCostType, res);
+      editDocumentGroup(targetCostType, itemID, res);
 
       if (document && document.length > 0) {
         await uploadDocuments.mutateAsync({
@@ -244,7 +252,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
   return (
     <DialogBase dialogName={activeDialog as DialogStoreActionType}>
       <p className="font-bold text-lg text-admin_dark_text -mt-6">
-        Neue Ausgaben
+        Rechnung bearbeiten
       </p>
 
       <Form {...methods}>

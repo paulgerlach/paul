@@ -1235,12 +1235,12 @@ export async function getInvoicesByOperatingCostDocumentID(docId: string): Promi
 }
 
 export async function getHeatingBillDocumentByID(docId: string): Promise<HeatingBillDocumentType> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const document = await database
     .select()
     .from(heating_bill_documents)
-    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .where(eq(heating_bill_documents.id, docId))
     .then((res) => res[0]);
 
   return document;
@@ -1279,12 +1279,12 @@ export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, use
 }
 
 export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+    .where(eq(heating_invoices.heating_doc_id, docId));
 
   return invoices;
 }
@@ -1336,7 +1336,7 @@ export async function getHeatingBillDocsByObjektId(
  */
 export async function getDocumentsByHeatingBillDocId(
   docId: string,
-): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]>> {
+): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]>> {
   const docs = await database
     .select()
     .from(documents)
@@ -1348,7 +1348,7 @@ export async function getDocumentsByHeatingBillDocId(
     )
     .orderBy(documents.created_at);
 
-  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]> = {};
+  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]> = {};
   for (const doc of docs) {
     const localId = doc.local_id;
     if (!localId) continue;
@@ -1360,6 +1360,7 @@ export async function getDocumentsByHeatingBillDocId(
       document_name: doc.document_name,
       document_url: doc.document_url,
       local_id: localId,
+      current_document: doc.current_document,
     });
   }
 
@@ -1397,6 +1398,7 @@ export async function getDocumentsByRelatedIds(
  */
 export async function getDocumentsByObjektIds(
   objektIds: string[],
+  includeHistory: boolean = false
 ): Promise<any[]> {
   if (objektIds.length === 0) return [];
 
@@ -1430,10 +1432,16 @@ export async function getDocumentsByObjektIds(
   if (allParentIds.length === 0) return [];
 
   // Fetch documents linked to these parent records
+  const conditions = [inArray(documents.related_id, allParentIds)];
+
+  if (!includeHistory) {
+    conditions.push(eq(documents.current_document, true));
+  }
+
   const allDocs = await database
     .select()
     .from(documents)
-    .where(inArray(documents.related_id, allParentIds))
+    .where(and(...conditions))
     .orderBy(documents.created_at);
 
   return allDocs.map((doc) => ({

@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { DocCostCategoryType } from "@/types";
-import SaveLocalCostButton from "../../Common/SaveCostButton";
 import CostTypesSelects from "@/components/Admin/Docs/CostTypes/CostTypesSelects";
 import AdminSaveCostButton from "../../Common/AdminSaveCostButton";
+import { useEffect } from "react";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 
 export default function AdminUmlageschlüsselLocalForm({
   objektId,
@@ -20,6 +23,20 @@ export default function AdminUmlageschlüsselLocalForm({
   initialDocumentGroups: DocCostCategoryType[];
   isEditMode?: boolean;
 }) {
+  const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
+
+  useEffect(() => {
+    if (initialDocumentGroups && documentGroups.length === 0) {
+      setDocumentGroups(
+        initialDocumentGroups.map((group) => ({
+          ...group,
+          data: [],
+        }))
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialDocumentGroups]);
+
   const backLink = isEditMode
     ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/gesamtkosten`
     : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/gesamtkosten`;

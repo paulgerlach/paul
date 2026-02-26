@@ -200,6 +200,9 @@ importers:
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.3.1
+      wireless-mbus-parser:
+        specifier: ^1.1.0
+        version: 1.1.0
       zod:
         specifier: ^3.24.2
         version: 3.25.76
@@ -2209,6 +2212,9 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  aes-cmac@3.1.0:
+    resolution: {integrity: sha512-+G57G8R0xZMF4MbwZ38Ff6RqAY33B0cRqxce6EvLrlxMK2ku6wwDMSq65d250JGoTbIUbIvQBMkdPVGRakSB+g==}
 
   aggregate-error@3.1.0:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
@@ -4696,6 +4702,9 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
+  one-webcrypto@1.0.3:
+    resolution: {integrity: sha512-fu9ywBVBPx0gS9K0etIROTiCkvI5S1TDjFsYFb3rC1ewFxeOqsbzq7aIMBHsYfrTHBcGXJaONXXjTl8B01cW1Q==}
+
   onetime@5.1.2:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
     engines: {node: '>=6'}
@@ -5903,6 +5912,10 @@ packages:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
     hasBin: true
+
+  wireless-mbus-parser@1.1.0:
+    resolution: {integrity: sha512-/DtyrLOdAt1OmoRiH2aI3my0Vz/x/RPx5nwyDZak46aQbPg20Kx+NzQdR+y3USZtMMBBLqJ+FE+zoB2LfrU8vw==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
@@ -7844,6 +7857,10 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  aes-cmac@3.1.0:
+    dependencies:
+      one-webcrypto: 1.0.3
 
   aggregate-error@3.1.0:
     dependencies:
@@ -10709,6 +10726,8 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
+  one-webcrypto@1.0.3: {}
+
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
@@ -12203,6 +12222,10 @@ snapshots:
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
+
+  wireless-mbus-parser@1.1.0:
+    dependencies:
+      aes-cmac: 3.1.0
 
   word-wrap@1.2.5: {}
 

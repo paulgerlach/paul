@@ -155,7 +155,7 @@ class DataHandler {
       }, 'Parse error');
     } else {
       try {
-        await databaseService.saveTelegramParserError(gatewayEui, telegram, messageNumber);
+        await databaseService.saveTelegramParserError(gatewayEui, telegram, error.message);
       } catch (error) {
         console.error({
         gatewayEui,

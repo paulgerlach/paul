@@ -159,8 +159,7 @@ export const countLocals = (locals: LocalType[]) => {
   );
 
   const otherLocals = locals.filter(
-    (local) =>
-      local.usage_type !== "commercial" && local.usage_type !== "parking"
+    (local) => local.usage_type === "residential"
   );
 
   return { commertialLocals, otherLocals };

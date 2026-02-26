@@ -70,6 +70,7 @@ const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
   floor: z.string().nullable(),
   living_space: z.coerce.number().nullable(),
+  heating_area: z.coerce.number().nullable(),
   house_location: z.string().nullable(),
   outdoor: z.string().nullable(),
   rooms: z.coerce.number().nullable(),
@@ -121,6 +122,7 @@ const defaultValues: CreateObjekteUnitFormValues = {
   usage_type: "residential",
   floor: "",
   living_space: 0,
+  heating_area: 0,
   house_location: "",
   outdoor: "",
   rooms: null,
@@ -160,6 +162,7 @@ export default function AdminCreateObjekteUnitForm({
   const house_location = methods.watch("house_location");
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
+  const heating_area = methods.watch("heating_area");
   const usage_type = methods.watch("usage_type");
 
   // Check if current type is non-residential
@@ -174,6 +177,7 @@ export default function AdminCreateObjekteUnitForm({
       house_location: house_location ?? undefined,
       residential_area: residential_area ?? undefined,
       living_space: String(living_space ?? 0),
+      heating_area: String(heating_area ?? 0),
     });
 
   return (
@@ -253,8 +257,14 @@ export default function AdminCreateObjekteUnitForm({
                   replaceDotWithComma
                   unit="qm"
                 />
-                {/* Empty div to align grid when only 5 items */}
-                <div className="hidden max-medium:hidden" />
+                <FormInputField<CreateObjekteUnitFormValues>
+                  control={methods.control}
+                  name="heating_area"
+                  label="Heizfläche"
+                  placeholder="Quadratmeter"
+                  replaceDotWithComma
+                  unit="qm"
+                />
               </div>
             </>
           )}

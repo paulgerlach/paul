@@ -7,6 +7,10 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import AdminObjekteLocalItemHeatingBillDocResult from "@/components/Admin/ObjekteLocalItem/Admin/AdminObjekteLocalItemHeatingBillDocResult";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { supabaseServer } from "@/utils/supabase/server";
+import database from "@/db";
+import { users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export default async function ResultLocalPDF({
   params,
@@ -19,6 +23,18 @@ export default async function ResultLocalPDF({
   }>;
 }) {
   const { objekt_id, local_id, doc_id, user_id } = await params;
+
+  const supabase = await supabaseServer();
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+  let isSuperAdmin = false;
+  if (currentUser) {
+    const [userData] = await database
+      .select({ permission: users.permission })
+      .from(users)
+      .where(eq(users.id, currentUser.id));
+    isSuperAdmin = userData?.permission === "super_admin";
+  }
 
   const [localData, documentsByLocalId, contracts] = await Promise.all([
     getLocalById(local_id),
@@ -45,7 +61,9 @@ export default async function ResultLocalPDF({
 
   // Resolve tenant names for each document belonging to this local
   const docsForLocal = documentsByLocalId[local_id] ?? [];
-  const tenantDocuments = docsForLocal.map((doc) => {
+  const validDocsForLocal = isSuperAdmin ? docsForLocal : docsForLocal.filter(doc => doc.current_document !== false);
+
+  const tenantDocuments = validDocsForLocal.map((doc) => {
     const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
     const contractId = contractIdMatch?.[1] ?? "";
     const isVacancy = doc.document_name.includes("leerstand");
@@ -71,6 +89,7 @@ export default async function ResultLocalPDF({
           docType="localauswahl"
           docID={doc_id}
           tenantDocuments={tenantDocuments}
+          isSuperAdmin={isSuperAdmin}
         />
       </ContentWrapper>
     </div>

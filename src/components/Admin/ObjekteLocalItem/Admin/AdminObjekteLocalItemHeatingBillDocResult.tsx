@@ -6,13 +6,14 @@ import { getAdminContractsWithContractorsByLocalID } from "@/api";
 import ThreeDotsButton from "@/components/Basic/TheeDotsButton/TheeDotsButton";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import TenantDocumentActions from "@/components/Admin/ObjekteLocalItem/Admin/TenantDocumentActions";
-
+import TenantDocumentUploadHandler from "@/components/Admin/ObjekteLocalItem/Admin/TenantDocumentUploadHandler";
 
 export type TenantDocument = {
   id: string;
   document_name: string;
   document_url: string;
   tenantName: string;
+  current_document: boolean;
 };
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
@@ -23,6 +24,7 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   docType: "localauswahl" | "objektauswahl";
   status?: "renting" | "vacancy";
   tenantDocuments?: TenantDocument[];
+  isSuperAdmin?: boolean;
 };
 
 export default async function AdminObjekteLocalItemHeatingBillDocResult({
@@ -33,6 +35,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   docType,
   status: statusFromProps,
   tenantDocuments = [],
+  isSuperAdmin = false,
 }: Readonly<ObjekteLocalItemHeatingBillDocResultProps>) {
   let status = statusFromProps;
   if (!status) {
@@ -88,6 +91,21 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   const singleDoc = tenantDocuments.length === 1 ? tenantDocuments[0] : null;
   const hasMultipleDocs = tenantDocuments.length > 1;
 
+  const groupedDocsByTenant = Object.values(
+    tenantDocuments.reduce((acc, doc) => {
+      const key = doc.tenantName || "Unbekannt";
+      if (!acc[key]) {
+        acc[key] = { current: undefined, history: [] };
+      }
+      if (doc.current_document) {
+        acc[key].current = doc;
+      } else {
+        acc[key].history.push(doc);
+      }
+      return acc;
+    }, {} as Record<string, { current?: TenantDocument; history: TenantDocument[] }>)
+  );
+
   return (
     <div className="bg-white rounded-2xl max-medium:rounded-xl overflow-hidden">
       {/* Main row: locale info + actions */}
@@ -122,36 +140,93 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
         <div className="flex items-center gap-4">
           {/* Inline action buttons when single document */}
           {singleDoc && (
-            <TenantDocumentActions
+            <div className="flex items-center gap-2">
+              {!singleDoc.current_document && (
+                <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full whitespace-nowrap hidden medium:inline-block">
+                  Überschrieben
+                </span>
+              )}
+              <TenantDocumentActions
+                documentId={singleDoc.id}
+                previewHref={`${previewBaseHref}?documentId=${singleDoc.id}`}
+              />
+            </div>
+          )}
+          {singleDoc && isSuperAdmin ? (
+            <TenantDocumentUploadHandler
               documentId={singleDoc.id}
-              previewHref={`${previewBaseHref}?documentId=${singleDoc.id}`}
+              editLink={editLink}
+              dialogAction="admin_heating_bill_delete"
+              disabled={!singleDoc.current_document}
+            />
+          ) : (
+            <ThreeDotsButton
+              dialogAction="admin_heating_bill_delete"
+              editLink={editLink}
             />
           )}
-          <ThreeDotsButton
-            dialogAction="admin_heating_bill_delete"
-            editLink={editLink}
-          />
         </div>
       </div>
 
       {/* Tenant documents sublist — only for multiple documents */}
       {hasMultipleDocs && (
         <div className="border-t border-gray-100 ml-6 max-medium:ml-4 border-l-2 border-l-gray-50 bg-gray-50/30">
-          {tenantDocuments.map((doc) => {
-            const previewHref = `${previewBaseHref}?documentId=${doc.id}`;
-
+          {groupedDocsByTenant.map((group, groupIdx) => {
+            const hasCurrent = !!group.current;
+            const groupKey = group.current?.id || group.history[0]?.id || groupIdx;
             return (
-              <div
-                key={doc.id}
-                className="flex items-center justify-between pl-6 pr-4 py-3 max-medium:pl-4 max-medium:pr-3 max-medium:py-2 hover:bg-gray-100 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0"
-              >
-                <p className="text-base max-xl:text-sm max-medium:text-xs text-dark_green/70 truncate">
-                  {doc.tenantName || "\u00A0"}
-                </p>
-                <TenantDocumentActions
-                  documentId={doc.id}
-                  previewHref={previewHref}
-                />
+              <div key={groupKey} className="flex flex-col border-b border-gray-100 last:border-b-0">
+                {/* Active Document */}
+                {group.current && (
+                  <div className="flex items-center justify-between pl-6 pr-4 py-3 max-medium:pl-4 max-medium:pr-3 max-medium:py-2 transition-colors hover:bg-gray-100 cursor-pointer">
+                    <div className="flex items-center gap-2 flex-1 min-w-0 pr-4">
+                      <p className="text-base max-xl:text-sm max-medium:text-xs text-dark_green/70 truncate">
+                        {group.current.tenantName || "\u00A0"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <TenantDocumentActions
+                        documentId={group.current.id}
+                        previewHref={`${previewBaseHref}?documentId=${group.current.id}`}
+                      />
+                      {isSuperAdmin && (
+                        <TenantDocumentUploadHandler
+                          documentId={group.current.id}
+                          disabled={!group.current.current_document}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Historical Documents nested list */}
+                {group.history.length > 0 && (
+                  <div className={`${hasCurrent ? 'pl-6 pb-2 pt-1 bg-gray-50/50 border-t border-gray-100/60' : ''} flex flex-col gap-1`}>
+                    {group.history.map((histDoc) => (
+                      <div
+                        key={histDoc.id}
+                        className={`flex items-center justify-between ${hasCurrent ? 'pl-4 pr-3 py-2 rounded-md' : 'pl-6 pr-4 py-3 border-b border-gray-100 last:border-b-0'} opacity-75 transition-colors hover:bg-gray-200/50 cursor-pointer`}
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm max-xl:text-xs text-dark_green/70 truncate">
+                              {histDoc.tenantName || group.current?.tenantName || "\u00A0"}
+                            </p>
+                            <span className="text-[10px] font-medium text-red-700 bg-red-100/80 px-2 py-0.5 rounded-full whitespace-nowrap">
+                              Überschrieben
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TenantDocumentActions
+                            documentId={histDoc.id}
+                            previewHref={`${previewBaseHref}?documentId=${histDoc.id}`}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}

@@ -21,6 +21,7 @@ export interface DocumentMetadata {
   user_id: string;
   objekt_id?: string | null;
   local_id?: string | null;
+  current_document?: boolean;
 }
 
 export class DocumentService {
@@ -43,7 +44,7 @@ export class DocumentService {
         console.error("Supabase error:", error);
         throw new Error(`Failed to fetch documents: ${error.message}`);
       }
-      
+
       if (!documents || documents.length === 0) {
         return [];
       }
@@ -95,11 +96,11 @@ export class DocumentService {
       // Combine documents with objekt information
       return documents.map(doc => ({
         ...doc,
-        objekt_id: doc.related_type === "heating_bill" 
+        objekt_id: doc.related_type === "heating_bill"
           ? heatingBillData[doc.related_id]?.objekt_id || null
           : doc.related_type === "operating_costs"
-          ? operatingCostObjekts[doc.related_id] || null
-          : null,
+            ? operatingCostObjekts[doc.related_id] || null
+            : null,
         local_id: doc.related_type === "heating_bill"
           ? heatingBillData[doc.related_id]?.local_id || null
           : null
@@ -158,7 +159,7 @@ export class DocumentService {
         console.error("Supabase error:", error);
         throw new Error(`Failed to fetch documents: ${error.message}`);
       }
-      
+
       if (!documents || documents.length === 0) {
         return [];
       }
@@ -207,11 +208,11 @@ export class DocumentService {
 
       return documents.map(doc => ({
         ...doc,
-        objekt_id: doc.related_type === "heating_bill" 
+        objekt_id: doc.related_type === "heating_bill"
           ? heatingBillData[doc.related_id]?.objekt_id || null
           : doc.related_type === "operating_costs"
-          ? operatingCostObjekts[doc.related_id] || null
-          : null,
+            ? operatingCostObjekts[doc.related_id] || null
+            : null,
         local_id: doc.related_type === "heating_bill"
           ? heatingBillData[doc.related_id]?.local_id || null
           : null
@@ -221,7 +222,7 @@ export class DocumentService {
       throw error;
     }
   }
-  
+
   static async getDocumentFileSize(documentPath: string): Promise<string> {
     try {
       const { data, error } = await supabase.storage
@@ -237,7 +238,7 @@ export class DocumentService {
 
       const fileName = documentPath.split('/').pop();
       const file = data?.find(item => item.name === fileName);
-      
+
       if (file && file.metadata?.size) {
         const sizeInBytes = parseInt(file.metadata.size);
         return this.formatFileSize(sizeInBytes);
@@ -252,11 +253,11 @@ export class DocumentService {
 
   private static formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }

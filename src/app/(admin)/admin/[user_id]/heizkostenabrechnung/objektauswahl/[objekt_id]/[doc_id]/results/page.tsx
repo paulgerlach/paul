@@ -10,6 +10,10 @@ import SearchControls from "@/components/Admin/SearchControls";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
 import type { UnitType } from "@/types";
+import { supabaseServer } from "@/utils/supabase/server";
+import database from "@/db";
+import { users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
   "residential",
@@ -25,6 +29,18 @@ export default async function ResultLocalPDF({
 }) {
   const { objekt_id, doc_id, user_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
+
+  const supabase = await supabaseServer();
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+  let isSuperAdmin = false;
+  if (currentUser) {
+    const [userData] = await database
+      .select({ permission: users.permission })
+      .from(users)
+      .where(eq(users.id, currentUser.id));
+    isSuperAdmin = userData?.permission === "super_admin";
+  }
 
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
@@ -71,10 +87,12 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; tenantName: string }[]
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
-    tenantDocsByLocalId[localId] = docs.map((doc) => {
+    const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
+
+    tenantDocsByLocalId[localId] = validDocsForLocal.map((doc) => {
       const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
       const isVacancy = doc.document_name.includes("leerstand");
@@ -126,6 +144,7 @@ export default async function ResultLocalPDF({
                 docID={doc_id}
                 status={status}
                 tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
+                isSuperAdmin={isSuperAdmin}
               />
             ))
           )}

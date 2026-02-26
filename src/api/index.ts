@@ -1336,7 +1336,7 @@ export async function getHeatingBillDocsByObjektId(
  */
 export async function getDocumentsByHeatingBillDocId(
   docId: string,
-): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]>> {
+): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]>> {
   const docs = await database
     .select()
     .from(documents)
@@ -1348,7 +1348,7 @@ export async function getDocumentsByHeatingBillDocId(
     )
     .orderBy(documents.created_at);
 
-  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string }[]> = {};
+  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]> = {};
   for (const doc of docs) {
     const localId = doc.local_id;
     if (!localId) continue;
@@ -1360,6 +1360,7 @@ export async function getDocumentsByHeatingBillDocId(
       document_name: doc.document_name,
       document_url: doc.document_url,
       local_id: localId,
+      current_document: doc.current_document,
     });
   }
 

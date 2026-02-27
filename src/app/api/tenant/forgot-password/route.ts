@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
       if (resetToken) {
         // Build reset URL
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://heidi-systems.de';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://heidisystems.com';
         const resetUrl = `${baseUrl}/mieter/reset?token=${resetToken}`;
 
         // Send email via Make.com webhook

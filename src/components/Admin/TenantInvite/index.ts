@@ -9,3 +9,4 @@ export { BuildingSelector } from "./BuildingSelector";
 export { TenantSelector } from "./TenantSelector";
 export type { Tenant } from "./TenantSelector";
 export { TenantInviteSection } from "./TenantInviteSection";
+export { ScheduleSettings } from "./ScheduleSettings";

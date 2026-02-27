@@ -244,19 +244,22 @@ async function processBatchInBackground(
     let generated = 0;
     let failed = 0;
 
-    // Clean up old documents from prior batch runs for this doc
+    // Archive old documents from prior batch runs for this doc
     try {
         const { error: cleanupError } = await supabase
             .from("documents")
-            .delete()
+            .update({ current_document: false })
             .eq("related_id", docId)
-            .eq("related_type", "heating_bill");
+            .eq("related_type", "heating_bill")
+            .eq("current_document", true);
         if (cleanupError) {
-            console.warn("[HeatingBillBatch] Cleanup of old documents failed (non-fatal):", cleanupError);
+            console.warn("[HeatingBillBatch] Archiving old documents failed (non-fatal):", cleanupError);
         }
     } catch (error_) {
-        console.warn("[HeatingBillBatch] Cleanup error (non-fatal):", error_);
+        console.warn("[HeatingBillBatch] Archiving error (non-fatal):", error_);
     }
+
+    const batchTimestamp = Date.now();
 
     for (let i = 0; i < locals.length; i += UPLOAD_BATCH_SIZE) {
         const batch = locals.slice(i, i + UPLOAD_BATCH_SIZE);
@@ -294,7 +297,7 @@ async function processBatchInBackground(
                     }
                     const model = { ...computedModel, logoSrc };
                     const buffer = await renderPdf(model);
-                    const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
+                    const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default_v${batchTimestamp}.pdf`;
                     await uploadPdf(supabase, storagePath, buffer);
 
                     // Insert document record linked to parent heating bill doc
@@ -309,6 +312,7 @@ async function processBatchInBackground(
                                 related_type: "heating_bill",
                                 user_id: userId,
                                 local_id: localId,
+                                current_document: true,
                             })
                             .select("id")
                             .single();
@@ -353,7 +357,7 @@ async function processBatchInBackground(
                         }
                         const model = { ...computedModel, logoSrc };
                         const buffer = await renderPdf(model);
-                        const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
+                        const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}_v${batchTimestamp}.pdf`;
                         await uploadPdf(supabase, storagePath, buffer);
 
                         // Insert document record linked to parent heating bill doc
@@ -368,6 +372,7 @@ async function processBatchInBackground(
                                     related_type: "heating_bill",
                                     user_id: userId,
                                     local_id: localId,
+                                    current_document: true,
                                 })
                                 .select("id")
                                 .single();
@@ -506,7 +511,7 @@ async function processBatchInBackground(
         const batch = allTenantPdfs.slice(i, i + UPLOAD_BATCH_SIZE);
         const signedResults = await Promise.allSettled(
             batch.map(async ({ apt, tenant }) => {
-                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}_${tenant.contractId}.pdf`;
+                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}_${tenant.contractId}_v${batchTimestamp}.pdf`;
                 const signOnce = async () =>
                     supabase.storage
                         .from("documents")

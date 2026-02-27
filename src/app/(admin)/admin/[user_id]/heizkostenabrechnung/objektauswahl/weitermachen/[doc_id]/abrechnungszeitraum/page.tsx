@@ -6,7 +6,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import AbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/HeatObjektauswahlForm";
+import AdminAbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function AbrechnungszeitraumContinuePage({
@@ -33,8 +33,9 @@ export default async function AbrechnungszeitraumContinuePage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumHeatObjektauswahlForm
-          id={doc.objekt_id ?? ""}
+        <AdminAbrechnungszeitraumHeatObjektauswahlForm
+          objekteID={doc.objekt_id ?? ""}
+          userID={user_id}
           docValues={doc}
         />
         <HeizkostenabrechnungBuildingReceipt

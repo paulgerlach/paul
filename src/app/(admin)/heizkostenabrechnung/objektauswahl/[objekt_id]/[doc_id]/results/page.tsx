@@ -67,13 +67,15 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; tenantName: string }[]
+    { id: string; document_name: string; document_url: string; tenantName: string; current_document: boolean }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
-    tenantDocsByLocalId[localId] = docs.map((doc) => {
-      const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+    const validDocs = docs.filter(doc => doc.current_document !== false);
+    tenantDocsByLocalId[localId] = validDocs.map((doc) => {
+      // Matches `_contractId.pdf` or `_contractId_v12345.pdf`
+      const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
-      const isVacancy = doc.document_name.includes("leerstand");
+      const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
       const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
       return { ...doc, tenantName };
     });

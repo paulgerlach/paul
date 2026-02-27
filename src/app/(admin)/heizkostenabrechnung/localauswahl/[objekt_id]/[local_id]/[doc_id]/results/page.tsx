@@ -40,10 +40,12 @@ export default async function ResultLocalPDF({
 
   // Resolve tenant names for each document belonging to this local
   const docsForLocal = documentsByLocalId[local_id] ?? [];
-  const tenantDocuments = docsForLocal.map((doc) => {
-    const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+  const validDocs = docsForLocal.filter(doc => doc.current_document !== false);
+  const tenantDocuments = validDocs.map((doc) => {
+    // Matches `_contractId.pdf` or `_contractId_v12345.pdf`
+    const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
     const contractId = contractIdMatch?.[1] ?? "";
-    const isVacancy = doc.document_name.includes("leerstand");
+    const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
     const tenantName = isVacancy
       ? "Leerstand"
       : (contractIdToTenantName[contractId] ?? "");

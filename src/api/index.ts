@@ -911,12 +911,32 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   // Get current user
   const user = await getAuthenticatedServerUser();
 
+  // Determine user permissions
+  const [userResult] = await database
+    .select({ permission: users.permission })
+    .from(users)
+    .where(eq(users.id, user.id));
+
+  const isSuperAdmin = userResult?.permission === "super_admin";
+
   // Get documents for the current user using direct database query
-  const userDocuments = await database
+  const query = database
     .select()
     .from(documents)
-    .where(eq(documents.user_id, user.id))
     .orderBy(documents.created_at);
+
+  if (isSuperAdmin) {
+    query.where(eq(documents.user_id, user.id));
+  } else {
+    query.where(
+      and(
+        eq(documents.user_id, user.id),
+        eq(documents.current_document, true)
+      )
+    );
+  }
+
+  const userDocuments = await query;
 
   if (!userDocuments || userDocuments.length === 0) {
     return [];

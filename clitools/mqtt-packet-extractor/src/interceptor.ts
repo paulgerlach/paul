@@ -3,6 +3,7 @@ import mqtt from 'mqtt';
 import { Environment } from './config/env';
 import { IPacket } from 'mqtt-packet';
 import { createWriteStream, WriteStream } from 'fs';
+import { decodeSerial } from './decoder/decode';
 
 export default class Interceptor {
     env: Environment;
@@ -42,16 +43,17 @@ export default class Interceptor {
     }
 
     private onMessage(topic: string, payload: Buffer, packet: IPacket) {
-        const message = payload.toString();
+        const now: string = new Date().toISOString();
+        const message: string = decodeSerial(payload);
         console.log("-- new packet -- ");
+        console.log("Time: ", now);
         console.log('Topic: ', topic);
         console.log('Message: ', message);
         
         // write to file.
         if (this.logfile) {
             if (!this.logfileWriteStream) this.logfileWriteStream = createWriteStream(this.logfile!, {flags: 'a'});
-
-            const entry = `PACKET:\nTOPIC: ${topic}\nMESSAGE: ${message}\n\n`;
+            const entry = `PACKET:\nTIME:${now}\nTOPIC: ${topic}\nMESSAGE: ${message}\n\n`;
             this.logfileWriteStream?.write(entry);
         }
     }

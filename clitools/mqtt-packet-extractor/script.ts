@@ -1,3 +1,4 @@
+import { decodeSerial } from "./src/decoder/decode";
 import Interceptor from "./src/interceptor";
 
 import { parseArgs } from "util";

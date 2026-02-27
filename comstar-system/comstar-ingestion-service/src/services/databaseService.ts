@@ -32,7 +32,9 @@ class DatabaseService {
         updated_at: new Date().toISOString(),
         date_only: new Date().toISOString().substring(0, 10),
       };
-      const { data, error } = await supabase.from("parsed_data").insert(insertItem)
+      const { data, error } = await supabase
+        .from("parsed_data")
+        .insert(insertItem);
       // {
       //   local_meter_id: local_meter_id, // why is this flagging as not existing?? - need to check it's on the model
       //   device_id: meter_id,
@@ -83,7 +85,7 @@ class DatabaseService {
     }
   };
 
-  getLocalMeterById = async (meterId) => {
+  getLocalMeterById = async (meterId: string) => {
     try {
       const { data, error } = await supabase
         .from("local_meters")
@@ -370,7 +372,7 @@ class DatabaseService {
   }
 
   // does this need to be here?
-  async query(sql, params:any[] = []) {
+  async query(sql, params: any[] = []) {
     try {
       const result = await supabase.postgres.query(sql, params);
       return result;

@@ -263,7 +263,7 @@ class StatusHandler {
     console.log(`   Telegrams: ${status.collection.telegrams_collected}`);
   }
   
-  async storeStatus(gatewayEui, status) {
+  async storeStatus(gatewayEui:string, status) {
     try {
       
       await this.checkAlerts(gatewayEui, status);
@@ -298,7 +298,7 @@ class StatusHandler {
     }
   }
   
-  async checkAlerts(gatewayEui, status) {
+  async checkAlerts(gatewayEui:string, status) {
     const alerts:any[] = [];
     
     // Check battery
@@ -400,7 +400,7 @@ class StatusHandler {
     return alerts;
   }
   
-  async storeAlerts(gatewayEui, alerts) {
+  async storeAlerts(gatewayEui:string, alerts) {
     try {
       const insertPromises = alerts.map(alert => {        
         return databaseService.insertGatewayAlert(

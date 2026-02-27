@@ -1,6 +1,18 @@
 import databaseService from "../services/databaseService.js";
 import logger from "../utils/logger.js";
 
+interface GatewaySyncItem {
+  app: string | null;
+  boot: string | null;
+  etag: string | null;
+}
+
+interface GatewaySyncResponseItem {
+  app: string | null | boolean;
+  boot: string | null | boolean;
+  etag: string | null | boolean;
+}
+
 class SyncHandler {
   name: string;
   isUrgent: boolean;
@@ -10,7 +22,15 @@ class SyncHandler {
     this.isUrgent = true;
   }
 
-  async handle({ gatewayEui, data, messageNumber }) {
+  async handle({
+    gatewayEui,
+    data,
+    messageNumber,
+  }: {
+    gatewayEui: string;
+    data: GatewaySyncItem;
+    messageNumber: any;
+  }): Promise<GatewaySyncResponseItem> {
     console.log({ gatewayEui, messageNumber }, "Processing sync request");
 
     try {
@@ -27,7 +47,14 @@ class SyncHandler {
         );
         const desiredState =
           await databaseService.getDesiredGatewayState(gatewayEui);
-        const response = {
+
+        // explicit return to show that desiredState can fail, will need to handle this
+        // when we move the DBService to pure TS
+        if (!desiredState) {
+          return { app: null, boot: null, etag: null };
+        }
+
+        const response: GatewaySyncResponseItem = {
           app: desiredState.app,
           boot: desiredState.boot,
           etag: desiredState.etag,
@@ -36,6 +63,7 @@ class SyncHandler {
       }
 
       // Build response according to ComStar spec
+
       const response = {
         app: this.compareFirmware(data.app, desiredState.app),
         boot: this.compareFirmware(data.boot, desiredState.boot),
@@ -47,7 +75,7 @@ class SyncHandler {
       logger.error(
         {
           gatewayEui,
-          requestedEtag: data?.etag || null,
+          requestedEtag: data?.etag || null, //why is this null checked? -H
           error: error.message,
         },
         "Failed to get configuration",
@@ -62,13 +90,19 @@ class SyncHandler {
     }
   }
 
-  compareFirmware(current, desired): boolean | null {
+  compareFirmware(
+    current: string | null,
+    desired: string | null,
+  ): boolean | string | null {
     if (!desired) return null; // No desired firmware
     if (current === desired) return true; // Firmware matches
     return desired; // Firmware update needed
   }
 
-  compareEtag(current, desired): boolean | null {
+  compareEtag(
+    current: string | null,
+    desired: string | null,
+  ): boolean | string | null {
     if (!desired) return null; // No desired config
     if (!current) return desired; // Gateway has no config
     if (current === desired) return true; // Config matches

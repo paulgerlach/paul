@@ -652,6 +652,7 @@ class FirmwareRequestHandler {
 
   // Admin functions
 
+  //why is this here?
   async uploadFirmware(fileBuffer, originalFilename, metadata = {}) {
     // Generate safe filename
     const timestamp = Date.now();

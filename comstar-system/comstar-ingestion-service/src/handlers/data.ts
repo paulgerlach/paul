@@ -1,16 +1,16 @@
 import { WirelessMbusParser } from "wireless-mbus-parser";
-import databaseService from '../services/databaseService.js';
-import logger from '../utils/logger.js';
-import fs from 'fs';
-import path from 'path';
+import databaseService from "../services/databaseService.js";
+import logger from "../utils/logger.js";
+import fs from "fs";
+import path from "path";
 import { exitAppWithError } from "../errors/generalError.js";
 
-const TELEGRAM_DIR = process.env.TELEGRAM_DIR || '.';
+const TELEGRAM_DIR = process.env.TELEGRAM_DIR || ".";
 
 /**
  * Transform M-Bus readings array to web-compatible flat object format
  * This ensures parsed_data matches the format expected by the web project's parser
- * 
+ *
  * @param {Array} readings - Raw M-Bus readings array from wireless-mbus-parser
  * @param {string} meterId - Meter device ID
  * @param {string} meterManufacturer - Meter manufacturer
@@ -22,27 +22,37 @@ const TELEGRAM_DIR = process.env.TELEGRAM_DIR || '.';
  * @returns {Object} Transformed readings in flat object format
  */
 
-
-function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType, engelmannVolume:number|null = null) {
+function transformMbusToWebFormat(
+  readings,
+  meterId,
+  meterManufacturer,
+  meterDeviceType,
+  version,
+  status,
+  accessNo,
+  frameType,
+  engelmannVolume: number | null = null,
+) {
   const result = {};
 
   const columnMap = {
-    'Time point': 'IV,0,0,0,,Date/Time',
-    'Energy': 'IV,0,0,0,Wh,E',
-    'Volume': 'IV,0,0,0,m^3,Vol',
-    'Units HCA': 'IV,0,0,0,,Units HCA',
-    'Date': 'IV,1,0,0,,Date',
-    'Energy 1': 'IV,1,0,0,Wh,E',
-    'Volume 1': 'IV,1,0,0,m^3,Vol',
-    'Units HCA 1': 'IV,1,0,0,,Units HCA',
-    'ErrorFlags': 'IV,0,0,0,,ErrorFlags(binary)(deviceType specific)',
-    'Model/Version': 'IV,0,0,0,Model/Version',
-    'Parameter set ident': 'IV,0,0,0,,Parameter set ident',
-    'Volume; Accumulation of abs value only if negative contributions': 'IV,0,0,0,m^3,Vol',
+    "Time point": "IV,0,0,0,,Date/Time",
+    Energy: "IV,0,0,0,Wh,E",
+    Volume: "IV,0,0,0,m^3,Vol",
+    "Units HCA": "IV,0,0,0,,Units HCA",
+    Date: "IV,1,0,0,,Date",
+    "Energy 1": "IV,1,0,0,Wh,E",
+    "Volume 1": "IV,1,0,0,m^3,Vol",
+    "Units HCA 1": "IV,1,0,0,,Units HCA",
+    ErrorFlags: "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)",
+    "Model/Version": "IV,0,0,0,Model/Version",
+    "Parameter set ident": "IV,0,0,0,,Parameter set ident",
+    "Volume; Accumulation of abs value only if negative contributions":
+      "IV,0,0,0,m^3,Vol",
   };
 
   if (Array.isArray(readings)) {
-    readings.forEach(item => {
+    readings.forEach((item) => {
       if (item && item.description) {
         const columnName = columnMap[item.description] || item.description;
         const existing = result[columnName];
@@ -55,7 +65,7 @@ function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDev
         }
       }
     });
-  } else if (typeof readings === 'object' && readings !== null) {
+  } else if (typeof readings === "object" && readings !== null) {
     Object.entries(readings).forEach(([key, value]) => {
       const columnName = columnMap[key] || key;
       result[columnName] = isSentinel(value) ? null : value;
@@ -64,7 +74,7 @@ function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDev
 
   // Apply Engelmann-specific volume override LAST — wins over parser garbage
   if (engelmannVolume !== null) {
-    result['IV,0,0,0,m^3,Vol'] = engelmannVolume;
+    result["IV,0,0,0,m^3,Vol"] = engelmannVolume;
   }
 
   return result;
@@ -73,24 +83,25 @@ function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDev
 // Sentinel value: 0xFFFFFFFF scaled by any VIF factor means "no data"
 function isSentinel(value) {
   if (value === null || value === undefined) return true;
-  if (Math.round(value * 1000) === 0xFFFFFFFF) return true;
-  if (typeof value === 'number' && Math.abs(value) < 1e-10) return true; // float garbage
+  if (Math.round(value * 1000) === 0xffffffff) return true;
+  if (typeof value === "number" && Math.abs(value) < 1e-10) return true; // float garbage
   return false;
 }
 
 class DataHandler {
-
-  name:string;
+  name: string;
   isUrgent: boolean;
   // cacheTTL: number
   key: string;
 
   constructor() {
-    this.name = 'data';
+    this.name = "data";
     this.isUrgent = false;
     //this.meterMapping = null; // this is never used, commented to highlight
     //this.parser = null; // this is also never used??
-    this.key = process.env.COMSTAR_ENCRYPTION_KEY ?? exitAppWithError("Missing COMSTAR_ENCRYPTION_KEY") ;
+    this.key =
+      process.env.COMSTAR_ENCRYPTION_KEY ??
+      exitAppWithError("Missing COMSTAR_ENCRYPTION_KEY");
   }
 
   async initialize() {
@@ -99,153 +110,201 @@ class DataHandler {
     // }
   }
 
-  async handle({ gatewayEui, data, messageNumber }) {
-  // 1. Try to write telegram to text file - don't await failure
-  this.writeTelegramToText(gatewayEui, data, messageNumber).catch(err => 
-    console.error('Failed to write telegram to text:', err)
-  );
+  async handle({
+    gatewayEui,
+    data,
+    messageNumber,
+  }: {
+    gatewayEui: string;
+    data: any;
+    messageNumber: any;
+  }) {
+    // 1. Try to write telegram to text file - don't await failure
+    this.writeTelegramToText(gatewayEui, data, messageNumber).catch((err) =>
+      console.error("Failed to write telegram to text:", err),
+    );
 
-  try {
-    if (data && data.batch && Array.isArray(data.batch)) {
-      // 2. Handle batch - continue even if individual items fail
-      for (const item of data.batch) {
-        try {
-          if (item.telegram) {
-            await databaseService.saveTelegram(gatewayEui, item.telegram, messageNumber);
-            await this.handleTelegramData(gatewayEui, item.telegram, messageNumber);
+    try {
+      if (data && data.batch && Array.isArray(data.batch)) {
+        // 2. Handle batch - continue even if individual items fail
+        for (const item of data.batch) {
+          try {
+            if (item.telegram) {
+              await databaseService.saveTelegram(
+                gatewayEui,
+                item.telegram,
+                messageNumber,
+              );
+              await this.handleTelegramData(
+                gatewayEui,
+                item.telegram,
+                messageNumber,
+              );
+            }
+          } catch (itemError) {
+            console.error("Failed to process batch item:", itemError);
+            // Continue to next item
           }
-        } catch (itemError) {
-          console.error('Failed to process batch item:', itemError);
-          // Continue to next item
         }
+      } else if (data && data.d.telegram) {
+        try {
+          return await this.handleTelegramData(
+            gatewayEui,
+            data.d.telegram,
+            messageNumber,
+          );
+        } catch (telegramError) {
+          console.error("Failed to handle telegram:", telegramError);
+          return null;
+        }
+      } else {
+        console.warn({ gatewayEui, data }, "No telegram data found");
       }
-    } else if (data && data.d.telegram) {
-      try {
-        return await this.handleTelegramData(gatewayEui, data.d.telegram, messageNumber);
-      } catch (telegramError) {
-        console.error('Failed to handle telegram:', telegramError);
-        return null;
-      }
-    } else {
-      console.warn({ gatewayEui, data }, 'No telegram data found');
+    } catch (error) {
+      console.error("Handle function error:", error);
+      return null;
     }
-  } catch (error) {
-    console.error('Handle function error:', error);
-    return null;
   }
-}
-
 
   validateTelegram(buffer) {
-  if (buffer.length < 10) {
-    return { valid: false, reason: 'Too short (minimum 10 bytes)' };
-  }
-  
-  const lengthByte = buffer[0];
-  const actualLength = buffer.length;
-  
-  // Length byte indicates payload length (excluding length byte itself)
-  if (lengthByte !== actualLength - 1) {
-    return { 
-      valid: false, 
-      reason: `Length mismatch: declared=${lengthByte}, actual=${actualLength - 1}` 
-    };
-  }
-  
-  return { valid: true };
-}
+    if (buffer.length < 10) {
+      return { valid: false, reason: "Too short (minimum 10 bytes)" };
+    }
 
-  async writeTelegramToText(gatewayEui, data, messageNumber) {
+    const lengthByte = buffer[0];
+    const actualLength = buffer.length;
+
+    // Length byte indicates payload length (excluding length byte itself)
+    if (lengthByte !== actualLength - 1) {
+      return {
+        valid: false,
+        reason: `Length mismatch: declared=${lengthByte}, actual=${actualLength - 1}`,
+      };
+    }
+
+    return { valid: true };
+  }
+
+  async writeTelegramToText(gatewayEui: string, data, messageNumber) {
     try {
-      const filepath = path.join('.', 'all_telegrams.txt');
+      const filepath = path.join(".", "all_telegrams.txt");
 
-      const entry = JSON.stringify({
-        gatewayEui,
-        messageNumber,
-        timestamp: new Date().toISOString(),
-        data: data
-      }) + '\n';
+      const entry =
+        JSON.stringify({
+          gatewayEui,
+          messageNumber,
+          timestamp: new Date().toISOString(),
+          data: data,
+        }) + "\n";
 
-      fs.appendFileSync(filepath, entry, 'utf8');
+      fs.appendFileSync(filepath, entry, "utf8");
       console.log(`Telegram appended to: ${filepath}`);
     } catch (error) {
-      console.error('Error writing telegram to file:', error.message);
+      console.error("Error writing telegram to file:", error.message);
     }
   }
 
-  async handleTelegramData(gatewayEui, telegram, messageNumber) {
+  async handleTelegramData(gatewayEui: string, telegram, messageNumber) {
     try {
-      const telegramBuffer = Buffer.from(telegram, 'hex');
+      const telegramBuffer = Buffer.from(telegram, "hex");
       // Filter non-EFE manufacturers silently
       const manufacturer = telegramBuffer.readUInt16LE(2);
-    
+
       const parser = new WirelessMbusParser();
       const result = await parser.parse(telegramBuffer, {
-        key: Buffer.from(this.key, 'hex')
+        key: Buffer.from(this.key, "hex"),
       });
 
       // Decrypt independently to extract Engelmann-specific volume encoding
       // The parser misreads DIF=0x05 as a 32-bit float — we read it correctly here
-      const EFE = 0x14C5;
+      const EFE = 0x14c5;
       if (manufacturer !== EFE) {
         return await this.processParsedResult(gatewayEui, telegram, result);
-      }
-      else{
-        const engelmannVolume = this.extractEngelmannVolume(telegramBuffer, this.key);
+      } else {
+        const engelmannVolume = this.extractEngelmannVolume(
+          telegramBuffer,
+          this.key,
+        );
 
-        return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
+        return await this.processParsedResult(
+          gatewayEui,
+          telegram,
+          result,
+          engelmannVolume,
+        );
       }
-  } catch (error) {
-    if (!error.message.includes('Wrong key')) {
-      console.error({
-        gatewayEui,
-        error: error.message,
-      }, 'Parse error');
-    } else {
-      try {
-        await databaseService.saveTelegramParserError(gatewayEui, telegram, error.message);
-      } catch (error) {
-        console.error({
-        gatewayEui,
-        error: error.message,
-        telegram
-        }, 'Error saving telegram error');
-        return null;
+    } catch (error) {
+      if (!error.message.includes("Wrong key")) {
+        console.error(
+          {
+            gatewayEui,
+            error: error.message,
+          },
+          "Parse error",
+        );
+      } else {
+        try {
+          await databaseService.saveTelegramParserError(
+            gatewayEui,
+            telegram,
+            error.message,
+          );
+        } catch (error) {
+          console.error(
+            {
+              gatewayEui,
+              error: error.message,
+              telegram,
+            },
+            "Error saving telegram error",
+          );
+          return null;
+        }
       }
+      return null;
     }
-    return null;
   }
-}
 
   // Engelmann-specific: DIF=0x05 is a 1-byte integer, not a 32-bit float.
-// Bytes: [8]=DIF, [9]=VIF=0x12, [10]=volume integer, [11-13]=device metadata.
+  // Bytes: [8]=DIF, [9]=VIF=0x12, [10]=volume integer, [11-13]=device metadata.
   extractEngelmannVolume(telegramBuffer, keyHex) {
     try {
-      const crypto = require('crypto');
-      const key = Buffer.from(keyHex, 'hex');
+      const crypto = require("crypto");
+      const key = Buffer.from(keyHex, "hex");
       const acc = telegramBuffer[12]; // ELL ACC field
       const iv = Buffer.from([
-        telegramBuffer[2], telegramBuffer[3],
-        telegramBuffer[4], telegramBuffer[5],
-        telegramBuffer[6], telegramBuffer[7],
-        telegramBuffer[8], telegramBuffer[9],
-        acc, acc, acc, acc, acc, acc, acc, acc
+        telegramBuffer[2],
+        telegramBuffer[3],
+        telegramBuffer[4],
+        telegramBuffer[5],
+        telegramBuffer[6],
+        telegramBuffer[7],
+        telegramBuffer[8],
+        telegramBuffer[9],
+        acc,
+        acc,
+        acc,
+        acc,
+        acc,
+        acc,
+        acc,
+        acc,
       ]);
 
-      const decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
+      const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
       decipher.setAutoPadding(false);
       const dec = Buffer.concat([
         decipher.update(telegramBuffer.slice(18)),
-        decipher.final()
+        decipher.final(),
       ]);
 
       // Verify AES
-      if (dec[0] !== 0x2F || dec[1] !== 0x2F) return null;
+      if (dec[0] !== 0x2f || dec[1] !== 0x2f) return null;
 
       // Check for Engelmann's non-standard DIF=0x05 VIF=0x12 volume record
       if (dec[8] === 0x05 && dec[9] === 0x12) {
         const rawByte = dec[10]; // e.g. 0x32 = 50
-        return rawByte * 0.001;  // -> 0.050 m³
+        return rawByte * 0.001; // -> 0.050 m³
       }
 
       return null;
@@ -254,112 +313,167 @@ class DataHandler {
     }
   }
 
-  async processParsedResult(gatewayEui, telegram, result, engelmannVolume:number|null = null) {
-  const meterId = result.meter.id;
-  const meterManufacturer = result.meter.manufacturer;
-  const meterType = result.meter.type;
-  const meterDeviceType = result.meter.deviceType;
-  const version = result.meter.version;
-  const status = result.meter.status;
-  const accessNo = result.meter.accessNo;
-  const rssi = result.meter.rssi;
-  const mode = result.meter.mode;
-  const frame_type = result.frame_type ?? null;
-  const encryption = result.encryption ?? null;
+  async processParsedResult(
+    gatewayEui: string,
+    telegram,
+    result,
+    engelmannVolume: number | null = null,
+  ) {
+    const meterId = result.meter.id;
+    const meterManufacturer = result.meter.manufacturer;
+    const meterType = result.meter.type;
+    const meterDeviceType = result.meter.deviceType;
+    const version = result.meter.version;
+    const status = result.meter.status;
+    const accessNo = result.meter.accessNo;
+    const rssi = result.meter.rssi;
+    const mode = result.meter.mode;
+    const frame_type = result.frame_type ?? null;
+    const encryption = result.encryption ?? null;
 
-  if (meterManufacturer !== 'EFE') {
-    console.warn('Invalid manufacturer (not EFE). Skipping'); 
-    return null;
-  }
-    
-  if (typeof meterId !== 'string' || meterId.trim() === '') {
-    console.warn({ gatewayEui }, 'Invalid or missing meter ID');
-    throw new Error('Invalid or missing meter ID')
-  }
-    
+    if (meterManufacturer !== "EFE") {
+      console.warn("Invalid manufacturer (not EFE). Skipping");
+      return null;
+    }
 
-  try {
+    if (typeof meterId !== "string" || meterId.trim() === "") {
+      console.warn({ gatewayEui }, "Invalid or missing meter ID");
+      throw new Error("Invalid or missing meter ID");
+    }
+
+    try {
       // why are wwe converting a date to a string, to an int, to a string??
-    // await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
-    await databaseService.saveTelegramDetails(gatewayEui, new Date().toISOString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+      // await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+      await databaseService.saveTelegramDetails(
+        gatewayEui,
+        new Date().toISOString(),
+        telegram,
+        rssi,
+        mode,
+        frame_type,
+        meterId,
+        meterManufacturer,
+        version,
+        meterType,
+      );
 
-    const meter = await this.getLocalMeter(meterId);
+      const meter = await this.getLocalMeter(meterId);
 
-    const readings = result.data;
-    if (!readings || (Array.isArray(readings) ? readings.length === 0 : (typeof readings !== 'object' || Object.keys(readings).length === 0))) {
-      console.warn({ gatewayEui, meterId }, 'Invalid or empty readings, skipping');
-      return null;
-    }
-
-    let timestamp;
-    if (Array.isArray(readings)) {
-      const timePoint = readings.find(item => item.description === 'Time point');
-      timestamp = timePoint ? timePoint.value : null;
-    } else {
-      timestamp = readings.date;
-    }
-
-    if (!timestamp) {
-      console.warn({ gatewayEui, meterId }, 'No timestamp in readings, skipping');
-      return null;
-    }
-
-    if (meter) {
-      const exists = await databaseService.checkExistingReading(meter.id, timestamp);
-      if (exists) {
-        console.log({ gatewayEui, meterId, timestamp }, 'Duplicate reading detected, skipping insertion');
+      const readings = result.data;
+      if (
+        !readings ||
+        (Array.isArray(readings)
+          ? readings.length === 0
+          : typeof readings !== "object" || Object.keys(readings).length === 0)
+      ) {
+        console.warn(
+          { gatewayEui, meterId },
+          "Invalid or empty readings, skipping",
+        );
         return null;
       }
-    }
 
-    const transformedReadings = transformMbusToWebFormat(
-      readings,
-      meterId,
-      meterManufacturer,
-      meterDeviceType,
-      version,
-      status,
-      accessNo,
-      frame_type,
-      engelmannVolume// <-- pass through the corrected volume
-    );
+      let timestamp;
+      if (Array.isArray(readings)) {
+        const timePoint = readings.find(
+          (item) => item.description === "Time point",
+        );
+        timestamp = timePoint ? timePoint.value : null;
+      } else {
+        timestamp = readings.date;
+      }
 
-    await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter ? meter.id : null, frame_type, encryption);
+      if (!timestamp) {
+        console.warn(
+          { gatewayEui, meterId },
+          "No timestamp in readings, skipping",
+        );
+        return null;
+      }
 
-    return {
-      success: true,
-      gatewayEui,
-      meterId,
-      processedAt: new Date()
-    };
-  } catch (error) {
-    logger.error({
-      gatewayEui,
-      meterId,
-      error: error.message,
-      stack: error.stack
-    }, 'Error processing telegram data');
+      if (meter) {
+        const exists = await databaseService.checkExistingReading(
+          meter.id,
+          timestamp,
+        );
+        if (exists) {
+          console.log(
+            { gatewayEui, meterId, timestamp },
+            "Duplicate reading detected, skipping insertion",
+          );
+          return null;
+        }
+      }
+
+      const transformedReadings = transformMbusToWebFormat(
+        readings,
+        meterId,
+        meterManufacturer,
+        meterDeviceType,
+        version,
+        status,
+        accessNo,
+        frame_type,
+        engelmannVolume, // <-- pass through the corrected volume
+      );
+
+      await databaseService.insertMeterReading(
+        meterId,
+        meterManufacturer,
+        meterType,
+        meterDeviceType,
+        version,
+        status,
+        accessNo,
+        transformedReadings,
+        meter ? meter.id : null,
+        frame_type,
+        encryption,
+      );
+
+      return {
+        success: true,
+        gatewayEui,
+        meterId,
+        processedAt: new Date(),
+      };
+    } catch (error) {
+      logger.error(
+        {
+          gatewayEui,
+          meterId,
+          error: error.message,
+          stack: error.stack,
+        },
+        "Error processing telegram data",
+      );
 
       try {
-        await databaseService.saveTelegramParserError(gatewayEui, telegram, error.message);
+        await databaseService.saveTelegramParserError(
+          gatewayEui,
+          telegram,
+          error.message,
+        );
       } catch (error) {
-        console.error({
-        gatewayEui,
-        error: error.message,
-        telegram
-        }, 'Error saving telegram error');
+        console.error(
+          {
+            gatewayEui,
+            error: error.message,
+            telegram,
+          },
+          "Error saving telegram error",
+        );
         return null;
       }
-    return null;
+      return null;
+    }
   }
-}
 
-  async getLocalMeter(meterId) {
+  async getLocalMeter(meterId: string) {
     try {
       const meter = await databaseService.getLocalMeterById(meterId);
       return meter;
-    }
-    catch (error) {
+    } catch (error) {
       throw error;
     }
   }

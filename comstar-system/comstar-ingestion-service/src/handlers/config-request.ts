@@ -130,7 +130,7 @@ class ConfigRequestHandler {
     }
   }
   
-  async getBaseConfiguration(etag) {
+  async getBaseConfiguration(etag:string) {
     // Fetch from config_versions table
     const query = `
       SELECT config 
@@ -154,7 +154,7 @@ class ConfigRequestHandler {
     }
   }
   
-  async getGatewayOverrides(gatewayEui) {
+  async getGatewayOverrides(gatewayEui:string) {
     // Fetch gateway-specific overrides
     const query = `
       SELECT config_key, config_value 

@@ -3,20 +3,20 @@ import databaseService from '../services/databaseService.js';
 import logger from '../utils/logger.js';
 
 class DeviceHandler {
-  name:string;
+  name: string;
   isUrgent: boolean;
-  gatewayCache: Map<any,any>
-  lastDeviceUpdate: Map<any,any>
+  gatewayCache: Map<any, any>
+  lastDeviceUpdate: Map<any, any>
   cacheTTL: number
 
   constructor() {
     this.name = 'device';
     this.isUrgent = false;
-    
+
     // Cache gateway info to avoid frequent DB writes
     this.gatewayCache = new Map();
     this.cacheTTL = config.gateway.configTtl || 24 * 60 * 60 * 1000; // 24 hours
-    
+
     // Track when each gateway last sent device info
     this.lastDeviceUpdate = new Map();
   }
@@ -31,7 +31,7 @@ class DeviceHandler {
     });
 
     try {
-      if(data.reboot_reason === 'power_on') 
+      if (data.reboot_reason === 'power_on')
         this.validateDeviceBootData(data, gatewayEui);
 
       console.log('Device uplink data validated successfully');
@@ -40,6 +40,8 @@ class DeviceHandler {
       console.log('Device uplink data sanitized successfully');
 
       // Check if we should skip (recent update)
+      // why is this awaited? the function doesn't return a promise
+
       if (await this.shouldSkipUpdate(gatewayEui, sanitizedData)) {
         console.log({
           gatewayEui,
@@ -55,74 +57,74 @@ class DeviceHandler {
       }
 
       //Store in Cache
-      this.updateCache(gatewayEui, sanitizedData);
+      this.updateCache(gatewayEui  ,sanitizedData);
       console.log('Device uplink data cached successfully');
-      
+
       return {
         success: true,
         gatewayId: 0,
         cached: false,
         processedAt: new Date()
       };
-    } catch (error) { 
+    } catch (error) {
       console.error({
         gatewayEui,
         error: error.message,
         stack: error.stack,
         data: JSON.stringify(data)
       }, 'Failed to process device uplink');
-      
+
       return null
     }
   }
 
-  validateDeviceBootData(data, gatewayEui) {
+  validateDeviceBootData(data, gatewayEui:string) {
     const requiredFields = [
       'imei',
-      'imsi', 
+      'imsi',
       'iccid',
       'eui',
       'model',
       'app'
     ];
-    
-    const missingFields:any[] = [];
-    
+
+    const missingFields: any[] = [];
+
     for (const field of requiredFields) {
       if (!data[field] && data[field] !== '') {
         missingFields.push(field);
       }
     }
-    
+
     if (missingFields.length > 0) {
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
-    
+
     // Validate EUI matches topic
     if (data.eui && data.eui.toLowerCase() !== gatewayEui.toLowerCase()) {
       throw new Error(`EUI mismatch: topic ${gatewayEui} != payload ${data.eui}`);
     }
-    
+
     // Validate IMEI format (15-17 digits)
     if (data.imei && !/^\d{15,17}$/.test(data.imei.replace(/\D/g, ''))) {
       console.warn({
-        gatewayEui,
+        gatewayEui, 
         imei: data.imei
       }, 'Invalid IMEI format');
     }
-    
+
     // Validate ICCID format (19-22 digits)
     if (data.iccid && !/^\d{19,22}$/.test(data.iccid.replace(/\D/g, ''))) {
       console.warn({
-        gatewayEui, 
+        gatewayEui,
         iccid: data.iccid
       }, 'Invalid ICCID format');
     }
-    
+
     return true;
   }
 
-  validateDeviceConfigData(data, gatewayEui) { 
+  validateDeviceConfigData(data, gatewayEui:string) {
     // Example validation: check for presence of config version
     if (!data.etag) {
       throw new Error('Missing etag in device config data');
@@ -131,39 +133,39 @@ class DeviceHandler {
 
   sanitizeDeviceData(data) {
     const sanitized = { ...data };
-    
+
     // Ensure EUI is uppercase
     if (sanitized.eui) {
       sanitized.eui = sanitized.eui.toUpperCase();
     }
-    
+
     // Clean numeric fields
     if (sanitized.imei) {
       sanitized.imei = sanitized.imei.replace(/\D/g, '');
     }
-    
+
     if (sanitized.imsi) {
       sanitized.imsi = sanitized.imsi.replace(/\D/g, '');
     }
-    
+
     if (sanitized.iccid) {
       sanitized.iccid = sanitized.iccid.replace(/\D/g, '');
     }
-    
+
     // Extract firmware version details
     if (sanitized.app) {
       const firmwareInfo = this.parseFirmwareVersion(sanitized.app);
       sanitized.firmware_details = firmwareInfo;
     }
-    
+
     // Parse reboot reason
     if (sanitized.reboot_reason) {
       sanitized.reboot_details = this.parseRebootReason(sanitized.reboot_reason);
     }
-    
+
     // Add timestamp
     sanitized.received_at = new Date().toISOString();
-    
+
     return sanitized;
   }
 
@@ -174,7 +176,7 @@ class DeviceHandler {
       // app-nrf91-origin+0.1.7.hex
       /^(?<name>[\w-]+)\+(?<version>[\d\.]+)\.hex$/i
     ];
-    
+
     for (const pattern of patterns) {
       const match = firmwareString.match(pattern);
       if (match) {
@@ -188,7 +190,7 @@ class DeviceHandler {
         };
       }
     }
-    
+
     return {
       full: firmwareString,
       name: 'unknown',
@@ -209,9 +211,9 @@ class DeviceHandler {
       'assert': { type: 'assert', severity: 'error' },
       'low voltage': { type: 'power', severity: 'warning' }
     };
-    
+
     const lowerReason = reason.toLowerCase();
-    
+
     for (const [key, info] of Object.entries(commonReasons)) {
       if (lowerReason.includes(key.toLowerCase())) {
         return {
@@ -222,7 +224,7 @@ class DeviceHandler {
         };
       }
     }
-    
+
     return {
       original: reason,
       type: 'unknown',
@@ -231,23 +233,23 @@ class DeviceHandler {
     };
   }
 
-  shouldSkipUpdate(gatewayEui, currentData) {
+  shouldSkipUpdate(gatewayEui: string, currentData) {
     // Always process first-time gateways
     if (!this.gatewayCache.has(gatewayEui)) {
       return false;
     }
-    
+
     const lastUpdate = this.lastDeviceUpdate.get(gatewayEui);
     const cachedData = this.gatewayCache.get(gatewayEui);
-    
+
     // Skip if updated less than 1 hour ago AND data hasn't changed
     if (lastUpdate && Date.now() - lastUpdate < 3600000) { // 1 hour
       // Check if any critical fields changed
       const criticalFields = ['imei', 'imsi', 'iccid', 'app', 'boot', 'model'];
-      const hasChanges = criticalFields.some(field => 
+      const hasChanges = criticalFields.some(field =>
         currentData[field] !== cachedData[field]
       );
-      
+
       if (!hasChanges) {
         return true;
       }
@@ -263,7 +265,7 @@ class DeviceHandler {
     }
   }
 
-  async insertGatewayDeviceDetails(gatewayEui, model, data) {
+  async insertGatewayDeviceDetails(gatewayEui: string, model, data) {
     try {
       const metadata = {
         board: data.board,
@@ -287,7 +289,7 @@ class DeviceHandler {
       };
 
       // Clean up undefined values
-      Object.keys(metadata).forEach(key => 
+      Object.keys(metadata).forEach(key =>
         metadata[key] === undefined && delete metadata[key]
       );
       return await databaseService.insertGatewayDeviceDetails(gatewayEui, model, metadata, data);
@@ -303,16 +305,16 @@ class DeviceHandler {
   }
 
 
-  updateCache(gatewayEui, data) {
+  updateCache(gatewayEui: string, data) {
     this.gatewayCache.set(gatewayEui, {
       ...data,
       cached_at: Date.now()
     });
-    
+
     // Clean old cache entries
     this.cleanCache();
   }
-  
+
   cleanCache() {
     const now = Date.now();
     for (const [eui, data] of this.gatewayCache.entries()) {
@@ -324,22 +326,22 @@ class DeviceHandler {
   }
 
   extractCapabilities(data) {
-  const capabilities = ['wmbus']; // All gateways have wmbus
-  
-  // Check for communication capabilities
-  if (data.model?.includes('nRF9160')) {
-    capabilities.push('lte-m', 'nb-iot');
-  }
-  
-  // Check if LoRaWAN is supported
-  if (data.metadata?.wan_capabilities?.includes('lorawan') || 
+    const capabilities = ['wmbus']; // All gateways have wmbus
+
+    // Check for communication capabilities
+    if (data.model?.includes('nRF9160')) {
+      capabilities.push('lte-m', 'nb-iot');
+    }
+
+    // Check if LoRaWAN is supported
+    if (data.metadata?.wan_capabilities?.includes('lorawan') ||
       data.model?.toLowerCase().includes('sx')) {
-    capabilities.push('lorawan');
+      capabilities.push('lorawan');
+    }
+
+    return capabilities;
   }
-  
-  return capabilities;
-}
-  
+
 }
 
 const deviceHandler = new DeviceHandler();

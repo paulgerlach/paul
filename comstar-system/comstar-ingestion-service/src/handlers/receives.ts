@@ -8,6 +8,7 @@ class ReceivesHandler {
   }
 
   async handle({ gatewayEui, data, messageNumber }) {
+    console.log("data is unused in this function", { data });
     console.log({ gatewayEui, messageNumber }, "Processing receives update");
   }
 }

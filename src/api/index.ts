@@ -618,9 +618,10 @@ export async function getAdminContractsWithContractorsByLocalID(
 export async function getAdminContractsWithContractorsByLocalIDs(
   localIDs: string[],
   userID: string,
+  ignoreUserId: boolean = false
 ): Promise<Record<string, (ContractType & { contractors: ContractorType[] })[]>> {
   const validLocalIDs = Array.from(new Set(localIDs.filter(Boolean)));
-  if (validLocalIDs.length === 0 || !userID) {
+  if (validLocalIDs.length === 0 || (!ignoreUserId && !userID)) {
     return {};
   }
 
@@ -629,10 +630,12 @@ export async function getAdminContractsWithContractorsByLocalIDs(
     .from(contracts)
     .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
     .where(
-      and(
-        inArray(contracts.local_id, validLocalIDs),
-        eq(contracts.user_id, userID)
-      )
+      ignoreUserId
+        ? inArray(contracts.local_id, validLocalIDs)
+        : and(
+          inArray(contracts.local_id, validLocalIDs),
+          eq(contracts.user_id, userID)
+        )
     );
 
   const contractsByLocal: Record<string, Record<string, ContractType & { contractors: ContractorType[] }>> = {};

@@ -64,7 +64,8 @@ export default async function ResultLocalPDF({
   });
   const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
     locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
-    user_id
+    user_id,
+    true
   );
 
   // Fetch tenant documents linked directly to this heating bill doc
@@ -74,12 +75,13 @@ export default async function ResultLocalPDF({
   const contractIdToTenantName: Record<string, string> = {};
   for (const localContracts of Object.values(contractsByLocalId)) {
     for (const contract of localContracts) {
-      const names = contract.contractors
-        ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
-        .filter(Boolean)
-        .join(", ");
-      if (contract.id && names) {
-        contractIdToTenantName[contract.id] = names;
+      if (contract.id) {
+        const names = contract.contractors
+          ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
+          .filter(Boolean)
+          .join(", ");
+
+        contractIdToTenantName[contract.id] = names || "Unbekannter Mieter";
       }
     }
   }
@@ -87,7 +89,7 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string }[]
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
     const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
@@ -97,8 +99,18 @@ export default async function ResultLocalPDF({
       const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
       const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
-      const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
-      return { ...doc, tenantName };
+
+      let tenantName = "";
+      if (isVacancy) {
+        tenantName = "Leerstand";
+      } else if (contractId === "default") {
+        // Fallback for single PDFs without explicit contract segments
+        tenantName = "Unbekannter Mieter";
+      } else {
+        tenantName = contractIdToTenantName[contractId] ?? "Unbekannter Mieter";
+      }
+
+      return { ...doc, tenantName, contractId };
     });
   }
 

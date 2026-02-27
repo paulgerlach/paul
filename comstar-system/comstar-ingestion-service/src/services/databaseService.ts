@@ -17,7 +17,7 @@ class DatabaseService {
     encryption,
   ) => {
     try {
-      const { data, error } = await supabase.from("parsed_data").insert({
+      const insertItem = {
         local_meter_id: local_meter_id, // why is this flagging as not existing?? - need to check it's on the model
         device_id: meter_id,
         device_type: meter_device_type,
@@ -28,10 +28,26 @@ class DatabaseService {
         status,
         encryption,
         parsed_data: readings,
-        created_at: new Date(),
-        updated_at: new Date(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         date_only: new Date().toISOString().substring(0, 10),
-      });
+      };
+      const { data, error } = await supabase.from("parsed_data").insert(insertItem)
+      // {
+      //   local_meter_id: local_meter_id, // why is this flagging as not existing?? - need to check it's on the model
+      //   device_id: meter_id,
+      //   device_type: meter_device_type,
+      //   manufacturer: meterManufacturer,
+      //   frame_type: frame_type, // bugfixed, comma instead of colon, not needed as named param
+      //   version: version,
+      //   access_number: accessNo,
+      //   status,
+      //   encryption,
+      //   parsed_data: readings,
+      //   created_at: new Date(),
+      //   updated_at: new Date(),
+      //   date_only: new Date().toISOString().substring(0, 10),
+      // });
 
       if (error) {
         console.error("Error insert reading data:", error);
@@ -136,7 +152,7 @@ class DatabaseService {
             desired_app_version: desiredAppVersion,
             desired_boot_version: desiredBootVersion,
             desired_etag: desiredEtag,
-            updated_at: new Date(), // to iso string??
+            updated_at: new Date().toISOString(), // to iso string??
           },
           {
             onConflict: "gateway_eui",
@@ -353,7 +369,8 @@ class DatabaseService {
     }
   }
 
-  async query(sql, params = []) {
+  // does this need to be here?
+  async query(sql, params:any[] = []) {
     try {
       const result = await supabase.postgres.query(sql, params);
       return result;

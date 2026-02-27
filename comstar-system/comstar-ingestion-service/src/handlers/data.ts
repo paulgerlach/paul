@@ -23,7 +23,7 @@ const TELEGRAM_DIR = process.env.TELEGRAM_DIR || '.';
  */
 
 
-function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType, engelmannVolume = null) {
+function transformMbusToWebFormat(readings, meterId, meterManufacturer, meterDeviceType, version, status, accessNo, frameType, engelmannVolume:number|null = null) {
   const result = {};
 
   const columnMap = {
@@ -192,6 +192,7 @@ class DataHandler {
       }
       else{
         const engelmannVolume = this.extractEngelmannVolume(telegramBuffer, this.key);
+
         return await this.processParsedResult(gatewayEui, telegram, result, engelmannVolume);
       }
   } catch (error) {
@@ -253,7 +254,7 @@ class DataHandler {
     }
   }
 
-  async processParsedResult(gatewayEui, telegram, result, engelmannVolume = null) {
+  async processParsedResult(gatewayEui, telegram, result, engelmannVolume:number|null = null) {
   const meterId = result.meter.id;
   const meterManufacturer = result.meter.manufacturer;
   const meterType = result.meter.type;
@@ -278,7 +279,9 @@ class DataHandler {
     
 
   try {
-    await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+      // why are wwe converting a date to a string, to an int, to a string??
+    // await databaseService.saveTelegramDetails(gatewayEui, BigInt(new Date()).toString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
+    await databaseService.saveTelegramDetails(gatewayEui, new Date().toISOString(), telegram, rssi, mode, frame_type, meterId, meterManufacturer, version, meterType);
 
     const meter = await this.getLocalMeter(meterId);
 
@@ -318,7 +321,7 @@ class DataHandler {
       status,
       accessNo,
       frame_type,
-      engelmannVolume  // <-- pass through the corrected volume
+      engelmannVolume// <-- pass through the corrected volume
     );
 
     await databaseService.insertMeterReading(meterId, meterManufacturer, meterType, meterDeviceType, version, status, accessNo, transformedReadings, meter ? meter.id : null, frame_type, encryption);

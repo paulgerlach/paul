@@ -1,5 +1,7 @@
+// Used to check if the gateway is up to date or requires FW.
 import databaseService from "../services/databaseService.js";
 import logger from "../utils/logger.js";
+
 
 interface GatewaySyncItem {
   app: string | null;

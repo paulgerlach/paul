@@ -180,7 +180,7 @@ class ConfigRequestHandler {
     }
   }
   
-  parseConfigValue(value) {
+  parseConfigValue(value:string) {
     // Parse configuration values from string to appropriate type
     if (value === null || value === undefined) {
       return value;
@@ -256,7 +256,7 @@ class ConfigRequestHandler {
     return true;
   }
   
-  isValidMqttUrl(url) {
+  isValidMqttUrl(url:string) {
     try {
       const parsed = new URL(url);
       return parsed.protocol === 'mqtt:' || parsed.protocol === 'mqtts:' || parsed.protocol === 'ws:' || parsed.protocol === 'wss:';
@@ -265,13 +265,13 @@ class ConfigRequestHandler {
     }
   }
   
-  isValidCron(cron) {
+  isValidCron(cron:string) {
     // Basic cron validation (simplified)
     const cronParts = cron.split(' ');
     return cronParts.length >= 5 && cronParts.length <= 6;
   }
   
-  getFallbackConfig(gatewayEui) {
+  getFallbackConfig(gatewayEui:string) {
     // Minimal configuration to keep gateway operational
     return {
       Host: process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883',

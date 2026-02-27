@@ -83,8 +83,13 @@ function transformMbusToWebFormat(
 // Sentinel value: 0xFFFFFFFF scaled by any VIF factor means "no data"
 function isSentinel(value) {
   if (value === null || value === undefined) return true;
-  if (Math.round(value * 1000) === 0xffffffff) return true;
-  if (typeof value === "number" && Math.abs(value) < 1e-10) return true; // float garbage
+
+  //why is there no safety guard here???
+  // 0.001 is common but is it guaranteed
+  if (Math.round(value * 1000) === 0xffffffff) return true; 
+
+  // float is close enough to zero to be consideredgarbage
+  if (typeof value === "number" && Math.abs(value) < 1e-10) return true; 
   return false;
 }
 

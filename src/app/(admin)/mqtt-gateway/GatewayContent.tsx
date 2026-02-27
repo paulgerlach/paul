@@ -22,10 +22,10 @@ export default function GatewayContent() {
 			/>
 			<ContentWrapper className="flex flex-col space-y-4">
 				<h1>MQTT Gateway Management</h1>
+				<ParserErrorTelegrams />
 				<Devices />
 				<Firmware />
 				<Telegrams />
-				<ParserErrorTelegrams/>
 				<ParsedData />
 			</ContentWrapper>
 		</div>

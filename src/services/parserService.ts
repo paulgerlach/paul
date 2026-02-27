@@ -14,7 +14,7 @@ export const handleTelegramData = async (gatewayEui: string, telegramBuffer: Buf
       throw new Error(`Telegram too short: ${telegramBuffer.length} bytes (minimum 16 required)`);
     }
 
-    const comstarKey = process.env.COMSTAR_ENCRYPTION_KEY;
+    const comstarKey = process.env.COMSTAR_ENCRYPTION_KEY ?? 'CEDEA589128790D232FAD61B5D4F593D';
 
     if (!comstarKey) {
       console.error('[handleTelegramData] Comstar Encryption Key not found');
@@ -46,8 +46,8 @@ export const handleTelegramData = async (gatewayEui: string, telegramBuffer: Buf
     // }
 
   } catch (error:any) {
-    console.error('[handleTelegramData] Error:', error.message);
-    console.error('[handleTelegramData] Error stack:', error.stack);
+    // console.error('[handleTelegramData] Error:', error.message);
+    // console.error('[handleTelegramData] Error stack:', error.stack);
     throw new Error(error.message)
   }
 }

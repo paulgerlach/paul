@@ -1,0 +1,17 @@
+{
+  "name": "mqtt-packet-extractor",
+  "version": "1.0.0",
+  "description": "MQTT Interceptor and Logger",
+  "type": "module",
+  "scripts": {
+    "intercept": "bun run script.ts"
+  },
+  "dependencies": {
+    "mqtt": "^5.0.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "bun-types": "^1.3.10"
+  }
+}

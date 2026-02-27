@@ -1,6 +1,6 @@
 import mqtt from 'mqtt';
 
-import { Environment } from '../config/env';
+import { Environment } from './config/env';
 import { IPacket } from 'mqtt-packet';
 import { createWriteStream, WriteStream } from 'fs';
 

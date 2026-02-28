@@ -24,6 +24,7 @@ export const doInsert = async (
 
   if (dbRecords.length > 0) {
     for (let i = 0; i < dbRecords.length; i += BATCH_SIZE) {
+      // if i+batchsize > dbRecords.length -- 
       const batch = dbRecords.slice(i, i + BATCH_SIZE);
       const { data, error } = await supabase
         .from("parsed_data")

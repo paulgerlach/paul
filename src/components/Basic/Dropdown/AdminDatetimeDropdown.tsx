@@ -26,7 +26,7 @@ export default function AdminDatetimeDropdown({
     from: startOfYear(new Date()),
     to: endOfMonth(new Date()),
   });
-  const { setDates, startDate, endDate } = useChartStore();
+  const { setDates, startDate, endDate } = useChartStore()
   const [open, setOpen] = useState(false);
 
   // Set initial dates in the store when component mounts
@@ -156,8 +156,6 @@ export default function AdminDatetimeDropdown({
           <TimeFilterPresets
             date={date}
             setDate={handleDateChange}
-            startDate={startDate}
-            endDate={endDate}
             onCommitRange={(from, to) => setDates(from, to)}
             defaultPreset={getDefaultPreset()}
             onClose={() => setOpen(false)}

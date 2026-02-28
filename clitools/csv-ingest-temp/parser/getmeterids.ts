@@ -18,7 +18,7 @@ export const getMeterIds = async (
     supabase,
     uniqueDeviceIds,
   );
-  return {meterIdMap, prefixedMatches, uniqueDeviceIds };
+  return { meterIdMap, prefixedMatches, uniqueDeviceIds };
 };
 
 const isolateMeterIds = async (
@@ -47,14 +47,19 @@ const isolateMeterIds = async (
     );
 
     // Create potential Elec device IDs with 1EMH00 prefix
-    const elecDeviceIds = uniqueDeviceIds.map((id) => `1EMH00${id}`);
-    const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
+    // const elecDeviceIds = uniqueDeviceIds.map((id) => `1EMH00${id}`);
+    // const allSearchIds = [...uniqueDeviceIds, ...elecDeviceIds];
 
+    const { data } = await supabase
+      .from("local_meters")
+      .select("meter_number")
+      .limit(5);
+    console.log("DB samples:", data);
     // Single query to get all possible matches
     const { data: meters, error } = await supabase
       .from("local_meters")
       .select("id, meter_number")
-      .in("meter_number", allSearchIds);
+      .in("meter_number", uniqueDeviceIds);
 
     if (error) {
       console.error("Error batch fetching meter IDs:", error);

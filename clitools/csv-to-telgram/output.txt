@@ -1,0 +1,2290 @@
+$ bun run ./script.ts -i "All_telgrams_2026-02-27.csv"
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20724790",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20724790\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698884",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698884\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02113769",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02113769\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "52358520",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"52358520\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123955",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123955\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698877",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698877\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664903",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664903\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02113761",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02113761\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698363",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698363\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38231358",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38231358\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698868",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698868\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698870",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698870\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698322",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698322\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122059",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122059\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20724755",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20724755\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02121969",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02121969\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54350390",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54350390\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14570912",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14570912\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14572591",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14572591\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14687767",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14687767\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14309021",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14309021\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14309013",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14309013\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30664384",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30664384\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810532",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810532\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02121976",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02121976\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "41260894",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"41260894\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664894",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664894\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54905307",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54905307\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664905",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664905\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14308945",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14308945\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20724748",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20724748\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215641",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215641\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54550008",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54550008\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "12020966",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"12020966\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123956",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123956\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251659",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251659\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "74865901",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"74865901\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "00212346",
+  manufacturer: "LAS",
+  device_type: "OMS unidirectional repeater",
+  src_data: "{\"device_id\":\"00212346\",\"manufacturer\":\"LAS\",\"device_type\":\"OMS unidirectional repeater\",\"src_data\":\"\",\"status\":\"No error\",\"version\":11,\"encrypted\":false}",
+  status: "No error",
+  version: 11,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30664393",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30664393\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "73110847",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"73110847\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00212345",
+  manufacturer: "LAS",
+  device_type: "OMS unidirectional repeater",
+  src_data: "{\"device_id\":\"00212345\",\"manufacturer\":\"LAS\",\"device_type\":\"OMS unidirectional repeater\",\"src_data\":\"\",\"status\":\"No error\",\"version\":11,\"encrypted\":false}",
+  status: "No error",
+  version: 11,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10665031",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10665031\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "12020982",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"12020982\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "73110846",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"73110846\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "01654860",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"01654860\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14695454",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14695454\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10525950",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10525950\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14309022",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14309022\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54350387",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54350387\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680325",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680325\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38231359",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38231359\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14679614",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14679614\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14570913",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14570913\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "54421381",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54421381\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02121963",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02121963\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14678282",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14678282\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14695453",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14695453\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14695463",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14695463\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680322",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680322\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123951",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123951\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00412128",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00412128\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14678287",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14678287\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "73110685",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"73110685\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "93914056",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"93914056\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "93911518",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"93911518\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "73110684",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"73110684\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810531",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810531\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14678278",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14678278\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215624",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215624\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232917",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232917\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30669927",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30669927\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232921",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232921\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "41124099",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"41124099\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10665740",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10665740\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30670315",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30670315\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "40463931",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"40463931\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253360",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253360\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14308956",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14308956\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10668265",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10668265\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "30499701",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30499701\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "44217380",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"44217380\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "12020967",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"12020967\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664908",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664908\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016635",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016635\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251654",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251654\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251694",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251694\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215621",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215621\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "40463926",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"40463926\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183058",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183058\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "31282624",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"31282624\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10668271",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10668271\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "60444640",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60444640\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "60444645",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60444645\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253369",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253369\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54729289",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54729289\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016627",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016627\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016622",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016622\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10668244",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10668244\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "73973845",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"73973845\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "60444637",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60444637\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "65004144",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"65004144\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "93914075",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"93914075\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810345",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810345\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016653",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016653\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "65004006",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"65004006\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "11274698",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11274698\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680382",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680382\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183052",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183052\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664889",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664889\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183053",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183053\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "10965971",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10965971\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "24500197",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"24500197\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "11155168",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11155168\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183057",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183057\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "30331307",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30331307\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30666943",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30666943\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253352",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253352\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "50409926",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"50409926\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":97,\"encrypted\":false}",
+  status: undefined,
+  version: 97,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251660",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251660\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14570910",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14570910\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183048",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183048\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54960174",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54960174\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016636",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016636\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016609",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016609\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215647",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215647\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "53013984",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"53013984\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251655",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251655\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30670201",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30670201\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00251687",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00251687\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183051",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183051\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "24500198",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"24500198\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02121964",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02121964\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "31282622",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"31282622\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215602",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215602\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "65004023",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"65004023\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54905357",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54905357\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122002",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122002\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122022",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122022\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "60214418",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60214418\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14308815",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14308815\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664901",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664901\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30666924",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30666924\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00412127",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00412127\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810533",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810533\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253355",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253355\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02121983",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02121983\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "40463930",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"40463930\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14308944",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14308944\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54905332",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54905332\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00183049",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00183049\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "11157643",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11157643\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123949",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123949\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20727058",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20727058\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253370",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253370\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20727061",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20727061\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54905345",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54905345\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680325",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680325\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"status\":\"No error\",\"version\":26,\"encrypted\":false}",
+  status: "No error",
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232932",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232932\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215622",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215622\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "21215655",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"21215655\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14695465",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14695465\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "74356574",
+  manufacturer: "TCH",
+  device_type: "Hot water meter (TCH)",
+  src_data: "{\"device_id\":\"74356574\",\"manufacturer\":\"TCH\",\"device_type\":\"Hot water meter (TCH)\",\"src_data\":\"\",\"version\":149,\"encrypted\":false}",
+  status: undefined,
+  version: 149,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "60444647",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60444647\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54905305",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54905305\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232919",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232919\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "32469993",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"32469993\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "00253354",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"00253354\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "42004165",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"42004165\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "95016654",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"95016654\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232931",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232931\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123953",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123953\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "33558245",
+  manufacturer: "TCH",
+  device_type: "Hot water meter (TCH)",
+  src_data: "{\"device_id\":\"33558245\",\"manufacturer\":\"TCH\",\"device_type\":\"Hot water meter (TCH)\",\"src_data\":\"\",\"version\":116,\"encrypted\":false}",
+  status: undefined,
+  version: 116,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000be7
+{
+  device_id: "60474126",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"60474126\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "54351966",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"54351966\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14687767",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14687767\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"status\":\"No error\",\"version\":26,\"encrypted\":false}",
+  status: "No error",
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123954",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123954\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123950",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123950\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122053",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122053\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11800308",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11800308\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "20727111",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"20727111\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14570914",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14570914\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122055",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122055\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698867",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698867\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810365",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810365\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14677213",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14677213\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698413",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698413\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698847",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698847\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "38232928",
+  manufacturer: "QDS",
+  device_type: "Heat Cost Allocator",
+  src_data: "{\"device_id\":\"38232928\",\"manufacturer\":\"QDS\",\"device_type\":\"Heat Cost Allocator\",\"src_data\":\"\",\"version\":58,\"encrypted\":false}",
+  status: undefined,
+  version: 58,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680319",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680319\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "84810498",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"84810498\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14308964",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14308964\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698862",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698862\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122007",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122007\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698355",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698355\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698699",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698699\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14571516",
+  manufacturer: "QDS",
+  device_type: "Water",
+  src_data: "{\"device_id\":\"14571516\",\"manufacturer\":\"QDS\",\"device_type\":\"Water\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02122066",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02122066\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10664935",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10664935\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "30673889",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"30673889\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02123952",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02123952\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14680383",
+  manufacturer: "QDS",
+  device_type: "Warm Water (30 - 90 °C)",
+  src_data: "{\"device_id\":\"14680383\",\"manufacturer\":\"QDS\",\"device_type\":\"Warm Water (30 - 90 °C)\",\"src_data\":\"\",\"version\":26,\"encrypted\":false}",
+  status: undefined,
+  version: 26,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698845",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698845\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "14309014",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"14309014\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698866",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698866\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "11698879",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"11698879\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10221924",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10221924\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "10665759",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"10665759\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":105,\"encrypted\":false}",
+  status: undefined,
+  version: 105,
+  encrypted: false,
+} 
+
+Gateway:  8c1f646b60000bee
+{
+  device_id: "02113776",
+  manufacturer: "TCH",
+  device_type: "Heat cost allocator (TCH)",
+  src_data: "{\"device_id\":\"02113776\",\"manufacturer\":\"TCH\",\"device_type\":\"Heat cost allocator (TCH)\",\"src_data\":\"\",\"version\":148,\"encrypted\":false}",
+  status: undefined,
+  version: 148,
+  encrypted: false,
+} 
+
+Total: 1329, Succeeded: 208, Failed 1121

@@ -202,13 +202,45 @@ const parseHCADate = (dateStr: string | undefined): Date => {
 // Uses IV historical columns to calculate CONSUMPTION (not cumulative sums)
 const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
-  startDate?: Date,
-  endDate?: Date
+  startDate?: Date | null,
+  endDate?: Date | null
 ): { label: string; value: number }[] => {
   if (!readings || readings.length === 0) return [];
 
   // Filter out invalid readings first
-  const validReadings = readings.filter(isValidReading);
+  let validReadings = readings.filter(isValidReading);
+  if (validReadings.length === 0) return [];
+
+  // Filter readings by date range if provided
+  if (startDate && endDate) {
+    const rangeStart = new Date(startDate);
+    const rangeEnd = new Date(endDate);
+    
+    validReadings = validReadings.filter((reading) => {
+      let dateString: string | null = null;
+      
+      const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+      const newActualDate = reading["Actual Date"];
+      const newRawDate = reading["Raw Date"];
+
+      if (oldFormatDate && typeof oldFormatDate === "string") {
+        dateString = oldFormatDate.split(" ")[0];
+      } else if (newActualDate && typeof newActualDate === "string") {
+        dateString = newActualDate.split(" ")[0];
+      } else if (newRawDate && typeof newRawDate === "string") {
+        dateString = newRawDate.replace(/-/g, ".");
+      }
+
+      if (!dateString) return false;
+      
+      const [day, month, year] = dateString.split(".").map(Number);
+      const fullYear = year < 100 ? 2000 + year : year;
+      const readingDate = new Date(fullYear, month - 1, day);
+      
+      return readingDate >= rangeStart && readingDate <= rangeEnd;
+    });
+  }
+
   if (validReadings.length === 0) return [];
 
   // Detect device type
@@ -216,8 +248,8 @@ const aggregateDataByTimeRange = (
   const isHCA = deviceType === "HCA";
 
   // Determine date range for display
-  const now = endDate || new Date();
-  const rangeStart = startDate || new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+  const now = endDate ? new Date(endDate) : new Date();
+  const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
   const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
   const monthsToShow = Math.max(2, Math.ceil(daysDiff / 30));
 
@@ -258,42 +290,81 @@ const aggregateDataByTimeRange = (
   });
 
   // STEP 2: Calculate monthly consumption from IV columns
+  // Filter IV values based on whether their months fall within the date range
   const monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
 
-  deviceLatestReading.forEach(({ reading }) => {
+  deviceLatestReading.forEach(({ reading, date: readingDate }) => {
     if (isHCA) {
       // HCA: Values are direct monthly readings (not cumulative)
       // IV,0 = current, IV,1 = last month, IV,2 = 2 months ago, etc.
       for (let offset = 0; offset <= 31; offset++) {
         const value = parseGermanNumber(reading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]);
-        if (value !== null && value > 0) {
+        
+        // Calculate the month this IV value represents
+        const ivMonthDate = new Date(readingDate);
+        ivMonthDate.setMonth(readingDate.getMonth() - offset);
+        ivMonthDate.setDate(1); // First day of the month
+        
+        // Only include if within date range
+        const rangeStart = startDate ? new Date(startDate) : null;
+        const rangeEnd = endDate ? new Date(endDate) : null;
+        
+        let isInRange = true;
+        if (rangeStart && rangeEnd) {
+          // Check if this IV month falls within the selected range
+          isInRange = ivMonthDate >= rangeStart && ivMonthDate <= rangeEnd;
+        }
+        
+        if (value !== null && value > 0 && isInRange) {
           monthlyConsumption.set(offset, (monthlyConsumption.get(offset) || 0) + value);
         }
       }
     } else {
       // Standard meters: Calculate deltas from cumulative IV values
-      const iv0 = parseGermanNumber(reading["IV,0,0,0,Wh,E"]);
-      const iv1 = parseGermanNumber(reading["IV,1,0,0,Wh,E"]);
-      const iv2 = parseGermanNumber(reading["IV,2,0,0,Wh,E"]);
-      const iv3 = parseGermanNumber(reading["IV,3,0,0,Wh,E"]);
-      const iv5 = parseGermanNumber(reading["IV,5,0,0,Wh,E"]);
+      // Only include IV values whose months fall within the date range
+      const rangeStart = startDate ? new Date(startDate) : null;
+      const rangeEnd = endDate ? new Date(endDate) : null;
+      
+      const getIVValue = (ivKey: string, offset: number): number | null => {
+        const value = parseGermanNumber(reading[ivKey as keyof MeterReadingType]);
+        if (value === null || value <= 0) return null;
+        
+        // Calculate the month this IV value represents
+        const ivMonthDate = new Date(readingDate);
+        ivMonthDate.setMonth(readingDate.getMonth() - offset);
+        ivMonthDate.setDate(1);
+        
+        // Only include if within date range
+        if (rangeStart && rangeEnd) {
+          if (ivMonthDate < rangeStart || ivMonthDate > rangeEnd) {
+            return null;
+          }
+        }
+        
+        return value;
+      };
 
-      const cumulativeValues: number[] = [];
-      if (iv0 !== null && iv0 > 0) cumulativeValues.push(iv0);
+      const iv0 = getIVValue("IV,0,0,0,Wh,E", 0);
+      const iv1 = getIVValue("IV,1,0,0,Wh,E", 1);
+      const iv2 = getIVValue("IV,2,0,0,Wh,E", 2);
+      const iv3 = getIVValue("IV,3,0,0,Wh,E", 3);
+      const iv5 = getIVValue("IV,5,0,0,Wh,E", 5);
 
-      const lastMonth = iv1 !== null && iv1 > 0 ? iv1 : null;
-      if (lastMonth !== null) cumulativeValues.push(lastMonth);
+      const cumulativeValues: { value: number; offset: number }[] = [];
+      if (iv0 !== null) cumulativeValues.push({ value: iv0, offset: 0 });
+      if (iv1 !== null) cumulativeValues.push({ value: iv1, offset: 1 });
+      if (iv2 !== null) cumulativeValues.push({ value: iv2, offset: 2 });
+      if (iv3 !== null) cumulativeValues.push({ value: iv3, offset: 3 });
+      if (iv5 !== null) cumulativeValues.push({ value: iv5, offset: 5 });
 
-      const twoMonthsAgo = (iv3 !== null && iv3 > 0) ? iv3 : (iv2 !== null && iv2 > 0 ? iv2 : null);
-      if (twoMonthsAgo !== null) cumulativeValues.push(twoMonthsAgo);
-
-      if (iv5 !== null && iv5 > 0) cumulativeValues.push(iv5);
+      // Sort by offset (most recent first)
+      cumulativeValues.sort((a, b) => a.offset - b.offset);
 
       // Calculate consumption for each month (delta between consecutive values)
       for (let i = 0; i < cumulativeValues.length - 1; i++) {
-        const consumption = cumulativeValues[i] - cumulativeValues[i + 1];
+        const consumption = cumulativeValues[i].value - cumulativeValues[i + 1].value;
         if (consumption >= 0) {
-          monthlyConsumption.set(i, (monthlyConsumption.get(i) || 0) + consumption);
+          monthlyConsumption.set(cumulativeValues[i].offset, (monthlyConsumption.get(cumulativeValues[i].offset) || 0) + consumption);
         }
       }
     }
@@ -343,7 +414,7 @@ export default function HeatingCosts({
 
     // Data is already filtered by meter IDs at database level
     const filteredDevices = csvText;
-
+    console.log('Start date', startDate)
     // Use the new aggregation function
     const aggregatedData = aggregateDataByTimeRange(
       filteredDevices,

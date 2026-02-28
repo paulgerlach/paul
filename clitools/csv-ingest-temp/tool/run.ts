@@ -42,6 +42,8 @@ export default class CSVDirectInjector {
     let deviceIds: string[] = [];
     let errors: string[] = [];
 
+    let uploaded: Set<string> = new Set<string>();
+
     const { meterIdMap } = await getMeterIds(this.client, processed);
 
     try {
@@ -54,15 +56,21 @@ export default class CSVDirectInjector {
           console.log(data, "\n");
         } catch (e: any) {
           if (e?.name !== undefined) {
-            errors.push(`[${e.deviceId ?? "Unknown"}] ${e.name}:: ${e.message}`);
+            errors.push(
+              `[${e.deviceId ?? "Unknown"}] ${e.name}:: ${e.message}`,
+            );
             failedCount += 1;
           } else {
-            errors.push(e)
+            errors.push(e);
           }
           continue;
         }
 
         if (!this.ingest) continue;
+
+        let key = `${data.device_id}${data.manufacturer}${data.date_only}`;
+        if (uploaded.has(key)) continue;
+        uploaded.add(key);
 
         try {
           const sent = await this.client

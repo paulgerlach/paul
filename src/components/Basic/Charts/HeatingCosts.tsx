@@ -229,29 +229,20 @@ const aggregateDataByTimeRange = (
 
     let dateString: string | null = null;
 
-    if (isHCA) {
-      // HCA uses IV,1,0,0,,Date format
-      const hcaDate = reading["IV,1,0,0,,Date"];
-      if (hcaDate && typeof hcaDate === "string") {
-        dateString = hcaDate;
-      }
-    } else {
+  
       // Standard meter date parsing
       const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
-      const newFormatDate = reading["IV,1,0,0,,Date"];
       const newActualDate = reading["Actual Date"];
       const newRawDate = reading["Raw Date"];
 
-      if (newFormatDate && typeof newFormatDate === "string") {
-        dateString = newFormatDate;
-      } else if (oldFormatDate && typeof oldFormatDate === "string") {
+       if (oldFormatDate && typeof oldFormatDate === "string") {
         dateString = oldFormatDate.split(" ")[0];
       } else if (newActualDate && typeof newActualDate === "string") {
         dateString = newActualDate.split(" ")[0];
       } else if (newRawDate && typeof newRawDate === "string") {
         dateString = newRawDate.replace(/-/g, ".");
       }
-    }
+    
 
     let readingDate = new Date(0);
     if (dateString && dateString !== "00.00.00") {
@@ -311,31 +302,7 @@ const aggregateDataByTimeRange = (
   // STEP 3: Convert month offsets to actual labels
   const result: { label: string; value: number }[] = [];
 
-  if (isHCA) {
-    // For HCA, use date columns to determine labels
-    // IV,1 = last month, IV,2 = 2 months ago, etc.
-    for (let offset = 0; offset < monthsToShow && offset < 6; offset++) {
-      const consumption = monthlyConsumption.get(offset) || 0;
-
-      if (consumption > 0 || offset < 2) {
-        // Get date from first reading (IV,{offset+1},0,0,,Date)
-        const dateKey = `IV,${offset + 1},0,0,,Date` as keyof MeterReadingType;
-        const dateStr = readings[0]?.[dateKey] as string | undefined;
-
-        let label: string;
-        if (dateStr) {
-          const date = parseHCADate(dateStr);
-          label = monthNames[date.getMonth()];
-        } else {
-          // Fallback: use offset to generate label
-          const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-          label = monthNames[monthDate.getMonth()];
-        }
-
-        result.push({ label, value: Math.round(consumption) });
-      }
-    }
-  } else {
+  
     // Standard meters: use calculated month offsets
     for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
       const consumption = monthlyConsumption.get(offset) || 0;
@@ -347,7 +314,7 @@ const aggregateDataByTimeRange = (
         });
       }
     }
-  }
+  
 
   // Return in chronological order (oldest first)
   return result.reverse();

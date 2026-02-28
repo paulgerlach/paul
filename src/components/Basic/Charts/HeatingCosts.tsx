@@ -414,7 +414,6 @@ export default function HeatingCosts({
 
     // Data is already filtered by meter IDs at database level
     const filteredDevices = csvText;
-    console.log('Start date', startDate)
     // Use the new aggregation function
     const aggregatedData = aggregateDataByTimeRange(
       filteredDevices,

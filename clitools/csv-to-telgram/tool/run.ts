@@ -9,6 +9,8 @@ import { getDecryptionKey } from "./keys";
 // moved this here to initialise it for all env variables
 import dotenv from "dotenv";
 import { guessDeviceId } from "wireless-mbus-parser";
+import { getMeterIds } from "../parser/getmeterids";
+import type { DatabaseRecord } from "../parser/models";
 dotenv.config({ path: "../.env", quiet: true }); // local
 
 export default class CSVTelegramSupabaseUploader {
@@ -28,6 +30,7 @@ export default class CSVTelegramSupabaseUploader {
     this.key = getDecryptionKey();
   }
 
+
   async run() {
     let totalCount: number = 0;
     let succesCount: number = 0;
@@ -36,6 +39,11 @@ export default class CSVTelegramSupabaseUploader {
     const parser = await getCSVData(this.csvFilepath);
     let deviceIds: string[] = [];
     let errors: string[] = [];
+
+    //prevents duplication
+    let uploaded: Set<string> = new Set<string>();
+
+    const { meterIdMap } = await getMeterIds(this.client);
 
     try {
       for await (const row of parser) {
@@ -50,13 +58,14 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId)
         } catch (_) { }
 
+
         totalCount += 1;
-        let data: TelegramData;
+        let dbRecord: DatabaseRecord;
         try {
-          data = await parseTelegram(telegram, keyBuffer, this.verbose);
+          dbRecord = await parseTelegram(telegram, keyBuffer, this.verbose, meterIdMap, deviceId);
           succesCount += 1;
           console.log("Gateway: ", row.gateway_eui);
-          console.log(data, '\n');
+          console.log(dbRecord, '\n');
         } catch (e: any) {
           if (e?.name === "NO_AES_KEY") {
             
@@ -74,19 +83,24 @@ export default class CSVTelegramSupabaseUploader {
 
         if (!this.ingest) continue;
 
+        let key = `${dbRecord.device_id}${dbRecord.manufacturer}${dbRecord.date_only}`;
+        if (uploaded.has(key)) continue;
+        uploaded.add(key);
+
         try {
           const sent = await this.client
             .from("parsed_data")
-            .insert([
-              {
-                device_id: data.device_id,
-                device_type: data.device_type,
-                manufacturer: data.manufacturer,
-                version: data.version,
-                status: data.status,
-                parsed_data: data.src_data,
-              },
-            ])
+            .insert(dbRecord)
+            // [
+            //   {
+            //     device_id: dbRecord.device_id,
+            //     device_type: dbRecord.device_type,
+            //     manufacturer: dbRecord.manufacturer,
+            //     version: dbRecord.version,
+            //     status: dbRecord.status,
+            //     parsed_data: dbRecord.parsed_data,
+            //   },
+            // ])
             .select();
 
           if (sent.error !== null) throw Error(`${sent.error.message}`);

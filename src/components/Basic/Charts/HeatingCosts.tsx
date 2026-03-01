@@ -390,8 +390,6 @@ const aggregateDataByTimeRange = (
     }
   }
   
-
-  // Return in chronological order (oldest first)
   return result.reverse();
 };
 

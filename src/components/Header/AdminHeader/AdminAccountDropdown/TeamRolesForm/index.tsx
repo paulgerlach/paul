@@ -31,10 +31,10 @@ const defaultRoles: Role[] = [
   { value: 'user', label: 'Standardbenutzer' },
 ];
 
-export default function TeamRolesForm({ 
-  onClose, 
-  inputStyle, 
-  labelStyle, 
+export default function TeamRolesForm({
+  onClose,
+  inputStyle,
+  labelStyle,
   roles = defaultRoles,
   initialMembers = [],
 }: TeamRolesFormProps) {
@@ -43,8 +43,8 @@ export default function TeamRolesForm({
   const { data: currentUser, isLoading } = useAuthUser();
 
   const [members, setMembers] = useState<TeamMember[]>(
-    initialMembers.length > 0 
-      ? initialMembers 
+    initialMembers.length > 0
+      ? initialMembers
       : [{ id: crypto.randomUUID(), email: '', role: '' }]
   );
 
@@ -59,7 +59,7 @@ export default function TeamRolesForm({
   };
 
   const updateMember = (id: string, field: keyof TeamMember, value: string) => {
-    setMembers(members.map(m => 
+    setMembers(members.map(m =>
       m.id === id ? { ...m, [field]: value } : m
     ));
   };
@@ -79,7 +79,7 @@ export default function TeamRolesForm({
       const response = await fetch("/api/invitations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([{...members, agency_id: currentUser?.agency_id || null }]),
+        body: JSON.stringify([{ ...members, agency_id: currentUser?.agency_id || null }]),
       });
 
       const data = await response.json();
@@ -114,17 +114,23 @@ export default function TeamRolesForm({
           canRemove={members.length > 1}
         />
       ))}
-      
-      <div className="w-full">
-        <button 
-          onClick={addMember}
-          className="w-full py-3 border-2 border-dashed border-[#D1D5DB] rounded-lg flex items-center justify-start px-4 gap-2 text-[#9CA3AF] hover:bg-gray-50 transition-colors"
-        >
-          <span className="text-xl font-light">+</span>
-          <span className="text-sm">Weiteren Nutzer hinzufügen</span>
-        </button>
-      </div>
-      <ModalFooter onClose={onClose} onSave={handleSave} loading={isSubmitting} isValid={members.every(m => m.email && m.role)} />
+      <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+        <div className="w-full">
+          <button
+            type="button"
+            onClick={addMember}
+            className="w-full py-3 border-2 border-dashed border-[#D1D5DB] rounded-lg flex items-center justify-start px-4 gap-2 text-[#9CA3AF] hover:bg-gray-50 transition-colors"
+          >
+            <span className="text-xl font-light">+</span>
+            <span className="text-sm">Weiteren Nutzer hinzufügen</span>
+          </button>
+        </div>
+        <ModalFooter
+          onClose={onClose}
+          loading={isSubmitting}
+          isValid={members.every(m => m.email && m.role)}
+        />
+      </form>
       {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
     </div>
   );

@@ -37,6 +37,12 @@ export type UnitBreakdownInput = {
   /** Energy relief for unit share (optional) */
   energyRelief?: { label: string; amount: number } | null;
   unitCount: number;
+  /**
+   * Time fraction for multi-tenant proration (0..1).
+   * When set, base costs (area-based) are scaled by this fraction.
+   * Consumption costs are NOT scaled — they already use tenant-scoped readings.
+   */
+  timeFraction?: number;
 };
 
 /**
@@ -62,14 +68,16 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
     unitCount,
   } = input;
 
+  const tf = input.timeFraction ?? 1;
   const locationLabel = localLabel ?? "Wohnung";
 
-  const heatingBaseCost = round2(livingSpaceM2 * heating.baseCostRatePerM2);
-  // Local-only meter readings for this apartment
+  // Base costs are area-based — scale by time fraction for multi-tenant proration
+  const heatingBaseCost = round2(livingSpaceM2 * heating.baseCostRatePerM2 * tf);
+  // Consumption costs use tenant-scoped meter readings — no time scaling needed
   const heatingConsumptionMwh = heatingDevices.reduce((s, d) => s + d.consumption, 0);
   const heatingConsumptionCost = round2(heatingConsumptionMwh * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionMwh)));
 
-  const warmWaterBaseCost = round2(livingSpaceM2 * warmWater.baseCostRatePerM2);
+  const warmWaterBaseCost = round2(livingSpaceM2 * warmWater.baseCostRatePerM2 * tf);
   const warmWaterConsumptionM3 = warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
   const warmWaterConsumptionCost = round2(
     warmWaterConsumptionM3 * (warmWater.consumptionCostAmount / Math.max(0.001, warmWater.consumptionCostVolume))
@@ -85,7 +93,9 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
       item.unit === "Nutzeinh."
         ? 1
         : unitColdWaterM3 || 0;
-    const cost = round2(volume * item.rate);
+    // Per-unit flat fees are prorated by time; consumption-based items use actual readings
+    const costMultiplier = item.unit === "Nutzeinh." ? tf : 1;
+    const cost = round2(volume * item.rate * costMultiplier);
     return {
       label: item.label,
       volume,
@@ -112,7 +122,7 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
 
   const unitCountSafe = Math.max(1, unitCount);
   const reliefUnitShare = energyRelief
-    ? round2(energyRelief.amount / unitCountSafe)
+    ? round2((energyRelief.amount / unitCountSafe) * tf)
     : 0;
 
   return {
@@ -150,12 +160,12 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
     stateRelief:
       energyRelief && reliefUnitShare !== 0
         ? {
-            label: energyRelief.label,
-            buildingTotal: energyRelief.amount,
-            buildingTotalFormatted: formatEuro(energyRelief.amount),
-            unitShare: reliefUnitShare,
-            unitShareFormatted: formatEuro(reliefUnitShare),
-          }
+          label: energyRelief.label,
+          buildingTotal: energyRelief.amount,
+          buildingTotalFormatted: formatEuro(energyRelief.amount),
+          unitShare: reliefUnitShare,
+          unitShareFormatted: formatEuro(reliefUnitShare),
+        }
         : null,
     heatingDevices: deviceRowsWithLocation(heatingDevices),
     warmWaterDevices: deviceRowsWithLocation(warmWaterDevices),

@@ -491,132 +491,138 @@ export default function HeatingBillPreviewFourPDF({
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ihre Verbrauchswerte</Text>
 
-        <Text style={styles.costTableTitle}>Heizung in MWh</Text>
-        <View style={styles.consumptionTable}>
-          <View style={styles.consumptionThead}>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
-              RAUMBEZEICHNUNG
-            </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-          </View>
-          <View style={styles.consumptionTbody}>
-            {ub.heatingDevices.map((device, i) => (
-              <View key={i} style={styles.consumptionTr}>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.location}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                  {device.deviceNumber}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.deviceType}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.startReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.endReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.consumptionFormatted}
-                </Text>
+        <View wrap={false}>
+          <Text style={styles.costTableTitle}>Heizung in MWh</Text>
+          <View style={styles.consumptionTable}>
+            <View style={styles.consumptionThead}>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
+                RAUMBEZEICHNUNG
+              </Text>
+              <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
+            </View>
+            <View style={styles.consumptionTbody}>
+              {ub.heatingDevices.map((device, i) => (
+                <View key={i} style={styles.consumptionTr}>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.location}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                    {device.deviceNumber}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.deviceType}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.startReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.endReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.consumptionFormatted}
+                  </Text>
+                </View>
+              ))}
+              <View style={styles.consumptionSumRow}>
+                <Text style={{ flex: 5 }}>Summe Heizung</Text>
+                <Text style={{ flex: 1 }}>{ub.heatingDevicesTotalFormatted}</Text>
               </View>
-            ))}
-            <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 5 }}>Summe Heizung</Text>
-              <Text style={{ flex: 1 }}>{ub.heatingDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>
 
-        <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
-          Warmwasser in m³
-        </Text>
-        <View style={styles.consumptionTable}>
-          <View style={styles.consumptionThead}>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
-              RAUMBEZEICHNUNG
-            </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-          </View>
-          <View style={styles.consumptionTbody}>
-            {ub.warmWaterDevices.map((device, i) => (
-              <View key={i} style={styles.consumptionTr}>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.location}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                  {device.deviceNumber}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.deviceType}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.startReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.endReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.consumptionFormatted}
-                </Text>
+        <View wrap={false}>
+          <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
+            Warmwasser in m³
+          </Text>
+          <View style={styles.consumptionTable}>
+            <View style={styles.consumptionThead}>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
+                RAUMBEZEICHNUNG
+              </Text>
+              <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
+            </View>
+            <View style={styles.consumptionTbody}>
+              {ub.warmWaterDevices.map((device, i) => (
+                <View key={i} style={styles.consumptionTr}>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.location}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                    {device.deviceNumber}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.deviceType}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.startReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.endReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.consumptionFormatted}
+                  </Text>
+                </View>
+              ))}
+              <View style={styles.consumptionSumRow}>
+                <Text style={{ flex: 5 }}>Summe Warmwasser</Text>
+                <Text style={{ flex: 1 }}>{ub.warmWaterDevicesTotalFormatted}</Text>
               </View>
-            ))}
-            <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 5 }}>Summe Warmwasser</Text>
-              <Text style={{ flex: 1 }}>{ub.warmWaterDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>
 
-        <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
-          Kaltwasser in m³
-        </Text>
-        <View style={styles.consumptionTable}>
-          <View style={styles.consumptionThead}>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
-              RAUMBEZEICHNUNG
-            </Text>
-            <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
-            <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
-            <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
-          </View>
-          <View style={styles.consumptionTbody}>
-            {ub.coldWaterDevices.map((device, i) => (
-              <View key={i} style={styles.consumptionTr}>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.location}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 2 }]}>
-                  {device.deviceNumber}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
-                  {device.deviceType}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.startReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.endReadingFormatted}
-                </Text>
-                <Text style={[styles.consumptionTd, { flex: 1 }]}>
-                  {device.consumptionFormatted}
-                </Text>
+        <View wrap={false}>
+          <Text style={[styles.costTableTitle, { marginTop: 10 }]}>
+            Kaltwasser in m³
+          </Text>
+          <View style={styles.consumptionTable}>
+            <View style={styles.consumptionThead}>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>
+                RAUMBEZEICHNUNG
+              </Text>
+              <Text style={[styles.consumptionTh, { flex: 2 }]}>GERÄTENUMMER</Text>
+              <Text style={[styles.consumptionTh, { flex: 1.5 }]}>GERÄTEART</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ANF.-STAND</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>ABLESUNG</Text>
+              <Text style={[styles.consumptionTh, { flex: 1 }]}>VERBRAUCH</Text>
+            </View>
+            <View style={styles.consumptionTbody}>
+              {ub.coldWaterDevices.map((device, i) => (
+                <View key={i} style={styles.consumptionTr}>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.location}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 2 }]}>
+                    {device.deviceNumber}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1.5 }]}>
+                    {device.deviceType}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.startReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.endReadingFormatted}
+                  </Text>
+                  <Text style={[styles.consumptionTd, { flex: 1 }]}>
+                    {device.consumptionFormatted}
+                  </Text>
+                </View>
+              ))}
+              <View style={styles.consumptionSumRow}>
+                <Text style={{ flex: 5 }}>Summe Kaltwasser</Text>
+                <Text style={{ flex: 1 }}>{ub.coldWaterDevicesTotalFormatted}</Text>
               </View>
-            ))}
-            <View style={styles.consumptionSumRow}>
-              <Text style={{ flex: 5 }}>Summe Kaltwasser</Text>
-              <Text style={{ flex: 1 }}>{ub.coldWaterDevicesTotalFormatted}</Text>
             </View>
           </View>
         </View>

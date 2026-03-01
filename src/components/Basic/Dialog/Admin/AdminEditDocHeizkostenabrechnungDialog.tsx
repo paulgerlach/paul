@@ -1,10 +1,10 @@
 "use client";
 
 import { useDialogStore } from "@/store/useDIalogStore";
-import DialogBase from "../ui/DialogBase";
+import DialogBase from "../../ui/DialogBase";
 import { DialogStoreActionType } from "@/types";
-import { Button } from "../ui/Button";
-import { Form } from "../ui/Form";
+import { Button } from "../../ui/Button";
+import { Form } from "../../ui/Form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,21 +18,25 @@ import FormDocument from "@/components/Admin/Forms/FormDocument";
 import { format, parse } from "date-fns";
 import { toast } from "sonner";
 import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
+import { buildLocalName } from "@/utils";
 import FormLocalsultiselect from "@/components/Admin/Forms/FormLocalsMultiselect";
-import { buildLocalName, isFuelCostType } from "@/utils";
-import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
+import { useParams } from "next/navigation";
+import { adminEditInvoiceDocument } from "@/actions/edit/admin/adminEditInvoiceDocument";
 import { useEffect, useMemo, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   buildInvoiceNotes,
   mapCostCategoryToPurpose,
   processInvoicesViaNext,
 } from "@/api/invoices";
 import FormTextareaField from "@/components/Admin/Forms/FormTextareaField";
-import { useMutation } from "@tanstack/react-query";
+import { residentialAreaOptions } from "@/static/formSelectOptions";
 
 const addDocHeizkostenabrechnungDialogSchema = z.object({
   invoice_date: z.coerce
-    .date({ errorMap: () => ({ message: "Ungültiges Datum" }) })
+    .date({
+      errorMap: () => ({ message: "Ungültiges Datum" }),
+    })
     .refine((val) => !isNaN(val.getTime()), { message: "Ungültiges Datum" })
     .nullable(),
   total_amount: z.coerce.number().min(1, "Pflichtfeld").nullable(),
@@ -59,40 +63,69 @@ const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
   direct_local_id: null,
 };
 
-export default function AddDocHeizkostenabrechnungDialog() {
+export default function AdminEditDocHeizkostenabrechnungDialog() {
   const { openDialogByType, closeDialog } = useDialogStore();
   const {
     purposeOptions,
     activeCostType,
-    updateDocumentGroup,
+    editDocumentGroup,
     objektID,
     operatingDocID,
+    documentGroups,
   } = useHeizkostenabrechnungStore();
 
+  const { itemID } = useDialogStore();
+
   const { data: locals } = useLocalsByObjektID(objektID);
+  const { user_id } = useParams();
 
   const activeDialog = useMemo(() => {
     return Object.entries(openDialogByType).find(
       ([key, value]) =>
-        key.endsWith("_heizkostenabrechnung_upload") &&
-        value === true &&
-        !key.includes("admin_")
+        key === "admin_invoice_edit" && value === true
     )?.[0];
   }, [openDialogByType]);
 
   const isOpen = Boolean(activeDialog);
+
+  // Extract existing invoice from store
+  const { existingInvoice, targetCostType } = useMemo(() => {
+    if (!itemID || !documentGroups) return { existingInvoice: null, targetCostType: null };
+    for (const group of documentGroups) {
+      const found = group.data.find((item) => String(item.id) === String(itemID));
+      if (found) return { existingInvoice: found, targetCostType: group.type };
+    }
+    return { existingInvoice: null, targetCostType: null };
+  }, [itemID, documentGroups]);
 
   const methods = useForm<AddDocHeizkostenabrechnungDialogFormValues>({
     resolver: zodResolver(addDocHeizkostenabrechnungDialogSchema),
     defaultValues,
   });
 
+  const { isSubmitting } = methods.formState;
+
+  useEffect(() => {
+    if (existingInvoice && isOpen) {
+      methods.reset({
+        invoice_date: existingInvoice.invoice_date ? new Date(existingInvoice.invoice_date) : null,
+        total_amount: existingInvoice.total_amount ? Number(existingInvoice.total_amount) : null,
+        service_period: existingInvoice.service_period ?? false,
+        for_all_tenants: existingInvoice.for_all_tenants ?? true,
+        purpose: existingInvoice.purpose ?? "",
+        notes: existingInvoice.notes ?? "",
+        direct_local_id: existingInvoice.direct_local_id ?? null,
+      });
+    }
+  }, [existingInvoice, isOpen, methods]);
+
   const uploadDocuments = useUploadDocuments();
   const { deletedDocumentIds } = useDocumentDeletion([]);
+
+  const servicePeriod = methods.watch("service_period");
   const forAllTenants = methods.watch("for_all_tenants");
   const watchedDocs = methods.watch("document") ?? [];
-  const servicePeriod = methods.watch("service_period");
-  const isFuelCost = isFuelCostType(activeCostType);
+  const isFuelCost = targetCostType === "fuel_costs";
 
   const processedFilesRef = useRef<Set<string>>(new Set());
   const fileKey = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
@@ -148,19 +181,24 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
   const isProcessingInvoice = parseInvoicesMutation.isPending;
 
-  // ✅ run invoice parsing whenever new documents are added (skip for fuel costs)
   useEffect(() => {
     if (isFuelCost) return;
     if (!watchedDocs.length) return;
 
-    const newFiles = watchedDocs.filter(
-      (f) => !processedFilesRef.current.has(fileKey(f))
-    );
+    const newFiles = watchedDocs.filter((f) => {
+      const key = fileKey(f);
+      return !processedFilesRef.current.has(key);
+    });
+
     if (!newFiles.length) return;
 
+    // mark immediately to avoid double-queue before mutation settles
+    newFiles.forEach((f) => processedFilesRef.current.add(fileKey(f)));
+
     parseInvoicesMutation.mutate(newFiles, {
-      onSettled: () => {
-        newFiles.forEach((f) => processedFilesRef.current.add(fileKey(f)));
+      onError: () => {
+        // optional: allow retry if parsing failed
+        newFiles.forEach((f) => processedFilesRef.current.delete(fileKey(f)));
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,63 +206,43 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
   const onSubmit = async (data: AddDocHeizkostenabrechnungDialogFormValues) => {
     if (isProcessingInvoice) return; // ✅ don't submit while parsing
-    if (!activeCostType || !activeDialog) return;
-
-    if (isFuelCostType(activeCostType)) {
-      if (!data.notes || String(data.notes).trim() === "") {
-        methods.setError("notes", { message: "Pflichtfeld" });
-        return;
-      }
-      // Validate against the same regex pattern as the database constraint: positive numbers and decimals only
-      const notesString = String(data.notes).trim();
-      if (!/^\d+(\.\d+)?$/.test(notesString)) {
-        methods.setError("notes", { message: "Nur positive Zahlen erlaubt" });
-        return;
-      }
-    }
+    if (!targetCostType || !activeDialog) return;
 
     const { document, ...rest } = data;
 
-    const formattedPayload = {
-      invoice_date: rest.invoice_date
-        ? format(rest.invoice_date, "yyyy-MM-dd")
-        : null,
-      total_amount: rest.total_amount != null ? String(rest.total_amount) : null,
-      service_period: rest.service_period,
-      for_all_tenants: rest.for_all_tenants,
-      purpose: rest.purpose,
-      notes: rest.notes,
-      direct_local_id:
-        rest.for_all_tenants === false ? rest.direct_local_id : null,
-      document,
+    // Optional: we don't strictly *require* a new document if we're editing
+    // if (!document?.length && !existingInvoice?.document_name) {
+    //   toast.error("Rechnung beifügen");
+    //   return;
+    // }
+
+    const delayPromise = new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const submitProcess = async () => {
+      const formattedPayload = { ...rest, document };
+
+      if (!itemID) {
+        toast.error("Missing Item ID");
+        return;
+      }
+      const res = await adminEditInvoiceDocument(itemID, formattedPayload);
+
+      editDocumentGroup(targetCostType, itemID, res);
+
+      if (document && document.length > 0) {
+        await uploadDocuments.mutateAsync({
+          files: document,
+          relatedId: operatingDocID ?? "",
+          relatedType: "operating_costs",
+        });
+      }
     };
 
-    if (!document?.length) {
-      toast.error("Rechnung beifügen");
-      return;
-    }
-
-    const res = await createHeatingInvoice(
-      {
-        ...formattedPayload,
-        invoice_date: rest.invoice_date,
-        total_amount: rest.total_amount != null ? rest.total_amount : null,
-      },
-      objektID,
-      operatingDocID,
-      activeCostType
-    );
-
-    updateDocumentGroup(activeCostType, res);
-
-    await uploadDocuments.mutateAsync({
-      files: document,
-      relatedId: operatingDocID ?? "",
-      relatedType: "heating_bill",
-    });
+    await Promise.all([submitProcess(), delayPromise]);
 
     closeDialog(activeDialog as DialogStoreActionType);
     toast.success("Rechnung erfolgreich hinzugefügt");
+    methods.resetField("document");
     methods.reset(defaultValues);
     processedFilesRef.current.clear();
   };
@@ -234,7 +252,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
   return (
     <DialogBase dialogName={activeDialog as DialogStoreActionType}>
       <p className="font-bold text-lg text-admin_dark_text -mt-6">
-        Neue Ausgaben
+        Rechnung bearbeiten
       </p>
 
       <Form {...methods}>
@@ -278,8 +296,11 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 type="button"
                 disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", false)}
-                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 max-xl: rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
-                  } cursor-pointer transition-all duration-300`}
+                className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
+                  } ${isProcessingInvoice
+                    ? "opacity-60 cursor-not-allowed"
+                    : "cursor-pointer"
+                  } transition-all duration-300`}
               >
                 Nein
               </button>
@@ -288,7 +309,10 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 disabled={isProcessingInvoice}
                 onClick={() => methods.setValue("service_period", true)}
                 className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
-                  } cursor-pointer transition-all duration-300`}
+                  } ${isProcessingInvoice
+                    ? "opacity-60 cursor-not-allowed"
+                    : "cursor-pointer"
+                  } transition-all duration-300`}
               >
                 Ja
               </button>
@@ -305,7 +329,6 @@ export default function AddDocHeizkostenabrechnungDialog() {
                 className="!mt-0 h-fit"
                 disabled={isProcessingInvoice}
               />
-
               {!forAllTenants && (
                 <FormLocalsultiselect<AddDocHeizkostenabrechnungDialogFormValues>
                   options={
@@ -337,7 +360,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
           <FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
             control={methods.control}
             name="notes"
-            label={isFuelCost ? "Menge in kWh *" : "Anmerkungen"}
+            label={isFuelCost ? "Menge in kWh" : "Anmerkungen"}
             placeholder=""
             rows={4}
             disabled={isProcessingInvoice}
@@ -370,10 +393,17 @@ export default function AddDocHeizkostenabrechnungDialog() {
 
             <Button
               type="submit"
-              disabled={isProcessingInvoice}
+              disabled={isProcessingInvoice || isSubmitting}
               className="!font-medium !text-lg max-xl:!text-sm"
             >
-              Speichern
+              {isSubmitting ? (
+                <>
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  Speichern...
+                </>
+              ) : (
+                "Speichern"
+              )}
             </Button>
           </div>
         </form>

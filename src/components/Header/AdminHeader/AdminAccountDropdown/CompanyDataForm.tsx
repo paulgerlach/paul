@@ -9,7 +9,7 @@ import ModalFooter from './ModalFooter';
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
 // TO DO: Create table for the company logos needed
 export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, reset } = useForm();
   const [preview, setPreview] = useState<string | null>(null);
 
   const logoFile = watch("logo");
@@ -24,7 +24,40 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
     }
   }, [logoFile]);
 
-   const onSubmit = async (data: any) => {
+useEffect(() => {
+  const loadExistingData = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: userData } = await supabase
+      .from("users")
+      .select("agency_id")
+      .eq("id", user.id)
+      .single();
+
+    if (userData?.agency_id) {
+      const { data: agency } = await supabase
+        .from("agencies")
+        .select("*")
+        .eq("id", userData.agency_id)
+        .single();
+
+      if (agency) {
+        reset({
+          companyName: agency.name,
+          street: agency.street,
+          zip: agency.zip,
+          city: agency.city,
+          vatId: agency.vat_id,
+        });
+        if (agency.logo_url) setPreview(agency.logo_url);
+      }
+    }
+  };
+  loadExistingData();
+}, [reset]);
+
+  const onSubmit = async (data: any) => {
     let logoUrl: string | null = null;
 
     // Upload logo if present
@@ -50,21 +83,51 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       logoUrl = publicData.publicUrl;
     }
 
-    // Save form + logo URL
-    const { error } = await supabase
-      .from("objekte")
-      .update({
-        company_name: data.companyName,
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (!user || userError) {
+      console.error("No logged-in user", userError);
+      return;
+    }
+
+    const { data: userData } = await supabase
+      .from("users")
+      .select("agency_id")
+      .eq("id", user.id)
+      .single();
+
+    const { data: agencyData, error: agencyError } = await supabase
+      .from("agencies")
+      .upsert({
+        id: userData?.agency_id || undefined,
+        name: data.companyName,
         street: data.street,
         zip: data.zip,
         city: data.city,
         vat_id: data.vatId,
         logo_url: logoUrl,
-      });
+      })
+      .select()
+      .single();
 
-    if (error) {
-      console.error("DB update failed:", error);
+    if (agencyError || !agencyData) {
+      console.error("Failed to save agency data. Check if columns exist in Supabase:", agencyError);
       return;
+    }
+
+    if (!userData?.agency_id) {
+      const { error: linkError } = await supabase
+        .from("users")
+        .update({ agency_id: agencyData.id })
+        .eq("id", user.id);
+
+      if (linkError) {
+        console.error("Failed to link user to agency:", linkError);
+        return;
+      }
     }
 
     onClose();
@@ -77,28 +140,28 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
           <label className={labelStyle}>Firmenname *</label>
           <input {...register("companyName")} type="text" className={inputStyle} />
         </div>
-        
+
         <div className="flex-shrink-0">
           <label className={labelStyle}>Firmenlogo</label>
           <label className="w-[160px] h-[45px] border-2 border-dashed border-blue-200 flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
-              {preview ? (
-      <img
-        src={preview}
-        alt="Logo preview"
-        className="object-contain w-full h-full"
-      />
-    ) : (
-      <span className="text-[10px] text-blue-400 text-center px-4">
-        Logo hinzufügen<br />(320 × 100 px)
-      </span>
-    )}
+            {preview ? (
+              <img
+                src={preview}
+                alt="Logo preview"
+                className="object-contain w-full h-full"
+              />
+            ) : (
+              <span className="text-[10px] text-blue-400 text-center px-4">
+                Logo hinzufügen<br />(320 × 100 px)
+              </span>
+            )}
 
-    <input
-      type="file"
-      accept="image/*"
-      className="hidden"
-      {...register("logo")}
-    />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              {...register("logo")}
+            />
           </label>
         </div>
       </div>
@@ -106,7 +169,7 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
       {/* Rechnungsadresse Header */}
       <div className="space-y-4">
         <h4 className="text-sm font-bold text-gray-900 m-0">Rechnungsadresse</h4>
-        
+
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
           <input {...register("street")} type="text" className={inputStyle} />

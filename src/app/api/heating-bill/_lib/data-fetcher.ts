@@ -52,6 +52,8 @@ export interface HeatingBillRawData {
     purpose: string | null;
     notes: string | null;
     heating_doc_id: string | null;
+    for_all_tenants: boolean | null;
+    direct_local_id: string[] | null;
   }>;
   contractsWithContractors: Array<{
     id: string;
@@ -143,6 +145,8 @@ export async function fetchHeatingBillData(
         purpose: i.purpose,
         notes: i.notes,
         heating_doc_id: i.heating_doc_id,
+        for_all_tenants: i.for_all_tenants,
+        direct_local_id: i.direct_local_id,
       })),
       contractsWithContractors: [],
       user: user ? { first_name: user.first_name, last_name: user.last_name, id: user.id } : null,
@@ -293,6 +297,8 @@ export async function fetchHeatingBillData(
       purpose: i.purpose,
       notes: i.notes,
       heating_doc_id: i.heating_doc_id,
+      for_all_tenants: i.for_all_tenants,
+      direct_local_id: i.direct_local_id,
     })),
     contractsWithContractors: contractsWithContractors.map((c) => ({
       id: c.id,

@@ -18,10 +18,11 @@ export default async function AbrechnungszeitraumContinuePage({
 
   const doc = await getHeatingBillDocumentByID(doc_id);
 
-  const objekt = await getObjectById(doc.objekt_id ?? "");
-  const locals = await getRelatedLocalsWithContractsByObjektId(
-    doc.objekt_id ?? ""
-  );
+  const objektId = doc?.objekt_id ?? "";
+  const objekt = objektId ? await getObjectById(objektId) : ({} as any);
+  const locals = objektId
+    ? await getRelatedLocalsWithContractsByObjektId(objektId)
+    : [];
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
@@ -33,7 +34,7 @@ export default async function AbrechnungszeitraumContinuePage({
       />
       <CreateDocContentWrapper>
         <AbrechnungszeitraumHeatObjektauswahlForm
-          id={doc.objekt_id ?? ""}
+          id={doc?.objekt_id ?? ""}
           docValues={doc}
         />
         <HeizkostenabrechnungBuildingReceipt

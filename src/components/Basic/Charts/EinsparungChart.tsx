@@ -39,8 +39,7 @@ export default function EinsparungChart({
 	const shouldShowEmpty =
 		isEmpty ||
 		!filteredData ||
-		filteredData.length === 0 ||
-		co2Result?.totalCO2SavedTons === 0;
+		filteredData.length === 0
 
 	return (
 		<div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">

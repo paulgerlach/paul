@@ -12,7 +12,7 @@ import {
   users,
   local_meters,
   heating_invoices,
-  agencies,   
+  agencies,
 } from "@/db/drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
@@ -48,6 +48,7 @@ export type MeterReadingType = {
   Status: string;
   Encryption: number;
   "IV,0,0,0,,Date/Time"?: string; // OLD format - now optional
+  "IV,0,0,0,,Date"?: string; // OLD format - now optional
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
   "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
   "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
@@ -171,7 +172,39 @@ export type MeterReadingType = {
   "IV,12,0,0,m^3,Vol"?: number;
   "IV,14,0,0,m^3,Vol"?: number;
   "IV,16,0,0,m^3,Vol"?: number;
-
+  // For HCA devices, we have additional fields for billing data and hint codes, which can be used for advanced analytics and alerts
+  "IV,0,0,0,,Units HCA"?: number;  // Current/primary consumption
+  "IV,1,0,0,,Units HCA"?: number;  // Previous year (2025)
+  "IV,2,0,0,,Units HCA"?: number;  // Previous year (2024)
+  "IV,3,0,0,,Units HCA"?: number;
+  "IV,4,0,0,,Units HCA"?: number;
+  "IV,5,0,0,,Units HCA"?: number;
+  "IV,6,0,0,,Units HCA"?: number;
+  "IV,7,0,0,,Units HCA"?: number;
+  "IV,8,0,0,,Units HCA"?: number;
+  "IV,9,0,0,,Units HCA"?: number;
+  "IV,10,0,0,,Units HCA"?: number;
+  "IV,11,0,0,,Units HCA"?: number;
+  "IV,12,0,0,,Units HCA"?: number;
+  "IV,13,0,0,,Units HCA"?: number;
+  "IV,14,0,0,,Units HCA"?: number;
+  "IV,15,0,0,,Units HCA"?: number;
+  "IV,16,0,0,,Units HCA"?: number;
+  "IV,17,0,0,,Units HCA"?: number;
+  "IV,18,0,0,,Units HCA"?: number;
+  "IV,19,0,0,,Units HCA"?: number;
+  "IV,20,0,0,,Units HCA"?: number;
+  "IV,21,0,0,,Units HCA"?: number;
+  "IV,22,0,0,,Units HCA"?: number;
+  "IV,23,0,0,,Units HCA"?: number;
+  "IV,24,0,0,,Units HCA"?: number;
+  "IV,25,0,0,,Units HCA"?: number;
+  "IV,26,0,0,,Units HCA"?: number;
+  "IV,27,0,0,,Units HCA"?: number;
+  "IV,28,0,0,,Units HCA"?: number;  // Monthly value
+  "IV,29,0,0,,Units HCA"?: number;  // Monthly value
+  "IV,30,0,0,,Units HCA"?: number;  // Monthly value
+  "IV,31,0,0,,Units HCA"?: number;  // Monthly value
 }
 
 interface DeviceTypeSummary {
@@ -1151,7 +1184,17 @@ export async function getDocCostCategoryTypes(
       (defaultType) => {
         const userEntry = userTypesMap.get(defaultType.type);
         if (userEntry) {
-          // User has this type - use their version (priority)
+          // User has this type - use their version (priority), but merge any newly added default options
+          if (defaultType.options && userEntry.options) {
+            const existingOptions = new Set(userEntry.options);
+            const missingOptions = defaultType.options.filter(opt => !existingOptions.has(opt));
+            if (missingOptions.length > 0) {
+              userEntry.options = [...userEntry.options, ...missingOptions];
+            }
+          } else if (defaultType.options && !userEntry.options) {
+            userEntry.options = [...defaultType.options];
+          }
+
           userTypesMap.delete(defaultType.type); // Mark as used
           return userEntry;
         }
@@ -1202,12 +1245,12 @@ export async function getInvoicesByOperatingCostDocumentID(docId: string): Promi
 }
 
 export async function getHeatingBillDocumentByID(docId: string): Promise<HeatingBillDocumentType> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const document = await database
     .select()
     .from(heating_bill_documents)
-    .where(and(eq(heating_bill_documents.id, docId), eq(heating_bill_documents.user_id, user.id)))
+    .where(eq(heating_bill_documents.id, docId))
     .then((res) => res[0]);
 
   return document;
@@ -1246,12 +1289,12 @@ export async function getAdminInvoicesByHeatingBillDocumentID(docId: string, use
 }
 
 export async function getHeatingInvoicesByHeatingBillDocumentID(docId: string): Promise<HeatingInvoiceType[]> {
-  const user = await getAuthenticatedServerUser();
+  await getAuthenticatedServerUser(); // ensure logged in
 
   const invoices = await database
     .select()
     .from(heating_invoices)
-    .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, user.id)));
+    .where(eq(heating_invoices.heating_doc_id, docId));
 
   return invoices;
 }
@@ -1264,4 +1307,168 @@ export async function getAdminHeatingInvoicesByHeatingBillDocumentID(docId: stri
     .where(and(eq(heating_invoices.heating_doc_id, docId), eq(heating_invoices.user_id, userId)));
 
   return invoices;
+}
+
+/**
+ * Get per-locale heating bill documents for an objekt (where local_id is set).
+ * Returns only the most recent record per local_id to avoid duplicates from
+ * multiple batch runs.
+ */
+export async function getHeatingBillDocsByObjektId(
+  objektId: string,
+): Promise<HeatingBillDocumentType[]> {
+  const docs = await database
+    .select()
+    .from(heating_bill_documents)
+    .where(
+      and(
+        eq(heating_bill_documents.objekt_id, objektId),
+        sql`${heating_bill_documents.local_id} IS NOT NULL`,
+      )
+    );
+
+  // Deduplicate: keep only the latest record per local_id
+  const latestByLocalId = new Map<string, (typeof docs)[0]>();
+  for (const doc of docs) {
+    if (!doc.local_id) continue;
+    const existing = latestByLocalId.get(doc.local_id);
+    if (!existing || new Date(doc.created_at) > new Date(existing.created_at)) {
+      latestByLocalId.set(doc.local_id, doc);
+    }
+  }
+
+  return Array.from(latestByLocalId.values());
+}
+
+/**
+ * Get all documents for a heating bill, grouped by local_id.
+ * Documents are linked directly to the parent heating_bill_documents.id via related_id.
+ */
+export async function getDocumentsByHeatingBillDocId(
+  docId: string,
+): Promise<Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]>> {
+  const docs = await database
+    .select()
+    .from(documents)
+    .where(
+      and(
+        eq(documents.related_id, docId),
+        eq(documents.related_type, "heating_bill"),
+      )
+    )
+    .orderBy(documents.created_at);
+
+  const grouped: Record<string, { id: string; document_name: string; document_url: string; local_id: string; current_document: boolean }[]> = {};
+  for (const doc of docs) {
+    const localId = doc.local_id;
+    if (!localId) continue;
+    if (!grouped[localId]) {
+      grouped[localId] = [];
+    }
+    grouped[localId].push({
+      id: doc.id,
+      document_name: doc.document_name,
+      document_url: doc.document_url,
+      local_id: localId,
+      current_document: doc.current_document,
+    });
+  }
+
+  return grouped;
+}
+
+/**
+ * Get all document records whose related_id is in the given set of IDs.
+ * Returns a map of related_id → document records.
+ */
+export async function getDocumentsByRelatedIds(
+  relatedIds: string[],
+): Promise<Record<string, { id: string; document_name: string; document_url: string; related_id: string; user_id: string; created_at: string | null }[]>> {
+  if (relatedIds.length === 0) return {};
+
+  const docs = await database
+    .select()
+    .from(documents)
+    .where(inArray(documents.related_id, relatedIds));
+
+  const grouped: Record<string, typeof docs> = {};
+  for (const doc of docs) {
+    if (!grouped[doc.related_id]) {
+      grouped[doc.related_id] = [];
+    }
+    grouped[doc.related_id].push(doc);
+  }
+
+  return grouped;
+}
+
+/**
+ * Get all documents linked to the given objekt IDs.
+ * Resolves through heating_bill_documents and operating_cost_documents.
+ */
+export async function getDocumentsByObjektIds(
+  objektIds: string[],
+  includeHistory: boolean = false
+): Promise<any[]> {
+  if (objektIds.length === 0) return [];
+
+  // Find all heating bill doc IDs for these objekts
+  const hbDocs = await database
+    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+    .from(heating_bill_documents)
+    .where(inArray(heating_bill_documents.objekt_id, objektIds));
+
+  const hbObjektMap: Record<string, string> = {};
+  for (const hb of hbDocs) {
+    if (hb.objekt_id) hbObjektMap[hb.id] = hb.objekt_id;
+  }
+
+  // Find all operating cost doc IDs for these objekts
+  const ocDocs = await database
+    .select({ id: operating_cost_documents.id, objekt_id: operating_cost_documents.objekt_id })
+    .from(operating_cost_documents)
+    .where(inArray(operating_cost_documents.objekt_id, objektIds));
+
+  const ocObjektMap: Record<string, string> = {};
+  for (const oc of ocDocs) {
+    if (oc.objekt_id) ocObjektMap[oc.id] = oc.objekt_id;
+  }
+
+  const allParentIds = [
+    ...hbDocs.map((d) => d.id),
+    ...ocDocs.map((d) => d.id),
+  ];
+
+  if (allParentIds.length === 0) return [];
+
+  // Fetch documents linked to these parent records
+  const conditions = [inArray(documents.related_id, allParentIds)];
+
+  if (!includeHistory) {
+    conditions.push(eq(documents.current_document, true));
+  }
+
+  const allDocs = await database
+    .select()
+    .from(documents)
+    .where(and(...conditions))
+    .orderBy(documents.created_at);
+
+  return allDocs.map((doc) => ({
+    ...doc,
+    objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
+  }));
+}
+
+/**
+ * Get a single document record by ID.
+ */
+export async function getDocumentById(
+  docId: string,
+): Promise<{ id: string; document_name: string; document_url: string; related_id: string; user_id: string } | null> {
+  const rows = await database
+    .select()
+    .from(documents)
+    .where(eq(documents.id, docId));
+  return rows[0] ?? null;
 }

@@ -30,6 +30,7 @@ export const emptyHeatingBillModel: HeatingBillPdfModel = {
     },
 
     buildingCalc: {
+        energyCarrier: "Nah-/Fernwärme",
         energyInvoices: [],
         energyRelief: null,
         energyTotalKwh: 0,
@@ -56,6 +57,7 @@ export const emptyHeatingBillModel: HeatingBillPdfModel = {
             tempDiffHigh: 60,
             tempDiffLow: 10,
             conversionFactor: 1.15,
+            conversionOperation: "divide" as const,
             energyKwh: 0,
             energyKwhFormatted: "0,00",
             energySharePercent: 0,

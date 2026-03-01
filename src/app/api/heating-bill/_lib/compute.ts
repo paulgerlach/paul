@@ -24,6 +24,7 @@ import {
   userNumberFromIds,
   securityCodeFromIds,
 } from "@/utils";
+import { getHkvoFactor } from "./constants";
 
 const HEAT_DEVICE_TYPES = [
   "Heat",
@@ -147,6 +148,17 @@ export function computeHeatingBill(
     raw.mainDoc.consumption_dependent ?? 70
   );
 
+  // Resolve energy carrier: prefer the fuel cost invoice's purpose (user-selected option
+  // like "Erdgas (Brennwert)"), fall back to objekt.heating_systems
+  const fuelInvoice = filteredInvoices.find((inv) => {
+    const ct = (inv.cost_type ?? "").toLowerCase().replace(/\s/g, "_");
+    return ct === "fuel_costs" || ct === "brennstoffkosten";
+  });
+  const energyCarrier =
+    fuelInvoice?.purpose?.trim() ||
+    energyCarrierFromObjekt(raw.objekt?.heating_systems);
+  const hkvoFactor = getHkvoFactor(energyCarrier);
+
   const warmWater = computeWarmWaterCosts(
     warmWaterVolumeM3,
     energyTotalKwh,
@@ -156,6 +168,7 @@ export function computeHeatingBill(
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
+      hkvoFactor,
     }
   );
 
@@ -304,7 +317,7 @@ export function computeHeatingBill(
     timeFraction: tenantOverride?.timeFraction,
   });
 
-  const energyCarrier = energyCarrierFromObjekt(raw.objekt?.heating_systems);
+
   const totalLivingSpaceM2 = totalLivingSpace || 0;
   const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
   const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
@@ -343,6 +356,7 @@ export function computeHeatingBill(
   });
 
   model.buildingCalc = {
+    energyCarrier,
     energyInvoices: costAgg.energyInvoices.map((i) => ({
       ...i,
       kWhFormatted:

@@ -373,18 +373,22 @@ const aggregateDataByTimeRange = (
   // STEP 3: Convert month offsets to actual labels
   const result: { label: string; value: number }[] = [];
 
+  // Get the most recent reading date to use as reference for month labels
+  const referenceDate = deviceLatestReading.size > 0 
+    ? Math.max(...Array.from(deviceLatestReading.values()).map(r => r.date.getTime()))
+    : now.getTime();
+  const refDate = new Date(referenceDate);
   
-    // Standard meters: use calculated month offsets
-    for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
-      const consumption = monthlyConsumption.get(offset) || 0;
-      if (consumption > 0 || offset < 2) {
-        const monthDate = new Date(now.getFullYear(), now.getMonth() - offset, 1);
-        result.push({
-          label: monthNames[monthDate.getMonth()],
-          value: Math.round(consumption),
-        });
-      }
+  for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
+    const consumption = monthlyConsumption.get(offset) || 0;
+    if (consumption > 0 || offset < 2) {
+      const monthDate = new Date(refDate.getFullYear(), refDate.getMonth() - offset, 1);
+      result.push({
+        label: monthNames[monthDate.getMonth()],
+        value: Math.round(consumption),
+      });
     }
+  }
   
 
   // Return in chronological order (oldest first)

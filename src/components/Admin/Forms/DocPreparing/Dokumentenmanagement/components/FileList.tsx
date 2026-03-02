@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, CheckCircle2 } from "lucide-react";
-import type { FileEntry } from "@/hooks/useDokumentenManagement";
+import type { FileEntry } from "@/hooks/useInvoicesBase";
 
 interface FileListProps {
     entries: FileEntry[];

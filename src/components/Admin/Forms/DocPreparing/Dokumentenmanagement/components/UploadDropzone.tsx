@@ -1,20 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { ai_starts } from "@/static/icons";
-import { ROUTE_DOKUMENTE } from "@/routes/routes";
 
 interface UploadDropzoneProps {
     onDrop: (acceptedFiles: File[]) => void;
+    onDropRejected?: (fileRejections: FileRejection[]) => void;
 }
 
-export function UploadDropzone({ onDrop }: UploadDropzoneProps) {
+export function UploadDropzone({ onDrop, onDropRejected }: UploadDropzoneProps) {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
+        onDropRejected,
         accept: { "application/pdf": [".pdf"] },
         multiple: true,
+        maxSize: 10 * 1024 * 1024,   // 10 MB per file
+        maxFiles: 20,                 // max 20 files per batch
     });
 
     return (
@@ -44,7 +46,7 @@ export function UploadDropzone({ onDrop }: UploadDropzoneProps) {
                 </p>
             </div>
             <p className="mt-4 text-[#757575] text-sm">
-                Unbegrenztes Hochladen von <Link href={ROUTE_DOKUMENTE} className="font-bold text-ai-blue">Dokumenten</Link> mit einer Dateigröße von bis zu 500 MB.
+                Maximal 20 Dateien pro Upload, bis zu 10 MB pro PDF-Datei.
             </p>
         </>
     );

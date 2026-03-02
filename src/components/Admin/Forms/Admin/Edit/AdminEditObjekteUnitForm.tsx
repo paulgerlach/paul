@@ -89,6 +89,13 @@ const localSchema = z.object({
         meter_number: z.string().nullable(),
         meter_note: z.string().nullable(),
         meter_type: z.string().nullable(),
+        old_reading: z.coerce.number().nullable().optional(),
+        installation_date: z.string().nullable().optional(),
+        radiator_type: z.string().nullable().optional(),
+        radiator_length: z.coerce.number().nullable().optional(),
+        radiator_width: z.coerce.number().nullable().optional(),
+        radiator_depth: z.coerce.number().nullable().optional(),
+        installation_factor: z.string().nullable().optional(),
       })
     )
     .nullable(),

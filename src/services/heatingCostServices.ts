@@ -1,7 +1,8 @@
 import { MeterReadingType } from "@/api";
 import { monthNames } from "@/lib/constants/date";
+import { start } from "repl";
 
-export const isValidReading = (reading: MeterReadingType, startDate: null | undefined, endDate: null | undefined): boolean => {
+export const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
   // Check for error status codes
   const status = reading.Status;
   if (status && status !== "00h") {
@@ -59,33 +60,13 @@ export const isValidReading = (reading: MeterReadingType, startDate: null | unde
     return false;
   }
 
-  return true;
+  return isWithinDateRange(reading, startDate, endDate);
 };
 
-const parseHCADate = (dateStr: string | undefined): Date => {
-  if (!dateStr) return new Date(0);
-  const [day, month, year] = dateStr.split(".").map(Number);
-  return new Date(year, month - 1, day);
-};
-
-
-export const aggregateDataByTimeRange = (
-  readings: MeterReadingType[],
-  startDate?: Date | null,
-  endDate?: Date | null
-): { label: string; value: number }[] => {
-  if (!readings || readings.length === 0 || startDate || endDate) return [];
-
-  // Filter out invalid readings first
-  let validReadings = readings.filter((reading:MeterReadingType) =>isValidReading(reading, startDate, endDate));
-  if (validReadings.length === 0) return [];
-
-  // Filter readings by date range if provided
-  if (startDate && endDate) {
+const isWithinDateRange = (reading:MeterReadingType, startDate: Date, endDate: Date) => {
     const rangeStart = new Date(startDate);
     const rangeEnd = new Date(endDate);
 
-    validReadings = validReadings.filter((reading) => {
       let dateString: string | null = null;
 
       const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
@@ -107,14 +88,26 @@ export const aggregateDataByTimeRange = (
       const readingDate = new Date(fullYear, month - 1, day);
 
       return readingDate >= rangeStart && readingDate <= rangeEnd;
-    });
-  }
+}
 
+const parseHCADate = (dateStr: string | undefined): Date => {
+  if (!dateStr) return new Date(0);
+  const [day, month, year] = dateStr.split(".").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+
+export const aggregateDataByTimeRange = (
+  readings: MeterReadingType[],
+  startDate?: Date | null,
+  endDate?: Date | null
+): { label: string; value: number }[] => {
+  if (!readings || readings.length === 0 || !startDate || !endDate) return [];
+
+  // Filter out invalid readings first
+  let validReadings = readings.filter((reading:MeterReadingType) =>isValidReading(reading, startDate, endDate));
   if (validReadings.length === 0) return [];
 
-  // Detect device type
-  const deviceType = validReadings[0]?.["Device Type"];
-  const isHCA = deviceType === "HCA";
 
   // Determine date range for display
   const now = endDate ? new Date(endDate) : new Date();
@@ -163,6 +156,8 @@ export const aggregateDataByTimeRange = (
   const monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
 
   deviceLatestReading.forEach(({ reading, date: readingDate }) => {
+    const deviceType = validReadings[0]?.["Device Type"];
+    const isHCA = deviceType === "HCA";
     if (isHCA) {
       // HCA: Values are direct monthly readings (not cumulative)
       // IV,0 = current, IV,1 = last month, IV,2 = 2 months ago, etc.

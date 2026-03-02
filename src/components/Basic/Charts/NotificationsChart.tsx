@@ -176,9 +176,6 @@ export default function NotificationsChart({
 		items: GroupNotificationItem[]
 	} | null>(null);
 
-	// Fetch dynamic data from store
-	const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-
 	const openDetailModal = (n: NotificationItem) => {
 		setSelectedNotification({
 			leftIcon: n.leftIcon,
@@ -196,14 +193,6 @@ export default function NotificationsChart({
 			tenant: n.tenant,
 		});
 		setOpenPopoverId(null);
-	};
-
-	const toggleGroup = (key: string) => {
-		setExpandedGroups(prev => {
-			const next = new Set(prev);
-			if (next.has(key)) next.delete(key); else next.add(key);
-			return next;
-		});
 	};
 
 	// Check if current user is the demo account (heidi@hausverwaltung.com)
@@ -790,7 +779,6 @@ export default function NotificationsChart({
 						notification["Notification Message"];
 
 					const calculatedLeftIcon = getLeftIconForNotificationType(notificationTypeWithMessage, notification.Category);
-					console.log("DUMMY NOTIF ICONS:", { leftIcon: calculatedLeftIcon, rightIcon });
 
 					notifications.push({
 						leftIcon: calculatedLeftIcon,

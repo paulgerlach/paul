@@ -283,7 +283,12 @@ export function detectBurstPipe(device: MeterReadingType, meterMeta?: any): Cons
         title: "Leckage erkannt",
         subtitle: `Rohrbruch bei ${deviceTypeLabel}zähler ${meterId} - Sofort handeln!`,
         meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-        severity: "critical"
+        severity: "critical",
+        deviceType: device["Device Type"],
+        manufacturer: device.Manufacturer,
+        building: meterMeta?.building,
+        unit: meterMeta?.unit,
+        tenant: meterMeta?.tenant
       };
     }
   }
@@ -303,7 +308,12 @@ export function detectBurstPipe(device: MeterReadingType, meterMeta?: any): Cons
         title: "Leckage erkannt",
         subtitle: `${deviceTypeLabel}zähler ${meterId} meldet Leckage - Sofort prüfen!`,
         meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
-        severity: "critical"
+        severity: "critical",
+        deviceType: device["Device Type"],
+        manufacturer: device.Manufacturer,
+        building: meterMeta?.building,
+        unit: meterMeta?.unit,
+        tenant: meterMeta?.tenant
       };
     }
   }

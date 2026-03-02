@@ -51,8 +51,10 @@ function getDeviceId(r: MeterReadingType): string {
 
 function getDeviceType(r: MeterReadingType): string {
   const dt = r["Device Type"];
-  if (dt === "Heat" || dt === "Wärmemengenzähler" || dt === "Heizkostenverteiler" || dt === "WMZ Rücklauf")
+  if (dt === "Heat" || dt === "Wärmemengenzähler" || dt === "WMZ Rücklauf")
     return "Wärmezähler";
+  if (dt === "HCA" || dt === "Heizkostenverteiler")
+    return "Heizkostenverteiler";
   if (dt === "WWater" || dt === "Warmwasserzähler") return "Warmwasserzähler";
   if (dt === "Water" || dt === "Kaltwasserzähler") return "Kaltwasserzähler";
   return String(dt ?? "Unbekannt");

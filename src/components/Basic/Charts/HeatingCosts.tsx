@@ -517,7 +517,7 @@ export default function HeatingCosts({
               <Tooltip
                 formatter={(value: number) => {
                   const formattedValue = tickFormatter(value);
-                  return [`${formattedValue} Wh`, "Heizkosten"];
+                  return [`${formattedValue} Ein`, "Heizkosten"];
                 }}
               />
               <Bar

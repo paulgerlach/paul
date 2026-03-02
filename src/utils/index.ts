@@ -167,12 +167,17 @@ export const countLocals = (locals: LocalType[]) => {
 };
 
 export const buildLocalName = ({
+  usage_type,
   floor,
   house_location,
   residential_area,
   living_space,
   heating_area,
 }: Partial<LocalType>) => {
+  if (usage_type === "hallway" || usage_type === "staircase") {
+    return "Treppenhaus"; 
+  }
+
   const floorShortcut = floor
     ? (floorShortcuts[floor as keyof typeof floorShortcuts] ?? floor)
     : "";

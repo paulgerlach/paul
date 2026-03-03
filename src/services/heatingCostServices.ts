@@ -1,6 +1,6 @@
 import { MeterReadingType } from "@/api";
 import { monthNames } from "@/lib/constants/date";
-import { start } from "repl";
+import { getDateString, getReadingDate, isDateRangeLongerThanAMonth } from "@/utils/date";
 
 export const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
@@ -22,36 +22,17 @@ export const aggregateDataByTimeRange = (
 
   // STEP 2: Calculate monthly consumption from IV columns
   // Filter IV values based on whether their months fall within the date range
-  const monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
-
+  let dailyConsumption = new Map<number, number>(); // monthOffset -> total consumption
+  let monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
+  
   deviceLatestReadings.forEach(({ reading, date: readingDate }) => {
     const deviceType = validReadings[0]?.["Device Type"];
     const isHCA = deviceType === "HCA";
+
     if (isHCA) {
-      // HCA: Values are direct monthly readings (not cumulative)
-      // IV,0 = current, IV,1 = last month, IV,2 = 2 months ago, etc.
-      for (let offset = 0; offset <= 31; offset++) {
-        const value = parseGermanNumber(reading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]);
-
-        // Calculate the month this IV value represents
-        const ivMonthDate = new Date(readingDate);
-        ivMonthDate.setMonth(readingDate.getMonth() - offset);
-        ivMonthDate.setDate(1); // First day of the month
-
-        // Only include if within date range
-        const rangeStart = startDate ? new Date(startDate) : null;
-        const rangeEnd = endDate ? new Date(endDate) : null;
-
-        let isInRange = true;
-        if (rangeStart && rangeEnd) {
-          // Check if this IV month falls within the selected range
-          isInRange = ivMonthDate >= rangeStart && ivMonthDate <= rangeEnd;
-        }
-
-        if (value !== null && value > 0 && isInRange) {
-          monthlyConsumption.set(offset, (monthlyConsumption.get(offset) || 0) + value);
-        }
-      }
+      // isDateRangeLongerThanAMonth(startDate, endDate) ?
+      monthlyConsumption = getHCAMonthlyConsumption(reading, readingDate, { startDate, endDate });
+        // dailyConsumption = getHCADailyConsumption(reading, readingDate, { startDate, endDate });
     } else {
       // Standard meters: Calculate deltas from cumulative IV values
       // Only include IV values whose months fall within the date range
@@ -331,24 +312,43 @@ const getLatestDeviceReadings = (validReadings: MeterReadingType[]): Map<string,
   return deviceLatestReading;
 }
 
-const getDateString = (oldFormatDate: string | undefined, newActualDate: string | undefined, newRawDate: string | undefined): string|null => {
 
-
-  if (oldFormatDate && typeof oldFormatDate === "string") {
-    return oldFormatDate.split(" ")[0];
-  } else if (newActualDate && typeof newActualDate === "string") {
-    return newActualDate.split(" ")[0];
-  } else if (newRawDate && typeof newRawDate === "string") {
-    return newRawDate.replace(/-/g, ".");
-  }
-  return null;
+interface DateRange{
+  startDate: Date,
+  endDate: Date
 }
 
-const getReadingDate = (dateString: string | null) => {
-  if (dateString && dateString !== "00.00.00") {
-    const [day, month, year] = dateString.split(".").map(Number);
-    const fullYear = year < 100 ? 2000 + year : year;
-    return new Date(fullYear, month - 1, day);
+const getHCAMonthlyConsumption = (reading: MeterReadingType, readingDate: Date, dateRange: DateRange): Map<number, number> => {
+
+  let currentMonthCumulativeValue = null;
+  let monthlyConsumption = new Map<number, number>();
+  for (let offset = 0; offset <= 31; offset++) {
+    const value = parseGermanNumber(reading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]);
+
+    if (offset === 0)
+      currentMonthCumulativeValue = value;
+
+
+    const ivMonthDate = new Date(readingDate);
+    ivMonthDate.setMonth(readingDate.getMonth() - offset);
+    ivMonthDate.setDate(1); // First day of the month
+
+    const rangeStart = dateRange.startDate ? new Date(dateRange.startDate) : null;
+    const rangeEnd = dateRange.endDate ? new Date(dateRange.endDate) : null;
+
+    let isInRange = true;
+    if (rangeStart && rangeEnd) {
+      isInRange = ivMonthDate >= rangeStart && ivMonthDate <= rangeEnd;
+    }
+
+    if (value !== null && value > 0 && isInRange) {
+      monthlyConsumption.set(offset, (monthlyConsumption.get(offset) || 0) + value);
+    }
   }
-  return new Date(0);
+  return monthlyConsumption
+}
+
+const getHCADailyConsumption = (reading: MeterReadingType, readingDate: Date, dateRange: DateRange): Map<number, number> => {
+  let dailyConsumption = new Map<number, number>();
+  return dailyConsumption
 }

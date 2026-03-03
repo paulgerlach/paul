@@ -17,7 +17,8 @@ export type MeterReadingBase = {
     Status: string;
     Encryption: number;
     "IV,0,0,0,,Date/Time": string;
-
+    "Actual Date": string,
+    "Raw Date":string,
     // Energy readings (Heat meters)
     "IV,0,0,0,Wh,E"?: number;
 

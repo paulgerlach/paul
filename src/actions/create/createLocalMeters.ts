@@ -1,13 +1,15 @@
 "use server";
 
-import { AdminEditObjekteUnitFormValues } from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
+import type { AdminEditObjekteUnitFormValues } from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
 import database from "@/db";
 import { local_meters } from "@/db/drizzle/schema";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq, and } from "drizzle-orm";
 
+type MeterFormData = NonNullable<AdminEditObjekteUnitFormValues["meters"]>[number];
+
 export async function createLocalMeters(
-  formData: AdminEditObjekteUnitFormValues["meters"],
+  formData: MeterFormData[] | null | undefined,
   localID: string
 ) {
   const user = await getAuthenticatedServerUser();

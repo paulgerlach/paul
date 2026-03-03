@@ -1,6 +1,6 @@
 "use server";
 
-import { type EditObjekteUnitFormValues } from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
+import type { EditObjekteUnitFormValues } from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
 import database from "@/db";
 import { locals } from "@/db/drizzle/schema";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";

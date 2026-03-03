@@ -15,54 +15,16 @@ export const aggregateDataByTimeRange = (
 
 
   // Determine date range for display
-
   const now = endDate ? new Date(endDate) : new Date();
   const monthsToShow = getMonthsToShow(startDate, endDate, now);
-  console.log('Start date', startDate)
-  console.log('End date', endDate)
-  console.log('Months To show', monthsToShow)
 
-  // STEP 1: Get most recent reading per device
-  const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
-
-  validReadings.forEach((reading) => {
-    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
-
-    let dateString: string | null = null;
-
-
-    // Standard meter date parsing
-    const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
-    const newActualDate = reading["Actual Date"];
-    const newRawDate = reading["Raw Date"];
-
-    if (oldFormatDate && typeof oldFormatDate === "string") {
-      dateString = oldFormatDate.split(" ")[0];
-    } else if (newActualDate && typeof newActualDate === "string") {
-      dateString = newActualDate.split(" ")[0];
-    } else if (newRawDate && typeof newRawDate === "string") {
-      dateString = newRawDate.replace(/-/g, ".");
-    }
-
-
-    let readingDate = new Date(0);
-    if (dateString && dateString !== "00.00.00") {
-      const [day, month, year] = dateString.split(".").map(Number);
-      const fullYear = year < 100 ? 2000 + year : year;
-      readingDate = new Date(fullYear, month - 1, day);
-    }
-
-    const existing = deviceLatestReading.get(deviceId);
-    if (!existing || readingDate > existing.date) {
-      deviceLatestReading.set(deviceId, { reading, date: readingDate });
-    }
-  });
+  const deviceLatestReadings = getLatestDeviceReadings(validReadings);
 
   // STEP 2: Calculate monthly consumption from IV columns
   // Filter IV values based on whether their months fall within the date range
   const monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
 
-  deviceLatestReading.forEach(({ reading, date: readingDate }) => {
+  deviceLatestReadings.forEach(({ reading, date: readingDate }) => {
     const deviceType = validReadings[0]?.["Device Type"];
     const isHCA = deviceType === "HCA";
     if (isHCA) {
@@ -145,8 +107,8 @@ export const aggregateDataByTimeRange = (
   const result: { label: string; value: number }[] = [];
 
   // Get the most recent reading date to use as reference for month labels
-  const referenceDate = deviceLatestReading.size > 0
-    ? Math.max(...Array.from(deviceLatestReading.values()).map(r => r.date.getTime()))
+  const referenceDate = deviceLatestReadings.size > 0
+    ? Math.max(...Array.from(deviceLatestReadings.values()).map(r => r.date.getTime()))
     : now.getTime();
   const refDate = new Date(referenceDate);
 
@@ -164,7 +126,7 @@ export const aggregateDataByTimeRange = (
   return result.reverse();
 };
 
-export const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
+const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
   return hasValidStatus(reading.Status)
     && hasNoErrorFlags(reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"])
     && hasValidEnergyReading(reading)
@@ -352,4 +314,41 @@ const getMonthsToShow = (startDate: Date, endDate: Date, now:Date) => {
   const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
   const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
   return Math.max(2, Math.ceil(daysDiff / 30));
+}
+
+const getLatestDeviceReadings = (validReadings: MeterReadingType[]): Map<string, { reading: MeterReadingType; date: Date }> => {
+  const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
+  validReadings.forEach((reading) => {
+    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown")
+    const dateString = getDateString(reading["IV,0,0,0,,Date/Time"], reading["Actual Date"], reading["Raw Date"]);
+    let readingDate = getReadingDate(dateString);
+
+    const existing = deviceLatestReading.get(deviceId);
+    if (!existing || readingDate > existing.date) {
+      deviceLatestReading.set(deviceId, { reading, date: readingDate });
+    }
+  });
+  return deviceLatestReading;
+}
+
+const getDateString = (oldFormatDate: string | undefined, newActualDate: string | undefined, newRawDate: string | undefined): string|null => {
+
+
+  if (oldFormatDate && typeof oldFormatDate === "string") {
+    return oldFormatDate.split(" ")[0];
+  } else if (newActualDate && typeof newActualDate === "string") {
+    return newActualDate.split(" ")[0];
+  } else if (newRawDate && typeof newRawDate === "string") {
+    return newRawDate.replace(/-/g, ".");
+  }
+  return null;
+}
+
+const getReadingDate = (dateString: string | null) => {
+  if (dateString && dateString !== "00.00.00") {
+    const [day, month, year] = dateString.split(".").map(Number);
+    const fullYear = year < 100 ? 2000 + year : year;
+    return new Date(fullYear, month - 1, day);
+  }
+  return new Date(0);
 }

@@ -31,6 +31,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
   },
 
   buildingCalc: {
+    energyCarrier: "Nah-/Fernwärme",
     energyInvoices: [
       {
         label: "Rechnung\n260002673166",
@@ -81,6 +82,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
       tempDiffHigh: 60,
       tempDiffLow: 10,
       conversionFactor: 1.15,
+      conversionOperation: "divide" as const,
       energyKwh: 342201.09,
       energyKwhFormatted: "342.201,09",
       energySharePercent: 44.96,

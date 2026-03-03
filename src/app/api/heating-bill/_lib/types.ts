@@ -30,6 +30,7 @@ export interface HeatingBillPdfModel {
 
   // --- Page 2: Building-Level Calculation ---
   buildingCalc: {
+    energyCarrier: string;
     energyInvoices: Array<{
       label: string;
       date: string;
@@ -72,6 +73,7 @@ export interface HeatingBillPdfModel {
       tempDiffHigh: number;
       tempDiffLow: number;
       conversionFactor: number;
+      conversionOperation: "multiply" | "divide";
       energyKwh: number;
       energyKwhFormatted: string;
       energySharePercent: number;

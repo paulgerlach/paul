@@ -242,7 +242,7 @@ export default function HeatingBillPreviewTwoPDF({
                 color: colors.dark,
               }}
             >
-              Energieart: Nah-/Fernwärme kWh
+              Energieart: {bc.energyCarrier} kWh
             </Text>
             <View style={styles.tableHeader}>
               <Text style={styles.tableHeaderCell}>POSITION</Text>
@@ -412,20 +412,28 @@ export default function HeatingBillPreviewTwoPDF({
           Berechnung und Aufteilung der Kosten für Warmwasser-Erwärmung
         </Text>
         <View style={styles.allocationRow}>
-          <View style={styles.formulaBox}>
-            <Text
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: "#FFFFFF",
-                fontWeight: 400,
-              }}
-            >
-              {bc.warmWater.constantFactor} kWh/m³/K x {bc.warmWater.volumeM3Formatted} m³ x ({bc.warmWater.tempDiffHigh}-{bc.warmWater.tempDiffLow}°C)
-            </Text>
-            <Text style={{ textAlign: "center" }}>{bc.warmWater.conversionFactor}</Text>
-          </View>
+          {bc.warmWater.conversionOperation === "divide" ? (
+            <View style={{ ...styles.formulaBox, alignItems: "center" }}>
+              <Text
+                style={{
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#FFFFFF",
+                  fontWeight: 400,
+                }}
+              >
+                {bc.warmWater.constantFactor} kWh/m³/K x {bc.warmWater.volumeM3Formatted} m³ x ({bc.warmWater.tempDiffHigh}-{bc.warmWater.tempDiffLow}°C)
+              </Text>
+              <Text>{bc.warmWater.conversionFactor}</Text>
+            </View>
+          ) : (
+            <View style={styles.formulaBox}>
+              <Text style={{ fontWeight: 400, color: "#FFFFFF" }}>
+                {bc.warmWater.constantFactor} kWh/m³/K x {bc.warmWater.volumeM3Formatted} m³ x ({bc.warmWater.tempDiffHigh}-{bc.warmWater.tempDiffLow}°C) × {bc.warmWater.conversionFactor}
+              </Text>
+            </View>
+          )}
           <Text style={{ color: "#FFFFFF" }}>
-            = {bc.warmWater.energyKwhFormatted} kWh Nah-/Fernwärme
+            = {bc.warmWater.energyKwhFormatted} kWh {bc.energyCarrier}
           </Text>
           <Text style={{ color: "#FFFFFF" }}>= {bc.warmWater.energySharePercentFormatted} % d. Gesamtverbr.</Text>
         </View>

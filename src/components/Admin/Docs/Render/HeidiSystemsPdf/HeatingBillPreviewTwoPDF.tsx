@@ -510,8 +510,8 @@ export default function HeatingBillPreviewTwoPDF({
             davon {bc.heating.consumptionCostPercent} % Verbrauchskosten
           </Text>
           <Text style={styles.allocationGridAmount}>{bc.heating.consumptionCostAmountFormatted} :</Text>
-          <Text style={styles.allocationGridUnit}>{bc.heating.consumptionMwhFormatted} MWh</Text>
-          <Text style={styles.allocationGridRate}>= {bc.heating.consumptionCostRatePerMwhFormatted} €/MWh</Text>
+          <Text style={styles.allocationGridUnit}>{bc.heating.consumptionValueFormatted} {bc.heating.consumptionUnit}</Text>
+          <Text style={styles.allocationGridRate}>= {bc.heating.consumptionCostRatePerUnitFormatted} €/{bc.heating.consumptionUnit}</Text>
         </View>
       </View>
     </Page>

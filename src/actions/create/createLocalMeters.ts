@@ -8,6 +8,20 @@ import { eq, and } from "drizzle-orm";
 
 type MeterFormData = NonNullable<AdminEditObjekteUnitFormValues["meters"]>[number];
 
+/** Build heater_metadata jsonb for Heizkostenverteiler meters */
+function buildHeaterMetadata(meter: MeterFormData): Record<string, unknown> | null {
+  if (meter.meter_type !== "Heizkostenverteiler") return null;
+  const meta: Record<string, unknown> = {};
+  if (meter.old_reading != null) meta.old_reading = meter.old_reading;
+  if (meter.installation_date) meta.installation_date = meter.installation_date;
+  if (meter.radiator_type) meta.radiator_type = meter.radiator_type;
+  if (meter.radiator_length != null) meta.radiator_length = meter.radiator_length;
+  if (meter.radiator_width != null) meta.radiator_width = meter.radiator_width;
+  if (meter.radiator_depth != null) meta.radiator_depth = meter.radiator_depth;
+  if (meter.installation_factor) meta.installation_factor = meter.installation_factor;
+  return Object.keys(meta).length > 0 ? meta : null;
+}
+
 export async function createLocalMeters(
   formData: MeterFormData[] | null | undefined,
   localID: string
@@ -36,6 +50,9 @@ export async function createLocalMeters(
       (m) => m.meter_number === meter.meter_number
     );
 
+    const heaterMeta = buildHeaterMetadata(meter);
+    const gatewayEui = meter.gateway_eui ?? null;
+
     if (existingMeter) {
       // UPDATE existing meter with new values
       await database
@@ -43,6 +60,8 @@ export async function createLocalMeters(
         .set({
           meter_note: meter.meter_note ?? null,
           meter_type: meter.meter_type ?? null,
+          heater_metadata: heaterMeta,
+          gateway_eui: gatewayEui ?? null,
         })
         .where(
           and(
@@ -56,6 +75,8 @@ export async function createLocalMeters(
         meter_number: meter.meter_number,
         meter_note: meter.meter_note ?? null,
         meter_type: meter.meter_type ?? null,
+        heater_metadata: heaterMeta,
+        gateway_eui: gatewayEui ?? null,
         local_id: localID,
       });
     }

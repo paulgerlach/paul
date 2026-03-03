@@ -62,7 +62,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
 
         return (
           <div key={field.id} className="space-y-4">
-            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-end">
+            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-end max-medium:grid-cols-1">
               <FormInputField<T>
                 control={control}
                 className="w-fit"
@@ -91,6 +91,12 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                 name={`meters.${index}.meter_note` as Path<T>}
                 label="Gerätestandort"
                 placeholder="Gerätestandort"
+              />
+              <FormInputField<T>
+                control={control}
+                name={`meters.${index}.gateway_eui` as Path<T>}
+                label="Gateway EUI"
+                placeholder="z.B. 0123456789ABCDEF"
               />
               <button
                 type="button"
@@ -165,6 +171,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             meter_number: "",
             meter_note: "",
             meter_type: "",
+            gateway_eui: null,
             old_reading: null,
             installation_date: null,
             radiator_type: null,

@@ -3,6 +3,7 @@ import {
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
+import PdfViewer from "@/components/Admin/Docs/Render/PdfViewer";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { supabaseServer } from "@/utils/supabase/server";
 
@@ -39,11 +40,7 @@ export default async function ResultLocalPreview({
       />
       <ContentWrapper className="space-y-4 max-medium:space-y-3 h-full">
         {pdfUrl ? (
-          <iframe
-            src={pdfUrl}
-            className="w-full h-full min-h-[70vh] rounded-lg border border-gray-200"
-            title="Heizkostenabrechnung PDF"
-          />
+          <PdfViewer url={pdfUrl} />
         ) : (
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-500">Kein Dokument gefunden</p>
@@ -53,3 +50,4 @@ export default async function ResultLocalPreview({
     </div>
   );
 }
+

@@ -51,6 +51,58 @@ export const WARM_WATER_TEMP_DIFF_HIGH = 60; // °C
 export const WARM_WATER_TEMP_DIFF_LOW = 10; // °C
 export const WARM_WATER_CONVERSION_FACTOR = 1.15;
 
+// HKVO factors by energy type (Heizkostenverordnung)
+export type HkvoFactorEntry = {
+  factor: number;
+  operation: "multiply" | "divide";
+};
+
+export const HKVO_FACTORS = new Map<string, HkvoFactorEntry>([
+  ["Erdgas (Brennwert)", { factor: 1.11, operation: "multiply" }],
+  ["Erdgas (Heizwert)", { factor: 1.0, operation: "multiply" }],
+  ["Heizöl EL", { factor: 1.0, operation: "multiply" }],
+  ["Flüssiggas (LPG)", { factor: 1.0, operation: "multiply" }],
+  ["Fernwärme", { factor: 1.15, operation: "divide" }],
+  ["Nahwärme (BHKW)", { factor: 1.15, operation: "divide" }],
+  ["Pellets", { factor: 1.0, operation: "multiply" }],
+  ["Holzhackschnitzel", { factor: 1.0, operation: "multiply" }],
+  ["Wärmepumpe (Strom)", { factor: 1.0, operation: "multiply" }],
+  ["Stromdirektheizung", { factor: 1.0, operation: "multiply" }],
+]);
+
+const DEFAULT_HKVO_FACTOR: HkvoFactorEntry = {
+  factor: WARM_WATER_CONVERSION_FACTOR,
+  operation: "divide",
+};
+
+// Aliases for legacy heating_systems values (e.g. "Gas", "Öl") -> canonical HKVO key
+const HKVO_ALIASES: Record<string, string> = {
+  "Gas": "Erdgas (Heizwert)",
+  "Öl": "Heizöl EL",
+  "Wärmepumpe": "Wärmepumpe (Strom)",
+  "Strom": "Stromdirektheizung",
+  "Nahwärme": "Nahwärme (BHKW)",
+  "Nah-/Fernwärme": "Fernwärme",
+  "Nah-/Fernwarme": "Fernwärme",
+};
+
+/** Look up HKVO factor for an energy carrier. Falls back to divide-by-1.15. */
+export function getHkvoFactor(energyCarrier: string): HkvoFactorEntry {
+  const direct = HKVO_FACTORS.get(energyCarrier);
+  if (direct) return direct;
+  const aliased = HKVO_ALIASES[energyCarrier];
+  if (aliased) return HKVO_FACTORS.get(aliased) ?? DEFAULT_HKVO_FACTOR;
+  return DEFAULT_HKVO_FACTOR;
+}
+
+/** Apply an HKVO factor: multiply or divide depending on the entry. */
+export function applyHkvoFactor(
+  value: number,
+  hkvo: HkvoFactorEntry,
+): number {
+  return hkvo.operation === "divide" ? value / hkvo.factor : value * hkvo.factor;
+}
+
 // Default base/consumption split (%)
 export const DEFAULT_LIVING_SPACE_SHARE = 30;
 export const DEFAULT_CONSUMPTION_DEPENDENT = 70;

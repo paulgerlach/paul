@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { BuildingSelector } from "./BuildingSelector";
 import { TenantSelector, Tenant } from "./TenantSelector";
 import { Button } from "@/components/Basic/ui/Button";
+import { ScheduleSettings } from "./ScheduleSettings";
 
 /**
  * TenantInviteSection - Complete tenant invite UI
@@ -347,6 +348,14 @@ export function TenantInviteSection() {
         </div>
       )}
 
+      {/* Email reminder schedule - only for active tenants */}
+      {selectedTenantObj && hasLoginRecord && isActiveTenant && (
+        <ScheduleSettings 
+          tenantLoginId={selectedTenantObj.tenant_login_id!}
+          tenantName={`${selectedTenantObj.first_name} ${selectedTenantObj.last_name}`}
+        />
+      )}
+
       {/* Bulk invite checkbox */}
       <div className="flex items-center gap-2">
         <input
@@ -371,7 +380,10 @@ export function TenantInviteSection() {
       {/* Action buttons */}
       {showToggle ? (
         // Show toggle button for invited/active/disabled tenants
-        <div className="space-y-2">
+        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+            Zugang verwalten
+          </p>
           <Button
             onClick={handleToggle}
             disabled={toggling}
@@ -388,11 +400,11 @@ export function TenantInviteSection() {
                 <span className="animate-spin">⏳</span> Wird geändert...
               </span>
             ) : isDisabledTenant ? (
-              "Aktivieren"
+              "Zugang aktivieren"
             ) : isInvitedTenant ? (
               "Einladung widerrufen"
             ) : (
-              "Deaktivieren"
+              "Zugang deaktivieren"
             )}
           </Button>
           {isDisabledTenant && (

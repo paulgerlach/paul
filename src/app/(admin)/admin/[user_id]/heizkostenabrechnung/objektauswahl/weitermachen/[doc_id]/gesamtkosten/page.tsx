@@ -8,7 +8,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import GesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/HeatObjektauswahlForm";
+import AdminGesamtkostenHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Gesamtkosten/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function GesamtkostenEditPage({
@@ -40,11 +40,12 @@ export default async function GesamtkostenEditPage({
         subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
       />
       <CreateDocContentWrapper>
-        <GesamtkostenHeatObjektauswahlForm
+        <AdminGesamtkostenHeatObjektauswahlForm
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}
           objektId={doc.objekt_id ?? ""}
           docId={doc_id ?? ""}
+          userId={user_id}
         />
         <HeizkostenabrechnungBuildingReceipt
           locals={locals}

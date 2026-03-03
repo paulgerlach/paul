@@ -43,6 +43,11 @@ export type UnitBreakdownInput = {
    * Consumption costs are NOT scaled — they already use tenant-scoped readings.
    */
   timeFraction?: number;
+  /**
+   * Building-level consumption unit: "MWh" for Wärmezähler, "Nutzeinh." for HCA.
+   * Controls calc string labels and warm water zeroing.
+   */
+  consumptionUnit?: string;
 };
 
 /**
@@ -70,16 +75,21 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
 
   const tf = input.timeFraction ?? 1;
   const locationLabel = localLabel ?? "Wohnung";
+  const cUnit = input.consumptionUnit ?? "MWh";
+  const isHca = cUnit === "Nutzeinh.";
 
   // Base costs are area-based — scale by time fraction for multi-tenant proration
   const heatingBaseCost = round2(livingSpaceM2 * heating.baseCostRatePerM2 * tf);
   // Consumption costs use tenant-scoped meter readings — no time scaling needed
-  const heatingConsumptionMwh = heatingDevices.reduce((s, d) => s + d.consumption, 0);
-  const heatingConsumptionCost = round2(heatingConsumptionMwh * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionMwh)));
+  const heatingConsumptionValue = heatingDevices.reduce((s, d) => s + d.consumption, 0);
+  const heatingConsumptionCost = round2(heatingConsumptionValue * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionValue)));
 
   const warmWaterBaseCost = round2(livingSpaceM2 * warmWater.baseCostRatePerM2 * tf);
-  const warmWaterConsumptionM3 = warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
-  const warmWaterConsumptionCost = round2(
+  // HCA warm water rule: warm water consumption cost is 0 for HCA apartments.
+  // Hot water cost allocation only applies when consumption is in kWh (Wärmezähler).
+  // The warm water base cost (area-based Grundkosten) still applies.
+  const warmWaterConsumptionM3 = isHca ? 0 : warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
+  const warmWaterConsumptionCost = isHca ? 0 : round2(
     warmWaterConsumptionM3 * (warmWater.consumptionCostAmount / Math.max(0.001, warmWater.consumptionCostVolume))
   );
 
@@ -116,7 +126,7 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   const deviceRowsWithLocation = (rows: DeviceReadingRow[]) =>
     rows.map((r) => ({ ...r, location: r.location || locationLabel }));
 
-  const heatingTotal = heatingConsumptionMwh;
+  const heatingTotal = heatingConsumptionValue;
   const warmWaterTotal = warmWaterConsumptionM3;
   const coldWaterTotalM3 = unitColdWaterM3;
 
@@ -137,11 +147,12 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
     heatingBaseCost,
     heatingBaseCostFormatted: formatEuro(heatingBaseCost),
     heatingBaseCostCalc: `${formatGermanNumber(livingSpaceM2, 2)} m² x ${heating.baseCostRatePerM2Formatted} €/m²`,
-    heatingConsumptionMwh,
-    heatingConsumptionMwhFormatted: formatGermanNumber(heatingConsumptionMwh, 2),
+    heatingConsumptionValue,
+    heatingConsumptionValueFormatted: formatGermanNumber(heatingConsumptionValue, 2),
+    heatingConsumptionUnit: cUnit,
     heatingConsumptionCost,
     heatingConsumptionCostFormatted: formatEuro(heatingConsumptionCost),
-    heatingConsumptionCalc: `${formatGermanNumber(heatingConsumptionMwh, 2)} MWh x ${heating.consumptionCostRatePerMwhFormatted} €/MWh`,
+    heatingConsumptionCalc: `${formatGermanNumber(heatingConsumptionValue, 2)} ${cUnit} x ${heating.consumptionCostRatePerUnitFormatted} €/${cUnit}`,
     warmWaterBaseCost,
     warmWaterBaseCostFormatted: formatEuro(warmWaterBaseCost),
     warmWaterBaseCostCalc: `${formatGermanNumber(livingSpaceM2, 2)} m² x ${warmWater.baseCostRatePerM2Formatted} €/m²`,

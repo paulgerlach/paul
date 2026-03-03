@@ -72,9 +72,8 @@ export default function AdminObjekteItemLocalDocWithHistory({
 
   return (
     <div
-      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${
-        status === "vacancy" && "available"
-      } [.available.active]:pb-7`}
+      className={`bg-white/50 rounded-2xl ${isOpen ? `active` : ""} ${status === "vacancy" && "available"
+        } [.available.active]:pb-7`}
     >
       <ObjekteItemLocalHeader
         item={item}
@@ -115,7 +114,7 @@ export default function AdminObjekteItemLocalDocWithHistory({
             </Link>
             <div className="flex items-center justify-end gap-2">
               <Link
-                href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
+                href={`${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`}
                 className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
               >
                 <Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />

@@ -22,6 +22,7 @@ export type BetriebskostenabrechnungStoreType = {
     newItem: Partial<InvoiceDocumentType> & { document?: File[] }
   ) => void;
   removeDocumentGroup: (key: BetriebskostenabrechnungCostType["type"]) => void;
+  removeInvoiceFromGroup: (itemID: string) => void;
   purposeOptions: string[];
   setActiveCostType: (key: BetriebskostenabrechnungCostType["type"]) => void;
   objektID?: string;
@@ -112,19 +113,19 @@ export const useBetriebskostenabrechnungStore =
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? {
-                ...group,
-                data: group.data.map((item, i) =>
-                  i === index
-                    ? {
-                        ...item,
-                        ...values,
-                        document: values.document
-                          ? [...(item.document ?? []), values.document].flat()
-                          : item.document,
-                      }
-                    : item
-                ),
-              }
+              ...group,
+              data: group.data.map((item, i) =>
+                i === index
+                  ? {
+                    ...item,
+                    ...values,
+                    document: values.document
+                      ? [...(item.document ?? []), values.document].flat()
+                      : item.document,
+                  }
+                  : item
+              ),
+            }
             : group
         ),
       })),
@@ -133,6 +134,13 @@ export const useBetriebskostenabrechnungStore =
         documentGroups: state.documentGroups.filter(
           (group) => group.type !== key
         ),
+      })),
+    removeInvoiceFromGroup: (itemID) =>
+      set((state) => ({
+        documentGroups: state.documentGroups.map((group) => ({
+          ...group,
+          data: group.data.filter((item) => String(item.id) !== String(itemID)),
+        })),
       })),
     updateAllocationKey: (key, allocationKey) =>
       set((state) => ({

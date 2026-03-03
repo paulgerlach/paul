@@ -28,10 +28,12 @@ import { getHkvoFactor } from "./constants";
 
 const HEAT_DEVICE_TYPES = [
   "Heat",
-  "HCA",
   "Wärmemengenzähler",
-  "Heizkostenverteiler",
   "WMZ Rücklauf",
+];
+const HCA_DEVICE_TYPES = [
+  "HCA",
+  "Heizkostenverteiler",
 ];
 const WARM_WATER_DEVICE_TYPES = ["WWater", "Warmwasserzähler"];
 const COLD_WATER_DEVICE_TYPES = ["Water", "Kaltwasserzähler"];
@@ -98,6 +100,9 @@ export function computeHeatingBill(
   const heatReadings = raw.meterReadings.filter((r) =>
     HEAT_DEVICE_TYPES.includes(r["Device Type"] as string)
   );
+  const hcaReadings = raw.meterReadings.filter((r) =>
+    HCA_DEVICE_TYPES.includes(r["Device Type"] as string)
+  );
   const warmWaterReadings = raw.meterReadings.filter((r) =>
     WARM_WATER_DEVICE_TYPES.includes(r["Device Type"] as string)
   );
@@ -105,8 +110,13 @@ export function computeHeatingBill(
     COLD_WATER_DEVICE_TYPES.includes(r["Device Type"] as string)
   );
 
+  // Determine building consumption unit based on device types present
+  const hasHca = hcaReadings.length > 0;
+  const consumptionUnit = hasHca ? "Nutzeinh." : "MWh";
+
   const readingsResult = computeReadingDeltas({
     heatReadings,
+    hcaReadings,
     warmWaterReadings,
     coldWaterReadings,
     startDate,
@@ -136,7 +146,11 @@ export function computeHeatingBill(
     costAgg.energyInvoices.reduce((s, i) => s + i.kWh, 0) || readingsTotalKwh || 0;
 
   const warmWaterVolumeM3 = readingsResult.totalWarmWaterM3 || 0;
-  const heatingMwh = readingsResult.totalHeatMwh || 0;
+  // Use HCA units when HCA devices are present, otherwise use MWh from heat meters
+  const heatingConsumptionValue = hasHca
+    ? readingsResult.totalHcaUnits
+    : readingsResult.totalHeatMwh;
+  const heatingMwh = heatingConsumptionValue;
 
   const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
   const wwDeviceRental = combinedDeviceRental;
@@ -182,6 +196,7 @@ export function computeHeatingBill(
     {
       baseCostPercent: livingSpaceShare,
       consumptionCostPercent: consumptionDependent,
+      consumptionUnit,
     }
   );
 
@@ -235,6 +250,7 @@ export function computeHeatingBill(
   const unitReadingsResult = tenantOverride
     ? computeReadingDeltas({
       heatReadings,
+      hcaReadings,
       warmWaterReadings,
       coldWaterReadings,
       startDate: tenantOverride.overlapStart,
@@ -242,9 +258,15 @@ export function computeHeatingBill(
     })
     : readingsResult;
 
-  const heatingDevicesForLocal = unitReadingsResult.deviceRows.heat.filter((r) =>
-    belongsToLocal(r.deviceNumber)
-  );
+  // Merge heat + HCA device rows for the target local
+  const heatingDevicesForLocal = [
+    ...unitReadingsResult.deviceRows.heat.filter((r) =>
+      belongsToLocal(r.deviceNumber)
+    ),
+    ...unitReadingsResult.deviceRows.hca.filter((r) =>
+      belongsToLocal(r.deviceNumber)
+    ),
+  ];
   const warmWaterDevicesForLocal = unitReadingsResult.deviceRows.warmWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
@@ -254,6 +276,7 @@ export function computeHeatingBill(
   // Diagnostic logging: always log device pipeline counts for troubleshooting
   const allDeviceRowCount =
     unitReadingsResult.deviceRows.heat.length +
+    unitReadingsResult.deviceRows.hca.length +
     unitReadingsResult.deviceRows.warmWater.length +
     unitReadingsResult.deviceRows.coldWater.length;
   const localDeviceRowCount =
@@ -271,6 +294,7 @@ export function computeHeatingBill(
     // Log unmatched devices to identify why filtering dropped everything
     const unmatchedDevices = [
       ...unitReadingsResult.deviceRows.heat,
+      ...unitReadingsResult.deviceRows.hca,
       ...unitReadingsResult.deviceRows.warmWater,
       ...unitReadingsResult.deviceRows.coldWater,
     ].map((r) => ({
@@ -281,6 +305,7 @@ export function computeHeatingBill(
     console.warn("[HeatingBill] no device rows matched target local after filtering", {
       targetLocalId,
       allHeatDevices: unitReadingsResult.deviceRows.heat.length,
+      allHcaDevices: unitReadingsResult.deviceRows.hca.length,
       allWarmWaterDevices: unitReadingsResult.deviceRows.warmWater.length,
       allColdWaterDevices: unitReadingsResult.deviceRows.coldWater.length,
       localHeatDevices: heatingDevicesForLocal.length,
@@ -346,11 +371,16 @@ export function computeHeatingBill(
       : null,
     unitCount,
     timeFraction: tenantOverride?.timeFraction,
+    consumptionUnit,
   });
 
 
   const totalLivingSpaceM2 = totalLivingSpace || 0;
-  const unitHeatingMwh = heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
+  // For HCA buildings, heating consumption is in Einheiten, not MWh.
+  // Pass 0 for energy summary to avoid distorted kWh/m² metrics.
+  const unitHeatingMwh = hasHca
+    ? 0
+    : heatingDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
   const unitWarmWaterM3 = warmWaterDevicesForLocal.reduce((s, d) => s + d.consumption, 0);
 
   const portalLinkForQr = LOGIN_ENTRY_URL;

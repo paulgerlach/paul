@@ -119,10 +119,11 @@ export interface HeatingBillPdfModel {
       consumptionCostPercent: number;
       consumptionCostAmount: number;
       consumptionCostAmountFormatted: string;
-      consumptionMwh: number;
-      consumptionMwhFormatted: string;
-      consumptionCostRatePerMwh: number;
-      consumptionCostRatePerMwhFormatted: string;
+      consumptionValue: number;
+      consumptionValueFormatted: string;
+      consumptionCostRatePerUnit: number;
+      consumptionCostRatePerUnitFormatted: string;
+      consumptionUnit: string;
     };
   };
 
@@ -160,8 +161,9 @@ export interface HeatingBillPdfModel {
     heatingBaseCost: number;
     heatingBaseCostFormatted: string;
     heatingBaseCostCalc: string;
-    heatingConsumptionMwh: number;
-    heatingConsumptionMwhFormatted: string;
+    heatingConsumptionValue: number;
+    heatingConsumptionValueFormatted: string;
+    heatingConsumptionUnit: string;
     heatingConsumptionCost: number;
     heatingConsumptionCostFormatted: string;
     heatingConsumptionCalc: string;

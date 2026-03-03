@@ -28,6 +28,7 @@ import { getHkvoFactor } from "./constants";
 
 const HEAT_DEVICE_TYPES = [
   "Heat",
+  "HCA",
   "Wärmemengenzähler",
   "Heizkostenverteiler",
   "WMZ Rücklauf",
@@ -250,28 +251,58 @@ export function computeHeatingBill(
   const coldWaterDevicesForLocal = unitReadingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
   );
-  if (
-    process.env.NODE_ENV !== "production" &&
-    (raw.localMeters?.length ?? 0) > 0 &&
-    deviceIdToLocalId.size === 0
-  ) {
+  // Diagnostic logging: always log device pipeline counts for troubleshooting
+  const allDeviceRowCount =
+    unitReadingsResult.deviceRows.heat.length +
+    unitReadingsResult.deviceRows.warmWater.length +
+    unitReadingsResult.deviceRows.coldWater.length;
+  const localDeviceRowCount =
+    heatingDevicesForLocal.length +
+    warmWaterDevicesForLocal.length +
+    coldWaterDevicesForLocal.length;
+
+  if ((raw.localMeters?.length ?? 0) > 0 && deviceIdToLocalId.size === 0) {
     console.warn("[HeatingBill] local meter mapping is empty after normalization", {
       localMetersCount: raw.localMeters.length,
       targetLocalId: targetLocalId ?? null,
     });
   }
-  if (
-    process.env.NODE_ENV !== "production" &&
-    targetLocalId &&
-    unitReadingsResult.deviceRows.heat.length + unitReadingsResult.deviceRows.warmWater.length + unitReadingsResult.deviceRows.coldWater.length > 0 &&
-    heatingDevicesForLocal.length + warmWaterDevicesForLocal.length + coldWaterDevicesForLocal.length === 0
-  ) {
+  if (allDeviceRowCount > 0 && localDeviceRowCount === 0 && targetLocalId) {
+    // Log unmatched devices to identify why filtering dropped everything
+    const unmatchedDevices = [
+      ...unitReadingsResult.deviceRows.heat,
+      ...unitReadingsResult.deviceRows.warmWater,
+      ...unitReadingsResult.deviceRows.coldWater,
+    ].map((r) => ({
+      deviceNumber: r.deviceNumber,
+      normalizedId: normalizeDeviceId(r.deviceNumber),
+      mappedLocalId: deviceIdToLocalId.get(normalizeDeviceId(r.deviceNumber)) ?? "NOT_FOUND",
+    }));
     console.warn("[HeatingBill] no device rows matched target local after filtering", {
       targetLocalId,
       allHeatDevices: unitReadingsResult.deviceRows.heat.length,
       allWarmWaterDevices: unitReadingsResult.deviceRows.warmWater.length,
       allColdWaterDevices: unitReadingsResult.deviceRows.coldWater.length,
+      localHeatDevices: heatingDevicesForLocal.length,
+      localWarmWaterDevices: warmWaterDevicesForLocal.length,
+      localColdWaterDevices: coldWaterDevicesForLocal.length,
       mappedMeters: deviceIdToLocalId.size,
+      unmatchedDevices: unmatchedDevices.slice(0, 10), // limit to 10 for log readability
+    });
+  }
+  // Log device type distribution from raw readings for debugging
+  if (raw.meterReadings.length > 0 && allDeviceRowCount === 0) {
+    const typeCounts: Record<string, number> = {};
+    for (const r of raw.meterReadings) {
+      const dt = String(r["Device Type"] ?? "unknown");
+      typeCounts[dt] = (typeCounts[dt] ?? 0) + 1;
+    }
+    console.warn("[HeatingBill] RPC returned readings but no device rows were produced", {
+      totalReadings: raw.meterReadings.length,
+      deviceTypeCounts: typeCounts,
+      heatTypeFilter: HEAT_DEVICE_TYPES,
+      warmWaterTypeFilter: WARM_WATER_DEVICE_TYPES,
+      coldWaterTypeFilter: COLD_WATER_DEVICE_TYPES,
     });
   }
 

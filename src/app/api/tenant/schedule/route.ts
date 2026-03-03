@@ -100,7 +100,9 @@ export async function POST(request: Request) {
     if (frequency === "weekly") {
       nextSendAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     } else {
-      nextSendAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      // monthly - use proper calendar month to handle varying month lengths
+      nextSendAt = new Date(now);
+      nextSendAt.setMonth(nextSendAt.getMonth() + 1);
     }
 
     // Create schedule

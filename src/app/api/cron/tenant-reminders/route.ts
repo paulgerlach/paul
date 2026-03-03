@@ -25,9 +25,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://heidisystems.com";
  */
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret for security
+    // Verify cron secret for security (fail-closed: reject if secret not set or doesn't match)
     const authHeader = request.headers.get("authorization");
-    if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+    if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
       console.error("[cron/tenant-reminders] Unauthorized request");
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
@@ -157,7 +157,9 @@ function calculateNextSendAt(frequency: string): string {
   if (frequency === "weekly") {
     return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
   } else {
-    // monthly - add 30 days
-    return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    // monthly - use proper calendar month to handle varying month lengths
+    const nextMonth = new Date(now);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    return nextMonth.toISOString();
   }
 }

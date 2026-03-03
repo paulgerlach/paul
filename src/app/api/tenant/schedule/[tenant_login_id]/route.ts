@@ -143,7 +143,10 @@ export async function PATCH(
       if (frequency === "weekly") {
         updates.next_send_at = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
       } else {
-        updates.next_send_at = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+        // monthly - use proper calendar month to handle varying month lengths
+        const nextMonth = new Date(now);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        updates.next_send_at = nextMonth.toISOString();
       }
     }
 

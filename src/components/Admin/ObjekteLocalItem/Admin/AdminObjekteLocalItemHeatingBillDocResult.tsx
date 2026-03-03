@@ -14,6 +14,7 @@ export type TenantDocument = {
   document_url: string;
   tenantName: string;
   current_document: boolean;
+  contractId?: string;
 };
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
@@ -93,7 +94,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
 
   const groupedDocsByTenant = Object.values(
     tenantDocuments.reduce((acc, doc) => {
-      const key = doc.tenantName || "Unbekannt";
+      const key = doc.contractId || doc.id;
       if (!acc[key]) {
         acc[key] = { current: undefined, history: [] };
       }

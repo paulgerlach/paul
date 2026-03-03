@@ -13,25 +13,24 @@ export const aggregateDataByTimeRange = (
   let validReadings = readings.filter((reading: MeterReadingType) => isValidReading(reading, startDate, endDate));
   if (validReadings.length === 0) return [];
 
-
   // Determine date range for display
   const now = endDate ? new Date(endDate) : new Date();
   const monthsToShow = getMonthsToShow(startDate, endDate, now);
 
-  const deviceLatestReadings = getLatestDeviceReadings(validReadings);
+  const deviceReadings = getLatestDeviceReadingsMonthly(validReadings);
 
   // STEP 2: Calculate monthly consumption from IV columns
   // Filter IV values based on whether their months fall within the date range
   let dailyConsumption = new Map<number, number>(); // monthOffset -> total consumption
   let monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
   
-  deviceLatestReadings.forEach(({ reading, date: readingDate }) => {
+  deviceReadings.forEach(({ reading, date: readingDate, previousReading, previousDate }) => {
     const deviceType = validReadings[0]?.["Device Type"];
     const isHCA = deviceType === "HCA";
 
     if (isHCA) {
       // isDateRangeLongerThanAMonth(startDate, endDate) ?
-      monthlyConsumption = getHCAMonthlyConsumption(reading, readingDate, { startDate, endDate });
+      monthlyConsumption = getHCAMonthlyConsumption(reading, readingDate, previousReading, previousDate, { startDate, endDate }, monthsToShow);
         // dailyConsumption = getHCADailyConsumption(reading, readingDate, { startDate, endDate });
     } else {
       // Standard meters: Calculate deltas from cumulative IV values
@@ -88,8 +87,8 @@ export const aggregateDataByTimeRange = (
   const result: { label: string; value: number }[] = [];
 
   // Get the most recent reading date to use as reference for month labels
-  const referenceDate = deviceLatestReadings.size > 0
-    ? Math.max(...Array.from(deviceLatestReadings.values()).map(r => r.date.getTime()))
+  const referenceDate = deviceReadings.size > 0
+    ? Math.max(...Array.from(deviceReadings.values()).map(r => r.date.getTime()))
     : now.getTime();
   const refDate = new Date(referenceDate);
 
@@ -297,55 +296,155 @@ const getMonthsToShow = (startDate: Date, endDate: Date, now:Date) => {
   return Math.max(2, Math.ceil(daysDiff / 30));
 }
 
-const getLatestDeviceReadings = (validReadings: MeterReadingType[]): Map<string, { reading: MeterReadingType; date: Date }> => {
-  const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
-  validReadings.forEach((reading) => {
-    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown")
-    const dateString = getDateString(reading["IV,0,0,0,,Date/Time"], reading["Actual Date"], reading["Raw Date"]);
-    let readingDate = getReadingDate(dateString);
+const getLatestDeviceReadingsDaily = (
+  validReadings: MeterReadingType[]
+): Map<string, { reading: MeterReadingType; date: Date; previousReading: MeterReadingType | null; previousDate: Date | null }> => {
 
-    const existing = deviceLatestReading.get(deviceId);
-    if (!existing || readingDate > existing.date) {
-      deviceLatestReading.set(deviceId, { reading, date: readingDate });
+  const deviceLatestReadings = new Map<string, {
+    reading: MeterReadingType;
+    date: Date;
+    previousReading: MeterReadingType | null;
+    previousDate: Date | null
+  }>();
+
+  validReadings.forEach((reading) => {
+    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
+    const dateString = getDateString(reading["IV,0,0,0,,Date/Time"], reading["Actual Date"], reading["Raw Date"]);
+    const readingDate = getReadingDate(dateString);
+
+    const existing = deviceLatestReadings.get(deviceId);
+
+    if (!existing) {
+      // First reading for this device — no previous yet
+      deviceLatestReadings.set(deviceId, {
+        reading,
+        date: readingDate,
+        previousReading: null,
+        previousDate: null
+      });
+    } else if (readingDate > existing.date) {
+      // New reading is latest — demote existing latest to previous
+      deviceLatestReadings.set(deviceId, {
+        reading,
+        date: readingDate,
+        previousReading: existing.reading,
+        previousDate: existing.date,
+      });
+    } else {
+      // New reading is older — check if it's a better previous candidate
+      if (!existing.previousDate || readingDate > existing.previousDate) {
+        deviceLatestReadings.set(deviceId, {
+          ...existing,
+          previousReading: reading,
+          previousDate: readingDate,
+        });
+      }
     }
   });
-  return deviceLatestReading;
-}
 
+  return deviceLatestReadings;
+};
+
+const getLatestDeviceReadingsMonthly = (
+  validReadings: MeterReadingType[]
+): Map<string, { reading: MeterReadingType; date: Date; previousReading: MeterReadingType | null; previousDate: Date | null }> => {
+
+  const deviceLatestReadings = new Map<string, {
+    reading: MeterReadingType;
+    date: Date;
+    previousReading: MeterReadingType | null;
+    previousDate: Date | null
+  }>();
+
+  validReadings.forEach((reading) => {
+    const deviceId = String(reading.ID || reading["Number Meter"] || "unknown");
+    const dateString = getDateString(reading["IV,0,0,0,,Date/Time"], reading["Actual Date"], reading["Raw Date"]);
+    const readingDate = getReadingDate(dateString);
+
+    const existing = deviceLatestReadings.get(deviceId);
+
+    if (!existing) {
+      deviceLatestReadings.set(deviceId, {
+        reading,
+        date: readingDate,
+        previousReading: null,
+        previousDate: null
+      });
+    } else if (readingDate > existing.date) {
+      // New reading becomes latest — re-evaluate old latest as previous candidate
+      const previousMonthOfNew = new Date(readingDate.getFullYear(), readingDate.getMonth() - 1, 1);
+      const isPrevInPreviousMonth =
+        existing.date.getFullYear() === previousMonthOfNew.getFullYear() &&
+        existing.date.getMonth() === previousMonthOfNew.getMonth();
+
+      deviceLatestReadings.set(deviceId, {
+        reading,
+        date: readingDate,
+        // Only carry forward old latest as previous if it's from the previous calendar month
+        previousReading: isPrevInPreviousMonth ? existing.reading : existing.previousReading,
+        previousDate: isPrevInPreviousMonth ? existing.date : existing.previousDate,
+      });
+    } else {
+      // This reading is older — check if it belongs to the previous calendar month of the latest
+      const previousMonthOfExisting = new Date(existing.date.getFullYear(), existing.date.getMonth() - 1, 1);
+      const isInPreviousMonth =
+        readingDate.getFullYear() === previousMonthOfExisting.getFullYear() &&
+        readingDate.getMonth() === previousMonthOfExisting.getMonth();
+
+      if (isInPreviousMonth) {
+        // Among all readings from the previous month, keep the latest one
+        if (!existing.previousDate || readingDate > existing.previousDate) {
+          deviceLatestReadings.set(deviceId, {
+            ...existing,
+            previousReading: reading,
+            previousDate: readingDate,
+          });
+        }
+      }
+    }
+  });
+
+  return deviceLatestReadings;
+};
 
 interface DateRange{
   startDate: Date,
   endDate: Date
 }
 
-const getHCAMonthlyConsumption = (reading: MeterReadingType, readingDate: Date, dateRange: DateRange): Map<number, number> => {
-
-  let currentMonthCumulativeValue = null;
+const getHCAMonthlyConsumption = (
+  currentReading: MeterReadingType,
+  currentReadingDate: Date,
+  previousReading: MeterReadingType | null,
+  previousReadingDate: Date | null,
+  dateRange: DateRange,
+  monthsToShow: number
+): Map<number, number> => {
   let monthlyConsumption = new Map<number, number>();
-  for (let offset = 0; offset <= 31; offset++) {
-    const value = parseGermanNumber(reading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]);
+  for (let offset = 0; offset < monthsToShow; offset++) {
+    const currentCumulative = parseGermanNumber(
+      currentReading[`IV,${offset},0,0,,Units HCA` as keyof MeterReadingType]
+    );
+    
+    const previousCumulative = previousReading ? parseGermanNumber(
+      previousReading[`IV,${offset + 1},0,0,,Units HCA` as keyof MeterReadingType]
+    ) : 0;
 
-    if (offset === 0)
-      currentMonthCumulativeValue = value;
-
-
-    const ivMonthDate = new Date(readingDate);
-    ivMonthDate.setMonth(readingDate.getMonth() - offset);
-    ivMonthDate.setDate(1); // First day of the month
-
-    const rangeStart = dateRange.startDate ? new Date(dateRange.startDate) : null;
-    const rangeEnd = dateRange.endDate ? new Date(dateRange.endDate) : null;
+    const ivMonthDate = new Date(currentReadingDate);
+    ivMonthDate.setMonth(currentReadingDate.getMonth() - offset);
+    ivMonthDate.setDate(1);
 
     let isInRange = true;
-    if (rangeStart && rangeEnd) {
-      isInRange = ivMonthDate >= rangeStart && ivMonthDate <= rangeEnd;
+    if (dateRange.startDate && dateRange.endDate) {
+      isInRange = ivMonthDate >= dateRange.startDate && ivMonthDate <= dateRange.endDate;
     }
 
-    if (value !== null && value > 0 && isInRange) {
-      monthlyConsumption.set(offset, (monthlyConsumption.get(offset) || 0) + value);
+    if (currentCumulative !== null && previousCumulative !== null && isInRange) {
+      monthlyConsumption.set(offset, currentCumulative - previousCumulative);
     }
   }
-  return monthlyConsumption
+
+  return monthlyConsumption;
 }
 
 const getHCADailyConsumption = (reading: MeterReadingType, readingDate: Date, dateRange: DateRange): Map<number, number> => {

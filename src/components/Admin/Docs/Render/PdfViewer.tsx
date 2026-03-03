@@ -15,12 +15,20 @@ interface PdfViewerProps {
 export default function PdfViewer({ url }: PdfViewerProps) {
     const [numPages, setNumPages] = useState<number>(0);
     const [containerWidth, setContainerWidth] = useState<number>(0);
+    const [hasError, setHasError] = useState<boolean>(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const onDocumentLoadSuccess = useCallback(
-        ({ numPages: n }: { numPages: number }) => setNumPages(n),
+        ({ numPages: n }: { numPages: number }) => {
+            setNumPages(n);
+            setHasError(false);
+        },
         [],
     );
+
+    const onDocumentLoadError = useCallback(() => {
+        setHasError(true);
+    }, []);
 
     // Track container width for responsive page sizing
     useEffect(() => {
@@ -42,6 +50,17 @@ export default function PdfViewer({ url }: PdfViewerProps) {
             ? Math.max(window.devicePixelRatio || 1, 2)
             : 2;
 
+    if (hasError) {
+        // Fallback to iframe if pdfjs worker fails to load or parsing fails
+        return (
+            <iframe
+                src={url}
+                className="w-full h-full min-h-[70vh] rounded-lg border border-gray-200"
+                title="Heizkostenabrechnung PDF"
+            />
+        );
+    }
+
     return (
         <div
             ref={containerRef}
@@ -50,14 +69,10 @@ export default function PdfViewer({ url }: PdfViewerProps) {
             <Document
                 file={url}
                 onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
                 loading={
                     <div className="flex items-center justify-center h-64">
                         <p className="text-gray-500">PDF wird geladen…</p>
-                    </div>
-                }
-                error={
-                    <div className="flex items-center justify-center h-64">
-                        <p className="text-red-500">Fehler beim Laden des PDFs</p>
                     </div>
                 }
             >

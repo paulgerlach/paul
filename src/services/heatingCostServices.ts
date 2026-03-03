@@ -2,101 +2,6 @@ import { MeterReadingType } from "@/api";
 import { monthNames } from "@/lib/constants/date";
 import { start } from "repl";
 
-export const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
-  // Check for error status codes
-  const status = reading.Status;
-  if (status && status !== "00h") {
-    return false; // Status other than 00h indicates error
-  }
-
-  // Check for error flags
-  const errorFlags =
-    reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"];
-  if (errorFlags && errorFlags !== "0b") {
-    return false; // Non-zero error flags indicate problems
-  }
-
-  // Check for obvious error values in energy reading
-  // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
-  const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
-  const newFormatEnergy = reading["Actual Energy / HCA"];
-  const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
-  
-  let numValue = 0;
-  if (currentValue != null) {
-    numValue =
-      typeof currentValue === "number"
-        ? currentValue
-        : parseFloat(String(currentValue).replace(",", ".") || "0");
-  }
-
-  // Filter out obvious error codes (repeated digits like 77777777, 88888888, 99999999)
-  if (numValue >= 10000000) {
-    // Values above 10 million Wh are likely errors
-    return false;
-  }
-
-  // Check for error patterns in volume
-  // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
-  const oldFormatVolume = reading["IV,0,0,0,m^3,Vol"];
-  const newFormatVolume = reading["Actual Volume"];
-  const volume = newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume;
-  
-  let volumeValue = 0;
-  if (volume != null) {
-    volumeValue =
-      typeof volume === "number"
-        ? volume
-        : parseFloat(String(volume).replace(",", ".") || "0");
-  }
-
-  // Filter out obvious volume error codes (777.777, 888.888, 999.999)
-  if (
-    volumeValue >= 777 &&
-    (Math.abs(volumeValue - 777.777) < 0.001 ||
-      Math.abs(volumeValue - 888.888) < 0.001 ||
-      Math.abs(volumeValue - 999.999) < 0.001)
-  ) {
-    return false;
-  }
-
-  return isWithinDateRange(reading, startDate, endDate);
-};
-
-const isWithinDateRange = (reading:MeterReadingType, startDate: Date, endDate: Date) => {
-    const rangeStart = new Date(startDate);
-    const rangeEnd = new Date(endDate);
-
-      let dateString: string | null = null;
-
-      const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
-      const newActualDate = reading["Actual Date"];
-      const newRawDate = reading["Raw Date"];
-
-      if (oldFormatDate && typeof oldFormatDate === "string") {
-        dateString = oldFormatDate.split(" ")[0];
-      } else if (newActualDate && typeof newActualDate === "string") {
-        dateString = newActualDate.split(" ")[0];
-      } else if (newRawDate && typeof newRawDate === "string") {
-        dateString = newRawDate.replace(/-/g, ".");
-      }
-
-      if (!dateString) return false;
-
-      const [day, month, year] = dateString.split(".").map(Number);
-      const fullYear = year < 100 ? 2000 + year : year;
-      const readingDate = new Date(fullYear, month - 1, day);
-
-      return readingDate >= rangeStart && readingDate <= rangeEnd;
-}
-
-const parseHCADate = (dateStr: string | undefined): Date => {
-  if (!dateStr) return new Date(0);
-  const [day, month, year] = dateStr.split(".").map(Number);
-  return new Date(year, month - 1, day);
-};
-
-
 export const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
   startDate?: Date | null,
@@ -105,7 +10,7 @@ export const aggregateDataByTimeRange = (
   if (!readings || readings.length === 0 || !startDate || !endDate) return [];
 
   // Filter out invalid readings first
-  let validReadings = readings.filter((reading:MeterReadingType) =>isValidReading(reading, startDate, endDate));
+  let validReadings = readings.filter((reading: MeterReadingType) => isValidReading(reading, startDate, endDate));
   if (validReadings.length === 0) return [];
 
 
@@ -257,6 +162,14 @@ export const aggregateDataByTimeRange = (
   return result.reverse();
 };
 
+export const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
+  console.log('Reading ====>', reading)
+  return hasValidStatus(reading.Status)
+    && hasNoErrorFlags(reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"])
+    && hasValidEnergyReading(reading)
+    && hasValidVolumeReading(reading)
+    && isWithinDateRange(reading, startDate, endDate);
+};
 
 // Helper to parse German number format
 const parseGermanNumber = (value: string | number | undefined): number | null => {
@@ -352,4 +265,84 @@ const getMonthlyEnergyDataWithDates = (
   }
 
   return monthlyData;
+};
+
+const hasValidStatus = (status: string): boolean => {
+  return status === "00h"; // Status other than 00h indicates error
+};
+
+const hasNoErrorFlags = (errorFlags: string | undefined): boolean => {
+  return !errorFlags || errorFlags === "0b"; // Non-zero error flags indicate problems
+};
+
+const hasValidEnergyReading = (reading: MeterReadingType): boolean => {
+
+  // Check for obvious error values in energy reading
+  // Support both OLD format (IV,0,0,0,Wh,E) and NEW format (Actual Energy / HCA)
+  const oldFormatEnergy = reading["IV,0,0,0,Wh,E"];
+  const newFormatEnergy = reading["Actual Energy / HCA"];
+  const currentValue = newFormatEnergy !== undefined ? newFormatEnergy : oldFormatEnergy;
+
+  let numValue = 0;
+  if (currentValue != null) {
+    numValue =
+      typeof currentValue === "number"
+        ? currentValue
+        : parseFloat(String(currentValue).replace(",", ".") || "0");
+  }
+  return numValue < 10000000
+}
+
+const hasValidVolumeReading = (reading: MeterReadingType): boolean => {
+  // Check for error patterns in volume
+  // Support both OLD format (IV,0,0,0,m^3,Vol) and NEW format (Actual Volume)
+  const oldFormatVolume = reading["IV,0,0,0,m^3,Vol"];
+  const newFormatVolume = reading["Actual Volume"];
+  const volume = newFormatVolume !== undefined ? newFormatVolume : oldFormatVolume;
+
+  let volumeValue = 0;
+  if (volume != null) {
+    volumeValue =
+      typeof volume === "number"
+        ? volume
+        : parseFloat(String(volume).replace(",", ".") || "0");
+  }
+  // Filter out obvious volume error codes (777.777, 888.888, 999.999)
+  return volumeValue < 777 &&
+    (Math.abs(volumeValue - 777.777) >= 0.001 ||
+      Math.abs(volumeValue - 888.888) >= 0.001 ||
+      Math.abs(volumeValue - 999.999) >= 0.001)
+
+}
+
+const isWithinDateRange = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
+  const rangeStart = new Date(startDate);
+  const rangeEnd = new Date(endDate);
+
+  let dateString: string | null = null;
+
+  const oldFormatDate = reading["IV,0,0,0,,Date/Time"];
+  const newActualDate = reading["Actual Date"];
+  const newRawDate = reading["Raw Date"];
+
+  if (oldFormatDate && typeof oldFormatDate === "string") {
+    dateString = oldFormatDate.split(" ")[0];
+  } else if (newActualDate && typeof newActualDate === "string") {
+    dateString = newActualDate.split(" ")[0];
+  } else if (newRawDate && typeof newRawDate === "string") {
+    dateString = newRawDate.replace(/-/g, ".");
+  }
+
+  if (!dateString) return false;
+
+  const [day, month, year] = dateString.split(".").map(Number);
+  const fullYear = year < 100 ? 2000 + year : year;
+  const readingDate = new Date(fullYear, month - 1, day);
+  return readingDate >= rangeStart && readingDate <= rangeEnd;
+}
+
+const parseHCADate = (dateStr: string | undefined): Date => {
+  if (!dateStr) return new Date(0);
+  const [day, month, year] = dateStr.split(".").map(Number);
+  return new Date(year, month - 1, day);
 };

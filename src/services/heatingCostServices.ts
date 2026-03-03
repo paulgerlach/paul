@@ -19,10 +19,10 @@ export const aggregateDataByTimeRange = (
 
   const deviceReadings = getLatestDeviceReadingsMonthly(validReadings);
 
-  // STEP 2: Calculate monthly consumption from IV columns
-  // Filter IV values based on whether their months fall within the date range
-  let dailyConsumption = new Map<number, number>(); // monthOffset -> total consumption
-  let monthlyConsumption = new Map<number, number>(); // monthOffset -> total consumption
+  let monthlyConsumption = new Map<number, number>();
+  const referenceDate = deviceReadings.size > 0
+    ? Math.max(...Array.from(deviceReadings.values()).map(r => r.date.getTime()))
+    : now.getTime();
   
   deviceReadings.forEach(({ reading, date: readingDate, previousReading, previousDate }) => {
     const deviceType = validReadings[0]?.["Device Type"];
@@ -87,9 +87,7 @@ export const aggregateDataByTimeRange = (
   const result: { label: string; value: number }[] = [];
 
   // Get the most recent reading date to use as reference for month labels
-  const referenceDate = deviceReadings.size > 0
-    ? Math.max(...Array.from(deviceReadings.values()).map(r => r.date.getTime()))
-    : now.getTime();
+  
   const refDate = new Date(referenceDate);
 
   for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {

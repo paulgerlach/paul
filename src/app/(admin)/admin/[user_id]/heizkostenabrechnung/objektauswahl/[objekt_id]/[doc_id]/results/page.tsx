@@ -93,9 +93,10 @@ export default async function ResultLocalPDF({
     const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
 
     tenantDocsByLocalId[localId] = validDocsForLocal.map((doc) => {
-      const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+      // Matches `_contractId.pdf` or `_contractId_v12345.pdf`
+      const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
-      const isVacancy = doc.document_name.includes("leerstand");
+      const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
       const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
       return { ...doc, tenantName };
     });

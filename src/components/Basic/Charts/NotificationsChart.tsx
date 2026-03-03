@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ROUTE_HOME } from "@/routes/routes";
+
 import {
 	alert_triangle,
 	blue_info,
@@ -14,7 +14,6 @@ import {
 	notification,
 	pipe_water,
 	cold_water,
-
 	smoke_detector,
 	electricity,
 } from "@/static/icons";
@@ -22,17 +21,14 @@ import Image from "next/image";
 import NotificationItem from "./NotificationItem";
 import { EmptyState } from "@/components/Basic/ui/States";
 import ErrorDetailsModal from "./ErrorDetailsModal";
+import NotificationDetailModal, { type NotificationDetail } from "./NotificationDetailModal";
+import NotificationGroupModal, { type GroupNotificationItem } from "./NotificationGroupModal";
 import { MeterReadingType } from "@/api";
 import {
 	getDevicesWithErrors,
-	groupErrorsBySeverity,
-	groupErrorsByDeviceType,
 	interpretErrorFlags,
 } from "@/utils/errorFlagInterpreter";
-import { interpretHintCode } from "@/utils/hintCodeInterpreter";
-import { checkRSSI } from "@/utils/rssiChecker";
 import {
-	analyzeConsumption,
 	getConsumptionNotifications,
 } from "@/utils/consumptionAnalyzer";
 import { StaticImageData } from "next/image";
@@ -50,6 +46,12 @@ interface NotificationItem {
 	title: string;
 	subtitle: string;
 	meterId?: number;
+	severity?: string;
+	deviceType?: string;
+	manufacturer?: string;
+	building?: string;
+	unit?: string;
+	tenant?: string;
 }
 
 interface NotificationsChartProps {
@@ -61,57 +63,81 @@ interface NotificationsChartProps {
 		errors?: { row: number; error: string; rawRow: any }[];
 	};
 	userId?: string;
+	hierarchy?: Record<string, { building: string; unit: string; tenant: string }>;
 }
+
+const GROUPING_THRESHOLD = 10;
 
 const dummy_notifications = [
 	{
 		Date: "05.09.2025",
+		ID: 53157195,
 		Building: "Friedrichstr. 15",
-		ID: 53157195, // Random cold water meter ID
-		Severity: "critical",
+		Unit: "EG links",
+		Tenant: "Maria Müller",
+		Severity: "high",
+		Category: "coldwater",
 		"Notification Type": "Leckage",
 		"Notification Message":
-			"Leckage erkannt - Rohrbruch bei Kaltwasserzähler 53157195.",
+			"Leckage erkannt - Rohrbruch bei Kaltwasserzähler 53157195. Sofortiger Handlungsbedarf!",
 		"Hint Code": "Bit 5",
 		"Hint Code Description": "Leckage erkannt",
-		Category: "coldwater",
 	},
 	{
-		Date: "06.09.2025",
-		Building: "Alte Jakobstr. 1",
-		ID: 53157166, // Random heat meter ID (used for smoke detector)
+		Date: "05.09.2025",
+		ID: 53157166,
+		Building: "Friedrichstr. 15",
+		Unit: "1. OG rechts",
+		Tenant: "Peter Hoffmann",
 		Severity: "high",
+		Category: "heatMeters",
 		"Notification Type": "Rauchwarnmelder",
 		"Notification Message":
-			"Rauchwarnmelder wurde abgenommen bei Heizungsbereich 53157166.",
+			"Rauchwarnmelder wurde abgenommen bei Wohnung 1. OG rechts - Zähler 53157166.",
 		"Hint Code": "Bit 12",
 		"Hint Code Description": "Rauchwarnmelder entfernt",
-		Category: "heatMeters",
 	},
 	{
-		Date: "07.09.2025",
+		Date: "05.09.2025",
+		ID: 73157310,
+		Building: "Alte Jakobstr. 1",
+		Unit: "3. OG rechts",
+		Tenant: "Hans Becker",
+		Severity: "high",
+		Category: "electricity",
+		"Notification Type": "Gerätefehler",
+		"Notification Message":
+			"Stromzähler 73157310 meldet Fehlerflags: Rückwärtsfluss (EMH)",
+		"Hint Code": "",
+		"Hint Code Description": "",
+	},
+	{
+		Date: "05.09.2025",
+		ID: 53157290,
 		Building: "Unter den Linden 42",
-		ID: 53157218, // Random hot water meter ID
-		Severity: "medium",
+		Unit: "2. OG Mitte",
+		Tenant: "Anna Schmidt",
+		Severity: "low",
+		Category: "heatMeters",
 		"Notification Type": "Verbrauchsanstieg",
 		"Notification Message":
-			"Warmwasserverbrauch ist um 32% angestiegen bei Zähler 53157218.",
-		"Hint Code": "Bit 15",
-		"Hint Code Description": "Ungewöhnlicher Verbrauchsanstieg",
-		Category: "hotwater",
+			"Wärmezähler 53157290 - Verbrauch 25% über Vorjahreswert!",
+		"Hint Code": "",
+		"Hint Code Description": "",
 	},
-	{
-		Date: "08.09.2025",
-		Building: "Friedrichstr. 15",
-		ID: 63157201, // Random cold water meter ID (different series)
-		Severity: "medium",
-		"Notification Type": "Verbrauchsanstieg",
-		"Notification Message":
-			"Kaltwasserverbrauch ist um 42% angestiegen bei Zähler 63157201.",
-		"Hint Code": "Bit 15",
-		"Hint Code Description": "Ungewöhnlicher Verbrauchsanstieg",
+	...Array.from({ length: 13 }).map((_, i) => ({
+		Date: "05.09.2025",
+		ID: 60000000 + i,
+		Building: `Musterstraße ${10 + (i % 5)}`,
+		Unit: `${(i % 3) + 1}. OG`,
+		Tenant: `Mieter ${i}`,
+		Severity: "high",
 		Category: "coldwater",
-	},
+		"Notification Type": "Leckage",
+		"Notification Message": `Leckage erkannt - Rohrbruch bei Kaltwasserzähler ${60000000 + i}. Sofortiger Handlungsbedarf!`,
+		"Hint Code": "Bit 5",
+		"Hint Code Description": "Leckage erkannt",
+	})),
 ];
 
 export default function NotificationsChart({
@@ -120,6 +146,7 @@ export default function NotificationsChart({
 	emptyDescription,
 	parsedData,
 	userId,
+	hierarchy,
 }: NotificationsChartProps) {
 	const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 	const [selectedMeterId, setSelectedMeterId] = useState<number | undefined>(
@@ -127,9 +154,7 @@ export default function NotificationsChart({
 	);
 	const { meterIds } = useChartStore();
 	const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-	const [notificationQueue, setNotificationQueue] = useState<
-		NotificationItem[]
-	>([]);
+
 	const [openPopoverId, setOpenPopoverId] = useState<number | null>(null);
 	const { data: user } = useAuthUser();
 	const { notifications: tenantNotifications } = useTenantNotifications(userId || user?.id);
@@ -140,8 +165,37 @@ export default function NotificationsChart({
 	const [originalNotificationCount, setOriginalNotificationCount] =
 		useState(0);
 	const [showAllNotifications, setShowAllNotifications] = useState(false);
+	const [selectedNotification, setSelectedNotification] = useState<NotificationDetail | null>(null);
+	const [selectedGroup, setSelectedGroup] = useState<{
+		label: string;
+		title: string;
+		color: string;
+		icon: StaticImageData;
+		rightIcon: StaticImageData;
+		rightBg: string;
+		items: GroupNotificationItem[]
+	} | null>(null);
 
-	// Check if current user is the demo account (only heidi@hausverwaltung.com sees dummy notifications)
+	const openDetailModal = (n: NotificationItem) => {
+		setSelectedNotification({
+			leftIcon: n.leftIcon,
+			rightIcon: n.rightIcon,
+			leftBg: n.leftBg,
+			rightBg: n.rightBg,
+			title: n.title,
+			subtitle: n.subtitle,
+			meterId: n.meterId,
+			severity: n.severity,
+			deviceType: n.deviceType,
+			manufacturer: n.manufacturer,
+			building: n.building,
+			unit: n.unit,
+			tenant: n.tenant,
+		});
+		setOpenPopoverId(null);
+	};
+
+	// Check if current user is the demo account (heidi@hausverwaltung.com)
 	const isDemoAccount = user?.email === "heidi@hausverwaltung.com";
 
 	const openErrorModal = (meterId?: number) => {
@@ -151,22 +205,9 @@ export default function NotificationsChart({
 	};
 
 	const deleteNotification = (index: number) => {
-		setHasDismissedNotifications(true); // Track that user has dismissed notifications
-		setNotifications((prev) => {
-			const newNotifications = prev.filter((_, i) => i !== index);
-
-			// If we have fewer than 10 notifications and there are items in the queue, add the next one
-			if (newNotifications.length < 10 && notificationQueue.length > 0) {
-				const nextNotification = notificationQueue[0];
-				const updatedQueue = notificationQueue.slice(1);
-				setNotificationQueue(updatedQueue);
-
-				return [...newNotifications, nextNotification];
-			}
-
-			return newNotifications;
-		});
-		setOpenPopoverId(null); // Close the popover after deletion
+		setHasDismissedNotifications(true);
+		setNotifications((prev) => prev.filter((_, i) => i !== index));
+		setOpenPopoverId(null);
 	};
 
 	const getLeftIconForNotificationType = (
@@ -199,7 +240,7 @@ export default function NotificationsChart({
 			return caract_battery; // battery icon
 		}
 		if (type.includes("rauchwarnmelder") || type.includes("smoke")) {
-			return smoke_detector; // smoke detector icon
+			return smoke_detector;
 		}
 		if (
 			type.includes("verbrauchsanstieg") ||
@@ -334,7 +375,8 @@ export default function NotificationsChart({
 				consumptionNotificationsGenerated = getConsumptionNotifications(
 					{
 						data: selectedMeters,
-					}
+					},
+					hierarchy
 				);
 			}
 
@@ -474,6 +516,7 @@ export default function NotificationsChart({
 									? electricity
 									: pipe_water;
 
+				const meterMeta = hierarchy?.[meterId || ""];
 				dynamicNotifications.push({
 					leftIcon: leftIcon,
 					rightIcon: rightIcon,
@@ -482,6 +525,12 @@ export default function NotificationsChart({
 					title: `Gerätefehler - Zähler ${meterId}`,
 					subtitle: `${deviceType} Gerät meldet technischen Fehler (${manufacturer})`,
 					meterId: parseInt(meterId || "0"),
+					severity,
+					deviceType,
+					manufacturer,
+					building: meterMeta?.building,
+					unit: meterMeta?.unit,
+					tenant: meterMeta?.tenant,
 				});
 			});
 
@@ -523,16 +572,16 @@ export default function NotificationsChart({
 				selectedMeters.forEach(device => {
 					const errorInterpretation = interpretErrorFlags(device);
 					if (errorInterpretation?.errors) {
-						// Check for battery issues
 						const hasBatteryIssue = errorInterpretation.errors.some(e =>
 							e.includes("Batterie") || e.includes("battery")
 						);
 
 						if (hasBatteryIssue) {
 							const meterId = device.ID || device["Number Meter"];
+							const meterIdStr = meterId?.toString() || "";
 							const deviceType = device["Device Type"];
+							const meterMeta = hierarchy?.[meterIdStr];
 
-							// Get appropriate left icon based on device type
 							let leftIcon = notification;
 							if (deviceType === "Heat" || deviceType === "Wärme") leftIcon = heater;
 							else if (deviceType === "WWater" || deviceType === "Warmwasser") leftIcon = hot_water;
@@ -542,10 +591,15 @@ export default function NotificationsChart({
 								leftIcon: leftIcon,
 								rightIcon: caract_battery,
 								leftBg: "#E7E8EA",
-								rightBg: "#F7E7D5", // Orange
+								rightBg: "#F7E7D5",
 								title: "Schwache Batterie",
 								subtitle: `${deviceType}zähler ${meterId} - Batterie bald wechseln`,
-								meterId: typeof meterId === "string" ? parseInt(meterId) : meterId
+								meterId: typeof meterId === "string" ? parseInt(meterId) : meterId,
+								severity: "medium",
+								deviceType,
+								building: meterMeta?.building,
+								unit: meterMeta?.unit,
+								tenant: meterMeta?.tenant,
 							});
 						}
 					}
@@ -567,8 +621,7 @@ export default function NotificationsChart({
 				);
 			});
 
-			// Limit to max 4 dynamic notifications (highest severity first)
-			return dynamicNotifications.slice(0, 10);
+			return dynamicNotifications;
 		};
 
 		const generateNotifications = (): NotificationItem[] => {
@@ -689,111 +742,10 @@ export default function NotificationsChart({
 
 					return notifications;
 				}
-				// Demo account continues to dummy notifications below
-			}
-
-			const errorsBySeverity = groupErrorsBySeverity(deviceErrors);
-
-			// if (errorsBySeverity.critical.length > 0) {
-			//   notifications.push({
-			//     leftIcon: getLeftIconForNotificationType("critical", "general"),
-			//     rightIcon: alert_triangle,
-			//     leftBg: "#E7E8EA",
-			//     rightBg: "#FFE5E5",
-			//     title: "criticale Zählerfehler",
-			//     subtitle: `${errorsBySeverity.critical.length} Geräte mit schwerwiegenden Problemen`,
-			//   });
-			// }
-
-			// if (errorsBySeverity.high.length > 0) {
-			//   notifications.push({
-			//     leftIcon: getLeftIconForNotificationType("sensor", "general"),
-			//     rightIcon: alert_triangle,
-			//     leftBg: "#E7E8EA",
-			//     rightBg: "#F7E7D5",
-			//     title: "Wichtige Zählerfehler",
-			//     subtitle: `${errorsBySeverity.high.length} Geräte mit Sensor- oder Kommunikationsfehlern`,
-			//   });
-			// }
-
-			if (errorsBySeverity.medium.length > 0) {
-				// notifications.push({
-				//   leftIcon: getLeftIconForNotificationType('maintenance', 'general'),
-				//   rightIcon: blue_info,
-				//   leftBg: "#E7E8EA",
-				//   rightBg: "#E5EBF5",
-				//   title: "Wartungshinweise",
-				//   subtitle: `${errorsBySeverity.medium.length} Geräte benötigen Wartung`,
-				// });
-				// notifications.push({
-				//   leftIcon: getLeftIconForNotificationType("maintenance", "general"),
-				//   rightIcon: blue_info,
-				//   leftBg: "#E7E8EA",
-				//   rightBg: "#E5EBF5",
-				//   title: "Wartungshinweise",
-				//   subtitle: `1x Rauchwarnmelder wurde entfernt`,
-				// });
-			}
-
-			// if (errorsBySeverity.low.length > 0) {
-			//   notifications.push({
-			//     leftIcon: getLeftIconForNotificationType("info", "general"),
-			//     rightIcon: blue_info,
-			//     leftBg: "#E7E8EA",
-			//     rightBg: "#E5EBF5",
-			//     title: "Geringfügige Probleme",
-			//     subtitle: `${errorsBySeverity.low.length} Geräte mit kleinen Problemen`,
-			//   });
-			// }
-
-			const errorsByDeviceType = groupErrorsByDeviceType(deviceErrors);
-
-			if (notifications.length < 3) {
-				if (
-					errorsByDeviceType.Heat &&
-					errorsByDeviceType.Heat.length > 0
-				) {
-					// notifications.push({
-					//   leftIcon: getLeftIconForNotificationType("problems", "Heat"),
-					//   rightIcon: alert_triangle,
-					//   leftBg: "#E7E8EA",
-					//   rightBg: "#F7E7D5",
-					//   title: "Wärmezähler Probleme",
-					//   subtitle: `${errorsByDeviceType.Heat.length} Wärmezähler melden Fehler`,
-					// });
-				}
-
-				if (
-					errorsByDeviceType.Water &&
-					errorsByDeviceType.Water.length > 0
-				) {
-					// notifications.push({
-					//   leftIcon: getLeftIconForNotificationType("problems", "Water"),
-					//   rightIcon: alert_triangle,
-					//   leftBg: "#E7E8EA",
-					//   rightBg: "#F7E7D5",
-					//   title: "Wasserzähler Probleme",
-					//   subtitle: `${errorsByDeviceType.Water.length} Wasserzähler melden Fehler`,
-					// });
-				}
-
-				if (
-					errorsByDeviceType.WWater &&
-					errorsByDeviceType.WWater.length > 0
-				) {
-					// notifications.push({
-					//   leftIcon: getLeftIconForNotificationType("problems", "WWater"),
-					//   rightIcon: alert_triangle,
-					//   leftBg: "#E7E8EA",
-					//   rightBg: "#F7E7D5",
-					//   title: "Warmwasserzähler Probleme",
-					//   subtitle: `${errorsByDeviceType.WWater.length} Warmwasserzähler melden Fehler`,
-					// });
-				}
 			}
 
 			// Check dummy notifications based on selected meter categories
-			// For demo account, always show dummy notifications regardless of meter selection
+			// For demo account, always show dummy notifications
 			for (const notification of dummy_notifications) {
 				const meterId = notification.ID.toString();
 				const category = notification.Category;
@@ -816,7 +768,9 @@ export default function NotificationsChart({
 							? "#FFE5E5"
 							: notification.Severity === "high"
 								? "#F7E7D5"
-								: "#E5EBF5";
+								: notification.Severity === "medium"
+									? "#FEF3C7"
+									: "#E5EBF5";
 
 					// Pass the full message to get the correct icon for consumption notifications
 					const notificationTypeWithMessage =
@@ -824,20 +778,26 @@ export default function NotificationsChart({
 						" " +
 						notification["Notification Message"];
 
+					const calculatedLeftIcon = getLeftIconForNotificationType(notificationTypeWithMessage, notification.Category);
+
 					notifications.push({
-						leftIcon: getLeftIconForNotificationType(
-							notificationTypeWithMessage
-						),
+						leftIcon: calculatedLeftIcon,
 						rightIcon: rightIcon,
 						leftBg: "#E7E8EA",
 						rightBg: rightBg,
 						title: `${notification["Notification Type"]} - Zähler ${notification.ID}`,
 						subtitle: notification["Notification Message"],
+						meterId: notification.ID,
+						severity: notification.Severity,
+						deviceType: notification.Category,
+						building: (notification as any).Building,
+						unit: (notification as any).Unit,
+						tenant: (notification as any).Tenant,
 					});
 				}
 			}
 
-			return notifications.slice(0, 10);
+			return notifications;
 		};
 
 		// Reset dismissed state when data changes (new data load)
@@ -846,7 +806,6 @@ export default function NotificationsChart({
 		// Prevent unnecessary re-renders
 		if (!parsedData || isEmpty) {
 			setNotifications([]);
-			setNotificationQueue([]);
 			setOriginalNotificationCount(0);
 			return;
 		}
@@ -859,16 +818,8 @@ export default function NotificationsChart({
 				? generateNotifications() // Shows dummy_notifications for demo
 				: generateDynamicNotifications(); // Shows real errors for live users
 
-			// Track original count for better UX messaging
 			setOriginalNotificationCount(finalNotifications.length);
-
-			// Split into displayed (first 10, scrollable) and queue (rest)
-			const displayed = finalNotifications.slice(0, 10);
-			const queue = finalNotifications.slice(10);
-
-			// Update both displayed notifications and queue
-			setNotificationQueue(queue);
-			setNotifications(displayed);
+			setNotifications(finalNotifications);
 		} catch (error) {
 			// Fallback to existing logic if anything fails
 			console.warn("Notifications generation failed:", error);
@@ -884,6 +835,80 @@ export default function NotificationsChart({
 		parsedData?.data &&
 		getDevicesWithErrors(parsedData).length > 0;
 
+	// ── Grouping logic ───────────────────────────────────────────────────────
+	const shouldGroup = notifications.length > GROUPING_THRESHOLD;
+
+	type IssueGroup = {
+		key: string;
+		label: string; // The text to display e.g. "Wasserzähler"
+		title: string; // Original title describing the issue
+		items: NotificationItem[];
+		color: string;
+		icon: StaticImageData; // leftIcon (device)
+		rightIcon: StaticImageData; // rightIcon (issue)
+		rightBg: string; // background color for the right icon
+		order: number;
+	};
+
+	const issueGroups: IssueGroup[] = [];
+	if (shouldGroup) {
+		const groupMap = new Map<string, NotificationItem[]>();
+		for (const n of notifications) {
+			// Group by the localized title (which combines issue and meter ID, we'll strip the meter ID)
+			// e.g. "Keine Daten - Zähler 12345" -> "Keine Daten"
+			const baseTitle = n.title.split(" - Zähler")[0].split(" - Stromzähler")[0];
+			// Combine with device type to get unique groups per device and issue
+			const key = `${n.deviceType || 'unknown'}_${baseTitle}`;
+
+			if (!groupMap.has(key)) groupMap.set(key, []);
+			groupMap.get(key)!.push(n);
+		}
+
+		groupMap.forEach((items, key) => {
+			const firstItem = items[0];
+			const baseTitle = firstItem.title.split(" - Zähler")[0].split(" - Stromzähler")[0];
+
+			// Determine a nice label for the device based on deviceType
+			const deviceType = firstItem.deviceType?.toLowerCase() ?? "";
+			let deviceLabel = "Gerät";
+			if (["wwwater", "warmwasserzähler", "warmwasser", "warmwater", "wwater", "wwwater"].some(v => deviceType.includes(v))) deviceLabel = "Warmwasserzähler";
+			else if (["water", "kaltwasserzähler", "kaltwasser", "cold", "coldwater"].some(v => deviceType.includes(v))) deviceLabel = "Kaltwasserzähler";
+			else if (["heat", "wärmezähler", "wärme", "warmth", "heatmeter", "heatmeters", "wmz"].some(v => deviceType.includes(v))) deviceLabel = "Wärmezähler";
+			else if (["hca", "heizkostenverteiler", "heizkosten"].some(v => deviceType.includes(v))) deviceLabel = "Heizkostenverteiler";
+			else if (["elec", "stromzähler", "strom", "electricity", "electric"].some(v => deviceType.includes(v))) deviceLabel = "Stromzähler";
+			else if (["gas", "gas"].some(v => deviceType.includes(v))) deviceLabel = "Gaszähler";
+			else if (["smoke", "rauch", "rauchwarnmelder"].some(v => deviceType.includes(v))) deviceLabel = "Rauchwarnmelder";
+			else if (["room", "temp", "temperatur"].some(v => deviceType.includes(v))) deviceLabel = "Temperatursensor";
+			else if (deviceType) deviceLabel = firstItem.deviceType!;
+
+			// Determine sort order based on severity
+			const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+			const order = severityOrder[firstItem.severity as keyof typeof severityOrder] ?? 3;
+
+			issueGroups.push({
+				key,
+				label: deviceLabel,
+				title: baseTitle,
+				items,
+				color: firstItem.leftBg,
+				icon: firstItem.leftIcon,
+				rightIcon: firstItem.rightIcon,
+				rightBg: firstItem.rightBg,
+				order,
+			});
+		});
+
+		issueGroups.sort((a, b) => {
+			// Sort by severity first
+			if (a.order !== b.order) {
+				return a.order - b.order;
+			}
+			// Then sort by descending count
+			return b.items.length - a.items.length;
+		});
+	}
+	// ─────────────────────────────────────────────────────────────────────────
+
 	return (
 		<div
 			className={`rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col ${isEmpty ? "flex flex-col" : ""
@@ -894,9 +919,9 @@ export default function NotificationsChart({
 					<h2 className="text-lg font-medium max-small:text-sm max-medium:text-sm text-gray-800">
 						Benachrichtigungen
 					</h2>
-					{notificationQueue.length > 0 && (
-						<span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-							+{notificationQueue.length}
+					{notifications.length > 0 && (
+						<span className="bg-dark_green/80 text-white text-xs px-2 py-0.5 rounded-full">
+							{notifications.length}
 						</span>
 					)}
 				</div>
@@ -939,32 +964,80 @@ export default function NotificationsChart({
 						/>
 					)
 				) : (
-					notifications
-						.slice(
-							0,
-							showAllNotifications ? notifications.length : 4
-						)
-						.map((n, idx) => (
+					shouldGroup ? (
+						// Render Issue Groups
+						issueGroups.map((group, idx) => (
 							<div
-								key={idx}
-								className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg"
+								key={group.key}
+								className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg cursor-pointer transition-colors"
+								onClick={() => setSelectedGroup({
+									key: group.key,
+									label: group.title,
+									items: group.items,
+									color: group.color,
+									icon: group.icon,
+									rightBg: group.rightBg,
+									rightIcon: group.rightIcon,
+								} as any)}
 							>
+								{/* Identical Layout to NotificationItem.tsx */}
 								<div className="flex-1 min-w-0">
-									<NotificationItem {...n} />
+									<div className="flex items-start justify-start gap-2 w-full p-1">
+										<div className="flex items-center justify-start gap-2 flex-shrink-0">
+											<span
+												className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
+												style={{ backgroundColor: group.color }}
+											>
+												<Image
+													width={28}
+													height={28}
+													sizes="100vw"
+													loading="lazy"
+													className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6 opacity-90"
+													src={(group.icon && typeof group.icon !== "string") ? group.icon : notification}
+													alt="device"
+												/>
+											</span>
+											<span
+												className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
+												style={{ backgroundColor: group.rightBg }}
+											>
+												<Image
+													width={28}
+													height={28}
+													sizes="100vw"
+													loading="lazy"
+													className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6"
+													src={(group.rightIcon && typeof group.rightIcon !== "string") ? group.rightIcon : alert_triangle}
+													alt="issue"
+												/>
+											</span>
+										</div>
+										<div className="flex-1 min-w-0 py-1">
+											<p className="text-sm font-medium text-gray-800 leading-tight truncate">
+												{group.items.length}x {group.label}...
+											</p>
+											<p className="text-sm max-lg:text-xs text-black/50 leading-tight truncate line-clamp-1 mt-0.5">
+												{group.title}
+											</p>
+										</div>
+									</div>
 								</div>
+
+								{/* The 3 dots popover block (same as single notifications) */}
 								<div className="flex items-center flex-shrink-0 ml-1">
 									<Popover
-										open={openPopoverId === idx}
+										open={openPopoverId === `group-${idx}` as any}
 										onOpenChange={(open) =>
-											setOpenPopoverId(open ? idx : null)
+											setOpenPopoverId(open ? `group-${idx}` as any : null)
 										}
 									>
 										<PopoverTrigger asChild>
 											<button
 												className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
-												onClick={(e) =>
-													e.stopPropagation()
-												}
+												onClick={(e) => {
+													e.stopPropagation();
+												}}
 											>
 												<Image
 													width={0}
@@ -982,30 +1055,98 @@ export default function NotificationsChart({
 											onClick={(e) => e.stopPropagation()}
 										>
 											<button
-												onClick={() =>
-													openErrorModal(n.meterId)
-												}
+												onClick={(e) => {
+													e.stopPropagation();
+													setSelectedGroup({
+														key: group.key,
+														label: group.title,
+														items: group.items,
+														color: group.color,
+														icon: group.icon,
+														rightBg: group.rightBg,
+														rightIcon: group.rightIcon,
+													} as any);
+													setOpenPopoverId(null);
+												}}
 												className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
 											>
 												<Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
 												öffnen
-											</button>
-											<button
-												onClick={() => {
-													deleteNotification(idx);
-												}}
-												className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
-											>
-												<Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
-												Löschen
 											</button>
 										</PopoverContent>
 									</Popover>
 								</div>
 							</div>
 						))
+					) : (
+						// Render Flat List
+						notifications
+							.slice(
+								0,
+								showAllNotifications ? notifications.length : 4
+							)
+							.map((n, idx) => (
+								<div
+									key={idx}
+									className="flex items-center w-full rounded-base border border-transparent hover:bg-base-bg/70 hover:border-base-bg"
+								>
+									<div className="flex-1 min-w-0">
+										<NotificationItem {...n} />
+									</div>
+									<div className="flex items-center flex-shrink-0 ml-1">
+										<Popover
+											open={openPopoverId === idx}
+											onOpenChange={(open) =>
+												setOpenPopoverId(open ? idx : null)
+											}
+										>
+											<PopoverTrigger asChild>
+												<button
+													className="size-4 border-none bg-transparent cursor-pointer flex items-center justify-center flex-shrink-0"
+													onClick={(e) =>
+														e.stopPropagation()
+													}
+												>
+													<Image
+														width={0}
+														height={0}
+														sizes="100vw"
+														loading="lazy"
+														className="max-w-4 max-h-4"
+														src={dots_button}
+														alt="dots button"
+													/>
+												</button>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-40 p-2 flex flex-col bg-white border-none shadow-sm"
+												onClick={(e) => e.stopPropagation()}
+											>
+												<button
+													onClick={() => openDetailModal(n)}
+													className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+												>
+													<Pencil className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+													öffnen
+												</button>
+												<button
+													onClick={() => {
+														deleteNotification(idx);
+														setOpenPopoverId(null);
+													}}
+													className="text-xl max-xl:text-sm text-dark_green cursor-pointer flex items-center justify-start gap-2 hover:bg-green/20 transition-all duration-300 px-1.5 py-1 rounded-md"
+												>
+													<Trash className="w-4 h-4 max-xl:w-3 max-xl:h-3" />{" "}
+													Löschen
+												</button>
+											</PopoverContent>
+										</Popover>
+									</div>
+								</div>
+							))
+					)
 				)}
-				{notifications.length > 4 && (
+				{!shouldGroup && notifications.length > 4 && (
 					<button
 						onClick={() =>
 							setShowAllNotifications(!showAllNotifications)
@@ -1018,7 +1159,6 @@ export default function NotificationsChart({
 					</button>
 				)}
 			</div>
-			{/* <>{notifications.length}</> */}
 			{hasDeviceErrors && (
 				<div className="flex flex-col gap-2">
 					<button
@@ -1034,10 +1174,41 @@ export default function NotificationsChart({
 				isOpen={isErrorModalOpen}
 				onClose={() => {
 					setIsErrorModalOpen(false);
-					setSelectedMeterId(undefined); // Clear the filter when closing
+					setSelectedMeterId(undefined);
 				}}
 				parsedData={parsedData}
 				filteredMeterId={selectedMeterId}
+			/>
+
+			<NotificationDetailModal
+				notification={selectedNotification}
+				onClose={() => setSelectedNotification(null)}
+			/>
+
+			<NotificationGroupModal
+				group={selectedGroup}
+				onClose={() => setSelectedGroup(null)}
+				onOpenDetail={(item) => {
+					setSelectedNotification(item as any);
+				}}
+				onDelete={(item) => {
+					// Find the original index of this notification
+					const idx = notifications.findIndex(n => n.meterId === item.meterId && n.title === item.title);
+					if (idx !== -1) deleteNotification(idx);
+
+					// Also safely remove from the currently viewed group so it updates immediately
+					if (selectedGroup) {
+						const updatedGroup = {
+							...selectedGroup,
+							items: selectedGroup.items.filter(n => !(n.meterId === item.meterId && n.title === item.title))
+						};
+						if (updatedGroup.items.length === 0) {
+							setSelectedGroup(null);
+						} else {
+							setSelectedGroup(updatedGroup);
+						}
+					}
+				}}
 			/>
 		</div>
 	);

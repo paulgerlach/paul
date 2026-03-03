@@ -1,4 +1,5 @@
 import Image, { StaticImageData } from "next/image";
+import { notification, alert_triangle } from "@/static/icons";
 
 interface NotificationItemProps {
 	leftIcon: StaticImageData;
@@ -30,7 +31,7 @@ export default function NotificationItem({
 						sizes="100vw"
 						loading="lazy"
 						className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6"
-						src={leftIcon}
+						src={(leftIcon && typeof leftIcon !== "string") ? leftIcon : notification}
 						alt=""
 					/>
 				</span>
@@ -44,7 +45,7 @@ export default function NotificationItem({
 						sizes="100vw"
 						loading="lazy"
 						className="w-6 h-6 max-md:w-6 max-md:h-6 max-lg:w-6 max-lg:h-6"
-						src={rightIcon}
+						src={(rightIcon && typeof rightIcon !== "string") ? rightIcon : alert_triangle}
 						alt=""
 					/>
 				</span>

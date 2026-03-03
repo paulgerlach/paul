@@ -30,6 +30,7 @@ export interface HeatingBillPdfModel {
 
   // --- Page 2: Building-Level Calculation ---
   buildingCalc: {
+    energyCarrier: string;
     energyInvoices: Array<{
       label: string;
       date: string;
@@ -72,6 +73,7 @@ export interface HeatingBillPdfModel {
       tempDiffHigh: number;
       tempDiffLow: number;
       conversionFactor: number;
+      conversionOperation: "multiply" | "divide";
       energyKwh: number;
       energyKwhFormatted: string;
       energySharePercent: number;
@@ -117,10 +119,11 @@ export interface HeatingBillPdfModel {
       consumptionCostPercent: number;
       consumptionCostAmount: number;
       consumptionCostAmountFormatted: string;
-      consumptionMwh: number;
-      consumptionMwhFormatted: string;
-      consumptionCostRatePerMwh: number;
-      consumptionCostRatePerMwhFormatted: string;
+      consumptionValue: number;
+      consumptionValueFormatted: string;
+      consumptionCostRatePerUnit: number;
+      consumptionCostRatePerUnitFormatted: string;
+      consumptionUnit: string;
     };
   };
 
@@ -158,8 +161,9 @@ export interface HeatingBillPdfModel {
     heatingBaseCost: number;
     heatingBaseCostFormatted: string;
     heatingBaseCostCalc: string;
-    heatingConsumptionMwh: number;
-    heatingConsumptionMwhFormatted: string;
+    heatingConsumptionValue: number;
+    heatingConsumptionValueFormatted: string;
+    heatingConsumptionUnit: string;
     heatingConsumptionCost: number;
     heatingConsumptionCostFormatted: string;
     heatingConsumptionCalc: string;

@@ -60,25 +60,26 @@ const HINT_CODE_MAPPINGS: Record<string, {
 export function interpretHintCode(device: MeterReadingType): HintCodeNotification | null {
   const hintCode = device["Hint Code"];
   const hintDescription = device["Hint Code Description"];
-  
+
   // Skip if no hint code or if it's 0 or empty
   if (!hintCode || hintCode === "0" || hintCode === 0 || hintCode === "") {
     return null;
   }
-  
+
   const hintCodeStr = String(hintCode);
   const deviceType = device["Device Type"];
   const meterId = device.ID || device["Number Meter"];
-  
+
   // Check if we have a mapping for this hint code
   const mapping = HINT_CODE_MAPPINGS[hintCodeStr];
-  
+
   if (mapping) {
     const deviceTypeLabel = deviceType === "WWater" ? "Warmwasserzähler" :
-                           deviceType === "Water" ? "Kaltwasserzähler" :
-                           deviceType === "Heat" ? "Wärmezähler" :
-                           deviceType;
-    
+      deviceType === "Water" ? "Kaltwasserzähler" :
+        deviceType === "Heat" ? "Wärmezähler" :
+          deviceType === "Elec" ? "Stromzähler" :
+            deviceType;
+
     return {
       leftIcon: mapping.leftIcon,
       rightIcon: mapping.rightIcon,
@@ -90,7 +91,7 @@ export function interpretHintCode(device: MeterReadingType): HintCodeNotificatio
       severity: mapping.severity
     };
   }
-  
+
   // If hint code description exists but no mapping, create a generic notification
   if (hintDescription && hintDescription !== "") {
     return {
@@ -104,7 +105,7 @@ export function interpretHintCode(device: MeterReadingType): HintCodeNotificatio
       severity: "medium"
     };
   }
-  
+
   return null;
 }
 
@@ -115,14 +116,14 @@ export function getDevicesWithHintCodes(parsedData: {
   data: MeterReadingType[];
 }): HintCodeNotification[] {
   const notifications: HintCodeNotification[] = [];
-  
+
   for (const device of parsedData.data) {
     const notification = interpretHintCode(device);
     if (notification) {
       notifications.push(notification);
     }
   }
-  
+
   return notifications;
 }
 

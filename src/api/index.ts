@@ -52,6 +52,8 @@ export type MeterReadingType = {
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
   "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
   "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
+  "IV,0,0,0,W,Power"?: number | string; // Instantaneous power - OLD format
+  "IV,0,0,0,Wh,E accumulation of abs value only if negative contributions (Backward flow)"?: number | string; // Backward flow E
 
   // NEW Engelmann CSV format fields
   "Number Meter"?: string | number; // NEW format device ID
@@ -618,9 +620,10 @@ export async function getAdminContractsWithContractorsByLocalID(
 export async function getAdminContractsWithContractorsByLocalIDs(
   localIDs: string[],
   userID: string,
+  ignoreUserId: boolean = false
 ): Promise<Record<string, (ContractType & { contractors: ContractorType[] })[]>> {
   const validLocalIDs = Array.from(new Set(localIDs.filter(Boolean)));
-  if (validLocalIDs.length === 0 || !userID) {
+  if (validLocalIDs.length === 0 || (!ignoreUserId && !userID)) {
     return {};
   }
 
@@ -629,10 +632,12 @@ export async function getAdminContractsWithContractorsByLocalIDs(
     .from(contracts)
     .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
     .where(
-      and(
-        inArray(contracts.local_id, validLocalIDs),
-        eq(contracts.user_id, userID)
-      )
+      ignoreUserId
+        ? inArray(contracts.local_id, validLocalIDs)
+        : and(
+          inArray(contracts.local_id, validLocalIDs),
+          eq(contracts.user_id, userID)
+        )
     );
 
   const contractsByLocal: Record<string, Record<string, ContractType & { contractors: ContractorType[] }>> = {};
@@ -911,12 +916,32 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   // Get current user
   const user = await getAuthenticatedServerUser();
 
+  // Determine user permissions
+  const [userResult] = await database
+    .select({ permission: users.permission })
+    .from(users)
+    .where(eq(users.id, user.id));
+
+  const isSuperAdmin = userResult?.permission === "super_admin";
+
   // Get documents for the current user using direct database query
-  const userDocuments = await database
+  const query = database
     .select()
     .from(documents)
-    .where(eq(documents.user_id, user.id))
     .orderBy(documents.created_at);
+
+  if (isSuperAdmin) {
+    query.where(eq(documents.user_id, user.id));
+  } else {
+    query.where(
+      and(
+        eq(documents.user_id, user.id),
+        eq(documents.current_document, true)
+      )
+    );
+  }
+
+  const userDocuments = await query;
 
   if (!userDocuments || userDocuments.length === 0) {
     return [];

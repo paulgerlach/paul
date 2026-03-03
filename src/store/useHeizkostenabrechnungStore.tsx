@@ -27,6 +27,7 @@ export type HeizkostenabrechnungStoreType = {
     updatedItem: Partial<InvoiceDocumentType> & { document?: File[] }
   ) => void;
   removeDocumentGroup: (key: HeizkostenabrechnungCostType["type"]) => void;
+  removeInvoiceFromGroup: (itemID: string) => void;
   purposeOptions: string[];
   setActiveCostType: (key: HeizkostenabrechnungCostType["type"]) => void;
   objektID?: string;
@@ -151,6 +152,13 @@ export const useHeizkostenabrechnungStore =
         documentGroups: state.documentGroups.filter(
           (group) => group.type !== key
         ),
+      })),
+    removeInvoiceFromGroup: (itemID) =>
+      set((state) => ({
+        documentGroups: state.documentGroups.map((group) => ({
+          ...group,
+          data: group.data.filter((item) => String(item.id) !== String(itemID)),
+        })),
       })),
     updateAllocationKey: (key, allocationKey) =>
       set((state) => ({

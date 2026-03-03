@@ -7,7 +7,7 @@ import {
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import UmlageschlüsselHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/HeatObjektauswahlForm";
+import AdminUmlageschlüsselHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Umlageschlüssel/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_BETRIEBSKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function UmlageschlüsselEditPage({
@@ -37,9 +37,10 @@ export default async function UmlageschlüsselEditPage({
         subtitle="Bitte ergänzen Sie die Umlageschlüssel der Kostenkategorien. Mit dem Umlageschlüssel geben Sie als Vermieter vor, wie Sie die Kosten auf die verschiedenen Mietparteien im Haus verteilst."
       />
       <CreateDocContentWrapper>
-        <UmlageschlüsselHeatObjektauswahlForm
+        <AdminUmlageschlüsselHeatObjektauswahlForm
           objektId={doc.objekt_id ?? ""}
           docId={doc_id}
+          userId={user_id}
           initialDocumentGroups={userDocCostCategories}
           isEditMode
         />

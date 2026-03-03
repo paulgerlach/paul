@@ -408,6 +408,7 @@ export default function HeatingCosts({
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value.toLocaleString()}`
   );
+  const isHCA = csvText?.[0]?.["Device Type"] === "HCA";
 
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
@@ -517,7 +518,7 @@ export default function HeatingCosts({
               <Tooltip
                 formatter={(value: number) => {
                   const formattedValue = tickFormatter(value);
-                  return [`${formattedValue} Wh`, "Heizkosten"];
+                    return [`${formattedValue} ${isHCA ? "Einh." : "Wh"}`, "Heizkosten"];
                 }}
               />
               <Bar

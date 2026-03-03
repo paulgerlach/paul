@@ -159,8 +159,7 @@ export const countLocals = (locals: LocalType[]) => {
   );
 
   const otherLocals = locals.filter(
-    (local) =>
-      local.usage_type !== "commercial" && local.usage_type !== "parking"
+    (local) => local.usage_type === "residential"
   );
 
   return { commertialLocals, otherLocals };
@@ -182,7 +181,7 @@ export const buildLocalName = ({
   );
 
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
-  const heatingSpacePart = heating_area ? `, HF: ${heating_area}qm` : "";
+  const heatingSpacePart = heating_area ? `, HF: ${String(heating_area).replace(".", ",")}qm` : "";
 
   return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
 };

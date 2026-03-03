@@ -15,7 +15,7 @@ import { useMemo, useState, useEffect } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
 import { EmptyState } from "@/components/Basic/ui/States";
-import { aggregateDataByTimeRange } from "@/services/heatingCostServices";
+import { aggregateDataByTimeRange } from "@/services/heatingCostServices/heatingCostServices";
 import { monthNames } from "@/lib/constants/date";
 interface HeatingCostsProps {
   csvText?: MeterReadingType[];

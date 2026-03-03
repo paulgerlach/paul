@@ -15,10 +15,12 @@ export const aggregateDataByTimeRange = (
 
 
   // Determine date range for display
+
   const now = endDate ? new Date(endDate) : new Date();
-  const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-  const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
-  const monthsToShow = Math.max(2, Math.ceil(daysDiff / 30));
+  const monthsToShow = getMonthsToShow(startDate, endDate, now);
+  console.log('Start date', startDate)
+  console.log('End date', endDate)
+  console.log('Months To show', monthsToShow)
 
   // STEP 1: Get most recent reading per device
   const deviceLatestReading = new Map<string, { reading: MeterReadingType; date: Date }>();
@@ -163,7 +165,6 @@ export const aggregateDataByTimeRange = (
 };
 
 export const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
-  console.log('Reading ====>', reading)
   return hasValidStatus(reading.Status)
     && hasNoErrorFlags(reading["IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"])
     && hasValidEnergyReading(reading)
@@ -346,3 +347,9 @@ const parseHCADate = (dateStr: string | undefined): Date => {
   const [day, month, year] = dateStr.split(".").map(Number);
   return new Date(year, month - 1, day);
 };
+
+const getMonthsToShow = (startDate: Date, endDate: Date, now:Date) => {
+  const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+  const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
+  return Math.max(2, Math.ceil(daysDiff / 30));
+}

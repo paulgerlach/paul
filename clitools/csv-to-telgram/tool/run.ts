@@ -30,7 +30,6 @@ export default class CSVTelegramSupabaseUploader {
     this.key = getDecryptionKey();
   }
 
-
   async run() {
     let totalCount: number = 0;
     let succesCount: number = 0;
@@ -39,6 +38,7 @@ export default class CSVTelegramSupabaseUploader {
     const parser = await getCSVData(this.csvFilepath);
     let deviceIds: string[] = [];
     let errors: string[] = [];
+    let successIds: string[] = [];
 
     //prevents duplication
     let uploaded: Set<string> = new Set<string>();
@@ -55,23 +55,34 @@ export default class CSVTelegramSupabaseUploader {
         try {
           const info = guessDeviceId(telegram);
           deviceId = info.substring(4);
-          deviceIds.push(deviceId)
+          deviceIds.push(deviceId);
         } catch (_) { }
-
 
         totalCount += 1;
         let dbRecord: DatabaseRecord;
         try {
-          dbRecord = await parseTelegram(telegram, keyBuffer, this.verbose, meterIdMap, deviceId);
+          dbRecord = await parseTelegram(
+            telegram,
+            keyBuffer,
+            this.verbose,
+            meterIdMap,
+            deviceId,
+          );
           succesCount += 1;
           console.log("Gateway: ", row.gateway_eui);
-          console.log(dbRecord, '\n');
+          console.log(dbRecord, "\n");
+          if (deviceId) {
+            successIds.push(deviceId);
+          }
         } catch (e: any) {
           if (e?.name === "NO_AES_KEY") {
-            
-            errors.push(`${deviceId ?? "Unknown Device"}, ParserError [${e.name}]:: ${e.message}`);
+            errors.push(
+              `${deviceId ?? "Unknown Device"}, ParserError [${e.name}]:: ${e.message}`,
+            );
           } else if (e?.name !== "NO_AES_KEY") {
-            errors.push(`${deviceId ?? "Unknown Device"}, Other [${e.name}]: ${e.message}`);
+            errors.push(
+              `${deviceId ?? "Unknown Device"}, Other [${e.name}]: ${e.message}`,
+            );
           } else {
             errors.push(
               `${deviceId ?? "Unknown Device"}, [${e?.constructor?.name}] name=${e?.name} msg=${e?.message}`,
@@ -112,9 +123,10 @@ export default class CSVTelegramSupabaseUploader {
       console.error("CSV iteration error:", e);
     }
 
-    let folder = `./output/${Date.now()}/`
-    Bun.write(`${folder}DeviceIds.txt`, deviceIds.join("\n"))
-    Bun.write(`${folder}Errors.txt`, errors.join("\n"))
+    let folder = `./output/${Date.now()}/`;
+    Bun.write(`${folder}SuccessIds.txt`, successIds.join("\n"));
+    Bun.write(`${folder}DeviceIds.txt`, deviceIds.join("\n"));
+    Bun.write(`${folder}Errors.txt`, errors.join("\n"));
 
     console.log(
       `Total: ${totalCount}, Succeeded: ${succesCount}, Failed ${failedCount}`,

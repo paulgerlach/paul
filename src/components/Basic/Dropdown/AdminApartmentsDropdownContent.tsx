@@ -30,7 +30,18 @@ export default function AdminApartmentsDropdownContent({
 
   const filteredApartments = apartments?.filter((apartment) =>
     apartment.street.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).map((apartment) => ({
+    ...apartment,
+    locals: [...apartment.locals].sort((a, b) => {
+      const valA = `${a.floor || ""} ${a.house_location || ""}`.trim();
+      const valB = `${b.floor || ""} ${b.house_location || ""}`.trim();
+
+      return valA.localeCompare(valB, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
+    }),
+  }));
 
   const handleClick = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));

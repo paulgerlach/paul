@@ -2,8 +2,7 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import EditObjekteUnitForm from "@/components/Admin/Forms/Edit/EditObjekteUnitForm";
 import { ROUTE_OBJEKTE } from "@/routes/routes";
-import { getLocalById, getMetersByLocalId, getSignedUrlsForObject } from "@/api";
-import { mapMeterToFormValues } from "@/utils/meterUtils";
+import { getLocalById, getSignedUrlsForObject } from "@/api";
 
 export default async function EditLocalPage({
   params,
@@ -12,10 +11,7 @@ export default async function EditLocalPage({
 }) {
   const { id, local_id } = await params;
 
-  const [local, meters] = await Promise.all([
-    getLocalById(local_id),
-    getMetersByLocalId(local_id),
-  ]);
+  const local = await getLocalById(local_id);
 
   if (!local) {
     return <div>Objekt nicht gefunden</div>;
@@ -37,7 +33,6 @@ export default async function EditLocalPage({
             localID={local_id}
             uploadedDocuments={documentFilesUrls}
             initialValues={{
-              id: local_id,
               apartment_type: local.apartment_type
                 ? local.apartment_type
                 : null,
@@ -57,7 +52,6 @@ export default async function EditLocalPage({
               tags: Array.isArray(local.tags) ? (local.tags as string[]) : [],
               usage_type: local.usage_type,
               documents: [],
-              meters: meters.map(mapMeterToFormValues),
             }}
           />
         </div>

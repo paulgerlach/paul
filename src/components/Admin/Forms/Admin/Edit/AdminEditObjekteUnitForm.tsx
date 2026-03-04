@@ -220,9 +220,7 @@ export default function AdminEditObjekteUnitForm({
           try {
             await editLocal(localID, data);
 
-            if (data.meters && data.meters.length > 0) {
-              await createLocalMeters(data.meters, localID);
-            }
+            await createLocalMeters(data.meters, localID);
 
             if (data.documents && data.documents.length > 0) {
               await uploadDocuments.mutateAsync({

@@ -117,7 +117,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   control={control}
                   name={`meters.${index}.installation_date` as Path<T>}
                   label="Datum des Einbaus"
-                  placeholder="TT.MM.JJJJ"
+                  placeholder="dd.mm.yyyy"
                   valueAsString
                 />
                 <FormSelectField<T>

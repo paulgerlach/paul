@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/Basic/ui/Form";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { de } from "date-fns/locale";
 import { cn } from "@/utils";
 import { Control, FieldValues, Path } from "react-hook-form";
@@ -31,6 +31,8 @@ export type FormDateInputProps<T extends FieldValues = FieldValues> = {
   clearLabel?: string;
   onClear?: () => void;
   onSelect?: (date: Date | undefined) => void;
+  /** When true, store value as YYYY-MM-DD string instead of Date (for forms that need string format) */
+  valueAsString?: boolean;
 };
 
 export default function FormDateInput<T extends FieldValues = FieldValues>({
@@ -44,12 +46,32 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
   clearLabel = "Löschen",
   onClear,
   onSelect,
+  valueAsString = false,
 }: FormDateInputProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field }) => {
+        let displayDate: Date | undefined;
+        if (valueAsString && typeof field.value === "string" && field.value) {
+          try {
+            displayDate = parse(field.value, "yyyy-MM-dd", new Date());
+          } catch {
+            displayDate = undefined;
+          }
+        } else {
+          displayDate = field.value;
+        }
+        const handleChange = (date: Date | undefined) => {
+          if (valueAsString) {
+            field.onChange(date ? format(date, "yyyy-MM-dd") : null);
+          } else {
+            field.onChange(date);
+          }
+          onSelect?.(date);
+        };
+        return (
         <FormItem className={cn("flex flex-col", className)}>
           <FormLabel className="text-[#757575] text-sm">{label}</FormLabel>
           <Popover>
@@ -61,8 +83,8 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                     "w-full flex items-center justify-between text-left px-6 max-medium:px-3 rounded-md border max-xl:text-sm max-medium:text-xs h-14 border-black/20 shadow-xs font-normal gap-2"
                   }
                 >
-                  {field.value ? (
-                    format(field.value, "dd.MM.yyyy", { locale: de })
+                  {displayDate ? (
+                    format(displayDate, "dd.MM.yyyy", { locale: de })
                   ) : (
                     <span className="text-gray-400">{placeholder}</span>
                   )}
@@ -86,11 +108,8 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
               <div className="flex flex-col bg-white border border-black/20 rounded-md shadow-lg overflow-hidden">
                 <Calendar
                   mode="single"
-                  selected={field.value}
-                  onSelect={(date) => {
-                    field.onChange(date);
-                    onSelect?.(date);
-                  }}
+                  selected={displayDate}
+                  onSelect={handleChange}
                   disabled={disabled}
                   initialFocus
                 />
@@ -98,7 +117,7 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
                   <button
                     type="button"
                     onClick={() => {
-                      field.onChange(null);
+                      handleChange(undefined);
                       onClear?.();
                     }}
                     className="w-full py-3 text-sm font-medium text-dark_green hover:bg-gray-50 border-t border-black/10 transition-colors cursor-pointer"
@@ -111,7 +130,8 @@ export default function FormDateInput<T extends FieldValues = FieldValues>({
           </Popover>
           <FormMessage className="text-red-500 text-sm absolute -bottom-5 left-0" />
         </FormItem>
-      )}
+        );
+      }}
     />
   );
 }

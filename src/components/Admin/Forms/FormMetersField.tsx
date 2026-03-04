@@ -13,6 +13,7 @@ import {
 import { admin_plus } from "@/static/icons";
 import FormInputField from "./FormInputField";
 import FormSelectField from "./FormSelectField";
+import FormDateInput from "./FormDateInput";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 const HEIZKOSTENVERTEILER_RADIATOR_TYPE_OPTIONS = [
@@ -62,16 +63,17 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
 
         return (
           <div key={field.id} className="space-y-4">
-            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-4 items-end max-medium:grid-cols-1">
+            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-end max-medium:grid-cols-1">
               <FormInputField<T>
                 control={control}
-                className="w-fit"
+                className="min-w-0"
                 name={`meters.${index}.meter_number` as Path<T>}
                 label="Zähler Identifikationsnummer"
                 placeholder="Zählernummer"
               />
               <FormSelectField<T>
                 control={control}
+                className="min-w-0"
                 name={`meters.${index}.meter_type` as Path<T>}
                 label="Zählerart"
                 options={[
@@ -88,15 +90,10 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
               />
               <FormInputField<T>
                 control={control}
+                className="min-w-0"
                 name={`meters.${index}.meter_note` as Path<T>}
                 label="Gerätestandort"
                 placeholder="Gerätestandort"
-              />
-              <FormInputField<T>
-                control={control}
-                name={`meters.${index}.gateway_eui` as Path<T>}
-                label="Gateway EUI"
-                placeholder="z.B. 0123456789ABCDEF"
               />
               <button
                 type="button"
@@ -108,7 +105,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             </div>
 
             {isHeizkostenverteiler && (
-              <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3 border-l-2 border-dark_green/20 pl-4 max-medium:pl-4 ml-2 max-medium:ml-0">
+              <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3 border-l-2 border-dark_green/20 pl-4 max-medium:pl-4 ml-2 max-medium:ml-0 [&>*]:min-w-0">
                 <FormInputField<T>
                   control={control}
                   name={`meters.${index}.old_reading` as Path<T>}
@@ -116,12 +113,12 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   placeholder="Zählerstand"
                   replaceDotWithComma
                 />
-                <FormInputField<T>
+                <FormDateInput<T>
                   control={control}
                   name={`meters.${index}.installation_date` as Path<T>}
                   label="Datum des Einbaus"
                   placeholder="TT.MM.JJJJ"
-                  type="date"
+                  valueAsString
                 />
                 <FormSelectField<T>
                   control={control}
@@ -171,7 +168,6 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             meter_number: "",
             meter_note: "",
             meter_type: "",
-            gateway_eui: null,
             old_reading: null,
             installation_date: null,
             radiator_type: null,

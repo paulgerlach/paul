@@ -51,7 +51,6 @@ export async function createLocalMeters(
     );
 
     const heaterMeta = buildHeaterMetadata(meter);
-    const gatewayEui = meter.gateway_eui ?? null;
 
     if (existingMeter) {
       // UPDATE existing meter with new values
@@ -61,7 +60,6 @@ export async function createLocalMeters(
           meter_note: meter.meter_note ?? null,
           meter_type: meter.meter_type ?? null,
           heater_metadata: heaterMeta,
-          gateway_eui: gatewayEui ?? null,
         })
         .where(
           and(
@@ -76,7 +74,6 @@ export async function createLocalMeters(
         meter_note: meter.meter_note ?? null,
         meter_type: meter.meter_type ?? null,
         heater_metadata: heaterMeta,
-        gateway_eui: gatewayEui ?? null,
         local_id: localID,
       });
     }

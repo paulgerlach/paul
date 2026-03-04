@@ -177,7 +177,6 @@ export const local_meters = pgTable("local_meters", {
 	meter_note: text(),
 	meter_type: text(),
 	heater_metadata: jsonb(),
-	gateway_eui: text(),
 	local_id: uuid().defaultRandom(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [

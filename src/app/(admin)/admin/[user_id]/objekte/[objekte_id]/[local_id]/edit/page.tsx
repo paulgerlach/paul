@@ -65,7 +65,6 @@ export default async function AdminEditLocalPage({
                   meter_note: meter.meter_note ?? null,
                   meter_number: meter.meter_number ?? null,
                   meter_type: meter.meter_type ?? null,
-                  gateway_eui: meter.gateway_eui ?? null,
                   old_reading: (meta.old_reading as number | undefined) ?? null,
                   installation_date: (meta.installation_date as string | undefined) ?? null,
                   radiator_type: (meta.radiator_type as string | undefined) ?? null,

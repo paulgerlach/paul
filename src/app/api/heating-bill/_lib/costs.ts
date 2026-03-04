@@ -55,7 +55,9 @@ export type CostAggregation = {
 
   coldWaterInvoices: HeatingInvoiceType[];
   coldWaterTotal: number;
-  meteringDeviceRentalTotal: number;
+  heatingDeviceRentalTotal: number;  // Heizkostenverteiler, Wärmemengenzähler, Kältezähler
+  wwDeviceRentalTotal: number;       // Warmwasserzähler
+  coldWaterDeviceRentalTotal: number; // Kaltwasserzähler
 };
 
 /** Round to 2 decimals for currency */
@@ -118,7 +120,9 @@ export function aggregateInvoiceCosts(
 
   const coldWaterInvoices: HeatingInvoiceType[] = [];
   let coldWaterTotal = 0;
-  let meteringDeviceRentalTotal = 0;
+  let heatingDeviceRentalTotal = 0;
+  let wwDeviceRentalTotal = 0;
+  let coldWaterDeviceRentalTotal = 0;
 
   const costTypeMap = (ct: string | null | undefined): string =>
     (ct ?? "").toLowerCase().replace(/\s/g, "_");
@@ -130,8 +134,25 @@ export function aggregateInvoiceCosts(
     const label =
       inv.purpose || inv.document_name || `Rechnung ${inv.id?.slice(0, 8) ?? ""}`;
 
-    if (ct === "metering_device_rental" || ct === "metering_service_costs") {
-      meteringDeviceRentalTotal += amount;
+    if (ct === "metering_service_costs") {
+      heatingDeviceRentalTotal += amount;
+      continue;
+    }
+
+    if (ct === "metering_device_rental") {
+      const purpose = (inv.purpose ?? "").trim();
+      if (purpose === "Warmwasserzähler") {
+        wwDeviceRentalTotal += amount;
+      } else if (purpose === "Kaltwasserzähler") {
+        coldWaterDeviceRentalTotal += amount;
+        coldWaterInvoices.push(inv);
+        coldWaterTotal += amount;
+        distributionCostItems.push({ label, amount, amountFormatted: formatEuro(amount) });
+        distributionCostTotal += amount;
+      } else {
+        // Heizkostenverteiler, Wärmemengenzähler, Kältezähler, unspecified → Heat
+        heatingDeviceRentalTotal += amount;
+      }
       continue;
     }
 
@@ -217,6 +238,8 @@ export function aggregateInvoiceCosts(
     grandTotal,
     coldWaterInvoices,
     coldWaterTotal,
-    meteringDeviceRentalTotal: round2(meteringDeviceRentalTotal),
+    heatingDeviceRentalTotal: round2(heatingDeviceRentalTotal),
+    wwDeviceRentalTotal: round2(wwDeviceRentalTotal),
+    coldWaterDeviceRentalTotal: round2(coldWaterDeviceRentalTotal),
   };
 }

@@ -46,7 +46,7 @@ export async function parseTelegram(
     version: parsedMQTT.meter.version.toString(),
     access_number: parsedMQTT.meter.accessNo,
     status: parsedMQTT.meter.status,
-    parsed_data: "",
+    parsed_data: JSON.stringify(parsedMQTT),
     date_only: dt!,
     
     // frame_type: "", // not sure where to pull this from

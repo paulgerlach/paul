@@ -100,6 +100,13 @@ const localSchema = z.object({
         radiator_width: z.coerce.number().nullable().optional(),
         radiator_depth: z.coerce.number().nullable().optional(),
         installation_factor: z.string().nullable().optional(),
+        fernfuehler: z.string().nullable().optional(),
+        installation_location: z.string().nullable().optional(),
+        gateway_eui: z.string().nullable().optional(),
+        repeater_count: z.string().nullable().optional(),
+        notes: z.string().nullable().optional(),
+        manufacturer_old_device: z.string().nullable().optional(),
+        calibration_date: z.string().nullable().optional(),
       })
     )
     .nullable(),

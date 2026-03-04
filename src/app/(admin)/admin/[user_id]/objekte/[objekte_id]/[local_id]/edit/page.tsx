@@ -7,6 +7,7 @@ import {
   getSignedUrlsForObject,
 } from "@/api";
 import AdminEditObjekteUnitForm from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
+import { mapMeterToFormValues } from "@/utils/meterUtils";
 
 export default async function AdminEditLocalPage({
   params,
@@ -59,21 +60,7 @@ export default async function AdminEditLocalPage({
               tags: Array.isArray(local.tags) ? (local.tags as string[]) : [],
               usage_type: local.usage_type,
               documents: [],
-              meters: meters.map((meter) => {
-                const meta = (meter.heater_metadata ?? {}) as Record<string, unknown>;
-                return {
-                  meter_note: meter.meter_note ?? null,
-                  meter_number: meter.meter_number ?? null,
-                  meter_type: meter.meter_type ?? null,
-                  old_reading: (meta.old_reading as number | undefined) ?? null,
-                  installation_date: (meta.installation_date as string | undefined) ?? null,
-                  radiator_type: (meta.radiator_type as string | undefined) ?? null,
-                  radiator_length: (meta.radiator_length as number | undefined) ?? null,
-                  radiator_width: (meta.radiator_width as number | undefined) ?? null,
-                  radiator_depth: (meta.radiator_depth as number | undefined) ?? null,
-                  installation_factor: (meta.installation_factor as string | undefined) ?? null,
-                };
-              }),
+              meters: meters.map(mapMeterToFormValues),
             }}
           />
         </div>

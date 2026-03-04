@@ -30,6 +30,17 @@ const HEIZKOSTENVERTEILER_INSTALLATION_FACTOR_OPTIONS = [
   "stärker installierte bzw. gut gedämmte Ausführung",
 ];
 
+const FERNFUEHLER_OPTIONS = ["Ja", "Nein"];
+
+const REPEATER_COUNT_OPTIONS = [
+  "1x Repeater",
+  "2x Repeater",
+  "3x Repeater",
+];
+
+const TYPE_SECTION_CLASS =
+  "grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3 border-l-2 border-dark_green/20 pl-4 max-medium:pl-4 ml-2 max-medium:ml-0 [&>*]:min-w-0";
+
 type FormMetersProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
 };
@@ -58,8 +69,18 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
 
       {fields.map((field, index) => {
         const meter = Array.isArray(watchedMeters) ? watchedMeters[index] : undefined;
-        const isHeizkostenverteiler =
-          meter?.meter_type === "Heizkostenverteiler";
+        const meterType = meter?.meter_type;
+        const isHeizkostenverteiler = meterType === "Heizkostenverteiler";
+        const isGateway = meterType === "Gateway";
+        const isRepeater = meterType === "Repeater";
+        const isWaterMeter = [
+          "Warmwasserzähler",
+          "Kaltwasserzähler",
+          "Wärmemengenzähler",
+          "Kältezähler",
+          "Stromzähler",
+        ].includes(meterType ?? "");
+        const isRauchwarnmelder = meterType === "Rauchwarnmelder";
 
         return (
           <div key={field.id} className="space-y-4">
@@ -85,6 +106,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   "Rauchwarnmelder",
                   "Kältezähler",
                   "Gateway",
+                  "Repeater",
                 ]}
                 placeholder="Zählerart auswählen"
               />
@@ -105,7 +127,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             </div>
 
             {isHeizkostenverteiler && (
-              <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3 border-l-2 border-dark_green/20 pl-4 max-medium:pl-4 ml-2 max-medium:ml-0 [&>*]:min-w-0">
+              <div className={TYPE_SECTION_CLASS}>
                 <FormInputField<T>
                   control={control}
                   name={`meters.${index}.old_reading` as Path<T>}
@@ -119,6 +141,13 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   label="Datum des Einbaus"
                   placeholder="dd.mm.yyyy"
                   valueAsString
+                />
+                <FormSelectField<T>
+                  control={control}
+                  name={`meters.${index}.fernfuehler` as Path<T>}
+                  label="Fernfühler"
+                  placeholder="Ja/Nein"
+                  options={FERNFUEHLER_OPTIONS}
                 />
                 <FormSelectField<T>
                   control={control}
@@ -157,6 +186,116 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                 />
               </div>
             )}
+
+            {isGateway && (
+              <div className={TYPE_SECTION_CLASS}>
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.installation_location` as Path<T>}
+                  label="Installations Standort"
+                  placeholder="Standort"
+                />
+                <FormDateInput<T>
+                  control={control}
+                  name={`meters.${index}.installation_date` as Path<T>}
+                  label="Einbaudatum"
+                  placeholder="dd.mm.yyyy"
+                  valueAsString
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.gateway_eui` as Path<T>}
+                  label="Gateway EUI*"
+                  placeholder="EUI"
+                />
+                <FormSelectField<T>
+                  control={control}
+                  name={`meters.${index}.repeater_count` as Path<T>}
+                  label="Repeater installiert"
+                  placeholder="Auswählen"
+                  options={REPEATER_COUNT_OPTIONS}
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.notes` as Path<T>}
+                  label="Notizen"
+                  placeholder="Notizen"
+                />
+              </div>
+            )}
+
+            {isRepeater && (
+              <div className={TYPE_SECTION_CLASS}>
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.installation_location` as Path<T>}
+                  label="Installations Standort"
+                  placeholder="Standort"
+                />
+                <FormDateInput<T>
+                  control={control}
+                  name={`meters.${index}.installation_date` as Path<T>}
+                  label="Einbaudatum"
+                  placeholder="dd.mm.yyyy"
+                  valueAsString
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.notes` as Path<T>}
+                  label="Notizen"
+                  placeholder="Notizen"
+                />
+              </div>
+            )}
+
+            {isWaterMeter && (
+              <div className={TYPE_SECTION_CLASS}>
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.old_reading` as Path<T>}
+                  label="Alter Zählerstand"
+                  placeholder="Zählerstand"
+                  replaceDotWithComma
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.manufacturer_old_device` as Path<T>}
+                  label="Hersteller Altgerät"
+                  placeholder="Hersteller"
+                />
+                <FormDateInput<T>
+                  control={control}
+                  name={`meters.${index}.calibration_date` as Path<T>}
+                  label="Eichfrist"
+                  placeholder="dd.mm.yyyy"
+                  valueAsString
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.notes` as Path<T>}
+                  label="Notizen"
+                  placeholder="Notizen"
+                />
+              </div>
+            )}
+
+            {isRauchwarnmelder && (
+              <div className={TYPE_SECTION_CLASS}>
+                <FormDateInput<T>
+                  control={control}
+                  name={`meters.${index}.calibration_date` as Path<T>}
+                  label="Eichfrist"
+                  placeholder="dd.mm.yyyy"
+                  valueAsString
+                />
+                <FormInputField<T>
+                  control={control}
+                  name={`meters.${index}.notes` as Path<T>}
+                  label="Notizen"
+                  placeholder="Notizen"
+                />
+              </div>
+            )}
           </div>
         );
       })}
@@ -175,6 +314,13 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             radiator_width: null,
             radiator_depth: null,
             installation_factor: null,
+            fernfuehler: null,
+            installation_location: null,
+            gateway_eui: null,
+            repeater_count: null,
+            notes: null,
+            manufacturer_old_device: null,
+            calibration_date: null,
           } as FieldArray<T, ArrayPath<T>>)
         }
         className="flex items-center mb-7 [.available_&]:mx-3 w-fit justify-center gap-2 px-6 py-5 max-xl:py-2.5 max-xl:px-3 border border-dark_green rounded-md bg-white text-sm font-medium text-admin_dark_text"

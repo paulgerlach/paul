@@ -17,7 +17,7 @@ export default function MenuModal({ title, children, trigger }: MenuModalProps) 
 
       <DialogContent
         className="
-          w-[480px]
+          w-[620px]
           max-w-[90vw]
           p-6
           bg-white

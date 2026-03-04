@@ -2,12 +2,12 @@
 
 // --- 6. Support ---
 // TODO(form): TODO(form): Correct UI needed! + Submission + validation pending.
-export default function SupportForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function SupportForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Betreff</label>
-        <select title='betreff' className={`${inputStyle} appearance-none cursor-pointer`} defaultValue="">
+        <select title='betreff' className={`${bigInputStyle} appearance-none cursor-pointer`} defaultValue="">
             <option value="" disabled>Wählen Sie ein Thema</option>
             <option value="technical">Technisches Problem</option>
             <option value="billing">Abrechnung</option>
@@ -16,7 +16,7 @@ export default function SupportForm({ onClose, inputStyle, labelStyle }: { onClo
       </div>
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Nachricht</label>
-        <textarea rows={5} className={`${inputStyle} resize-none`} placeholder="Wie können wir Ihnen helfen?" />
+        <textarea rows={5} className={`${bigInputStyle} min-h-[80px] resize-y`} placeholder="Wie können wir Ihnen helfen?" />
       </div>
       <div className="flex justify-end pt-4">
         <button 

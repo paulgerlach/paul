@@ -19,6 +19,7 @@ export interface Role {
 interface TeamRolesFormProps {
   onClose: () => void;
   inputStyle: string;
+  bigInputStyle: string;
   labelStyle: string;
   roles?: Role[];
   initialMembers?: TeamMember[];
@@ -34,6 +35,7 @@ const defaultRoles: Role[] = [
 export default function TeamRolesForm({
   onClose,
   inputStyle,
+  bigInputStyle,
   labelStyle,
   roles = defaultRoles,
   initialMembers = [],
@@ -45,7 +47,7 @@ export default function TeamRolesForm({
   const [members, setMembers] = useState<TeamMember[]>(
     initialMembers.length > 0
       ? initialMembers
-      : [{ id: crypto.randomUUID(), email: '', role: '' }]
+      : Array.from({ length: 3 }, () => ({ id: crypto.randomUUID(), email: '', role: '' }))
   );
 
   const addMember = () => {
@@ -106,7 +108,7 @@ export default function TeamRolesForm({
           key={member.id}
           member={member}
           index={index}
-          inputStyle={inputStyle}
+          inputStyle={bigInputStyle}
           labelStyle={labelStyle}
           roles={roles}
           onUpdate={(field, value) => updateMember(member.id, field, value)}

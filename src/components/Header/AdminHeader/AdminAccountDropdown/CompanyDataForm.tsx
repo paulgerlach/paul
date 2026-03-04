@@ -8,7 +8,7 @@ import ModalFooter from './ModalFooter';
 // --- 2. Unternehmensdaten Form (Company Data) ---
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
 // TO DO: Create table for the company logos needed
-export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function CompanyDataForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   const { register, handleSubmit, watch, reset } = useForm();
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -138,7 +138,7 @@ useEffect(() => {
       <div className="flex gap-10 items-start">
         <div className="flex-grow space-y-1.5">
           <label className={labelStyle}>Firmenname *</label>
-          <input {...register("companyName")} type="text" className={inputStyle} />
+          <input {...register("companyName")} type="text" className={bigInputStyle} />
         </div>
 
         <div className="flex-shrink-0">
@@ -172,24 +172,24 @@ useEffect(() => {
 
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
-          <input {...register("street")} type="text" className={inputStyle} />
+          <input {...register("street")} type="text" className={bigInputStyle} />
         </div>
 
         <div className="flex gap-8 w-full">
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Postleitzahl</label>
-            <input {...register("zip")} type="text" className={inputStyle} />
+            <input {...register("zip")} type="text" className={bigInputStyle} />
           </div>
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Stadt</label>
-            <input {...register("city")} type="text" className={inputStyle} />
+            <input {...register("city")} type="text" className={bigInputStyle} />
           </div>
         </div>
       </div>
 
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Umsatzsteuer-ID</label>
-        <input {...register("vatId")} type="text" className={inputStyle} />
+        <input {...register("vatId")} type="text" className={bigInputStyle} />
       </div>
 
       <ModalFooter onClose={onClose} />

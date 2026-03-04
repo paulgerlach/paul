@@ -21,6 +21,7 @@ import SupportForm from "./SupportForm";
 // --- Shared Styles & Components ---
 const inputStyle = "w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors";
 const labelStyle = "text-xs font-medium text-gray-500";
+const bigInputStyle = `${inputStyle} h-14 py-3 px-4 text-base`;
 
 export default function AdminAccountDropdown() {
   const router = useRouter();
@@ -36,27 +37,27 @@ export default function AdminAccountDropdown() {
 }[] = [
   {
     title: "Mein Profil",
-    render: (onClose) => <ProfileEditForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <ProfileEditForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Unternehmensdaten",
-    render: (onClose) => <CompanyDataForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <CompanyDataForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Team & Rollen",
-    render: (onClose) => <TeamRolesForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <TeamRolesForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Sicherheit",
-    render: (onClose) => <SecurityForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <SecurityForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Integrationen",
-    render: (onClose) => <IntegrationsForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <IntegrationsForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Support",
-    render: (onClose) => <SupportForm onClose={onClose} inputStyle={inputStyle} labelStyle={labelStyle} />,
+    render: (onClose) => <SupportForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
 ];
 

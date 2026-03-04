@@ -6,7 +6,7 @@ import ModalFooter from "./ModalFooter";
 
 // --- 4. Sicherheit (Security) ---
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
-export default function SecurityForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function SecurityForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data: any) => {
@@ -24,14 +24,14 @@ export default function SecurityForm({ onClose, inputStyle, labelStyle }: { onCl
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mt-2">
-      <div className="w-full">
+      <div className="w-full space-y-1.5">
         <label className={labelStyle}>Email Adresse *</label>
-        <input {...register("email")} type="email" className={inputStyle} />
+        <input {...register("email")} type="email" className={bigInputStyle} />
       </div>
       
-      <div className="w-full space-y-2">
+      <div className="w-full space-y-1.5">
         <label className={labelStyle}>Passwort</label>
-        <input {...register("password")} type="password" className={inputStyle} />
+        <input {...register("password")} type="password" className={bigInputStyle} />
         <button 
           type="button" 
           className="text-xs text-[#6366F1] hover:underline block pt-1"

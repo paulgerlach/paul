@@ -2,14 +2,14 @@
 
 import ModalFooter from "./AdminAccountDropdown/ModalFooter";
 
-export default function IntegrationsForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function IntegrationsForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>API Schlüssel</label>
         <div className="flex gap-2">
-            <input title="API Schlüssel" type="text" value="sk_live_51J..." readOnly className={`${inputStyle} bg-gray-50 text-gray-500`} />
-            <button className="px-3 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50">Kopieren</button>
+            <input title="API Schlüssel" type="text" value="sk_live_51J..." readOnly className={`${bigInputStyle} bg-gray-50 text-gray-500`} />
+            <button className="h-14 px-4 text-sm border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">Kopieren</button>
         </div>
       </div>
       <div className="w-full space-y-3">

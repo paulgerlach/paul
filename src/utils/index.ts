@@ -171,7 +171,6 @@ export const buildLocalName = ({
   house_location,
   residential_area,
   living_space,
-  heating_area,
 }: Partial<LocalType>) => {
   if (usage_type === "hallway" || usage_type === "staircase") {
     return "Treppenhaus"; 
@@ -186,9 +185,8 @@ export const buildLocalName = ({
   );
 
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
-  const heatingSpacePart = heating_area ? `, HF: ${String(heating_area).replace(".", ",")}qm` : "";
 
-  return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
+  return mainParts.join(" ") + livingSpacePart;
 };
 
 export const FUEL_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;

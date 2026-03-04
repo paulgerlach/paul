@@ -15,41 +15,82 @@ export const aggregateDataByTimeRange = (
   startDate?: Date | null,
   endDate?: Date | null
 ): { label: string; value: number }[] => {
-  if (!readings || readings.length === 0 || !startDate || !endDate) return [];
+  if (!readings?.length || !startDate || !endDate) return [];
 
-  // Filter out invalid readings first
-  let validReadings = readings.filter((reading: MeterReadingType) => isValidReading(reading, startDate, endDate));
+  const validReadings = readings.filter((reading) =>
+    isValidReading(reading, startDate, endDate)
+  );
   if (validReadings.length === 0) return [];
 
-  // Determine date range for display
-  const now = endDate ? new Date(endDate) : new Date();
-  const monthsToShow = getMonthsToShow(startDate, endDate, now);
+  const deviceType = validReadings[0]?.["Device Type"]; 
+  const isHCA = deviceType === "HCA";
+  const readingsByDevice = new Map<string, MeterReadingType[]>();
+  validReadings.forEach((reading) => {
+    const deviceId = reading.ID || reading["Number Meter"]?.toString();
+    if (!deviceId) return;
+    if (!readingsByDevice.has(deviceId)) {
+      readingsByDevice.set(deviceId, []);
+    }
+    readingsByDevice.get(deviceId)!.push(reading);
+  });
 
-  const deviceReadings = getLatestDeviceReadingsMonthly(validReadings);
+  const monthlyTotals = new Map<number, number>();
 
-  let monthlyConsumption = new Map<number, number>();
-  const referenceDate = deviceReadings.size > 0
-    ? Math.max(...Array.from(deviceReadings.values()).map(r => r.date.getTime()))
-    : now.getTime();
-  
-  deviceReadings.forEach(({ reading, date: readingDate, previousReading, previousDate }) => {
-    const deviceType = validReadings[0]?.["Device Type"];
-    const isHCA = deviceType === "HCA";
+  readingsByDevice.forEach((deviceReadings, deviceId) => {
+    // Attach parsed dates for sorting
+    const readingsWithDate = deviceReadings.map((reading) => {
+      const dateString = getDateString(
+        reading["IV,0,0,0,,Date/Time"],
+        reading["Actual Date"],
+        reading["Raw Date"]
+      );
+      const readingDate = getReadingDate(dateString);
+      return { ...reading, readingDate };
+    });
+
+    // Sort chronologically
+    readingsWithDate.sort((a, b) => a.readingDate.getTime() - b.readingDate.getTime());
+
 
     if (isHCA) {
-      // isDateRangeLongerThanAMonth(startDate, endDate) ?
-      monthlyConsumption = getHCAMonthlyConsumption(reading, readingDate, previousReading, previousDate, { startDate, endDate }, monthsToShow);
-        // dailyConsumption = getHCADailyConsumption(reading, readingDate, { startDate, endDate });
+      // HCA: compute daily consumption from consecutive readings
+      let previousReading: (MeterReadingType & { readingDate: Date }) | null = null;
+
+      readingsWithDate.forEach((currentReading) => {
+        if (previousReading) {
+          const dailyDelta = getHCAMonthlyConsumption(currentReading, previousReading);
+          if (dailyDelta != null && dailyDelta > 0) {
+            const monthKey = currentReading.readingDate.getMonth();
+            monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + dailyDelta);
+          }
+        } 
+        previousReading = currentReading;
+      });
     } else {
-      monthlyConsumption = getStandardMeterConsumption(reading, readingDate, startDate, endDate)
+      // Standard meters: getStandardMeterConsumption returns a Map<month, consumption> for this reading
+      readingsWithDate.forEach((reading) => {
+        const monthlyMap = getStandardMeterConsumption(reading, reading.readingDate, startDate, endDate);
+        if (monthlyMap instanceof Map) {
+          monthlyMap.forEach((value, monthKey) => {
+            if (value != null && value > 0) {
+              monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + value);
+            }
+          });
+        }
+      });
     }
   });
 
+  const deviceLatestReadings = getLatestDeviceReadingsMonthly(validReadings);
+  const referenceDate =
+    deviceLatestReadings.size > 0
+      ? Math.max(...Array.from(deviceLatestReadings.values()).map((r) => r.date.getTime()))
+      : endDate.getTime();
 
-  return getDisplayMapping(monthlyConsumption, referenceDate, monthsToShow) 
+  const monthsToShow = getMonthsToShow(startDate, endDate, isHCA ? endDate : new Date(referenceDate));
+  return getDisplayMapping(monthlyTotals, referenceDate, monthsToShow);
 };
 
-// Helper to parse German number format
 export const parseGermanNumber = (value: string | number | undefined): number | null => {
   if (value === undefined || value === null || value === "") return null;
   if (typeof value === "number") return value;
@@ -62,13 +103,11 @@ export const parseGermanNumber = (value: string | number | undefined): number | 
 
 const getDisplayMapping = (monthlyConsumption: Map<number, number>, referenceDate: number, monthsToShow: number) => {
 
-  // Convert month offsets to actual labels
   const result: { label: string; value: number }[] = [];
 
-  // Get the most recent reading date to use as reference for month labels
   const refDate = new Date(referenceDate);
 
-  for (let offset = 0; offset < monthsToShow && offset < 4; offset++) {
+  for (let offset = 0; offset < monthsToShow; offset++) {
     const consumption = monthlyConsumption.get(offset) || 0;
     if (consumption > 0 || offset < 2) {
       const monthDate = new Date(refDate.getFullYear(), refDate.getMonth() - offset, 1);
@@ -234,29 +273,6 @@ const getLatestDeviceReadingsMonthly = (
 
 
 //Not Referenced 
-const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
-  if (!readings || readings.length === 0) return null;
-
-  // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
-  const oldFormatDate = readings[0]["IV,0,0,0,,Date/Time"];
-  const newActualDate = readings[0]["Actual Date"];
-  const newRawDate = readings[0]["Raw Date"];
-
-  let dateString: string | null = null;
-
-  if (oldFormatDate && typeof oldFormatDate === "string") {
-    dateString = oldFormatDate.split(" ")[0];
-  } else if (newActualDate && typeof newActualDate === "string") {
-    dateString = newActualDate.split(" ")[0];
-  } else if (newRawDate && typeof newRawDate === "string") {
-    // Convert "29-10-2025" to "29.10.2025"
-    dateString = newRawDate.replace(/-/g, ".");
-  }
-
-  if (!dateString) return null;
-  const [day, month, year] = dateString.split(".").map(Number);
-  return new Date(year, month - 1, day);
-};
 
 // Helper function to get unique dates from readings
 const getUniqueDatesFromReadings = (readings: MeterReadingType[]): Date[] => {
@@ -316,4 +332,27 @@ const getMonthlyEnergyDataWithDates = (
   }
 
   return monthlyData;
+};
+const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
+  if (!readings || readings.length === 0) return null;
+
+  // Support both OLD format (IV,0,0,0,,Date/Time) and NEW format (Actual Date / Raw Date)
+  const oldFormatDate = readings[0]["IV,0,0,0,,Date/Time"];
+  const newActualDate = readings[0]["Actual Date"];
+  const newRawDate = readings[0]["Raw Date"];
+
+  let dateString: string | null = null;
+
+  if (oldFormatDate && typeof oldFormatDate === "string") {
+    dateString = oldFormatDate.split(" ")[0];
+  } else if (newActualDate && typeof newActualDate === "string") {
+    dateString = newActualDate.split(" ")[0];
+  } else if (newRawDate && typeof newRawDate === "string") {
+    // Convert "29-10-2025" to "29.10.2025"
+    dateString = newRawDate.replace(/-/g, ".");
+  }
+
+  if (!dateString) return null;
+  const [day, month, year] = dateString.split(".").map(Number);
+  return new Date(year, month - 1, day);
 };

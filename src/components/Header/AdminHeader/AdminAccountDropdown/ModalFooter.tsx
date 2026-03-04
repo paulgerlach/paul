@@ -1,6 +1,6 @@
 'use client';
 
-export default function ModalFooter({ onClose, loading, onSave, isValid=true }: { onClose: () => void, loading?: boolean, onSave?: () => void, isValid?:boolean  }) {
+export default function ModalFooter({ onClose, loading, isValid=true }: { onClose: () => void, loading?: boolean, isValid?:boolean  }) {
   return (
     <div className="flex justify-between items-center pt-6 mt-2">
       <button
@@ -11,16 +11,13 @@ export default function ModalFooter({ onClose, loading, onSave, isValid=true }: 
         Abbrechen
       </button>
 
-      {onSave && isValid &&
       <button
-        type="button"
-        onClick={onSave}
-        disabled={loading}
+        type="submit"
+        disabled={loading || !isValid}
         className="px-6 py-2.5 text-sm font-medium text-black bg-[#7AD085] rounded-md hover:bg-[#6bc176] shadow-sm transition-colors disabled:opacity-50"
       >
         {loading ? "Lädt..." : "Speichern"}
       </button>
-      }
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default async function GesamtkostenEditPage({
         <GesamtkostenHeatObjektauswahlForm
           userDocCostCategories={userDocCostCategories}
           relatedInvoices={relatedToDocInvoices}
-          objektId={doc.objekt_id ?? ""}
+          objektId={doc?.objekt_id ?? ""}
           docId={doc_id ?? ""}
           pathSlug={path_slug ?? ""}
         />

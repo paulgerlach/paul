@@ -24,11 +24,11 @@ export default async function UmlageschlüsselEditPage({
     user_id
   );
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId
+    ? await getAdminContractsByLocalID(localId, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 

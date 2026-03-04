@@ -1,6 +1,7 @@
 import {
   getAdminContractsWithContractorsByLocalIDs,
   getRelatedLocalsByObjektId,
+  getDocumentsByHeatingBillDocId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
@@ -9,6 +10,10 @@ import SearchControls from "@/components/Admin/SearchControls";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { buildLocalName } from "@/utils";
 import type { UnitType } from "@/types";
+import { supabaseServer } from "@/utils/supabase/server";
+import database from "@/db";
+import { users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
   "residential",
@@ -24,6 +29,18 @@ export default async function ResultLocalPDF({
 }) {
   const { objekt_id, doc_id, user_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
+
+  const supabase = await supabaseServer();
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+  let isSuperAdmin = false;
+  if (currentUser) {
+    const [userData] = await database
+      .select({ permission: users.permission })
+      .from(users)
+      .where(eq(users.id, currentUser.id));
+    isSuperAdmin = userData?.permission === "super_admin";
+  }
 
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
@@ -47,8 +64,56 @@ export default async function ResultLocalPDF({
   });
   const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
     locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
-    user_id
+    user_id,
+    true
   );
+
+  // Fetch tenant documents linked directly to this heating bill doc
+  const documentsByLocalId = await getDocumentsByHeatingBillDocId(doc_id);
+
+  // Build a contract_id → tenant name map from the already-fetched contracts
+  const contractIdToTenantName: Record<string, string> = {};
+  for (const localContracts of Object.values(contractsByLocalId)) {
+    for (const contract of localContracts) {
+      if (contract.id) {
+        const names = contract.contractors
+          ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
+          .filter(Boolean)
+          .join(", ");
+
+        contractIdToTenantName[contract.id] = names || "Unbekannter Mieter";
+      }
+    }
+  }
+
+  // Resolve tenant names for each document
+  const tenantDocsByLocalId: Record<
+    string,
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string }[]
+  > = {};
+  for (const [localId, docs] of Object.entries(documentsByLocalId)) {
+    const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
+
+    tenantDocsByLocalId[localId] = validDocsForLocal.map((doc) => {
+      // Matches `_contractId.pdf` or `_contractId_v12345.pdf`
+      const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
+      const contractId = contractIdMatch?.[1] ?? "";
+      const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
+
+      let tenantName = "";
+      if (isVacancy) {
+        tenantName = "Leerstand";
+      } else if (contractId === "default") {
+        // Fallback for single PDFs without explicit contract segments
+        tenantName = "Unbekannter Mieter";
+      } else {
+        tenantName = contractIdToTenantName[contractId] ?? "Unbekannter Mieter";
+      }
+
+      return { ...doc, tenantName, contractId };
+    });
+  }
+
   const localsWithStatus = locals.map((local) => {
     const localId = local.id ?? "";
     const contracts = contractsByLocalId[localId] ?? [];
@@ -72,28 +137,30 @@ export default async function ResultLocalPDF({
           currentResults={locals.length}
         />
         <div className="overflow-y-auto space-y-4">
-            {locals.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center">
-                <p className="text-dark_green/50 text-lg">
-                  Keine Ergebnisse gefunden
-                </p>
-                <p className="text-dark_green/30 text-sm mt-2">
-                  Versuchen Sie einen anderen Suchbegriff
-                </p>
-              </div>
-            ) : (
-              localsWithStatus.map(({ local, status }) => (
-                <AdminObjekteLocalItemHeatingBillDocResult
-                  objektID={objekt_id}
-                  key={local.id}
-                  userID={user_id}
-                  item={local}
-                  docType="objektauswahl"
-                  docID={doc_id}
-                  status={status}
-                />
-              ))
-            )}
+          {locals.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center">
+              <p className="text-dark_green/50 text-lg">
+                Keine Ergebnisse gefunden
+              </p>
+              <p className="text-dark_green/30 text-sm mt-2">
+                Versuchen Sie einen anderen Suchbegriff
+              </p>
+            </div>
+          ) : (
+            localsWithStatus.map(({ local, status }) => (
+              <AdminObjekteLocalItemHeatingBillDocResult
+                objektID={objekt_id}
+                key={local.id}
+                userID={user_id}
+                item={local}
+                docType="objektauswahl"
+                docID={doc_id}
+                status={status}
+                tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
+                isSuperAdmin={isSuperAdmin}
+              />
+            ))
+          )}
         </div>
       </ContentWrapper>
     </div>

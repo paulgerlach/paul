@@ -28,14 +28,17 @@ export default function AdminGesamtkostenHeatObjektauswahlForm({
   const isEditMode = !!relatedInvoices;
 
   useEffect(() => {
-    const groups = userDocCostCategories.map((doc) => ({
-      ...doc,
-      data: isEditMode
-        ? relatedInvoices.filter((invoice) => invoice.cost_type === doc.type)
-        : [],
-    }));
-    setDocumentGroups(groups);
-  }, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode]);
+    // Only initialize if the documentGroups are currently empty
+    if (documentGroups.length === 0) {
+      const groups = userDocCostCategories.map((doc) => ({
+        ...doc,
+        data: isEditMode
+          ? relatedInvoices.filter((invoice) => invoice.cost_type === doc.type)
+          : [],
+      }));
+      setDocumentGroups(groups);
+    }
+  }, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode, documentGroups.length]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =

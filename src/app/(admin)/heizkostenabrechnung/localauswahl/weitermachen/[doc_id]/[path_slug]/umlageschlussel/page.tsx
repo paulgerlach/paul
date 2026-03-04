@@ -23,10 +23,9 @@ export default async function UmlageschlüsselEditPage({
     "heizkostenabrechnung"
   );
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getContractsByLocalID(
-    doc.local_id ? doc.local_id : ""
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId ? await getContractsByLocalID(localId) : [];
 
   const localWithContacts = { ...localData, contracts };
 
@@ -40,8 +39,8 @@ export default async function UmlageschlüsselEditPage({
       />
       <CreateDocContentWrapper>
         <UmlageschlüsselLocalForm
-          objektId={doc.objekt_id ?? ""}
-          localId={doc.local_id ?? ""}
+          objektId={doc?.objekt_id ?? ""}
+          localId={doc?.local_id ?? ""}
           docId={doc_id}
           pathSlug={path_slug}
           initialDocumentGroups={userDocCostCategories}

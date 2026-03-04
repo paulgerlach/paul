@@ -163,6 +163,7 @@ type ApartmentEntry = {
     tenants: Array<{
         contractId: string;
         contractorsNames: string;
+        documentId?: string;
         presignedUrl?: string;
     }>;
 };
@@ -243,6 +244,23 @@ async function processBatchInBackground(
     let generated = 0;
     let failed = 0;
 
+    // Archive old documents from prior batch runs for this doc
+    try {
+        const { error: cleanupError } = await supabase
+            .from("documents")
+            .update({ current_document: false })
+            .eq("related_id", docId)
+            .eq("related_type", "heating_bill")
+            .eq("current_document", true);
+        if (cleanupError) {
+            console.warn("[HeatingBillBatch] Archiving old documents failed (non-fatal):", cleanupError);
+        }
+    } catch (error_) {
+        console.warn("[HeatingBillBatch] Archiving error (non-fatal):", error_);
+    }
+
+    const batchTimestamp = Date.now();
+
     for (let i = 0; i < locals.length; i += UPLOAD_BATCH_SIZE) {
         const batch = locals.slice(i, i + UPLOAD_BATCH_SIZE);
         const results = await Promise.allSettled(
@@ -279,11 +297,38 @@ async function processBatchInBackground(
                     }
                     const model = { ...computedModel, logoSrc };
                     const buffer = await renderPdf(model);
-                    const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default.pdf`;
+                    const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_default_v${batchTimestamp}.pdf`;
                     await uploadPdf(supabase, storagePath, buffer);
+
+                    // Insert document record linked to parent heating bill doc
+                    let documentId: string | undefined;
+                    try {
+                        const { data: docRecord, error: insertError } = await supabase
+                            .from("documents")
+                            .insert({
+                                document_name: `Heizkostenabrechnung_${docId}_default.pdf`,
+                                document_url: storagePath,
+                                related_id: docId,
+                                related_type: "heating_bill",
+                                user_id: userId,
+                                local_id: localId,
+                                current_document: true,
+                            })
+                            .select("id")
+                            .single();
+                        if (insertError) {
+                            console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, insertError });
+                        } else {
+                            documentId = docRecord?.id;
+                        }
+                    } catch (error_) {
+                        console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, error_ });
+                    }
+
                     tenantEntries.push({
                         contractId: "default",
                         contractorsNames: model.cover.contractorsNames,
+                        documentId,
                     });
                     generated++;
                 } else {
@@ -312,11 +357,38 @@ async function processBatchInBackground(
                         }
                         const model = { ...computedModel, logoSrc };
                         const buffer = await renderPdf(model);
-                        const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}.pdf`;
+                        const storagePath = `${userId}/${objektId}/${localId}/heating-bill_${docId}_${seg.contractId}_v${batchTimestamp}.pdf`;
                         await uploadPdf(supabase, storagePath, buffer);
+
+                        // Insert document record linked to parent heating bill doc
+                        let documentId: string | undefined;
+                        try {
+                            const { data: docRecord, error: insertError } = await supabase
+                                .from("documents")
+                                .insert({
+                                    document_name: `Heizkostenabrechnung_${docId}_${seg.contractId}.pdf`,
+                                    document_url: storagePath,
+                                    related_id: docId,
+                                    related_type: "heating_bill",
+                                    user_id: userId,
+                                    local_id: localId,
+                                    current_document: true,
+                                })
+                                .select("id")
+                                .single();
+                            if (insertError) {
+                                console.warn("[HeatingBillBatch] Documents insert error (non-fatal):", { localId, contractId: seg.contractId, insertError });
+                            } else {
+                                documentId = docRecord?.id;
+                            }
+                        } catch (error_) {
+                            console.warn("[HeatingBillBatch] Documents insert failed (non-fatal):", { localId, contractId: seg.contractId, error_ });
+                        }
+
                         tenantEntries.push({
                             contractId: seg.contractId,
                             contractorsNames: seg.contractorsNames,
+                            documentId,
                         });
                         generated++;
                     }
@@ -439,7 +511,7 @@ async function processBatchInBackground(
         const batch = allTenantPdfs.slice(i, i + UPLOAD_BATCH_SIZE);
         const signedResults = await Promise.allSettled(
             batch.map(async ({ apt, tenant }) => {
-                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}_${tenant.contractId}.pdf`;
+                const storagePath = `${userId}/${objektId}/${apt.localId}/heating-bill_${docId}_${tenant.contractId}_v${batchTimestamp}.pdf`;
                 const signOnce = async () =>
                     supabase.storage
                         .from("documents")

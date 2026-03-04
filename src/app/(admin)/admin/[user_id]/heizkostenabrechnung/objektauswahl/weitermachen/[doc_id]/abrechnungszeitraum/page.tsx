@@ -1,12 +1,12 @@
 import {
-  getHeatingBillDocumentByID,
+  getAdminHeatingBillDocumentByID,
   getObjectById,
   getRelatedLocalsWithContractsByObjektId,
 } from "@/api";
 import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import CreateDocContentWrapper from "@/components/Admin/ContentWrapper/CreateDocContentWrapper";
 import HeizkostenabrechnungBuildingReceipt from "@/components/Admin/Docs/Receipt/Heizkostenabrechnung/HeizkostenabrechnungBuildingReceipt";
-import AbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/HeatObjektauswahlForm";
+import AdminAbrechnungszeitraumHeatObjektauswahlForm from "@/components/Admin/Forms/DocPreparing/Abrechnungszeitraum/Admin/AdminHeatObjektauswahlForm";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 
 export default async function AbrechnungszeitraumContinuePage({
@@ -16,12 +16,13 @@ export default async function AbrechnungszeitraumContinuePage({
 }) {
   const { doc_id, user_id } = await params;
 
-  const doc = await getHeatingBillDocumentByID(doc_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
 
-  const objekt = await getObjectById(doc.objekt_id ?? "");
-  const locals = await getRelatedLocalsWithContractsByObjektId(
-    doc.objekt_id ?? ""
-  );
+  const objektId = doc?.objekt_id ?? "";
+  const objekt = objektId ? await getObjectById(objektId) : ({} as any);
+  const locals = objektId
+    ? await getRelatedLocalsWithContractsByObjektId(objektId)
+    : [];
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
@@ -32,8 +33,9 @@ export default async function AbrechnungszeitraumContinuePage({
         subtitle="Handelt es sich hierbei um einen Auzug oder Einzug? Bitte geben Sie den gewünschten Abrechnungszeitraum ein."
       />
       <CreateDocContentWrapper>
-        <AbrechnungszeitraumHeatObjektauswahlForm
-          id={doc.objekt_id ?? ""}
+        <AdminAbrechnungszeitraumHeatObjektauswahlForm
+          objekteID={doc.objekt_id ?? ""}
+          userID={user_id}
           docValues={doc}
         />
         <HeizkostenabrechnungBuildingReceipt

@@ -20,6 +20,7 @@ export default async function GesamtkostenEditPage({
   const { doc_id, user_id, path_slug } = await params;
 
   const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
+  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
     "heizkostenabrechnung",
     user_id
@@ -27,11 +28,11 @@ export default async function GesamtkostenEditPage({
 
   const relatedToDocInvoices = await getAdminInvoicesByHeatingBillDocumentID(doc_id, user_id);
 
-  const localData = await getLocalById(doc.local_id ? doc.local_id : "");
-  const contracts = await getAdminContractsByLocalID(
-    doc.local_id ? doc.local_id : "",
-    user_id
-  );
+  const localId = doc?.local_id ?? "";
+  const localData = localId ? await getLocalById(localId) : ({} as any);
+  const contracts = localId
+    ? await getAdminContractsByLocalID(localId, user_id)
+    : [];
 
   const localWithContacts = { ...localData, contracts };
 
@@ -60,6 +61,6 @@ export default async function GesamtkostenEditPage({
           title={buildLocalName(localData)}
         />
       </CreateDocContentWrapper>
-    </div>
+    </div >
   );
 }

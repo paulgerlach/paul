@@ -114,8 +114,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 			invoice_date: rest.invoice_date
 				? format(rest.invoice_date, "yyyy-MM-dd")
 				: null,
-			total_amount:
-				rest.total_amount != null ? String(rest.total_amount) : null,
+			total_amount: rest.total_amount != null ? String(rest.total_amount) : null,
 			service_period: rest.service_period,
 			for_all_tenants: rest.for_all_tenants,
 			purpose: rest.purpose,
@@ -130,7 +129,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 			return;
 		}
 
-		const res = await adminCreateHeatingInvoiceDocument(
+		const res = await adminCreateInvoiceDocument(
 			{
 				...formattedPayload,
 				invoice_date: rest.invoice_date,
@@ -139,7 +138,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 			objektID,
 			String(user_id),
 			operatingDocID,
-			activeCostType,
+			activeCostType
 		);
 
 		updateDocumentGroup(activeCostType, res);
@@ -194,18 +193,16 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 							<button
 								type="button"
 								onClick={() => methods.setValue("service_period", false)}
-								className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${
-									servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
-								} transition-all duration-300`}
+								className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === false ? "bg-white" : "bg-[#EAEAEA]"
+									} transition-all duration-300`}
 							>
 								Nein
 							</button>
 							<button
 								type="button"
 								onClick={() => methods.setValue("service_period", true)}
-								className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${
-									servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
-								} transition-all duration-300`}
+								className={`text-admin_dark_text text-lg max-xl:text-sm max-xl:px-4 py-1 px-8 rounded-full ${servicePeriod === true ? "bg-white" : "bg-[#EAEAEA]"
+									} transition-all duration-300`}
 							>
 								Ja
 							</button>
@@ -278,6 +275,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
 						<Button
 							type="submit"
+							disabled={isProcessingInvoice}
 							className="!font-medium !text-lg max-xl:!text-sm"
 						>
 							Speichern

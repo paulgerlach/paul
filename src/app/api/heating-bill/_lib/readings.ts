@@ -10,7 +10,7 @@ import { parseGermanDate } from "@/utils";
 type ReadingPoint = {
   date: Date;
   value: number;
-  unit: "Wh" | "m3";
+  unit: "Wh" | "m3" | "Units";
 };
 
 function parseDate(r: MeterReadingType): Date | null {
@@ -27,11 +27,18 @@ function parseDate(r: MeterReadingType): Date | null {
   return isNaN(d.getTime()) ? null : d;
 }
 
-function parseValue(r: MeterReadingType, unit: "Wh" | "m3"): number {
+function parseValue(r: MeterReadingType, unit: "Wh" | "m3" | "Units"): number {
   if (unit === "Wh") {
     const v =
       r["IV,0,0,0,Wh,E"] ??
       r["Actual Energy / HCA"] ??
+      r["Billing Value"];
+    const n = typeof v === "string" ? parseFloat(v.replace(",", ".")) : Number(v);
+    return isNaN(n) ? 0 : n;
+  }
+  if (unit === "Units") {
+    const v =
+      r["IV,0,0,0,,Units HCA"] ??
       r["Billing Value"];
     const n = typeof v === "string" ? parseFloat(v.replace(",", ".")) : Number(v);
     return isNaN(n) ? 0 : n;
@@ -51,8 +58,10 @@ function getDeviceId(r: MeterReadingType): string {
 
 function getDeviceType(r: MeterReadingType): string {
   const dt = r["Device Type"];
-  if (dt === "Heat" || dt === "Wärmemengenzähler" || dt === "Heizkostenverteiler" || dt === "WMZ Rücklauf")
+  if (dt === "Heat" || dt === "Wärmemengenzähler" || dt === "WMZ Rücklauf")
     return "Wärmezähler";
+  if (dt === "HCA" || dt === "Heizkostenverteiler")
+    return "Heizkostenverteiler";
   if (dt === "WWater" || dt === "Warmwasserzähler") return "Warmwasserzähler";
   if (dt === "Water" || dt === "Kaltwasserzähler") return "Kaltwasserzähler";
   return String(dt ?? "Unbekannt");
@@ -60,6 +69,7 @@ function getDeviceType(r: MeterReadingType): string {
 
 export type ReadingsInput = {
   heatReadings: MeterReadingType[];
+  hcaReadings: MeterReadingType[];
   warmWaterReadings: MeterReadingType[];
   coldWaterReadings: MeterReadingType[];
   startDate: Date;
@@ -68,14 +78,17 @@ export type ReadingsInput = {
 
 export type ReadingsResult = {
   heatDeltas: Map<string, { start: number; end: number; delta: number }>;
+  hcaDeltas: Map<string, { start: number; end: number; delta: number }>;
   warmWaterDeltas: Map<string, { start: number; end: number; delta: number }>;
   coldWaterDeltas: Map<string, { start: number; end: number; delta: number }>;
   totalHeatMwh: number;
+  totalHcaUnits: number;
   totalWarmWaterM3: number;
   totalColdWaterM3: number;
   totalHeatKwh: number;
   deviceRows: {
     heat: DeviceReadingRow[];
+    hca: DeviceReadingRow[];
     warmWater: DeviceReadingRow[];
     coldWater: DeviceReadingRow[];
   };
@@ -83,7 +96,7 @@ export type ReadingsResult = {
 
 function extractPoints(
   readings: MeterReadingType[],
-  unit: "Wh" | "m3"
+  unit: "Wh" | "m3" | "Units"
 ): { deviceId: string; deviceType: string; points: ReadingPoint[] }[] {
   const byDevice = new Map<
     string,
@@ -131,7 +144,7 @@ function findClosestAtOrBefore(
 
 function computeDeltas(
   readings: MeterReadingType[],
-  unit: "Wh" | "m3",
+  unit: "Wh" | "m3" | "Units",
   startDate: Date,
   endDate: Date
 ): Map<string, { start: number; end: number; delta: number }> {
@@ -150,7 +163,7 @@ function computeDeltas(
 
 function buildDeviceRows(
   readings: MeterReadingType[],
-  unit: "Wh" | "m3",
+  unit: "Wh" | "m3" | "Units",
   deltas: Map<string, { start: number; end: number; delta: number }>,
   displayUnit: string
 ): DeviceReadingRow[] {
@@ -159,6 +172,7 @@ function buildDeviceRows(
   for (const { deviceId, deviceType, points } of extracted) {
     const d = deltas.get(deviceId);
     if (!d) continue;
+    // For Wh: convert to MWh by dividing by 1M; for Units/m3: keep raw
     const displayValue =
       unit === "Wh"
         ? d.delta / 1_000_000
@@ -189,9 +203,10 @@ function buildDeviceRows(
  * Compute reading deltas per device for the given period.
  */
 export function computeReadingDeltas(input: ReadingsInput): ReadingsResult {
-  const { heatReadings, warmWaterReadings, coldWaterReadings, startDate, endDate } = input;
+  const { heatReadings, hcaReadings, warmWaterReadings, coldWaterReadings, startDate, endDate } = input;
 
   const heatDeltas = computeDeltas(heatReadings, "Wh", startDate, endDate);
+  const hcaDeltas = computeDeltas(hcaReadings, "Units", startDate, endDate);
   const warmWaterDeltas = computeDeltas(warmWaterReadings, "m3", startDate, endDate);
   const coldWaterDeltas = computeDeltas(coldWaterReadings, "m3", startDate, endDate);
 
@@ -201,6 +216,11 @@ export function computeReadingDeltas(input: ReadingsInput): ReadingsResult {
     const mwh = d.delta / 1_000_000;
     totalHeatMwh += mwh;
     totalHeatKwh += d.delta / 1_000;
+  }
+
+  let totalHcaUnits = 0;
+  for (const [, d] of hcaDeltas) {
+    totalHcaUnits += d.delta;
   }
 
   let totalWarmWaterM3 = 0;
@@ -215,15 +235,18 @@ export function computeReadingDeltas(input: ReadingsInput): ReadingsResult {
 
   const deviceRows = {
     heat: buildDeviceRows(heatReadings, "Wh", heatDeltas, "MWh"),
+    hca: buildDeviceRows(hcaReadings, "Units", hcaDeltas, "Nutzeinh."),
     warmWater: buildDeviceRows(warmWaterReadings, "m3", warmWaterDeltas, "m³"),
     coldWater: buildDeviceRows(coldWaterReadings, "m3", coldWaterDeltas, "m³"),
   };
 
   return {
     heatDeltas,
+    hcaDeltas,
     warmWaterDeltas,
     coldWaterDeltas,
     totalHeatMwh,
+    totalHcaUnits,
     totalWarmWaterM3,
     totalColdWaterM3,
     totalHeatKwh,

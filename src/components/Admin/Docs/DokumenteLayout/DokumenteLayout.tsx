@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useTransition } from "react";
 import { useDocumentService, DocumentMetadata } from "@/hooks/useDocumentService";
 import { pdf_icon, building } from "@/static/icons";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Exo_2 } from "next/font/google";
 import { useDialogStore } from "@/store/useDIalogStore";
 import { Trash2, Eye, FolderOpen, X } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { useUploadDocuments } from "@/apiClient";
 
@@ -45,7 +45,7 @@ interface ObjektWithLocals {
 interface DokumenteLayoutProps {
   userId?: string;
   objektsWithLocals: ObjektWithLocals[];
-  documents: any[]; 
+  documents: any[];
 }
 
 type FileWithPreview = File & { preview: string };
@@ -53,21 +53,36 @@ type FileWithPreview = File & { preview: string };
 export default function DokumenteLayout({ userId, objektsWithLocals, documents: serverDocuments }: DokumenteLayoutProps) {
   const [fileSizes, setFileSizes] = useState<Record<string, string>>({});
   const [selectedObjekt, setSelectedObjekt] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const uploadDocuments = useUploadDocuments();
+
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [pendingFiles, setPendingFiles] = useState<FileWithPreview[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  
+  const showOverwritten = searchParams.get("includeHistory") === "true";
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggleHistory = (checked: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (checked) {
+      params.set("includeHistory", "true");
+    } else {
+      params.delete("includeHistory");
+    }
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
+  };
+
   const {
     getDocumentFileSize,
     getDownloadUrl,
     getViewUrl,
   } = useDocumentService();
-  
-  const { setItemID, openDialog } = useDialogStore();
-  const router = useRouter();
-  const pathname = usePathname();
-  const uploadDocuments = useUploadDocuments();
 
+  const { setItemID, openDialog } = useDialogStore();
   // Detect if we're in admin context
   const isAdmin = pathname.startsWith('/admin');
   const adminUserId = isAdmin ? pathname.split('/')[2] : null;
@@ -79,46 +94,46 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   > = {
     heating_bill: (doc) => {
       if (!doc.objekt_id || !doc.related_id) return null;
-      
-      const baseRoute = isAdmin 
-        ? `/admin/${adminUserId}/heizkostenabrechnung` 
+
+      const baseRoute = isAdmin
+        ? `/admin/${adminUserId}/heizkostenabrechnung`
         : `/heizkostenabrechnung`;
-      
+
       // If has local_id → apartment-level (localauswahl)
       if (doc.local_id) {
         return `${baseRoute}/localauswahl/${doc.objekt_id}/${doc.local_id}/${doc.related_id}/results`;
       }
-      
+
       // No local_id → building-level (objektauswahl)
       return `${baseRoute}/objektauswahl/${doc.objekt_id}/${doc.related_id}/results`;
     },
-    
+
     operating_costs: (doc) => {
       if (!doc.objekt_id || !doc.related_id) return null;
-      
-      const baseRoute = isAdmin 
-        ? `/admin/${adminUserId}/betriebskostenabrechnung` 
+
+      const baseRoute = isAdmin
+        ? `/admin/${adminUserId}/betriebskostenabrechnung`
         : `/betriebskostenabrechnung`;
-      
+
       return `${baseRoute}/objektauswahl/${doc.objekt_id}/${doc.related_id}/results`;
     },
   };
 
   const handleGoToSource = (document: DocumentMetadata) => {
     const routeBuilder = DOCUMENT_SOURCE_ROUTES[document.related_type];
-    
+
     if (!routeBuilder) {
       toast.info("Kein Quelldokument verfügbar");
       return;
     }
-    
+
     const url = routeBuilder(document);
-    
+
     if (!url) {
       toast.error("Unvollständige Dokumentdaten");
       return;
     }
-    
+
     router.push(url);
   };
 
@@ -135,7 +150,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
       toast.error("Fehler beim Öffnen des Dokuments");
     }
   };
-  
+
   const documents = serverDocuments;
   const documentsLoading = false;
 
@@ -181,7 +196,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   // Get documents for currently selected folder
   const currentFolderDocuments = useMemo(() => {
     if (!selectedFolder) return [];
-    
+
     const folder = documentFolders.find(f => f.type === selectedFolder);
     return folder ? folder.documents : [];
   }, [selectedFolder, documentFolders]);
@@ -230,9 +245,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
           preview: URL.createObjectURL(file),
         })
       ) as FileWithPreview[];
-      
+
       setPendingFiles((prev) => [...prev, ...filesWithPreview]);
-      
+
       // Immediately upload files
       if (filesWithPreview.length > 0 && selectedFolder) {
         setIsUploading(true);
@@ -274,7 +289,7 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) {
       return "vor weniger als 1 Stunde";
     } else if (diffInHours < 24) {
@@ -319,22 +334,20 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   }
                   setSelectedFolder(null);
                 }}
-                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all flex-shrink-0 ${
-                  selectedObjekt === objekt.id
-                    ? "border-green bg-green-50 text-green-800"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                }`}
+                className={`flex flex-col items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all flex-shrink-0 ${selectedObjekt === objekt.id
+                  ? "border-green bg-green-50 text-green-800"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                  }`}
               >
                 <Image
                   width={40}
                   height={40}
                   src={building}
                   alt="building"
-                  className={`h-10 w-10 transition-all ${
-                    selectedObjekt === objekt.id
-                      ? "filter brightness-0"
-                      : "filter brightness-0 opacity-40"
-                  }`}
+                  className={`h-10 w-10 transition-all ${selectedObjekt === objekt.id
+                    ? "filter brightness-0"
+                    : "filter brightness-0 opacity-40"
+                    }`}
                 />
                 <span className="text-xs font-light whitespace-nowrap">
                   {getObjektDisplayName(objekt)}
@@ -355,22 +368,20 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   }
                   setSelectedFolder(null);
                 }}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all w-full ${
-                  selectedObjekt === objekt.id
-                    ? "border-green bg-green-50 text-green-800"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                }`}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg border-2 transition-all w-full ${selectedObjekt === objekt.id
+                  ? "border-green bg-green-50 text-green-800"
+                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                  }`}
               >
                 <Image
                   width={32}
                   height={32}
                   src={building}
                   alt="building"
-                  className={`h-8 w-8 transition-all ${
-                    selectedObjekt === objekt.id
-                      ? "filter brightness-0"
-                      : "filter brightness-0 opacity-40"
-                  }`}
+                  className={`h-8 w-8 transition-all ${selectedObjekt === objekt.id
+                    ? "filter brightness-0"
+                    : "filter brightness-0 opacity-40"
+                    }`}
                 />
                 <span className="text-sm font-light">
                   {getObjektDisplayName(objekt)}
@@ -385,16 +396,38 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
           {!selectedFolder ? (
             // FOLDER VIEW
             <div>
-              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
-                {selectedObjekt === null 
-                  ? "Dokumente"
-                  : (() => {
+              <div className="flex justify-between items-center mb-6 max-medium:mb-4">
+                <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-0">
+                  {selectedObjekt === null
+                    ? "Dokumente"
+                    : (() => {
                       const objekt = objektsToUse?.find(o => o.id === selectedObjekt);
                       return objekt ? getObjektDisplayName(objekt) : "Unbekanntes Objekt";
                     })()
-                }
-              </h2>
-              
+                  }
+                </h2>
+                <label className="flex items-center cursor-pointer gap-2">
+                  <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={showOverwritten}
+                      onChange={(e) => handleToggleHistory(e.target.checked)}
+                    />
+                    <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform flex items-center justify-center ${showOverwritten ? 'transform translate-x-4' : ''}`}>
+                      {isPending && (
+                        <svg className={`animate-spin h-3 w-3 ${showOverwritten ? 'text-green' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              </div>
+
               {documentFolders.length > 0 ? (
                 <div className="flex flex-col gap-4 w-full">
                   {documentFolders.map(folder => (
@@ -456,12 +489,34 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               </button>
 
               {/* Folder Header */}
-              <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-6 max-medium:mb-4">
-                {documentFolders.find(f => f.type === selectedFolder)?.name}
-                <span className="text-gray-500 ml-2 text-lg max-medium:text-base">
-                  ({currentFolderDocuments.length} {currentFolderDocuments.length === 1 ? 'Dokument' : 'Dokumente'})
-                </span>
-              </h2>
+              <div className="flex justify-between items-center mb-6 max-medium:mb-4">
+                <h2 className="text-2xl max-medium:text-xl font-light text-gray-900 mb-0">
+                  {documentFolders.find(f => f.type === selectedFolder)?.name}
+                  <span className="text-gray-500 ml-2 text-lg max-medium:text-base">
+                    ({currentFolderDocuments.length} {currentFolderDocuments.length === 1 ? 'Dokument' : 'Dokumente'})
+                  </span>
+                </h2>
+                <label className="flex items-center cursor-pointer gap-2">
+                  <span className="text-sm text-gray-600 max-medium:hidden">Überschriebene anzeigen</span>
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={showOverwritten}
+                      onChange={(e) => handleToggleHistory(e.target.checked)}
+                    />
+                    <div className={`block w-10 h-6 rounded-full transition-colors ${showOverwritten ? 'bg-green' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform flex items-center justify-center ${showOverwritten ? 'transform translate-x-4' : ''}`}>
+                      {isPending && (
+                        <svg className={`animate-spin h-3 w-3 ${showOverwritten ? 'text-green' : 'text-gray-400'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              </div>
 
               {/* Documents Table */}
               <div className="overflow-auto">
@@ -484,9 +539,9 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                   </thead>
                   <tbody className="bg-white">
                     {currentFolderDocuments.map((document: DocumentMetadata) => (
-                      <tr key={document.id} className="hover:bg-gray-50">
+                      <tr key={document.id} className={`hover:bg-gray-50 ${document.current_document === false ? 'opacity-60 bg-gray-50' : ''}`}>
                         <td className="px-6 py-4 max-medium:px-2 max-medium:py-3">
-                          <div className="flex items-center min-w-0">
+                          <div className="flex items-center min-w-0 gap-2">
                             <Image
                               width={0}
                               height={0}
@@ -496,12 +551,19 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
                               src={pdf_icon}
                               alt="pdf_icon"
                             />
-                            <button
-                              onClick={() => handleDownload(document)}
-                              className="text-sm max-medium:text-xs font-light text-gray-900 hover:text-green-600 hover:underline cursor-pointer truncate max-medium:max-w-[140px]"
-                            >
-                              {document.document_name}
-                            </button>
+                            <div className="flex flex-col gap-1 pr-2 min-w-0">
+                              <button
+                                onClick={() => handleDownload(document)}
+                                className="text-sm max-medium:text-xs font-light text-left text-gray-900 hover:text-green-600 hover:underline cursor-pointer truncate max-medium:max-w-[140px]"
+                              >
+                                {document.document_name}
+                              </button>
+                              {document.current_document === false && (
+                                <span className="text-[10px] self-start text-red-600 bg-red-50 px-2 py-0.5 rounded-full whitespace-nowrap">
+                                  Überschrieben
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 max-medium:hidden whitespace-nowrap text-sm text-gray-500">
@@ -576,15 +638,14 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
               ))}
             </ul>
           )}
-          
+
           {/* Dropzone */}
           <div
             {...getRootProps()}
-            className={`w-full py-4 max-medium:py-3 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors text-base max-medium:text-sm ${
-              isDragActive 
-                ? "border-green bg-green/10 text-green" 
-                : "border-blue-300 text-blue-500 hover:border-blue-400 hover:text-blue-600"
-            } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full py-4 max-medium:py-3 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors text-base max-medium:text-sm ${isDragActive
+              ? "border-green bg-green/10 text-green"
+              : "border-blue-300 text-blue-500 hover:border-blue-400 hover:text-blue-600"
+              } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />
             {isUploading ? (

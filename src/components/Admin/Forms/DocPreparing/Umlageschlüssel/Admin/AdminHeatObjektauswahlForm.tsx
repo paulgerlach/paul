@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { DocCostCategoryType } from "@/types";
 import CostTypesHeatObjektauswahlSelects from "@/components/Admin/Docs/CostTypes/CostTypesHeatObjektauswahlSelects";
 import AdminSaveCostButton from "../../Common/AdminSaveCostButton";
+import { useEffect } from "react";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 
 export default function AdminUmlageschlüsselHeatObjektauswahlForm({
   objektId,
@@ -19,6 +23,20 @@ export default function AdminUmlageschlüsselHeatObjektauswahlForm({
   isEditMode?: boolean;
   pathSlug: string;
 }) {
+  const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
+
+  useEffect(() => {
+    if (initialDocumentGroups && documentGroups.length === 0) {
+      setDocumentGroups(
+        initialDocumentGroups.map((group) => ({
+          ...group,
+          data: [],
+        }))
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialDocumentGroups]);
+
   const backLink = isEditMode
     ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
     : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/gesamtkosten`;

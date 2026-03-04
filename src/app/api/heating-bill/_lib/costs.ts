@@ -132,6 +132,7 @@ export function aggregateInvoiceCosts(
 
     if (ct === "metering_device_rental" || ct === "metering_service_costs") {
       meteringDeviceRentalTotal += amount;
+      continue;
     }
 
     if (IGNORED_COST_TYPES.includes(ct as any)) continue;
@@ -155,9 +156,9 @@ export function aggregateInvoiceCosts(
           kWh,
           kWhFormatted: isFuel
             ? new Intl.NumberFormat("de-DE", {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 3,
-              }).format(kWh)
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 3,
+            }).format(kWh)
             : "",
           amount,
           amountFormatted: formatEuro(amount),

@@ -8,6 +8,7 @@ import { useChartStore } from "@/store/useChartStore";
 import { createShareableUrl, ShareFilters } from "@/lib/shareUtils";
 import { Button } from "../ui/Button";
 import { TenantInviteSection } from "@/components/Admin/TenantInvite";
+import { useAuthUser } from "@/apiClient";
 
 export default function ShareDashboardDialog() {
   const { openDialogByType } = useDialogStore();
@@ -20,6 +21,10 @@ export default function ShareDashboardDialog() {
   const [generatedPin, setGeneratedPin] = useState<string>("");
 
   const { startDate, endDate, meterIds } = useChartStore();
+  
+  // Check if user is super_admin - hide tenant invite for super admins
+  const { data: user } = useAuthUser();
+  const isSuperAdmin = user?.permission === "super_admin";
 
   // Helper to format date as YYYY-MM-DD in local timezone (not UTC)
   // Defensively handles strings (from Zustand persist rehydration) in addition to Date objects.
@@ -223,16 +228,18 @@ export default function ShareDashboardDialog() {
           übersichtlich zur Verfügung stellen.
         </p>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-2 gap-8 pb-4">
+        {/* Two Column Layout (single column for super admin) */}
+        <div className={`grid ${isSuperAdmin ? 'grid-cols-1' : 'grid-cols-2'} gap-8 pb-4`}>
           
-          {/* LEFT COLUMN - NEW Section */}
-          <div>
-            <div className="text-xs font-medium text-blue-600 mb-2 uppercase tracking-wide">
-              ★ Neue Funktion
+          {/* LEFT COLUMN - NEW Section (hidden for super admins) */}
+          {!isSuperAdmin && (
+            <div>
+              <div className="text-xs font-medium text-blue-600 mb-2 uppercase tracking-wide">
+                ★ Neue Funktion
+              </div>
+              <TenantInviteSection />
             </div>
-            <TenantInviteSection />
-          </div>
+          )}
 
           {/* RIGHT COLUMN - EXISTING Sections */}
           <div className="space-y-4">

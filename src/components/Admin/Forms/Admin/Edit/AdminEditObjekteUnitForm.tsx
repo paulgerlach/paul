@@ -74,7 +74,7 @@ const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
   floor: z.string().nullable(),
   living_space: z.coerce.number().nullable(),
-  heating_area: z.number().nullable(),
+  heating_area: z.coerce.number().nullable(),
   house_location: z.string().nullable(),
   outdoor: z.string().nullable(),
   id: z.string().nullable(),
@@ -179,10 +179,12 @@ export default function AdminEditObjekteUnitForm({
   const house_location = methods.watch("house_location");
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
+  const heating_area = methods.watch("heating_area");
   const usage_type = methods.watch("usage_type");
 
   // Check if current type is non-residential
   const isNonResidential = NON_RESIDENTIAL_TYPES.includes(usage_type);
+  const shouldHideSections = ["warehouse", "basement", "hallway"].includes(usage_type);
 
   // Build display name based on usage type
   const displayName = isNonResidential
@@ -192,6 +194,7 @@ export default function AdminEditObjekteUnitForm({
       house_location: house_location ?? undefined,
       residential_area: residential_area ?? undefined,
       living_space: String(living_space ?? 0),
+      heating_area: String(heating_area ?? 0),
     });
 
   return (
@@ -243,95 +246,111 @@ export default function AdminEditObjekteUnitForm({
             label="Nutzungsart auswählen"
             name="usage_type"
           />
-          <h2 className="text-sm font-bold">Wohnungsdetails</h2>
-          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
-            <FormSelectField<AdminEditObjekteUnitFormValues>
+          {!shouldHideSections && (
+            <>
+              <h2 className="text-sm font-bold mt-5 max-medium:mt-3">Wohnungsdetails</h2>
+              <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+                <FormSelectField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="floor"
+                  label={isNonResidential ? "Etage" : "Etage*"}
+                  placeholder={isNonResidential ? "Etage" : "Etage*"}
+                  options={floorOptions}
+                />
+                <FormSelectField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="house_location"
+                  label="Hauslage"
+                  placeholder="Hauslage"
+                  options={houseLocatonOptions}
+                />
+                <FormSelectField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="residential_area"
+                  label="Wohnlage"
+                  placeholder="Wohnlage"
+                  options={residentialAreaOptions}
+                />
+                <FormSelectField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="apartment_type"
+                  label="Wohnungstyp"
+                  placeholder="Wohnungstyp"
+                  options={apartmentTypeOptions}
+                />
+                <FormInputField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="living_space"
+                  label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
+                  placeholder="Quadratmeter"
+                  replaceDotWithComma
+                  unit="qm"
+                />
+                <FormInputField<AdminEditObjekteUnitFormValues>
+                  control={methods.control}
+                  name="heating_area"
+                  label="Heizfläche"
+                  placeholder="Quadratmeter"
+                  replaceDotWithComma
+                  unit="qm"
+                />
+              </div>
+            </>
+          )}
+        </div>
+        {!shouldHideSections && (
+          <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
+            <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
+            <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+              <FormInputField<AdminEditObjekteUnitFormValues>
+                control={methods.control}
+                label="Zimmeranzahl"
+                placeholder="Anzahl der Zimmer"
+                name="rooms"
+                replaceDotWithComma
+              />
+              <FormSelectField<AdminEditObjekteUnitFormValues>
+                control={methods.control}
+                name="outdoor"
+                label="Außenbereich"
+                placeholder="Außenbereich"
+                options={outdoorOptions}
+              />
+              <FormInputField<AdminEditObjekteUnitFormValues>
+                control={methods.control}
+                label="Fläche Außenbereich"
+                placeholder="Quadratmeter"
+                name="outdoor_area"
+                replaceDotWithComma
+              />
+            </div>
+            <FormRoundedCheckbox<AdminEditObjekteUnitFormValues>
               control={methods.control}
-              name="floor"
-              label={isNonResidential ? "Etage" : "Etage*"}
-              placeholder={isNonResidential ? "Etage" : "Etage*"}
-              options={floorOptions}
+              name="cellar_available"
+              label="Keller vorhanden"
             />
-            <FormSelectField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              name="house_location"
-              label="Hauslage"
-              placeholder="Hauslage"
-              options={houseLocatonOptions}
-            />
-            <FormSelectField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              name="residential_area"
-              label="Wohnlage"
-              placeholder="Wohnlage"
-              options={residentialAreaOptions}
-            />
-            <FormSelectField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              name="apartment_type"
-              label="Wohnungstyp"
-              placeholder="Wohnungstyp"
-              options={apartmentTypeOptions}
-            />
-            <FormInputField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              name="living_space"
-              label={isNonResidential ? "Wohnfläche" : "Wohnfläche*"}
-              placeholder="Quadratmeter"
-              replaceDotWithComma
-              unit="qm"
-            />
-            {/* Empty div to align grid when only 5 items */}
-            <div className="hidden max-medium:hidden" />
           </div>
-        </div>
-        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
-          <h2 className="text-sm font-bold">Allgemeine Informationen</h2>
-          <div className="grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3">
+        )}
+        {!shouldHideSections && (
+          <FormTechnicalEquipment<AdminEditObjekteUnitFormValues>
+            control={methods.control}
+          />
+        )}
+        {!shouldHideSections && (
+          <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
+            <h2 className="text-sm font-bold">
+              Verwaltungstechnische Informationen
+            </h2>
             <FormInputField<AdminEditObjekteUnitFormValues>
               control={methods.control}
-              label="Zimmeranzahl"
-              placeholder="Anzahl der Zimmer"
-              name="rooms"
+              name="house_fee"
+              label="Hausgeld"
+              placeholder="Euro"
               replaceDotWithComma
-            />
-            <FormSelectField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              name="outdoor"
-              label="Außenbereich"
-              placeholder="Außenbereich"
-              options={outdoorOptions}
-            />
-            <FormInputField<AdminEditObjekteUnitFormValues>
-              control={methods.control}
-              label="Fläche Außenbereich"
-              placeholder="Quadratmeter"
-              name="outdoor_area"
-              replaceDotWithComma
+              unit="€"
             />
           </div>
-          <FormRoundedCheckbox<AdminEditObjekteUnitFormValues>
-            control={methods.control}
-            name="cellar_available"
-            label="Keller vorhanden"
-          />
-        </div>
-        <FormTechnicalEquipment<AdminEditObjekteUnitFormValues>
-          control={methods.control}
-        />
-        <div className="w-full border-b py-5 max-medium:py-3 space-y-3 border-dark_green/10">
-          <h2 className="text-sm font-bold">
-            Verwaltungstechnische Informationen
-          </h2>
-          <FormInputField<AdminEditObjekteUnitFormValues>
-            control={methods.control}
-            name="house_fee"
-            label="Hausgeld"
-            placeholder="Euro"
-            replaceDotWithComma
-            unit="€"
-          />
-        </div>
+        )}
         <FormMetersField control={methods.control} />
         <FormDocuments<AdminEditObjekteUnitFormValues>
           control={methods.control}

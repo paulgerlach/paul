@@ -5,7 +5,18 @@ export const DEFAULT_HEATING_COST_TYPES: Partial<DocCostCategoryType>[] = [
         name: "Brennstoffkosten",
         type: "fuel_costs",
         document_type: "heizkostenabrechnung",
-        options: ["Gas", "Öl", "Fernwärme", "Pellets"],
+        options: [
+            "Erdgas (Brennwert)",
+            "Erdgas (Heizwert)",
+            "Heizöl EL",
+            "Flüssiggas (LPG)",
+            "Fernwärme",
+            "Nahwärme (BHKW)",
+            "Pellets",
+            "Holzhackschnitzel",
+            "Wärmepumpe (Strom)",
+            "Stromdirektheizung",
+        ],
     },
     {
         name: "Betriebsstrom",
@@ -29,7 +40,7 @@ export const DEFAULT_HEATING_COST_TYPES: Partial<DocCostCategoryType>[] = [
         name: "Miete der Messgeräte",
         type: "metering_device_rental",
         document_type: "heizkostenabrechnung",
-        options: ["Für Heizkostenverteiler", "Wärmemengenzähler"],
+        options: ["Heizkostenverteiler", "Wärmemengenzähler", "Warmwasserzähler", "Kaltwasserzähler", "Kältezähler"],
     },
     {
         name: "Schornsteinfegerkosten",

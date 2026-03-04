@@ -39,7 +39,16 @@ const REPEATER_COUNT_OPTIONS = [
 ];
 
 const TYPE_SECTION_CLASS =
-  "grid grid-cols-3 max-medium:grid-cols-1 gap-4 max-medium:gap-3 border-l-2 border-dark_green/20 pl-4 max-medium:pl-4 ml-2 max-medium:ml-0 [&>*]:min-w-0";
+  "grid grid-cols-[1fr_1fr_1fr_auto] max-medium:grid-cols-1 gap-4 max-medium:gap-3 [&>*]:min-w-0";
+
+const TYPE_SECTION_SPACER = (
+  <div
+    className="col-start-4 row-start-1 row-end-[-1] max-medium:hidden p-2"
+    aria-hidden
+  >
+    <div className="h-5 w-5" />
+  </div>
+);
 
 type FormMetersProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
@@ -78,7 +87,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
           "Kaltwasserzähler",
           "Wärmemengenzähler",
           "Kältezähler",
-          "Stromzähler",
+          "Elektrozähler",
         ].includes(meterType ?? "");
         const isRauchwarnmelder = meterType === "Rauchwarnmelder";
 
@@ -102,7 +111,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   "Warmwasserzähler",
                   "Wärmemengenzähler",
                   "Heizkostenverteiler",
-                  "Stromzähler",
+                  "Elektrozähler",
                   "Rauchwarnmelder",
                   "Kältezähler",
                   "Gateway",
@@ -127,63 +136,78 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
             </div>
 
             {isHeizkostenverteiler && (
-              <div className={TYPE_SECTION_CLASS}>
-                <FormInputField<T>
-                  control={control}
-                  name={`meters.${index}.old_reading` as Path<T>}
-                  label="Alter Zählerstand"
-                  placeholder="Zählerstand"
-                  replaceDotWithComma
-                />
-                <FormDateInput<T>
-                  control={control}
-                  name={`meters.${index}.installation_date` as Path<T>}
-                  label="Datum des Einbaus"
-                  placeholder="dd.mm.yyyy"
-                  valueAsString
-                />
-                <FormSelectField<T>
-                  control={control}
-                  name={`meters.${index}.fernfuehler` as Path<T>}
-                  label="Fernfühler"
-                  placeholder="Ja/Nein"
-                  options={FERNFUEHLER_OPTIONS}
-                />
-                <FormSelectField<T>
-                  control={control}
-                  name={`meters.${index}.radiator_type` as Path<T>}
-                  label="Heizkörper Typ"
-                  placeholder="Heizkörper Typ auswählen"
-                  options={HEIZKOSTENVERTEILER_RADIATOR_TYPE_OPTIONS}
-                />
-                <FormInputField<T>
-                  control={control}
-                  name={`meters.${index}.radiator_length` as Path<T>}
-                  label="Heizkörper Länge"
-                  placeholder="cm"
-                  replaceDotWithComma
-                />
-                <FormInputField<T>
-                  control={control}
-                  name={`meters.${index}.radiator_width` as Path<T>}
-                  label="Heizkörper Breite"
-                  placeholder="cm"
-                  replaceDotWithComma
-                />
-                <FormInputField<T>
-                  control={control}
-                  name={`meters.${index}.radiator_depth` as Path<T>}
-                  label="Heizkörper Tiefe"
-                  placeholder="cm"
-                  replaceDotWithComma
-                />
-                <FormSelectField<T>
-                  control={control}
-                  name={`meters.${index}.installation_factor` as Path<T>}
-                  label="Installationsfaktor"
-                  placeholder="Installationsfaktor auswählen"
-                  options={HEIZKOSTENVERTEILER_INSTALLATION_FACTOR_OPTIONS}
-                />
+              <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 max-medium:grid-cols-1 max-medium:gap-3">
+                <div className="col-span-3 grid grid-cols-3 gap-4 max-medium:col-span-1 max-medium:grid-cols-1 max-medium:gap-3 [&>*]:min-w-0">
+                  <FormInputField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.old_reading` as Path<T>}
+                    label="Alter Zählerstand"
+                    placeholder="Zählerstand"
+                    replaceDotWithComma
+                  />
+                  <FormDateInput<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.installation_date` as Path<T>}
+                    label="Datum des Einbaus"
+                    placeholder="dd.mm.yyyy"
+                    valueAsString
+                  />
+                  <FormSelectField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.fernfuehler` as Path<T>}
+                    label="Fernfühler"
+                    placeholder="Ja/Nein"
+                    options={FERNFUEHLER_OPTIONS}
+                  />
+                  <FormSelectField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.radiator_type` as Path<T>}
+                    label="Heizkörper Typ"
+                    placeholder="Heizkörper Typ auswählen"
+                    options={HEIZKOSTENVERTEILER_RADIATOR_TYPE_OPTIONS}
+                  />
+                  <FormInputField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.radiator_length` as Path<T>}
+                    label="Heizkörper Länge"
+                    placeholder="cm"
+                    replaceDotWithComma
+                  />
+                  <FormInputField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.radiator_width` as Path<T>}
+                    label="Heizkörper Breite"
+                    placeholder="cm"
+                    replaceDotWithComma
+                  />
+                  <FormInputField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.radiator_depth` as Path<T>}
+                    label="Heizkörper Tiefe"
+                    placeholder="cm"
+                    replaceDotWithComma
+                  />
+                  <FormSelectField<T>
+                    control={control}
+                    className="min-w-0"
+                    name={`meters.${index}.installation_factor` as Path<T>}
+                    label="Installationsfaktor"
+                    placeholder="Installationsfaktor auswählen"
+                    options={HEIZKOSTENVERTEILER_INSTALLATION_FACTOR_OPTIONS}
+                  />
+                </div>
+                <div
+                  className="col-start-4 row-start-1 row-end-[-1] max-medium:hidden p-2"
+                  aria-hidden>
+                  <div className="h-5 w-5" />
+                </div>
               </div>
             )}
 
@@ -221,6 +245,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   label="Notizen"
                   placeholder="Notizen"
                 />
+                {TYPE_SECTION_SPACER}
               </div>
             )}
 
@@ -245,6 +270,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   label="Notizen"
                   placeholder="Notizen"
                 />
+                {TYPE_SECTION_SPACER}
               </div>
             )}
 
@@ -276,6 +302,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   label="Notizen"
                   placeholder="Notizen"
                 />
+                {TYPE_SECTION_SPACER}
               </div>
             )}
 
@@ -294,6 +321,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                   label="Notizen"
                   placeholder="Notizen"
                 />
+                {TYPE_SECTION_SPACER}
               </div>
             )}
           </div>

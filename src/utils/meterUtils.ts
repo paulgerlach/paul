@@ -4,14 +4,11 @@
 
 import type { LocalMeterType } from "@/types";
 
-/** Map a database meter to form initial values, reading from device_metadata (fallback heater_metadata for HCA) */
+/** Map a database meter to form initial values. Prefers device_metadata, fallback to heater_metadata for backward compat */
 export function mapMeterToFormValues(meter: LocalMeterType) {
   const heaterMeta = (meter.heater_metadata ?? {}) as Record<string, unknown>;
   const deviceMeta = (meter.device_metadata ?? {}) as Record<string, unknown>;
-  const meta =
-    meter.meter_type === "Heizkostenverteiler"
-      ? { ...heaterMeta, ...deviceMeta }
-      : deviceMeta;
+  const meta = Object.keys(deviceMeta).length > 0 ? { ...heaterMeta, ...deviceMeta } : heaterMeta;
 
   const get = <T>(key: string): T | null =>
     (meta[key] as T | undefined) ?? null;

@@ -8,21 +8,6 @@ import { eq, and } from "drizzle-orm";
 
 type MeterFormData = NonNullable<AdminEditObjekteUnitFormValues["meters"]>[number];
 
-/** Build heater_metadata jsonb for Heizkostenverteiler meters (backward compat) */
-function buildHeaterMetadata(meter: MeterFormData): Record<string, unknown> | null {
-  if (meter.meter_type !== "Heizkostenverteiler") return null;
-  const meta: Record<string, unknown> = {};
-  if (meter.old_reading != null) meta.old_reading = meter.old_reading;
-  if (meter.installation_date) meta.installation_date = meter.installation_date;
-  if (meter.fernfuehler) meta.fernfuehler = meter.fernfuehler;
-  if (meter.radiator_type) meta.radiator_type = meter.radiator_type;
-  if (meter.radiator_length != null) meta.radiator_length = meter.radiator_length;
-  if (meter.radiator_width != null) meta.radiator_width = meter.radiator_width;
-  if (meter.radiator_depth != null) meta.radiator_depth = meter.radiator_depth;
-  if (meter.installation_factor) meta.installation_factor = meter.installation_factor;
-  return Object.keys(meta).length > 0 ? meta : null;
-}
-
 /** Build device_metadata jsonb for all meter types */
 function buildDeviceMetadata(meter: MeterFormData): Record<string, unknown> | null {
   const meta: Record<string, unknown> = {};
@@ -57,7 +42,7 @@ function buildDeviceMetadata(meter: MeterFormData): Record<string, unknown> | nu
     case "Kaltwasserzähler":
     case "Wärmemengenzähler":
     case "Kältezähler":
-    case "Stromzähler":
+    case "Elektrozähler":
       add("old_reading", meter.old_reading);
       add("manufacturer_old_device", meter.manufacturer_old_device);
       add("calibration_date", meter.calibration_date);
@@ -110,7 +95,6 @@ export async function createLocalMeters(
       (m) => m.meter_number === effectiveMeterNumber
     );
 
-    const heaterMeta = buildHeaterMetadata(meter);
     const deviceMeta = buildDeviceMetadata(meter);
 
     if (existingMeter) {
@@ -120,7 +104,6 @@ export async function createLocalMeters(
         .set({
           meter_note: meter.meter_note ?? null,
           meter_type: meter.meter_type ?? null,
-          heater_metadata: heaterMeta,
           device_metadata: deviceMeta,
         })
         .where(
@@ -135,7 +118,6 @@ export async function createLocalMeters(
         meter_number: effectiveMeterNumber,
         meter_note: meter.meter_note ?? null,
         meter_type: meter.meter_type ?? null,
-        heater_metadata: heaterMeta,
         device_metadata: deviceMeta,
         local_id: localID,
       });

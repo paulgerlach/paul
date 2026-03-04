@@ -129,7 +129,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 			return;
 		}
 
-		const res = await adminCreateInvoiceDocument(
+		const res = await adminCreateHeatingInvoiceDocument(
 			{
 				...formattedPayload,
 				invoice_date: rest.invoice_date,
@@ -275,7 +275,6 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 
 						<Button
 							type="submit"
-							disabled={isProcessingInvoice}
 							className="!font-medium !text-lg max-xl:!text-sm"
 						>
 							Speichern

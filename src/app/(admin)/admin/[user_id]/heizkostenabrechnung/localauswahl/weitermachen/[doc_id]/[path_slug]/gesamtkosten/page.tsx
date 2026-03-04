@@ -20,7 +20,6 @@ export default async function GesamtkostenEditPage({
   const { doc_id, user_id, path_slug } = await params;
 
   const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
-  const doc = await getAdminHeatingBillDocumentByID(doc_id, user_id);
   const userDocCostCategories = await getDocCostCategoryTypes(
     "heizkostenabrechnung",
     user_id

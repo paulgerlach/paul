@@ -1,8 +1,9 @@
 import { MeterReadingType } from "@/api";
 import { monthNames } from "@/lib/constants/date";
 import { getDateString, getReadingDate, isDateRangeLongerThanAMonth } from "@/utils/date";
-import { getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
-import { getStandardMeterConsumption } from "./standardHeatingCostServices";
+import { getHCADisplayMapping, getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
+import { getDisplayMapping, getStandardMeterConsumption } from "./standardHeatingCostServices";
+import { parseGermanDate } from "@/utils";
 
 
 export interface DateRange {
@@ -34,10 +35,10 @@ export const aggregateDataByTimeRange = (
     readingsByDevice.get(deviceId)!.push(reading);
   });
 
-  const monthlyTotals = new Map<number, number>();
+  const monthlyTotals = new Map<string, number>();
+  const monthlyHCATotals = new Map<number, number>();
 
   readingsByDevice.forEach((deviceReadings, deviceId) => {
-    // Attach parsed dates for sorting
     const readingsWithDate = deviceReadings.map((reading) => {
       const dateString = getDateString(
         reading["IV,0,0,0,,Date/Time"],
@@ -48,20 +49,28 @@ export const aggregateDataByTimeRange = (
       return { ...reading, readingDate };
     });
 
-    // Sort chronologically
-    readingsWithDate.sort((a, b) => a.readingDate.getTime() - b.readingDate.getTime());
+    readingsWithDate.sort((a, b) => {
+      const aDate = parseDate(a);
+      const bDate = parseDate(b);
+
+      if (aDate === null && bDate === null) return 0;
+      if (aDate === null) return 1;  
+      if (bDate === null) return -1; 
+
+      return aDate.getTime() - bDate.getTime();
+    });
 
 
     if (isHCA) {
-      // HCA: compute daily consumption from consecutive readings
       let previousReading: (MeterReadingType & { readingDate: Date }) | null = null;
 
       readingsWithDate.forEach((currentReading) => {
         if (previousReading) {
           const dailyDelta = getHCAMonthlyConsumption(currentReading, previousReading);
           if (dailyDelta != null && dailyDelta > 0) {
-            const monthKey = currentReading.readingDate.getMonth();
-            monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + dailyDelta);
+            const date = parseDate(currentReading);
+            const monthStr = `${date?.getFullYear()}-${date?.getMonth().toString().padStart(2, '0')}`;
+            monthlyTotals.set(monthStr, (monthlyTotals.get(monthStr) || 0) + dailyDelta);
           }
         } 
         previousReading = currentReading;
@@ -73,7 +82,7 @@ export const aggregateDataByTimeRange = (
         if (monthlyMap instanceof Map) {
           monthlyMap.forEach((value, monthKey) => {
             if (value != null && value > 0) {
-              monthlyTotals.set(monthKey, (monthlyTotals.get(monthKey) || 0) + value);
+              monthlyHCATotals.set(monthKey, (monthlyHCATotals.get(monthKey) || 0) + value);
             }
           });
         }
@@ -88,7 +97,7 @@ export const aggregateDataByTimeRange = (
       : endDate.getTime();
 
   const monthsToShow = getMonthsToShow(startDate, endDate, isHCA ? endDate : new Date(referenceDate));
-  return getDisplayMapping(monthlyTotals, referenceDate, monthsToShow);
+  return isHCA ? getHCADisplayMapping(monthlyTotals, referenceDate, monthsToShow) : getDisplayMapping(monthlyHCATotals, referenceDate, monthsToShow)
 };
 
 export const parseGermanNumber = (value: string | number | undefined): number | null => {
@@ -101,24 +110,6 @@ export const parseGermanNumber = (value: string | number | undefined): number | 
   return isNaN(parsed) ? null : parsed;
 };
 
-const getDisplayMapping = (monthlyConsumption: Map<number, number>, referenceDate: number, monthsToShow: number) => {
-
-  const result: { label: string; value: number }[] = [];
-
-  const refDate = new Date(referenceDate);
-
-  for (let offset = 0; offset < monthsToShow; offset++) {
-    const consumption = monthlyConsumption.get(offset) || 0;
-    if (consumption > 0 || offset < 2) {
-      const monthDate = new Date(refDate.getFullYear(), refDate.getMonth() - offset, 1);
-      result.push({
-        label: monthNames[monthDate.getMonth()],
-        value: Math.round(consumption),
-      });
-    }
-  }
-  return result.reverse();
-}
 
 const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Date): boolean => {
   return hasValidStatus(reading.Status)
@@ -206,7 +197,7 @@ const isWithinDateRange = (reading: MeterReadingType, startDate: Date, endDate: 
 const getMonthsToShow = (startDate: Date, endDate: Date, now:Date) => {
   const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
   const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.max(2, Math.ceil(daysDiff / 30));
+  return Math.max(2, Math.ceil(daysDiff / 30))-1;
 }
 
 const getLatestDeviceReadingsMonthly = (
@@ -356,3 +347,17 @@ const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   const [day, month, year] = dateString.split(".").map(Number);
   return new Date(year, month - 1, day);
 };
+
+function parseDate(r: MeterReadingType): Date | null {
+  const raw =
+    r["IV,0,0,0,,Date/Time"] ??
+    r["Actual Date"] ??
+    r["Raw Date"] ??
+    r["Billing Date"];
+  if (!raw) return null;
+  if (typeof raw === "string" && raw.includes(".")) {
+    return parseGermanDate(raw) ?? new Date(raw);
+  }
+  const d = new Date(raw as string);
+  return isNaN(d.getTime()) ? null : d;
+}

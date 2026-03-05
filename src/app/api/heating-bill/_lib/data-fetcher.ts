@@ -75,7 +75,7 @@ export interface HeatingBillRawData {
   } | null;
   meterReadings: MeterReadingType[];
   /** Maps device_id (meter_number) to local_id for filtering unit-level readings */
-  localMeters: Array<{ meter_number: string | null; local_id: string | null }>;
+  localMeters: Array<{ meter_number: string | null; local_id: string | null; meter_note: string | null }>;
 }
 
 export async function fetchHeatingBillData(
@@ -209,6 +209,7 @@ export async function fetchHeatingBillData(
   const localMeters = localMetersRows.map((m) => ({
     meter_number: m.meter_number,
     local_id: m.local_id,
+    meter_note: m.meter_note ?? null,
   }));
 
   let meterReadings: MeterReadingType[] = [];

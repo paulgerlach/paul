@@ -1,3 +1,5 @@
+import type { MeterReading } from "./types";
+
 export interface DatabaseRecord {
   local_meter_id?: string;
   device_id: string;
@@ -8,6 +10,6 @@ export interface DatabaseRecord {
   access_number?: number;
   status?: string;
   encryption?: number;
-  parsed_data?: string;
+  parsed_data?: MeterReading;
   date_only?: string; // YYYY-MM-DD format for DB unique constraint
 }

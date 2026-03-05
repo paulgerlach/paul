@@ -47,7 +47,7 @@ export async function parseTelegram(
     version: parsedMQTT.meter.version.toString(),
     access_number: parsedMQTT.meter.accessNo,
     status: parsedMQTT.meter.status === 'No error' ? '00h' : parsedMQTT.meter.status,
-    parsed_data: JSON.stringify(transformMbusToWebFormat(
+    parsed_data: transformMbusToWebFormat(
       parsedMQTT.data,
       parsedMQTT.meter.id,
       parsedMQTT.meter.manufacturer,
@@ -55,7 +55,7 @@ export async function parseTelegram(
       parsedMQTT.meter.version.toString(),
       parsedMQTT.meter.status ?? '',
       parsedMQTT.meter.accessNo ?? 0
-    )),
+    ),
     date_only: dt!,
   };
 

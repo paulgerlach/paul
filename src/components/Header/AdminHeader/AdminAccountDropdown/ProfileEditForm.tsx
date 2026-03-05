@@ -81,12 +81,10 @@ export default function ProfileEditForm({ onClose, isOpen, inputStyle, bigInputS
               {...register("permission")}
               className={`${bigInputStyle} appearance-none cursor-pointer`}
             >
-              {currentUser?.permission === "super_admin" ? (
-                <option value="super_admin">super_admin</option>
-              ) : currentUser?.permission === "admin" ? (
-                <option value="admin">admin</option>
+              {(currentUser?.permission === "super_admin" || currentUser?.permission === "admin" || currentUser?.permission === "agency_admin") ? (
+                <option value={currentUser.permission}>Lesen & Schreiben</option>
               ) : (
-                <option value="user">user</option>
+                <option value="user">Nur Lesen</option>
               )}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">

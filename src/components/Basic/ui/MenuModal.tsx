@@ -5,7 +5,7 @@ import React, { ReactNode, useState } from "react";
 
 interface MenuModalProps {
   title: string;
-  children: (onClose: () => void) => ReactNode;
+  children: (onClose: () => void, isOpen: boolean) => ReactNode;
   trigger: ReactNode;
 }
 
@@ -31,7 +31,7 @@ export default function MenuModal({ title, children, trigger }: MenuModalProps) 
         </DialogTitle>
 
         <div className="mt-4 text-sm text-gray-600 leading-relaxed">
-          {children(() => setOpen(false))}
+          {children(() => setOpen(false), open)}
         </div>
       </DialogContent>
     </Dialog>

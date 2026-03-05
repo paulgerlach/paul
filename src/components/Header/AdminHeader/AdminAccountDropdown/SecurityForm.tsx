@@ -1,13 +1,21 @@
 'use client';
 
+import { useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useForm } from "react-hook-form";
 import ModalFooter from "./ModalFooter";
+import { useAuthUser } from "@/apiClient";
 
 // --- 4. Sicherheit (Security) ---
-// TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
-export default function SecurityForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
-  const { register, handleSubmit } = useForm();
+export default function SecurityForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+  const { data: currentUser } = useAuthUser();
+  const { register, handleSubmit, reset } = useForm();
+
+  useEffect(() => {
+    if (isOpen && currentUser?.email) {
+      reset({ email: currentUser.email });
+    }
+  }, [isOpen, currentUser?.email, reset]);
 
   const onSubmit = async (data: any) => {
   const { error } = await supabase

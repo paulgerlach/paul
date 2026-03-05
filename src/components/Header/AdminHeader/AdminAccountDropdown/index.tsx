@@ -33,31 +33,31 @@ export default function AdminAccountDropdown() {
 
   const menuItems: {
   title: string;
-  render: (onClose: () => void) => ReactNode;
+  render: (onClose: () => void, isOpen: boolean) => ReactNode;
 }[] = [
   {
     title: "Mein Profil",
-    render: (onClose) => <ProfileEditForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <ProfileEditForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Unternehmensdaten",
-    render: (onClose) => <CompanyDataForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <CompanyDataForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Team & Rollen",
-    render: (onClose) => <TeamRolesForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <TeamRolesForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Sicherheit",
-    render: (onClose) => <SecurityForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <SecurityForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Integrationen",
-    render: (onClose) => <IntegrationsForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <IntegrationsForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
   {
     title: "Support",
-    render: (onClose) => <SupportForm onClose={onClose} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
+    render: (onClose, isOpen) => <SupportForm onClose={onClose} isOpen={isOpen} inputStyle={inputStyle} bigInputStyle={bigInputStyle} labelStyle={labelStyle} />,
   },
 ];
 
@@ -102,7 +102,7 @@ export default function AdminAccountDropdown() {
                 </button>
               }
             >
-              {(onClose) => item.render(onClose)}
+              {(onClose, isOpen) => item.render(onClose, isOpen)}
             </MenuModal>
           ))}
 

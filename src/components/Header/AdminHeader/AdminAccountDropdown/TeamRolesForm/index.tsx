@@ -18,6 +18,7 @@ export interface Role {
 
 interface TeamRolesFormProps {
   onClose: () => void;
+  isOpen: boolean;
   inputStyle: string;
   bigInputStyle: string;
   labelStyle: string;
@@ -34,6 +35,7 @@ const defaultRoles: Role[] = [
 
 export default function TeamRolesForm({
   onClose,
+  isOpen,
   inputStyle,
   bigInputStyle,
   labelStyle,

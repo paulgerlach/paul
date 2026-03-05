@@ -2,7 +2,7 @@
 
 import ModalFooter from "./AdminAccountDropdown/ModalFooter";
 
-export default function IntegrationsForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+export default function IntegrationsForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">

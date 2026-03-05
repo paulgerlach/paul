@@ -6,8 +6,8 @@ import { useForm } from 'react-hook-form';
 import ModalFooter from './ModalFooter';
 import { useAuthUser } from '@/apiClient';
 
-export default function ProfileEditForm({ onClose, inputStyle, bigInputStyle, labelStyle }
-  : { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+export default function ProfileEditForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }
+  : { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
 
   const { data: currentUser } = useAuthUser();
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function ProfileEditForm({ onClose, inputStyle, bigInputStyle, la
   });
 
   useEffect(() => {
-    if (currentUser) {
+    if (isOpen && currentUser) {
       const u = currentUser as { phone?: string; notes?: string };
       reset({
         firstName: currentUser.first_name || '',
@@ -34,7 +34,7 @@ export default function ProfileEditForm({ onClose, inputStyle, bigInputStyle, la
         notes: u.notes || '',
       });
     }
-  }, [currentUser, reset]);
+  }, [isOpen, currentUser, reset]);
 
   const onSubmit = async (data: { firstName: string; lastName: string; phone?: string; permission: string; notes?: string }) => {
     if (!currentUser?.id) return;

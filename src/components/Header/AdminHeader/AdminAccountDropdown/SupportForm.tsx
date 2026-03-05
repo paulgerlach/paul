@@ -2,7 +2,7 @@
 
 // --- 6. Support ---
 // TODO(form): TODO(form): Correct UI needed! + Submission + validation pending.
-export default function SupportForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+export default function SupportForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   return (
     <div className="flex flex-col gap-5 mt-2">
       <div className="w-full space-y-1.5">

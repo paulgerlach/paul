@@ -8,7 +8,7 @@ import ModalFooter from './ModalFooter';
 // --- 2. Unternehmensdaten Form (Company Data) ---
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
 // TO DO: Create table for the company logos needed
-export default function CompanyDataForm({ onClose, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+export default function CompanyDataForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   const { register, handleSubmit, watch, reset } = useForm();
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -24,38 +24,39 @@ export default function CompanyDataForm({ onClose, inputStyle, bigInputStyle, la
     }
   }, [logoFile]);
 
-useEffect(() => {
-  const loadExistingData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  useEffect(() => {
+    if (!isOpen) return;
+    const loadExistingData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("agency_id")
-      .eq("id", user.id)
-      .single();
-
-    if (userData?.agency_id) {
-      const { data: agency } = await supabase
-        .from("agencies")
-        .select("*")
-        .eq("id", userData.agency_id)
+      const { data: userData } = await supabase
+        .from("users")
+        .select("agency_id")
+        .eq("id", user.id)
         .single();
 
-      if (agency) {
-        reset({
-          companyName: agency.name,
-          street: agency.street,
-          zip: agency.zip,
-          city: agency.city,
-          vatId: agency.vat_id,
-        });
-        if (agency.logo_url) setPreview(agency.logo_url);
+      if (userData?.agency_id) {
+        const { data: agency } = await supabase
+          .from("agencies")
+          .select("*")
+          .eq("id", userData.agency_id)
+          .single();
+
+        if (agency) {
+          reset({
+            companyName: agency.name,
+            street: agency.street,
+            zip: agency.zip,
+            city: agency.city,
+            vatId: agency.vat_id,
+          });
+          if (agency.logo_url) setPreview(agency.logo_url);
+        }
       }
-    }
-  };
-  loadExistingData();
-}, [reset]);
+    };
+    loadExistingData();
+  }, [isOpen, reset]);
 
   const onSubmit = async (data: any) => {
     let logoUrl: string | null = null;

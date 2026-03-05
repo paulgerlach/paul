@@ -16,7 +16,6 @@ export type UnitBreakdownInput = {
   /** Target local for this breakdown */
   localId: string;
   livingSpaceM2: number;
-  localLabel?: string;
   /** Building-level heating rates */
   heating: HeatingRates;
   /** Building-level warm water result */
@@ -56,7 +55,6 @@ export type UnitBreakdownInput = {
 export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfModel["unitBreakdown"] {
   const {
     livingSpaceM2,
-    localLabel,
     heating,
     warmWater,
     coldWaterRateItems,
@@ -74,7 +72,6 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   } = input;
 
   const tf = input.timeFraction ?? 1;
-  const locationLabel = localLabel ?? "Wohnung";
   const cUnit = input.consumptionUnit ?? "MWh";
   const isHca = cUnit === "Nutzeinh.";
 
@@ -124,7 +121,7 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   const grandTotal = round2(heatingAndWarmWaterTotal + coldWaterTotal);
 
   const deviceRowsWithLocation = (rows: DeviceReadingRow[]) =>
-    rows.map((r) => ({ ...r, location: r.location || locationLabel }));
+    rows.map((r) => ({ ...r, location: r.location || "" }));
 
   const heatingTotal = heatingConsumptionValue;
   const warmWaterTotal = warmWaterConsumptionM3;

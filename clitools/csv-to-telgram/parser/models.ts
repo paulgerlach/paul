@@ -8,6 +8,6 @@ export interface DatabaseRecord {
   access_number?: number;
   status?: string;
   encryption?: number;
-  parsed_data: string;
+  parsed_data?: string;
   date_only?: string; // YYYY-MM-DD format for DB unique constraint
 }

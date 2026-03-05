@@ -1,6 +1,7 @@
 import { WirelessMbusParser, type EvaluatedData } from "wireless-mbus-parser";
 import type { DatabaseRecord } from "./models";
 import { getDateTimeFromData } from "./dateTime";
+import type { MeterReading } from "./types";
 
 export function byteArrayToHexString(byteArray: Uint8Array): string {
   return Array.from(byteArray, function(byte: number) {
@@ -41,21 +42,81 @@ export async function parseTelegram(
   const databaseRecord: DatabaseRecord = {
     local_meter_id: localMeterId,
     device_id: parsedMQTT.meter.id,
-    device_type: parsedMQTT.meter.deviceType,
+    device_type: parsedMQTT.meter.deviceType === 'Heat Cost Allocator' ? 'HCA' : 'Unknown',
     manufacturer: parsedMQTT.meter.manufacturer,
     version: parsedMQTT.meter.version.toString(),
     access_number: parsedMQTT.meter.accessNo,
-    status: parsedMQTT.meter.status,
-    parsed_data: JSON.stringify(parsedMQTT),
+    status: parsedMQTT.meter.status === 'No error' ? '00h' : parsedMQTT.meter.status,
+    parsed_data: JSON.stringify(transformMbusToWebFormat(
+      parsedMQTT.data,
+      parsedMQTT.meter.id,
+      parsedMQTT.meter.manufacturer,
+      parsedMQTT.meter.deviceType === 'Heat Cost Allocator' ? 'HCA' : 'Unknown',
+      parsedMQTT.meter.version.toString(),
+      parsedMQTT.meter.status ?? '',
+      parsedMQTT.meter.accessNo ?? 0
+    )),
     date_only: dt!,
-    
-    // frame_type: "", // not sure where to pull this from
-    // encryption: 0, // not sure where to pull this from
   };
 
   // self referential bullshit - lol
-  databaseRecord.parsed_data = JSON.stringify(databaseRecord);
 
   return databaseRecord;
 }
 
+function transformMbusToWebFormat(
+  readings: EvaluatedData[],
+  meterId: string,
+  meterManufacturer: string,
+  meterDeviceType: string,
+  version: string,
+  status: string,
+  accessNo: number,
+): MeterReading {
+  const result: Partial<MeterReading> = {
+    "Manufacturer": meterManufacturer,
+    "ID": meterId,
+    "Version": version,
+    "Device Type": meterDeviceType,
+    "Access Number": accessNo,
+    "Status": status,
+  };
+
+  if (!Array.isArray(readings)) return result as MeterReading;
+
+  const formatDate = (value: unknown): string => {
+    const d = new Date(String(value));
+    const day = String(d.getUTCDate()).padStart(2, "0");
+    const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const year = d.getUTCFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
+  let dateCount = 0;
+
+  for (const item of readings) {
+    if (!item?.description) continue;
+
+    if (item.description === "Time point" && item.type === "DateTime" && !result["IV,0,0,0,,Date/Time"]) {
+      const d = new Date(String(item.value));
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      const hours = String(d.getHours()).padStart(2, "0");
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+      result["IV,0,0,0,,Date/Time"] = `${day}.${month}.${year} ${hours}:${minutes}`;
+    } else if (item.description === "Time point" && item.type === "Date") {
+      const key = `IV,${dateCount + 1},0,0,,Date` as keyof MeterReading;
+      (result as Record<string, unknown>)[key] = formatDate(item.value);
+      dateCount++;
+
+    } else if (item.description === "Units for H.C.A.") {
+      const storageNo = item.info?.storageNo ?? 0;
+      const targetIndex = storageNo === 1 ? 28 : storageNo;
+      const key = `IV,${targetIndex},0,0,,Units HCA` as keyof MeterReading;
+      (result as Record<string, unknown>)[key] = item.value as number;
+    }
+  }
+
+  return result as MeterReading;
+}

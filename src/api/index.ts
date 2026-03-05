@@ -1152,9 +1152,17 @@ export async function getLocalWithContractsById(
 }
 
 export async function getMetersByLocalId(localId: string): Promise<LocalMeterType[]> {
-
   const meters = await database
-    .select()
+    .select({
+      id: local_meters.id,
+      meter_number: local_meters.meter_number,
+      meter_note: local_meters.meter_note,
+      meter_type: local_meters.meter_type,
+      heater_metadata: local_meters.heater_metadata,
+      device_metadata: local_meters.device_metadata,
+      local_id: local_meters.local_id,
+      created_at: local_meters.created_at,
+    })
     .from(local_meters)
     .where(eq(local_meters.local_id, localId));
 
@@ -1167,7 +1175,16 @@ export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMete
   }
 
   const meters = await database
-    .select()
+    .select({
+      id: local_meters.id,
+      meter_number: local_meters.meter_number,
+      meter_note: local_meters.meter_note,
+      meter_type: local_meters.meter_type,
+      heater_metadata: local_meters.heater_metadata,
+      device_metadata: local_meters.device_metadata,
+      local_id: local_meters.local_id,
+      created_at: local_meters.created_at,
+    })
     .from(local_meters)
     .where(inArray(local_meters.local_id, localIds));
 

@@ -312,6 +312,8 @@ export const users = pgTable("users", {
 	first_name: text().notNull(),
 	last_name: text().notNull(),
 	permission: text().default('user').notNull(),
+	phone: text(),
+	notes: text(),
 	has_seen_tour: boolean().default(false).notNull(),
 	agency_id: uuid(),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),

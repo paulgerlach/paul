@@ -38,7 +38,7 @@ export default function HeatingCosts({
     () => (value: number) => `${value.toLocaleString()}`
   );
   const isHCA = csvText?.[0]?.["Device Type"] === "HCA";
-
+  
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
       return [];
@@ -52,7 +52,6 @@ export default function HeatingCosts({
       startDate || undefined,
       endDate || undefined
     );
-
     // If we have raw device data but no readings for the selected date range,
     // show 0 value for each day in the range instead of "no data available"
     // This provides better UX - users see "0 consumption" rather than ambiguous "no data"

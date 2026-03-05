@@ -200,7 +200,7 @@ export async function fetchHeatingBillData(
       : [],
     localIds.length > 0
       ? database
-        .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id })
+        .select({ id: local_meters.id, meter_number: local_meters.meter_number, local_id: local_meters.local_id, meter_note: local_meters.meter_note })
         .from(local_meters)
         .where(inArray(local_meters.local_id, localIds))
       : [],

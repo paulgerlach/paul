@@ -1,7 +1,7 @@
 import {
   getAdminContractsByLocalID,
   getAdminHeatingBillDocumentByID,
-  getAdminInvoicesByHeatingBillDocumentID,
+  getAdminHeatingInvoicesByHeatingBillDocumentID,
   getDocCostCategoryTypes,
   getLocalById,
 } from "@/api";
@@ -25,7 +25,7 @@ export default async function GesamtkostenEditPage({
     user_id
   );
 
-  const relatedToDocInvoices = await getAdminInvoicesByHeatingBillDocumentID(doc_id, user_id);
+  const relatedToDocInvoices = await getAdminHeatingInvoicesByHeatingBillDocumentID(doc_id, user_id);
 
   const localId = doc?.local_id ?? "";
   const localData = localId ? await getLocalById(localId) : ({} as any);

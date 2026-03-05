@@ -25,7 +25,7 @@ import { useParams } from "next/navigation";
 type FileEntry = {
   id: string;
   file: File;
-  status: "pending" | "analyzing" | "success" | "error";
+  status: "pending" | "analyzing" | "success" | "error" | "saved";
   result?: {
     costType: string;
     costTypeName: string;
@@ -172,25 +172,42 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
           direct_local_id: null,
         };
 
-        await adminCreateHeatingInvoiceDocument(
-          formPayload,
-          objektID,
-          String(user_id),
-          operatingDocID,
-          costType
-        );
+        try {
+          await adminCreateHeatingInvoiceDocument(
+            formPayload,
+            objektID,
+            String(user_id),
+            operatingDocID,
+            costType
+          );
 
-        updateDocumentGroup(costType, {
-          ...formPayload,
-          invoice_date: invoiceDate ? invoiceDate.toISOString() : null,
-          total_amount: amount != null ? String(amount) : null,
-        });
+          updateDocumentGroup(costType, {
+            ...formPayload,
+            invoice_date: invoiceDate ? invoiceDate.toISOString() : null,
+            total_amount: amount != null ? String(amount) : null,
+          });
 
-        await uploadDocuments.mutateAsync({
-          files: [file],
-          relatedId: operatingDocID ?? "",
-          relatedType: "heating_bill",
-        });
+          await uploadDocuments.mutateAsync({
+            files: [file],
+            relatedId: operatingDocID ?? "",
+            relatedType: "heating_bill",
+          });
+
+          // Mark as saved
+          setEntries((prev) =>
+            prev.map((e) => (e.id === entry.id ? { ...e, status: "saved" } : e))
+          );
+        } catch (err: any) {
+          console.error(`Failed to save ${file.name}:`, err);
+          // Mark as error
+          setEntries((prev) =>
+            prev.map((e) =>
+              e.id === entry.id
+                ? { ...e, status: "error", error: err.message || "Speichern fehlgeschlagen" }
+                : e
+            )
+          );
+        }
       }
     },
     onSuccess: () => {
@@ -219,6 +236,8 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
     onDrop,
     accept: { "application/pdf": [".pdf"] },
     multiple: true,
+    maxSize: 10 * 1024 * 1024,   // 10 MB per file
+    maxFiles: 20,                 // max 20 files per batch
     disabled: parseMutation.isPending || saveMutation.isPending,
   });
 
@@ -250,7 +269,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
   const isAnalyzing = parseMutation.isPending;
   const isSaving = saveMutation.isPending;
   const hasPending = entries.some((e) => e.status === "pending" || e.status === "error");
-  const hasSuccess = entries.some((e) => e.status === "success");
+  const hasSuccess = entries.some((e) => e.status === "success" || e.status === "saved");
 
   return (
     <DialogBase dialogName={"admin_ai_invoice_create"}>
@@ -304,7 +323,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
                       {entry.status === "analyzing" && (
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-black/10 border-t-black/60" />
                       )}
-                      {entry.status === "success" && (
+                      {(entry.status === "success" || entry.status === "saved") && (
                         <CheckCircle2 className="w-4 h-4 text-green-500" />
                       )}
                       {entry.status === "pending" && (
@@ -327,7 +346,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
         ) : (
           /* ── Review Step ── */
           <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2">
-            {entries.filter(e => e.status === "success").map((entry) => (
+            {entries.filter(e => e.status === "success" || e.status === "saved").map((entry) => (
               <div key={entry.id} className="rounded-xl border border-green-200 bg-green-50 p-4 flex flex-col gap-3">
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
@@ -413,7 +432,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
                   Speichern…
                 </span>
               ) : (
-                `Alle Speichern (${entries.filter(e => e.status === "success").length})`
+                `Alle Speichern (${entries.filter(e => e.status === "success" || e.status === "saved").length})`
               )}
             </Button>
           )}

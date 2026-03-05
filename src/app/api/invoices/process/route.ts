@@ -38,6 +38,13 @@ export async function POST(req: NextRequest) {
         const arrayBuffer = await req.arrayBuffer();
         const body = new Uint8Array(arrayBuffer);
 
+        if (body.byteLength > MAX_BODY_BYTES) {
+            return NextResponse.json(
+                { error: "Payload too large. Maximum total upload size is 200 MB." },
+                { status: 413 }
+            );
+        }
+
         const upstreamRes = await fetch("https://heididoc.vercel.app/api/invoices/process/", {
             method: "POST",
             headers: {

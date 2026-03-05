@@ -35,6 +35,7 @@ export default function AdminDokumentenmanagementLocalForm({
         entries,
         step,
         onDrop,
+        onDropRejected,
         handleSubmit,
         parseMutation,
         saveMutation,
@@ -69,6 +70,7 @@ export default function AdminDokumentenmanagementLocalForm({
                         {step === "upload" && (
                             <UploadDropzone
                                 onDrop={onDrop}
+                                onDropRejected={onDropRejected}
                             />
                         )}
 

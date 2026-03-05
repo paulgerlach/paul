@@ -19,7 +19,7 @@ export function FileList({ entries }: FileListProps) {
                 >
                     <FileText />
                     {entry.file.name}
-                    {entry.status === "success" && (
+                    {(entry.status === "success" || entry.status === "saved") && (
                         <CheckCircle2 className="text-green-500" />
                     )}
                     {entry.status === "error" && (

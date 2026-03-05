@@ -124,28 +124,32 @@ export default function AddDocHeizkostenabrechnungDialog() {
       return;
     }
 
-    const res = await createHeatingInvoice(
-      {
-        ...formattedPayload,
-        invoice_date: rest.invoice_date,
-        total_amount: rest.total_amount != null ? rest.total_amount : null,
-      },
-      objektID,
-      operatingDocID,
-      activeCostType
-    );
+    try {
+      const res = await createHeatingInvoice(
+        {
+          ...formattedPayload,
+          invoice_date: rest.invoice_date,
+          total_amount: rest.total_amount != null ? rest.total_amount : null,
+        },
+        objektID,
+        operatingDocID,
+        activeCostType
+      );
 
-    updateDocumentGroup(activeCostType, res);
+      updateDocumentGroup(activeCostType, res);
 
-    await uploadDocuments.mutateAsync({
-      files: document,
-      relatedId: operatingDocID ?? "",
-      relatedType: "heating_bill",
-    });
+      await uploadDocuments.mutateAsync({
+        files: document,
+        relatedId: operatingDocID ?? "",
+        relatedType: "heating_bill",
+      });
 
-    closeDialog(activeDialog as DialogStoreActionType);
-    toast.success("Rechnung erfolgreich hinzugefügt");
-    methods.reset(defaultValues);
+      closeDialog(activeDialog as DialogStoreActionType);
+      toast.success("Rechnung erfolgreich hinzugefügt");
+      methods.reset(defaultValues);
+    } catch (err: any) {
+      toast.error(err?.message || "Fehler beim Speichern der Rechnung.");
+    }
   };
 
   if (!isOpen) return null;

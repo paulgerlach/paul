@@ -21,7 +21,7 @@ import { toast } from "sonner";
 export type FileEntry = {
     id: string;
     file: File;
-    status: "pending" | "analyzing" | "success" | "error";
+    status: "pending" | "analyzing" | "success" | "error" | "saved";
     result?: {
         costType: string;
         costTypeName: string;
@@ -238,10 +238,17 @@ export function useInvoicesBase({
                     });
 
                     await uploadDocuments.mutateAsync({
+                        relatedType: "heating_bill",
                         files: [file],
                         relatedId: docId,
-                        relatedType: "heating_bill",
                     });
+
+                    // Update this specific entry to 'saved'
+                    setEntries((prev) =>
+                        prev.map((e) =>
+                            e.id === entry.id ? { ...e, status: "saved" } : e
+                        )
+                    );
                 } catch (err: any) {
                     console.error(`Failed to save ${file.name}:`, err);
                     errors.push(`${file.name}: ${err.message || 'Speichern fehlgeschlagen'}`);

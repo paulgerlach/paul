@@ -17,7 +17,6 @@ export const aggregateDataByTimeRange = (
   endDate?: Date | null
 ): { label: string; value: number }[] => {
   if (!readings?.length || !startDate || !endDate) return [];
-
   const validReadings = readings.filter((reading) =>
     isValidReading(reading, startDate, endDate)
   );
@@ -121,7 +120,7 @@ const isValidReading = (reading: MeterReadingType, startDate: Date, endDate: Dat
 
 
 const hasValidStatus = (status: string): boolean => {
-  return status === "00h"; // Status other than 00h indicates error
+  return (status === "00h" || status === "No error" || status === "Alarm (permanent)");
 };
 
 const hasNoErrorFlags = (errorFlags: string | undefined): boolean => {

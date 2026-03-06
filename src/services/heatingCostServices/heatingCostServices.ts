@@ -1,7 +1,6 @@
 import { MeterReadingType } from "@/api";
-import { monthNames } from "@/lib/constants/date";
-import { getDateString, getReadingDate, isDateRangeLongerThanAMonth } from "@/utils/date";
-import { addHCAMonthlyTotals, getHCADailyConsumption, getHCADisplayMapping, getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
+import { getDateString, getReadingDate, } from "@/utils/date";
+import { addHCAMonthlyTotals, getHCADailyConsumption, getHCADisplayMapping } from "./hcaHeatingCostServices";
 import { getDisplayMapping, getStandardMeterConsumption } from "./standardHeatingCostServices";
 import { parseGermanDate } from "@/utils";
 

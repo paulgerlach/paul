@@ -39,41 +39,41 @@ export default function DashboardTable({ data, hierarchy = {} }: DashboardTableP
   const tableData = useMemo(() => {
     // Ensure we have a valid map even if null is passed
     const map = hierarchy || {};
-    
+
     // Normalization helper (strips leading zeros and spaces)
     const normalizeId = (id: string) => String(id || "").trim().replace(/^0+/, '');
 
     return data.map((item: any) => {
       const rawId = String(item.ID || item["Number Meter"] || "");
       const normalizedRawId = normalizeId(rawId);
-      
+
       // Try to find a match in the hierarchy map
       // Check both raw ID and normalized ID in case the map keys are already normalized
       const matchKey = Object.keys(map).find(key => normalizeId(key) === normalizedRawId) || rawId;
       const meta = map[matchKey] || { building: '-', unit: '-', tenant: '-' };
-      
+
       const date = item["Actual Date"] || item["Raw Date"] || String(item["IV,0,0,0,,Date/Time"] || "").split(" ")[0] || "-";
-      
+
       // Aggressive search for Value
-      const value = item["Actual Energy / HCA"] 
-                 || item["Actual Volume"] 
-                 || item["IV,0,0,0,Wh,E"] 
-                 || item["IV,0,0,0,m^3,Vol"] 
-                 || item["Actual Energy"]
-                 || item["Energy"]
-                 || item["Volume"]
-                 || item["Messwert"]
-                 || item["Billing Value"]
-                 || "-";
-      
+      const value = item["Actual Energy / HCA"]
+        || item["Actual Volume"]
+        || item["IV,0,0,0,Wh,E"]
+        || item["IV,0,0,0,m^3,Vol"]
+        || item["Actual Energy"]
+        || item["Energy"]
+        || item["Volume"]
+        || item["Messwert"]
+        || item["Billing Value"]
+        || "-";
+
       // Aggressive search for Unit
-      const unit = item["Actual Unit"] 
-                || item["Actual Unit Volume"] 
-                || item.Unit 
-                || item.Unity
-                || item["Billing Unit"]
-                || (item["Device Type"] === "Heat" || item["Device Type"] === "Heizkostenverteiler" ? "Einheiten" : "")
-                || "-";
+      const unit = item["Actual Unit"]
+        || item["Actual Unit Volume"]
+        || item.Unit
+        || item.Unity
+        || item["Billing Unit"]
+        || (item["Device Type"] === "Heat" || item["Device Type"] === "Heizkostenverteiler" ? "Einheiten" : "")
+        || "-";
 
       return {
         building: meta.building,
@@ -113,7 +113,7 @@ export default function DashboardTable({ data, hierarchy = {} }: DashboardTableP
             })}
           </tbody>
         </table>
-        
+
         {data.length === 0 && (
           <div className="bg-white p-10 text-center text-sm text-gray-500 font-light italic">
             Keine Verbrauchsdaten für diesen Filter verfügbar.
@@ -134,7 +134,7 @@ function Th({ children, className = "" }: { children: React.ReactNode, className
 
 function Td({ children, className = "" }: { children: React.ReactNode, className?: string }) {
   return (
-    <td className={`px-2 py-1 border-r border-[#e2e8f0] border-b border-[#e2e8f0] whitespace-nowrap overflow-hidden text-ellipsis max-w-[250px] ${className}`}>
+    <td className={`px-2 py-1 border-r border-[#e2e8f0] border-b whitespace-nowrap overflow-hidden text-ellipsis max-w-[250px] ${className}`}>
       {children}
     </td>
   );

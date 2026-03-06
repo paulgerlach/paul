@@ -97,7 +97,7 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string }[]
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string; created_at: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
     const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);

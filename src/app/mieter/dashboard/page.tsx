@@ -88,7 +88,8 @@ function DashboardContent() {
         const sessionData = await sessionRes.json();
         
         if (!sessionRes.ok || !sessionData.authenticated) {
-          router.push('/mieter/login');
+          // Redirect to main site with param to auto-open tenant login dialog
+          router.push('/?tenant-login=true');
           return;
         }
         

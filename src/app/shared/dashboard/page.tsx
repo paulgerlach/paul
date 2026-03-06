@@ -97,19 +97,9 @@ export default async function SharedDashboardPage({ searchParams }: SharedDashbo
     filters.endDate
   );
   
-  if (!parsedData?.data || parsedData.data.length === 0) {
-    return (
-      <div className="py-6 px-9 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Data Unavailable</h1>
-          <p className="text-gray-600">Unable to load dashboard data at this time.</p>
-          {parsedData.errors.length > 0 && (
-            <p className="text-sm text-gray-400 mt-2">Error: {parsedData.errors[0]}</p>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // Note: We no longer show "Data Unavailable" error when there's no data.
+  // Instead, let the dashboard render with empty charts showing "Keine Daten" messages.
+  // This provides better UX for tenants viewing buildings with no readings yet.
 
   // Filter out header rows (meter ID filtering now done at database level)
   let filteredData = parsedData?.data?.filter((item: any) => item["Device Type"] !== "Device Type");

@@ -27,6 +27,8 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   status?: "renting" | "vacancy";
   tenantDocuments?: TenantDocument[];
   isSuperAdmin?: boolean;
+  isPending?: boolean;
+  pendingTooltip?: string;
 };
 
 export default async function AdminObjekteLocalItemHeatingBillDocResult({
@@ -38,6 +40,8 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   status: statusFromProps,
   tenantDocuments = [],
   isSuperAdmin = false,
+  isPending = false,
+  pendingTooltip,
 }: Readonly<ObjekteLocalItemHeatingBillDocResultProps>) {
   let status = statusFromProps;
   if (!status) {
@@ -144,8 +148,15 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
           </div>
         </div>
         <div className="flex items-center gap-4">
+          {/* Pending placeholder actions */}
+          {isPending && (
+            <TenantDocumentActions
+              isPending
+              pendingTooltip={pendingTooltip}
+            />
+          )}
           {/* Inline action buttons when single document */}
-          {singleDoc && (
+          {!isPending && singleDoc && (
             <div className="flex items-center gap-2">
               {!singleDoc.current_document && (
                 <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full whitespace-nowrap hidden medium:inline-block">
@@ -158,7 +169,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
               />
             </div>
           )}
-          {singleDoc && isSuperAdmin ? (
+          {!isPending && singleDoc && isSuperAdmin ? (
             <TenantDocumentUploadHandler
               documentId={singleDoc.id}
               editLink={editLink}

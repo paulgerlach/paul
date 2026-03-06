@@ -1,0 +1,40 @@
+"use client";
+
+import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
+import { useInvoicesBase } from "@/hooks/useInvoicesBase";
+import type {
+    DocCostCategoryType,
+    InvoiceDocumentType,
+} from "@/types";
+
+export function useDokumentenManagement({
+    objektId,
+    docId,
+    pathSlug,
+    userDocCostCategories,
+    relatedInvoices,
+}: {
+    objektId: string;
+    docId: string;
+    pathSlug: string;
+    userDocCostCategories: DocCostCategoryType[];
+    relatedInvoices?: InvoiceDocumentType[];
+}) {
+    const isEditMode = !!relatedInvoices;
+
+    const nextLink = isEditMode
+        ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
+        : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/gesamtkosten`;
+
+    return useInvoicesBase({
+        objektId,
+        docId,
+        pathSlug,
+        userDocCostCategories,
+        relatedInvoices,
+        saveInvoiceAction: (payload, objId, opDocId, costType) =>
+            createHeatingInvoice(payload, objId, opDocId, costType),
+        nextLink,
+    });
+}

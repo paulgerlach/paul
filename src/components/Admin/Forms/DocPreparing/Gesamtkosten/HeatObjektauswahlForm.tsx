@@ -12,11 +12,13 @@ import CostTypesHeatObjektauswahlAccordion from "@/components/Admin/Docs/CostTyp
 export default function GesamtkostenHeatObjektauswahlForm({
   objektId,
   docId,
+  pathSlug,
   userDocCostCategories,
   relatedInvoices,
 }: {
   objektId: string;
   docId: string;
+  pathSlug: string;
   userDocCostCategories: DocCostCategoryType[];
   relatedInvoices?: InvoiceDocumentType[];
 }) {
@@ -24,14 +26,16 @@ export default function GesamtkostenHeatObjektauswahlForm({
   const isEditMode = !!relatedInvoices;
 
   useEffect(() => {
-    const groups = userDocCostCategories.map((doc) => ({
-      ...doc,
-      data: isEditMode
-        ? relatedInvoices.filter((invoice) => invoice.cost_type === doc.type)
-        : [],
-    }));
-    setDocumentGroups(groups);
-  }, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode]);
+    if (documentGroups.length === 0) {
+      const groups = userDocCostCategories.map((doc) => ({
+        ...doc,
+        data: isEditMode
+          ? relatedInvoices.filter((invoice) => invoice.cost_type === doc.type)
+          : [],
+      }));
+      setDocumentGroups(groups);
+    }
+  }, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode, documentGroups.length]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =
@@ -43,12 +47,12 @@ export default function GesamtkostenHeatObjektauswahlForm({
   }, 0);
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/abrechnungszeitraum`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`;
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`
+    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${pathSlug === "manuell" ? "abrechnungszeitraum" : `${pathSlug}/dokumentenmanagement`}`;
 
   const nextLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/umlageschlussel`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/umlageschlussel`;
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/umlageschlussel`
+    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/umlageschlussel`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] max-medium:border-y-[10px] border-[#EFEEEC] col-span-2 max-medium:col-span-1 rounded-2xl max-medium:rounded-xl px-4 max-medium:px-2 flex items-start justify-center">

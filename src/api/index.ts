@@ -1420,7 +1420,7 @@ export async function getDocumentsByHeatingBillDocId(
       document_url: doc.document_url,
       local_id: localId,
       current_document: doc.current_document,
-      created_at: doc.created_at,
+      created_at: doc.created_at ?? '',
     });
   }
 

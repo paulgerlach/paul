@@ -9,18 +9,28 @@ export default function ObjekteItemDocAccordion({
 }: {
   objekts?: ObjektType[];
 }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [closedIds, setClosedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleClick = (index: number) => {
-    setOpenIndex((prev) => (prev === index ? null : index));
+    const objekt = filteredAndSortedObjekts[index];
+    if (!objekt || !objekt.id) return;
+    setClosedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(objekt.id as string)) {
+        newSet.delete(objekt.id as string);
+      } else {
+        newSet.add(objekt.id as string);
+      }
+      return newSet;
+    });
   };
 
   // Filter and sort objekts
   const filteredAndSortedObjekts = useMemo(() => {
     if (!objekts) return [];
-    
+
     let result = [...objekts];
 
     // Filter by search query
@@ -92,7 +102,7 @@ export default function ObjekteItemDocAccordion({
         ) : (
           filteredAndSortedObjekts.map((objekt, index) => (
             <ObjekteItemDocWithHistory
-              isOpen={openIndex === index}
+              isOpen={!closedIds.has(objekt.id as string)}
               onClick={handleClick}
               key={objekt.id}
               index={index}

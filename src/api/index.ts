@@ -951,15 +951,20 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     .map(doc => doc.related_id);
 
   let heatingBillObjekts: Record<string, string> = {};
+  const lockedHbIds = new Set<string>();
   if (heatingBillIds.length > 0) {
     const heatingBills = await database
-      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id, created_at: heating_bill_documents.created_at })
       .from(heating_bill_documents)
       .where(inArray(heating_bill_documents.id, heatingBillIds));
 
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     heatingBillObjekts = heatingBills.reduce((acc, bill) => {
       if (bill.objekt_id) {
         acc[bill.id] = bill.objekt_id;
+      }
+      if (!isSuperAdmin && bill.created_at && new Date(bill.created_at) > twentyFourHoursAgo) {
+        lockedHbIds.add(bill.id);
       }
       return acc;
     }, {} as Record<string, string>);
@@ -983,14 +988,16 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     }, {} as Record<string, string>);
   }
 
-  return userDocuments.map(doc => ({
-    ...doc,
-    objekt_id: doc.related_type === "heating_bill"
-      ? heatingBillObjekts[doc.related_id] || null
-      : doc.related_type === "operating_costs"
-        ? operatingCostObjekts[doc.related_id] || null
-        : null
-  }));
+  return userDocuments
+    .filter(doc => !(doc.related_type === "heating_bill" && lockedHbIds.has(doc.related_id)))
+    .map(doc => ({
+      ...doc,
+      objekt_id: doc.related_type === "heating_bill"
+        ? heatingBillObjekts[doc.related_id] || null
+        : doc.related_type === "operating_costs"
+          ? operatingCostObjekts[doc.related_id] || null
+          : null
+    }));
 }
 
 export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
@@ -1450,19 +1457,25 @@ export async function getDocumentsByRelatedIds(
  */
 export async function getDocumentsByObjektIds(
   objektIds: string[],
-  includeHistory: boolean = false
+  includeHistory: boolean = false,
+  viewerIsSuperAdmin: boolean = false
 ): Promise<any[]> {
   if (objektIds.length === 0) return [];
 
   // Find all heating bill doc IDs for these objekts
   const hbDocs = await database
-    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id, created_at: heating_bill_documents.created_at })
     .from(heating_bill_documents)
     .where(inArray(heating_bill_documents.objekt_id, objektIds));
 
   const hbObjektMap: Record<string, string> = {};
+  const lockedHbIds = new Set<string>();
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
   for (const hb of hbDocs) {
     if (hb.objekt_id) hbObjektMap[hb.id] = hb.objekt_id;
+    if (!viewerIsSuperAdmin && hb.created_at && new Date(hb.created_at) > twentyFourHoursAgo) {
+      lockedHbIds.add(hb.id);
+    }
   }
 
   // Find all operating cost doc IDs for these objekts
@@ -1496,10 +1509,12 @@ export async function getDocumentsByObjektIds(
     .where(and(...conditions))
     .orderBy(documents.created_at);
 
-  return allDocs.map((doc) => ({
-    ...doc,
-    objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
-  }));
+  return allDocs
+    .filter(doc => !lockedHbIds.has(doc.related_id))
+    .map((doc) => ({
+      ...doc,
+      objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
+    }));
 }
 
 /**

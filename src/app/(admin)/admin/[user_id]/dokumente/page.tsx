@@ -3,6 +3,10 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import DokumenteLayout from "@/components/Admin/Docs/DokumenteLayout/DokumenteLayout";
 import { ROUTE_ADMIN } from "@/routes/routes";
+import { supabaseServer } from "@/utils/supabase/server";
+import database from "@/db";
+import { users } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 interface DokumentePageProps {
   params: Promise<{
@@ -16,13 +20,24 @@ export default async function DokumentePage({ params, searchParams }: DokumenteP
   const resolvedSearchParams = await searchParams;
   const includeHistory = resolvedSearchParams?.includeHistory === 'true';
 
+  const supabase = await supabaseServer();
+  const { data: { user: viewer } } = await supabase.auth.getUser();
+  let viewerIsSuperAdmin = false;
+  if (viewer) {
+    const [viewerData] = await database
+      .select({ permission: users.permission })
+      .from(users)
+      .where(eq(users.id, viewer.id));
+    viewerIsSuperAdmin = viewerData?.permission === "super_admin";
+  }
+
   const objektsWithLocals = await getObjektsWithLocalsByUserID(user_id);
 
   // Get documents by objekt IDs (avoids user_id mismatch in admin context)
   const objektIds = objektsWithLocals
     .map((o) => o.id)
     .filter((id): id is string => Boolean(id));
-  const documents = await getDocumentsByObjektIds(objektIds, includeHistory);
+  const documents = await getDocumentsByObjektIds(objektIds, includeHistory, viewerIsSuperAdmin);
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">

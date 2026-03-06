@@ -10,7 +10,7 @@ import { Button } from "@/components/Basic/ui/Button";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { createHeatingBillDocuments } from "@/actions/create/createHeatingBillDocuments";
 import { editHeatingBillDocument } from "@/actions/edit/editHeatingBillDocument";
@@ -96,44 +96,63 @@ export default function AbrechnungszeitraumLocalForm({
     if (end_date) setEndDate(end_date);
   }, []);
 
-  const handleSubmit = async (data: AbrechnungszeitraumFormValues) => {
-    if (!isPathSubmited) {
-      openDialog("heating_bill_path_create");
-      return;
+  useEffect(() => {
+    if (isPathSubmited) {
+      handleSubmit(getValues());
+      setIsPathSubmited(false);
     }
-    try {
-      const payload = {
-        ...data,
-        start_date: data.start_date?.toISOString() ?? null,
-        end_date: data.end_date?.toISOString() ?? null,
-        consumption_dependent: String(data.consumption_dependent),
-        living_space_share: String(data.living_space_share),
-      };
+  }, [isPathSubmited, path, getValues]);
 
-      if (isEditMode) {
-        await editHeatingBillDocument(docValues.id ?? "", payload);
-        router.push(
-          `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
-        );
-      } else {
-        const result = await createHeatingBillDocuments(
-          objekteID,
-          localId,
-          payload
-        );
-        const insertedDoc = result?.[0];
-        if (insertedDoc?.id) {
+  const handleSubmit = useCallback(
+    async (data: AbrechnungszeitraumFormValues) => {
+      if (!isPathSubmited) {
+        openDialog("heating_bill_path_create");
+        return;
+      }
+      try {
+        const payload = {
+          ...data,
+          start_date: data.start_date?.toISOString() ?? null,
+          end_date: data.end_date?.toISOString() ?? null,
+          consumption_dependent: String(data.consumption_dependent),
+          living_space_share: String(data.living_space_share),
+        };
+
+        if (isEditMode) {
+          await editHeatingBillDocument(docValues?.id ?? "", payload);
           router.push(
-            `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekteID}/${localId}/${insertedDoc.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
+            `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues?.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
           );
         } else {
-          console.error("Kein Dokument wurde erstellt.");
+          const result = await createHeatingBillDocuments(
+            objekteID,
+            localId,
+            payload
+          );
+          const insertedDoc = result?.[0];
+          if (insertedDoc?.id) {
+            router.push(
+              `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekteID}/${localId}/${insertedDoc.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
+            );
+          } else {
+            console.error("Kein Dokument wurde erstellt.");
+          }
         }
+      } catch (err) {
+        console.error("Fehler beim Verarbeiten des Dokuments:", err);
       }
-    } catch (err) {
-      console.error("Fehler beim Verarbeiten des Dokuments:", err);
-    }
-  };
+    },
+    [
+      isPathSubmited,
+      openDialog,
+      isEditMode,
+      docValues?.id,
+      router,
+      path,
+      objekteID,
+      localId,
+    ]
+  );
 
   const backLink = isEditMode
     ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`

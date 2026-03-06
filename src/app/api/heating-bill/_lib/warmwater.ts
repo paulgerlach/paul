@@ -56,6 +56,8 @@ export type WarmWaterResult = {
   consumptionCostVolumeFormatted: string;
   consumptionCostRatePerM3: number;
   consumptionCostRatePerM3Formatted: string;
+  /** True when no warm water meter readings are available; costs are allocated by sqm in unit breakdown */
+  noReadings: boolean;
 };
 
 /**
@@ -153,5 +155,6 @@ export function computeWarmWaterCosts(
       consumptionCostRatePerM3,
       6
     ),
+    noReadings: volumeM3 === 0,
   };
 }

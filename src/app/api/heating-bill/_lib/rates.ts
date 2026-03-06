@@ -36,6 +36,8 @@ export type HeatingRates = {
   consumptionCostRatePerUnit: number;
   consumptionCostRatePerUnitFormatted: string;
   consumptionUnit: string;
+  /** True when no heat meter readings are available; costs are allocated by sqm in unit breakdown */
+  noReadings: boolean;
 };
 
 /**
@@ -103,5 +105,6 @@ export function computeHeatingRates(
       6
     ),
     consumptionUnit,
+    noReadings: consumptionValue === 0,
   };
 }

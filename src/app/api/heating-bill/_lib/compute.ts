@@ -362,6 +362,7 @@ export function computeHeatingBill(
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
     livingSpaceM2: localLivingSpaceM2 || 0,
+    totalLivingSpaceM2: totalLivingSpace || 0,
     heating,
     warmWater,
     coldWaterRateItems: coldWater.rateItems,

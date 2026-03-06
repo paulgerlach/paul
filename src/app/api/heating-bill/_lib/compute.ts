@@ -152,9 +152,8 @@ export function computeHeatingBill(
     : readingsResult.totalHeatMwh;
   const heatingMwh = heatingConsumptionValue;
 
-  const combinedDeviceRental = costAgg.meteringDeviceRentalTotal || 0;
-  const wwDeviceRental = combinedDeviceRental;
-  const heatingDeviceRental = 0;
+  const wwDeviceRental = costAgg.wwDeviceRentalTotal || 0;
+  const heatingDeviceRental = costAgg.heatingDeviceRentalTotal || 0;
 
   const livingSpaceShare = Number(
     raw.mainDoc.living_space_share ?? 30

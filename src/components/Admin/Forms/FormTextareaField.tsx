@@ -47,7 +47,7 @@ export default function FormTextareaField<T extends FieldValues = FieldValues>({
                             disabled={disabled}
                             placeholder={placeholder}
                             {...field}
-                            className="flex min-h-14 w-full bg-white px-3.5 border border-black/20 rounded-md text-base max-xl:text-sm ring-offset-background file:text-sm file:font-medium file:text-foreground placeholder:text-dark_text/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green/40 focus-visible:border-green transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 max-medium:text-sm"
+                            className="flex min-h-14 w-full bg-white px-3.5 border border-black/20 rounded-md text-base max-xl:text-sm ring-offset-background file:text-sm file:font-medium file:text-foreground text-admin_dark_text placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green/40 focus-visible:border-green transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 max-medium:text-sm"
                             onChange={(e) => {
                                 field.onChange(e);
                                 onChange?.(e);

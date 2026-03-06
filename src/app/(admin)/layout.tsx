@@ -136,6 +136,12 @@ const LazyInviteUserDialog = lazy(
 const LazyInvoiceDeleteDialog = lazy(
   () => import("@/components/Basic/Dialog/InvoiceDeleteDIalog")
 );
+const LazyAIInvoiceCreateDialog = lazy(
+  () => import("@/components/Basic/Dialog/AddDocHeizkostenabrechnungAIDialog")
+);
+const LazyAdminAIInvoiceCreateDialog = lazy(
+  () => import("@/components/Basic/Dialog/Admin/AdminAddDocHeizkostenabrechnungAIDialog")
+);
 const LazyAdminInvoiceDeleteDialog = lazy(
   () =>
     import("@/components/Basic/Dialog/Admin/AdminInvoiceDeleteDIalog")
@@ -259,8 +265,15 @@ export default async function AdminLayout({
           <LazyInvoiceDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
+          <LazyAIInvoiceCreateDialog />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazyAdminAIInvoiceCreateDialog />
+        </Suspense>
+        <Suspense fallback={null}>
           <LazyAdminInvoiceDeleteDialog />
         </Suspense>
+
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
       </QueryProvider>

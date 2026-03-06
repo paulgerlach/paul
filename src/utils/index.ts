@@ -186,7 +186,10 @@ export const buildLocalName = ({
   );
 
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
-  const heatingSpacePart = heating_area ? `, HF: ${String(heating_area).replace(".", ",")}qm` : "";
+  const heatingSpacePart =
+    heating_area != null && Number(heating_area) !== 0
+      ? `, HF: ${String(heating_area).replace(".", ",")}qm`
+      : "";
 
   return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
 };

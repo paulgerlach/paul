@@ -89,6 +89,20 @@ const localSchema = z.object({
         meter_number: z.string().nullable(),
         meter_note: z.string().nullable(),
         meter_type: z.string().nullable(),
+        old_reading: z.coerce.number().nullable().optional(),
+        installation_date: z.string().nullable().optional(),
+        radiator_type: z.string().nullable().optional(),
+        radiator_length: z.coerce.number().nullable().optional(),
+        radiator_width: z.coerce.number().nullable().optional(),
+        radiator_depth: z.coerce.number().nullable().optional(),
+        installation_factor: z.string().nullable().optional(),
+        fernfuehler: z.string().nullable().optional(),
+        installation_location: z.string().nullable().optional(),
+        gateway_eui: z.string().nullable().optional(),
+        repeater_count: z.string().nullable().optional(),
+        notes: z.string().nullable().optional(),
+        manufacturer_old_device: z.string().nullable().optional(),
+        calibration_date: z.string().nullable().optional(),
       })
     )
     .nullable(),
@@ -206,9 +220,7 @@ export default function AdminEditObjekteUnitForm({
           try {
             await editLocal(localID, data);
 
-            if (data.meters && data.meters.length > 0) {
-              await createLocalMeters(data.meters, localID);
-            }
+            await createLocalMeters(data.meters, localID);
 
             if (data.documents && data.documents.length > 0) {
               await uploadDocuments.mutateAsync({

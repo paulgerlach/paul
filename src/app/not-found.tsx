@@ -2,9 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <html lang="de">
-      <body>
-        <div style={{
+    <div style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -35,7 +33,5 @@ export default function NotFound() {
             </button>
           </Link>
         </div>
-      </body>
-    </html>
   );
 }

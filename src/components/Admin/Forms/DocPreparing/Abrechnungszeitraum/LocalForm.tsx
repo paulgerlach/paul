@@ -10,11 +10,12 @@ import { Button } from "@/components/Basic/ui/Button";
 import Link from "next/link";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { createHeatingBillDocuments } from "@/actions/create/createHeatingBillDocuments";
 import { editHeatingBillDocument } from "@/actions/edit/editHeatingBillDocument";
 import type { HeatingBillDocumentType } from "@/types";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -42,6 +43,11 @@ const defaultValues: AbrechnungszeitraumFormValues = {
   living_space_share: 30,
 };
 
+const LazyHeatingBillPathDialog = lazy(
+  () =>
+    import("@/components/Basic/Dialog/HeatingBillPathDialog")
+);
+
 export default function AbrechnungszeitraumLocalForm({
   id: objekteID,
   localId,
@@ -54,19 +60,22 @@ export default function AbrechnungszeitraumLocalForm({
   const router = useRouter();
   const { setStartDate, setEndDate } = useHeizkostenabrechnungStore();
   const isEditMode = !!docValues;
+  const { openDialog } = useDialogStore();
+  const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
+  const [path, setPath] = useState<"manuell" | "ai">("manuell");
 
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
     defaultValues: docValues
       ? {
-          ...docValues,
-          start_date: new Date(
-            docValues.start_date ?? defaultValues.start_date
-          ),
-          end_date: new Date(docValues.end_date ?? defaultValues.end_date),
-          consumption_dependent: Number(docValues.consumption_dependent),
-          living_space_share: Number(docValues.living_space_share),
-        }
+        ...docValues,
+        start_date: new Date(
+          docValues.start_date ?? defaultValues.start_date
+        ),
+        end_date: new Date(docValues.end_date ?? defaultValues.end_date),
+        consumption_dependent: Number(docValues.consumption_dependent),
+        living_space_share: Number(docValues.living_space_share),
+      }
       : defaultValues,
   });
   const { setValue, watch, getValues } = methods;
@@ -87,40 +96,63 @@ export default function AbrechnungszeitraumLocalForm({
     if (end_date) setEndDate(end_date);
   }, []);
 
-  const handleSubmit = async (data: AbrechnungszeitraumFormValues) => {
-    try {
-      const payload = {
-        ...data,
-        start_date: data.start_date?.toISOString() ?? null,
-        end_date: data.end_date?.toISOString() ?? null,
-        consumption_dependent: String(data.consumption_dependent),
-        living_space_share: String(data.living_space_share),
-      };
+  useEffect(() => {
+    if (isPathSubmited) {
+      handleSubmit(getValues());
+      setIsPathSubmited(false);
+    }
+  }, [isPathSubmited, path, getValues]);
 
-      if (isEditMode) {
-        await editHeatingBillDocument(docValues.id ?? "", payload);
-        router.push(
-          `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/gesamtkosten`
-        );
-      } else {
-        const result = await createHeatingBillDocuments(
-          objekteID,
-          localId,
-          payload
-        );
-        const insertedDoc = result?.[0];
-        if (insertedDoc?.id) {
+  const handleSubmit = useCallback(
+    async (data: AbrechnungszeitraumFormValues) => {
+      if (!isPathSubmited) {
+        openDialog("heating_bill_path_create");
+        return;
+      }
+      try {
+        const payload = {
+          ...data,
+          start_date: data.start_date?.toISOString() ?? null,
+          end_date: data.end_date?.toISOString() ?? null,
+          consumption_dependent: String(data.consumption_dependent),
+          living_space_share: String(data.living_space_share),
+        };
+
+        if (isEditMode) {
+          await editHeatingBillDocument(docValues?.id ?? "", payload);
           router.push(
-            `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekteID}/${localId}/${insertedDoc.id}/gesamtkosten`
+            `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues?.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
           );
         } else {
-          console.error("Kein Dokument wurde erstellt.");
+          const result = await createHeatingBillDocuments(
+            objekteID,
+            localId,
+            payload
+          );
+          const insertedDoc = result?.[0];
+          if (insertedDoc?.id) {
+            router.push(
+              `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekteID}/${localId}/${insertedDoc.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
+            );
+          } else {
+            console.error("Kein Dokument wurde erstellt.");
+          }
         }
+      } catch (err) {
+        console.error("Fehler beim Verarbeiten des Dokuments:", err);
       }
-    } catch (err) {
-      console.error("Fehler beim Verarbeiten des Dokuments:", err);
-    }
-  };
+    },
+    [
+      isPathSubmited,
+      openDialog,
+      isEditMode,
+      docValues?.id,
+      router,
+      path,
+      objekteID,
+      localId,
+    ]
+  );
 
   const backLink = isEditMode
     ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
@@ -201,6 +233,9 @@ export default function AbrechnungszeitraumLocalForm({
           </form>
         </Form>
       </div>
+      <Suspense fallback={null}>
+        <LazyHeatingBillPathDialog setIsPathSubmited={setIsPathSubmited} path={path} setPath={setPath} />
+      </Suspense>
     </div>
   );
 }

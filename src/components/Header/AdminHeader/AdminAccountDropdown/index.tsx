@@ -119,7 +119,7 @@ export default function AdminAccountDropdown() {
                 </button>
               }
             >
-               {(onClose) => item.render(onClose)}
+              {(onClose, isOpen) => item.render(onClose, isOpen)}
             </MenuModal>
           ))}
 

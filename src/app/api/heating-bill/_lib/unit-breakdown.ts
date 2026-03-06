@@ -16,7 +16,8 @@ export type UnitBreakdownInput = {
   /** Target local for this breakdown */
   localId: string;
   livingSpaceM2: number;
-  localLabel?: string;
+  /** Building total living space m² — required for sqm-based fallback allocation */
+  totalLivingSpaceM2: number;
   /** Building-level heating rates */
   heating: HeatingRates;
   /** Building-level warm water result */
@@ -56,7 +57,7 @@ export type UnitBreakdownInput = {
 export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfModel["unitBreakdown"] {
   const {
     livingSpaceM2,
-    localLabel,
+    totalLivingSpaceM2,
     heating,
     warmWater,
     coldWaterRateItems,
@@ -74,22 +75,30 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   } = input;
 
   const tf = input.timeFraction ?? 1;
-  const locationLabel = localLabel ?? "Wohnung";
   const cUnit = input.consumptionUnit ?? "MWh";
   const isHca = cUnit === "Nutzeinh.";
+  const sqmShare = totalLivingSpaceM2 > 0 ? livingSpaceM2 / totalLivingSpaceM2 : 0;
 
-  // Base costs are area-based — scale by time fraction for multi-tenant proration
-  const heatingBaseCost = round2(livingSpaceM2 * heating.baseCostRatePerM2 * tf);
-  // Consumption costs use tenant-scoped meter readings — no time scaling needed
-  const heatingConsumptionValue = heatingDevices.reduce((s, d) => s + d.consumption, 0);
-  const heatingConsumptionCost = round2(heatingConsumptionValue * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionValue)));
+  // Heat: sqm fallback when no readings — allocate 100% of heating cost by sqm
+  const heatingBaseCost = heating.noReadings
+    ? round2(heating.totalCost * sqmShare * tf)
+    : round2(livingSpaceM2 * heating.baseCostRatePerM2 * tf);
+  const heatingConsumptionValue = heating.noReadings
+    ? 0
+    : heatingDevices.reduce((s, d) => s + d.consumption, 0);
+  const heatingConsumptionCost = heating.noReadings
+    ? 0
+    : round2(heatingConsumptionValue * (heating.consumptionCostAmount / Math.max(0.001, heating.consumptionValue)));
 
-  const warmWaterBaseCost = round2(livingSpaceM2 * warmWater.baseCostRatePerM2 * tf);
+  // Warm water: sqm fallback when no readings — allocate 100% of warm water cost by sqm
+  const warmWaterBaseCost = warmWater.noReadings
+    ? round2(warmWater.totalCost * sqmShare * tf)
+    : round2(livingSpaceM2 * warmWater.baseCostRatePerM2 * tf);
   // HCA warm water rule: warm water consumption cost is 0 for HCA apartments.
   // Hot water cost allocation only applies when consumption is in kWh (Wärmezähler).
   // The warm water base cost (area-based Grundkosten) still applies.
-  const warmWaterConsumptionM3 = isHca ? 0 : warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
-  const warmWaterConsumptionCost = isHca ? 0 : round2(
+  const warmWaterConsumptionM3 = (isHca || warmWater.noReadings) ? 0 : warmWaterDevices.reduce((s, d) => s + d.consumption, 0);
+  const warmWaterConsumptionCost = (isHca || warmWater.noReadings) ? 0 : round2(
     warmWaterConsumptionM3 * (warmWater.consumptionCostAmount / Math.max(0.001, warmWater.consumptionCostVolume))
   );
 
@@ -99,6 +108,21 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
 
   const unitColdWaterM3 = coldWaterDevices.reduce((s, d) => s + d.consumption, 0);
   const coldWaterItems = coldWaterRateItems.map((item) => {
+    // Cold water sqm fallback: use living space m² when no readings
+    if (item.allocationMode === "sqm") {
+      const cost = round2(livingSpaceM2 * item.rate * tf);
+      return {
+        label: item.label,
+        volume: livingSpaceM2,
+        volumeFormatted: formatGermanNumber(livingSpaceM2, 2),
+        unit: item.unit,
+        rate: item.rate,
+        rateFormatted: item.rateFormatted,
+        rateUnit: item.rateUnit,
+        cost,
+        costFormatted: formatEuro(cost),
+      };
+    }
     const volume =
       item.unit === "Nutzeinh."
         ? 1
@@ -124,7 +148,7 @@ export function computeUnitBreakdown(input: UnitBreakdownInput): HeatingBillPdfM
   const grandTotal = round2(heatingAndWarmWaterTotal + coldWaterTotal);
 
   const deviceRowsWithLocation = (rows: DeviceReadingRow[]) =>
-    rows.map((r) => ({ ...r, location: r.location || locationLabel }));
+    rows.map((r) => ({ ...r, location: r.location || "" }));
 
   const heatingTotal = heatingConsumptionValue;
   const warmWaterTotal = warmWaterConsumptionM3;

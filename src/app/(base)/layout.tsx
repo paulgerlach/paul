@@ -4,6 +4,7 @@ import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
 import { Toaster } from "@/components/Basic/ui/Sonner";
 import { Suspense, lazy } from "react";
+import TenantLoginAutoOpen from "@/components/Basic/TenantLoginAutoOpen";
 
 // Lazy-load the dialogs
 const LazyLoginDialog = lazy(() => import("@/components/Basic/Dialog/LoginDialog"));
@@ -43,6 +44,9 @@ export default function BaseLayout({
       </Suspense>
       <Suspense fallback={null}>
         <LazyTenantForgotPasswordDialog />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TenantLoginAutoOpen />
       </Suspense>
       <Toaster />
     </QueryProvider>

@@ -8,6 +8,8 @@ import {
 import { Input } from "@/components/Basic/ui/Input";
 import React, { useEffect, useState } from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
+import Image from "next/image";
+import { calendar } from "@/static/icons";
 
 export type FormInputFieldProps<T extends FieldValues = FieldValues> = {
   control: Control<T>;
@@ -101,6 +103,8 @@ function FormInnerInput({
     finalDisplayValue = "";
   }
 
+  const isDateType = type === "date";
+
   return (
     <FormItem className={className}>
       {label && (
@@ -113,6 +117,11 @@ function FormInnerInput({
             disabled={disabled}
             type={isNumericProp && replaceDotWithComma ? "text" : type}
             placeholder={placeholder}
+            className={
+              isDateType
+                ? "pr-10 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-12 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
+                : undefined
+            }
             {...field}
             onKeyDown={(e) => {
               if (isNumericProp && ["e", "E", "+", "-"].includes(e.key)) {
@@ -138,9 +147,20 @@ function FormInnerInput({
               }
               onChange?.(e);
             }}
-            value={finalDisplayValue}
+            value={isDateType ? field.value ?? "" : finalDisplayValue}
           />
-          {unit && (
+          {isDateType && (
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              loading="lazy"
+              className="pointer-events-none absolute right-3 top-1/2 max-h-5 max-w-5 -translate-y-1/2"
+              src={calendar}
+              alt="calendar"
+            />
+          )}
+          {unit && !isDateType && (
             <span className="absolute text-sm text-dark_green right-7 top-1/2 -translate-y-1/2">
               {unit}
             </span>

@@ -1,7 +1,7 @@
 import { MeterReadingType } from "@/api";
 import { monthNames } from "@/lib/constants/date";
 import { getDateString, getReadingDate, isDateRangeLongerThanAMonth } from "@/utils/date";
-import { getHCADisplayMapping, getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
+import { addHCAMonthlyTotals, getHCADailyConsumption, getHCADisplayMapping, getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
 import { getDisplayMapping, getStandardMeterConsumption } from "./standardHeatingCostServices";
 import { parseGermanDate } from "@/utils";
 
@@ -62,10 +62,9 @@ export const aggregateDataByTimeRange = (
 
     if (isHCA) {
       let previousReading: (MeterReadingType & { readingDate: Date }) | null = null;
-
       readingsWithDate.forEach((currentReading) => {
         if (previousReading) {
-          const dailyDelta = getHCAMonthlyConsumption(currentReading, previousReading);
+          const dailyDelta = getHCADailyConsumption(currentReading, previousReading);
           if (dailyDelta != null && dailyDelta > 0) {
             const date = parseDate(currentReading);
             const monthStr = `${date?.getFullYear()}-${date?.getMonth().toString().padStart(2, '0')}`;
@@ -73,6 +72,7 @@ export const aggregateDataByTimeRange = (
           }
         } 
         previousReading = currentReading;
+        addHCAMonthlyTotals(currentReading, monthlyTotals);
       });
     } else {
       // Standard meters: getStandardMeterConsumption returns a Map<month, consumption> for this reading

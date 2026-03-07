@@ -9,19 +9,13 @@ import { Button } from "@/components/Basic/ui/Button";
 import Link from "next/link";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { useRouter } from "next/navigation";
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { editHeatingBillDocument } from "@/actions/edit/editHeatingBillDocument";
 import type { HeatingBillDocumentType } from "@/types";
 import FormDateInput from "../../../FormDateInput";
 import FormPercentInput from "../../../FormPercentInput";
 import { adminCreateHeatingBillBuildingDocuments } from "@/actions/create/admin/adminCreateHeatingBillBuildingDocuments";
-import { useDialogStore } from "@/store/useDIalogStore";
-
-const LazyHeatingBillPathDialog = lazy(
-  () =>
-    import("@/components/Basic/Dialog/HeatingBillPathDialog")
-);
 
 const abrechnungszeitraumSchema = z.object({
   start_date: z.coerce
@@ -61,22 +55,19 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
   const router = useRouter();
   const { setStartDate, setEndDate } = useHeizkostenabrechnungStore();
   const isEditMode = !!docValues;
-  const { openDialog } = useDialogStore();
-  const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
-  const [path, setPath] = useState<"manuell" | "ai">("manuell");
 
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
     defaultValues: docValues
       ? {
-        ...docValues,
-        start_date: new Date(
-          docValues.start_date ?? defaultValues.start_date
-        ),
-        end_date: new Date(docValues.end_date ?? defaultValues.end_date),
-        consumption_dependent: Number(docValues.consumption_dependent),
-        living_space_share: Number(docValues.living_space_share),
-      }
+          ...docValues,
+          start_date: new Date(
+            docValues.start_date ?? defaultValues.start_date
+          ),
+          end_date: new Date(docValues.end_date ?? defaultValues.end_date),
+          consumption_dependent: Number(docValues.consumption_dependent),
+          living_space_share: Number(docValues.living_space_share),
+        }
       : defaultValues,
   });
   const { setValue, watch, getValues } = methods;
@@ -97,71 +88,48 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
     if (end_date) setEndDate(end_date);
   }, []);
 
-  useEffect(() => {
-    if (isPathSubmited) {
-      handleSubmit(getValues());
-      setIsPathSubmited(false);
-    }
-  }, [isPathSubmited, path, getValues]);
+  const handleSubmit = async (data: AbrechnungszeitraumFormValues) => {
+    try {
+      const payload = {
+        ...data,
+        start_date: data.start_date?.toISOString() ?? null,
+        end_date: data.end_date?.toISOString() ?? null,
+        consumption_dependent: String(data.consumption_dependent),
+        living_space_share: String(data.living_space_share),
+      };
 
-  const handleSubmit = useCallback(
-    async (data: AbrechnungszeitraumFormValues) => {
-      if (!isPathSubmited) {
-        openDialog("heating_bill_path_create");
-        return;
-      }
-      try {
-        const payload = {
-          ...data,
-          start_date: data.start_date?.toISOString() ?? null,
-          end_date: data.end_date?.toISOString() ?? null,
-          consumption_dependent: String(data.consumption_dependent),
-          living_space_share: String(data.living_space_share),
-        };
-
-        if (isEditMode) {
-          await editHeatingBillDocument(docValues?.id ?? "", payload);
+      if (isEditMode) {
+        await editHeatingBillDocument(docValues.id ?? "", payload);
+        router.push(
+          `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docValues.id}/gesamtkosten`
+        );
+      } else {
+        const result = await adminCreateHeatingBillBuildingDocuments(
+          objekteID,
+          userID,
+          payload
+        );
+        const insertedDoc = result?.[0];
+        if (insertedDoc?.id) {
           router.push(
-            `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docValues?.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
+            `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/gesamtkosten`
           );
         } else {
-          const result = await adminCreateHeatingBillBuildingDocuments(
-            objekteID,
-            userID,
-            payload
-          );
-          const insertedDoc = result?.[0];
-          if (insertedDoc?.id) {
-            router.push(
-              `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekteID}/${insertedDoc.id}/${path}/${path === "manuell" ? "gesamtkosten" : "dokumentenmanagement"}`
-            );
-          } else {
-            console.error("Kein Dokument wurde erstellt.");
-          }
+          console.error("Kein Dokument wurde erstellt.");
         }
-      } catch (err) {
-        console.error("Fehler beim Verarbeiten des Dokuments:", err);
       }
-    },
-    [
-      isPathSubmited,
-      openDialog,
-      isEditMode,
-      docValues?.id,
-      router,
-      userID,
-      path,
-      objekteID,
-    ]
-  );
+    } catch (err) {
+      console.error("Fehler beim Verarbeiten des Dokuments:", err);
+    }
+  };
 
   const backLink = isEditMode
     ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
     : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`;
 
   return (
-    <div className="bg-[#EFEEEC] border-y-[20px] max-medium:border-y-[10px] border-[#EFEEEC] overflow-y-auto col-span-2 max-medium:col-span-1 rounded-2xl max-medium:rounded-xl px-4 max-medium:px-2 flex items-center justify-center">
-      <div className="bg-white h-full py-4 px-[18px] max-medium:px-3 rounded w-full shadow-sm space-y-8 max-xl:space-y-4 max-medium:space-y-4">
+    <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-center justify-center">
+      <div className="bg-white h-full py-4 px-[18px] rounded w-full shadow-sm space-y-8 max-xl:space-y-4">
         <Form {...methods}>
           <form
             className="flex flex-col justify-between h-full"
@@ -170,10 +138,10 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
           >
             <div className="space-y-9 max-xl:space-y-4">
               <div className="space-y-3">
-                <h2 className="font-bold text-admin_dark_text max-medium:text-sm">
+                <h2 className="font-bold text-admin_dark_text">
                   Abrechnungszeitraum
                 </h2>
-                <div className="items-center gap-7 max-xl:gap-3.5 max-medium:gap-2 grid grid-cols-[1fr_auto_1fr] w-full">
+                <div className="items-center gap-7 max-xl:gap-3.5 grid grid-cols-[1fr_auto_1fr] w-full">
                   <FormDateInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
                     label="Start*"
@@ -188,10 +156,10 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
                 </div>
               </div>
               <div className="space-y-3">
-                <h2 className="font-bold text-admin_dark_text max-medium:text-sm">
+                <h2 className="font-bold text-admin_dark_text">
                   Verteilerschlüssel
                 </h2>
-                <div className="grid grid-cols-2 gap-12 max-xl:gap-8 max-medium:gap-4">
+                <div className="grid grid-cols-2 gap-12 max-xl:gap-8">
                   <FormPercentInput<AbrechnungszeitraumFormValues>
                     control={methods.control}
                     label="Verbrauchsabhängig*"
@@ -215,7 +183,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
                     name="living_space_share"
                   />
                 </div>
-                <p className="text-sm max-medium:text-xs text-[#757575]">
+                <p className="text-sm text-[#757575]">
                   Die Heizkosten werden in der Regel verbrauchsabhängig und
                   anteilig nach Wohnfläche verteilt - gesetzlich vorgeschrieben
                   ist dabei ein verbrauchsbezogener Anteil von mindestens 50 %.
@@ -225,7 +193,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
             <div className="flex items-center justify-between mt-6 max-medium:mt-4">
               <Link
                 href={backLink}
-                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:px-3 max-medium:py-2 max-medium:text-sm rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
+                className="py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:px-4 max-medium:py-2.5 rounded-lg flex items-center justify-center border border-admin_dark_text/50 text-admin_dark_text bg-white cursor-pointer font-medium hover:bg-[#e0e0e0]/50 transition-colors duration-300"
               >
                 Zurück
               </Link>
@@ -234,9 +202,6 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
           </form>
         </Form>
       </div>
-      <Suspense fallback={null}>
-        <LazyHeatingBillPathDialog setIsPathSubmited={setIsPathSubmited} path={path} setPath={setPath} />
-      </Suspense>
     </div>
   );
 }

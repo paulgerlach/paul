@@ -233,7 +233,7 @@ export default function AdminEditDocHeizkostenabrechnungDialog() {
         await uploadDocuments.mutateAsync({
           files: document,
           relatedId: operatingDocID ?? "",
-          relatedType: "heating_bill",
+          relatedType: "operating_costs",
         });
       }
     };

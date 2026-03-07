@@ -13,7 +13,6 @@ export default function AdminUmlageschlüsselLocalForm({
   localId,
   docId,
   userId,
-  pathSlug,
   initialDocumentGroups,
   isEditMode,
 }: {
@@ -21,7 +20,6 @@ export default function AdminUmlageschlüsselLocalForm({
   localId: string;
   docId: string;
   userId: string;
-  pathSlug: string;
   initialDocumentGroups: DocCostCategoryType[];
   isEditMode?: boolean;
 }) {
@@ -40,8 +38,8 @@ export default function AdminUmlageschlüsselLocalForm({
   }, [initialDocumentGroups]);
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
-    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/gesamtkosten`;
+    ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/gesamtkosten`
+    : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/gesamtkosten`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] overflow-y-auto col-span-2 rounded-2xl px-4 flex items-start justify-center">

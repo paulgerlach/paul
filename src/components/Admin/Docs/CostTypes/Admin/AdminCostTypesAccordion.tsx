@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import AddCostTypeButton from "../AddCostTypeButton";
 import AdminCostTypeItem from "./AdminCostTypeItem";
-import AddCostTypeInvoiceButton from "../AddCostTypeInvoiceButton";
 
 export default function AdminCostTypesAccordion({
   objektId,
@@ -37,7 +36,6 @@ export default function AdminCostTypesAccordion({
         />
       ))}
       <AddCostTypeButton dialogType="admin_cost_type_heizkostenabrechnung_create" />
-      <AddCostTypeInvoiceButton dialogType="admin_ai_invoice_create" />
     </div>
   );
 }

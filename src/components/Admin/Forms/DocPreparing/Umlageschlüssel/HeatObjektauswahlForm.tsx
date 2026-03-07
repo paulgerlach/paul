@@ -13,13 +13,11 @@ export default function UmlageschlüsselHeatObjektauswahlForm({
   docId,
   initialDocumentGroups,
   isEditMode,
-  pathSlug,
 }: {
   objektId: string;
   docId: string;
   initialDocumentGroups: DocCostCategoryType[];
   isEditMode?: boolean;
-  pathSlug: string;
 }) {
   const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
 
@@ -36,8 +34,8 @@ export default function UmlageschlüsselHeatObjektauswahlForm({
   }, [initialDocumentGroups]);
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
-    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/${pathSlug}/gesamtkosten`;
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/gesamtkosten`
+    : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${docId}/gesamtkosten`;
 
   return (
     <div className="bg-[#EFEEEC] border-y-[20px] max-medium:border-y-[10px] border-[#EFEEEC] overflow-y-auto col-span-2 max-medium:col-span-1 rounded-2xl max-medium:rounded-xl px-4 max-medium:px-2 flex items-start justify-center">

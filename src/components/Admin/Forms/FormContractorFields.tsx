@@ -85,6 +85,8 @@ export default function FormContractorField<
           disabled={disabled}
           label="Geburtsdatum"
           name={`contractors.${index}.birth_date` as Path<T>}
+          showClearButton={true}
+          clearLabel="Geburtsdatum löschen"
         />
         <FormInputField<T>
           control={control}

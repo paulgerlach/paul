@@ -11,6 +11,7 @@ const MAKE_WEBHOOK_UNIFIED = process.env.MAKE_WEBHOOK_UNIFIED;
 const MAKE_WEBHOOK_LEAK = process.env.MAKE_WEBHOOK_LEAK_DETECTION;
 const MAKE_WEBHOOK_TENANT_INVITE = process.env.MAKE_WEBHOOK_TENANT_INVITE;
 const MAKE_WEBHOOK_PASSWORD_RESET = process.env.MAKE_WEBHOOK_PASSWORD_RESET;
+const MAKE_WEBHOOK_TENANT_REMINDER = process.env.MAKE_WEBHOOK_TENANT_REMINDER;
 
 type EventType = 'login' | 'registration' | 'newsletter' | 'pwrecovery' | 'newinquiry' | 'contactform' | 'leakdetected' | 'invitation';
 
@@ -251,5 +252,47 @@ export async function sendTenantPasswordResetEmail(
   } catch (error) {
     console.error('[WEBHOOK] Error sending tenant password reset email:', error);
     // Don't throw - webhook failures shouldn't break user flow
+  }
+}
+
+/**
+ * Send tenant reminder email via Make.com
+ * Triggered by cron job to remind tenants to check meter readings
+ * 
+ * @param tenantMail - Tenant's email address
+ * @param tenantName - Tenant's full name
+ * @param dashboardURL - URL for tenant to access their dashboard
+ */
+export async function sendTenantReminderEmail(
+  tenantMail: string,
+  tenantName: string,
+  dashboardURL: string
+): Promise<void> {
+  if (!MAKE_WEBHOOK_TENANT_REMINDER) {
+    console.warn('[WEBHOOK] MAKE_WEBHOOK_TENANT_REMINDER not set. Skipping tenant reminder email.');
+    return;
+  }
+
+  try {
+    console.log(`[WEBHOOK] Sending tenant reminder email to ${tenantMail}`);
+
+    const response = await fetch(MAKE_WEBHOOK_TENANT_REMINDER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tenantMail,
+        tenantName,
+        dashboardURL,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('[WEBHOOK] Failed to send tenant reminder email:', response.statusText);
+    } else {
+      console.log('[WEBHOOK] Successfully sent tenant reminder email');
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] Error sending tenant reminder email:', error);
+    // Don't throw - webhook failures shouldn't break cron job
   }
 }

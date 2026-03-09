@@ -31,10 +31,13 @@ export type HeatingRates = {
   consumptionCostPercent: number;
   consumptionCostAmount: number;
   consumptionCostAmountFormatted: string;
-  consumptionMwh: number;
-  consumptionMwhFormatted: string;
-  consumptionCostRatePerMwh: number;
-  consumptionCostRatePerMwhFormatted: string;
+  consumptionValue: number;
+  consumptionValueFormatted: string;
+  consumptionCostRatePerUnit: number;
+  consumptionCostRatePerUnitFormatted: string;
+  consumptionUnit: string;
+  /** True when no heat meter readings are available; costs are allocated by sqm in unit breakdown */
+  noReadings: boolean;
 };
 
 /**
@@ -44,13 +47,15 @@ export function computeHeatingRates(
   heatingCostTotal: number,
   warmWaterResult: WarmWaterResult,
   heatingDeviceRental: number,
-  consumptionMwh: number,
+  consumptionValue: number,
   totalLivingSpaceM2: number,
   options?: {
     baseCostPercent?: number;
     consumptionCostPercent?: number;
+    consumptionUnit?: string;
   }
 ): HeatingRates {
+  const consumptionUnit = options?.consumptionUnit ?? "MWh";
   const baseCostPercent = options?.baseCostPercent ?? 30;
   const consumptionCostPercent = options?.consumptionCostPercent ?? 70;
 
@@ -68,9 +73,9 @@ export function computeHeatingRates(
     totalLivingSpaceM2 > 0
       ? round6(baseCostAmount / totalLivingSpaceM2)
       : 0;
-  const consumptionCostRatePerMwh =
-    consumptionMwh > 0
-      ? round6(consumptionCostAmount / consumptionMwh)
+  const consumptionCostRatePerUnit =
+    consumptionValue > 0
+      ? round6(consumptionCostAmount / consumptionValue)
       : 0;
 
   return {
@@ -92,12 +97,14 @@ export function computeHeatingRates(
     consumptionCostPercent,
     consumptionCostAmount,
     consumptionCostAmountFormatted: formatEuro(consumptionCostAmount),
-    consumptionMwh,
-    consumptionMwhFormatted: formatGermanNumber(consumptionMwh, 2),
-    consumptionCostRatePerMwh,
-    consumptionCostRatePerMwhFormatted: formatGermanNumber(
-      consumptionCostRatePerMwh,
+    consumptionValue,
+    consumptionValueFormatted: formatGermanNumber(consumptionValue, 2),
+    consumptionCostRatePerUnit,
+    consumptionCostRatePerUnitFormatted: formatGermanNumber(
+      consumptionCostRatePerUnit,
       6
     ),
+    consumptionUnit,
+    noReadings: consumptionValue === 0,
   };
 }

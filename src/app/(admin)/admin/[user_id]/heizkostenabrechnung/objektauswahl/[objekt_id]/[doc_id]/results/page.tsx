@@ -12,8 +12,9 @@ import { buildLocalName } from "@/utils";
 import type { UnitType } from "@/types";
 import { supabaseServer } from "@/utils/supabase/server";
 import database from "@/db";
-import { users } from "@/db/drizzle/schema";
+import { users, heating_bill_documents } from "@/db/drizzle/schema";
 import { eq } from "drizzle-orm";
+import HeatingBillPDFPendingModal from "@/components/Admin/Docs/HeatingBillPDFPendingModal/HeatingBillPDFPendingModal";
 
 const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
   "residential",
@@ -42,6 +43,13 @@ export default async function ResultLocalPDF({
     isSuperAdmin = userData?.permission === "super_admin";
   }
 
+  const [hbDoc] = await database
+    .select({ created_at: heating_bill_documents.created_at })
+    .from(heating_bill_documents)
+    .where(eq(heating_bill_documents.id, doc_id));
+  const isPdfPending = !isSuperAdmin && !!hbDoc?.created_at &&
+    new Date(hbDoc.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
   );
@@ -64,7 +72,8 @@ export default async function ResultLocalPDF({
   });
   const contractsByLocalId = await getAdminContractsWithContractorsByLocalIDs(
     locals.map((local) => local.id).filter((id): id is string => Boolean(id)),
-    user_id
+    user_id,
+    true
   );
 
   // Fetch tenant documents linked directly to this heating bill doc
@@ -74,12 +83,13 @@ export default async function ResultLocalPDF({
   const contractIdToTenantName: Record<string, string> = {};
   for (const localContracts of Object.values(contractsByLocalId)) {
     for (const contract of localContracts) {
-      const names = contract.contractors
-        ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
-        .filter(Boolean)
-        .join(", ");
-      if (contract.id && names) {
-        contractIdToTenantName[contract.id] = names;
+      if (contract.id) {
+        const names = contract.contractors
+          ?.map((c: { first_name: string; last_name: string }) => `${c.first_name} ${c.last_name}`.trim())
+          .filter(Boolean)
+          .join(", ");
+
+        contractIdToTenantName[contract.id] = names || "Unbekannter Mieter";
       }
     }
   }
@@ -87,17 +97,28 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string }[]
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
     const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
 
     tenantDocsByLocalId[localId] = validDocsForLocal.map((doc) => {
-      const contractIdMatch = /_([^_]+)\.pdf$/.exec(doc.document_name);
+      // Matches `_contractId.pdf` or `_contractId_v12345.pdf`
+      const contractIdMatch = /_([^_]+)(?:_v\d+)?\.pdf$/.exec(doc.document_name);
       const contractId = contractIdMatch?.[1] ?? "";
-      const isVacancy = doc.document_name.includes("leerstand");
-      const tenantName = isVacancy ? "Leerstand" : (contractIdToTenantName[contractId] ?? "");
-      return { ...doc, tenantName };
+      const isVacancy = doc.document_name.toLowerCase().includes("leerstand");
+
+      let tenantName = "";
+      if (isVacancy) {
+        tenantName = "Leerstand";
+      } else if (contractId === "default") {
+        // Fallback for single PDFs without explicit contract segments
+        tenantName = "Unbekannter Mieter";
+      } else {
+        tenantName = contractIdToTenantName[contractId] ?? "Unbekannter Mieter";
+      }
+
+      return { ...doc, tenantName, contractId };
     });
   }
 
@@ -112,6 +133,7 @@ export default async function ResultLocalPDF({
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none grid grid-rows-[auto_1fr]">
+      <HeatingBillPDFPendingModal isOpen={isPdfPending} />
       <Breadcrumb
         backTitle="Objekte"
         link={`${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}`}
@@ -143,7 +165,7 @@ export default async function ResultLocalPDF({
                 docType="objektauswahl"
                 docID={doc_id}
                 status={status}
-                tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
+                tenantDocuments={isPdfPending ? [] : (tenantDocsByLocalId[local.id ?? ""] ?? [])}
                 isSuperAdmin={isSuperAdmin}
               />
             ))

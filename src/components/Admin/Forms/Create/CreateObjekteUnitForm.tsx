@@ -68,6 +68,7 @@ const localSchema = z.object({
   usage_type: z.string().min(1, "Pflichtfeld"),
   floor: z.string().nullable(),
   living_space: z.coerce.number().nullable(),
+  heating_area: z.coerce.number().nullable().optional(),
   house_location: z.string().nullable(),
   outdoor: z.string().nullable(),
   rooms: z.coerce.number().nullable(),

@@ -55,6 +55,8 @@ export type ColdWaterRateItem = {
   rate: number;
   rateFormatted: string;
   rateUnit: string;
+  /** "sqm" when no cold water readings — unit cost uses localSqm × rate; "consumption" otherwise */
+  allocationMode: "sqm" | "consumption";
 };
 
 export type ColdWaterResult = {
@@ -63,6 +65,8 @@ export type ColdWaterResult = {
   rateItems: ColdWaterRateItem[];
   unitTotalCost: number;
   unitTotalCostFormatted: string;
+  /** True when no cold water meter readings are available; costs are allocated by sqm in unit breakdown */
+  noReadings: boolean;
 };
 
 /**
@@ -77,6 +81,7 @@ export function computeColdWaterRates(
 ): ColdWaterResult {
   const unitCountSafe = Math.max(1, unitCount);
   const totalM3Safe = Math.max(0.001, totalColdWaterM3);
+  const noReadings = totalColdWaterM3 === 0;
 
   // Group by subtype (label)
   const bySubtype = new Map<
@@ -100,28 +105,44 @@ export function computeColdWaterRates(
 
   for (const [, item] of bySubtype) {
     totalCost += item.amount;
-    const volume =
-      item.unit === "m3"
-        ? totalM3Safe
-        : unitCountSafe;
-    const rate = volume > 0 ? round6(item.amount / volume) : 0;
-    const volumeFormatted =
-      item.unit === "m3"
-        ? formatGermanNumber(totalM3Safe, 2)
-        : formatGermanNumber(unitCountSafe, 0);
-    const unit = item.unit === "m3" ? "m³" : "Nutzeinh.";
-    const rateUnit = item.unit === "m3" ? "€/m³" : "€/Nutzeinh.";
-    rateItems.push({
-      label: item.label,
-      totalCost: item.amount,
-      totalCostFormatted: formatEuro(item.amount),
-      totalVolume: volume,
-      totalVolumeFormatted: volumeFormatted,
-      unit,
-      rate,
-      rateFormatted: formatGermanNumber(rate, item.decimals),
-      rateUnit,
-    });
+
+    if (noReadings && item.unit === "m3") {
+      // No readings: allocate by sqm (€/m² rate)
+      const rate = totalLivingSpaceM2 > 0 ? round6(item.amount / totalLivingSpaceM2) : 0;
+      rateItems.push({
+        label: item.label,
+        totalCost: item.amount,
+        totalCostFormatted: formatEuro(item.amount),
+        totalVolume: totalLivingSpaceM2,
+        totalVolumeFormatted: formatGermanNumber(totalLivingSpaceM2, 2),
+        unit: "m²",
+        rate,
+        rateFormatted: formatGermanNumber(rate, item.decimals),
+        rateUnit: "€/m²",
+        allocationMode: "sqm",
+      });
+    } else {
+      const volume = item.unit === "m3" ? totalM3Safe : unitCountSafe;
+      const rate = volume > 0 ? round6(item.amount / volume) : 0;
+      const volumeFormatted =
+        item.unit === "m3"
+          ? formatGermanNumber(totalM3Safe, 2)
+          : formatGermanNumber(unitCountSafe, 0);
+      const unit = item.unit === "m3" ? "m³" : "Nutzeinh.";
+      const rateUnit = item.unit === "m3" ? "€/m³" : "€/Nutzeinh.";
+      rateItems.push({
+        label: item.label,
+        totalCost: item.amount,
+        totalCostFormatted: formatEuro(item.amount),
+        totalVolume: volume,
+        totalVolumeFormatted: volumeFormatted,
+        unit,
+        rate,
+        rateFormatted: formatGermanNumber(rate, item.decimals),
+        rateUnit,
+        allocationMode: "consumption",
+      });
+    }
   }
 
   // Fallback if no cold water invoices: one placeholder item
@@ -131,16 +152,19 @@ export function computeColdWaterRates(
       label: "Kaltwasser",
       totalCost: 0,
       totalCostFormatted: formatEuro(0),
-      totalVolume: totalM3Safe,
-      totalVolumeFormatted: formatGermanNumber(totalM3Safe, 2),
-      unit: "m³",
+      totalVolume: noReadings ? totalLivingSpaceM2 : totalM3Safe,
+      totalVolumeFormatted: noReadings
+        ? formatGermanNumber(totalLivingSpaceM2, 2)
+        : formatGermanNumber(totalM3Safe, 2),
+      unit: noReadings ? "m²" : "m³",
       rate: 0,
       rateFormatted: "0",
-      rateUnit: "€/m³",
+      rateUnit: noReadings ? "€/m²" : "€/m³",
+      allocationMode: noReadings ? "sqm" : "consumption",
     });
   }
 
-  // Unit share: proportional by living space for m³ items, equal split for per-unit items
+  // Unit share: proportional by living space for m³/m² items, equal split for per-unit items
   let unitTotalCost = 0;
   const localSpace = localLivingSpaceM2 ?? 0;
   const spaceShare =
@@ -149,7 +173,7 @@ export function computeColdWaterRates(
       : 1 / unitCountSafe;
 
   for (const item of rateItems) {
-    if (item.unit === "m³") {
+    if (item.unit === "m³" || item.unit === "m²") {
       unitTotalCost += item.totalCost * spaceShare;
     } else {
       unitTotalCost += item.totalCost / unitCountSafe;
@@ -163,5 +187,6 @@ export function computeColdWaterRates(
     rateItems,
     unitTotalCost,
     unitTotalCostFormatted: formatEuro(unitTotalCost),
+    noReadings,
   };
 }

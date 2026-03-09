@@ -2,43 +2,42 @@
 
 import Image from "next/image";
 import { information } from "@/static/icons";
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { supabase } from "@/utils/supabase/client";
 
 export default function TipsOfTheDay() {
-	const [isVisible, setIsVisible] = useState(true);
+	const [isVisible, setIsVisible] = useState(false);
+	const [dailyTip, setDailyTip] = useState<string | null>(null);
 
 	useEffect(() => {
 		const storedDate = localStorage.getItem("tipOfTheDay_closed");
 		const today = new Date().toDateString();
+
 		if (storedDate === today) {
 			setIsVisible(false);
+			return;
 		}
-	}, []);
 
-	const tips = [
-		"Schalten Sie Lichter aus, wenn Sie den Raum verlassen",
-		"LED-Lampen verbrauchen bis zu 75% weniger Energie",
-		"Ziehen Sie ungenutzte Geräte aus der Steckdose",
-		"Senken Sie die Raumtemperatur im Winter um 2°C",
-		"Nutzen Sie Tageslicht statt künstlicher Beleuchtung",
-		"Duschen Sie kürzer und sparen Sie Warmwasser",
-		"Lüften Sie kurz und intensiv statt Fenster dauerhaft gekippt zu lassen",
-		"Nutzen Sie Energiesparfunktionen bei Haushaltsgeräten",
-		"Waschen Sie Wäsche bei niedrigeren Temperaturen",
-		"Entkalken Sie regelmäßig Wasserkocher und Kaffeemaschine",
-		"Nutzen Sie Deckel beim Kochen, um Energie zu sparen",
-		"Tauen Sie Kühl- und Gefrierschränke regelmäßig ab",
-	];
+		const fetchDailyTip = async () => {
+			const { data: tips, error } = await supabase
+				.from("daily_tips")
+				.select("content")
+				.eq("is_active", true);
 
-	// Select a random tip that stays consistent during the session
-	const dailyTip = useMemo(() => {
-		const today = new Date().toDateString();
-		const hash = today
-			.split("")
-			.reduce((acc, char) => acc + char.charCodeAt(0), 0);
-		return tips[hash % tips.length];
-	}, []);
+			if (!error && tips && tips.length > 0) {
+				const hash = today
+					.split("")
+					.reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+				const selectedTip = tips[hash % tips.length].content;
+				setDailyTip(selectedTip);
+				setIsVisible(true);
+			}
+		};
+
+		fetchDailyTip();
+	}, [supabase]);
 
 	const handleClose = () => {
 		const today = new Date().toDateString();
@@ -46,7 +45,7 @@ export default function TipsOfTheDay() {
 		setIsVisible(false);
 	};
 
-	if (!isVisible) return null;
+	if (!isVisible || !dailyTip) return null;
 
 	return (
 		<div className="px-2 mb-4">
@@ -63,7 +62,7 @@ export default function TipsOfTheDay() {
 				</div>
 
 				{/* Close button */}
-				<button 
+				<button
 					onClick={handleClose}
 					className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
 					aria-label="Close tip"

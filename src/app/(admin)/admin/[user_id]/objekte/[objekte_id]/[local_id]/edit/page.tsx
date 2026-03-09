@@ -7,6 +7,7 @@ import {
   getSignedUrlsForObject,
 } from "@/api";
 import AdminEditObjekteUnitForm from "@/components/Admin/Forms/Admin/Edit/AdminEditObjekteUnitForm";
+import { mapMeterToFormValues } from "@/utils/meterUtils";
 
 export default async function AdminEditLocalPage({
   params,
@@ -59,11 +60,7 @@ export default async function AdminEditLocalPage({
               tags: Array.isArray(local.tags) ? (local.tags as string[]) : [],
               usage_type: local.usage_type,
               documents: [],
-              meters: meters.map((meter) => ({
-                meter_note: meter.meter_note ?? null,
-                meter_number: meter.meter_number ?? null,
-                meter_type: meter.meter_type ?? null,
-              })),
+              meters: meters.map(mapMeterToFormValues),
             }}
           />
         </div>

@@ -52,6 +52,8 @@ export type MeterReadingType = {
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format
   "IV,0,0,0,m^3,Vol"?: number; // Volume in cubic meters - OLD format
   "IV,0,0,0,,ErrorFlags(binary)(deviceType specific)"?: string;
+  "IV,0,0,0,W,Power"?: number | string; // Instantaneous power - OLD format
+  "IV,0,0,0,Wh,E accumulation of abs value only if negative contributions (Backward flow)"?: number | string; // Backward flow E
 
   // NEW Engelmann CSV format fields
   "Number Meter"?: string | number; // NEW format device ID
@@ -618,9 +620,10 @@ export async function getAdminContractsWithContractorsByLocalID(
 export async function getAdminContractsWithContractorsByLocalIDs(
   localIDs: string[],
   userID: string,
+  ignoreUserId: boolean = false
 ): Promise<Record<string, (ContractType & { contractors: ContractorType[] })[]>> {
   const validLocalIDs = Array.from(new Set(localIDs.filter(Boolean)));
-  if (validLocalIDs.length === 0 || !userID) {
+  if (validLocalIDs.length === 0 || (!ignoreUserId && !userID)) {
     return {};
   }
 
@@ -629,10 +632,12 @@ export async function getAdminContractsWithContractorsByLocalIDs(
     .from(contracts)
     .leftJoin(contractors, eq(contractors.contract_id, contracts.id))
     .where(
-      and(
-        inArray(contracts.local_id, validLocalIDs),
-        eq(contracts.user_id, userID)
-      )
+      ignoreUserId
+        ? inArray(contracts.local_id, validLocalIDs)
+        : and(
+          inArray(contracts.local_id, validLocalIDs),
+          eq(contracts.user_id, userID)
+        )
     );
 
   const contractsByLocal: Record<string, Record<string, ContractType & { contractors: ContractorType[] }>> = {};
@@ -911,12 +916,32 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
   // Get current user
   const user = await getAuthenticatedServerUser();
 
+  // Determine user permissions
+  const [userResult] = await database
+    .select({ permission: users.permission })
+    .from(users)
+    .where(eq(users.id, user.id));
+
+  const isSuperAdmin = userResult?.permission === "super_admin";
+
   // Get documents for the current user using direct database query
-  const userDocuments = await database
+  const query = database
     .select()
     .from(documents)
-    .where(eq(documents.user_id, user.id))
     .orderBy(documents.created_at);
+
+  if (isSuperAdmin) {
+    query.where(eq(documents.user_id, user.id));
+  } else {
+    query.where(
+      and(
+        eq(documents.user_id, user.id),
+        eq(documents.current_document, true)
+      )
+    );
+  }
+
+  const userDocuments = await query;
 
   if (!userDocuments || userDocuments.length === 0) {
     return [];
@@ -926,15 +951,20 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     .map(doc => doc.related_id);
 
   let heatingBillObjekts: Record<string, string> = {};
+  const lockedHbIds = new Set<string>();
   if (heatingBillIds.length > 0) {
     const heatingBills = await database
-      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+      .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id, created_at: heating_bill_documents.created_at })
       .from(heating_bill_documents)
       .where(inArray(heating_bill_documents.id, heatingBillIds));
 
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     heatingBillObjekts = heatingBills.reduce((acc, bill) => {
       if (bill.objekt_id) {
         acc[bill.id] = bill.objekt_id;
+      }
+      if (!isSuperAdmin && bill.created_at && new Date(bill.created_at) > twentyFourHoursAgo) {
+        lockedHbIds.add(bill.id);
       }
       return acc;
     }, {} as Record<string, string>);
@@ -958,14 +988,16 @@ export async function getCurrentUserDocuments(): Promise<any[]> {
     }, {} as Record<string, string>);
   }
 
-  return userDocuments.map(doc => ({
-    ...doc,
-    objekt_id: doc.related_type === "heating_bill"
-      ? heatingBillObjekts[doc.related_id] || null
-      : doc.related_type === "operating_costs"
-        ? operatingCostObjekts[doc.related_id] || null
-        : null
-  }));
+  return userDocuments
+    .filter(doc => !(doc.related_type === "heating_bill" && lockedHbIds.has(doc.related_id)))
+    .map(doc => ({
+      ...doc,
+      objekt_id: doc.related_type === "heating_bill"
+        ? heatingBillObjekts[doc.related_id] || null
+        : doc.related_type === "operating_costs"
+          ? operatingCostObjekts[doc.related_id] || null
+          : null
+    }));
 }
 
 export async function getAllUsers(permissions: string[]): Promise<UserType[]> {
@@ -1127,9 +1159,17 @@ export async function getLocalWithContractsById(
 }
 
 export async function getMetersByLocalId(localId: string): Promise<LocalMeterType[]> {
-
   const meters = await database
-    .select()
+    .select({
+      id: local_meters.id,
+      meter_number: local_meters.meter_number,
+      meter_note: local_meters.meter_note,
+      meter_type: local_meters.meter_type,
+      heater_metadata: local_meters.heater_metadata,
+      device_metadata: local_meters.device_metadata,
+      local_id: local_meters.local_id,
+      created_at: local_meters.created_at,
+    })
     .from(local_meters)
     .where(eq(local_meters.local_id, localId));
 
@@ -1142,7 +1182,16 @@ export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMete
   }
 
   const meters = await database
-    .select()
+    .select({
+      id: local_meters.id,
+      meter_number: local_meters.meter_number,
+      meter_note: local_meters.meter_note,
+      meter_type: local_meters.meter_type,
+      heater_metadata: local_meters.heater_metadata,
+      device_metadata: local_meters.device_metadata,
+      local_id: local_meters.local_id,
+      created_at: local_meters.created_at,
+    })
     .from(local_meters)
     .where(inArray(local_meters.local_id, localIds));
 
@@ -1408,19 +1457,25 @@ export async function getDocumentsByRelatedIds(
  */
 export async function getDocumentsByObjektIds(
   objektIds: string[],
-  includeHistory: boolean = false
+  includeHistory: boolean = false,
+  viewerIsSuperAdmin: boolean = false
 ): Promise<any[]> {
   if (objektIds.length === 0) return [];
 
   // Find all heating bill doc IDs for these objekts
   const hbDocs = await database
-    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id })
+    .select({ id: heating_bill_documents.id, objekt_id: heating_bill_documents.objekt_id, created_at: heating_bill_documents.created_at })
     .from(heating_bill_documents)
     .where(inArray(heating_bill_documents.objekt_id, objektIds));
 
   const hbObjektMap: Record<string, string> = {};
+  const lockedHbIds = new Set<string>();
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
   for (const hb of hbDocs) {
     if (hb.objekt_id) hbObjektMap[hb.id] = hb.objekt_id;
+    if (!viewerIsSuperAdmin && hb.created_at && new Date(hb.created_at) > twentyFourHoursAgo) {
+      lockedHbIds.add(hb.id);
+    }
   }
 
   // Find all operating cost doc IDs for these objekts
@@ -1454,10 +1509,12 @@ export async function getDocumentsByObjektIds(
     .where(and(...conditions))
     .orderBy(documents.created_at);
 
-  return allDocs.map((doc) => ({
-    ...doc,
-    objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
-  }));
+  return allDocs
+    .filter(doc => !lockedHbIds.has(doc.related_id))
+    .map((doc) => ({
+      ...doc,
+      objekt_id: hbObjektMap[doc.related_id] ?? ocObjektMap[doc.related_id] ?? null,
+    }));
 }
 
 /**

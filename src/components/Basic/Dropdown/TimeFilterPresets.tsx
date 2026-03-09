@@ -12,6 +12,7 @@ import { useState } from "react";
 
 import { cn } from "@/utils";
 import { Calendar } from "../ui/Calendar";
+import { useChartStore } from "@/store/useChartStore";
 
 export type TimePreset =
   | "today"
@@ -27,8 +28,6 @@ export type TimePreset =
 interface TimeFilterPresetsProps {
   date: DateRange | undefined;
   setDate: (range: DateRange | undefined) => void;
-  startDate?: Date | null;
-  endDate?: Date | null;
   onCommitRange: (from: Date, to: Date) => void;
   className?: string;
   defaultPreset?: TimePreset;
@@ -38,14 +37,13 @@ interface TimeFilterPresetsProps {
 export default function TimeFilterPresets({
   date,
   setDate,
-  startDate,
-  endDate,
   onCommitRange,
   className,
   defaultPreset = "thisMonth",
   onClose,
 }: TimeFilterPresetsProps) {
   const [activePreset, setActivePreset] = useState<TimePreset>(defaultPreset);
+  const { setDates, startDate, endDate } = useChartStore()
 
   const applyPreset = (preset: TimePreset) => {
     const today = new Date();
@@ -108,9 +106,9 @@ export default function TimeFilterPresets({
         to = endOfMonth(today);
         break;
     }
-
     setActivePreset(preset);
     setDate({ from, to });
+    setDates(from, to);
     onCommitRange(from, to);
     onClose?.();
   };

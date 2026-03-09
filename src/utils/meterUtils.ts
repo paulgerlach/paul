@@ -2,6 +2,38 @@
  * Utility functions for meter operations
  */
 
+import type { LocalMeterType } from "@/types";
+
+/** Map a database meter to form initial values. Prefers device_metadata, fallback to heater_metadata for backward compat */
+export function mapMeterToFormValues(meter: LocalMeterType) {
+  const heaterMeta = (meter.heater_metadata ?? {}) as Record<string, unknown>;
+  const deviceMeta = (meter.device_metadata ?? {}) as Record<string, unknown>;
+  const meta = Object.keys(deviceMeta).length > 0 ? { ...heaterMeta, ...deviceMeta } : heaterMeta;
+
+  const get = <T>(key: string): T | null =>
+    (meta[key] as T | undefined) ?? null;
+
+  return {
+    meter_note: meter.meter_note ?? null,
+    meter_number: meter.meter_number ?? null,
+    meter_type: meter.meter_type ?? null,
+    old_reading: get<number>("old_reading"),
+    installation_date: get<string>("installation_date"),
+    radiator_type: get<string>("radiator_type"),
+    radiator_length: get<number>("radiator_length"),
+    radiator_width: get<number>("radiator_width"),
+    radiator_depth: get<number>("radiator_depth"),
+    installation_factor: get<string>("installation_factor"),
+    fernfuehler: get<string>("fernfuehler"),
+    installation_location: get<string>("installation_location"),
+    gateway_eui: get<string>("gateway_eui"),
+    repeater_count: get<string>("repeater_count"),
+    notes: get<string>("notes"),
+    manufacturer_old_device: get<string>("manufacturer_old_device"),
+    calibration_date: get<string>("calibration_date"),
+  };
+}
+
 export const fetchMeterUUIDs = async (localIds: string[]): Promise<string[]> => {
   if (!localIds.length) return [];
   

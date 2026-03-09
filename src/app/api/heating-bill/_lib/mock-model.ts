@@ -31,6 +31,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
   },
 
   buildingCalc: {
+    energyCarrier: "Nah-/Fernwärme",
     energyInvoices: [
       {
         label: "Rechnung\n260002673166",
@@ -81,6 +82,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
       tempDiffHigh: 60,
       tempDiffLow: 10,
       conversionFactor: 1.15,
+      conversionOperation: "divide" as const,
       energyKwh: 342201.09,
       energyKwhFormatted: "342.201,09",
       energySharePercent: 44.96,
@@ -126,10 +128,11 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
       consumptionCostPercent: 70,
       consumptionCostAmount: 48846.65,
       consumptionCostAmountFormatted: "48.846,65 €",
-      consumptionMwh: 404.04,
-      consumptionMwhFormatted: "404,04",
-      consumptionCostRatePerMwh: 120.89558,
-      consumptionCostRatePerMwhFormatted: "120,895580",
+      consumptionValue: 404.04,
+      consumptionValueFormatted: "404,04",
+      consumptionCostRatePerUnit: 120.89558,
+      consumptionCostRatePerUnitFormatted: "120,895580",
+      consumptionUnit: "MWh",
     },
   },
 
@@ -200,8 +203,9 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     heatingBaseCost: 144.01,
     heatingBaseCostFormatted: "144,01 €",
     heatingBaseCostCalc: "77,02 m² x 1,869733 €/m²",
-    heatingConsumptionMwh: 7,
-    heatingConsumptionMwhFormatted: "7,00",
+    heatingConsumptionValue: 7,
+    heatingConsumptionValueFormatted: "7,00",
+    heatingConsumptionUnit: "MWh",
     heatingConsumptionCost: 846.27,
     heatingConsumptionCostFormatted: "846,27 €",
     heatingConsumptionCalc: "7,00 MWh x 120,895580 €/MWh",

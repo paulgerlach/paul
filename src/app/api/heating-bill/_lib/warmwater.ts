@@ -1,6 +1,8 @@
 /**
  * Warm water energy formula per HeizKV:
- * WarmWaterEnergy = 2.5 kWh/m³/K × Volume × (60 - 10)°C / 1.15
+ * WarmWaterEnergy = 2.5 kWh/m³/K × Volume × (60 - 10)°C × factor (multiply)
+ *             or  = 2.5 kWh/m³/K × Volume × (60 - 10)°C / factor (divide)
+ * The operation depends on the energy type (see HKVO_FACTORS).
  */
 import {
   WARM_WATER_CONSTANT_FACTOR,
@@ -9,6 +11,8 @@ import {
   WARM_WATER_CONVERSION_FACTOR,
   DEFAULT_LIVING_SPACE_SHARE,
   DEFAULT_CONSUMPTION_DEPENDENT,
+  applyHkvoFactor,
+  type HkvoFactorEntry,
 } from "./constants";
 import { formatEuro, formatGermanNumber } from "@/utils";
 
@@ -27,6 +31,7 @@ export type WarmWaterResult = {
   tempDiffHigh: number;
   tempDiffLow: number;
   conversionFactor: number;
+  conversionOperation: "multiply" | "divide";
   energyKwh: number;
   energyKwhFormatted: string;
   energySharePercent: number;
@@ -51,17 +56,26 @@ export type WarmWaterResult = {
   consumptionCostVolumeFormatted: string;
   consumptionCostRatePerM3: number;
   consumptionCostRatePerM3Formatted: string;
+  /** True when no warm water meter readings are available; costs are allocated by sqm in unit breakdown */
+  noReadings: boolean;
 };
 
 /**
  * Compute warm water energy from volume (m³) using HeizKV formula.
+ * When hkvoFactor is provided, it applies the factor's operation (multiply or divide).
+ * Falls back to dividing by WARM_WATER_CONVERSION_FACTOR (1.15) when not provided.
  */
-export function computeWarmWaterEnergy(volumeM3: number): number {
-  const energy =
-    (WARM_WATER_CONSTANT_FACTOR *
-      volumeM3 *
-      (WARM_WATER_TEMP_DIFF_HIGH - WARM_WATER_TEMP_DIFF_LOW)) /
-    WARM_WATER_CONVERSION_FACTOR;
+export function computeWarmWaterEnergy(
+  volumeM3: number,
+  hkvoFactor?: HkvoFactorEntry,
+): number {
+  const rawEnergy =
+    WARM_WATER_CONSTANT_FACTOR *
+    volumeM3 *
+    (WARM_WATER_TEMP_DIFF_HIGH - WARM_WATER_TEMP_DIFF_LOW);
+  const energy = hkvoFactor
+    ? applyHkvoFactor(rawEnergy, hkvoFactor)
+    : rawEnergy / WARM_WATER_CONVERSION_FACTOR;
   return round2(energy);
 }
 
@@ -78,6 +92,7 @@ export function computeWarmWaterCosts(
   options?: {
     baseCostPercent?: number;
     consumptionCostPercent?: number;
+    hkvoFactor?: HkvoFactorEntry;
   }
 ): WarmWaterResult {
   const baseCostPercent =
@@ -85,7 +100,7 @@ export function computeWarmWaterCosts(
   const consumptionCostPercent =
     options?.consumptionCostPercent ?? DEFAULT_CONSUMPTION_DEPENDENT;
 
-  const energyKwh = computeWarmWaterEnergy(volumeM3);
+  const energyKwh = computeWarmWaterEnergy(volumeM3, options?.hkvoFactor);
   const energySharePercent =
     totalEnergyKwh > 0 ? round2((energyKwh / totalEnergyKwh) * 100) : 0;
   const costFromEnergy = round2(
@@ -111,7 +126,8 @@ export function computeWarmWaterCosts(
     volumeM3Formatted: formatGermanNumber(volumeM3, 2),
     tempDiffHigh: WARM_WATER_TEMP_DIFF_HIGH,
     tempDiffLow: WARM_WATER_TEMP_DIFF_LOW,
-    conversionFactor: WARM_WATER_CONVERSION_FACTOR,
+    conversionFactor: options?.hkvoFactor?.factor ?? WARM_WATER_CONVERSION_FACTOR,
+    conversionOperation: options?.hkvoFactor?.operation ?? "divide",
     energyKwh,
     energyKwhFormatted: formatGermanNumber(energyKwh, 2),
     energySharePercent,
@@ -139,5 +155,6 @@ export function computeWarmWaterCosts(
       consumptionCostRatePerM3,
       6
     ),
+    noReadings: volumeM3 === 0,
   };
 }

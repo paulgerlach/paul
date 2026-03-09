@@ -1,0 +1,14 @@
+                                           id  The meter id number.
+                                         name  Your name for the meter.
+                                        media  What does the meter measure?
+                                        meter  Meter driver.
+                                    timestamp  Timestamp when wmbusmeters received the telegram. Local time for hr/fields UTC for json.
+                                 timestamp_ut  Unix timestamp when wmbusmeters received the telegram.
+                                 timestamp_lt  Local time when wmbusmeters received the telegram.
+                                timestamp_utc  UTC time when wmbusmeters received the telegram.
+                                       device  The wmbus device that received the telegram.
+                                     rssi_dbm  The rssi for the received telegram as reported by the device.
+                                       status  Meter status from error flags and tpl status field.
+                      current_consumption_hca  The current heat cost allocation.
+consumption_at_set_date_{storage_counter}_hca  The heat cost allocation at set date #.
+                  consumption_at_set_date_hca  Deprecated field.

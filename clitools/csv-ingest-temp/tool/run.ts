@@ -17,82 +17,85 @@ import { getMeterIds } from "../parser/getmeterids";
 dotenv.config({ path: "../.env", quiet: true }); // local
 
 export default class CSVDirectInjector {
-  client: SupabaseClient;
+	client: SupabaseClient;
 
-  filename: string;
-  verbose: boolean;
-  ingest: boolean;
+	filename: string;
+	verbose: boolean;
+	ingest: boolean;
 
-  constructor(filename: string, verbose: boolean, ingest: boolean) {
-    this.filename = filename;
-    this.verbose = verbose;
-    this.ingest = ingest;
+	constructor(filename: string, verbose: boolean, ingest: boolean) {
+		this.filename = filename;
+		this.verbose = verbose;
+		this.ingest = ingest;
 
-    this.client = getSupabaseClient();
-  }
+		this.client = getSupabaseClient();
+	}
 
-  async run() {
-    let totalCount: number = 0;
-    let succesCount: number = 0;
-    let failedCount: number = 0;
+	async run() {
+		let totalCount: number = 0;
+		let succesCount: number = 0;
+		let failedCount: number = 0;
 
-    const text = readFileSync(this.filename).toString("utf-8");
+		const text = readFileSync(this.filename).toString("utf-8");
 
-    const processed = Utils.processCSVContent(text);
-    let deviceIds: string[] = [];
-    let errors: string[] = [];
+		const processed = Utils.processCSVContent(text);
+		let deviceIds: string[] = [];
+		let errors: string[] = [];
 
-    let uploaded: Set<string> = new Set<string>();
+		let uploaded: Set<string> = new Set<string>();
 
-    const { meterIdMap } = await getMeterIds(this.client, processed);
+		const { meterIdMap } = await getMeterIds(this.client, processed);
 
-    try {
-      for (const row of processed) {
-        totalCount += 1;
-        let data: DatabaseRecord;
-        try {
-          data = await parseRow(row, meterIdMap);
-          succesCount += 1;
-          console.log(data, "\n");
-        } catch (e: any) {
-          if (e?.name !== undefined) {
-            errors.push(
-              `[${e.deviceId ?? "Unknown"}] ${e.name}:: ${e.message}`,
-            );
-            failedCount += 1;
-          } else {
-            errors.push(e);
-          }
-          continue;
-        }
+		try {
+			for (const row of processed) {
+				totalCount += 1;
+				let data: DatabaseRecord;
+				try {
+					data = await parseRow(row, meterIdMap);
+					if (data.device_id !== "54919617") {
+						continue;
+					}
+					succesCount += 1;
+					console.log(data, "\n");
+				} catch (e: any) {
+					if (e?.name !== undefined) {
+						errors.push(
+							`[${e.deviceId ?? "Unknown"}] ${e.name}:: ${e.message}`,
+						);
+						failedCount += 1;
+					} else {
+						errors.push(e);
+					}
+					continue;
+				}
 
-        if (!this.ingest) continue;
+				if (!this.ingest) continue;
 
-        let key = `${data.device_id}${data.manufacturer}${data.date_only}`;
-        if (uploaded.has(key)) continue;
-        uploaded.add(key);
+				let key = `${data.device_id}${data.manufacturer}${data.date_only}`;
+				if (uploaded.has(key)) continue;
+				uploaded.add(key);
 
-        try {
-          const sent = await this.client
-            .from("parsed_data")
-            .insert(data)
-            .select();
+				try {
+					const sent = await this.client
+						.from("parsed_data")
+						.insert(data)
+						.select();
 
-          if (sent.error !== null) throw Error(`${sent.error.message}`);
-        } catch (e: any) {
-          console.error("failed upload: ", e);
-        }
-      }
-    } catch (e: any) {
-      console.error("CSV iteration error:", e);
-    }
+					if (sent.error !== null) throw Error(`${sent.error.message}`);
+				} catch (e: any) {
+					console.error("failed upload: ", e);
+				}
+			}
+		} catch (e: any) {
+			console.error("CSV iteration error:", e);
+		}
 
-    let folder = `./output/${Date.now()}/`;
-    Bun.write(`${folder}DeviceIds.txt`, deviceIds.join("\n"));
-    Bun.write(`${folder}Errors.txt`, errors.join("\n"));
+		let folder = `./output/${Date.now()}/`;
+		Bun.write(`${folder}DeviceIds.txt`, deviceIds.join("\n"));
+		Bun.write(`${folder}Errors.txt`, errors.join("\n"));
 
-    console.log(
-      `Total: ${totalCount}, Succeeded: ${succesCount}, Failed ${failedCount}`,
-    );
-  }
+		console.log(
+			`Total: ${totalCount}, Succeeded: ${succesCount}, Failed ${failedCount}`,
+		);
+	}
 }

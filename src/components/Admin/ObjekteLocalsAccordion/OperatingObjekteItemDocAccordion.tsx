@@ -9,12 +9,22 @@ export default function OperatingObjekteItemDocAccordion({
 }: {
   objekts?: ObjektType[];
 }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [closedIds, setClosedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleClick = (index: number) => {
-    setOpenIndex((prev) => (prev === index ? null : index));
+    const objekt = filteredAndSortedObjekts[index];
+    if (!objekt || !objekt.id) return;
+    setClosedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(objekt.id as string)) {
+        newSet.delete(objekt.id as string);
+      } else {
+        newSet.add(objekt.id as string);
+      }
+      return newSet;
+    });
   };
 
   const filteredAndSortedObjekts = useMemo(() => {
@@ -61,7 +71,7 @@ export default function OperatingObjekteItemDocAccordion({
           </p>
           {filteredAndSortedObjekts.map((objekt, index) => (
             <OperatingObjekteItemDocWithHistory
-              isOpen={openIndex === index}
+              isOpen={!closedIds.has(objekt.id as string)}
               onClick={handleClick}
               key={objekt.id}
               index={index}

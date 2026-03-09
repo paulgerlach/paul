@@ -6,17 +6,22 @@ import Link from "next/link";
 import { pdf_icon, doc_download, gmail } from "@/static/icons";
 
 export type TenantDocumentActionsProps = {
-    documentId: string;
-    previewHref: string;
+    documentId?: string;
+    previewHref?: string;
+    isPending?: boolean;
+    pendingTooltip?: string;
 };
 
 export default function TenantDocumentActions({
     documentId,
     previewHref,
+    isPending = false,
+    pendingTooltip,
 }: Readonly<TenantDocumentActionsProps>) {
     const [loading, setLoading] = useState(false);
 
     const handleDownload = async () => {
+        if (!documentId) return;
         try {
             setLoading(true);
             const res = await fetch(`/api/heating-bill/document-url/${documentId}`);
@@ -46,10 +51,57 @@ export default function TenantDocumentActions({
         }
     };
 
+    if (isPending) {
+        return (
+            <div className="relative group flex items-center gap-3 max-medium:gap-2 flex-shrink-0">
+                <div className="flex items-center gap-3 max-medium:gap-2 opacity-40 pointer-events-none cursor-not-allowed">
+                    <span className="inline-flex">
+                        <Image
+                            width={0}
+                            height={0}
+                            sizes="100vw"
+                            loading="lazy"
+                            className="max-w-8 max-h-8 max-xl:max-w-5 max-xl:max-h-5 max-medium:max-w-6 max-medium:max-h-6"
+                            src={pdf_icon}
+                            alt="preview"
+                        />
+                    </span>
+                    <span className="inline-flex">
+                        <Image
+                            width={0}
+                            height={0}
+                            sizes="100vw"
+                            loading="lazy"
+                            className="max-w-8 max-h-8 max-xl:max-w-5 max-xl:max-h-5 max-medium:max-w-6 max-medium:max-h-6"
+                            src={doc_download}
+                            alt="download"
+                        />
+                    </span>
+                    <span className="inline-flex">
+                        <Image
+                            width={0}
+                            height={0}
+                            sizes="100vw"
+                            loading="lazy"
+                            className="max-w-7 max-h-7 max-xl:max-w-5 max-xl:max-h-5 max-medium:max-w-6 max-medium:max-h-6"
+                            src={gmail}
+                            alt="email"
+                        />
+                    </span>
+                </div>
+                {pendingTooltip && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        {pendingTooltip}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="flex items-center gap-3 max-medium:gap-2 flex-shrink-0">
             <span className="inline-flex">
-                <Link href={previewHref}>
+                <Link href={previewHref ?? "#"}>
                     <Image
                         width={0}
                         height={0}

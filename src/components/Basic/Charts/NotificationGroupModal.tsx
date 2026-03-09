@@ -20,6 +20,7 @@ export interface GroupNotificationItem {
     building?: string;
     unit?: string;
     tenant?: string;
+    totalDevices?: number;
 }
 
 interface NotificationGroupModalProps {

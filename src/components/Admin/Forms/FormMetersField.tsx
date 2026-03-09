@@ -174,7 +174,7 @@ export default function FormMetersField<T extends FieldValues = FieldValues>({
                     control={control}
                     className="min-w-0"
                     name={`meters.${index}.radiator_length` as Path<T>}
-                    label="Heizkörper Länge"
+                    label="Heizkörper Höhe"
                     placeholder="cm"
                     replaceDotWithComma
                   />

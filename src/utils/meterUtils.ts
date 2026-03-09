@@ -48,9 +48,10 @@ export const fetchMeterUUIDs = async (localIds: string[]): Promise<string[]> => 
 
     if (response.ok) {
       const { meters } = await response.json();
-      return meters
+      const ids = meters
         .map((meter: any) => meter.id)
         .filter((id: string) => Boolean(id));
+      return ids.sort();
     }
     return [];
   } catch (error) {

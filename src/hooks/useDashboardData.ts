@@ -1,17 +1,18 @@
 import { useMemo } from 'react';
 import useSWR from 'swr';
+import { useParams } from 'next/navigation';
 import { MeterReadingType } from '@/api';
 import { useChartStore } from '@/store/useChartStore';
 
 /**
  * Unified dashboard data hook with SWR caching
  * Fetches all device types in a single API call, then filters client-side
- * 
- * Benefits:
- * - 1 API call instead of 5
- * - Automatic deduplication (60s window)
- * - Shared cache across components
- * - Automatic revalidation
+ *
+ * Cache key design:
+ * - userId: Ensures admin viewing User B never gets User A's cached data
+ * - Sorted meterIds: DB returns meters in arbitrary order; sorting ensures same
+ *   set of meters always produces the same key regardless of array order
+ * - Date strings: Normalized to ISO date or 'null' for consistency
  */
 
 interface DashboardDataResult {
@@ -52,7 +53,7 @@ const fetchAllChartData = async (
         // OLD format
         'Heat', 'Water', 'WWater', 'Elec', 'HCA',
         // NEW Engelmann format
-        'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
+        'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler',
         'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
       ],
       startDate: adjustedStartDate?.toISOString() || null,
@@ -68,19 +69,31 @@ const fetchAllChartData = async (
   return result.data || [];
 };
 
+/** Normalize date to ISO date string or 'null' for stable cache keys */
+function toDateKey(d: Date | null | undefined): string {
+  if (!d) return 'null';
+  const date = d instanceof Date ? d : new Date(d);
+  return isNaN(date.getTime()) ? 'null' : date.toISOString().split('T')[0];
+}
+
 export const useDashboardData = (): DashboardDataResult => {
+  const params = useParams();
   const { meterIds, startDate, endDate } = useChartStore();
 
-  // Create stable cache key
+  // User context: when admin views /admin/[user_id]/dashboard, this is the viewed user
+  const resolvedUserId = typeof params?.user_id === 'string' ? params.user_id : 'self';
+
+  // Stable cache key: userId + sorted meterIds + normalized dates
+  // - Sorted meterIds: same set of meters = same key regardless of array order from DB
+  // - userId: prevents serving wrong user's cache when admin switches customers
   const cacheKey = useMemo(() => {
     if (!meterIds.length) return null;
-    return [
-      'dashboard-data',
-      meterIds.join(','),
-      startDate?.toISOString() || 'null',
-      endDate?.toISOString() || 'null'
-    ];
-  }, [meterIds, startDate, endDate]);
+    const sortedIds = [...meterIds].filter(Boolean).sort();
+    const idsPart = sortedIds.join(',');
+    const startPart = toDateKey(startDate);
+    const endPart = toDateKey(endDate);
+    return `dashboard-data:${resolvedUserId}:${idsPart}:${startPart}:${endPart}`;
+  }, [resolvedUserId, meterIds, startDate, endDate]);
 
   // SWR with 60s deduplication window
   const { data: allData, error, mutate } = useSWR(

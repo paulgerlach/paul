@@ -52,6 +52,7 @@ interface NotificationItem {
 	building?: string;
 	unit?: string;
 	tenant?: string;
+	totalDevices?: number;
 }
 
 interface NotificationsChartProps {
@@ -191,6 +192,7 @@ export default function NotificationsChart({
 			building: n.building,
 			unit: n.unit,
 			tenant: n.tenant,
+			totalDevices: n.totalDevices,
 		});
 		setOpenPopoverId(null);
 	};
@@ -475,15 +477,19 @@ export default function NotificationsChart({
 					parts.push(`${hotWaterDevices} Warmwasser`);
 				if (elecDevices > 0) parts.push(`${elecDevices} Strom`);
 
+				const subtitle =
+					parts.length > 0
+						? `${totalDevices} Geräte ohne Fehler (${parts.join(", ")})`
+						: `${totalDevices} Geräte ohne Fehler`;
+
 				dynamicNotifications.push({
 					leftIcon: notification,
 					rightIcon: green_check,
 					leftBg: "#E7E8EA",
 					rightBg: "#E7F2E8",
 					title: "Alle Zähler funktionieren korrekt",
-					subtitle: `${totalDevices} Geräte ohne Fehler (${parts.join(
-						", "
-					)})`,
+					subtitle,
+					totalDevices,
 				});
 
 				return dynamicNotifications;
@@ -726,6 +732,11 @@ export default function NotificationsChart({
 
 				// For demo account, skip success message and show dummy notifications instead
 				if (!isDemoAccount) {
+					const subtitle =
+						categoryParts.length > 0
+							? `${totalDevices} Geräte ohne Fehler (${categoryParts.join(", ")})`
+							: `${totalDevices} Geräte ohne Fehler`;
+
 					notifications.push({
 						leftIcon: getLeftIconForNotificationType(
 							"success",
@@ -735,9 +746,8 @@ export default function NotificationsChart({
 						leftBg: "#E7E8EA",
 						rightBg: "#E7F2E8",
 						title: "Alle Zähler funktionieren korrekt",
-						subtitle: `${totalDevices} Geräte ohne Fehler (${categoryParts.join(
-							", "
-						)})`,
+						subtitle,
+						totalDevices,
 					});
 
 					return notifications;
@@ -982,7 +992,7 @@ export default function NotificationsChart({
 							>
 								{/* Identical Layout to NotificationItem.tsx */}
 								<div className="flex-1 min-w-0">
-									<div className="flex items-start justify-start gap-2 w-full p-1">
+									<div className="flex items-center justify-start gap-2 w-full p-1 min-h-[52px] max-md:min-h-12 max-lg:min-h-14">
 										<div className="flex items-center justify-start gap-2 flex-shrink-0">
 											<span
 												className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
@@ -1013,11 +1023,11 @@ export default function NotificationsChart({
 												/>
 											</span>
 										</div>
-										<div className="flex-1 min-w-0 py-1">
-											<p className="text-sm font-medium text-gray-800 leading-tight truncate">
+										<div className="flex-1 min-w-0 py-1 flex flex-col justify-center">
+											<p className="text-sm font-medium text-gray-800 leading-tight truncate text-left w-full">
 												{group.items.length}x {group.label}...
 											</p>
-											<p className="text-sm max-lg:text-xs text-black/50 leading-tight truncate line-clamp-1 mt-0.5">
+											<p className="text-sm max-lg:text-xs text-black/50 leading-tight truncate line-clamp-1 mt-0.5 text-left w-full">
 												{group.title}
 											</p>
 										</div>

@@ -160,8 +160,10 @@ export default function CreateContractForm({
                 placeholder="Unbefristet"
                 showClearButton={true}
                 clearLabel="Unbefristet"
-                onClear={() => methods.setValue("is_current", true, { shouldDirty: true })}
-                onSelect={() => methods.setValue("is_current", true, { shouldDirty: true })}
+                onClear={() => {
+                  methods.setValue("rental_end_date", null, { shouldDirty: true });
+                  methods.setValue("is_current", true, { shouldDirty: true });
+                }} onSelect={() => methods.setValue("is_current", true, { shouldDirty: true })}
               />
             </div>
           </div>

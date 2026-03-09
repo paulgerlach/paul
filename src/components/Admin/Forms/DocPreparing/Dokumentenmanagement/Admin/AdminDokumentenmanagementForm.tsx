@@ -2,8 +2,9 @@
 
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type {
-    DocCostCategoryType,
-    InvoiceDocumentType,
+	DocCostCategoryType,
+	InvoiceDocumentType,
+	LocalType,
 } from "@/types";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/Basic/ui/Form";
@@ -14,73 +15,72 @@ import { FileList } from "../components/FileList";
 import { FormFooter } from "../components/FormFooter";
 
 export default function AdminDokumentenmanagementForm({
-    objektId,
-    docId,
-    pathSlug,
-    userId,
-    userDocCostCategories,
-    relatedInvoices,
+	objektId,
+	docId,
+	pathSlug,
+	userId,
+	userDocCostCategories,
+	relatedInvoices,
+	locals,
 }: {
-    objektId: string;
-    docId: string;
-    userId: string;
-    pathSlug: string;
-    userDocCostCategories: DocCostCategoryType[];
-    relatedInvoices?: InvoiceDocumentType[];
+	objektId: string;
+	docId: string;
+	userId: string;
+	pathSlug: string;
+	userDocCostCategories: DocCostCategoryType[];
+	relatedInvoices?: InvoiceDocumentType[];
+	locals: LocalType[];
 }) {
-    const methods = useForm();
-    const {
-        entries,
-        step,
-        onDrop,
-        onDropRejected,
-        handleSubmit,
-        parseMutation,
-        saveMutation,
-    } = useAdminDokumentenManagement({
-        objektId,
-        docId,
-        pathSlug,
-        userId,
-        userDocCostCategories,
-        relatedInvoices,
-    });
-    const isEditMode = !!relatedInvoices;
+	const methods = useForm();
+	const {
+		entries,
+		step,
+		onDrop,
+		onDropRejected,
+		handleSubmit,
+		parseMutation,
+		saveMutation,
+	} = useAdminDokumentenManagement({
+		objektId,
+		docId,
+		pathSlug,
+		userId,
+		userDocCostCategories,
+		relatedInvoices,
+		locals,
+	});
+	const isEditMode = !!relatedInvoices;
 
-    const backLink = isEditMode
-        ? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/abrechnungszeitraum`
-        : `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`;
+	const backLink = isEditMode
+		? `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${docId}/abrechnungszeitraum`
+		: `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/abrechnungszeitraum`;
 
-    return (
-        <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-3 h-full rounded-2xl px-4 flex items-start justify-center">
-            <div className="bg-white h-full py-6 px-4 rounded w-full shadow-sm space-y-8 flex flex-col">
-                <h2 className="font-bold">
-                    Dokumente hochladen
-                </h2>
+	return (
+		<div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-3 h-full rounded-2xl px-4 flex items-start justify-center">
+			<div className="bg-white h-full py-6 px-4 rounded w-full shadow-sm space-y-8 flex flex-col">
+				<h2 className="font-bold">Dokumente hochladen</h2>
 
-                <UploadInfoItems />
+				<UploadInfoItems />
 
-                <Form
-                    {...methods}
-                >
-                    <form className="flex-1 flex flex-col" onSubmit={methods.handleSubmit(handleSubmit)}>
-                        {step === "upload" && (
-                            <UploadDropzone
-                                onDrop={onDrop}
-                                onDropRejected={onDropRejected}
-                            />
-                        )}
+				<Form {...methods}>
+					<form
+						className="flex-1 flex flex-col"
+						onSubmit={methods.handleSubmit(handleSubmit)}
+					>
+						{step === "upload" && (
+							<UploadDropzone onDrop={onDrop} onDropRejected={onDropRejected} />
+						)}
 
-                        <FileList entries={entries} />
+						<FileList entries={entries} />
 
-                        <FormFooter
-                            backLink={backLink}
-                            step={step}
-                            isPending={parseMutation.isPending || saveMutation.isPending}
-                        />
-                    </form>
-                </Form>
-            </div>
-        </div>
-    );
+						<FormFooter
+							backLink={backLink}
+							step={step}
+							isPending={parseMutation.isPending || saveMutation.isPending}
+						/>
+					</form>
+				</Form>
+			</div>
+		</div>
+	);
 }

@@ -96,6 +96,7 @@ export default function AdminAccountDropdown() {
             <MenuModal
               key={item.title}
               title={item.title}
+              contentClassName="z-[10001]"
               trigger={
                 <button className="block w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded outline-none transition-colors">
                   {item.title}
@@ -113,6 +114,7 @@ export default function AdminAccountDropdown() {
             <MenuModal
               key={item.title}
               title={item.title}
+              contentClassName="z-[10001]"
               trigger={
                 <button className="block w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1.5 rounded outline-none transition-colors">
                   {item.title}

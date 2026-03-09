@@ -190,7 +190,12 @@ export const buildLocalName = ({
 
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
 
-  return mainParts.join(" ") + livingSpacePart;
+  const showHeatingPart = heatingAreaNum > 0 && heatingAreaNum !== livingSpaceNum;
+  const heatingSpacePart = showHeatingPart
+    ? `, ${String(heating_area).replace(".", ",")}qm`
+    : "";
+
+  return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
 };
 
 export const FUEL_COST_TYPES = ["fuel_costs", "brennstoffkosten"] as const;

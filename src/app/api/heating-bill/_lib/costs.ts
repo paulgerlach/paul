@@ -18,6 +18,7 @@ export type EnergyInvoiceItem = {
   kWhFormatted: string;
   amount: number;
   amountFormatted: string;
+  co2PricePerTonne: number | null;
 };
 
 export type EnergyReliefItem = {
@@ -183,6 +184,7 @@ export function aggregateInvoiceCosts(
             : "",
           amount,
           amountFormatted: formatEuro(amount),
+          co2PricePerTonne: isFuel ? (Number(inv.co2_price_per_tonne) || null) : null,
         });
         if (isFuel) energyTotalKwh += kWh;
         energyTotalAmount += amount;

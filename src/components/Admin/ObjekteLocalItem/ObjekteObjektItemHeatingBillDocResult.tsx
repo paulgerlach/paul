@@ -20,6 +20,8 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   docType: "localauswahl" | "objektauswahl";
   status?: "renting" | "vacancy";
   tenantDocuments?: TenantDocument[];
+  isPending?: boolean;
+  pendingTooltip?: string;
 };
 
 export default function ObjekteObjektItemHeatingBillDocResult({
@@ -29,6 +31,8 @@ export default function ObjekteObjektItemHeatingBillDocResult({
   docType,
   status = "vacancy",
   tenantDocuments = [],
+  isPending = false,
+  pendingTooltip,
 }: Readonly<ObjekteLocalItemHeatingBillDocResultProps>) {
   const handleStatusImage = () => {
     switch (status) {
@@ -105,8 +109,15 @@ export default function ObjekteObjektItemHeatingBillDocResult({
           </div>
         </div>
         <div className="flex items-center gap-4">
+          {/* Pending placeholder actions */}
+          {isPending && (
+            <TenantDocumentActions
+              isPending
+              pendingTooltip={pendingTooltip}
+            />
+          )}
           {/* Inline action buttons when single document */}
-          {singleDoc && (
+          {!isPending && singleDoc && (
             <TenantDocumentActions
               documentId={singleDoc.id}
               previewHref={`${previewBaseHref}?documentId=${singleDoc.id}`}

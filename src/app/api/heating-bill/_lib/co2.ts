@@ -15,7 +15,7 @@ function getEmissionFactor(energyCarrier: string): number {
 }
 
 export type CO2Input = {
-  energyInvoices: Array<{ label: string; date: string; kWh: number }>;
+  energyInvoices: Array<{ label: string; date: string; kWh: number; co2PricePerTonne?: number | null }>;
   totalLivingSpaceM2: number;
   energyCarrier: string;
   localLivingSpaceM2: number;
@@ -37,18 +37,23 @@ export function computeCo2Allocation(input: CO2Input): HeatingBillPdfModel["co2"
   const factor = getEmissionFactor(energyCarrier);
   const totalKwh = energyInvoices.reduce((s, i) => s + i.kWh, 0);
   const totalCo2Kg = round2(totalKwh * factor);
-  const totalCost = 0;
 
-  const energyRows = energyInvoices.map((i) => ({
-    label: i.label,
-    date: i.date,
-    kWh: i.kWh,
-    kWhFormatted: formatGermanNumber(i.kWh, 3),
-    co2Kg: round2(i.kWh * factor),
-    co2KgFormatted: formatGermanNumber(round2(i.kWh * factor), 2),
-    cost: 0,
-    costFormatted: "0,00 €",
-  }));
+  const energyRows = energyInvoices.map((i) => {
+    const co2Kg = round2(i.kWh * factor);
+    const cost = round2((co2Kg / 1000) * (i.co2PricePerTonne ?? 0));
+    return {
+      label: i.label,
+      date: i.date,
+      kWh: i.kWh,
+      kWhFormatted: formatGermanNumber(i.kWh, 3),
+      co2Kg,
+      co2KgFormatted: formatGermanNumber(co2Kg, 2),
+      cost,
+      costFormatted: formatEuro(cost),
+    };
+  });
+
+  const totalCost = round2(energyRows.reduce((s, r) => s + r.cost, 0));
 
   const emissionPerM2 =
     totalLivingSpaceM2 > 0
@@ -62,10 +67,10 @@ export function computeCo2Allocation(input: CO2Input): HeatingBillPdfModel["co2"
   const classificationTable = CO2_TIER_TABLE.map((t) => {
     const rangeLabel =
       t.minEmissionPerM2 === 0
-        ? `< ${t.maxEmissionPerM2} kg/m²/a`
+        ? `< ${t.maxEmissionPerM2} kg CO₂/m²/a`
         : t.maxEmissionPerM2 === Infinity
-          ? `≥ ${t.minEmissionPerM2}`
-          : `${t.minEmissionPerM2} bis < ${t.maxEmissionPerM2}`;
+          ? `≥ ${t.minEmissionPerM2} kg CO₂/m²/a`
+          : `${t.minEmissionPerM2} bis < ${t.maxEmissionPerM2} kg CO₂/m²/a`;
     return {
       rangeLabel,
       tenantPercent: t.tenantPercent,
@@ -76,16 +81,16 @@ export function computeCo2Allocation(input: CO2Input): HeatingBillPdfModel["co2"
     };
   });
 
-  const buildingTenantCost = 0;
-  const buildingLandlordCost = 0;
-  const buildingTotalCost = 0;
+  const buildingTotalCost = totalCost;
+  const buildingTenantCost = round2(buildingTotalCost * 0.5);
+  const buildingLandlordCost = round2(buildingTotalCost * 0.5);
 
   const spaceShare =
     totalLivingSpaceM2 > 0 && localLivingSpaceM2 > 0
       ? localLivingSpaceM2 / totalLivingSpaceM2
       : 0;
-  const unitTenantCost = round2(buildingTotalCost * (selectedTier.tenantPercent / 100) * spaceShare);
-  const unitLandlordCost = round2(buildingTotalCost * (selectedTier.landlordPercent / 100) * spaceShare);
+  const unitTenantCost = round2(buildingTenantCost * spaceShare);
+  const unitLandlordCost = round2(buildingLandlordCost * spaceShare);
   const unitTotalCost = round2(unitTenantCost + unitLandlordCost);
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(portalLink)}`;

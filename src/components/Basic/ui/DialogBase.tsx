@@ -16,8 +16,8 @@ export type DialogBaseProps = {
 export default function DialogBase({
   children,
   dialogName,
-  size = 682,
-  maxHeight = 889,
+  size = 576,
+  maxHeight = 600,
 }: PropsWithChildren<DialogBaseProps>) {
   const { closeDialog } = useDialogStore();
   const dialogRef = useRef<HTMLDivElement>(null);

@@ -232,7 +232,7 @@ export default function AddDocHeizkostenabrechnungDialog() {
   if (!isOpen) return null;
 
   return (
-    <DialogBase dialogName={activeDialog as DialogStoreActionType}>
+    <DialogBase dialogName={activeDialog as DialogStoreActionType} size={682} maxHeight={889}>
       <p className="font-bold text-lg text-admin_dark_text -mt-6">
         Neue Ausgaben
       </p>

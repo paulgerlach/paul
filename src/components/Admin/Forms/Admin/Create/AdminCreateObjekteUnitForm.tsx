@@ -176,7 +176,6 @@ export default function AdminCreateObjekteUnitForm({
   const house_location = methods.watch("house_location");
   const residential_area = methods.watch("residential_area");
   const living_space = methods.watch("living_space");
-  const heating_area = methods.watch("heating_area");
   const usage_type = methods.watch("usage_type");
 
   // Check if current type is non-residential
@@ -191,7 +190,6 @@ export default function AdminCreateObjekteUnitForm({
       house_location: house_location ?? undefined,
       residential_area: residential_area ?? undefined,
       living_space: String(living_space ?? 0),
-      heating_area: String(heating_area ?? 0),
     });
 
   return (

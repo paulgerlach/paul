@@ -5,6 +5,7 @@ import database from "@/db";
 import { local_meters } from "@/db/drizzle/schema";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { eq, and } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 type MeterFormData = NonNullable<AdminEditObjekteUnitFormValues["meters"]>[number];
 
@@ -130,9 +131,35 @@ export async function createLocalMeters(
   );
 
   for (const meter of metersToDelete) {
-    await database
-      .delete(local_meters)
-      .where(eq(local_meters.id, meter.id));
+    try {
+      // Unlink parsed_data before delete to avoid FK violation (parsed_data.local_meter_id -> local_meters.id)
+      try {
+        await database.execute(
+          sql`UPDATE parsed_data SET local_meter_id = NULL WHERE local_meter_id = ${meter.id}`
+        );
+      } catch (unlinkErr) {
+        // parsed_data may not exist or have different schema; log and proceed with delete
+        console.warn(
+          "[createLocalMeters] Could not unlink parsed_data for meter:",
+          { meterId: meter.id, meterNumber: meter.meter_number },
+          unlinkErr
+        );
+      }
+      await database
+        .delete(local_meters)
+        .where(eq(local_meters.id, meter.id));
+    } catch (deleteErr) {
+      const message =
+        deleteErr instanceof Error ? deleteErr.message : String(deleteErr);
+      console.error(
+        "[createLocalMeters] Failed to delete meter:",
+        { meterId: meter.id, meterNumber: meter.meter_number, localID },
+        deleteErr
+      );
+      throw new Error(
+        `Zähler konnte nicht gelöscht werden (${meter.meter_number ?? meter.id}): ${message}`
+      );
+    }
   }
 
   // NOTE: We intentionally do NOT update locals.meter_ids here

@@ -14,7 +14,7 @@ import {
   heating_invoices,
   agencies,
 } from "@/db/drizzle/schema";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
 import { isAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -1193,7 +1193,8 @@ export async function getMetersByLocalIds(localIds: string[]): Promise<LocalMete
       created_at: local_meters.created_at,
     })
     .from(local_meters)
-    .where(inArray(local_meters.local_id, localIds));
+    .where(inArray(local_meters.local_id, localIds))
+    .orderBy(asc(local_meters.id));
 
   return meters;
 }

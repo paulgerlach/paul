@@ -28,11 +28,10 @@ export default function AdminApartmentsDropdown() {
   const { setMeterIds } = useChartStore();
 
   const isAdmin = !!resolvedUserId;
-
   const apartmentsToUse = isAdmin ? usersApartments : apartments;
   const isLoading = isAdmin ? isLoadingUsersApartments : isLoadingApartments;
   const error = isAdmin ? usersApartmentsError : apartmentsError;
-  
+
   // Log apartment data status
   console.log('[AdminApartmentsDropdown] Status:', {
     isAdmin,
@@ -44,11 +43,11 @@ export default function AdminApartmentsDropdown() {
 
   const toggleSelection = async (localId?: string) => {
     if (!localId) return;
-    
+
     const newSelectedIds = selectedLocalIds.includes(localId)
       ? selectedLocalIds.filter((id) => id !== localId)
       : [...selectedLocalIds, localId];
-      
+
     setSelectedLocalIds(newSelectedIds);
 
     // Update meter IDs based on new selection
@@ -86,6 +85,14 @@ export default function AdminApartmentsDropdown() {
       setMeterIds([]);
     }
   };
+
+  useEffect(() => {
+    // When viewing a customer's dashboard (resolvedUserId set), clear stale data first to prevent showing another user's persisted meterIds
+    if (resolvedUserId) {
+      setSelectedLocalIds([]);
+      setMeterIds([]);
+    }
+  }, [resolvedUserId]);
 
   useEffect(() => {
     // Only run selectAll when apartments data is loaded and not empty

@@ -48,9 +48,8 @@ export const useChartStore = create<ChartState>()(
 
       isTableView: false,
   setMeterIds: (ids: string[]) => {
-        set({
-          meterIds: ids?.length ? Array.from(new Set(ids)) : [],
-        });
+        const normalized = ids?.length ? Array.from(new Set(ids)).sort() : [];
+        set({ meterIds: normalized });
       },
 
       setDates: (start, end) => set({ startDate: start, endDate: end }),
@@ -58,12 +57,20 @@ export const useChartStore = create<ChartState>()(
     }),
     {
       name: "dashboard-chart-layout",
+      // Exclude meterIds from persist - they are user-specific; persisting causes wrong data when admin switches customers
+      partialize: (state) => ({
+        startDate: state.startDate,
+        endDate: state.endDate,
+        chartSizes: state.chartSizes,
+        isTableView: state.isTableView,
+      }),
       // Convert date strings back to Date objects after rehydration from localStorage
       merge: (persistedState, currentState) => {
         const persisted = (persistedState ?? {}) as Partial<ChartState>;
         return {
           ...currentState,
           ...persisted,
+          meterIds: [], // Always start empty; AdminApartmentsDropdown populates from current user's apartments
           startDate: toDateOrNull(persisted.startDate),
           endDate: toDateOrNull(persisted.endDate),
         };

@@ -19,6 +19,7 @@ export interface NotificationDetail {
     building?: string;
     unit?: string;
     tenant?: string;
+    totalDevices?: number;
 }
 
 interface NotificationDetailModalProps {
@@ -148,7 +149,13 @@ export default function NotificationDetailModal({ notification, onClose }: Notif
 
                     {/* Description */}
                     <div className="bg-gray-50 rounded-xl p-4">
-                        <p className="text-sm text-gray-600 leading-relaxed">{notification.subtitle}</p>
+                        {notification.title === "Alle Zähler funktionieren korrekt" ? (
+                            <p className="text-sm text-gray-600 leading-relaxed text-center">
+                                Alle {notification.totalDevices ?? notification.subtitle.match(/^(\d+)/)?.[1] ?? "—"} Zähler arbeiten einwandfrei und zeigen aktuell keine Fehlermeldungen an, sodass eine kontinuierliche und sichere Datenübermittlung gewährleistet ist. Darüber hinaus verfügen sämtliche installierten Heidi-Geräte über eine integrierte Speicherfunktion, die die Messdaten für einen Zeitraum von bis zu einem Jahr auch lokal speichert.
+                            </p>
+                        ) : (
+                            <p className="text-sm text-gray-600 leading-relaxed">{notification.subtitle}</p>
+                        )}
                     </div>
 
                     {/* Detail rows */}

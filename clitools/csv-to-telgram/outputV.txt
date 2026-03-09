@@ -1,0 +1,1143 @@
+$ bun run ./script.ts -v -i "All_telgrams_2026-02-27.csv"
+d244c5143022314531087a3700c02568e6816beba27c9cd805a4b372a3b9f1042320c419d6a08af455be0e9dc56fb2e13163e582cf7da0a2c619eafc330d2135fc16d4d6b5d0ccad051294f2f21e19af7d929f403be3d85ef9024b4bd2f13611d704daf0bf10bbff5e67a5d99b702bdbc9d1e0c1cc09670f58ea32d910d2d4a57ac240b494b92fccbd0226bc4d09e0baa587bb2b9edb869e531a94e1b3010ad049984759faee818f7fc54f7a8695df47f13b1b1ad1bce3122052f61921e1d9397c75c7a0bf591214872d64293af48a
+{
+  data: [
+    {
+      value: 2026-02-27T09:03:00.000Z,
+      unit: "",
+      description: "Time point",
+      type: "DateTime",
+      info: {
+        legacyVif: "VIF_TIME_POINT_DATE_TIME",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 0,
+      },
+    }, {
+      value: 360,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 0,
+      },
+    }, {
+      value: 2025-12-31T00:00:00.000Z,
+      unit: "",
+      description: "Time point",
+      type: "Date",
+      info: {
+        legacyVif: "VIF_TIME_POINT_DATE",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 1,
+      },
+    }, {
+      value: 63,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 1,
+      },
+    }, {
+      value: 2024-11-30T00:00:00.000Z,
+      unit: "",
+      description: "Time point",
+      type: "Date",
+      info: {
+        legacyVif: "VIF_TIME_POINT_DATE",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 2,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 2,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 3,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 4,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 5,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 6,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 7,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 8,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 9,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 10,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 11,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 12,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 13,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 14,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 15,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 16,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 17,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 18,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 19,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 20,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 21,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 22,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 23,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 24,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 25,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 26,
+      },
+    }, {
+      value: 0,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 27,
+      },
+    }, {
+      value: 63,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 28,
+      },
+    }, {
+      value: 95,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 29,
+      },
+    }, {
+      value: 104,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 30,
+      },
+    }, {
+      value: 73,
+      unit: "",
+      description: "Units for H.C.A.",
+      type: "Number",
+      info: {
+        legacyVif: "VIF_HCA",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 31,
+      },
+    }, {
+      value: "0",
+      unit: "",
+      description: "Unknown manufacturer specific VIF 0x7f (during error state)",
+      type: "String",
+      info: {
+        legacyVif: "VIF_TYPE_MANUFACTURER_UNKOWN",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 0,
+      },
+    }, {
+      value: 1999-11-30T00:00:00.000Z,
+      unit: "",
+      description: "Time point (during error state)",
+      type: "DateTime",
+      info: {
+        legacyVif: "VIF_TIME_POINT_DATE_TIME",
+        tariff: 0,
+        deviceUnit: 0,
+        storageNo: 0,
+      },
+    }
+  ],
+  meter: {
+    manufacturer: "EFE",
+    id: "45312230",
+    type: 8,
+    deviceType: "Heat Cost Allocator",
+    version: 49,
+    status: "No error",
+    accessNo: 55,
+  },
+  linkLayer: {
+    lField: 210,
+    cField: 68,
+    mField: 5317,
+    aField: 1160847920,
+    version: 49,
+    type: 8,
+    addressRaw: <Buffer c5 14 30 22 31 45 31 08>,
+    aFieldRaw: <Buffer 30 22 31 45 31 08>,
+    manufacturer: "EFE",
+    typeString: "Heat Cost Allocator",
+    meterId: "45312230",
+  },
+  extendedLinkLayer: undefined,
+  authenticationAndFragmentationLayer: undefined,
+  applicationLayer: {
+    ci: 122,
+    offset: 10,
+    accessNo: 55,
+    statusCode: 0,
+    status: "No error",
+    config: {
+      mode: 5,
+      bidirectional: false,
+      accessability: false,
+      synchronous: true,
+      encryptedBlocks: 12,
+      content: 0,
+      hopCounter: 0,
+    },
+  },
+  dataRecords: [
+    {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 0,
+          functionField: 0,
+          dataField: 4,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 17,
+        length: 2,
+      },
+      value: 844835075,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 0,
+          functionField: 0,
+          dataField: 3,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 23,
+        length: 2,
+      },
+      value: 360,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 1,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 28,
+        length: 2,
+      },
+      value: 15423,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 1,
+          functionField: 0,
+          dataField: 3,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 32,
+        length: 2,
+      },
+      value: 63,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 2,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 37,
+        length: 3,
+      },
+      value: 15134,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 2,
+          functionField: 0,
+          dataField: 3,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 42,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 3,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 48,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 4,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 53,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 5,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 58,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 6,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 63,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 7,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 68,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 8,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 73,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 9,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 78,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 10,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 83,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 11,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 88,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 12,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 93,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 13,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 98,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 14,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 103,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 15,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 108,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 16,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 113,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 17,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 118,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 18,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 123,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 19,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 128,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 20,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 133,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 21,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 138,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 22,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 143,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 23,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 148,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 24,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 153,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 25,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 158,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 26,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 163,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 27,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 168,
+        length: 3,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 28,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 173,
+        length: 3,
+      },
+      value: 63,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 29,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 178,
+        length: 3,
+      },
+      value: 95,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 30,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 183,
+        length: 3,
+      },
+      value: 104,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 31,
+          functionField: 0,
+          dataField: 2,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 188,
+        length: 3,
+      },
+      value: 73,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 0,
+          functionField: 3,
+          dataField: 1,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 193,
+        length: 2,
+      },
+      value: 0,
+    }, {
+      header: {
+        dib: {
+          tariff: 0,
+          deviceUnit: 0,
+          storageNo: 0,
+          functionField: 3,
+          dataField: 4,
+        },
+        vib: {
+          primary: [Object ...],
+          extensions: [],
+        },
+        offset: 196,
+        length: 2,
+      },
+      value: 8192,
+    }
+  ],
+  rawData: <Buffer d2 44 c5 14 30 22 31 45 31 08 7a 37 00 c0 25 2f 2f 04 6d 03 29 5b 32 03 6e 68 01 00 42 6c 3f 3c 43 6e 3f 00 00 82 01 6c 1e 3b 83 01 6e 00 00 00 c2 01 ... 157 more bytes>,
+}
+Gateway:  8c1f646b60000bee
+{
+  local_meter_id: "96c7fb72-96eb-4519-a439-daf2b2172fec",
+  device_id: "45312230",
+  device_type: "HCA",
+  manufacturer: "EFE",
+  version: "49",
+  access_number: 55,
+  status: "00h",
+  parsed_data: {
+    Manufacturer: "EFE",
+    ID: "45312230",
+    Version: "49",
+    "Device Type": "HCA",
+    "Access Number": 55,
+    Status: "No error",
+    "IV,0,0,0,,Date/Time": "27.02.2026 09:03",
+    "IV,0,0,0,,Units HCA": 360,
+    "IV,1,0,0,,Date": "31.12.2025",
+    "IV,1,0,0,,Units HCA": 63,
+    "IV,2,0,0,,Date": "30.11.2024",
+    "IV,2,0,0,,Units HCA": 0,
+    "IV,3,0,0,,Units HCA": 0,
+    "IV,4,0,0,,Units HCA": 0,
+    "IV,5,0,0,,Units HCA": 0,
+    "IV,6,0,0,,Units HCA": 0,
+    "IV,7,0,0,,Units HCA": 0,
+    "IV,8,0,0,,Units HCA": 0,
+    "IV,9,0,0,,Units HCA": 0,
+    "IV,10,0,0,,Units HCA": 0,
+    "IV,11,0,0,,Units HCA": 0,
+    "IV,12,0,0,,Units HCA": 0,
+    "IV,13,0,0,,Units HCA": 0,
+    "IV,14,0,0,,Units HCA": 0,
+    "IV,15,0,0,,Units HCA": 0,
+    "IV,16,0,0,,Units HCA": 0,
+    "IV,17,0,0,,Units HCA": 0,
+    "IV,18,0,0,,Units HCA": 0,
+    "IV,19,0,0,,Units HCA": 0,
+    "IV,20,0,0,,Units HCA": 0,
+    "IV,21,0,0,,Units HCA": 0,
+    "IV,22,0,0,,Units HCA": 0,
+    "IV,23,0,0,,Units HCA": 0,
+    "IV,24,0,0,,Units HCA": 0,
+    "IV,25,0,0,,Units HCA": 0,
+    "IV,26,0,0,,Units HCA": 0,
+    "IV,27,0,0,,Units HCA": 0,
+    "IV,28,0,0,,Units HCA": 63,
+    "IV,29,0,0,,Units HCA": 95,
+    "IV,30,0,0,,Units HCA": 104,
+    "IV,31,0,0,,Units HCA": 73,
+  },
+  date_only: "2026-02-27",
+} 
+
+Total: 1, Succeeded: 1, Failed 0

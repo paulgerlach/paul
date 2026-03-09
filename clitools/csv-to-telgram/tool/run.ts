@@ -58,6 +58,11 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId);
         } catch (_) { }
 
+        if (deviceId !== "45312230") {
+          continue
+        }
+
+
         totalCount += 1;
         let dbRecord: DatabaseRecord;
         try {

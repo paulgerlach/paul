@@ -186,7 +186,12 @@ export const local_meters = pgTable("local_meters", {
 		foreignColumns: [locals.id],
 		name: "local_meters_local_id_fkey"
 	}),
-	pgPolicy("Only admin can edit this data", { as: "permissive", for: "all", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
+	pgPolicy("access_local_meters_through_properties", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`can_access_property(local_id)`
+	}),
 	pgPolicy("Users can update their own meters", {
 		as: "permissive",
 		for: "update",

@@ -15,6 +15,7 @@ export type TenantDocument = {
   tenantName: string;
   current_document: boolean;
   contractId?: string;
+  created_at: string;
 };
 
 export type ObjekteLocalItemHeatingBillDocResultProps = {
@@ -105,7 +106,11 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
       }
       return acc;
     }, {} as Record<string, { current?: TenantDocument; history: TenantDocument[] }>)
-  );
+  ).sort((a, b) => {
+    const dateA = (a.current ?? a.history[0])?.created_at ?? "";
+    const dateB = (b.current ?? b.history[0])?.created_at ?? "";
+    return dateA.localeCompare(dateB);
+  });
 
   return (
     <div className="bg-white rounded-2xl max-medium:rounded-xl overflow-hidden">

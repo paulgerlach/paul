@@ -8,16 +8,13 @@ interface ShareStoreState {
   setShareUrl: (url: string) => void;
 }
 
-// Helper to format date as YYYY-MM-DD in local timezone (not UTC)
+// Helper to safely convert date to ISO string
 // Defensively handles strings (from Zustand persist rehydration) in addition to Date objects.
-const formatLocalDate = (date: Date | string | null | undefined): string | undefined => {
+const toISOString = (date: Date | string | null | undefined): string | undefined => {
   if (!date) return undefined;
   const d = date instanceof Date ? date : new Date(date);
   if (isNaN(d.getTime())) return undefined;
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return d.toISOString(); // Full UTC timestamp e.g., "2025-08-31T22:00:00.000Z"
 };
 
 export const useShareStore = create<ShareStoreState>((set) => ({
@@ -28,11 +25,12 @@ export const useShareStore = create<ShareStoreState>((set) => ({
 
     const { startDate, endDate, meterIds } = useChartStore.getState();
 
-    // Use local date formatting to avoid timezone issues
+    // FIX: Use ISO timestamps to preserve exact UTC time - this ensures tenant sees
+    // identical data regardless of their timezone
     const filters: ShareFilters = {
       meterIds: meterIds.length > 0 ? meterIds : undefined,
-      startDate: formatLocalDate(startDate),
-      endDate: formatLocalDate(endDate),
+      startDate: toISOString(startDate),
+      endDate: toISOString(endDate),
     };
 
     const url = createShareableUrl(filters, 720); // 30 days

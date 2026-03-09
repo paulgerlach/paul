@@ -147,10 +147,11 @@ export const useHeatChartData = (): ChartDataHookResult => {
     setError(null);
 
     try {
-      // Support both OLD format ('Heat') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler')
+      // Support both OLD format ('Heat', 'HCA') and NEW format ('WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler')
+      // HCA = Heat Cost Allocator (Heizkostenverteiler) - must be included with heat devices
       const chartData = await fetchChartData(
         meterIds,
-        ['Heat', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'],
+        ['Heat', 'HCA', 'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'],
         startDate,
         endDate
       );

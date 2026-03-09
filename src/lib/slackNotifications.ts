@@ -65,6 +65,20 @@ type SlackWebhookPayload = {
   icon_emoji?: string;
 };
 
+/** Sanitize text used as the display portion of a Slack `<URL|text>` hyperlink.
+ * Special characters break Slack's mrkdwn link format:
+ * - `>` closes the hyperlink tag prematurely
+ * - `|` adds a spurious pipe that ends the display text early
+ * - newlines inside the format string break rendering
+ */
+function sanitizeSlackLinkText(text: string): string {
+  return text
+    .replaceAll(/[\r\n]+/g, " ")
+    .replaceAll("|", "-")
+    .replaceAll(">", "&gt;")
+    .replaceAll("<", "&lt;");
+}
+
 /** Label for hyperlinks: floor + living space concatenated. */
 function buildApartmentLinkLabel(apt: {
   floor?: string | null;
@@ -175,14 +189,14 @@ export async function sendHeatingBillNotification(
           const isLeerstand = tenant.contractId.startsWith("leerstand_");
           const tenantIcon = isLeerstand ? "🏚️" : "👤";
           if (tenant.presignedUrl) {
-            lines.push(`${tenantIcon} <${tenant.presignedUrl}|${tenant.contractorsNames}>`);
+            lines.push(`${tenantIcon} <${tenant.presignedUrl}|${sanitizeSlackLinkText(tenant.contractorsNames)}>`);
           } else {
             lines.push(`${tenantIcon} ${tenant.contractorsNames}`);
           }
         }
       } else {
         if (apt.presignedUrl) {
-          lines.push(`• <${apt.presignedUrl}|${aptLabel}>`);
+          lines.push(`• <${apt.presignedUrl}|${sanitizeSlackLinkText(aptLabel)}>`);
         } else {
           lines.push(`• ${aptLabel}`);
         }
@@ -203,13 +217,13 @@ export async function sendHeatingBillNotification(
         lines.push(`• *${label}*`);
         for (const tenant of apt.tenants) {
           if (tenant.presignedUrl) {
-            lines.push(`<${tenant.presignedUrl}|${tenant.contractorsNames}>`);
+            lines.push(`<${tenant.presignedUrl}|${sanitizeSlackLinkText(tenant.contractorsNames)}>`);
           } else {
             lines.push(`${tenant.contractorsNames}`);
           }
         }
       } else if (apt.presignedUrl) {
-        lines.push(`• <${apt.presignedUrl}|${label}>`);
+        lines.push(`• <${apt.presignedUrl}|${sanitizeSlackLinkText(label)}>`);
       } else {
         lines.push(`• ${label}`);
       }
@@ -218,26 +232,46 @@ export async function sendHeatingBillNotification(
 
   // Slack truncates messages over ~4000 chars. Split into chunks and send
   // each as a separate webhook call to avoid losing tenant PDF links.
-  const fullText = lines.join("\n");
+  // Group apartment-header lines with their tenant sub-lines so a header
+  // is never stranded in one message while its PDF links land in another.
   const MAX_CHUNK = 3900;
-  const chunks: string[] = [];
 
-  if (fullText.length <= MAX_CHUNK) {
-    chunks.push(fullText);
-  } else {
-    // Split on line boundaries, keeping each chunk under the limit
-    let current = "";
-    for (const line of lines) {
-      const candidate = current ? `${current}\n${line}` : line;
-      if (candidate.length > MAX_CHUNK && current) {
-        chunks.push(current);
-        current = line;
-      } else {
-        current = candidate;
+  // Build groups: each apartment header + its tenant lines form one group.
+  // All other lines (header, summary, etc.) are individual single-line groups.
+  const groups: string[][] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    // Apartment headers look like "• *label* (N PDF…)" – gather the lines that follow
+    // (tenant/failed lines) until the next header or non-child line.
+    if (line.startsWith("• *") && line.includes("PDF")) {
+      const group = [line];
+      i++;
+      while (i < lines.length && (lines[i].startsWith("👤 ") || lines[i].startsWith("🏚️ "))) {
+        group.push(lines[i]);
+        i++;
       }
+      groups.push(group);
+    } else {
+      groups.push([line]);
+      i++;
     }
-    if (current) chunks.push(current);
   }
+
+  // Fill chunks, never splitting a group across chunk boundaries.
+  const chunks: string[] = [];
+  let current = "";
+  for (const group of groups) {
+    const groupText = group.join("\n");
+    const candidate = current ? `${current}\n${groupText}` : groupText;
+    if (candidate.length > MAX_CHUNK && current) {
+      chunks.push(current);
+      current = groupText;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) chunks.push(current);
 
   for (const chunk of chunks) {
     const payload: SlackWebhookPayload = {

@@ -443,7 +443,9 @@ async function processBatchInBackground(
                 .then((r) => r[0] ?? null));
         const ownerUserId = objektRow?.user_id ?? null;
         const rawUserId = raw?.user?.id;
-        const needsInitiatorLookup = !raw?.user;
+        // Only skip the initiator lookup if raw.user IS the initiator (same userId).
+        // When an admin generates for a client, raw.user is the client, not the admin.
+        const needsInitiatorLookup = rawUserId !== userId;
         const needsOwnerLookup = Boolean(
             ownerUserId && rawUserId !== ownerUserId
         );
@@ -477,13 +479,14 @@ async function processBatchInBackground(
                 ownerRow = userRowsById.get(ownerUserId) ?? null;
             }
         }
-        if (raw?.user) {
-            userName =
-                `${raw.user.first_name ?? ""} ${raw.user.last_name ?? ""}`.trim() ||
-                userName;
-        } else if (initiatorRow) {
+        if (initiatorRow) {
             userName =
                 `${initiatorRow.first_name ?? ""} ${initiatorRow.last_name ?? ""}`.trim() ||
+                userName;
+        } else if (raw?.user && rawUserId === userId) {
+            // raw.user is the initiator — use it directly (no separate lookup needed)
+            userName =
+                `${raw.user.first_name ?? ""} ${raw.user.last_name ?? ""}`.trim() ||
                 userName;
         }
         if (ownerRow) {
@@ -538,7 +541,7 @@ async function processBatchInBackground(
         }
     }
 
-    await sendHeatingBillNotification(
+   await sendHeatingBillNotification(
         {
             docId,
             userId,
@@ -566,7 +569,7 @@ async function processBatchInBackground(
         failed,
         totalLocals: locals.length,
         apartments,
-        failedEntries,
+        failedEntries, 
     };
 }
 

@@ -50,6 +50,16 @@ export default async function ResultLocalPDF({
   const isPdfPending = !isSuperAdmin && !!hbDoc?.created_at &&
     new Date(hbDoc.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
 
+  let pendingTooltip = "";
+  if (isPdfPending && hbDoc?.created_at) {
+    const remainingMs = new Date(hbDoc.created_at).getTime() + 24 * 60 * 60 * 1000 - Date.now();
+    const hours = Math.floor(remainingMs / (60 * 60 * 1000));
+    const minutes = Math.ceil((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+    pendingTooltip = hours > 0
+      ? `Verfügbar in ${hours} Std. ${minutes} Min.`
+      : `Verfügbar in ${minutes} Min.`;
+  }
+
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
   );
@@ -97,7 +107,7 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string }[]
+    { id: string; document_name: string; document_url: string; current_document: boolean; tenantName: string; contractId?: string; created_at: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
     const validDocsForLocal = isSuperAdmin ? docs : docs.filter(doc => doc.current_document !== false);
@@ -167,6 +177,8 @@ export default async function ResultLocalPDF({
                 status={status}
                 tenantDocuments={isPdfPending ? [] : (tenantDocsByLocalId[local.id ?? ""] ?? [])}
                 isSuperAdmin={isSuperAdmin}
+                isPending={isPdfPending}
+                pendingTooltip={pendingTooltip}
               />
             ))
           )}

@@ -350,6 +350,7 @@ export const heating_invoices = pgTable("heating_invoices", {
 	for_all_tenants: boolean(),
 	purpose: text(),
 	notes: text(),
+	co2_price_per_tonne: numeric(),
 	heating_doc_id: uuid(),
 	direct_local_id: uuid().array(),
 }, (table) => [

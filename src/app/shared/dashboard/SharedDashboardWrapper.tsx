@@ -18,11 +18,21 @@ interface SharedDashboardWrapperProps {
 }
 
 export default function SharedDashboardWrapper({ filteredData, filters }: SharedDashboardWrapperProps) {
-  const { setDates, setMeterIds } = useChartStore();
+  const { setDates, setMeterIds, startDate, endDate } = useChartStore();
+  
+  // Parse URL dates once (now handles full ISO timestamps like "2025-08-31T22:00:00.000Z")
+  const urlStartDate = filters.startDate ? new Date(filters.startDate) : null;
+  const urlEndDate = filters.endDate ? new Date(filters.endDate) : null;
+  
+  // Check if store dates match URL dates (comparing ISO strings for exact match)
+  const datesMatch = startDate?.toISOString() === urlStartDate?.toISOString() &&
+                     endDate?.toISOString() === urlEndDate?.toISOString();
   
   useEffect(() => {
-    if (filters.startDate && filters.endDate) {
-      setDates(new Date(filters.startDate), new Date(filters.endDate));
+    // FIX: Set dates from URL (now with full ISO timestamps for exact UTC match)
+    // This ensures tenant sees identical data as landlord regardless of timezone
+    if (urlStartDate && urlEndDate && !datesMatch) {
+      setDates(urlStartDate, urlEndDate);
     }
     
     // For shared dashboard, we need to set the device serial numbers (not UUIDs)
@@ -37,19 +47,20 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
     } else if (filters.meterIds) {
       setMeterIds(filters.meterIds);
     }
-  }, [filters, filteredData, setDates, setMeterIds]);
+  }, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate, datesMatch]);
 
   const { heatDevices, coldWaterDevices, hotWaterDevices, electricityDevices } = useMemo(() => {
     return (filteredData || []).reduce(
       (acc, item) => {
         const deviceType = item["Device Type"];
         // Support both OLD format and NEW Engelmann format device types
-        // Must match exactly what useChartData.ts uses
-        if (deviceType === "Heat" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
+        // Must match exactly what useDashboardData.ts uses
+        // HCA = Heat Cost Allocator (Heizkostenverteiler) - belongs to heat, NOT hot water!
+        if (deviceType === "Heat" || deviceType === "HCA" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
           acc.heatDevices.push(item);
         } else if (deviceType === "Water" || deviceType === "Kaltwasserzähler") {
           acc.coldWaterDevices.push(item);
-        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler"|| deviceType === "HCA") {
+        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler") {
           acc.hotWaterDevices.push(item);
         } else if (deviceType === "Elec" || deviceType === "Stromzähler") {
           acc.electricityDevices.push(item);

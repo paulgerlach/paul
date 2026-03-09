@@ -398,7 +398,7 @@ export function computeHeatingBill(
     costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
       ? costAgg.energyInvoices
         .filter((i) => i.kWh > 0)
-        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh, co2PricePerTonne: i.co2PricePerTonne }))
       : [
         {
           label: "Energieverbrauch (Zähler)",

@@ -38,6 +38,16 @@ export default async function ResultLocalPDF({
   const isPdfPending = !isSuperAdmin && !!hbDoc?.created_at &&
     new Date(hbDoc.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
 
+  let pendingTooltip = "";
+  if (isPdfPending && hbDoc?.created_at) {
+    const remainingMs = new Date(hbDoc.created_at).getTime() + 24 * 60 * 60 * 1000 - Date.now();
+    const hours = Math.floor(remainingMs / (60 * 60 * 1000));
+    const minutes = Math.ceil((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+    pendingTooltip = hours > 0
+      ? `Verfügbar in ${hours} Std. ${minutes} Min.`
+      : `Verfügbar in ${minutes} Min.`;
+  }
+
   const [localData, documentsByLocalId, contracts] = await Promise.all([
     getLocalById(local_id),
     getDocumentsByHeatingBillDocId(doc_id),
@@ -91,6 +101,8 @@ export default async function ResultLocalPDF({
           docID={doc_id}
           docType="localauswahl"
           tenantDocuments={isPdfPending ? [] : tenantDocuments}
+          isPending={isPdfPending}
+          pendingTooltip={pendingTooltip}
         />
       </ContentWrapper>
     </div>

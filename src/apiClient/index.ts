@@ -225,11 +225,11 @@ export function useUserDocumentsByType(documentType: string) {
 export const getDocumentDownloadUrl = async (documentPath: string): Promise<string> => {
   const data = await supabase.storage
     .from("documents")
-    .createSignedUrl(documentPath, 60 * 60, {download: true});
+    .createSignedUrl(documentPath, 60 * 60, { download: true });
 
-    if (data.error) {
-      throw new Error(`Failed to fetch document download URL: ${data.error.message}`);
-    }
+  if (data.error) {
+    throw new Error(`Failed to fetch document download URL: ${data.error.message}`);
+  }
 
   return data.data.signedUrl;
 };
@@ -239,9 +239,9 @@ export const getDocumentViewUrl = async (documentPath: string): Promise<string> 
     .from("documents")
     .createSignedUrl(documentPath, 60 * 60);
 
-    if (data.error) {
-      throw new Error(`Failed to fetch document view URL: ${data.error.message}`);
-    }
+  if (data.error) {
+    throw new Error(`Failed to fetch document view URL: ${data.error.message}`);
+  }
 
   return data.data.signedUrl;
 };
@@ -552,6 +552,28 @@ export function useHeatingBillBuildingDocumentsByObjektID(objectID?: string) {
   });
 }
 
+async function getAllHeatingBillDocumentsByObjektID(objectID?: string): Promise<HeatingBillDocumentType[]> {
+
+  const { data, error } = await supabase
+    .from("heating_bill_documents")
+    .select("*")
+    .eq("objekt_id", objectID);
+
+  if (error) {
+    throw new Error(`Failed to fetch objects: ${error.message}`);
+  }
+
+  return data;
+}
+
+export function useAllHeatingBillDocumentsByObjektID(objectID?: string) {
+  return useQuery({
+    queryKey: ["all_heating_bill_documents", objectID],
+    queryFn: () => getAllHeatingBillDocumentsByObjektID(objectID),
+    refetchOnWindowFocus: false,
+    enabled: !!objectID,
+  });
+}
 
 export async function uploadObjektImage(file: File, objektId: string): Promise<string> {
   const filePath = `images/${objektId}/${file.name}`;

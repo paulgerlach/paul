@@ -52,8 +52,8 @@ export default function AdminHeatObjekteItemDocWithHistory({
 
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
-    openDialog("admin_operating_costs_delete");
-    setQueryKey(["operating_cost_documents", item.id ?? ""]);
+    openDialog("admin_heating_bill_delete");
+    setQueryKey(["all_heating_bill_documents", item.id ?? ""]);
   };
 
   return (

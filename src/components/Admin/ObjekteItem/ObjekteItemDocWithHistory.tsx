@@ -51,7 +51,7 @@ export default function ObjekteItemDocWithHistory({
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
     openDialog("heating_bill_delete");
-    setQueryKey(["heating_bill_documents", item.id ?? ""]);
+    setQueryKey(["all_heating_bill_documents", item.id ?? ""]);
   };
 
   return (

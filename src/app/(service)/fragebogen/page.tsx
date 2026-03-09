@@ -23,7 +23,7 @@ const formSchema = z.object({
       "über 800 Immobilien",
     ])
     .nullable(),
-  
+
   // Over50 Flow (51-800 & über 800 Immobilien) fields
   messdienstleister_count: z.number().min(1).optional(),
   zusammenarbeit_status: z
@@ -34,7 +34,7 @@ const formSchema = z.object({
     .enum(["Ja", "Nein"])
     .nullable()
     .optional(),
-  
+
   // Under50 Flow (1-50 Immobilien) fields
   wohnungen_count: z.number().min(1).optional(),
   funkzaehler_status: z
@@ -42,12 +42,12 @@ const formSchema = z.object({
     .nullable()
     .optional(),
   standort_schwerpunkt: z.string().optional().or(z.literal("")),
-  
+
   // Contact form fields (Q5 - Location)
   verwaltung_name: z.string().optional().or(z.literal("")),
   postleitzahl: z.string().optional().or(z.literal("")),
   ort: z.string().optional().or(z.literal("")),
-  
+
   // Contact form fields (Q6 - Personal)
   email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
   first_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
@@ -246,9 +246,8 @@ export default function FragebogenPage() {
               <span
                 key={step}
                 data-step-index={step}
-                className={`w-[50px] max-small:w-[30px] h-[1px] ${
-                  step <= activeStep ? "bg-green" : "bg-dark_green/10"
-                }`}
+                className={`w-[50px] max-small:w-[30px] h-[1px] ${step <= activeStep ? "bg-green" : "bg-dark_green/10"
+                  }`}
               ></span>
             ))}
             <span className="text-xs text-dark_text/20"> noch 4 min </span>
@@ -299,7 +298,7 @@ export default function FragebogenPage() {
                   const isUnder50Flow = propertyCategory === "1-50 Immobilien";
                   // Under50 flow submits on step 4, Over50 flow submits on step 5
                   const isSubmitStep = isUnder50Flow ? activeStep === 4 : activeStep === 5;
-                  
+
                   const handleClick = () => {
                     // Validate step 0 - property count is required
                     if (activeStep === 0 && !propertyCategory) {
@@ -309,7 +308,7 @@ export default function FragebogenPage() {
                     setStep0Error(false);
                     handleNextStep();
                   };
-                  
+
                   return (
                     <button
                       id="next-step"
@@ -329,7 +328,7 @@ export default function FragebogenPage() {
                   const lastStep = isUnder50Flow ? 4 : 5;
                   // Hide skip button on step 0 (required) and last step
                   if (activeStep === 0 || activeStep === lastStep) return null;
-                  
+
                   return (
                     <button
                       id="skip-step"

@@ -70,16 +70,14 @@ export default function EinsparungChart({
 					/>
 				) : (
 					<div>
-						<p className="text-6xl md:text-3xl lg:text-4xl text-black/50 mb-2">
+						<p className="text-6xl md:text-3xl lg:text-4xl text-black/50 mb-5 leading-none">
 							{co2Display}
 						</p>
-						{co2Context &&
-							co2Result &&
-							co2Result.totalCO2SavedTons > 0.1 && (
-								<p className="text-xs text-gray-500 max-small:text-xs">
-									{co2Context.description}
-								</p>
-							)}
+						<p className="text-xs text-gray-500 max-small:text-xs leading-normal">
+							{co2Result && co2Result.totalCO2SavedTons > 0.1
+								? co2Context?.description
+								: "Aktuell liegen nicht genügend Daten vor, um diesen Wert korrekt darzustellen."}
+						</p>
 						{/* {co2Result && (
               <div className="mt-2 text-xs text-gray-400">
                 {co2Result.details.deviceCount.heating + co2Result.details.deviceCount.hotWater + co2Result.details.deviceCount.coldWater} Geräte

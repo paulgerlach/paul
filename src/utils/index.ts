@@ -159,20 +159,24 @@ export const countLocals = (locals: LocalType[]) => {
   );
 
   const otherLocals = locals.filter(
-    (local) =>
-      local.usage_type !== "commercial" && local.usage_type !== "parking"
+    (local) => local.usage_type === "residential"
   );
 
   return { commertialLocals, otherLocals };
 };
 
 export const buildLocalName = ({
+  usage_type,
   floor,
   house_location,
   residential_area,
   living_space,
   heating_area,
 }: Partial<LocalType>) => {
+  if (usage_type === "hallway" || usage_type === "staircase") {
+    return "Treppenhaus";
+  }
+
   const floorShortcut = floor
     ? (floorShortcuts[floor as keyof typeof floorShortcuts] ?? floor)
     : "";
@@ -181,8 +185,15 @@ export const buildLocalName = ({
     Boolean
   );
 
+  const heatingAreaNum = heating_area ? parseFloat(String(heating_area)) : 0;
+  const livingSpaceNum = living_space ? parseFloat(String(living_space)) : 0;
+
   const livingSpacePart = living_space ? `, ${String(living_space).replace(".", ",")}qm` : "";
-  const heatingSpacePart = heating_area ? `, HF: ${heating_area}qm` : "";
+
+  const showHeatingPart = heatingAreaNum > 0 && heatingAreaNum !== livingSpaceNum;
+  const heatingSpacePart = showHeatingPart
+    ? `, ${String(heating_area).replace(".", ",")}qm`
+    : "";
 
   return mainParts.join(" ") + livingSpacePart + heatingSpacePart;
 };

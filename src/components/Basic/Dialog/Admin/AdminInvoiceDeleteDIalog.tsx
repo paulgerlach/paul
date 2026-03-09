@@ -6,6 +6,8 @@ import DialogBase from "../../ui/DialogBase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminDeleteInvoice } from "@/actions/delete/admin/adminDeleteInvoice";
+import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
+import { useBetriebskostenabrechnungStore } from "@/store/useBetriebskostenabrechnungStore";
 
 export default function AdminInvoiceDeleteDialog() {
     const {
@@ -19,6 +21,8 @@ export default function AdminInvoiceDeleteDialog() {
     const queryClient = useQueryClient();
     const { user_id } = useParams();
     const path = usePathname();
+    const { removeInvoiceFromGroup: removeHeizInvoice } = useHeizkostenabrechnungStore();
+    const { removeInvoiceFromGroup: removeBetriebInvoice } = useBetriebskostenabrechnungStore();
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
@@ -26,6 +30,11 @@ export default function AdminInvoiceDeleteDialog() {
         },
         onSuccess: (data) => {
             if (data.success) {
+                if (itemID) {
+                    removeHeizInvoice(itemID);
+                    removeBetriebInvoice(itemID);
+                }
+
                 queryClient.invalidateQueries({
                     queryKey: invalidateKey,
                 });

@@ -272,7 +272,7 @@ export default function HeatingBillPreviewOnePDF({
             </View>
           </View>
           <View style={[styles.colHalf, { alignItems: "flex-end" }]}>
-            <Image src={cover.qrCodeUrl} style={{ width: 40, height: 40 }} />
+            <Image src={cover.qrCodeUrl} style={{ width: 60, height: 60 }} />
             <Text style={[styles.bold, { marginTop: 4 }]}>
               Oder registrieren unter {cover.portalLink}.
             </Text>

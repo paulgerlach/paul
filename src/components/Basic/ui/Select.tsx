@@ -9,6 +9,7 @@ import {
 } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import { cn } from "@/utils";
 
 export type SelectProps = {
   options: string[];
@@ -33,8 +34,12 @@ export default function Select({
       <div className="relative min-w-[195px]">
         <ListboxButton
           disabled={disabled}
-          className="grid w-full cursor-default grid-cols-1 bg-white text-left text-admin_dark_text focus:outline-2 focus:outline-green max-xl:text-sm px-3.5 border border-black/20 rounded-md h-14 items-center">
-          <span className="truncate pr-6">
+          className="grid w-full cursor-default grid-cols-1 bg-white text-left focus:outline-2 focus:outline-green max-xl:text-sm px-3.5 border border-black/20 rounded-md h-14 items-center">
+          <span
+            className={cn(
+              "truncate pr-6",
+              selectedValue ? "text-admin_dark_text" : "text-gray-400"
+            )}>
             {selectedValue ? selectedValue : placeholder}
           </span>
           <ChevronDownIcon

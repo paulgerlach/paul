@@ -249,6 +249,7 @@ export default function DashboardCharts() {
 							}
 							parsedData={{ data: notificationsData, errors: [] }}
 							userId={currentUserId || undefined}
+							hierarchy={hierarchy.data ?? undefined}
 						/>
 					)}
 				</div>

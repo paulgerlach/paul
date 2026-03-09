@@ -5,7 +5,7 @@ import DialogBase from "../../ui/DialogBase";
 import { Button } from "../../ui/Button";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { toast } from "sonner";
-import { useUploadDocuments } from "@/apiClient";
+import { useLocalsByObjektID, useUploadDocuments } from "@/apiClient";
 import { createHeatingInvoice } from "@/actions/create/createHeatingInvoice";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -52,6 +52,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
 
   const uploadDocuments = useUploadDocuments();
   const { user_id } = useParams();
+  const { data: locals } = useLocalsByObjektID(objektID);
 
   const isOpen = openDialogByType.admin_ai_invoice_create;
 
@@ -67,7 +68,7 @@ export default function AdminAddDocHeizkostenabrechnungAIDialog() {
   // ─── mutation ────────────────────────────────────────────────────────────────
   const parseMutation = useMutation({
     mutationFn: async (filesToProcess: FileEntry[]) => {
-      const results = await processInvoicesViaNext(filesToProcess.map(e => e.file));
+      const results = await processInvoicesViaNext(filesToProcess.map(e => e.file), documentGroups, locals ?? []);
       return { results, filesToProcess };
     },
     onSuccess: (data) => {

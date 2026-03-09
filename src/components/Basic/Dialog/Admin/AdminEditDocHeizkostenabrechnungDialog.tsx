@@ -132,7 +132,7 @@ export default function AdminEditDocHeizkostenabrechnungDialog() {
 
   // ✅ TanStack mutation for invoice processing
   const parseInvoicesMutation = useMutation({
-    mutationFn: async (files: File[]) => processInvoicesViaNext(files),
+    mutationFn: async (files: File[]) => processInvoicesViaNext(files, documentGroups, locals ?? []),
     onSuccess: (result) => {
       const invoice = result.invoices?.[0];
       if (!invoice) return;

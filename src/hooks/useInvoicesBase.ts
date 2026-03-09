@@ -51,7 +51,7 @@ interface UseInvoicesBaseProps {
 		userId?: string,
 	) => Promise<any>;
 	nextLink: string;
-	locals: LocalType[];
+	locals?: LocalType[];
 }
 
 export function useInvoicesBase({
@@ -80,8 +80,8 @@ export function useInvoicesBase({
 			...doc,
 			data: isEditMode
 				? (relatedInvoices?.filter(
-						(invoice) => invoice.cost_type === doc.type,
-					) ?? [])
+					(invoice) => invoice.cost_type === doc.type,
+				) ?? [])
 				: [],
 		}));
 
@@ -98,7 +98,7 @@ export function useInvoicesBase({
 			const results = await processInvoicesViaNext(
 				filesToProcess.map((e) => e.file),
 				userDocCostCategories,
-				locals,
+				locals ?? [],
 			);
 			return { results, filesToProcess };
 		},

@@ -57,6 +57,7 @@ export async function parseTelegram(
       parsedMQTT.meter.accessNo ?? 0
     ),
     date_only: dt!,
+    interpolated: true
   };
 
   // self referential bullshit - lol

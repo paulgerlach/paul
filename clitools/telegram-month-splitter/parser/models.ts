@@ -12,4 +12,5 @@ export interface DatabaseRecord {
   encryption?: number;
   parsed_data?: MeterReading;
   date_only?: string; // YYYY-MM-DD format for DB unique constraint
+  interpolated: boolean;
 }

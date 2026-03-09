@@ -156,7 +156,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
   );
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/objektauswahl`
     : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`;
 
   return (

@@ -143,7 +143,7 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
   );
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/objektauswahl`
     : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl`;
 
   return (

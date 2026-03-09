@@ -155,7 +155,7 @@ export default function AbrechnungszeitraumLocalForm({
   );
 
   const backLink = isEditMode
-    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    ? `${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/objektauswahl`
     : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objekteID}`;
 
   return (

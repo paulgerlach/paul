@@ -112,8 +112,7 @@ function transformMbusToWebFormat(
 
     } else if (item.description === "Units for H.C.A.") {
       const storageNo = item.info?.storageNo ?? 0;
-      const targetIndex = storageNo === 1 ? 28 : storageNo;
-      const key = `IV,${targetIndex},0,0,,Units HCA` as keyof MeterReading;
+      const key = `IV,${storageNo},0,0,,Units HCA` as keyof MeterReading;
       (result as Record<string, unknown>)[key] = item.value as number;
     }
   }

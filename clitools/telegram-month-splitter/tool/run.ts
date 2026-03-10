@@ -61,7 +61,7 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId);
         } catch (_) { }
 
-        // if (deviceId !== "54919619") {
+        // if (deviceId !== "54919722") {
         //   continue
         // }
 
@@ -77,8 +77,8 @@ export default class CSVTelegramSupabaseUploader {
           );
           // HERE
           succesCount += 1;
-          console.log("Gateway: ", row.gateway_eui);
-          console.log(dbRecord, "\n");
+          // console.log("Gateway: ", row.gateway_eui);
+          // console.log(dbRecord, "\n");
           if (deviceId) {
             successIds.push(deviceId);
           }
@@ -104,6 +104,7 @@ export default class CSVTelegramSupabaseUploader {
           start_date: Date;
           total: number;
           days: number;
+          sv: number;
         }
 
         interface DayRecord {
@@ -111,16 +112,16 @@ export default class CSVTelegramSupabaseUploader {
           value: number;
         }
 
-        const interpolate_days = (total: number, days: number, start_date: Date): DayRecord[] => {
+        const interpolate_days = (sv: number, total: number, days: number, start_date: Date): DayRecord[] => {
           const d = Math.floor(total / days);
           const r = total % days;
 
-          let result: DayRecord[] = new Array(days).fill({ value: d });
+          let result: DayRecord[] = new Array(days).fill({});
 
-          result = result.map((o, i) => {
+          result = result.map((_, i) => {
             return {
               date: new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate() + i),
-              value: o.value
+              value: sv + (i + 1) * d
             };
           });
 
@@ -131,8 +132,8 @@ export default class CSVTelegramSupabaseUploader {
           return result;
         };
 
-        const create_time_point = (days: number, date: Date, total?: number): Timepoint => {
-          if (total === undefined) exit(1);
+        const create_time_point = (days: number, date: Date, sv?: number, total?: number): Timepoint => {
+          if (total === undefined || sv === undefined) exit(1);
           if (total < 0 || total > 60_000) total = 0;
           if (total > 1_000) {
             exit(1);
@@ -142,12 +143,13 @@ export default class CSVTelegramSupabaseUploader {
             days: days,
             total: total,
             start_date: date,
+            sv: sv,
           } as Timepoint;
         };
 
 
-        const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
-        const dec_h2 = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
+        // const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
+        const dec_h2_startvalue = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
         const jan_h1 = dbRecord.parsed_data?.["IV,29,0,0,,Units HCA"];
         const jan_h2 = dbRecord.parsed_data?.["IV,30,0,0,,Units HCA"];
         const feb_h1 = dbRecord.parsed_data?.["IV,31,0,0,,Units HCA"];
@@ -157,18 +159,22 @@ export default class CSVTelegramSupabaseUploader {
           - dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!
           - jan_h1! - jan_h2! - feb_h1!;
 
+        if (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) {
+          console.log("EVEN:", dbRecord.device_id);
+        }
+
         const bimonthly_data: Timepoint[] = [
-          create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
-          create_time_point(16, new Date("2025-12-16T05:00:00.000Z"), dec_h2),
-          create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), jan_h1),
-          create_time_point(16, new Date("2026-01-16T05:00:00.000Z"), jan_h2),
-          create_time_point(15, new Date("2026-02-01T05:00:00.000Z"), feb_h1),
-          create_time_point(13, new Date("2026-02-16T05:00:00.000Z"), feb_h2),
+          // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
+          create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
+          create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),
+          create_time_point(16, new Date("2026-01-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1!, jan_h2),
+          create_time_point(15, new Date("2026-02-01T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2!, feb_h1),
+          create_time_point(13, new Date("2026-02-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2! + feb_h1!, feb_h2),
         ];
 
 
         for (let timepoint of bimonthly_data) {
-          const days = interpolate_days(timepoint.total, timepoint.days, timepoint.start_date);
+          const days = interpolate_days(timepoint.sv, timepoint.total, timepoint.days, timepoint.start_date);
 
           for (let day of days) {
             const record: DatabaseRecord = {

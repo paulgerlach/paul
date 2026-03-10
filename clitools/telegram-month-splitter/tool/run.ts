@@ -61,9 +61,9 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId);
         } catch (_) { }
 
-        if (deviceId !== "54919722") {
-          continue
-        }
+        // if (deviceId !== "54919722") {
+        //   continue
+        // }
 
         totalCount += 1;
         let dbRecord: DatabaseRecord;
@@ -127,7 +127,7 @@ export default class CSVTelegramSupabaseUploader {
           });
 
           for (let i = 0; i < r; ++i) {
-            result[result.length - i - 1]!.value += (r-i);
+            result[result.length - i - 1]!.value += (r - i);
           }
 
           // console.log(result)
@@ -150,14 +150,12 @@ export default class CSVTelegramSupabaseUploader {
           } as Timepoint;
         };
 
-        if (dbRecord.parsed_data!["IV,29,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) {
-          console.log(deviceId)
-        }
-        const even = (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) 
+       
+        const even = (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!)
 
-          let bimonthly_data: Timepoint[] = []
+        let bimonthly_data: Timepoint[] = [];
 
-          if (!even) {
+        if (!even) {
           // const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
           const dec_h2_startvalue = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
           const jan_h1 = dbRecord.parsed_data?.["IV,29,0,0,,Units HCA"];
@@ -170,7 +168,7 @@ export default class CSVTelegramSupabaseUploader {
             - jan_h1! - jan_h2! - feb_h1!;
 
 
-            bimonthly_data = [
+          bimonthly_data = [
             // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
             create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
             create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),
@@ -188,7 +186,7 @@ export default class CSVTelegramSupabaseUploader {
           const feb_h2 = dbRecord.parsed_data?.["IV,31,0,0,,Units HCA"];
 
 
-            bimonthly_data = [
+          bimonthly_data = [
             // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
             create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
             create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),

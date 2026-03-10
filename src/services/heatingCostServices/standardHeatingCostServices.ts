@@ -1,8 +1,9 @@
 import { MeterReadingType } from "@/api";
 import { parseGermanNumber } from "./heatingCostServices";
 import { monthNames } from "@/lib/constants/date";
+import { HeatCostDisplay } from "@/types/HeatCostDisplay";
 
-export const getStandardMeterConsumption = (reading: MeterReadingType, readingDate:Date, startDate: Date, endDate: Date) => {
+export const getStandardMeterConsumption = (reading: MeterReadingType, readingDate: Date, startDate: Date, endDate: Date) => {
   
   let monthlyConsumption = new Map<number, number>();
   // Standard meters: Calculate deltas from cumulative IV values
@@ -54,22 +55,4 @@ export const getStandardMeterConsumption = (reading: MeterReadingType, readingDa
   }
 
   return monthlyConsumption;
-}
-export const getDisplayMapping = (monthlyConsumption: Map<number, number>, referenceDate: number, monthsToShow: number) => {
-
-  const result: { label: string; value: number }[] = [];
-
-  const refDate = new Date(referenceDate);
-
-  for (let offset = 0; offset < monthsToShow; offset++) {
-    const consumption = monthlyConsumption.get(offset) || 0;
-    if (consumption > 0 || offset < 2) {
-      const monthDate = new Date(refDate.getFullYear(), refDate.getMonth() - offset, 1);
-      result.push({
-        label: monthNames[monthDate.getMonth()],
-        value: Math.round(consumption),
-      });
-    }
-  }
-  return result.reverse();
-}
+};

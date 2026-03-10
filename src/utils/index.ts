@@ -315,7 +315,9 @@ export function securityCodeFromIds(userId: string, docId: string): string {
 // Helper function to parse German date format (DD.MM.YYYY)
 export const parseGermanDate = (dateString: string): Date | null => {
   if (!dateString) return null;
-
+  if (dateString.length > 10) {
+    dateString = dateString.substring(0, 10)
+  }
   // Handle DD.MM.YYYY format
   const parts = dateString.split(".");
   if (parts.length === 3) {

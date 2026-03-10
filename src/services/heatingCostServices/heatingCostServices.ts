@@ -1,10 +1,8 @@
 import { MeterReadingType } from "@/api";
-import { monthNames } from "@/lib/constants/date";
-import { getDateString, getReadingDate, isDateRangeLongerThanAMonth } from "@/utils/date";
-import { getHCADisplayMapping, getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
-import { getDisplayMapping, getStandardMeterConsumption } from "./standardHeatingCostServices";
+import { getDateString, getReadingDate } from "@/utils/date";
+import { getHCAMonthlyConsumption } from "./hcaHeatingCostServices";
 import { parseGermanDate } from "@/utils";
-
+import { HeatCostDisplay } from "@/types/HeatCostDisplay";
 
 export interface DateRange {
   startDate: Date,
@@ -15,30 +13,31 @@ export const aggregateDataByTimeRange = (
   readings: MeterReadingType[],
   startDate?: Date | null,
   endDate?: Date | null
-): { label: string; value: number }[] => {
+): HeatCostDisplay[] => {
+
   if (!readings?.length || !startDate || !endDate) return [];
   const validReadings = readings.filter((reading) =>
     isValidReading(reading, startDate, endDate)
   );
   if (validReadings.length === 0) return [];
 
-  const deviceType = validReadings[0]?.["Device Type"]; 
-  const isHCA = deviceType === "HCA";
-  const readingsByDevice = new Map<string, MeterReadingType[]>();
+  //Map of meter ID and it's list of readings
+  const metersWithReadings = new Map<string, MeterReadingType[]>();
   validReadings.forEach((reading) => {
     const deviceId = reading.ID || reading["Number Meter"]?.toString();
     if (!deviceId) return;
-    if (!readingsByDevice.has(deviceId)) {
-      readingsByDevice.set(deviceId, []);
+    if (!metersWithReadings.has(deviceId)) {
+      metersWithReadings.set(deviceId, []);
     }
-    readingsByDevice.get(deviceId)!.push(reading);
+    metersWithReadings.get(deviceId)!.push(reading);
   });
 
   const monthlyTotals = new Map<string, number>();
-  const monthlyHCATotals = new Map<number, number>();
 
-  readingsByDevice.forEach((deviceReadings, deviceId) => {
-    const readingsWithDate = deviceReadings.map((reading) => {
+  //iterate through each meter Id and its readings
+  metersWithReadings.forEach((meterWithReadings, deviceId) => {
+    //Attach date to each meter reading
+    const meterWithReadingAndDate = meterWithReadings.map((reading) => {
       const dateString = getDateString(
         reading["IV,0,0,0,,Date/Time"],
         reading["Actual Date"],
@@ -48,56 +47,71 @@ export const aggregateDataByTimeRange = (
       return { ...reading, readingDate };
     });
 
-    readingsWithDate.sort((a, b) => {
+    // Sort readings by attached data
+    meterWithReadingAndDate.sort((a, b) => {
       const aDate = parseDate(a);
       const bDate = parseDate(b);
 
       if (aDate === null && bDate === null) return 0;
-      if (aDate === null) return 1;  
-      if (bDate === null) return -1; 
+      if (aDate === null) return 1;
+      if (bDate === null) return -1;
 
       return aDate.getTime() - bDate.getTime();
     });
 
 
-    if (isHCA) {
-      let previousReading: (MeterReadingType & { readingDate: Date }) | null = null;
+    let previousReading: MeterReadingType | null = null;
+    meterWithReadingAndDate.forEach((currentReading: MeterReadingType) => {
+      const deviceType = currentReading?.["Device Type"];
+      const isHCA = deviceType === "HCA";
+      if (isHCA) {
+        const date = parseDate(currentReading);
 
-      readingsWithDate.forEach((currentReading) => {
+        const dy = date?.getFullYear();
+        const dm = date!.getMonth() + 1;
+
+        const monthStr = `${dy}-${dm?.toString().padStart(2, '0')}`;
         if (previousReading) {
           const dailyDelta = getHCAMonthlyConsumption(currentReading, previousReading);
-          if (dailyDelta != null && dailyDelta > 0) {
-            const date = parseDate(currentReading);
-            const monthStr = `${date?.getFullYear()}-${date?.getMonth().toString().padStart(2, '0')}`;
-            monthlyTotals.set(monthStr, (monthlyTotals.get(monthStr) || 0) + dailyDelta);
+
+            if (dailyDelta != null && dailyDelta > 0) {
+              monthlyTotals.set(monthStr, (monthlyTotals.get(monthStr) || 0) + dailyDelta);
           }
-        } 
-        previousReading = currentReading;
-      });
-    } else {
-      // Standard meters: getStandardMeterConsumption returns a Map<month, consumption> for this reading
-      readingsWithDate.forEach((reading) => {
-        const monthlyMap = getStandardMeterConsumption(reading, reading.readingDate, startDate, endDate);
-        if (monthlyMap instanceof Map) {
-          monthlyMap.forEach((value, monthKey) => {
-            if (value != null && value > 0) {
-              monthlyHCATotals.set(monthKey, (monthlyHCATotals.get(monthKey) || 0) + value);
-            }
-          });
+          console.log('Daily Delta========', dailyDelta)
+          console.log('Month String========', monthStr)
+          console.log('Monthly totals========', monthlyTotals)
+        } else {
+          const currentCumulative = parseGermanNumber(
+            currentReading[`IV,0,0,0,,Units HCA` as keyof MeterReadingType]
+          );
+          monthlyTotals.set(monthStr, (monthlyTotals.get(monthStr) || 0) + (currentCumulative ?? 0));
+          console.log('Current Cumulative========', currentCumulative)
+          console.log('Month String========', monthStr)
+          console.log('Monthly totals========', monthlyTotals)
         }
-      });
-    }
+        previousReading = currentReading;
+      }
+      // else {
+      //   if (currentReading.readingDate) {
+          
+      //     const monthlyMap = getStandardMeterConsumption(currentReading, currentReading.readingDate, startDate, endDate);
+      //     if (monthlyMap instanceof Map) {
+      //       monthlyMap.forEach((value, monthKey) => {
+      //         if (value != null && value > 0) {
+      //           monthlyTotals.set(monthKey.toString(), (monthlyTotals.get(monthKey.toString()) || 0) + value);
+      //         }
+      //       });
+      //     }
+      //   }
+      // }
+    });
+  
   });
 
-  const deviceLatestReadings = getLatestDeviceReadingsMonthly(validReadings);
-  const referenceDate =
-    deviceLatestReadings.size > 0
-      ? Math.max(...Array.from(deviceLatestReadings.values()).map((r) => r.date.getTime()))
-      : endDate.getTime();
-
-  const monthsToShow = getMonthsToShow(startDate, endDate, isHCA ? endDate : new Date(referenceDate));
-  return isHCA ? getHCADisplayMapping(monthlyTotals, referenceDate, monthsToShow) : getDisplayMapping(monthlyHCATotals, referenceDate, monthsToShow)
+  console.log(monthlyTotals)
+  return Array.from(monthlyTotals, ([label, value]) => ({ label, value }));;
 };
+
 
 export const parseGermanNumber = (value: string | number | undefined): number | null => {
   if (value === undefined || value === null || value === "") return null;
@@ -193,11 +207,6 @@ const isWithinDateRange = (reading: MeterReadingType, startDate: Date, endDate: 
   return readingDate >= rangeStart && readingDate <= rangeEnd;
 }
 
-const getMonthsToShow = (startDate: Date, endDate: Date, now:Date) => {
-  const rangeStart = startDate ? new Date(startDate) : new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-  const daysDiff = Math.ceil((now.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.max(2, Math.ceil(daysDiff / 30))-1;
-}
 
 const getLatestDeviceReadingsMonthly = (
   validReadings: MeterReadingType[]

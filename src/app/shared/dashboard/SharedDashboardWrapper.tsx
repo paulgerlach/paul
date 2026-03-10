@@ -11,8 +11,6 @@ import WaterChart from "@/components/Basic/Charts/WaterChart";
 interface SharedDashboardWrapperProps {
   filteredData: any[];
   filters: {
-    startDate?: string;
-    endDate?: string; 
     meterIds?: string[];
   };
 }
@@ -21,12 +19,12 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
   const { setDates, setMeterIds, startDate, endDate } = useChartStore();
   
   // Parse URL dates once (now handles full ISO timestamps like "2025-08-31T22:00:00.000Z")
-  const urlStartDate = filters.startDate ? new Date(filters.startDate) : null;
-  const urlEndDate = filters.endDate ? new Date(filters.endDate) : null;
+  const urlStartDate = startDate ? new Date(startDate) : null;
+  const urlEndDate = endDate ? new Date(endDate) : null;
   
   // Check if store dates match URL dates (comparing ISO strings for exact match)
   const datesMatch = startDate?.toISOString() === urlStartDate?.toISOString() &&
-                     endDate?.toISOString() === urlEndDate?.toISOString();
+                    endDate?.toISOString() === urlEndDate?.toISOString();
   
   useEffect(() => {
     // FIX: Set dates from URL (now with full ISO timestamps for exact UTC match)

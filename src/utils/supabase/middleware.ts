@@ -47,8 +47,6 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single();
     
-    console.log('User Record', userRecord)
-
     if (!error && userRecord) {
       const url = request.nextUrl.clone();
       if (userRecord.permission === "admin" || userRecord.permission === "super_admin") {

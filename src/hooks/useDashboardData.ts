@@ -55,7 +55,7 @@ const fetchAllChartData = async (
         'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
         'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
       ],
-      startDate: adjustedStartDate?.toISOString() || null,
+      startDate: startDate?.toISOString() || null,
       endDate: endDate?.toISOString() || null,
     }),
   });

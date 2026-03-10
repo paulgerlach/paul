@@ -126,7 +126,6 @@ export default class CSVTelegramSupabaseUploader {
             };
           });
 
-          console.log(r)
           for (let i = 0; i < r; ++i) {
             result[result.length - i - 1]!.value += (r-i);
           }
@@ -151,6 +150,9 @@ export default class CSVTelegramSupabaseUploader {
           } as Timepoint;
         };
 
+        if (dbRecord.parsed_data!["IV,29,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) {
+          console.log(deviceId)
+        }
         const even = (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) 
 
           let bimonthly_data: Timepoint[] = []

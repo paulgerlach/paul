@@ -64,7 +64,9 @@ const fetchAllChartData = async (
     throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 
-
+  //I was forced to do this as they have tied the view logic to the domain(business) logic in multiple places. 
+  // This was too brittle to change in the database so it requires 2 DB calls. DO NOT DELETE
+  // - Thulo
   const hcaResponse = await fetch('/api/dashboard-data', {
     method: 'POST',
     headers: {

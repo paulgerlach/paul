@@ -173,10 +173,10 @@ export default class CSVTelegramSupabaseUploader {
           for (let day of days) {
             const record: DatabaseRecord = {
               ...dbRecord,
-              date_only: `${day.date.getFullYear()}-${day.date.getMonth()}-${day.date.getDate()}`,
+              date_only: `${day.date.getFullYear()}-${day.date.getMonth() + 1}-${day.date.getDate()}`,
               parsed_data: {
                 ...dbRecord.parsed_data,
-                "IV,0,0,0,,Date/Time": `${day.date.getDate()}.${day.date.getMonth()}.${day.date.getFullYear()} 00:01`,
+                "IV,0,0,0,,Date/Time": `${day.date.getDate()}.${day.date.getMonth() + 1}.${day.date.getFullYear()} 00:01`,
                 "IV,0,0,0,,Units HCA": day.value,
                 "IV,24,0,0,,Units HCA": 0,
                 "IV,25,0,0,,Units HCA": 0,

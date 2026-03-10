@@ -50,12 +50,12 @@ const fetchAllChartData = async (
       meterIds,
       deviceTypes: [
         // OLD format
-        'Heat', 'Water', 'WWater', 'Elec', 'HCA',
+        'Heat', 'Water', 'WWater', 'Elec',
         // NEW Engelmann format
         'Stromzähler', 'Kaltwasserzähler', 'Warmwasserzähler', 
         'WMZ Rücklauf', 'Heizkostenverteiler', 'Wärmemengenzähler'
       ],
-      startDate: startDate?.toISOString() || null,
+      startDate: adjustedStartDate?.toISOString() || null,
       endDate: endDate?.toISOString() || null,
     }),
   });
@@ -64,8 +64,29 @@ const fetchAllChartData = async (
     throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 
+
+  const hcaResponse = await fetch('/api/dashboard-data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      meterIds,
+      deviceTypes: ['HCA'],
+      startDate: startDate?.toISOString() || null,
+      endDate: endDate?.toISOString() || null,
+    }),
+  });
+
+  if (!hcaResponse.ok) {
+    throw new Error(`Failed to fetch HCA data: ${response.statusText}`);
+  }
+
+  const hcaResult = await hcaResponse.json();
+
   const result = await response.json();
-  return result.data || [];
+  const meterReadings = [...hcaResult.data, result.data];
+  return meterReadings || [];
 };
 
 export const useDashboardData = (): DashboardDataResult => {

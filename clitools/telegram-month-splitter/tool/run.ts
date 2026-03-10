@@ -61,9 +61,9 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId);
         } catch (_) { }
 
-        // if (deviceId !== "54919722") {
-        //   continue
-        // }
+        if (deviceId !== "54919722") {
+          continue
+        }
 
         totalCount += 1;
         let dbRecord: DatabaseRecord;
@@ -119,15 +119,19 @@ export default class CSVTelegramSupabaseUploader {
           let result: DayRecord[] = new Array(days).fill({});
 
           result = result.map((_, i) => {
+            // console.log((sv + (i + 1) * d), sv, total, i+1, d)
             return {
               date: new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate() + i),
               value: sv + (i + 1) * d
             };
           });
 
+          console.log(r)
           for (let i = 0; i < r; ++i) {
-            result[result.length - i - 1]!.value++;
+            result[result.length - i - 1]!.value += (r-i);
           }
+
+          // console.log(result)
 
           return result;
         };
@@ -147,30 +151,50 @@ export default class CSVTelegramSupabaseUploader {
           } as Timepoint;
         };
 
+        const even = (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) 
 
-        // const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
-        const dec_h2_startvalue = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
-        const jan_h1 = dbRecord.parsed_data?.["IV,29,0,0,,Units HCA"];
-        const jan_h2 = dbRecord.parsed_data?.["IV,30,0,0,,Units HCA"];
-        const feb_h1 = dbRecord.parsed_data?.["IV,31,0,0,,Units HCA"];
+          let bimonthly_data: Timepoint[] = []
 
-        const feb_h2 =
-          dbRecord.parsed_data!["IV,0,0,0,,Units HCA"]!
-          - dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!
-          - jan_h1! - jan_h2! - feb_h1!;
+          if (!even) {
+          // const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
+          const dec_h2_startvalue = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
+          const jan_h1 = dbRecord.parsed_data?.["IV,29,0,0,,Units HCA"];
+          const jan_h2 = dbRecord.parsed_data?.["IV,30,0,0,,Units HCA"];
+          const feb_h1 = dbRecord.parsed_data?.["IV,31,0,0,,Units HCA"];
 
-        if (dbRecord.parsed_data!["IV,27,0,0,,Units HCA"] === dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!) {
-          console.log("EVEN:", dbRecord.device_id);
+          const feb_h2 =
+            dbRecord.parsed_data!["IV,0,0,0,,Units HCA"]!
+            - dbRecord.parsed_data!["IV,1,0,0,,Units HCA"]!
+            - jan_h1! - jan_h2! - feb_h1!;
+
+
+            bimonthly_data = [
+            // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
+            create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
+            create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),
+            create_time_point(16, new Date("2026-01-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1!, jan_h2),
+            create_time_point(15, new Date("2026-02-01T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2!, feb_h1),
+            create_time_point(13, new Date("2026-02-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2! + feb_h1!, feb_h2),
+          ];
+        } else {
+          // THIS IS DUPLICATED PURELY FOR SPEED
+          // const dec_h1 = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
+          const dec_h2_startvalue = dbRecord.parsed_data?.["IV,27,0,0,,Units HCA"];
+          const jan_h1 = dbRecord.parsed_data?.["IV,28,0,0,,Units HCA"];
+          const jan_h2 = dbRecord.parsed_data?.["IV,29,0,0,,Units HCA"];
+          const feb_h1 = dbRecord.parsed_data?.["IV,30,0,0,,Units HCA"];
+          const feb_h2 = dbRecord.parsed_data?.["IV,31,0,0,,Units HCA"];
+
+
+            bimonthly_data = [
+            // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
+            create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
+            create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),
+            create_time_point(16, new Date("2026-01-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1!, jan_h2),
+            create_time_point(15, new Date("2026-02-01T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2!, feb_h1),
+            create_time_point(13, new Date("2026-02-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2! + feb_h1!, feb_h2),
+          ];
         }
-
-        const bimonthly_data: Timepoint[] = [
-          // create_time_point(15, new Date("2025-12-01T05:00:00.000Z"), dec_h1),
-          create_time_point(31, new Date("2025-12-01T05:00:00.000Z"), 0, dec_h2_startvalue),
-          create_time_point(15, new Date("2026-01-01T05:00:00.000Z"), dec_h2_startvalue, jan_h1),
-          create_time_point(16, new Date("2026-01-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1!, jan_h2),
-          create_time_point(15, new Date("2026-02-01T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2!, feb_h1),
-          create_time_point(13, new Date("2026-02-16T05:00:00.000Z"), dec_h2_startvalue! + jan_h1! + jan_h2! + feb_h1!, feb_h2),
-        ];
 
 
         for (let timepoint of bimonthly_data) {

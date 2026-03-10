@@ -58,9 +58,9 @@ export default class CSVTelegramSupabaseUploader {
           deviceIds.push(deviceId);
         } catch (_) { }
 
-        if (deviceId !== "54919619") {
-          continue
-        }
+        // if (deviceId !== "54919619") {
+        //   continue
+        // }
 
         console.log(telegram.toHex())
         // console.log(require('util').inspect(telegram.toJSON(), { maxArrayLength: null }))

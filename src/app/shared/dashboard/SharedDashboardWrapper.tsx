@@ -54,7 +54,8 @@ export default function SharedDashboardWrapper({ filteredData, filters }: Shared
         // Support both OLD format and NEW Engelmann format device types
         // Must match exactly what useDashboardData.ts uses
         // HCA = Heat Cost Allocator (Heizkostenverteiler) - belongs to heat, NOT hot water!
-        if (deviceType === "Heat" || deviceType === "HCA" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
+        // if (deviceType === "Heat" || deviceType === "HCA" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
+          if (deviceType === "HCA") {
           acc.heatDevices.push(item);
         } else if (deviceType === "Water" || deviceType === "Kaltwasserzähler") {
           acc.coldWaterDevices.push(item);

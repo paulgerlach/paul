@@ -11,6 +11,9 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json();
+    // console.log(body.meterIds)
+
+    // console.log(require('util').inspect(body.meterIds, { maxArrayLength: null }))
     const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
 
     // Validate parameters - Filter out undefined/null values
@@ -50,6 +53,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    console.log(startDateParam, endDateParam)
+
     const supabase = await supabaseServer();
 
     // Use the database function for optimized data fetching
@@ -68,6 +73,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // console.log(startDateParam, endDateParam)
+    // console.log(parsedData.length)
 
     if (!parsedData || parsedData.length === 0) {
       return NextResponse.json({

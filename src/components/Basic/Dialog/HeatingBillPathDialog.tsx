@@ -43,7 +43,7 @@ export default function HeatingBillPathDialog({
 					</p>
 				</div>
 				<div className="grid grid-cols-2 max-medium:grid-cols-1 gap-6 max-medium:gap-4">
-					<div>
+					<div className="h-full">
 						<input
 							className="sr-only peer"
 							type="radio"
@@ -54,7 +54,7 @@ export default function HeatingBillPathDialog({
 						/>
 						<label
 							htmlFor="objektauswahl"
-							className="block px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
+							className="h-full flex flex-col px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-300 peer-checked:border-[3px] peer-checked:border-green space-y-2 relative peer-checked:[&_.cornerCheck]:block"
 						>
 							<div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
 								<Image
@@ -117,7 +117,7 @@ export default function HeatingBillPathDialog({
 							/>
 						</label>
 					</div>
-					<div>
+					<div className="h-full">
 						<input
 							className="sr-only peer"
 							type="radio"
@@ -128,7 +128,7 @@ export default function HeatingBillPathDialog({
 						/>
 						<label
 							htmlFor="ai"
-							className="block px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-ai-blue space-y-2 relative peer-checked:[&_.cornerCheck]:block"
+							className="h-full flex flex-col px-6 max-medium:px-4 pb-6 max-medium:pb-4 pt-11 max-medium:pt-6 rounded-xl border-[3px] border-transparent bg-white shadow-sm cursor-pointer transition-all duration-100 peer-checked:border-[3px] peer-checked:border-ai-blue space-y-2 relative peer-checked:[&_.cornerCheck]:block"
 						>
 							<div className="flex items-center justify-center flex-col gap-4 font-bold text-sm text-admin_dark_text">
 								<Image

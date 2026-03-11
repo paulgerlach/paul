@@ -3,6 +3,9 @@
 import Image from "next/image";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { ai_starts } from "@/static/icons";
+import Link from "next/link";
+import { ROUTE_ADMIN, ROUTE_DOKUMENTE } from "@/routes/routes";
+import { useParams, usePathname } from "next/navigation";
 
 interface UploadDropzoneProps {
     onDrop: (acceptedFiles: File[]) => void;
@@ -18,6 +21,11 @@ export function UploadDropzone({ onDrop, onDropRejected }: UploadDropzoneProps) 
         maxSize: 10 * 1024 * 1024,   // 10 MB per file
         maxFiles: 20,                 // max 20 files per batch
     });
+
+    const pathname = usePathname();
+    const params = useParams();
+
+    const isAdmin = pathname.includes("admin");
 
     return (
         <>
@@ -46,7 +54,7 @@ export function UploadDropzone({ onDrop, onDropRejected }: UploadDropzoneProps) 
                 </p>
             </div>
             <p className="mt-4 text-[#757575] text-sm">
-                Maximal 20 Dateien pro Upload, bis zu 10 MB pro PDF-Datei.
+                Unbegrenztes Hochladen von <Link className="text-ai-blue font-bold" href={isAdmin ? `${ROUTE_ADMIN}/${params.user_id}${ROUTE_DOKUMENTE}` : ROUTE_DOKUMENTE}>Dokumenten</Link> mit einer Dateigröße von bis zu 500 MB.
             </p>
         </>
     );

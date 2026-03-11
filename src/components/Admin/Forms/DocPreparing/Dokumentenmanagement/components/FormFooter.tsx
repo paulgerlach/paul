@@ -26,7 +26,7 @@ export function FormFooter({ backLink, step, isPending }: FormFooterProps) {
             >
                 {step === "upload"
                     ? "Rechnungen analysieren"
-                    : "Rechnungen speichern"}
+                    : "Dokumente hochladen"}
             </Button>
         </div>
     );

@@ -49,41 +49,47 @@ export const aggregateHCADataByTimeRange = (
 	);
 	if (validReadings.length === 0) return [];
 	//Map of meter ID and it's list of readings
-	const metersWithReadings = new Map<string, MeterReadingType[]>();
+	const meterReadingsGroupedById = new Map<string, MeterReadingType[]>();
 
 	// grouping meter reading by deviceID
 	validReadings.forEach((reading) => {
 		const deviceId = reading.ID || reading["Number Meter"]?.toString();
 		if (!deviceId) return;
-		if (!metersWithReadings.has(deviceId)) {
-			metersWithReadings.set(deviceId, []);
+		if (!meterReadingsGroupedById.has(deviceId)) {
+			meterReadingsGroupedById.set(deviceId, []);
 		}
-		metersWithReadings.get(deviceId)!.push(reading);
+
+    // separate the meters by deviceId into a map
+		meterReadingsGroupedById.get(deviceId)!.push(reading);
 	});
 
 	const monthlyTotals = new Map<string, number>();
 
 	//iterate through each meter Id and its readings
-	metersWithReadings.forEach((meterReadings, deviceId) => {
-		const meterReadingBuckets = new Map<string, MeterReadingType[]>();
-		meterReadings.forEach((meterReading) => {
+	meterReadingsGroupedById.forEach((meter, _) => {
+
+		const metersSeparatedByMonthBuckets = new Map<string, MeterReadingType[]>();
+
+    //iterate through each meter reading now we have them separated by ID
+		meter.forEach((meterReading) => {
 			const date = parseHCADate(meterReading);
 
 			const dy = date?.getFullYear();
 			const dm = date!.getMonth() + 1;
 
+      // label
 			const monthStr = `${dy}-${dm?.toString().padStart(2, "0")}`;
 
-			const allReadings = meterReadingBuckets.get(monthStr);
+			const allReadings = metersSeparatedByMonthBuckets.get(monthStr);
 			if (!allReadings) {
-				meterReadingBuckets.set(monthStr, [meterReading]);
+				metersSeparatedByMonthBuckets.set(monthStr, [meterReading]);
 			} else {
 				allReadings.push(meterReading);
-				meterReadingBuckets.set(monthStr, allReadings);
+				metersSeparatedByMonthBuckets.set(monthStr, allReadings);
 			}
 		});
 
-		meterReadingBuckets.forEach((meterReadingMonth, monthStr) => {
+		metersSeparatedByMonthBuckets.forEach((meterReadingMonth, monthStr) => {
 			const currentDelta = calculateConsumptionForReadings(meterReadingMonth);
 			monthlyTotals.set(
 				monthStr,
@@ -91,6 +97,12 @@ export const aggregateHCADataByTimeRange = (
 			);
 		});
 	});
+
+  //tree
+  // MetersReadings => a series of meters each with readings
+  // Meter Reading => a series of readings for a given meter 
+  // Buckets => A group of meter readings separated by yyyy-mm label
+
 
   const retArray = Array.from(monthlyTotals, ([label, value]) => ({ label, value }));
   retArray.sort((f,s) => { 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useChartStore } from '@/store/useChartStore';
 import EinsparungChart from "@/components/Basic/Charts/EinsparungChart";
 import ElectricityChart from "@/components/Basic/Charts/ElectricityChart";
@@ -11,41 +11,66 @@ import WaterChart from "@/components/Basic/Charts/WaterChart";
 interface SharedDashboardWrapperProps {
   filteredData: any[];
   filters: {
+    startDate: string|undefined,
+    endDate: string|undefined,
     meterIds?: string[];
   };
 }
 
 export default function SharedDashboardWrapper({ filteredData, filters }: SharedDashboardWrapperProps) {
-  const { setDates, setMeterIds, startDate, endDate } = useChartStore();
-  
+  // const { setDates, setMeterIds} = useChartStore();
+  const { setDates, setMeterIds, meterIds } = useChartStore();
+ 
+// console.log("MI=>", filters.meterIds)
+
   // Parse URL dates once (now handles full ISO timestamps like "2025-08-31T22:00:00.000Z")
-  const urlStartDate = startDate ? new Date(startDate) : null;
-  const urlEndDate = endDate ? new Date(endDate) : null;
-  
-  // Check if store dates match URL dates (comparing ISO strings for exact match)
-  const datesMatch = startDate?.toISOString() === urlStartDate?.toISOString() &&
-                    endDate?.toISOString() === urlEndDate?.toISOString();
-  
-  useEffect(() => {
-    // FIX: Set dates from URL (now with full ISO timestamps for exact UTC match)
-    // This ensures tenant sees identical data as landlord regardless of timezone
-    if (urlStartDate && urlEndDate && !datesMatch) {
-      setDates(urlStartDate, urlEndDate);
-    }
-    
-    // For shared dashboard, we need to set the device serial numbers (not UUIDs)
-    // because NotificationsChart filters by device.ID which is the serial number
-    if (filteredData && filteredData.length > 0) {
-      const deviceIds = [...new Set(
-        filteredData
-          .map(item => item.ID?.toString())
-          .filter((id): id is string => !!id)
-      )];
-      setMeterIds(deviceIds);
-    } else if (filters.meterIds) {
-      setMeterIds(filters.meterIds);
-    }
-  }, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate, datesMatch]);
+  const urlStartDate = useMemo(() => filters.startDate ? new Date(filters.startDate) : null, [filters.startDate])
+  const urlEndDate = useMemo(() => filters.endDate ? new Date(filters.endDate) : null, [filters.endDate])
+ //
+ //  // // Check if store dates match URL dates (comparing ISO strings for exact match)
+  // const datesMatch = startDate?.toISOString() === urlStartDate?.toISOString() &&
+  //                   endDate?.toISOString() === urlEndDate?.toISOString();
+  const prevDeviceIdsRef = useRef<string>('');
+
+useEffect(() => {
+  if (urlStartDate && urlEndDate) {
+    setDates(new Date(urlStartDate), new Date(urlEndDate));
+  }
+
+  const deviceIds = filteredData?.length > 0
+    ? [...new Set(filteredData.map(item => item.ID?.toString()).filter((id): id is string => !!id))]
+    : (filters.meterIds ?? []);
+
+  const deviceIdsKey = deviceIds.sort().join(',');
+  if (deviceIdsKey !== prevDeviceIdsRef.current) {
+    prevDeviceIdsRef.current = deviceIdsKey;
+    setMeterIds(deviceIds);
+  }
+}, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate]);
+
+
+  // useEffect(() => {
+  //   if (urlStartDate && urlEndDate) {
+  //     setDates(new Date(urlStartDate), new Date(urlEndDate));    
+  //   }
+  //   // if (filters.startDate && filters.endDate) {
+  //   //   setDates(new Date(filters.startDate), new Date(filters.endDate));    
+  //   // }
+  //   // For shared dashboard, we need to set the device serial numbers (not UUIDs)
+  //   // because NotificationsChart filters by device.ID which is the serial number
+  //   if (filteredData && filteredData.length > 0) {
+  //     const deviceIds = [...new Set(
+  //       filteredData
+  //         .map(item => item.ID?.toString())
+  //         .filter((id): id is string => !!id)
+  //     )];
+  //     setMeterIds(deviceIds);
+  //   } else if (filters.meterIds) {
+  //     setMeterIds(filters.meterIds);
+  //   }
+  // // }, [filters, filteredData, setDates, setMeterIds]);
+  // // , urlStartDate, urlEndDate, datesMatch]);
+  // }, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate]);//, datesMatch]);
 
   const { heatDevices, coldWaterDevices, hotWaterDevices, electricityDevices } = useMemo(() => {
     return (filteredData || []).reduce(

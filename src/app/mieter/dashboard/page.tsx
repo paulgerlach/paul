@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import SharedDashboardWrapper from "@/app/shared/dashboard/SharedDashboardWrapper";
-import { useChartStore } from "@/store/useChartStore";
 import TimeFrameSelector from "./TimeFrameSelector";
 
 // Loading component matching shared dashboard style
@@ -35,7 +34,6 @@ function DashboardLoading() {
 // Main dashboard content
 function DashboardContent() {
   const router = useRouter();
-  const { startDate, endDate } = useChartStore()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<any[]>([]);
@@ -96,7 +94,7 @@ function DashboardContent() {
         
         setTenantInfo(sessionData.tenant);
         // Fetch dashboard data
-        const dataRes = await fetch(`/api/tenant/dashboard-data?start=${startDate}&end=${endDate}`);
+        const dataRes = await fetch(`/api/tenant/dashboard-data?start=${dateRange.startDate}&end=${dateRange.endDate}`);
         const data = await dataRes.json();
         
         if (!dataRes.ok) {
@@ -114,7 +112,7 @@ function DashboardContent() {
     }
 
     checkSessionAndFetchData();
-  }, [router, startDate, endDate]);
+  }, [router, dateRange.startDate, dateRange.endDate]);
 
   // Handle logout
   const handleLogout = async () => {
@@ -189,10 +187,11 @@ function DashboardContent() {
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 max-md:px-0 py-2 max-md:py-1 overflow-x-hidden max-md:max-w-full">
         {dashboardData.length > 0 ? (
-          <SharedDashboardWrapper 
-            filteredData={dashboardData} 
+          <SharedDashboardWrapper
+            filteredData={dashboardData}
             filters={{
-              meterIds: []
+              startDate: dateRange.startDate,
+              endDate: dateRange.endDate,
             }}
           />
         ) : (

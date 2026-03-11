@@ -60,7 +60,7 @@ export async function fetchSharedDashboardData(
     const { data: shareMeters, error: metersError } = await supabase
       .from('local_meters')
       .select('id, meter_number, meter_type, local_id')
-      .in('meter_number', meterIds);
+      .in('id', meterIds);
 
     if (metersError) {
       logger.error('[SharedDashboard] Error fetching local_meters:', metersError);

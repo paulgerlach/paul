@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import SharedDashboardWrapper from "@/app/shared/dashboard/SharedDashboardWrapper";
 import { useChartStore } from "@/store/useChartStore";
+import TimeFrameSelector from "./TimeFrameSelector";
 
 // Loading component matching shared dashboard style
 function DashboardLoading() {
@@ -39,6 +40,45 @@ function DashboardContent() {
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<any[]>([]);
   const [tenantInfo, setTenantInfo] = useState<{ email: string; name?: string } | null>(null); 
+
+  // Time frame state
+  const [timeFrame, setTimeFrame] = useState<string>("30days");
+
+  // Calculate date range based on time frame
+  const dateRange = useMemo(() => {
+    const now = new Date();
+    const endDate = now.toISOString().split('T')[0];
+    let startDate: string;
+
+    switch (timeFrame) {
+      case "7days":
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        startDate = sevenDaysAgo.toISOString().split('T')[0];
+        break;
+      case "30days":
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        startDate = thirtyDaysAgo.toISOString().split('T')[0];
+        break;
+      case "3months":
+        const threeMonthsAgo = new Date(now);
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        startDate = threeMonthsAgo.toISOString().split('T')[0];
+        break;
+      case "year":
+        const oneYearAgo = new Date(now);
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        startDate = oneYearAgo.toISOString().split('T')[0];
+        break;
+      default:
+        const defaultAgo = new Date(now);
+        defaultAgo.setDate(defaultAgo.getDate() - 30);
+        startDate = defaultAgo.toISOString().split('T')[0];
+    }
+
+    return { startDate, endDate };
+  }, [timeFrame]);
 
   // Check session and fetch data
   useEffect(() => {
@@ -131,10 +171,10 @@ function DashboardContent() {
             
             {/* Right: Time selector + Logout */}
             <div className="flex items-center gap-3 max-md:w-full max-md:justify-between">
-              {/* <TimeFrameSelector 
+              <TimeFrameSelector 
                 value={timeFrame} 
                 onChange={setTimeFrame} 
-              /> */}
+              />
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"

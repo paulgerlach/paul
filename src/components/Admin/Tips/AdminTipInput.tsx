@@ -7,7 +7,7 @@ import Select from "@/components/Basic/ui/Select";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/utils/supabase/client";
-import type { Database } from "../../../types/supabase";
+import { Database } from "@/utils/supabase/database.types";
 
 type Tip = Database["public"]["Tables"]["daily_tips"]["Row"];
 

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import TelegramsContent from './TelegramsContent'
 
-export default function Telegrams() {
+export default function  Telegrams() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (

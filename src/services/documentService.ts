@@ -240,7 +240,7 @@ export class DocumentService {
       const file = data?.find(item => item.name === fileName);
 
       if (file && file.metadata?.size) {
-        const sizeInBytes = parseInt(file.metadata.size);
+        const sizeInBytes = file.metadata.size; // could do this as a direct but lets see
         return this.formatFileSize(sizeInBytes);
       }
 

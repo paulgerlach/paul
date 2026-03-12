@@ -7,37 +7,20 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
-import { DateRange } from "react-day-picker";
 import { useState } from "react";
 
 import { cn } from "@/utils";
 import { Calendar } from "../ui/Calendar";
 import { useChartStore } from "@/store/useChartStore";
-
-export type TimePreset =
-  | "today"
-  | "yesterday"
-  | "7d"
-  | "30d"
-  | "90d"
-  | "thisMonth"
-  | "lastMonth"
-  | "thisYear"
-  | "custom";
+import { TimePreset } from "@/types/TimeFilterPresets";
 
 interface TimeFilterPresetsProps {
-  date: DateRange | undefined;
-  setDate: (range: DateRange | undefined) => void;
-  onCommitRange: (from: Date, to: Date) => void;
   className?: string;
   defaultPreset?: TimePreset;
   onClose?: () => void;
 }
 
 export default function TimeFilterPresets({
-  date,
-  setDate,
-  onCommitRange,
   className,
   defaultPreset = "thisMonth",
   onClose,
@@ -46,70 +29,49 @@ export default function TimeFilterPresets({
   const { setDates, startDate, endDate } = useChartStore()
 
   const applyPreset = (preset: TimePreset) => {
+    setActivePreset(preset);
     const today = new Date();
 
-    if (preset === "custom") {
-      setActivePreset("custom");
-      setDate({
-        from: startDate || startOfMonth(today),
-        to: endDate || endOfMonth(today),
-      });
-      return;
-    }
-
-    let from: Date = today;
-    let to: Date = today;
-
     switch (preset) {
-      case "today":
-        from = new Date(today);
-        from.setHours(0, 0, 0, 0); // Start of today
-        to = new Date(today);
-        to.setHours(23, 59, 59, 999); // End of today
+      case "today": {
+        handleSetDate(0, today);
         break;
+      }
       case "yesterday":
-        const yesterday = subDays(today, 1);
-        from = new Date(yesterday);
-        from.setHours(0, 0, 0, 0); // Start of yesterday
-        to = new Date(yesterday);
-        to.setHours(23, 59, 59, 999); // End of yesterday
+        handleSetDate(1, today);
         break;
       case "7d":
-        from = subDays(today, 6);
-        from.setHours(0, 0, 0, 0); // Start of the first day
-        to = new Date(today);
-        to.setHours(23, 59, 59, 999); // End of today
+        handleSetDate(6, today);
         break;
       case "30d":
-        from = subDays(today, 29);
-        from.setHours(0, 0, 0, 0); // Start of the first day
-        to = new Date(today);
-        to.setHours(23, 59, 59, 999); // End of today
+        handleSetDate(29, today);
         break;
       case "90d":
-        from = subDays(today, 89);
-        from.setHours(0, 0, 0, 0); // Start of the first day
-        to = new Date(today);
-        to.setHours(23, 59, 59, 999); // End of today
+        handleSetDate(89, today);
         break;
       case "thisMonth":
-        from = startOfMonth(today);
-        to = endOfMonth(today);
+        setDates(startOfMonth(today), endOfMonth(today))
         break;
       case "lastMonth":
         const prev = subMonths(today, 1);
-        from = startOfMonth(prev);
-        to = endOfMonth(prev);
+        setDates(startOfMonth(prev), endOfMonth(prev))
         break;
       case "thisYear":
-        from = startOfYear(today);
-        to = endOfMonth(today);
+        setDates(startOfYear(today), today)
+        break;
+      case "custom":
+        setDates(startDate || startOfMonth(today), endDate || endOfMonth(today));
         break;
     }
-    setActivePreset(preset);
-    setDate({ from, to });
+  };
+
+
+  const handleSetDate = (daysOffset: number, today: Date) => {
+    const from = subDays(today, daysOffset);
+    from.setHours(0, 0, 0, 0);
+    const to = daysOffset == 1 ? from : today; //For the "yesterday" case. This adjusts it to not use today
+    to.setHours(23, 59, 59, 999);
     setDates(from, to);
-    onCommitRange(from, to);
     onClose?.();
   };
 
@@ -227,12 +189,14 @@ export default function TimeFilterPresets({
       {activePreset === "custom" && (
         <Calendar
           mode="range"
-          defaultMonth={date?.from}
-          selected={date}
+          defaultMonth={startDate ?? undefined}
+          selected={(startDate && endDate) ? { from: startDate, to: endDate } : undefined}
           onSelect={(r) => {
-            setDate(r);
             if (r?.from && r?.to) {
-              onCommitRange(r.from, r.to);
+              console.log('From', r.from);
+              console.log('To', r.to);
+
+              setDates(r?.from, r?.to);
             }
           }}
           numberOfMonths={2}

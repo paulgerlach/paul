@@ -15,7 +15,7 @@ import { useMemo, useState, useEffect } from "react";
 import { type MeterReadingType } from "@/api";
 import { useChartStore } from "@/store/useChartStore";
 import { EmptyState } from "@/components/Basic/ui/States";
-import { aggregateDataByTimeRange } from "@/services/heatingCostServices/heatingCostServices";
+import { aggregateHCADataByTimeRange } from "@/services/heatingCostServices/heatingCostServices";
 import { monthNames } from "@/lib/constants/date";
 interface HeatingCostsProps {
   csvText?: MeterReadingType[];
@@ -37,7 +37,6 @@ export default function HeatingCosts({
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value.toLocaleString()}`
   );
-  const isHCA = csvText?.[0]?.["Device Type"] === "HCA";
   
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
@@ -45,17 +44,19 @@ export default function HeatingCosts({
     }
 
     // Data is already filtered by meter IDs at database level
-    const filteredDevices = csvText;
+    // const filteredDevices = csvText;
     // Use the new aggregation function
-    const aggregatedData = aggregateDataByTimeRange(
-      filteredDevices,
-      startDate || undefined,
-      endDate || undefined
+    const aggregatedHCAData = aggregateHCADataByTimeRange(
+      csvText,
+      startDate,
+      endDate
     );
+
+    // console.log('AGGREGATE DATA', aggregatedHCAData)
     // If we have raw device data but no readings for the selected date range,
     // show 0 value for each day in the range instead of "no data available"
     // This provides better UX - users see "0 consumption" rather than ambiguous "no data"
-    if (aggregatedData.length === 0 && filteredDevices.length > 0 && startDate && endDate) {
+    if (aggregatedHCAData.length === 0 && csvText.length > 0 && startDate && endDate) {
       const result: { label: string; value: number }[] = [];
       const currentDate = new Date(startDate);
       const end = new Date(endDate);
@@ -71,7 +72,7 @@ export default function HeatingCosts({
       return result;
     }
 
-    return aggregatedData;
+    return aggregatedHCAData;
   }, [csvText, startDate, endDate]);
 
   // Calculate dynamic domain and formatting based on chart data
@@ -146,7 +147,7 @@ export default function HeatingCosts({
               <Tooltip
                 formatter={(value: number) => {
                   const formattedValue = tickFormatter(value);
-                    return [`${formattedValue} ${isHCA ? "Einh." : "Wh"}`, "Heizkosten"];
+                    return [`${formattedValue} ${ "Einh."}`, "Heizkosten"];
                 }}
               />
               <Bar
@@ -155,7 +156,7 @@ export default function HeatingCosts({
                 fill="#90b4e4"
                 radius={[10, 10, 10, 10]}
               >
-                {data.map((_, index) => (
+                  {data && data.map((_, index) => (
                   <Cell key={`cell-${index}`} fill="#90b4e4" />
                 ))}
               </Bar>

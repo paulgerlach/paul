@@ -64,6 +64,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
   const { openDialog } = useDialogStore();
   const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
   const [path, setPath] = useState<"manuell" | "ai">("manuell");
+  const isPathDialogTemporarilyDisabled = true;
 
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
@@ -106,7 +107,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
 
   const handleSubmit = useCallback(
     async (data: AbrechnungszeitraumFormValues) => {
-      if (!isPathSubmited) {
+      if (!isPathSubmited && !isPathDialogTemporarilyDisabled) {
         openDialog("heating_bill_path_create");
         return;
       }
@@ -145,6 +146,7 @@ export default function AdminAbrechnungszeitraumHeatObjektauswahlForm({
     },
     [
       isPathSubmited,
+      isPathDialogTemporarilyDisabled,
       openDialog,
       isEditMode,
       docValues?.id,

@@ -61,6 +61,7 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
   const { openDialog } = useDialogStore();
   const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
   const [path, setPath] = useState<"manuell" | "ai">("manuell");
+  const isPathDialogTemporarilyDisabled = true;
 
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
@@ -103,7 +104,7 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
 
   const handleSubmit = useCallback(
     async (data: AbrechnungszeitraumFormValues) => {
-      if (!isPathSubmited) {
+      if (!isPathSubmited && !isPathDialogTemporarilyDisabled) {
         openDialog("heating_bill_path_create");
         return;
       }
@@ -139,7 +140,16 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
         console.error("Fehler beim Verarbeiten des Dokuments:", err);
       }
     },
-    [isPathSubmited, openDialog, isEditMode, docValues?.id, router, path, objekteID]
+    [
+      isPathSubmited,
+      isPathDialogTemporarilyDisabled,
+      openDialog,
+      isEditMode,
+      docValues?.id,
+      router,
+      path,
+      objekteID,
+    ]
   );
 
   const backLink = isEditMode

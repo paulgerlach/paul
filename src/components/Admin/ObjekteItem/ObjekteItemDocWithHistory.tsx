@@ -51,7 +51,7 @@ export default function ObjekteItemDocWithHistory({
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
     openDialog("heating_bill_delete");
-    setQueryKey(["heating_bill_documents", item.id ?? ""]);
+    setQueryKey(["all_heating_bill_documents", item.id ?? ""]);
   };
 
   return (
@@ -74,11 +74,9 @@ export default function ObjekteItemDocWithHistory({
       >
         {relatedOpenedDocuments?.map((doc) => {
           const isSubmitted = doc.submited;
-          const href = isSubmitted
-            ? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${item.id}/${doc.id}/results`
-            : doc.local_id
-              ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`
-              : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`;
+          const href = doc.local_id
+            ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`
+            : `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`;
 
           return (
             <div className="flex items-center justify-between" key={doc.id}>

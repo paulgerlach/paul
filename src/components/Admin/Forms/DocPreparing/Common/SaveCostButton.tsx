@@ -20,18 +20,21 @@ export default function SaveCostButton({
   operatingDocId,
   objektId,
   localId,
+  isEditMode = false,
 }: {
   initialDocumentGroups: DocCostCategoryType[];
   documentType: "heizkostenabrechnung" | "betriebskostenabrechnung";
   operatingDocId: string;
   objektId: string;
   localId?: string;
+  isEditMode?: boolean;
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentGroups: betriebskostenGroups } =
     useBetriebskostenabrechnungStore();
-  const { documentGroups: heizkostenGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups: heizkostenGroups, hasChanges } =
+    useHeizkostenabrechnungStore();
 
   const documentGroups =
     documentType === "betriebskostenabrechnung"
@@ -65,6 +68,25 @@ export default function SaveCostButton({
         return initial && initial.allocation_key !== current.allocation_key;
       });
 
+      let redirectUrl = "";
+      if (documentType === "betriebskostenabrechnung") {
+        redirectUrl = `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      } else if (localId) {
+        redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
+      } else {
+        redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      }
+
+      const anythingChanged = hasChanges || changedItems.length > 0;
+      if (
+        documentType === "heizkostenabrechnung" &&
+        isEditMode &&
+        !anythingChanged
+      ) {
+        router.push(redirectUrl);
+        return;
+      }
+
       await Promise.all(
         changedItems
           .filter(
@@ -84,16 +106,11 @@ export default function SaveCostButton({
           )
       );
 
-      let redirectUrl = "";
       if (documentType === "betriebskostenabrechnung") {
         await submitBuildingDocument(operatingDocId);
-        redirectUrl = `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
       } else {
         await submitHeatLocalDocument(operatingDocId);
-        if (localId) {
-          redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
-        } else {
-          redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+        if (!localId) {
           await runBatchGeneration(objektId, operatingDocId);
         }
       }

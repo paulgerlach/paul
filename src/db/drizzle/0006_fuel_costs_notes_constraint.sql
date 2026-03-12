@@ -1,6 +1,6 @@
 -- Migration: 0006_fuel_costs_notes_constraint
 -- Description: Ensure Brennstoffkosten (fuel_costs, brennstoffkosten) cost types
---              only accept numeric values in the notes field (Menge in kWh)
+--              only accept numeric values in the notes field (Menge in MWh)
 
 ALTER TABLE heating_invoices
 ADD CONSTRAINT heating_invoices_fuel_costs_notes_numeric

@@ -61,6 +61,7 @@ export default function AdminUmlageschlüsselLocalForm({
             documentType="heizkostenabrechnung"
             operatingDocId={docId}
             localId={localId}
+            isEditMode={isEditMode}
           />
         </div>
       </div>

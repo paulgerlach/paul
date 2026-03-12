@@ -779,7 +779,7 @@ async function handleUpdate(request: Request, statementId: string) {
  * 
  * Data Scoping:
  * - Statement must belong to token.user_id
- * - Cascade deletes related invoices automatically (via foreign key)
+ * - Related invoices are deleted before deleting the statement
  */
 export async function DELETE(
   request: Request,
@@ -862,8 +862,12 @@ export async function DELETE(
       );
     }
 
-    // Delete heating bill document (invoices cascade delete via foreign key)
+    // Delete related invoices first, then the heating bill document
     try {
+      await database
+        .delete(heating_invoices)
+        .where(eq(heating_invoices.heating_doc_id, statementId));
+
       const deleted = await database
         .delete(heating_bill_documents)
         .where(eq(heating_bill_documents.id, statementId))

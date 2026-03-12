@@ -22,6 +22,7 @@ export default function AdminSaveCostButton({
   objektId,
   localId,
   userId,
+  isEditMode = false,
 }: {
   initialDocumentGroups: DocCostCategoryType[];
   documentType: "heizkostenabrechnung" | "betriebskostenabrechnung";
@@ -29,12 +30,14 @@ export default function AdminSaveCostButton({
   objektId: string;
   localId?: string;
   userId?: string;
+  isEditMode?: boolean;
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentGroups: betriebskostenGroups } =
     useBetriebskostenabrechnungStore();
-  const { documentGroups: heizkostenGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups: heizkostenGroups, hasChanges } =
+    useHeizkostenabrechnungStore();
 
   const documentGroups =
     documentType === "betriebskostenabrechnung"
@@ -68,6 +71,25 @@ export default function AdminSaveCostButton({
         return initial && initial.allocation_key !== current.allocation_key;
       });
 
+      let redirectUrl = "";
+      if (documentType === "betriebskostenabrechnung") {
+        redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      } else if (localId) {
+        redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
+      } else {
+        redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      }
+
+      const anythingChanged = hasChanges || changedItems.length > 0;
+      if (
+        documentType === "heizkostenabrechnung" &&
+        isEditMode &&
+        !anythingChanged
+      ) {
+        router.push(redirectUrl);
+        return;
+      }
+
       await Promise.all(
         changedItems
           .filter(
@@ -87,16 +109,11 @@ export default function AdminSaveCostButton({
           )
       );
 
-      let redirectUrl = "";
       if (documentType === "betriebskostenabrechnung") {
         await submitBuildingDocument(operatingDocId);
-        redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
       } else {
         await submitHeatLocalDocument(operatingDocId);
-        if (localId) {
-          redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
-        } else {
-          redirectUrl = `${ROUTE_ADMIN}/${userId}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+        if (!localId) {
           await runBatchGeneration(objektId, operatingDocId);
         }
       }

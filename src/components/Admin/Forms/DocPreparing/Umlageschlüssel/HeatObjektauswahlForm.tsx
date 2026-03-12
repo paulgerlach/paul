@@ -55,6 +55,7 @@ export default function UmlageschlüsselHeatObjektauswahlForm({
             initialDocumentGroups={initialDocumentGroups}
             documentType="heizkostenabrechnung"
             operatingDocId={docId}
+            isEditMode={isEditMode}
           />
         </div>
       </div>

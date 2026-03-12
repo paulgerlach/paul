@@ -9,6 +9,6 @@ export async function assignPropertyToAgency(propertyId: string, agencyId: strin
   const updateData = agencyId === "" ? { agency_id: null } : { agency_id: agencyId };
   await (supabase
     .from("objekte") as any)
-    .update(updateData)
+    .update(updateData as never)
     .eq("id", propertyId);
 }

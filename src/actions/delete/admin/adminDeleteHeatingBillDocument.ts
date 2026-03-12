@@ -3,6 +3,7 @@
 import database from "@/db";
 import {
   heating_bill_documents,
+  heating_invoices,
 } from "@/db/drizzle/schema";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
@@ -18,6 +19,10 @@ export async function adminDeleteHeatingBillDocument(
   if (!user) {
     throw new Error("Nicht authentifiziert");
   }
+
+  await database
+    .delete(heating_invoices)
+    .where(and(eq(heating_invoices.heating_doc_id, docID), eq(heating_invoices.user_id, userID)));
 
   const result = await database
     .delete(heating_bill_documents)

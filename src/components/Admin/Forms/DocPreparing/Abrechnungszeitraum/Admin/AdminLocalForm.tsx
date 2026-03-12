@@ -65,6 +65,7 @@ export default function AdminAbrechnungszeitraumLocalForm({
   const { openDialog } = useDialogStore();
   const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
   const [path, setPath] = useState<"manuell" | "ai">("manuell");
+  const isPathDialogTemporarilyDisabled = true;
 
   const methods = useForm({
     resolver: zodResolver(abrechnungszeitraumSchema),
@@ -107,7 +108,7 @@ export default function AdminAbrechnungszeitraumLocalForm({
 
   const handleSubmit = useCallback(
     async (data: AbrechnungszeitraumFormValues) => {
-      if (!isPathSubmited) {
+      if (!isPathSubmited && !isPathDialogTemporarilyDisabled) {
         openDialog("heating_bill_path_create");
         return;
       }
@@ -147,6 +148,7 @@ export default function AdminAbrechnungszeitraumLocalForm({
     },
     [
       isPathSubmited,
+      isPathDialogTemporarilyDisabled,
       openDialog,
       isEditMode,
       docValues?.id,
@@ -159,7 +161,7 @@ export default function AdminAbrechnungszeitraumLocalForm({
   );
 
   const backLink = isEditMode
-    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand`
+    ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/zwischenstand/objektauswahl`
     : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektID}`;
 
   return (

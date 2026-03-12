@@ -52,8 +52,8 @@ export default function AdminHeatObjekteItemDocWithHistory({
 
   const openDeleteDialog = (docID: string) => {
     setItemID(docID);
-    openDialog("admin_operating_costs_delete");
-    setQueryKey(["operating_cost_documents", item.id ?? ""]);
+    openDialog("admin_heating_bill_delete");
+    setQueryKey(["all_heating_bill_documents", item.id ?? ""]);
   };
 
   return (
@@ -76,11 +76,9 @@ export default function AdminHeatObjekteItemDocWithHistory({
       >
         {relatedOpenedDocuments?.map((doc) => {
           const isSubmitted = doc.submited;
-          const href = isSubmitted
-            ? `${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${item.id}/${doc.id}/results`
-            : doc.local_id
-              ? `${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`
-              : `${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`;
+          const href = doc.local_id
+            ? `${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${doc.id}/abrechnungszeitraum`
+            : `${ROUTE_ADMIN}/${user_id}${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/weitermachen/${doc.id}/abrechnungszeitraum`;
 
           return (
             <div className="flex items-center justify-between" key={doc.id}>

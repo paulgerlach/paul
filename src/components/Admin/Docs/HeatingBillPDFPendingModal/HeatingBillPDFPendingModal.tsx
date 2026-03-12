@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { green_check_circle, close_dialog } from "@/static/icons";
 
@@ -9,9 +8,10 @@ interface HeatingBillPDFPendingModalProps {
   isOpen: boolean;
 }
 
-export default function HeatingBillPDFPendingModal({ isOpen }: HeatingBillPDFPendingModalProps) {
+export default function HeatingBillPDFPendingModal({
+  isOpen,
+}: Readonly<HeatingBillPDFPendingModalProps>) {
   const [dismissed, setDismissed] = useState(false);
-  const router = useRouter();
 
   if (!isOpen || dismissed) return null;
 
@@ -51,7 +51,7 @@ export default function HeatingBillPDFPendingModal({ isOpen }: HeatingBillPDFPen
             </p>
           </div>
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => setDismissed(true)}
             className="px-8 py-3 cursor-pointer rounded-md bg-green text-dark_green font-medium border-none shadow-xs transition-all duration-300 hover:opacity-80"
           >
             Weiter

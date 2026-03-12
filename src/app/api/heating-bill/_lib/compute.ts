@@ -37,7 +37,7 @@ const HCA_DEVICE_TYPES = [
 ];
 const WARM_WATER_DEVICE_TYPES = ["WWater", "Warmwasserzähler"];
 const COLD_WATER_DEVICE_TYPES = ["Water", "Kaltwasserzähler"];
-const LOGIN_ENTRY_URL = "https://heidisystems.com/";
+const LOGIN_ENTRY_URL = "https://heidisystems.com/?tenant-login=true";
 
 function round2(v: number): number {
   return Math.round(v * 100) / 100;

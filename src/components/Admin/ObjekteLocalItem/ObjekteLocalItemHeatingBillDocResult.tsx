@@ -122,6 +122,7 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
           <ThreeDotsButton
             dialogAction="heating_bill_delete"
             editLink={editLink}
+            itemID={docID}
           />
         </div>
       </div>

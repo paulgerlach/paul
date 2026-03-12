@@ -6,11 +6,9 @@ import { revalidatePath } from "next/cache";
 export async function updateUserAgency(userId: string, agencyId: string | null) {  
   const supabase = await supabaseServer();
 
-  const updateData = agencyId === "" ? { agency_id: null } : { agency_id: agencyId };
-
   const { error } = await supabase
     .from("users")
-    .update(updateData)
+    .update({ agency_id: agencyId })
     .eq("id", userId);
 
   if (error) {

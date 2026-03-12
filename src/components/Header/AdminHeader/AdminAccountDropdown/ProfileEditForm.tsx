@@ -1,32 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/utils/supabase/client';
 import { useForm } from 'react-hook-form';
 import ModalFooter from './ModalFooter';
 import { useAuthUser } from '@/apiClient';
 
-// --- 1. Mein Profil Form ---
-// Confirm if supabase connection is correct - Updates user table of currentUser
-export default function ProfileEditForm({ onClose, inputStyle, labelStyle }
-  : { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function ProfileEditForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }
+  : { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
 
   const { data: currentUser } = useAuthUser();
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { isValid } } = useForm({
-    mode: "onChange", // Necessary for isValid to update in real-time
+  const { register, handleSubmit, reset, formState: { isValid } } = useForm({
+    mode: "onChange",
     defaultValues: {
-      firstName: currentUser?.first_name || '',
-      lastName: currentUser?.last_name || '',
-      permission: currentUser?.permission || 'user',
-      email: currentUser?.email || '',
-      companyName: (currentUser as any)?.agencies?.name || '',
-      street: (currentUser as any)?.agencies?.street || '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      permission: 'user',
+      notes: '',
     }
   });
 
-  const onSubmit = async (data: any) => {
+  useEffect(() => {
+    if (isOpen && currentUser) {
+      const u = currentUser as { phone?: string; notes?: string };
+      reset({
+        firstName: currentUser.first_name || '',
+        lastName: currentUser.last_name || '',
+        phone: u.phone || '',
+        permission: currentUser.permission || 'user',
+        notes: u.notes || '',
+      });
+    }
+  }, [isOpen, currentUser, reset]);
+
+  const onSubmit = async (data: { firstName: string; lastName: string; phone?: string; permission: string; notes?: string }) => {
     if (!currentUser?.id) return;
     setLoading(true);
 
@@ -36,28 +46,17 @@ export default function ProfileEditForm({ onClose, inputStyle, labelStyle }
         first_name: data.firstName,
         last_name: data.lastName,
         permission: data.permission,
-        email: data.email,
+        phone: data.phone || null,
+        notes: data.notes || null,
       })
       .eq("id", currentUser.id);
-
-    if (!userError && currentUser.agency_id) {
-      await supabase
-        .from("agencies")
-        .update({
-          name: data.companyName,
-          street: data.street,
-        })
-        .eq("id", currentUser.agency_id);
-    }
 
     setLoading(false);
     if (!userError) onClose();
   };
 
-  const bigInputStyle = `${inputStyle} h-14 py-3 px-4 text-base`;
-
   return (
-    <div className="w-full max-w-[670px] mx-auto">
+    <div className="w-full max-w-[800px] mx-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 mt-2">
         <div className="flex gap-4 w-full">
           <div className="flex-1 space-y-1.5">
@@ -71,15 +70,22 @@ export default function ProfileEditForm({ onClose, inputStyle, labelStyle }
         </div>
 
         <div className="w-full space-y-1.5">
+          <label className={labelStyle}>Telefonnummer</label>
+          <input {...register("phone")} type="text" className={bigInputStyle} />
+        </div>
+
+        <div className="w-full space-y-1.5">
           <label className={labelStyle}>Rolle im Unternehmen</label>
           <div className="relative">
             <select
               {...register("permission")}
               className={`${bigInputStyle} appearance-none cursor-pointer`}
             >
-              <option value="super_admin">super_admin</option>
-              <option value="admin">admin</option>
-              <option value="user">user</option>
+              {(currentUser?.permission === "super_admin" || currentUser?.permission === "admin" || currentUser?.permission === "agency_admin") ? (
+                <option value={currentUser.permission}>Lesen & Schreiben</option>
+              ) : (
+                <option value="user">Nur Lesen</option>
+              )}
             </select>
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -88,10 +94,12 @@ export default function ProfileEditForm({ onClose, inputStyle, labelStyle }
             </div>
           </div>
         </div>
+
         <div className="w-full space-y-1.5">
-          <label className={labelStyle}>E-Mail *</label>
-          <input {...register("email", { required: true })} type="text" className={bigInputStyle} />
+          <label className={labelStyle}>Anmerkungen</label>
+          <textarea {...register("notes")} rows={3} className={`${bigInputStyle} min-h-[80px] resize-y`} />
         </div>
+
         <ModalFooter
           onClose={onClose}
           loading={loading}

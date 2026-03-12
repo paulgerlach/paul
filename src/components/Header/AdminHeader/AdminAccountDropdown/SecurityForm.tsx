@@ -1,13 +1,21 @@
 'use client';
 
+import { useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useForm } from "react-hook-form";
 import ModalFooter from "./ModalFooter";
+import { useAuthUser } from "@/apiClient";
 
 // --- 4. Sicherheit (Security) ---
-// TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
-export default function SecurityForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
-  const { register, handleSubmit } = useForm();
+export default function SecurityForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
+  const { data: currentUser } = useAuthUser();
+  const { register, handleSubmit, reset } = useForm();
+
+  useEffect(() => {
+    if (isOpen && currentUser?.email) {
+      reset({ email: currentUser.email });
+    }
+  }, [isOpen, currentUser?.email, reset]);
 
   const onSubmit = async (data: any) => {
   const { error } = await supabase
@@ -24,14 +32,14 @@ export default function SecurityForm({ onClose, inputStyle, labelStyle }: { onCl
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mt-2">
-      <div className="w-full">
+      <div className="w-full space-y-1.5">
         <label className={labelStyle}>Email Adresse *</label>
-        <input {...register("email")} type="email" className={inputStyle} />
+        <input {...register("email")} type="email" className={bigInputStyle} />
       </div>
       
-      <div className="w-full space-y-2">
+      <div className="w-full space-y-1.5">
         <label className={labelStyle}>Passwort</label>
-        <input {...register("password")} type="password" className={inputStyle} />
+        <input {...register("password")} type="password" className={bigInputStyle} />
         <button 
           type="button" 
           className="text-xs text-[#6366F1] hover:underline block pt-1"

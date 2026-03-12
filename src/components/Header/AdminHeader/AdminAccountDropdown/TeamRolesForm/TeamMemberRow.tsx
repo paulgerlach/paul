@@ -6,7 +6,7 @@ import { TeamMember, Role } from './index';
 interface TeamMemberRowProps {
   member: TeamMember;
   index: number;
-  inputStyle: string;
+  inputStyle: string; // receives bigInputStyle from parent
   labelStyle: string;
   roles: Role[];
   onUpdate: (field: keyof TeamMember, value: string) => void;
@@ -14,15 +14,15 @@ interface TeamMemberRowProps {
   canRemove: boolean;
 }
 
-export default function TeamMemberRow({ 
-  member, 
-  index, 
-  inputStyle, 
-  labelStyle, 
+export default function TeamMemberRow({
+  member,
+  index,
+  inputStyle,
+  labelStyle,
   roles,
-  onUpdate, 
+  onUpdate,
   onRemove,
-  canRemove 
+  canRemove
 }: TeamMemberRowProps) {
   const [emailError, setEmailError] = useState<string>('');
 
@@ -45,10 +45,10 @@ export default function TeamMemberRow({
   };
 
   return (
-    <div className="flex gap-4 w-full items-start">
-      <div className="flex-1">
-        <label className={labelStyle}>
-          {index === 0 ? 'Nutzer' : ''}
+    <div className="flex gap-4 w-full items-end">
+      <div className="flex-1 min-w-0 space-y-1.5">
+        <label className={`${labelStyle} block`}>
+          Nutzer
         </label>
         <input
           type="email"
@@ -61,9 +61,9 @@ export default function TeamMemberRow({
           <span className="text-red-500 text-xs mt-1">{emailError}</span>
         )}
       </div>
-      <div className="flex-1">
-        <label className={labelStyle}>
-          {index === 0 ? 'Rolle' : ''}
+      <div className="flex-1 min-w-0 space-y-1.5">
+        <label className={`${labelStyle} block`}>
+          Rolle
         </label>
         <select
           value={member.role}
@@ -82,7 +82,7 @@ export default function TeamMemberRow({
       {canRemove && (
         <button
           onClick={onRemove}
-          className="mt-6 p-2 text-gray-400 hover:text-red-500 transition-colors"
+          className="flex-shrink-0 mb-5 text-gray-400 hover:text-red-500 transition-colors"
           title="Nutzer entfernen"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

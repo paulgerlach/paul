@@ -8,7 +8,7 @@ import ModalFooter from './ModalFooter';
 // --- 2. Unternehmensdaten Form (Company Data) ---
 // TO DO: Confirm if supabase connection is correct (if table selected in onSubmit is correct)
 // TO DO: Create table for the company logos needed
-export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { onClose: () => void, inputStyle: string, labelStyle: string }) {
+export default function CompanyDataForm({ onClose, isOpen, inputStyle, bigInputStyle, labelStyle }: { onClose: () => void, isOpen: boolean, inputStyle: string, bigInputStyle: string, labelStyle: string }) {
   const { register, handleSubmit, watch, reset } = useForm();
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -24,38 +24,39 @@ export default function CompanyDataForm({ onClose, inputStyle, labelStyle }: { o
     }
   }, [logoFile]);
 
-useEffect(() => {
-  const loadExistingData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  useEffect(() => {
+    if (!isOpen) return;
+    const loadExistingData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("agency_id")
-      .eq("id", user.id)
-      .single();
-
-    if (userData?.agency_id) {
-      const { data: agency } = await supabase
-        .from("agencies")
-        .select("*")
-        .eq("id", userData.agency_id)
+      const { data: userData } = await supabase
+        .from("users")
+        .select("agency_id")
+        .eq("id", user.id)
         .single();
 
-      if (agency) {
-        reset({
-          companyName: agency.name,
-          street: agency.street,
-          zip: agency.zip,
-          city: agency.city,
-          vatId: agency.vat_id,
-        });
-        if (agency.logo_url) setPreview(agency.logo_url);
+      if (userData?.agency_id) {
+        const { data: agency } = await supabase
+          .from("agencies")
+          .select("*")
+          .eq("id", userData.agency_id)
+          .single();
+
+        if (agency) {
+          reset({
+            companyName: agency.name,
+            street: agency.street,
+            zip: agency.zip,
+            city: agency.city,
+            vatId: agency.vat_id,
+          });
+          if (agency.logo_url) setPreview(agency.logo_url);
+        }
       }
-    }
-  };
-  loadExistingData();
-}, [reset]);
+    };
+    loadExistingData();
+  }, [isOpen, reset]);
 
   const onSubmit = async (data: any) => {
     let logoUrl: string | null = null;
@@ -138,7 +139,7 @@ useEffect(() => {
       <div className="flex gap-10 items-start">
         <div className="flex-grow space-y-1.5">
           <label className={labelStyle}>Firmenname *</label>
-          <input {...register("companyName")} type="text" className={inputStyle} />
+          <input {...register("companyName")} type="text" className={bigInputStyle} />
         </div>
 
         <div className="flex-shrink-0">
@@ -172,24 +173,24 @@ useEffect(() => {
 
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
-          <input {...register("street")} type="text" className={inputStyle} />
+          <input {...register("street")} type="text" className={bigInputStyle} />
         </div>
 
         <div className="flex gap-8 w-full">
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Postleitzahl</label>
-            <input {...register("zip")} type="text" className={inputStyle} />
+            <input {...register("zip")} type="text" className={bigInputStyle} />
           </div>
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Stadt</label>
-            <input {...register("city")} type="text" className={inputStyle} />
+            <input {...register("city")} type="text" className={bigInputStyle} />
           </div>
         </div>
       </div>
 
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Umsatzsteuer-ID</label>
-        <input {...register("vatId")} type="text" className={inputStyle} />
+        <input {...register("vatId")} type="text" className={bigInputStyle} />
       </div>
 
       <ModalFooter onClose={onClose} />

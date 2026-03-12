@@ -23,13 +23,13 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout: LayoutItem[] = [
 	// Row 1
 	{ i: "coldWater", x: 0, y: 0, w: 4, h: 5 },    // Column 1
-	{ i: "electricity", x: 4, y: 0, w: 4, h: 4 },  // Column 2 
+	{ i: "electricity", x: 4, y: 0, w: 4, h: 5 },  // Column 2 
 	{ i: "notifications", x: 8, y: 0, w: 4, h: 5 },  // Column 3
 
 	// Row 2
-	{ i: "hotWater", x: 0, y: 7, w: 4, h: 4 },      // Column 1
+	{ i: "hotWater", x: 0, y: 7, w: 4, h: 5 },      // Column 1
 	{ i: "heating", x: 4, y: 7, w: 4, h: 5 }, // Column 2
-	{ i: "einsparung", x: 8, y: 7, w: 4, h: 4 },    // Column 3 
+	{ i: "einsparung", x: 8, y: 7, w: 4, h: 5 },    // Column 3 
 ];
 
 

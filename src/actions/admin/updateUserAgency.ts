@@ -10,7 +10,7 @@ export async function updateUserAgency(userId: string, agencyId: string | null) 
 
   const { error } = await supabase
     .from("users")
-    .update(updateData as never)
+    .update(updateData)
     .eq("id", userId);
 
   if (error) {

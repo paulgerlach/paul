@@ -8,7 +8,7 @@ export async function updateUserPermission(userId: string, permission: string) {
 
   const { error } = await supabase
     .from("users")
-    .update({ permission } as never)
+    .update({ permission })
     .eq("id", userId);
 
   if (error) {

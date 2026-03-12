@@ -25,7 +25,7 @@ export async function getRegistrationStatus(): Promise<{
       return { enabled: true, error: error.message }; // Default to enabled on error
     }
 
-    return { enabled: data?.registration_enabled ?? true } as never;
+    return { enabled: data?.registration_enabled ?? true };
   } catch (err) {
     console.error("Unexpected error fetching registration status:", err);
     return { enabled: true, error: "Failed to fetch registration status" };

@@ -58,6 +58,7 @@ export default function UmlageschlüsselLocalForm({
             documentType="heizkostenabrechnung"
             operatingDocId={docId}
             localId={localId}
+            isEditMode={isEditMode}
           />
         </div>
       </div>

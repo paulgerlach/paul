@@ -56,7 +56,8 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
   docValues?: HeatingBillDocumentType;
 }) {
   const router = useRouter();
-  const { setStartDate, setEndDate } = useHeizkostenabrechnungStore();
+  const { setStartDate, setEndDate, setHasChanges, resetHasChanges } =
+    useHeizkostenabrechnungStore();
   const isEditMode = !!docValues;
   const { openDialog } = useDialogStore();
   const [isPathSubmited, setIsPathSubmited] = useState<boolean>(false);
@@ -96,6 +97,12 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
   }, []);
 
   useEffect(() => {
+    if (isEditMode) {
+      resetHasChanges();
+    }
+  }, [isEditMode, docValues?.id, resetHasChanges]);
+
+  useEffect(() => {
     if (isPathSubmited) {
       handleSubmit(getValues());
       setIsPathSubmited(false);
@@ -116,6 +123,32 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
           consumption_dependent: String(data.consumption_dependent),
           living_space_share: String(data.living_space_share),
         };
+
+        if (isEditMode && docValues) {
+          const originalStart = docValues.start_date
+            ? new Date(docValues.start_date).getTime()
+            : null;
+          const originalEnd = docValues.end_date
+            ? new Date(docValues.end_date).getTime()
+            : null;
+          const nextStart = payload.start_date
+            ? new Date(payload.start_date).getTime()
+            : null;
+          const nextEnd = payload.end_date
+            ? new Date(payload.end_date).getTime()
+            : null;
+
+          const dateChanged = originalStart !== nextStart || originalEnd !== nextEnd;
+          const percentChanged =
+            Number(payload.consumption_dependent) !==
+            Number(docValues.consumption_dependent ?? 0) ||
+            Number(payload.living_space_share) !==
+            Number(docValues.living_space_share ?? 0);
+
+          if (dateChanged || percentChanged) {
+            setHasChanges(true);
+          }
+        }
 
         if (isEditMode) {
           await editHeatingBillDocument(docValues?.id ?? "", payload);
@@ -145,10 +178,11 @@ export default function AbrechnungszeitraumHeatObjektauswahlForm({
       isPathDialogTemporarilyDisabled,
       openDialog,
       isEditMode,
-      docValues?.id,
+      docValues,
       router,
       path,
       objekteID,
+      setHasChanges,
     ]
   );
 

@@ -10,8 +10,11 @@ export type HeizkostenabrechnungCostType = Partial<DocCostCategoryType> & {
 export type HeizkostenabrechnungStoreType = {
   start_date: Date | null;
   end_date: Date | null;
+  hasChanges: boolean;
   activeCostType: HeizkostenabrechnungCostType["type"] | null;
   documentGroups: HeizkostenabrechnungCostType[];
+  setHasChanges: (value: boolean) => void;
+  resetHasChanges: () => void;
   setDocumentGroups: (groups: HeizkostenabrechnungCostType[]) => void;
   setStartDate: (date: Date) => void;
   setEndDate: (date: Date) => void;
@@ -55,12 +58,21 @@ export const useHeizkostenabrechnungStore =
   create<HeizkostenabrechnungStoreType>((set, get) => ({
     start_date: new Date(new Date().getFullYear(), 0, 1),
     end_date: null,
+    hasChanges: false,
     activeCostType: null,
     documentGroups: [],
     objektID: undefined,
     operatingDocID: undefined,
     localID: null,
     purposeOptions: [],
+    setHasChanges: (value) =>
+      set(() => ({
+        hasChanges: value,
+      })),
+    resetHasChanges: () =>
+      set(() => ({
+        hasChanges: false,
+      })),
     setDocumentGroups: (groups) =>
       set({
         documentGroups: groups,
@@ -103,10 +115,14 @@ export const useHeizkostenabrechnungStore =
       set((state) => {
         if (state.documentGroups.some((g) => g.type === group.type))
           return state;
-        return { documentGroups: [...state.documentGroups, group] };
+        return {
+          documentGroups: [...state.documentGroups, group],
+          hasChanges: true,
+        };
       }),
     updateDocumentGroup: (key, newItem) =>
       set((state) => ({
+        hasChanges: true,
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? { ...group, data: [...group.data, newItem] }
@@ -115,6 +131,7 @@ export const useHeizkostenabrechnungStore =
       })),
     editDocumentGroup: (key, itemID, updatedItem) =>
       set((state) => ({
+        hasChanges: true,
         documentGroups: state.documentGroups.map((group) =>
           group.type === key
             ? {
@@ -149,12 +166,14 @@ export const useHeizkostenabrechnungStore =
       })),
     removeDocumentGroup: (key) =>
       set((state) => ({
+        hasChanges: true,
         documentGroups: state.documentGroups.filter(
           (group) => group.type !== key
         ),
       })),
     removeInvoiceFromGroup: (itemID) =>
       set((state) => ({
+        hasChanges: true,
         documentGroups: state.documentGroups.map((group) => ({
           ...group,
           data: group.data.filter((item) => String(item.id) !== String(itemID)),

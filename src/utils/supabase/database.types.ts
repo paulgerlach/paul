@@ -1718,6 +1718,36 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_tips: {
+        Row: {
+          id: string
+          content: string
+          category: 'heating' | 'water' | 'electricity'
+          season: 'winter' | 'summer' | 'all'
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          content: string
+          category: 'heating' | 'water' | 'electricity'
+          season?: 'winter' | 'summer' | 'all'
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          content?: string
+          category?: 'heating' | 'water' | 'electricity'
+          season?: 'winter' | 'summer' | 'all'
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

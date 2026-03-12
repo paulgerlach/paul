@@ -1,2 +1,0 @@
-$ bun run ./script.ts -i "All_telgrams_2026-03-01.csv"
-Total: 1, Succeeded: 1, Failed 0

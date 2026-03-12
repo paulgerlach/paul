@@ -53,16 +53,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log(startDateParam, endDateParam)
-
     const supabase = await supabaseServer();
 
     // Use the database function for optimized data fetching
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
-      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : null,
+      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : undefined,
       p_device_types: requestedDeviceTypes.length > 0 ? requestedDeviceTypes : null,
-      p_start_date: startDate ? startDate.toISOString().split('T')[0] : null,
-      p_end_date: endDate ? endDate.toISOString().split('T')[0] : null
+      p_start_date: startDate ? startDate.toISOString().split('T')[0] : undefined,
+      p_end_date: endDate ? endDate.toISOString().split('T')[0] : undefined
     });
 
     if (error) {
@@ -73,9 +71,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    // console.log(startDateParam, endDateParam)
-    // console.log(parsedData.length)
 
     if (!parsedData || parsedData.length === 0) {
       return NextResponse.json({

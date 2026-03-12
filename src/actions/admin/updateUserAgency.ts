@@ -1,6 +1,6 @@
 'use server'
 
-import { Database } from "@/utils/supabase/database.types";
+// import { Database } from "@/utils/supabase/database.types";
 import { supabaseServer } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -9,7 +9,7 @@ export async function updateUserAgency(userId: string, agencyId: string | null) 
 
   const { error } = await supabase
     .from("users")
-    .update({ agency_id: agencyId } as Database["public"]["Tables"]["users"]["Update"])
+    .update({ agency_id: agencyId })
     .eq("id", userId);
 
 

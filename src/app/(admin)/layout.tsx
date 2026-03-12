@@ -256,9 +256,6 @@ export default async function AdminLayout({
           <LazyAdminOperatingCostDocumentDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
-          <LazyHeatingBillDeleteDialog />
-        </Suspense>
-        <Suspense fallback={null}>
           <LazyAdminHeatingBillDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
@@ -291,7 +288,7 @@ export default async function AdminLayout({
 
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
-      </QueryProvider>
-    </Suspense>
+      </QueryProvider >
+    </Suspense >
   );
 }

@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     try {
       await sendInvitationEvent(email, {
         inviter_name: inviterName,
-        agency_name: agencyName,
+        agency_name: agencyName!,
         role: role || 'user',
         invitation_token: token,
         expires_at: expiresAtISO,

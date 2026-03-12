@@ -1,3 +1,5 @@
+'use server'
+
 import { isSuperAdmin } from "@/auth";
 import { supabaseServer } from "@/utils/supabase/server";
 

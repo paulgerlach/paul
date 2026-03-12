@@ -22,10 +22,7 @@ import TimeFilterPresets from "./TimeFilterPresets";
 export default function AdminDatetimeDropdown({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: startOfYear(new Date()),
-    to: endOfMonth(new Date()),
-  });
+
   const { setDates, startDate, endDate } = useChartStore()
   const [open, setOpen] = useState(false);
 
@@ -33,19 +30,13 @@ export default function AdminDatetimeDropdown({
   useEffect(() => {
     // Only set dates if they don't exist in the store
     if (!startDate || !endDate) {
-      const initialFrom = date?.from ?? startOfYear(new Date());
-      const initialTo = date?.to ?? endOfMonth(new Date());
+      const initialFrom = startDate ?? startOfYear(new Date());
+      const initialTo = endDate ?? endOfMonth(new Date());
       setDates(initialFrom, initialTo);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount
 
-  // Sync local display state with store when store dates change
-  useEffect(() => {
-    if (startDate && endDate) {
-      setDate({ from: startDate, to: endDate });
-    }
-  }, [startDate, endDate]); // Re-sync whenever store dates change
 
   const getDefaultPreset = () => {
     const today = new Date();
@@ -92,14 +83,6 @@ export default function AdminDatetimeDropdown({
     return "thisMonth" as const;
   };
 
-  const handleDateChange = (newDate: DateRange | undefined) => {
-    setDate(newDate);
-
-    if (newDate?.from && newDate?.to) {
-      setDates(newDate.from, newDate.to);
-    }
-  };
-
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover open={open} onOpenChange={setOpen}>
@@ -121,14 +104,14 @@ export default function AdminDatetimeDropdown({
               <div className="flex flex-col items-start justify-center">
                 <span className="font-bold text-sm">Zeitraum</span>
                 <span className="text-xs uppercase text-black/50">
-                  {date?.from ? (
-                    date.to ? (
+                  {startDate ? (
+                    endDate ? (
                       <>
-                        {format(date.from, "LLL dd")} -{" "}
-                        {format(date.to, "LLL dd")}
+                        {format(startDate, "LLL dd")} -{" "}
+                        {format(endDate, "LLL dd")}
                       </>
                     ) : (
-                      format(date.from, "LLL dd")
+                      format(startDate, "LLL dd")
                     )
                   ) : (
                     <span>Pick a date</span>
@@ -154,9 +137,6 @@ export default function AdminDatetimeDropdown({
           sideOffset={8}
         >
           <TimeFilterPresets
-            date={date}
-            setDate={handleDateChange}
-            onCommitRange={(from, to) => setDates(from, to)}
             defaultPreset={getDefaultPreset()}
             onClose={() => setOpen(false)}
           />

@@ -11,6 +11,9 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json();
+    // console.log(body.meterIds)
+
+    // console.log(require('util').inspect(body.meterIds, { maxArrayLength: null }))
     const { meterIds: localMeterIds = [], startDate: startDateParam, endDate: endDateParam, deviceTypes: requestedDeviceTypes = [] } = body;
 
     // Validate parameters - Filter out undefined/null values
@@ -54,10 +57,10 @@ export async function POST(request: NextRequest) {
 
     // Use the database function for optimized data fetching
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
-      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : null,
+      p_local_meter_ids: validMeterIds.length > 0 ? validMeterIds : undefined,
       p_device_types: requestedDeviceTypes.length > 0 ? requestedDeviceTypes : null,
-      p_start_date: startDate ? startDate.toISOString().split('T')[0] : null,
-      p_end_date: endDate ? endDate.toISOString().split('T')[0] : null
+      p_start_date: startDate ? startDate.toISOString().split('T')[0] : undefined,
+      p_end_date: endDate ? endDate.toISOString().split('T')[0] : undefined
     });
 
     if (error) {

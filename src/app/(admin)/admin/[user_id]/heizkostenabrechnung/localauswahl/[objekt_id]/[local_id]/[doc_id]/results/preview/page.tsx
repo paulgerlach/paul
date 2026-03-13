@@ -5,12 +5,12 @@ import Breadcrumb from "@/components/Admin/Breadcrumb/Breadcrumb";
 import ContentWrapper from "@/components/Admin/ContentWrapper/ContentWrapper";
 import PdfViewer from "@/components/Admin/Docs/Render/PdfViewer";
 import { ROUTE_ADMIN, ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
-import { supabaseServer } from "@/utils/supabase/server";
+import { supabaseServiceRole } from "@/utils/supabase/serviceRole";
 
 export default async function ResultLocalPreview({
   params,
   searchParams,
-}: {
+}: Readonly<{
   params: Promise<{
     objekt_id: string;
     doc_id: string;
@@ -18,7 +18,7 @@ export default async function ResultLocalPreview({
     user_id: string;
   }>;
   searchParams: Promise<{ documentId?: string }>;
-}) {
+}>) {
   const { objekt_id, doc_id, local_id, user_id } = await params;
   const { documentId } = await searchParams;
 
@@ -27,10 +27,16 @@ export default async function ResultLocalPreview({
   if (documentId) {
     const doc = await getDocumentById(documentId);
     if (doc) {
-      const supabase = await supabaseServer();
-      const { data } = await supabase.storage
+      const supabase = supabaseServiceRole();
+      const { data, error } = await supabase.storage
         .from("documents")
         .createSignedUrl(doc.document_url, 3600);
+      if (error) {
+        console.error("[Preview] createSignedUrl failed:", error.message, {
+          documentId,
+          path: doc.document_url,
+        });
+      }
       pdfUrl = data?.signedUrl ?? null;
     }
   }

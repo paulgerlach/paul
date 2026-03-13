@@ -39,7 +39,6 @@ export type DialogStep = "upload" | "review";
 interface UseInvoicesBaseProps {
 	objektId: string;
 	docId: string;
-	pathSlug: string;
 	userDocCostCategories: DocCostCategoryType[];
 	relatedInvoices?: InvoiceDocumentType[];
 	userId?: string;
@@ -57,7 +56,6 @@ interface UseInvoicesBaseProps {
 export function useInvoicesBase({
 	objektId,
 	docId,
-	pathSlug,
 	userDocCostCategories,
 	relatedInvoices,
 	userId,
@@ -68,25 +66,47 @@ export function useInvoicesBase({
 	const router = useRouter();
 	const uploadDocuments = useUploadDocuments();
 
-	const { setDocumentGroups, documentGroups, updateDocumentGroup } =
-		useHeizkostenabrechnungStore();
+	const {
+		setDocumentGroups,
+		documentGroups,
+		updateDocumentGroup,
+		setOperatingDocID,
+		setObjektID,
+		operatingDocID,
+	} = useHeizkostenabrechnungStore();
 
 	const isEditMode = !!relatedInvoices;
 	const [entries, setEntries] = useState<FileEntry[]>([]);
 	const [step, setStep] = useState<DialogStep>("upload");
 
 	useEffect(() => {
-		const groups = userDocCostCategories.map((doc) => ({
-			...doc,
-			data: isEditMode
-				? (relatedInvoices?.filter(
-					(invoice) => invoice.cost_type === doc.type,
-				) ?? [])
-				: [],
-		}));
+		// Initialize if store is empty OR if we switched to a different document
+		if (documentGroups.length === 0 || operatingDocID !== docId) {
+			const groups = userDocCostCategories.map((doc) => ({
+				...doc,
+				data: isEditMode
+					? (relatedInvoices?.filter(
+						(invoice) => invoice.cost_type === doc.type,
+					) ?? [])
+					: [],
+			}));
 
-		setDocumentGroups(groups);
-	}, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode]);
+			setDocumentGroups(groups);
+			setOperatingDocID(docId);
+			setObjektID(objektId);
+		}
+	}, [
+		userDocCostCategories,
+		setDocumentGroups,
+		relatedInvoices,
+		isEditMode,
+		documentGroups.length,
+		docId,
+		objektId,
+		operatingDocID,
+		setOperatingDocID,
+		setObjektID,
+	]);
 
 	const allPurposeOptions = useMemo(
 		() => documentGroups.flatMap((g) => g.options ?? []),
@@ -104,11 +124,9 @@ export function useInvoicesBase({
 		},
 		onSuccess: (data) => {
 			const { results, filesToProcess } = data;
-			let hasValid = false;
 
-			// FIX: Use functional update to avoid stale closure drops
 			setEntries((currentEntries) => {
-				return currentEntries.map((entry) => {
+				const updated = currentEntries.map((entry) => {
 					const processed = filesToProcess.find((f) => f.id === entry.id);
 					if (!processed) return entry;
 
@@ -118,20 +136,20 @@ export function useInvoicesBase({
 					if (!invoice) {
 						return {
 							...entry,
-							status: "error",
+							status: "error" as const,
 							error: "Keine Rechnungsdaten erkannt.",
 						};
 					}
 
 					const mappedPurpose = mapCostCategoryToPurpose(
-						invoice.cost_category,
+						invoice.cost_category_option,
 						allPurposeOptions,
 					);
 
 					if (!mappedPurpose) {
 						return {
 							...entry,
-							status: "error",
+							status: "error" as const,
 							error: "Kostenart konnte nicht zugeordnet werden.",
 						};
 					}
@@ -143,7 +161,7 @@ export function useInvoicesBase({
 					if (!group?.type) {
 						return {
 							...entry,
-							status: "error",
+							status: "error" as const,
 							error: "Zugehörige Kategorie nicht gefunden.",
 						};
 					}
@@ -154,11 +172,9 @@ export function useInvoicesBase({
 						if (!isNaN(d.getTime())) invoiceDate = d;
 					}
 
-					hasValid = true;
-
 					return {
 						...entry,
-						status: "success",
+						status: "success" as const,
 						result: {
 							costType: group.type,
 							costTypeName: group.name ?? "Unbekannt",
@@ -172,10 +188,19 @@ export function useInvoicesBase({
 						},
 					};
 				});
-			});
 
-			if (hasValid) setStep("review");
-			else toast.error("Keine gültigen Rechnungen erkannt.");
+				const hasValid = updated.some(
+					(e) => filesToProcess.some((p) => p.id === e.id) && e.status === "success"
+				);
+
+				if (hasValid) {
+					setStep("review");
+				} else {
+					toast.error("Keine gültigen Rechnungen erkannt.");
+				}
+
+				return updated;
+			});
 		},
 	});
 
@@ -204,7 +229,7 @@ export function useInvoicesBase({
 				};
 
 				try {
-					await saveInvoiceAction(
+					const savedInvoice = await saveInvoiceAction(
 						payload,
 						objektId,
 						docId,
@@ -213,11 +238,8 @@ export function useInvoicesBase({
 					);
 
 					updateDocumentGroup(result.costType, {
-						...payload,
-						invoice_date: result.invoiceDate
-							? result.invoiceDate.toISOString()
-							: null,
-						total_amount: result.amount != null ? String(result.amount) : null,
+						...savedInvoice,
+						document: [file],
 					});
 
 					await uploadDocuments.mutateAsync({
@@ -233,7 +255,6 @@ export function useInvoicesBase({
 						),
 					);
 				} catch (err: any) {
-					console.error(`Failed to save ${file.name}:`, err);
 					errors.push(
 						`${file.name}: ${err.message || "Speichern fehlgeschlagen"}`,
 					);
@@ -262,7 +283,10 @@ export function useInvoicesBase({
 		},
 		onSuccess: () => {
 			toast.success("Alle Rechnungen erfolgreich gespeichert.");
-			router.push(nextLink);
+			// Small delay to ensure the user can see the success toast and logs
+			setTimeout(() => {
+				router.push(nextLink);
+			}, 500);
 		},
 		onError: (error: any) => {
 			toast.error(error.message || "Fehler beim Speichern der Rechnungen.");
@@ -293,31 +317,45 @@ export function useInvoicesBase({
 		});
 	}, []);
 
-	const startAnalysis = () => {
-		const pending = entries.filter(
-			(e) => e.status === "pending" || e.status === "error",
-		);
-		if (!pending.length) return;
+	const submitMutation = useMutation({
+		mutationFn: async () => {
+			if (step === "upload") {
+				const toAnalyze = entries.filter(
+					(e) => e.status === "pending" || e.status === "error",
+				);
+				if (toAnalyze.length > 0) {
+					setEntries((prev) =>
+						prev.map((e) =>
+							toAnalyze.some((p) => p.id === e.id)
+								? { ...e, status: "analyzing" }
+								: e,
+						),
+					);
+					await parseMutation.mutateAsync(toAnalyze);
+				} else {
+					router.push(nextLink);
+				}
+				return;
+			}
 
-		setEntries((prev) =>
-			prev.map((e) =>
-				pending.some((p) => p.id === e.id) ? { ...e, status: "analyzing" } : e,
-			),
-		);
+			if (step === "review") {
+				const toSave = entries.filter((e) => e.status === "success");
+				if (toSave.length > 0) {
+					await saveMutation.mutateAsync();
+				} else {
+					router.push(nextLink);
+				}
+			}
+		},
+	});
 
-		parseMutation.mutate(pending);
+	const handleSubmit = () => {
+		submitMutation.mutate();
 	};
 
-	const handleSubmit = async () => {
-		if (step === "upload") {
-			startAnalysis();
-			return;
-		}
-
-		if (step === "review") {
-			await saveMutation.mutateAsync();
-		}
-	};
+	const isSubmitDisabled =
+		(entries.length === 0 && !isEditMode) ||
+		(entries.length > 0 && entries.every((e) => e.status === "error"));
 
 	return {
 		entries,
@@ -329,6 +367,8 @@ export function useInvoicesBase({
 		handleSubmit,
 		parseMutation,
 		saveMutation,
+		submitMutation,
 		nextLink,
+		isSubmitDisabled,
 	};
 }

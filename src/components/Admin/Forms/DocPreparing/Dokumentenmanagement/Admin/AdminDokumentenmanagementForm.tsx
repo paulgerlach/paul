@@ -38,8 +38,8 @@ export default function AdminDokumentenmanagementForm({
 		onDrop,
 		onDropRejected,
 		handleSubmit,
-		parseMutation,
-		saveMutation,
+		submitMutation,
+		isSubmitDisabled,
 	} = useAdminDokumentenManagement({
 		objektId,
 		docId,
@@ -67,16 +67,15 @@ export default function AdminDokumentenmanagementForm({
 						className="flex-1 flex flex-col"
 						onSubmit={methods.handleSubmit(handleSubmit)}
 					>
-						{step === "upload" && (
-							<UploadDropzone onDrop={onDrop} onDropRejected={onDropRejected} />
-						)}
+						<UploadDropzone onDrop={onDrop} onDropRejected={onDropRejected} />
 
 						<FileList entries={entries} />
 
 						<FormFooter
 							backLink={backLink}
 							step={step}
-							isPending={parseMutation.isPending || saveMutation.isPending}
+							isPending={submitMutation.isPending}
+							disabled={isSubmitDisabled}
 						/>
 					</form>
 				</Form>

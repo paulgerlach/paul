@@ -24,10 +24,10 @@ const items = [
 
 export function UploadInfoItems() {
     return (
-        <div className="grid grid-cols-3 max-megalarge:grid-cols-2 max-small:grid-cols-1 max-small:gap-4 max-medium:gap-8 gap-16">
+        <div className="grid grid-cols-3 max-megalarge:grid-cols-2 max-small:grid-cols-1 max-small:gap-4 max-medium:gap-8 gap-12">
             {items.map((item) => (
                 <div key={item.id} className="flex gap-3">
-                    <span className="min-w-[55px] min-h-[60px] rounded-[5px] bg-[#E7E8EA] flex items-center justify-center">
+                    <span className="min-w-[48px] min-h-[48px] rounded-[5px] bg-[#E7E8EA] flex items-center justify-center">
                         <Image
                             src={item.icon}
                             alt={item.name}

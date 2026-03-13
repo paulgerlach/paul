@@ -7,9 +7,10 @@ interface FormFooterProps {
     backLink: string;
     step: "upload" | "review";
     isPending: boolean;
+    disabled?: boolean;
 }
 
-export function FormFooter({ backLink, step, isPending }: FormFooterProps) {
+export function FormFooter({ backLink, step, isPending, disabled }: FormFooterProps) {
     return (
         <div className="flex justify-between mt-6">
             <Link
@@ -22,7 +23,7 @@ export function FormFooter({ backLink, step, isPending }: FormFooterProps) {
             <Button
                 className="bg-ai-blue text-white"
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || disabled}
             >
                 {step === "upload"
                     ? "Rechnungen analysieren"

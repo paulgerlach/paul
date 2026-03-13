@@ -34,7 +34,6 @@ export function useAdminDokumentenManagementLocal({
     return useInvoicesBase({
         objektId,
         docId,
-        pathSlug,
         userDocCostCategories,
         relatedInvoices,
         userId,

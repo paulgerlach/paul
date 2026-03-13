@@ -24,12 +24,18 @@ export default function AdminGesamtkostenHeatObjektauswahlForm({
   userDocCostCategories: DocCostCategoryType[];
   relatedInvoices?: InvoiceDocumentType[];
 }) {
-  const { setDocumentGroups, documentGroups } = useHeizkostenabrechnungStore();
+  const {
+    setDocumentGroups,
+    documentGroups,
+    setOperatingDocID,
+    setObjektID,
+    operatingDocID,
+  } = useHeizkostenabrechnungStore();
   const isEditMode = !!relatedInvoices;
 
   useEffect(() => {
-    // Only initialize if the documentGroups are currently empty
-    if (documentGroups.length === 0) {
+    // Initialize if store is empty OR if we switched to a different document
+    if (documentGroups.length === 0 || operatingDocID !== docId) {
       const groups = userDocCostCategories.map((doc) => ({
         ...doc,
         data: isEditMode
@@ -37,8 +43,21 @@ export default function AdminGesamtkostenHeatObjektauswahlForm({
           : [],
       }));
       setDocumentGroups(groups);
+      setOperatingDocID(docId);
+      setObjektID(objektId);
     }
-  }, [userDocCostCategories, setDocumentGroups, relatedInvoices, isEditMode, documentGroups.length]);
+  }, [
+    userDocCostCategories,
+    setDocumentGroups,
+    relatedInvoices,
+    isEditMode,
+    documentGroups.length,
+    docId,
+    objektId,
+    operatingDocID,
+    setOperatingDocID,
+    setObjektID,
+  ]);
 
   const totalAmount = documentGroups.reduce((acc, group) => {
     const groupTotal =

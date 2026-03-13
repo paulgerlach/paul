@@ -32,7 +32,6 @@ export function useDokumentenManagementLocal({
     return useInvoicesBase({
         objektId,
         docId,
-        pathSlug,
         userDocCostCategories,
         relatedInvoices,
         saveInvoiceAction: (payload, objId, opDocId, costType) =>

@@ -64,6 +64,11 @@ const fetchAllChartData = async (
     throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 
+  function toLocalISOString(date: Date): string {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString();
+  }
+
   //I was forced to do this as they have tied the view logic to the domain(business) logic in multiple places. 
   // This was too brittle to change in the database so it requires 2 DB calls. DO NOT DELETE
   // - Thulo
@@ -75,8 +80,8 @@ const fetchAllChartData = async (
     body: JSON.stringify({
       meterIds,
       deviceTypes: ['HCA'],
-      startDate: startDate?.toISOString() || null,
-      endDate: endDate?.toISOString() || null,
+      startDate: startDate ? toLocalISOString(startDate) : null,
+      endDate: endDate ? toLocalISOString(endDate) : null,
     }),
   });
 

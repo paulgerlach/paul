@@ -79,7 +79,7 @@ export function TenantSelector({
     }
     return "Bitte auswählen...";
   };
-
+  
   return (
     <div className="space-y-1.5">
       <label className="text-[#757575] text-sm block">
@@ -105,7 +105,7 @@ export function TenantSelector({
                 Keine Mieter für dieses Gebäude gefunden.
               </div>
             ) : (
-              tenants.map((tenant) => (
+                tenants.toReversed().map((tenant) => (
                 <ListboxOption
                   key={tenant.contractor_id}
                   value={tenant.contractor_id}

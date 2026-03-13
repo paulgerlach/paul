@@ -75,13 +75,9 @@ export default function ShareDashboardDialog() {
         endDate: safeEnd?.toISOString(),      // Full UTC timestamp e.g., "2025-09-30T21:59:59.999Z"
       };
 
-      console.log('Filters being sent:', filters);
-
       // Generate secure shareable URL (30 days expiry)
       const url = createShareableUrl(filters, 720); // 30 days
       const fullUrl = `${window.location.origin}${url}`;
-
-      console.log('Generated URL:', fullUrl);
 
       setShareUrl(fullUrl);
 

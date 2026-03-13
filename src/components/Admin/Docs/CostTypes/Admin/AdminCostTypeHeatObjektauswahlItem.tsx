@@ -6,8 +6,11 @@ import {
   useHeizkostenabrechnungStore,
 } from "@/store/useHeizkostenabrechnungStore";
 import { getCostTypeIconByKey, slideDown, slideUp } from "@/utils";
+import { Download } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useAuthUser } from "@/apiClient";
 
 export type CostTypeItemProps = {
   isOpen: boolean;
@@ -27,6 +30,9 @@ export default function AdminCostTypeHeatObjektauswahlItem({
   docId,
 }: CostTypeItemProps) {
   const contentRef = useRef(null);
+  const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<
+    string | null
+  >(null);
   const { openDialog } = useDialogStore();
   const {
     setActiveCostType,
@@ -34,6 +40,8 @@ export default function AdminCostTypeHeatObjektauswahlItem({
     setPurposeOptions,
     setOperatingDocID,
   } = useHeizkostenabrechnungStore();
+  const { data: user } = useAuthUser();
+  const isSuperAdmin = user?.permission === "super_admin";
 
   useEffect(() => {
     if (isOpen) {
@@ -55,6 +63,42 @@ export default function AdminCostTypeHeatObjektauswahlItem({
     (acc, item) => acc + Number(item.total_amount ?? 0),
     0
   );
+
+  const handleDownloadDocument = async ({
+    invoiceId,
+    documentName,
+  }: {
+    invoiceId: string;
+    documentName: string;
+  }) => {
+    try {
+      setDownloadingInvoiceId(invoiceId);
+      const query = new URLSearchParams({
+        relatedId: docId,
+        invoiceId,
+        documentName,
+      }).toString();
+
+      const response = await fetch(
+        `/api/heating-bill/invoice-document-url?${query}`
+      );
+      const data = await response.json();
+
+      if (!response.ok || !data?.presignedUrl) {
+        throw new Error(data?.error || "Download fehlgeschlagen");
+      }
+
+      window.open(data.presignedUrl, "_blank");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Fehler beim Herunterladen des Dokuments"
+      );
+    } finally {
+      setDownloadingInvoiceId(null);
+    }
+  };
 
   return (
     <div className={`bg-[#F5F5F5] rounded-md ${isOpen ? `active` : ""}`}>
@@ -105,6 +149,10 @@ export default function AdminCostTypeHeatObjektauswahlItem({
       >
         {type.data.map((item, i) => {
           if (item.document?.length === 1 || item.document_name) {
+            const documentName = item.document_name ?? item.document?.[0]?.name;
+            const invoiceId = item.id ?? `${i}`;
+            const isDownloading = downloadingInvoiceId === invoiceId;
+
             return (
               <ul key={i} className="mt-4 mb-9 max-xl:mt-2 max-xl:mb-5">
                 <li className="flex justify-between items-center pl-12 max-xl:pl-6">
@@ -118,14 +166,31 @@ export default function AdminCostTypeHeatObjektauswahlItem({
                       src={pdf_icon}
                       alt="pdf_icon"
                     />
-                    {item.document_name ?? item.document?.[0]?.name}
+                    {documentName}
                   </span>
-                  <TheeDotsCostTypeButton
-                    editDialogAction="admin_invoice_edit"
-                    itemID={item.id ?? ""}
-                    userID={type.user_id}
-                    deleteDialogAction="admin_invoice_delete"
-                  />
+                  <div className="flex items-center gap-2">
+                    {isSuperAdmin && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          documentName
+                            ? handleDownloadDocument({ invoiceId, documentName })
+                            : undefined
+                        }
+                        disabled={!documentName || isDownloading}
+                        title="Dokument herunterladen"
+                        className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    )}
+                    <TheeDotsCostTypeButton
+                      editDialogAction="admin_invoice_edit"
+                      itemID={item.id ?? ""}
+                      userID={type.user_id}
+                      deleteDialogAction="admin_invoice_delete"
+                    />
+                  </div>
                 </li>
               </ul>
             );

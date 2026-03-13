@@ -150,8 +150,12 @@ export async function POST(request: Request) {
 
     // Step 8: Trigger email via Make.com webhook
     const tenantName = `${(contractor as any).first_name || ""} ${(contractor as any).last_name || ""}`.trim() || "Mieter";
-    await sendTenantInviteEmail(email, tenantName, setupUrl);
+    const success = await sendTenantInviteEmail(email, tenantName, setupUrl);
     console.log("[tenant/invite] Sent invite email to:", email);
+
+    if (!success) {
+      throw "Could not invite user, failed to send email due to mailer error"
+    }
 
     // Return success
     return NextResponse.json({

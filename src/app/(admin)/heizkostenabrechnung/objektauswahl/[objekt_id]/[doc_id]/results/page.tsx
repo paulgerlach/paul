@@ -10,6 +10,11 @@ import SearchControls from "@/components/Admin/SearchControls";
 import { buildLocalName } from "@/utils";
 import { ROUTE_HEIZKOSTENABRECHNUNG } from "@/routes/routes";
 import type { UnitType } from "@/types";
+import HeatingBillPDFPendingModal from "@/components/Admin/Docs/HeatingBillPDFPendingModal/HeatingBillPDFPendingModal";
+import { supabaseServer } from "@/utils/supabase/server";
+import database from "@/db";
+import { users, heating_bill_documents } from "@/db/drizzle/schema";
+import { eq } from "drizzle-orm";
 
 const ALLOWED_HEATING_BILL_USAGE_TYPES = new Set<UnitType>([
   "residential",
@@ -25,6 +30,32 @@ export default async function ResultLocalPDF({
 }) {
   const { objekt_id, doc_id } = await params;
   const { search = "", sort = "asc" } = await searchParams;
+
+  const supabase = await supabaseServer();
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  let isSuperAdmin = false;
+  if (currentUser) {
+    const [userData] = await database
+      .select({ permission: users.permission })
+      .from(users)
+      .where(eq(users.id, currentUser.id));
+    isSuperAdmin = userData?.permission === "super_admin";
+  }
+
+  const [hbDoc] = await database
+    .select({ created_at: heating_bill_documents.created_at })
+    .from(heating_bill_documents)
+    .where(eq(heating_bill_documents.id, doc_id));
+  const isPdfPending = !isSuperAdmin && !!hbDoc?.created_at &&
+    new Date(hbDoc.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  let pendingTooltip = "";
+  if (isPdfPending && hbDoc?.created_at) {
+    const remainingMs = new Date(hbDoc.created_at).getTime() + 24 * 60 * 60 * 1000 - Date.now();
+    if (remainingMs > 0) {
+      pendingTooltip = "Heizkostenabrechnung wird hergestellt. Dies dauert in der Regel 24h. Wir benachrichtigen Sie per Email.";
+    }
+  }
 
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>
     ALLOWED_HEATING_BILL_USAGE_TYPES.has(local.usage_type as UnitType)
@@ -67,7 +98,7 @@ export default async function ResultLocalPDF({
   // Resolve tenant names for each document
   const tenantDocsByLocalId: Record<
     string,
-    { id: string; document_name: string; document_url: string; tenantName: string; current_document: boolean }[]
+    { id: string; document_name: string; document_url: string; tenantName: string; current_document: boolean; created_at: string }[]
   > = {};
   for (const [localId, docs] of Object.entries(documentsByLocalId)) {
     const validDocs = docs.filter(doc => doc.current_document !== false);
@@ -112,6 +143,7 @@ export default async function ResultLocalPDF({
 
   return (
     <div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
+      <HeatingBillPDFPendingModal isOpen={isPdfPending} />
       <Breadcrumb
         backTitle="Objekte"
         link={ROUTE_HEIZKOSTENABRECHNUNG}
@@ -143,7 +175,9 @@ export default async function ResultLocalPDF({
                   docType="objektauswahl"
                   docID={doc_id}
                   status={status}
-                  tenantDocuments={tenantDocsByLocalId[local.id ?? ""] ?? []}
+                  tenantDocuments={isPdfPending ? [] : (tenantDocsByLocalId[local.id ?? ""] ?? [])}
+                  isPending={isPdfPending}
+                  pendingTooltip={pendingTooltip}
                 />
               ))
             )}

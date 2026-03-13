@@ -20,18 +20,21 @@ export default function SaveCostButton({
   operatingDocId,
   objektId,
   localId,
+  isEditMode = false,
 }: {
   initialDocumentGroups: DocCostCategoryType[];
   documentType: "heizkostenabrechnung" | "betriebskostenabrechnung";
   operatingDocId: string;
   objektId: string;
   localId?: string;
+  isEditMode?: boolean;
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { documentGroups: betriebskostenGroups } =
     useBetriebskostenabrechnungStore();
-  const { documentGroups: heizkostenGroups } = useHeizkostenabrechnungStore();
+  const { documentGroups: heizkostenGroups, hasChanges } =
+    useHeizkostenabrechnungStore();
 
   const documentGroups =
     documentType === "betriebskostenabrechnung"
@@ -54,6 +57,26 @@ export default function SaveCostButton({
     }
   };
 
+  const runSingleGeneration = async (
+    objektId: string,
+    localId: string,
+    docId: string
+  ) => {
+    const res = await fetch("/api/heating-bill/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ objektId, localId, docId }),
+    });
+    if (!res.ok) {
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        details?: string;
+      };
+      const message = payload.error ?? payload.details ?? "Single generation failed";
+      throw new Error(message);
+    }
+  };
+
   const handleSave = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -64,6 +87,25 @@ export default function SaveCostButton({
         );
         return initial && initial.allocation_key !== current.allocation_key;
       });
+
+      let redirectUrl = "";
+      if (documentType === "betriebskostenabrechnung") {
+        redirectUrl = `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      } else if (localId) {
+        redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
+      } else {
+        redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
+      }
+
+      const anythingChanged = hasChanges || changedItems.length > 0;
+      if (
+        documentType === "heizkostenabrechnung" &&
+        isEditMode &&
+        !anythingChanged
+      ) {
+        router.push(redirectUrl);
+        return;
+      }
 
       await Promise.all(
         changedItems
@@ -84,16 +126,13 @@ export default function SaveCostButton({
           )
       );
 
-      let redirectUrl = "";
       if (documentType === "betriebskostenabrechnung") {
         await submitBuildingDocument(operatingDocId);
-        redirectUrl = `${ROUTE_BETRIEBSKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
       } else {
         await submitHeatLocalDocument(operatingDocId);
         if (localId) {
-          redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${operatingDocId}/results`;
+          await runSingleGeneration(objektId, localId, operatingDocId);
         } else {
-          redirectUrl = `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objektId}/${operatingDocId}/results`;
           await runBatchGeneration(objektId, operatingDocId);
         }
       }
@@ -107,7 +146,11 @@ export default function SaveCostButton({
   };
 
   return (
-    <Button onClick={handleSave} disabled={isSubmitting}>
+    <Button
+      onClick={handleSave}
+      disabled={isSubmitting}
+      className="h-auto py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:px-3 max-medium:py-2 max-medium:text-sm rounded-lg font-medium"
+    >
       {isSubmitting ? "Wird generiert..." : "Weiter"}
     </Button>
   );

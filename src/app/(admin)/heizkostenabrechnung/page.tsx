@@ -78,7 +78,7 @@ export default function HeizkostenabrechnungPage() {
             height={0}
             sizes="100vw"
             loading="lazy"
-            className="w-full max-h-[624px] max-xl:max-h-[444px] max-medium:max-h-[300px]"
+            className="h-10/12 w-auto"
             src={heating_bill_preview}
             alt="heating_bill_preview"
           />

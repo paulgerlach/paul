@@ -50,9 +50,13 @@ export default function AdminHeatingBillDeleteDialog() {
         <p>Sind Sie sicher, dass Sie dieses Element löschen möchten?</p>
         <div className="grid grid-cols-2 gap-4">
           <button
-            className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm cursor-pointer rounded-md bg-red-500 text-white font-medium border-none shadow-xs transition-all duration-300 hover:opacity-80"
+            className="px-6 py-4 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm cursor-pointer rounded-md bg-red-500 text-white font-medium border-none shadow-xs transition-all duration-300 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             onClick={() => handleDelete()}
+            disabled={deleteMutation.isPending}
           >
+            {deleteMutation.isPending && (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            )}
             Löschen
           </button>
           <button

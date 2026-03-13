@@ -37,7 +37,7 @@ const HCA_DEVICE_TYPES = [
 ];
 const WARM_WATER_DEVICE_TYPES = ["WWater", "Warmwasserzähler"];
 const COLD_WATER_DEVICE_TYPES = ["Water", "Kaltwasserzähler"];
-const LOGIN_ENTRY_URL = "https://heidisystems.com/";
+const LOGIN_ENTRY_URL = "https://heidisystems.com/?tenant-login=true";
 
 function round2(v: number): number {
   return Math.round(v * 100) / 100;
@@ -218,6 +218,7 @@ export function computeHeatingBill(
 
   // Unit breakdown: filter device rows by local and compute unit costs
   const deviceIdToLocalId = new Map<string, string>();
+  const deviceIdToMeterNote = new Map<string, string>();
   for (const lm of raw.localMeters ?? []) {
     if (lm.meter_number && lm.local_id) {
       const normalizedMeterId = normalizeDeviceId(lm.meter_number);
@@ -225,14 +226,23 @@ export function computeHeatingBill(
         deviceIdToLocalId.set(normalizedMeterId, lm.local_id);
       }
     }
+    if (lm.meter_number && lm.meter_note) {
+      const normalizedMeterId = normalizeDeviceId(lm.meter_number);
+      if (normalizedMeterId) {
+        deviceIdToMeterNote.set(normalizedMeterId, lm.meter_note);
+      }
+    }
   }
 
+  const withMeterNote = <T extends { deviceNumber: string; location: string }>(r: T): T => {
+    const note = deviceIdToMeterNote.get(normalizeDeviceId(r.deviceNumber));
+    return note ? { ...r, location: note } : r;
+  };
 
   const targetLocal = targetLocalId
     ? raw.locals.find((l) => l.id === targetLocalId)
     : raw.locals[0];
   const localLivingSpaceM2 = targetLocal ? Number(targetLocal.living_space ?? 0) : 0;
-  const localLabel = targetLocal?.house_location ?? targetLocal?.floor ?? "Wohnung";
 
   const belongsToLocal = (deviceNumber: string) => {
     if (!targetLocalId) return true;
@@ -261,17 +271,17 @@ export function computeHeatingBill(
   const heatingDevicesForLocal = [
     ...unitReadingsResult.deviceRows.heat.filter((r) =>
       belongsToLocal(r.deviceNumber)
-    ),
+    ).map(withMeterNote),
     ...unitReadingsResult.deviceRows.hca.filter((r) =>
       belongsToLocal(r.deviceNumber)
-    ),
+    ).map(withMeterNote),
   ];
   const warmWaterDevicesForLocal = unitReadingsResult.deviceRows.warmWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
-  );
+  ).map(withMeterNote);
   const coldWaterDevicesForLocal = unitReadingsResult.deviceRows.coldWater.filter((r) =>
     belongsToLocal(r.deviceNumber)
-  );
+  ).map(withMeterNote);
   // Diagnostic logging: always log device pipeline counts for troubleshooting
   const allDeviceRowCount =
     unitReadingsResult.deviceRows.heat.length +
@@ -352,7 +362,7 @@ export function computeHeatingBill(
   model.unitBreakdown = computeUnitBreakdown({
     localId: targetLocalId ?? "",
     livingSpaceM2: localLivingSpaceM2 || 0,
-    localLabel: localLabel || undefined,
+    totalLivingSpaceM2: totalLivingSpace || 0,
     heating,
     warmWater,
     coldWaterRateItems: coldWater.rateItems,
@@ -388,7 +398,7 @@ export function computeHeatingBill(
     costAgg.energyInvoices.filter((i) => i.kWh > 0).length > 0
       ? costAgg.energyInvoices
         .filter((i) => i.kWh > 0)
-        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh }))
+        .map((i) => ({ label: i.label, date: i.date, kWh: i.kWh, co2PricePerTonne: i.co2PricePerTonne }))
       : [
         {
           label: "Energieverbrauch (Zähler)",

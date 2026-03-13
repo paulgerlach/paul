@@ -14,6 +14,8 @@ export type ObjekteLocalItemHeatingBillDocResultProps = {
   docID?: string;
   docType: "localauswahl" | "objektauswahl";
   tenantDocuments?: TenantDocument[];
+  isPending?: boolean;
+  pendingTooltip?: string;
 };
 
 export default async function ObjekteLocalItemHeatingBillDocResult({
@@ -22,7 +24,9 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
   docID,
   docType,
   tenantDocuments = [],
-}: ObjekteLocalItemHeatingBillDocResultProps) {
+  isPending = false,
+  pendingTooltip,
+}: Readonly<ObjekteLocalItemHeatingBillDocResultProps>) {
   const contracts = await getContractsWithContractorsByLocalID(item.id);
 
   const status = contracts?.some((contract) => contract.is_current)
@@ -101,8 +105,15 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
           </div>
         </div>
         <div className="flex items-center gap-4">
+          {/* Pending placeholder actions */}
+          {isPending && (
+            <TenantDocumentActions
+              isPending
+              pendingTooltip={pendingTooltip}
+            />
+          )}
           {/* Inline action buttons when single document */}
-          {singleDoc && (
+          {!isPending && singleDoc && (
             <TenantDocumentActions
               documentId={singleDoc.id}
               previewHref={`${previewBaseHref}?documentId=${singleDoc.id}`}
@@ -111,6 +122,7 @@ export default async function ObjekteLocalItemHeatingBillDocResult({
           <ThreeDotsButton
             dialogAction="heating_bill_delete"
             editLink={editLink}
+            itemID={docID}
           />
         </div>
       </div>

@@ -26,7 +26,6 @@ interface TeamRolesFormProps {
 }
 
 const defaultRoles: Role[] = [
-  { value: 'super_admin', label: 'Super-Admin' },
   { value: 'admin', label: 'Admin' },
   { value: 'user', label: 'Standardbenutzer' },
 ];

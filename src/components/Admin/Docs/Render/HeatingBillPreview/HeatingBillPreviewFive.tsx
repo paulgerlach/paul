@@ -217,56 +217,48 @@ const HeatingBillPreviewFive = ({
             ].map((item, index) => (
               <tr key={index}>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight
+                  className={`py-1 px-2 ${item.highlight
                       ? "bg-pdf-accent2 text-white rounded-l-base"
                       : ""
-                  }`}
+                    }`}
                 >
                   {item.bis}
                 </td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 >
                   {item.range}
                 </td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 >
                   {item.co}
                 </td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 ></td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight ? "bg-pdf-accent2 text-white" : ""
-                  }`}
+                  className={`py-1 px-2 ${item.highlight ? "bg-pdf-accent2 text-white" : ""
+                    }`}
                 >
                   {item.mieter}
                 </td>
                 <td
-                  className={`py-1 px-2 ${
-                    item.highlight
+                  className={`py-1 px-2 ${item.highlight
                       ? "bg-pdf-accent2 text-white rounded-r-base"
                       : ""
-                  }`}
+                    }`}
                 >
                   {item.vermieter}
                 </td>

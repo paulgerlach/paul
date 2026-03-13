@@ -24,10 +24,10 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     usagePeriodEnd: "31.12.2023",
     totalAmount: 1429.55,
     totalAmountFormatted: "1.429,55 €",
-    portalLink: "https://heidisystems.com/",
+    portalLink: "https://heidisystems.com/?tenant-login=true",
     userId: "1901913711",
     securityCode: "QNQH27LF1j",
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/?tenant-login=true",
   },
 
   buildingCalc: {
@@ -354,19 +354,19 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     emissionPerM2Formatted: "14,28",
 
     classificationTable: [
-      { rangeLabel: "< 12 kg/m²/a", tenantPercent: 100, landlordPercent: 0, isHighlighted: false },
-      { rangeLabel: "12 bis < 17", tenantPercent: 90, landlordPercent: 10, isHighlighted: false },
-      { rangeLabel: "17 bis < 22", tenantPercent: 80, landlordPercent: 20, isHighlighted: true },
-      { rangeLabel: "22 bis < 27", tenantPercent: 70, landlordPercent: 30, isHighlighted: false },
-      { rangeLabel: "27 bis < 32", tenantPercent: 60, landlordPercent: 40, isHighlighted: false },
-      { rangeLabel: "32 bis < 37", tenantPercent: 50, landlordPercent: 50, isHighlighted: false },
-      { rangeLabel: "37 bis < 42", tenantPercent: 40, landlordPercent: 60, isHighlighted: false },
-      { rangeLabel: "42 bis < 47", tenantPercent: 30, landlordPercent: 70, isHighlighted: false },
-      { rangeLabel: "47 bis < 52", tenantPercent: 20, landlordPercent: 80, isHighlighted: false },
-      { rangeLabel: "≥ 52", tenantPercent: 5, landlordPercent: 95, isHighlighted: false },
+      { rangeLabel: "< 12 kg CO₂/m²/a", tenantPercent: 100, landlordPercent: 0, isHighlighted: false },
+      { rangeLabel: "12 bis < 17 kg CO₂/m²/a", tenantPercent: 90, landlordPercent: 10, isHighlighted: true },
+      { rangeLabel: "17 bis < 22 kg CO₂/m²/a", tenantPercent: 80, landlordPercent: 20, isHighlighted: false },
+      { rangeLabel: "22 bis < 27 kg CO₂/m²/a", tenantPercent: 70, landlordPercent: 30, isHighlighted: false },
+      { rangeLabel: "27 bis < 32 kg CO₂/m²/a", tenantPercent: 60, landlordPercent: 40, isHighlighted: false },
+      { rangeLabel: "32 bis < 37 kg CO₂/m²/a", tenantPercent: 50, landlordPercent: 50, isHighlighted: false },
+      { rangeLabel: "37 bis < 42 kg CO₂/m²/a", tenantPercent: 40, landlordPercent: 60, isHighlighted: false },
+      { rangeLabel: "42 bis < 47 kg CO₂/m²/a", tenantPercent: 30, landlordPercent: 70, isHighlighted: false },
+      { rangeLabel: "47 bis < 52 kg CO₂/m²/a", tenantPercent: 20, landlordPercent: 80, isHighlighted: false },
+      { rangeLabel: "≥ 52 kg CO₂/m²/a", tenantPercent: 5, landlordPercent: 95, isHighlighted: false },
     ],
-    selectedTierTenantPercent: 80,
-    selectedTierLandlordPercent: 20,
+    selectedTierTenantPercent: 90,
+    selectedTierLandlordPercent: 10,
 
     buildingTenantCost: 0,
     buildingTenantCostFormatted: "0,00 €",
@@ -381,7 +381,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     unitTotalCost: 0,
     unitTotalCostFormatted: "0,00 €",
 
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/?tenant-login=true",
     infoLink: "https://heidi.systems/co2",
   },
 
@@ -422,7 +422,7 @@ export const mockHeatingBillModel: HeatingBillPdfModel = {
     comparisonWarmWaterNationalKwh: 1728.53,
     comparisonWarmWaterNationalKwhFormatted: "1.729",
 
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/",
+    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://heidisystems.com/?tenant-login=true",
     infoLink: "https://heidi.systems/energy",
     energyAgencyLink: "https://www.deutschland-machts-effizient.de",
   },

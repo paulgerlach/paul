@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useChartStore } from '@/store/useChartStore';
 import EinsparungChart from "@/components/Basic/Charts/EinsparungChart";
 import ElectricityChart from "@/components/Basic/Charts/ElectricityChart";
@@ -11,45 +11,80 @@ import WaterChart from "@/components/Basic/Charts/WaterChart";
 interface SharedDashboardWrapperProps {
   filteredData: any[];
   filters: {
-    startDate?: string;
-    endDate?: string; 
+    startDate: string|undefined,
+    endDate: string|undefined,
     meterIds?: string[];
   };
 }
 
 export default function SharedDashboardWrapper({ filteredData, filters }: SharedDashboardWrapperProps) {
-  const { setDates, setMeterIds } = useChartStore();
-  
-  useEffect(() => {
-    if (filters.startDate && filters.endDate) {
-      setDates(new Date(filters.startDate), new Date(filters.endDate));
-    }
-    
-    // For shared dashboard, we need to set the device serial numbers (not UUIDs)
-    // because NotificationsChart filters by device.ID which is the serial number
-    if (filteredData && filteredData.length > 0) {
-      const deviceIds = [...new Set(
-        filteredData
-          .map(item => item.ID?.toString())
-          .filter((id): id is string => !!id)
-      )];
-      setMeterIds(deviceIds);
-    } else if (filters.meterIds) {
-      setMeterIds(filters.meterIds);
-    }
-  }, [filters, filteredData, setDates, setMeterIds]);
+  // const { setDates, setMeterIds} = useChartStore();
+  const { setDates, setMeterIds, meterIds } = useChartStore();
+ 
+// console.log("MI=>", filters.meterIds)
+
+  // Parse URL dates once (now handles full ISO timestamps like "2025-08-31T22:00:00.000Z")
+  const urlStartDate = useMemo(() => filters.startDate ? new Date(filters.startDate) : null, [filters.startDate])
+  const urlEndDate = useMemo(() => filters.endDate ? new Date(filters.endDate) : null, [filters.endDate])
+ //
+ //  // // Check if store dates match URL dates (comparing ISO strings for exact match)
+  // const datesMatch = startDate?.toISOString() === urlStartDate?.toISOString() &&
+  //                   endDate?.toISOString() === urlEndDate?.toISOString();
+  const prevDeviceIdsRef = useRef<string>('');
+
+useEffect(() => {
+  if (urlStartDate && urlEndDate) {
+    setDates(new Date(urlStartDate), new Date(urlEndDate));
+  }
+
+  const deviceIds = filteredData?.length > 0
+    ? [...new Set(filteredData.map(item => item.ID?.toString()).filter((id): id is string => !!id))]
+    : (filters.meterIds ?? []);
+
+  const deviceIdsKey = deviceIds.sort().join(',');
+  if (deviceIdsKey !== prevDeviceIdsRef.current) {
+    prevDeviceIdsRef.current = deviceIdsKey;
+    setMeterIds(deviceIds);
+  }
+}, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate]);
+
+
+  // useEffect(() => {
+  //   if (urlStartDate && urlEndDate) {
+  //     setDates(new Date(urlStartDate), new Date(urlEndDate));    
+  //   }
+  //   // if (filters.startDate && filters.endDate) {
+  //   //   setDates(new Date(filters.startDate), new Date(filters.endDate));    
+  //   // }
+  //   // For shared dashboard, we need to set the device serial numbers (not UUIDs)
+  //   // because NotificationsChart filters by device.ID which is the serial number
+  //   if (filteredData && filteredData.length > 0) {
+  //     const deviceIds = [...new Set(
+  //       filteredData
+  //         .map(item => item.ID?.toString())
+  //         .filter((id): id is string => !!id)
+  //     )];
+  //     setMeterIds(deviceIds);
+  //   } else if (filters.meterIds) {
+  //     setMeterIds(filters.meterIds);
+  //   }
+  // // }, [filters, filteredData, setDates, setMeterIds]);
+  // // , urlStartDate, urlEndDate, datesMatch]);
+  // }, [filters, filteredData, setDates, setMeterIds, urlStartDate, urlEndDate]);//, datesMatch]);
 
   const { heatDevices, coldWaterDevices, hotWaterDevices, electricityDevices } = useMemo(() => {
     return (filteredData || []).reduce(
       (acc, item) => {
         const deviceType = item["Device Type"];
         // Support both OLD format and NEW Engelmann format device types
-        // Must match exactly what useChartData.ts uses
-        if (deviceType === "Heat" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
+        // Must match exactly what useDashboardData.ts uses
+        // HCA = Heat Cost Allocator (Heizkostenverteiler) - belongs to heat, NOT hot water!
+        // if (deviceType === "Heat" || deviceType === "HCA" || deviceType === "Heizkostenverteiler" || deviceType === "WMZ Rücklauf" || deviceType === "Wärmemengenzähler") {
+          if (deviceType === "HCA") {
           acc.heatDevices.push(item);
         } else if (deviceType === "Water" || deviceType === "Kaltwasserzähler") {
           acc.coldWaterDevices.push(item);
-        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler"|| deviceType === "HCA") {
+        } else if (deviceType === "WWater" || deviceType === "Warmwasserzähler") {
           acc.hotWaterDevices.push(item);
         } else if (deviceType === "Elec" || deviceType === "Stromzähler") {
           acc.electricityDevices.push(item);

@@ -350,6 +350,7 @@ export const heating_invoices = pgTable("heating_invoices", {
 	for_all_tenants: boolean(),
 	purpose: text(),
 	notes: text(),
+	co2_price_per_tonne: numeric(),
 	heating_doc_id: uuid(),
 	direct_local_id: uuid().array(),
 }, (table) => [
@@ -650,7 +651,7 @@ export const wmbus_telegrams = pgTable("wmbus_telegrams", {
 	processed: boolean().default(false),
 	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	pgPolicy("Admins can manage devices", { as: "permissive", for: "all", to: ["service_role"] }),
+	pgPolicy("Admins can manage wmbus_telgrams", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);
 
 // Firmware history
@@ -682,4 +683,25 @@ export const gatewayAlerts = pgTable('gateway_alerts', {
 	updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true }).defaultNow().notNull(),
 }, (table) => [
 	pgPolicy("Admins can view all history", { as: "permissive", for: "select", to: ["service_role"] }),
+]);
+
+export const gateway_telegrams = pgTable("gateway_telegrams", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	telegram: text().notNull(),  
+	messageNumber: text().notNull(),  
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Admins can manage gateway telegrams", { as: "permissive", for: "all", to: ["service_role"] }),
+]);
+
+export const gateway_telegram_parser_errors = pgTable("gateway_telegram_parser_errors", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	gateway_eui: text().notNull().references(() => gateway_devices.eui),
+	telegram: text().notNull(), 
+	error: text().notNull(),
+	telegram_length: text().notNull(),
+	created_at: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	pgPolicy("Admins can manage gateway telegram parser errors", { as: "permissive", for: "all", to: ["service_role"] }),
 ]);

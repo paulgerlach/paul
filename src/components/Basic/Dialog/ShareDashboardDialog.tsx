@@ -67,20 +67,17 @@ export default function ShareDashboardDialog() {
 
       // Create filters from current dashboard state
       // Only include dates if they're actually set in the dashboard
-      // Use local date formatting to avoid timezone issues
+      // FIX: Use ISO timestamps to preserve exact UTC time - this ensures tenant sees
+      // identical data regardless of their timezone
       const filters: ShareFilters = {
         meterIds: meterIds.length > 0 ? meterIds : undefined,
-        startDate: formatLocalDate(startDate),
-        endDate: formatLocalDate(endDate),
+        startDate: safeStart?.toISOString(),  // Full UTC timestamp e.g., "2025-08-31T22:00:00.000Z"
+        endDate: safeEnd?.toISOString(),      // Full UTC timestamp e.g., "2025-09-30T21:59:59.999Z"
       };
-
-      console.log('Filters being sent:', filters);
 
       // Generate secure shareable URL (30 days expiry)
       const url = createShareableUrl(filters, 720); // 30 days
       const fullUrl = `${window.location.origin}${url}`;
-
-      console.log('Generated URL:', fullUrl);
 
       setShareUrl(fullUrl);
 

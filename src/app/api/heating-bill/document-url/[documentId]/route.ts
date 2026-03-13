@@ -3,6 +3,7 @@ import database from "@/db";
 import { documents } from "@/db/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { supabaseServer } from "@/utils/supabase/server";
+import { supabaseServiceRole } from "@/utils/supabase/serviceRole";
 
 /**
  * GET /api/heating-bill/document-url/[documentId]
@@ -53,7 +54,8 @@ export async function GET(
         }
 
         // Create a presigned URL from the stored document_url (storage path)
-        const { data: signedData, error: signedError } = await supabase.storage
+        const supabaseAdmin = supabaseServiceRole();
+        const { data: signedData, error: signedError } = await supabaseAdmin.storage
             .from("documents")
             .createSignedUrl(docRecord.document_url, 3600);
 
@@ -67,10 +69,16 @@ export async function GET(
         return NextResponse.json({ presignedUrl: signedData.signedUrl });
     } catch (error: unknown) {
         console.error("Document URL error:", error);
+        let details = "Unknown error";
+        if (error instanceof Error) {
+            details = error.message;
+        } else if (typeof error === "string") {
+            details = error;
+        }
         return NextResponse.json(
             {
                 error: "Failed to get document URL",
-                details: error instanceof Error ? error.message : String(error),
+                details,
             },
             { status: 500 },
         );

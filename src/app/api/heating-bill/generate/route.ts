@@ -133,6 +133,8 @@ export async function POST(request: NextRequest) {
         related_id: docId,
         related_type: "heating_bill",
         user_id: user.id,
+        local_id: localId,
+        current_document: true,
       })
       .select("id")
       .single();

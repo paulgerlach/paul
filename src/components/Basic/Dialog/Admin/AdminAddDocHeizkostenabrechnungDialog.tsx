@@ -38,6 +38,7 @@ const addDocHeizkostenabrechnungDialogSchema = z.object({
 	direct_local_id: z.array(z.string()).nullable(),
 	purpose: z.string().min(1, "Pflichtfeld").nullable(),
 	notes: z.string().nullable(),
+	co2_price_per_tonne: z.coerce.number().nullable().optional(),
 	document: z.array(z.instanceof(File)).optional(),
 });
 
@@ -52,6 +53,7 @@ const defaultValues: AddDocHeizkostenabrechnungDialogFormValues = {
 	for_all_tenants: true,
 	purpose: "",
 	notes: "",
+	co2_price_per_tonne: null,
 	document: [],
 	direct_local_id: null,
 };
@@ -119,6 +121,7 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 			for_all_tenants: rest.for_all_tenants,
 			purpose: rest.purpose,
 			notes: rest.notes,
+			co2_price_per_tonne: rest.co2_price_per_tonne ?? null,
 			direct_local_id:
 				rest.for_all_tenants === false ? rest.direct_local_id : null,
 			document,
@@ -251,10 +254,18 @@ export default function AdminAddDocHeizkostenabrechnungDialog() {
 					<FormTextareaField<AddDocHeizkostenabrechnungDialogFormValues>
 						control={methods.control}
 						name="notes"
-						label={isFuelCost ? "Menge in kWh" : "Anmerkungen"}
+						label={isFuelCost ? "Menge in MWh" : "Anmerkungen"}
 						placeholder=""
 						rows={4}
 					/>
+
+					{isFuelCost && (
+						<FormMoneyInput<AddDocHeizkostenabrechnungDialogFormValues>
+							control={methods.control}
+							name="co2_price_per_tonne"
+							label="CO₂-Preis (€/t)"
+						/>
+					)}
 
 					<FormDocument<AddDocHeizkostenabrechnungDialogFormValues>
 						control={methods.control}

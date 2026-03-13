@@ -2,12 +2,12 @@
 
 import { heating_invoices } from "@/db/drizzle/schema";
 import database from "@/db";
-import { type AddDocBetriebskostenabrechnungDialogFormValues } from "@/components/Basic/Dialog/AddDocBetriebskostenabrechnungDialog";
+import { type AddDocHeizkostenabrechnungDialogFormValues } from "@/components/Basic/Dialog/AddDocHeizkostenabrechnungDialog";
 import type { HeatingInvoiceType } from "@/types";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 
 export async function adminCreateHeatingInvoiceDocument(
-    formData: AddDocBetriebskostenabrechnungDialogFormValues,
+    formData: AddDocHeizkostenabrechnungDialogFormValues,
     objectID?: string,
     userID?: string,
     operatingDocID?: string | null,
@@ -32,6 +32,7 @@ export async function adminCreateHeatingInvoiceDocument(
         for_all_tenants: formData.for_all_tenants ?? null,
         purpose: formData.purpose ?? null,
         notes: formData.notes ?? null,
+        co2_price_per_tonne: formData.co2_price_per_tonne == null ? null : String(formData.co2_price_per_tonne),
         heating_doc_id: operatingDocID ?? null,
         direct_local_id: formData.direct_local_id ?? null,
         created_at: now,

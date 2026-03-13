@@ -34,21 +34,20 @@ function DashboardLoading() {
 // Main dashboard content
 function DashboardContent() {
   const router = useRouter();
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<any[]>([]);
-  const [tenantInfo, setTenantInfo] = useState<{ email: string; name?: string } | null>(null);
-  
+  const [tenantInfo, setTenantInfo] = useState<{ email: string; name?: string } | null>(null); 
+
   // Time frame state
   const [timeFrame, setTimeFrame] = useState<string>("30days");
-  
+
   // Calculate date range based on time frame
   const dateRange = useMemo(() => {
     const now = new Date();
     const endDate = now.toISOString().split('T')[0];
     let startDate: string;
-    
+
     switch (timeFrame) {
       case "7days":
         const sevenDaysAgo = new Date(now);
@@ -75,7 +74,7 @@ function DashboardContent() {
         defaultAgo.setDate(defaultAgo.getDate() - 30);
         startDate = defaultAgo.toISOString().split('T')[0];
     }
-    
+
     return { startDate, endDate };
   }, [timeFrame]);
 
@@ -94,7 +93,6 @@ function DashboardContent() {
         }
         
         setTenantInfo(sessionData.tenant);
-        
         // Fetch dashboard data
         const dataRes = await fetch(`/api/tenant/dashboard-data?start=${dateRange.startDate}&end=${dateRange.endDate}`);
         const data = await dataRes.json();
@@ -112,9 +110,9 @@ function DashboardContent() {
         setLoading(false);
       }
     }
-    
+
     checkSessionAndFetchData();
-  }, [router, dateRange]);
+  }, [router, dateRange.startDate, dateRange.endDate]);
 
   // Handle logout
   const handleLogout = async () => {
@@ -189,12 +187,11 @@ function DashboardContent() {
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 max-md:px-0 py-2 max-md:py-1 overflow-x-hidden max-md:max-w-full">
         {dashboardData.length > 0 ? (
-          <SharedDashboardWrapper 
-            filteredData={dashboardData} 
+          <SharedDashboardWrapper
+            filteredData={dashboardData}
             filters={{
               startDate: dateRange.startDate,
               endDate: dateRange.endDate,
-              meterIds: undefined
             }}
           />
         ) : (

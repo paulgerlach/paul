@@ -32,8 +32,8 @@ const toDateOrNull = (value: unknown): Date | null => {
 export const useChartStore = create<ChartState>()(
   persist(
     (set) => ({
-      startDate: null,
-      endDate: null,
+      startDate: new Date(),
+      endDate: new Date(),
       meterIds: [],
 
       chartSizes: {},

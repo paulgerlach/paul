@@ -5,6 +5,7 @@ import ContentWrapper from '@/components/Admin/ContentWrapper/ContentWrapper';
 import Devices from '@/components/Admin/MQTTGateway/Devices';
 import Firmware from '@/components/Admin/MQTTGateway/Firmware';
 import ParsedData from '@/components/Admin/MQTTGateway/ParsedData';
+import ParserErrorTelegrams from '@/components/Admin/MQTTGateway/ParserErrorTelegrams';
 import Telegrams from '@/components/Admin/MQTTGateway/Telegrams';
 import { ROUTE_DASHBOARD } from '@/routes/routes';
 import React from 'react'
@@ -21,6 +22,7 @@ export default function GatewayContent() {
 			/>
 			<ContentWrapper className="flex flex-col space-y-4">
 				<h1>MQTT Gateway Management</h1>
+				<ParserErrorTelegrams />
 				<Devices />
 				<Firmware />
 				<Telegrams />

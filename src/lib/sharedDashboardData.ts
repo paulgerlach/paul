@@ -140,16 +140,26 @@ export async function fetchSharedDashboardData(
     
     // CRITICAL: Adjust start date -7 days to get baseline readings for consumption calculation
     // Without this, consumption = current - previous will be incorrect due to missing baseline
+    // FIX: Handle both ISO timestamps ("2025-08-31T22:00:00.000Z") and date strings ("2025-09-01")
     let adjustedStartDate = startDate;
     if (startDate) {
       const date = new Date(startDate);
       date.setDate(date.getDate() - 7);
+      // Keep as date-only string for database query (RPC expects YYYY-MM-DD format)
       adjustedStartDate = date.toISOString().split('T')[0];
+    }
+    
+    // Also convert endDate to date-only format for database query
+    let adjustedEndDate = endDate;
+    if (endDate) {
+      const date = new Date(endDate);
+      adjustedEndDate = date.toISOString().split('T')[0];
     }
     
     logger.log('[SharedDashboard] Querying parsed_data with consolidated approach:');
     logger.log('  - local_meter_ids:', allMeterIds.length);
     logger.log('  - adjustedStartDate:', adjustedStartDate, '(original:', startDate, ')');
+    logger.log('  - adjustedEndDate:', adjustedEndDate, '(original:', endDate, ')');
     
     // Single RPC call with all device types
     const { data: parsedData, error } = await supabase.rpc('get_dashboard_data', {
@@ -163,7 +173,7 @@ export async function fetchSharedDashboardData(
         'Gateway'
       ],
       p_start_date: adjustedStartDate || null,
-      p_end_date: endDate || null
+      p_end_date: adjustedEndDate || null
     });
     
     if (error) {

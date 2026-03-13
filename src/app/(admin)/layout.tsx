@@ -256,6 +256,9 @@ export default async function AdminLayout({
           <LazyAdminOperatingCostDocumentDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
+          <LazyHeatingBillDeleteDialog />
+        </Suspense>
+        <Suspense fallback={null}>
           <LazyAdminHeatingBillDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>

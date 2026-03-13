@@ -4,6 +4,8 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeFileName } from "@/utils/file";
 import { supabaseServer } from "@/utils/supabase/server";
+import { isSuperAdmin } from "@/auth";
+import { createClient } from "@supabase/supabase-js";
 
 /**
  * GET /api/heating-bill/invoice-document-url?relatedId=<doc_id>&documentName=<name>
@@ -20,6 +22,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: "Unauthorized - Please login" },
         { status: 401 }
+      );
+    }
+    const hasSuperAdminAccess = await isSuperAdmin(user.id);
+    if (!hasSuperAdminAccess) {
+      return NextResponse.json(
+        { error: "Forbidden - Super admin access required" },
+        { status: 403 }
       );
     }
 
@@ -120,8 +129,25 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
+    if (!docRecord.document_url) {
+      return NextResponse.json(
+        { error: "Invoice document path is missing" },
+        { status: 404 }
+      );
+    }
 
-    const { data: signedData, error: signedError } = await supabase.storage
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceRoleKey) {
+      return NextResponse.json(
+        { error: "Supabase service role is not configured" },
+        { status: 500 }
+      );
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+
+    const { data: signedData, error: signedError } = await supabaseAdmin.storage
       .from("documents")
       .createSignedUrl(docRecord.document_url, 3600, { download: true });
 

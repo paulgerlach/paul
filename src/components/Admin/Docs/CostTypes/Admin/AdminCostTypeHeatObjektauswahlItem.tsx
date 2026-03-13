@@ -10,6 +10,7 @@ import { Download } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useAuthUser } from "@/apiClient";
 
 export type CostTypeItemProps = {
   isOpen: boolean;
@@ -39,6 +40,8 @@ export default function AdminCostTypeHeatObjektauswahlItem({
     setPurposeOptions,
     setOperatingDocID,
   } = useHeizkostenabrechnungStore();
+  const { data: user } = useAuthUser();
+  const isSuperAdmin = user?.permission === "super_admin";
 
   useEffect(() => {
     if (isOpen) {
@@ -166,19 +169,21 @@ export default function AdminCostTypeHeatObjektauswahlItem({
                     {documentName}
                   </span>
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        documentName
-                          ? handleDownloadDocument({ invoiceId, documentName })
-                          : undefined
-                      }
-                      disabled={!documentName || isDownloading}
-                      title="Dokument herunterladen"
-                      className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Download className="w-4 h-4" />
-                    </button>
+                    {isSuperAdmin && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          documentName
+                            ? handleDownloadDocument({ invoiceId, documentName })
+                            : undefined
+                        }
+                        disabled={!documentName || isDownloading}
+                        title="Dokument herunterladen"
+                        className="p-1.5 text-dark_green hover:bg-green/20 transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    )}
                     <TheeDotsCostTypeButton
                       editDialogAction="admin_invoice_edit"
                       itemID={item.id ?? ""}

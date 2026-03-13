@@ -79,6 +79,7 @@ export default function GesamtkostenLocalForm({
           docId={docId}
           localId={localId}
           objektId={objektId}
+          pathSlug={pathSlug}
         />
         <div className="flex items-center justify-between mt-6 max-medium:mt-4">
           <Link

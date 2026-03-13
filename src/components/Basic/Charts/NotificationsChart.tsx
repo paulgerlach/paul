@@ -481,9 +481,7 @@ export default function NotificationsChart({
 					leftBg: "#E7E8EA",
 					rightBg: "#E7F2E8",
 					title: "Alle Zähler funktionieren korrekt",
-					subtitle: `${totalDevices} Geräte ohne Fehler (${parts.join(
-						", "
-					)})`,
+					subtitle: `${totalDevices} Geräte ohne Fehler`,
 				});
 
 				return dynamicNotifications;
@@ -735,9 +733,7 @@ export default function NotificationsChart({
 						leftBg: "#E7E8EA",
 						rightBg: "#E7F2E8",
 						title: "Alle Zähler funktionieren korrekt",
-						subtitle: `${totalDevices} Geräte ohne Fehler (${categoryParts.join(
-							", "
-						)})`,
+						subtitle: `${totalDevices} Geräte ohne Fehler`,
 					});
 
 					return notifications;

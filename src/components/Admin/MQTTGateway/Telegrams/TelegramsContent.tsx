@@ -2,28 +2,8 @@
 
 import React, { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { TelegramsResponse } from '@/types/Telegram';
 
-interface Telegram {
-  id: string;
-  gateway_eui: string;
-  telegram_hex: string;
-  type: string;
-  rssi: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface Pagination {
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-}
-
-interface TelegramsResponse {
-  data: Telegram[];
-  pagination: Pagination;
-}
 
 export default function TelegramsContent() {
   const [page, setPage] = useState(1);

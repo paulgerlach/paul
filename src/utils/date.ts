@@ -1,17 +1,5 @@
 import { MeterReadingType } from "./parser";
 
-export const isDateRangeLongerThanAMonth = (startDate: Date, endDate: Date): boolean => {
-  if (!(startDate instanceof Date) || !(endDate instanceof Date) || endDate <= startDate) {
-    return false;
-  }
-
-  const oneMonthLater = new Date(startDate);
-  oneMonthLater.setMonth(startDate.getMonth() + 1);
-
-  return endDate > oneMonthLater;
-};
-
-
 export const getRecentReadingDate = (readings: MeterReadingType[]): Date | null => {
   if (!readings || readings.length === 0) return null;
   

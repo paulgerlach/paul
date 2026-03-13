@@ -349,12 +349,12 @@ export function TenantInviteSection() {
       )}
 
       {/* Email reminder schedule - only for active tenants */}
-      {selectedTenantObj && hasLoginRecord && isActiveTenant && (
+      {/* {selectedTenantObj && hasLoginRecord && isActiveTenant && (
         <ScheduleSettings 
           tenantLoginId={selectedTenantObj.tenant_login_id!}
           tenantName={`${selectedTenantObj.first_name} ${selectedTenantObj.last_name}`}
         />
-      )}
+      )} */}
 
       {/* Bulk invite checkbox */}
       <div className="flex items-center gap-2">

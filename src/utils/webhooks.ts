@@ -186,10 +186,10 @@ export async function sendTenantInviteEmail(
   tenantMail: string,
   tenantName: string,
   setupURL: string
-): Promise<void> {
+): Promise<boolean> {
   if (!MAKE_WEBHOOK_TENANT_INVITE) {
     console.warn('[WEBHOOK] MAKE_WEBHOOK_TENANT_INVITE not set. Skipping tenant invite email.');
-    return;
+    return false;
   }
 
   try {
@@ -208,12 +208,15 @@ export async function sendTenantInviteEmail(
     if (!response.ok) {
       console.error('[WEBHOOK] Failed to send tenant invite email:', response.statusText);
     } else {
+      
       console.log('[WEBHOOK] Successfully sent tenant invite email');
+      return true;
     }
   } catch (error) {
     console.error('[WEBHOOK] Error sending tenant invite email:', error);
     // Don't throw - webhook failures shouldn't break user flow
   }
+  return false;
 }
 
 /**

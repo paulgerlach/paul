@@ -57,6 +57,26 @@ export default function SaveCostButton({
     }
   };
 
+  const runSingleGeneration = async (
+    objektId: string,
+    localId: string,
+    docId: string
+  ) => {
+    const res = await fetch("/api/heating-bill/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ objektId, localId, docId }),
+    });
+    if (!res.ok) {
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        details?: string;
+      };
+      const message = payload.error ?? payload.details ?? "Single generation failed";
+      throw new Error(message);
+    }
+  };
+
   const handleSave = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -110,7 +130,9 @@ export default function SaveCostButton({
         await submitBuildingDocument(operatingDocId);
       } else {
         await submitHeatLocalDocument(operatingDocId);
-        if (!localId) {
+        if (localId) {
+          await runSingleGeneration(objektId, localId, operatingDocId);
+        } else {
           await runBatchGeneration(objektId, operatingDocId);
         }
       }

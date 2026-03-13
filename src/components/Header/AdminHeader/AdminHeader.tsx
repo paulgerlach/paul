@@ -56,12 +56,13 @@ export default function AdminHeader() {
         {/* Desktop Filters - Hidden on tablet/mobile */}
         {isDashboard && (
           <div
-            className={`grid ${(isAdmin || isSuperAdmin) ? "grid-cols-4" : "grid-cols-3"} w-full gap-4 max-large:hidden`}
+            className={`grid grid-cols-4 w-full gap-4 max-large:hidden`}
           >
+          {//className={`grid ${(isAdmin || isSuperAdmin) ? "grid-cols-4" : "grid-cols-3"} w-full gap-4 max-large:hidden`}
+          }
             <AdminApartmentsDropdown />
             <AdminDatetimeDropdown />
             {(isSuperAdmin || isAdmin) && <AdminUsersDropdown user={user} />}
-
             <div className="flex w-full items-center gap-3 justify-start bg-transparent border-none px-6 py-3">
               <Switch checked={isTableView} onCheckedChange={setIsTableView} />
               <span className="text-sm">Datenansicht</span>

@@ -92,7 +92,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
   const previewBaseHref =
     docType === "objektauswahl"
       ? `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/${item.id}/preview`
-      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${docID}/results/preview`;
+      : `${ROUTE_ADMIN}/${userID}${ROUTE_HEIZKOSTENABRECHNUNG}/${docType}/${objektID}/${item.id}/${docID}/results/preview`;
 
   const singleDoc = tenantDocuments.length === 1 ? tenantDocuments[0] : null;
   const hasMultipleDocs = tenantDocuments.length > 1;

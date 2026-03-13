@@ -9,9 +9,11 @@ import AddCostTypeInvoiceButton from "../AddCostTypeInvoiceButton";
 export default function AdminCostTypesHeatObjektauswahlAccordion({
   objektId,
   docId,
+  pathSlug,
 }: {
   objektId: string;
   docId: string;
+  pathSlug: string;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { documentGroups } = useHeizkostenabrechnungStore();
@@ -33,8 +35,10 @@ export default function AdminCostTypesHeatObjektauswahlAccordion({
           objektId={objektId}
         />
       ))}
-      {/* <AddCostTypeButton dialogType="admin_cost_type_heizkostenabrechnung_create" />
-      <AddCostTypeInvoiceButton dialogType="admin_ai_invoice_create" /> */}
+      <AddCostTypeButton dialogType="admin_cost_type_heizkostenabrechnung_create" />
+      {pathSlug !== "manuell" && (
+        <AddCostTypeInvoiceButton dialogType="admin_ai_invoice_create" />
+      )}
     </div>
   );
 }

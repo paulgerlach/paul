@@ -76,6 +76,7 @@ export default function GesamtkostenHeatObjektauswahlForm({
         <CostTypesHeatObjektauswahlAccordion
           docId={docId}
           objektId={objektId}
+          pathSlug={pathSlug}
         />
         <div className="flex items-center justify-between mt-6 max-medium:mt-4">
           <Link

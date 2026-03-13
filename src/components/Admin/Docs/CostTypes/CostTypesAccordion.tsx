@@ -10,10 +10,12 @@ export default function CostTypesAccordion({
   objektId,
   localId,
   docId,
+  pathSlug,
 }: {
   objektId: string;
   localId: string;
   docId: string;
+  pathSlug: string;
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { documentGroups } = useHeizkostenabrechnungStore();
@@ -37,7 +39,9 @@ export default function CostTypesAccordion({
         />
       ))}
       <AddCostTypeButton dialogType="cost_type_heizkostenabrechnung_create" />
-      {/* <AddCostTypeInvoiceButton dialogType="ai_invoice_create" /> */}
+      {pathSlug !== "manuell" && (
+        <AddCostTypeInvoiceButton dialogType="ai_invoice_create" />
+      )}
     </div>
   );
 }

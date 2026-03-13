@@ -53,11 +53,9 @@ export default async function ResultLocalPDF({
   let pendingTooltip = "";
   if (isPdfPending && hbDoc?.created_at) {
     const remainingMs = new Date(hbDoc.created_at).getTime() + 24 * 60 * 60 * 1000 - Date.now();
-    const hours = Math.floor(remainingMs / (60 * 60 * 1000));
-    const minutes = Math.ceil((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
-    pendingTooltip = hours > 0
-      ? `Verfügbar in ${hours} Std. ${minutes} Min.`
-      : `Verfügbar in ${minutes} Min.`;
+    if (remainingMs > 0) {
+      pendingTooltip = "Heizkostenabrechnung wird hergestellt. Dies dauert in der Regel 24h. Wir benachrichtigen Sie per Email.";
+    }
   }
 
   let locals = (await getRelatedLocalsByObjektId(objekt_id)).filter((local) =>

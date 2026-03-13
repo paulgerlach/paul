@@ -19,7 +19,7 @@ export default function NotificationItem({
 	subtitle,
 }: NotificationItemProps) {
 	return (
-		<div className="flex items-start justify-start gap-2 w-full p-1">
+		<div className="flex items-center justify-start gap-2 w-full p-1">
 			<div className="flex items-center justify-start gap-2 flex-shrink-0">
 				<span
 					className="flex items-center justify-center w-[60px] h-[52px] max-md:w-12 max-md:h-12 max-lg:w-14 max-lg:h-14 rounded-sm"
@@ -52,7 +52,7 @@ export default function NotificationItem({
 			</div>
 			<div className="flex-1 min-w-0">
 				{/* <p className="text-sm max-md:text-xs text-black/50 font-medium leading-tight">{title}</p> */}
-				<p className="text-sm max-lg:text-xs text-black/50 leading-tight overflow-hidden text-ellipsis line-clamp-3">
+				<p className="text-md text-black/50 leading-tight overflow-hidden text-ellipsis line-clamp-3">
 					{subtitle}
 				</p>
 			</div>

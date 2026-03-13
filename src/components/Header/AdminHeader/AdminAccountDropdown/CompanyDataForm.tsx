@@ -138,10 +138,12 @@ useEffect(() => {
       <div className="flex gap-10 items-start">
         <div className="flex-grow space-y-1.5">
           <label className={labelStyle}>Firmenname *</label>
-          <input {...register("companyName")} type="text" className={inputStyle} />
+          <input disabled={true} {...register("companyName")} type="text" className={inputStyle} style={{
+            backgroundColor: "lightgray",
+          }} />
         </div>
 
-        <div className="flex-shrink-0">
+        {/* <div className="flex-shrink-0">
           <label className={labelStyle}>Firmenlogo</label>
           <label className="w-[160px] h-[45px] border-2 border-dashed border-blue-200 flex flex-col items-center justify-center bg-white cursor-pointer hover:bg-blue-50 transition-colors">
             {preview ? (
@@ -163,7 +165,7 @@ useEffect(() => {
               {...register("logo")}
             />
           </label>
-        </div>
+        </div> */}
       </div>
 
       {/* Rechnungsadresse Header */}
@@ -172,27 +174,35 @@ useEffect(() => {
 
         <div className="w-full space-y-1.5">
           <label className={labelStyle}>Straßenname</label>
-          <input {...register("street")} type="text" className={inputStyle} />
+          <input disabled={true} {...register("street")} type="text" className={inputStyle} style={{
+            backgroundColor: "lightgray",
+          }}/>
         </div>
 
         <div className="flex gap-8 w-full">
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Postleitzahl</label>
-            <input {...register("zip")} type="text" className={inputStyle} />
+            <input disabled={true} {...register("zip")} type="text" className={inputStyle} style={{
+            backgroundColor: "lightgray",
+          }}/>
           </div>
           <div className="flex-1 space-y-1.5">
             <label className={labelStyle}>Stadt</label>
-            <input {...register("city")} type="text" className={inputStyle} />
+            <input disabled={true} {...register("city")} type="text" className={inputStyle} style={{
+            backgroundColor: "lightgray",
+          }}/>
           </div>
         </div>
       </div>
 
       <div className="w-full space-y-1.5">
         <label className={labelStyle}>Umsatzsteuer-ID</label>
-        <input {...register("vatId")} type="text" className={inputStyle} />
+        <input disabled={true} {...register("vatId")} type="text" className={inputStyle} style={{
+            backgroundColor: "lightgray",
+          }}/>
       </div>
 
-      <ModalFooter onClose={onClose} />
+      {/* <ModalFooter onClose={onClose} /> */}
     </form>
   );
 }

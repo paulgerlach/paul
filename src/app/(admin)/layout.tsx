@@ -111,6 +111,9 @@ const LazyAdminOperatingCostDocumentDeleteDialog = lazy(
       "@/components/Basic/Dialog/Admin/AdminOperatingCostDocumentDeleteDialog"
     )
 );
+const LazyHeatingBillDeleteDialog = lazy(
+  () => import("@/components/Basic/Dialog/HeatingBillDeleteDialog")
+);
 const LazyAdminHeatingBillDeleteDialog = lazy(
   () =>
     import(
@@ -253,6 +256,9 @@ export default async function AdminLayout({
           <LazyAdminOperatingCostDocumentDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
+          <LazyHeatingBillDeleteDialog />
+        </Suspense>
+        <Suspense fallback={null}>
           <LazyAdminHeatingBillDeleteDialog />
         </Suspense>
         <Suspense fallback={null}>
@@ -285,7 +291,7 @@ export default async function AdminLayout({
 
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
-      </QueryProvider>
-    </Suspense>
+      </QueryProvider >
+    </Suspense >
   );
 }

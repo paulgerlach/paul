@@ -60,6 +60,26 @@ export default function AdminSaveCostButton({
     }
   };
 
+  const runSingleGeneration = async (
+    objektId: string,
+    localId: string,
+    docId: string
+  ) => {
+    const res = await fetch("/api/heating-bill/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ objektId, localId, docId }),
+    });
+    if (!res.ok) {
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        details?: string;
+      };
+      const message = payload.error ?? payload.details ?? "Single generation failed";
+      throw new Error(message);
+    }
+  };
+
   const handleSave = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -113,7 +133,9 @@ export default function AdminSaveCostButton({
         await submitBuildingDocument(operatingDocId);
       } else {
         await submitHeatLocalDocument(operatingDocId);
-        if (!localId) {
+        if (localId) {
+          await runSingleGeneration(objektId, localId, operatingDocId);
+        } else {
           await runBatchGeneration(objektId, operatingDocId);
         }
       }
@@ -127,7 +149,11 @@ export default function AdminSaveCostButton({
   };
 
   return (
-    <Button onClick={handleSave} disabled={isSubmitting}>
+    <Button
+      onClick={handleSave}
+      disabled={isSubmitting}
+      className="h-auto py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:px-3 max-medium:py-2 max-medium:text-sm rounded-lg font-medium"
+    >
       {isSubmitting ? "Wird generiert..." : "Weiter"}
     </Button>
   );

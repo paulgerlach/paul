@@ -126,6 +126,7 @@ export default function ObjekteObjektItemHeatingBillDocResult({
           <ThreeDotsButton
             dialogAction="heating_bill_delete"
             editLink={editLink}
+            itemID={docID}
           />
         </div>
       </div>

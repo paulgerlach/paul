@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { pdf_icon, doc_download, gmail } from "@/static/icons";
@@ -19,6 +19,8 @@ export default function TenantDocumentActions({
     pendingTooltip,
 }: Readonly<TenantDocumentActionsProps>) {
     const [loading, setLoading] = useState(false);
+    const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
+    const triggerRef = useRef<HTMLDivElement>(null);
 
     const handleDownload = async () => {
         if (!documentId) return;
@@ -51,9 +53,25 @@ export default function TenantDocumentActions({
         }
     };
 
+    const showTooltip = () => {
+        if (!triggerRef.current || !pendingTooltip) return;
+        const rect = triggerRef.current.getBoundingClientRect();
+        setTooltipPos({
+            top: rect.bottom + 8,
+            left: rect.right,
+        });
+    };
+
+    const hideTooltip = () => setTooltipPos(null);
+
     if (isPending) {
         return (
-            <div className="relative group flex items-center gap-3 max-medium:gap-2 flex-shrink-0">
+            <div
+                ref={triggerRef}
+                className="flex items-center gap-3 max-medium:gap-2 flex-shrink-0"
+                onMouseEnter={showTooltip}
+                onMouseLeave={hideTooltip}
+            >
                 <div className="flex items-center gap-3 max-medium:gap-2 opacity-40 pointer-events-none cursor-not-allowed">
                     <span className="inline-flex">
                         <Image
@@ -89,8 +107,11 @@ export default function TenantDocumentActions({
                         />
                     </span>
                 </div>
-                {pendingTooltip && (
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                {tooltipPos && pendingTooltip && (
+                    <div
+                        className="fixed px-3 py-2 bg-gray-800 text-white text-xs rounded w-64 text-center pointer-events-none z-50"
+                        style={{ top: tooltipPos.top, left: tooltipPos.left - 256 }}
+                    >
                         {pendingTooltip}
                     </div>
                 )}

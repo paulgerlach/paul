@@ -78,6 +78,7 @@ export default function HeatingBillActionButtons({
           <ThreeDotsButton
             dialogAction={dialogAction}
             editLink={editLink}
+            itemID={docId}
           />
         </div>
       </div>

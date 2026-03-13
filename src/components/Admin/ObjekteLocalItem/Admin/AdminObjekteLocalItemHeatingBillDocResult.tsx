@@ -180,6 +180,7 @@ export default async function AdminObjekteLocalItemHeatingBillDocResult({
             <ThreeDotsButton
               dialogAction="admin_heating_bill_delete"
               editLink={editLink}
+              itemID={singleDoc?.id}
             />
           )}
         </div>

@@ -291,7 +291,7 @@ export default async function AdminLayout({
 
         <Toaster />
         <ChatBotContainer isExistingClient={isExistingClient} userId={userId} />
-      </QueryProvider>
-    </Suspense>
+      </QueryProvider >
+    </Suspense >
   );
 }

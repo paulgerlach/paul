@@ -81,7 +81,7 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
             src={login}
             alt="login"
           />
-          Vermieter Login
+          Verwaltung Login
         </button>
         <button
           onClick={handleMieterClick}
@@ -96,7 +96,7 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
             src={login}
             alt="login"
           />
-          Mieter Login
+          Anwohner Login
         </button>
       </div>
     );
@@ -138,7 +138,7 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
           >
             <Building2 className="w-5 h-5 text-dark_text/50" />
             <div>
-              <div className="text-dark_text text-sm font-medium">Vermieter</div>
+              <div className="text-dark_text text-sm font-medium">Verwaltung</div>
               <div className="text-dark_text/50 text-xs">Immobilien verwalten</div>
             </div>
           </button>
@@ -149,7 +149,7 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
           >
             <User className="w-5 h-5 text-dark_text/50" />
             <div>
-              <div className="text-dark_text text-sm font-medium">Mieter</div>
+              <div className="text-dark_text text-sm font-medium">Anwohner</div>
               <div className="text-dark_text/50 text-xs">Dashboard ansehen</div>
             </div>
           </button>

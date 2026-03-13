@@ -146,7 +146,11 @@ export default function SaveCostButton({
   };
 
   return (
-    <Button onClick={handleSave} disabled={isSubmitting}>
+    <Button
+      onClick={handleSave}
+      disabled={isSubmitting}
+      className="h-auto py-4 px-6 max-xl:px-3.5 max-xl:py-2 max-xl:text-sm max-medium:px-3 max-medium:py-2 max-medium:text-sm rounded-lg font-medium"
+    >
       {isSubmitting ? "Wird generiert..." : "Weiter"}
     </Button>
   );

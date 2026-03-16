@@ -119,27 +119,6 @@ export async function POST(request: NextRequest) {
 
     console.log(`[dashboard-data] Found ${transformedData.length} records, filtered to ${filteredData.length} (requestedTypes: ${requestedDeviceTypes.length})`);
 
-    // Lord forgive me
-    filteredData = filteredData.map(item => {
-      return {
-        'Frame Type': item['Frame Type'],
-        Manufacturer: item['Manufacturer'],
-        ID: item['ID'],
-        Version: item['Version'],
-        'Device Type': item['Device Type'],
-        'TPL-Config': item['TPL-Config'],
-        'Access Number': item['Access Number'],
-        Status: item['Status'],
-        Encryption: item['Encryption'],
-        'IV,1,0,0,,Date': item['IV,1,0,0,,Date'],
-        'IV,2,0,0,,Date': item['IV,2,0,0,,Date'],
-        'IV,0,0,0,,Date/Time': item['IV,0,0,0,,Date/Time'],
-        'IV,0,0,0,,Units HCA': item['IV,0,0,0,,Units HCA'],
-        'IV,1,0,0,,Units HCA': item['IV,1,0,0,,Units HCA'],
-      };
-    });
-    
-
     // Group data by device type for metadata
     const deviceTypes = filteredData.reduce((acc, reading) => {
       const deviceType = reading["Device Type"];
@@ -192,6 +171,18 @@ export async function POST(request: NextRequest) {
     const actualMeterIds = Array.from(new Set(
       filteredData.map(reading => reading.ID).filter(Boolean)
     ));
+
+    // Remove uneeded lines in response
+    // Lord forgive me
+    filteredData = filteredData.map(item => {
+      return {
+        ID: item['ID'],                                     // required
+        'Device Type': item['Device Type'],                 // required
+        Status: item['Status'],                             // required
+        'IV,0,0,0,,Date/Time': item['IV,0,0,0,,Date/Time'], // required
+        'IV,0,0,0,,Units HCA': item['IV,0,0,0,,Units HCA'], // required
+      };
+    });
 
     return NextResponse.json({
       data: filteredData,

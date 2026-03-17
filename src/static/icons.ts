@@ -144,7 +144,6 @@ import watts from "@/asset/watts.png";
 import wattssvg from "@/asset/watts.svg";
 import water_shower from "@/asset/water_shower.svg";
 import weight from "@/asset/weight.png";
-import weightsvg from "@/asset/weight.svg";
 import wemolo from "@/asset/wemolo.svg";
 import xIcon from "@/asset/x.png";
 import xIconsvg from "@/asset/x.svg";
@@ -572,7 +571,6 @@ export {
   watts,
   wattssvg,
   weight,
-  weightsvg,
   wemolo,
   xIcon,
   xIconsvg,

@@ -5,15 +5,14 @@ import { isSuperAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { exit } from "process";
 import { PostgrestError } from "@supabase/supabase-js";
-import { PostgresError } from "postgres";
 
 /** shitty code based on terrible fucking database design, soon to be fixed **/
-export async function getIsProductionDBStatus(): Promise<{
+export async function getIsProductionDBStatus(supabase:any): Promise<{
   isProduction: boolean;
   error?: string;
 }> {
   try {
-    const supabase = await supabaseServer();
+    // const supabase = await supabaseServer();
 
     const { data, error } = await supabase
       .from("system_settings")

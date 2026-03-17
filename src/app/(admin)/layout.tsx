@@ -157,13 +157,6 @@ const LazyAdminInvoiceDeleteDialog = lazy(
 );
 
 
-let dbEnvName = "PRODUCTION"
-import { getIsProductionDBStatus, getRegistrationStatus } from "@/actions/system-settings";
-getIsProductionDBStatus().then((result) => {
-  if (!result.isProduction) {
-    dbEnvName = "DEVELOPMENT"
-  }
-})
 
 
 export const metadata: Metadata = {
@@ -172,12 +165,26 @@ export const metadata: Metadata = {
     "Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
 };
 
+import { getIsProductionDBStatus } from "@/actions/system-settings";
 export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  let dbEnvName = "LIVE Database"
+
   const supabase = await supabaseServer();
+  const result = await getIsProductionDBStatus(supabase)
+  if (!result.isProduction) {
+    dbEnvName = "DEVELOPMENT Database"
+  }
+
+  console.log("CODE ENVIRONMENT =>", process.env.NODE_ENV)
+  if (process.env.NODE_ENV === "production") {
+    dbEnvName = ""
+  }
+             
 
   const {
     data: { user },

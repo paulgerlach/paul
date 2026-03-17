@@ -26,7 +26,6 @@ export default function AdminHeader({dbEnv}:{dbEnv:string}) {
   const isSuperAdmin = user?.permission === "super_admin";
 
 
-
   return (
     <header id="header" className={`w-full`}>
       {/* Main Header Bar */}

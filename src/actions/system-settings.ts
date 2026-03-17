@@ -24,11 +24,11 @@ export async function getIsProductionDBStatus(): Promise<{
       throw "Error fetching is production status:" + error ? (error as PostgrestError).message : "unknown error"
     }
 
-    if (!data.not_production) {
+    if (data.not_production === null || data.not_production === undefined) {
       throw "not_production value not set in database" 
     }
 
-    return { isProduction: data.not_production };
+    return { isProduction: !data.not_production };
   } catch (err) {
     console.error("Unexpected error fetching registration status:", {err});
     console.error("Terminated Application due to missing production variable", {err});

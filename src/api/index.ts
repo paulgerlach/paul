@@ -38,15 +38,15 @@ import { CSVParser } from "./parse_csv_to_json";
 import { Agency } from "@/types/Agency";
 
 export type MeterReadingType = {
-  "Frame Type": string;
-  Manufacturer: string;
+  "Frame Type"?: string;
+  Manufacturer?: string;
   ID: string;
-  Version: string;
+  Version?: string;
   "Device Type": "Heat" | "WWater" | string;
-  "TPL-Config": string;
-  "Access Number": number;
+  "TPL-Config"?: string;
+  "Access Number"?: number;
   Status: string;
-  Encryption: number;
+  Encryption?: number;
   "IV,0,0,0,,Date/Time"?: string; // OLD format - now optional
   "IV,0,0,0,,Date"?: string; // OLD format - now optional
   "IV,0,0,0,Wh,E"?: number; // Energy in Wh (for heat meters) - OLD format

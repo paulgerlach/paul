@@ -25,7 +25,7 @@ export async function getIsProductionDBStatus(): Promise<{
     }
 
     if (data.not_production === null || data.not_production === undefined) {
-      throw "not_production value not set in database" 
+      throw "not_production value is NULL in database" 
     }
 
     return { isProduction: !data.not_production };

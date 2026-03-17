@@ -156,18 +156,37 @@ const LazyAdminInvoiceDeleteDialog = lazy(
     import("@/components/Basic/Dialog/Admin/AdminInvoiceDeleteDIalog")
 );
 
+
+
+
 export const metadata: Metadata = {
   title: "Heidi Systems",
   description:
     "Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
 };
 
+import { getIsProductionDBStatus } from "@/actions/system-settings";
 export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  let dbEnvName = "LIVE Database"
+
   const supabase = await supabaseServer();
+  const result = await getIsProductionDBStatus(supabase)
+  if (!result.isProduction) {
+    dbEnvName = "DEVELOPMENT Database"
+  } else {
+    console.log("DATABASE ENVIRONMENT => LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE LIVE")
+  }
+
+  console.log("CODE ENVIRONMENT =>", process.env.NODE_ENV)
+  if (process.env.NODE_ENV === "production") {
+    dbEnvName = ""
+  }
+             
 
   const {
     data: { user },
@@ -179,7 +198,7 @@ export default async function AdminLayout({
     <Suspense fallback={<Loading />}>
       <QueryProvider>
         <main className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
-          <AdminHeader />
+          <AdminHeader dbEnv={dbEnvName} />
           <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
             <Sidebar />
             <MobileSidebar />

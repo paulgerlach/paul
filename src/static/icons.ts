@@ -5,8 +5,6 @@ import article3 from "@/asset/article3.png";
 import article4 from "@/asset/article4.png";
 import big_x_icon from "@/asset/big_x_icon.png";
 import box_brands from "@/asset/box_brands.png";
-import buderus from "@/asset/buderus.png";
-import buderussvg from "@/asset/buderus.svg";
 import caract_battery from "@/asset/caract_battery.png";
 import caract_files from "@/asset/caract_files.png";
 import caract_mark from "@/asset/caract_mark.png";
@@ -32,13 +30,10 @@ import checkmarks3 from "@/asset/checkmarks3.png";
 import chess_shield from "@/asset/chess_shield.png";
 import chevron from "@/asset/chevron.png";
 import clock from "@/asset/clock.png";
-import clocksvg from "@/asset/clock.svg";
 import counter_small from "@/asset/counter_small.png";
 import counter from "@/asset/counter.png";
 import cursor from "@/asset/cursor.svg";
 import daten from "@/asset/daten.png";
-import dehoust from "@/asset/dehoust.png";
-import dehoustsvg from "@/asset/dehoust.svg";
 import doc_phone from "@/asset/doc_phone.png";
 import doc from "@/asset/doc.png";
 import docsvg from "@/asset/doc.svg";
@@ -74,13 +69,11 @@ import install_faq2 from "@/asset/install_faq2.png";
 import install_faq3 from "@/asset/install_faq3.png";
 import install_faq5 from "@/asset/install_faq5.png";
 import instruments from "@/asset/instruments.png";
-import instrumentssvg from "@/asset/instruments.svg";
 import ki_akademie from "@/asset/ki_akademie.svg";
 import linkedin from "@/asset/linkedin.png";
 import linkedinsvg from "@/asset/linkedin.svg";
 import list1 from "@/asset/list1.png";
 import list2 from "@/asset/list2.png";
-import list3 from "@/asset/list3.png";
 import lock from "@/asset/lock.png";
 import logo from "@/asset/logo_new.png";
 import logosvg from "@/asset/logo.svg";
@@ -115,7 +108,6 @@ import play from "@/asset/play.png";
 import playsvg from "@/asset/play.svg";
 import rate_star from "@/asset/rate_star.svg";
 import realtime from "@/asset/realtime.svg";
-import reviews_list from "@/asset/reviews_list.png";
 import reviews_mobile from "@/asset/reviews_mobile.png";
 import reviews from "@/asset/reviews.png";
 import right_arrow from "@/asset/right_arrow.png";
@@ -136,13 +128,8 @@ import techem from "@/asset/techem.png";
 import techemsvg from "@/asset/techem.svg";
 import trustpilot from "@/asset/trustpilot.png";
 import vitolos from "@/asset/vitolos.svg";
-import vonovia_colored from "@/asset/vonovia_colored.png";
-import vonovia from "@/asset/vonovia.png";
-import vonoviasvg from "@/asset/vonovia.svg";
-import water_kran from "@/asset/water_kran.svg";
 import watts from "@/asset/watts.png";
 import wattssvg from "@/asset/watts.svg";
-import water_shower from "@/asset/water_shower.svg";
 import weight from "@/asset/weight.png";
 import wemolo from "@/asset/wemolo.svg";
 import xIcon from "@/asset/x.png";
@@ -237,11 +224,8 @@ import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_c
 import building from "@/asset/building.svg";
 import basement from "@/asset/basement.png";
 import staircase from "@/asset/staircase.png";
-import buderusUpd from "@/asset/buderus_upd.png";
-import vonoviaUpd from "@/asset/vonovia_upd.png";
 import techemUpd from "@/asset/techem_upd.png";
 import wattsUpd from "@/asset/watts_upd.png";
-import dehoustUpd from "@/asset/dehoust_upd.png";
 import vdiv_footer from "@/asset/vdiv_footer.png";
 import personSlide1 from "@/asset/person_slide_1.png";
 import personSlide2 from "@/asset/person_slide_2.png";
@@ -332,7 +316,6 @@ export {
   wagner,
   winfried,
   electricity,
-  dehoustUpd,
   vdiv_footer,
   personSlide1,
   personSlide2,
@@ -349,8 +332,6 @@ export {
   personSlidePerson3,
   personSlidePerson4,
   personSlidePerson5,
-  buderusUpd,
-  vonoviaUpd,
   techemUpd,
   wattsUpd,
   operating_cost_documents_pending,
@@ -432,8 +413,6 @@ export {
   article4,
   big_x_icon,
   box_brands,
-  buderus,
-  buderussvg,
   caract_battery,
   caract_files,
   caract_mark,
@@ -459,13 +438,10 @@ export {
   chess_shield,
   chevron,
   clock,
-  clocksvg,
   counter,
   counter_small,
   cursor,
   daten,
-  dehoust,
-  dehoustsvg,
   doc,
   doc_phone,
   docsvg,
@@ -501,13 +477,11 @@ export {
   install_faq5,
   instasvg,
   instruments,
-  instrumentssvg,
   ki_akademie,
   linkedin,
   linkedinsvg,
   list1,
   list2,
-  list3,
   lock,
   logo,
   logosvg,
@@ -543,7 +517,6 @@ export {
   rate_star,
   realtime,
   reviews,
-  reviews_list,
   reviews_mobile,
   right_arrow,
   sameday,
@@ -563,11 +536,6 @@ export {
   techemsvg,
   trustpilot,
   vitolos,
-  vonovia,
-  vonovia_colored,
-  vonoviasvg,
-  water_kran,
-  water_shower,
   watts,
   wattssvg,
   weight,

@@ -15,14 +15,14 @@ export async function getIsProductionDBStatus(): Promise<{
 
     const { data, error } = await supabase
       .from("system_settings")
-      .select("production")
+      .select("not_production")
       .single();
 
     if (error) {
       throw "Error fetching registration status:" + error
     }
 
-    return { isProduction: data?.production || false };
+    return { isProduction: data?.not_production || true };
   } catch (err) {
     console.error("Unexpected error fetching registration status:", err);
     console.error("Terminated Application due to missing production variable", err);

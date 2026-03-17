@@ -156,6 +156,16 @@ const LazyAdminInvoiceDeleteDialog = lazy(
     import("@/components/Basic/Dialog/Admin/AdminInvoiceDeleteDIalog")
 );
 
+
+let dbEnvName = "PRODUCTION"
+import { getIsProductionDBStatus, getRegistrationStatus } from "@/actions/system-settings";
+getIsProductionDBStatus().then((result) => {
+  if (!result.isProduction) {
+    dbEnvName = "DEVELOPMENT"
+  }
+})
+
+
 export const metadata: Metadata = {
   title: "Heidi Systems",
   description:
@@ -179,7 +189,7 @@ export default async function AdminLayout({
     <Suspense fallback={<Loading />}>
       <QueryProvider>
         <main className="h-screen flex flex-col bg-base-bg overflow-hidden max-medium:overflow-y-auto">
-          <AdminHeader />
+          <AdminHeader dbEnv={dbEnvName} />
           <div className="grid grid-cols-[auto_1fr] max-large:grid-cols-1 gap-0 flex-1 overflow-hidden max-medium:overflow-visible w-full bg-base-bg">
             <Sidebar />
             <MobileSidebar />

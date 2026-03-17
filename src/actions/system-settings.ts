@@ -4,6 +4,8 @@ import { supabaseServer } from "@/utils/supabase/server";
 import { isSuperAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
 import { exit } from "process";
+import { PostgrestError } from "@supabase/supabase-js";
+import { PostgresError } from "postgres";
 
 /** shitty code based on terrible fucking database design, soon to be fixed **/
 export async function getIsProductionDBStatus(): Promise<{
@@ -19,13 +21,17 @@ export async function getIsProductionDBStatus(): Promise<{
       .single();
 
     if (error) {
-      throw "Error fetching registration status:" + error
+      throw "Error fetching is production status:" + error ? (error as PostgrestError).message : "unknown error"
     }
 
-    return { isProduction: data?.not_production || true };
+    if (!data.not_production) {
+      throw "not_production value not set in database" 
+    }
+
+    return { isProduction: data.not_production };
   } catch (err) {
-    console.error("Unexpected error fetching registration status:", err);
-    console.error("Terminated Application due to missing production variable", err);
+    console.error("Unexpected error fetching registration status:", {err});
+    console.error("Terminated Application due to missing production variable", {err});
     exit(0)
   }
 }

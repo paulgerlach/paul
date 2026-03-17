@@ -14,7 +14,7 @@ import AdminUsersDropdown from "./AdminUsersDropdown";
 import { useMobileSidebarStore } from "@/store/useMobileSidebarStore";
 import { useChartStore } from "@/store/useChartStore";
 
-export default function AdminHeader() {
+export default function AdminHeader({dbEnv}:{dbEnv:string}) {
   const { toggle } = useMobileSidebarStore();
   const { isTableView, setIsTableView } = useChartStore();
   const pathname = usePathname();
@@ -24,6 +24,8 @@ export default function AdminHeader() {
 
   const isAdmin = user?.permission === "admin";
   const isSuperAdmin = user?.permission === "super_admin";
+
+
 
   return (
     <header id="header" className={`w-full`}>
@@ -51,6 +53,7 @@ export default function AdminHeader() {
             src={admin_logo}
             alt="admin_logo"
           />
+          {dbEnv} 
         </Link>
         
         {/* Desktop Filters - Hidden on tablet/mobile */}

@@ -3,6 +3,33 @@
 import { supabaseServer } from "@/utils/supabase/server";
 import { isSuperAdmin } from "@/auth";
 import { getAuthenticatedServerUser } from "@/utils/auth/server";
+import { exit } from "process";
+
+/** shitty code based on terrible fucking database design, soon to be fixed **/
+export async function getIsProductionDBStatus(): Promise<{
+  isProduction: boolean;
+  error?: string;
+}> {
+  try {
+    const supabase = await supabaseServer();
+
+    const { data, error } = await supabase
+      .from("system_settings")
+      .select("production")
+      .single();
+
+    if (error) {
+      throw "Error fetching registration status:" + error
+    }
+
+    return { isProduction: data?.production || false };
+  } catch (err) {
+    console.error("Unexpected error fetching registration status:", err);
+    console.error("Terminated Application due to missing production variable", err);
+    exit(0)
+  }
+}
+
 
 /**
  * Get the current registration enabled status

@@ -24,19 +24,15 @@ import checkmark_bold from "@/asset/checkmark_bold.png";
 import checkmark_icon_big from "@/asset/checkmark_icon_big.png";
 import checkmark_icon from "@/asset/checkmark_icon.png";
 import checkmark_shield from "@/asset/checkmark_shield.png";
-import checkmarks1 from "@/asset/checkmarks1.png";
-import checkmarks2 from "@/asset/checkmarks2.png";
 import checkmarks3 from "@/asset/checkmarks3.png";
 import chess_shield from "@/asset/chess_shield.png";
 import chevron from "@/asset/chevron.png";
 import clock from "@/asset/clock.png";
 import counter_small from "@/asset/counter_small.png";
 import counter from "@/asset/counter.png";
-import cursor from "@/asset/cursor.svg";
 import daten from "@/asset/daten.png";
 import doc_phone from "@/asset/doc_phone.png";
 import doc from "@/asset/doc.png";
-import docsvg from "@/asset/doc.svg";
 import eu_elipse from "@/asset/eu_elipse.png";
 import eu_gdpr from "@/asset/eu_gdpr.png";
 import eu_lock from "@/asset/eu_lock.png";
@@ -63,8 +59,6 @@ import info from "@/asset/info.png";
 import information from "@/asset/information.png";
 import insta from "@/asset/insta.png";
 import instasvg from "@/asset/insta.svg";
-import instalation from "@/asset/instalation.png";
-import install_faq1 from "@/asset/install_faq1.png";
 import install_faq2 from "@/asset/install_faq2.png";
 import install_faq3 from "@/asset/install_faq3.png";
 import install_faq5 from "@/asset/install_faq5.png";
@@ -72,7 +66,6 @@ import instruments from "@/asset/instruments.png";
 import ki_akademie from "@/asset/ki_akademie.svg";
 import linkedin from "@/asset/linkedin.png";
 import linkedinsvg from "@/asset/linkedin.svg";
-import list1 from "@/asset/list1.png";
 import list2 from "@/asset/list2.png";
 import lock from "@/asset/lock.png";
 import logo from "@/asset/logo_new.png";
@@ -105,14 +98,10 @@ import parkdepot from "@/asset/parkdepot.svg";
 import payment from "@/asset/payment.png";
 import person_icon from "@/asset/person_icon.png";
 import play from "@/asset/play.png";
-import playsvg from "@/asset/play.svg";
-import rate_star from "@/asset/rate_star.svg";
 import realtime from "@/asset/realtime.svg";
 import reviews_mobile from "@/asset/reviews_mobile.png";
-import reviews from "@/asset/reviews.png";
 import right_arrow from "@/asset/right_arrow.png";
 import sameday1 from "@/asset/Sameday 1.png";
-import score_chart from "@/asset/score_chart.png";
 import sameday from "@/asset/sameday.svg";
 import settings_icon from "@/asset/settings_icon.png";
 import slider_counter1 from "@/asset/slider_counter1.png";
@@ -125,11 +114,9 @@ import swiper_counter2 from "@/asset/swiper_counter2.png";
 import swiper_counter3 from "@/asset/swiper_counter3.png";
 import swiper_counter4 from "@/asset/swiper_counter4.png";
 import techem from "@/asset/techem.png";
-import techemsvg from "@/asset/techem.svg";
 import trustpilot from "@/asset/trustpilot.png";
 import vitolos from "@/asset/vitolos.svg";
 import watts from "@/asset/watts.png";
-import wattssvg from "@/asset/watts.svg";
 import weight from "@/asset/weight.png";
 import wemolo from "@/asset/wemolo.svg";
 import xIcon from "@/asset/x.png";
@@ -224,8 +211,6 @@ import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_c
 import building from "@/asset/building.svg";
 import basement from "@/asset/basement.png";
 import staircase from "@/asset/staircase.png";
-import techemUpd from "@/asset/techem_upd.png";
-import wattsUpd from "@/asset/watts_upd.png";
 import vdiv_footer from "@/asset/vdiv_footer.png";
 import personSlide1 from "@/asset/person_slide_1.png";
 import personSlide2 from "@/asset/person_slide_2.png";
@@ -258,7 +243,6 @@ import wagner_green from "@/asset/wagner_green.png";
 import vitec_green from "@/asset/vitec_green.png";
 import schleicher_green from "@/asset/schleicher_green.png";
 import raum_green from "@/asset/raum_green.png";
-import quarterback_green from "@/asset/quarterback_green.png";
 import progera_green from "@/asset/progera_green.png";
 import niesen_green from "@/asset/niesen_green.png";
 import neckar_green from "@/asset/neckar_green.png";
@@ -296,7 +280,6 @@ export {
   vitec_green,
   schleicher_green,
   raum_green,
-  quarterback_green,
   progera_green,
   niesen_green,
   neckar_green,
@@ -332,8 +315,6 @@ export {
   personSlidePerson3,
   personSlidePerson4,
   personSlidePerson5,
-  techemUpd,
-  wattsUpd,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,
@@ -432,19 +413,15 @@ export {
   checkmark_icon,
   checkmark_icon_big,
   checkmark_shield,
-  checkmarks1,
-  checkmarks2,
   checkmarks3,
   chess_shield,
   chevron,
   clock,
   counter,
   counter_small,
-  cursor,
   daten,
   doc,
   doc_phone,
-  docsvg,
   eu_elipse,
   eu_gdpr,
   eu_lock,
@@ -470,8 +447,6 @@ export {
   info,
   information,
   insta,
-  instalation,
-  install_faq1,
   install_faq2,
   install_faq3,
   install_faq5,
@@ -480,7 +455,6 @@ export {
   ki_akademie,
   linkedin,
   linkedinsvg,
-  list1,
   list2,
   lock,
   logo,
@@ -513,15 +487,11 @@ export {
   payment,
   person_icon,
   play,
-  playsvg,
-  rate_star,
   realtime,
-  reviews,
   reviews_mobile,
   right_arrow,
   sameday,
   sameday1,
-  score_chart,
   settings_icon,
   slider_counter1,
   small_counter,
@@ -533,11 +503,9 @@ export {
   swiper_counter3,
   swiper_counter4,
   techem,
-  techemsvg,
   trustpilot,
   vitolos,
   watts,
-  wattssvg,
   weight,
   wemolo,
   xIcon,

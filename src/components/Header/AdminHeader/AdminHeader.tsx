@@ -52,7 +52,9 @@ export default function AdminHeader({dbEnv}:{dbEnv:string}) {
             src={admin_logo}
             alt="admin_logo"
           />
+          <p className="text-red-700 font-bold">
           {dbEnv} 
+          </p>
         </Link>
         
         {/* Desktop Filters - Hidden on tablet/mobile */}

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Forward to Supabase Edge Function (same function Make.com uses)
     const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/csv-parser?filename=${encodeURIComponent(fileName)}`;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!edgeFunctionUrl || !serviceRoleKey) {
       console.error('Missing Supabase configuration');

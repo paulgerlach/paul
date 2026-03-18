@@ -1,6 +1,6 @@
 import { createHmac, randomBytes } from "crypto";
 
-const PEPPER = process.env.BVED_TOKEN_PEPPER || process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY || "default-pepper-change-in-production";
+const PEPPER = process.env.BVED_TOKEN_PEPPER || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "default-pepper-change-in-production";
 
 if (!process.env.BVED_TOKEN_PEPPER && process.env.NODE_ENV === "production") {
     console.warn("BVED_TOKEN_PEPPER is not set, using default pepper");

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/Basic/ui/Button";
+import { Loader2 } from "lucide-react";
 
 interface FormFooterProps {
     backLink: string;
@@ -25,6 +26,7 @@ export function FormFooter({ backLink, step, isPending, disabled }: FormFooterPr
                 type="submit"
                 disabled={isPending || disabled}
             >
+                {isPending && <Loader2 className="animate-spin w-5 h-5" />}
                 {step === "upload"
                     ? "Rechnungen analysieren"
                     : "Dokumente hochladen"}

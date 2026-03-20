@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, CheckCircle2 } from "lucide-react";
+import { FileText, CheckCircle2, Loader2 } from "lucide-react";
 import type { FileEntry } from "@/hooks/useInvoicesBase";
 
 interface FileListProps {
@@ -26,6 +26,9 @@ export function FileList({ entries }: FileListProps) {
                         <span className="text-red-500">
                             {entry.error}
                         </span>
+                    )}
+                    {entry.status === "analyzing" && (
+                        <Loader2 className="animate-spin text-ai-blue h-5 w-5" />
                     )}
                 </div>
             ))}

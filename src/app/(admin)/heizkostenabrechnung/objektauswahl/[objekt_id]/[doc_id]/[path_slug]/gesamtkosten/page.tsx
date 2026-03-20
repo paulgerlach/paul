@@ -25,13 +25,13 @@ export default async function GesamtkostenPage({
 	const backLink =
 		path_slug === "manuell"
 			? `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/abrechnungszeitraum`
-			: `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/${doc_id}/${path_slug}/dokumentenmanagement`;
+			: `${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/${doc_id}/${path_slug}/detailansicht`;
 
 	return (
 		<div className="py-6 px-9 max-medium:px-4 max-medium:py-4 h-[calc(100dvh-77px)] max-h-[calc(100dvh-77px)] max-xl:h-[calc(100dvh-53px)] max-xl:max-h-[calc(100dvh-53px)] max-medium:h-auto max-medium:max-h-none max-medium:overflow-y-auto grid grid-rows-[auto_1fr]">
 			<Breadcrumb
 				backTitle="Abrechnung"
-				link={`${ROUTE_HEIZKOSTENABRECHNUNG}/objektauswahl/${objekt_id}/abrechnungszeitraum`}
+				link={backLink}
 				title={`Gesamtkosten für das Objekt`}
 				subtitle="Bitte erfassen Sie hier alle Kosten, die auf das gesamte Gebäude entfallen. Fügen Sie einzelne Ausgaben direkt zu den jeweiligen Kostenarten hinzu. Sie können auch eigene Kostenarten anstatt der vordefinierten Kostenarten anlegen."
 			/>

@@ -26,8 +26,8 @@ export function useDokumentenManagementLocal({
     const isEditMode = !!relatedInvoices;
 
     const nextLink = isEditMode
-        ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/gesamtkosten`
-        : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/gesamtkosten`;
+        ? `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/weitermachen/${docId}/${pathSlug}/detailansicht`
+        : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/${docId}/${pathSlug}/detailansicht`;
 
     return useInvoicesBase({
         objektId,

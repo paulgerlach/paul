@@ -355,7 +355,8 @@ export function useInvoicesBase({
 
 	const isSubmitDisabled =
 		(entries.length === 0 && !isEditMode) ||
-		(entries.length > 0 && entries.every((e) => e.status === "error"));
+		(entries.length > 0 && entries.every((e) => e.status === "error")) ||
+		(step === "review" && !entries.some((e) => e.status === "success"));
 
 	return {
 		entries,

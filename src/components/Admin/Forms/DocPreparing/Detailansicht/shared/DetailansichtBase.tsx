@@ -33,13 +33,15 @@ export default function DetailansichtBase({
 
     const {
         documents,
+        allInvoices,
+        activeInvoiceIndex,
         currentDocIndex,
         currentDoc,
         pdfUrl,
         openAccordionIndex,
-        setOpenAccordionIndex,
-        handleNextDoc,
-        handlePrevDoc,
+        handleNextInvoice,
+        handlePrevInvoice,
+        jumpToInvoice,
         checkIfChanged
     } = useDetailansichtLogic(relatedInvoices);
 
@@ -81,22 +83,22 @@ export default function DetailansichtBase({
             <div className="flex flex-col h-full border border-gray-200 rounded-lg bg-[#f9fafb] shadow-sm relative overflow-hidden">
                 <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200 bg-white shadow-sm z-10 w-full relative">
                     <h2 className="text-lg font-bold text-gray-800 truncate pr-4">
-                        Hochgeladenes Dokument: <span className="font-medium">{currentDoc?.file.name ?? "..."}</span>
+                        Beleg: <span className="font-medium">{allInvoices[activeInvoiceIndex]?.item?.document?.[0]?.name ?? "..."}</span>
                     </h2>
                     <div className="flex items-center gap-1 border border-gray-200 rounded-full px-1 py-1 bg-gray-50/50">
                         <button
-                            onClick={handlePrevDoc}
-                            disabled={currentDocIndex === 0}
+                            onClick={handlePrevInvoice}
+                            disabled={activeInvoiceIndex === 0}
                             className="p-1.5 hover:bg-white hover:shadow-sm rounded-full disabled:opacity-30 disabled:hover:shadow-none transition-all"
                         >
                             <ChevronLeft className="w-5 h-5 text-gray-600" />
                         </button>
-                        <span className="text-xs font-semibold text-gray-500 w-10 text-center">
-                            {documents.length > 0 ? `${currentDocIndex + 1} / ${documents.length}` : "0 / 0"}
+                        <span className="text-xs font-semibold text-gray-500 w-14 text-center">
+                            {allInvoices.length > 0 ? `${activeInvoiceIndex + 1} / ${allInvoices.length}` : "0 / 0"}
                         </span>
                         <button
-                            onClick={handleNextDoc}
-                            disabled={currentDocIndex === documents.length - 1}
+                            onClick={handleNextInvoice}
+                            disabled={activeInvoiceIndex === allInvoices.length - 1}
                             className="p-1.5 hover:bg-white hover:shadow-sm rounded-full disabled:opacity-30 disabled:hover:shadow-none transition-all"
                         >
                             <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -105,17 +107,21 @@ export default function DetailansichtBase({
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-6 py-6 pb-28">
-                    {currentDoc?.items.map((costItem, idx) => (
-                        <CostItemAccordion
-                            key={`${currentDocIndex}-${idx}`}
-                            costItem={costItem}
-                            isOpen={openAccordionIndex === idx}
-                            onToggle={() => setOpenAccordionIndex(openAccordionIndex === idx ? null : idx)}
-                            locals={locals}
-                            purposeOptions={purposeOptions}
-                        />
+                    {documents.map((doc, dIdx) => (
+                        <div key={dIdx} className={dIdx === currentDocIndex ? "" : "opacity-50 grayscale-[0.5]"}>
+                            {doc.items.map((costItem, iIdx) => (
+                                <CostItemAccordion
+                                    key={`${dIdx}-${iIdx}`}
+                                    costItem={costItem}
+                                    isOpen={currentDocIndex === dIdx && openAccordionIndex === iIdx}
+                                    onToggle={() => jumpToInvoice(dIdx, iIdx)}
+                                    locals={locals}
+                                    purposeOptions={purposeOptions}
+                                />
+                            ))}
+                        </div>
                     ))}
-                    {!currentDoc && (
+                    {allInvoices.length === 0 && (
                         <div className="flex flex-col items-center justify-center text-gray-400 mt-20 gap-2">
                             <MoreVertical className="w-8 h-8 opacity-20" />
                             <p>Keine Kostenarten erkannt</p>

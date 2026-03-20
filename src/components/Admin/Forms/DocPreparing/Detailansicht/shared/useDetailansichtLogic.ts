@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useHeizkostenabrechnungStore } from "@/store/useHeizkostenabrechnungStore";
 import { InvoiceDocumentType } from "@/types";
 import { format } from "date-fns";
 
 export function useDetailansichtLogic(relatedInvoices?: InvoiceDocumentType[]) {
     const { documentGroups } = useHeizkostenabrechnungStore();
-    const [currentDocIndex, setCurrentDocIndex] = useState(0);
-    const [openAccordionIndex, setOpenAccordionIndex] = useState<number | null>(0);
+    const [activeInvoiceIndex, setActiveInvoiceIndex] = useState(0);
 
     const initialInvoicesMap = useMemo(() => {
         const map = new Map<string, InvoiceDocumentType>();
@@ -37,20 +36,39 @@ export function useDetailansichtLogic(relatedInvoices?: InvoiceDocumentType[]) {
         return Array.from(docsMap.values());
     }, [documentGroups]);
 
+    const allInvoices = useMemo(() => {
+        const flat: any[] = [];
+        documents.forEach((doc, docIdx) => {
+            doc.items.forEach((item, itemIdx) => {
+                flat.push({ ...item, docIdx, itemIdx });
+            });
+        });
+        return flat;
+    }, [documents]);
+
+    const currentInvoice = allInvoices[activeInvoiceIndex];
+    const currentDocIndex = currentInvoice?.docIdx ?? 0;
+    const openAccordionIndex = currentInvoice?.itemIdx ?? 0;
     const currentDoc = documents[currentDocIndex];
+    
     const pdfUrl = useMemo(() => currentDoc ? URL.createObjectURL(currentDoc.file) : null, [currentDoc]);
 
-    const handleNextDoc = () => {
-        if (currentDocIndex < documents.length - 1) {
-            setCurrentDocIndex(prev => prev + 1);
-            setOpenAccordionIndex(0);
+    const handleNextInvoice = () => {
+        if (activeInvoiceIndex < allInvoices.length - 1) {
+            setActiveInvoiceIndex(prev => prev + 1);
         }
     };
 
-    const handlePrevDoc = () => {
-        if (currentDocIndex > 0) {
-            setCurrentDocIndex(prev => prev - 1);
-            setOpenAccordionIndex(0);
+    const handlePrevInvoice = () => {
+        if (activeInvoiceIndex > 0) {
+            setActiveInvoiceIndex(prev => prev - 1);
+        }
+    };
+
+    const jumpToInvoice = (docIdx: number, itemIdx: number) => {
+        const index = allInvoices.findIndex(inv => inv.docIdx === docIdx && inv.itemIdx === itemIdx);
+        if (index !== -1) {
+            setActiveInvoiceIndex(index);
         }
     };
 
@@ -73,13 +91,15 @@ export function useDetailansichtLogic(relatedInvoices?: InvoiceDocumentType[]) {
 
     return {
         documents,
+        allInvoices,
+        activeInvoiceIndex,
         currentDocIndex,
         currentDoc,
         pdfUrl,
         openAccordionIndex,
-        setOpenAccordionIndex,
-        handleNextDoc,
-        handlePrevDoc,
+        handleNextInvoice,
+        handlePrevInvoice,
+        jumpToInvoice,
         checkIfChanged,
     };
 }

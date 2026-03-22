@@ -52,7 +52,7 @@ export default function DokumentenmanagementLocalForm({
         : `${ROUTE_HEIZKOSTENABRECHNUNG}/localauswahl/${objektId}/${localId}/abrechnungszeitraum`;
 
     return (
-        <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-3 h-full rounded-2xl px-4 flex items-start justify-center">
+        <div className="bg-[#EFEEEC] border-y-[20px] border-[#EFEEEC] col-span-3 h-full rounded-2xl px-4 flex items-start justify-center max-w-6xl">
             <div className="bg-white h-full py-6 px-4 rounded w-full shadow-sm space-y-8 flex flex-col overflow-y-auto">
                 <h2 className="font-bold">
                     Dokumente hochladen

@@ -31,7 +31,7 @@ export function UploadDropzone({ onDrop, onDropRejected }: UploadDropzoneProps) 
         <>
             <div
                 {...getRootProps()}
-                className="border-2 flex-1 border-dashed border-ai-blue rounded-xl p-10 text-center cursor-pointer flex items-center justify-center flex-col"
+                className="border-2 flex-1 border-dashed border-ai-blue rounded-xl p-10 text-center cursor-pointer flex items-center justify-center flex-col max-w-"
             >
                 <input {...getInputProps()} />
                 <Image

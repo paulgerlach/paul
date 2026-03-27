@@ -58,7 +58,7 @@ export default function EinsparungChart({
 				/>
 			</div>
 			<div className="flex-1 flex flex-col justify-center">
-				{shouldShowEmpty ? (
+				{/* {shouldShowEmpty ? (
 					<EmptyState
 						title={emptyTitle ?? "Keine Daten verfügbar."}
 						description={
@@ -68,15 +68,13 @@ export default function EinsparungChart({
 						imageSrc={earth.src}
 						imageAlt="Einsparung"
 					/>
-				) : (
+				) : ( */}
 					<div>
 						<p className="text-6xl md:text-3xl lg:text-4xl text-black/50 mb-5 leading-none">
-							{co2Display}
+							0.5t CO₂
 						</p>
 						<p className="text-xs text-gray-500 max-small:text-xs leading-normal">
-							{co2Result && co2Result.totalCO2SavedTons > 0.1
-								? co2Context?.description
-								: "Aktuell liegen nicht genügend Daten vor, um diesen Wert korrekt darzustellen."}
+							Kleine Schritte führen zu großen Veränderungen.
 						</p>
 						{/* {co2Result && (
               <div className="mt-2 text-xs text-gray-400">
@@ -84,7 +82,7 @@ export default function EinsparungChart({
               </div>
             )} */}
 					</div>
-				)}
+				{/* )} */}
 			</div>
 		</div>
 	);

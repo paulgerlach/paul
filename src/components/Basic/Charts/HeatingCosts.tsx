@@ -37,6 +37,11 @@ export default function HeatingCosts({
   const [tickFormatter, setTickFormatter] = useState<(value: number) => string>(
     () => (value: number) => `${value.toLocaleString()}`
   );
+
+  const getRandomPlaceholder = () => {
+    return Math.floor(Math.random() * 9501) + 500;
+  }
+
   
   const data = useMemo(() => {
     if (!csvText || !Array.isArray(csvText)) {
@@ -72,7 +77,11 @@ export default function HeatingCosts({
       return result;
     }
 
-    return aggregatedHCAData;
+    return [
+      { label: '2025-12', value: getRandomPlaceholder() },
+      { label: '2026-01', value: getRandomPlaceholder() },
+      { label: '2026-02', value: getRandomPlaceholder() },
+    ];
   }, [csvText, startDate, endDate]);
 
   // Calculate dynamic domain and formatting based on chart data
@@ -123,14 +132,14 @@ export default function HeatingCosts({
         />
       </div>
       <div className="flex-1">
-        {isEmpty ? (
+        {/* {isEmpty ? (
           <EmptyState
             title={emptyTitle ?? "No data available."}
             description={emptyDescription ?? "No data available."}
             imageSrc={heater.src}
             imageAlt="Heizkosten"
           />
-        ) : (
+        ) : ( */}
           <ResponsiveContainer
             className="heating-costs"
             width="100%"
@@ -162,7 +171,7 @@ export default function HeatingCosts({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        )}
+        {/* )} */}
       </div>
     </div>
   );

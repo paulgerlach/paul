@@ -39,7 +39,11 @@ export default function EinsparungChart({
 	const shouldShowEmpty =
 		isEmpty ||
 		!filteredData ||
-		filteredData.length === 0
+		filteredData.length === 0;
+	
+	const getRandomPlaceholder = () => {
+		return Math.random() * (1.125 - 0.20) + 0.20;
+	};
 
 	return (
 		<div className="rounded-2xl shadow p-4 bg-white px-5 h-full flex flex-col">
@@ -71,7 +75,7 @@ export default function EinsparungChart({
 				) : ( */}
 					<div>
 						<p className="text-6xl md:text-3xl lg:text-4xl text-black/50 mb-5 leading-none">
-							0.5t CO₂
+						{getRandomPlaceholder().toFixed(1)}t CO₂
 						</p>
 						<p className="text-xs text-gray-500 max-small:text-xs leading-normal">
 							Kleine Schritte führen zu großen Veränderungen.

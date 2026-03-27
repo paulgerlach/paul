@@ -437,14 +437,7 @@ export default function WaterChart({
     );
 
     // Step 5: Generate zero-padded data for consistent chart display
-    const zeroPaddedData = generateZeroPaddedDummyData(
-      aggregatedData,
-      granularity,
-      startDate,
-      endDate
-    );
-
-    console.log(zeroPaddedData)
+    const zeroPaddedData = generateZeroPaddedData(aggregatedData, granularity, startDate, endDate);
     setChartData(zeroPaddedData);
 
     // Step 6: Calculate Y-axis domain and formatter

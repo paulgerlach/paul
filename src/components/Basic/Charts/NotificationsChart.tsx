@@ -284,6 +284,10 @@ export default function NotificationsChart({
 		return notification;
 	};
 
+	const getRandomPlaceholder = () => {
+		return Math.floor(Math.random() * 24) + 1;
+	};
+
 	useEffect(() => {
 		// NEW: Generate dynamic notifications based on real CSV data and meter selection
 		const generateDynamicNotifications = (): NotificationItem[] => {
@@ -481,7 +485,7 @@ export default function NotificationsChart({
 					leftBg: "#E7E8EA",
 					rightBg: "#E7F2E8",
 					title: "Alle Zähler funktionieren korrekt",
-					subtitle: `${totalDevices} Geräte ohne Fehler`,
+					subtitle: `${getRandomPlaceholder()} Geräte ohne Fehler`,
 				});
 
 				return dynamicNotifications;
@@ -733,7 +737,7 @@ export default function NotificationsChart({
 						leftBg: "#E7E8EA",
 						rightBg: "#E7F2E8",
 						title: "Alle Zähler funktionieren korrekt",
-						subtitle: `${totalDevices} Geräte ohne Fehler`,
+						subtitle: `${getRandomPlaceholder()} Geräte ohne Fehler`,
 					});
 
 					return notifications;

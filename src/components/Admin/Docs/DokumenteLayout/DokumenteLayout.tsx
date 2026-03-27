@@ -13,6 +13,7 @@ import { useDropzone } from "react-dropzone";
 import { useUploadDocuments } from "@/apiClient";
 
 const exo2 = Exo_2({ subsets: ["latin"] });
+const fileSizeCache = new Map<string, string>();
 
 interface Objekt {
   id: string;
@@ -163,6 +164,11 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
     return documents.filter(doc => doc.objekt_id === selectedObjekt);
   }, [documents, selectedObjekt]);
 
+  const filteredDocumentSignature = useMemo(
+    () => filteredDocuments.map((doc) => `${doc.id}:${doc.document_url}`).join("|"),
+    [filteredDocuments]
+  );
+
   // Group documents by type into folders
   const documentFolders = useMemo(() => {
     const grouped = filteredDocuments.reduce((acc, doc) => {
@@ -211,19 +217,58 @@ export default function DokumenteLayout({ userId, objektsWithLocals, documents: 
   };
 
   useEffect(() => {
+    if (!filteredDocuments || filteredDocuments.length === 0) return;
+
+    let cancelled = false;
+
     const fetchSizes = async () => {
-      if (filteredDocuments && filteredDocuments.length > 0) {
-        for (const doc of filteredDocuments) {
-          const size = await getDocumentFileSize(doc.document_url);
-          setFileSizes((prev: Record<string, string>) => ({
-            ...prev,
-            [doc.id]: size
-          }));
+      const docsToFetch: DocumentMetadata[] = [];
+      const cachedSizes: Record<string, string> = {};
+
+      for (const doc of filteredDocuments) {
+        const cachedSize = fileSizeCache.get(doc.id);
+        if (cachedSize === undefined) {
+          docsToFetch.push(doc);
+        } else {
+          cachedSizes[doc.id] = cachedSize;
         }
       }
+
+      if (Object.keys(cachedSizes).length > 0) {
+        setFileSizes((prev) => ({
+          ...prev,
+          ...cachedSizes,
+        }));
+      }
+
+      if (docsToFetch.length === 0) return;
+
+      const nextSizes: Record<string, string> = {};
+
+      for (const doc of docsToFetch) {
+        if (cancelled) return;
+        const size = await getDocumentFileSize(doc.document_url);
+        fileSizeCache.set(doc.id, size);
+        nextSizes[doc.id] = size;
+      }
+
+      if (cancelled || Object.keys(nextSizes).length === 0) return;
+
+      setFileSizes((prev) => ({
+        ...prev,
+        ...nextSizes,
+      }));
     };
-    fetchSizes();
-  }, [filteredDocuments, getDocumentFileSize]);
+
+    void fetchSizes();
+
+    return () => {
+      cancelled = true;
+    };
+    // `filteredDocuments` reference is unstable across server payloads.
+    // Track a stable signature to avoid redundant storage list fetches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredDocumentSignature]);
 
   const handleDownload = async (document: DocumentMetadata) => {
     try {

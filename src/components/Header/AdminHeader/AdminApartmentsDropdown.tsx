@@ -34,13 +34,13 @@ export default function AdminApartmentsDropdown() {
   const error = isAdmin ? usersApartmentsError : apartmentsError;
   
   // Log apartment data status
-  console.log('[AdminApartmentsDropdown] Status:', {
-    isAdmin,
-    isLoading,
-    error,
-    apartmentsCount: apartmentsToUse?.length || 0,
-    selectedCount: selectedLocalIds.length
-  });
+  // console.log('[AdminApartmentsDropdown] Status:', {
+  //   isAdmin,
+  //   isLoading,
+  //   error,
+  //   apartmentsCount: apartmentsToUse?.length || 0,
+  //   selectedCount: selectedLocalIds.length
+  // });
 
   const toggleSelection = async (localId?: string) => {
     if (!localId) return;

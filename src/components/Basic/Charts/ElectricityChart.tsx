@@ -353,6 +353,27 @@ export default function ElectricityChart({
     return out;
   }, [data]);
 
+  const dummyChartData = useMemo(() => {
+    const dummyData: { label: string; kwh: number }[] = Array.from({ length: 12 }, (_, i) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (11 - i));
+      date.setDate(1);
+
+      return {
+        label: date.toLocaleString("default", { month: "short", year: "numeric" }),
+        kwh: Math.round((Math.random() * 150 + 200) * 10) / 10, // 200–350 kWh range
+      };
+    });
+
+    const windowSize = 3;
+    return dummyData.map((d, idx) => {
+      const start = Math.max(0, idx - (windowSize - 1));
+      const slice = dummyData.slice(start, idx + 1);
+      const avg = slice.reduce((s, r) => s + r.kwh, 0) / slice.length;
+      return { ...d, avg };
+    });
+  }, [])
+
   const yMax = useMemo(() => {
     const values = chartData.map((d) => d.kwh as number);
     const maxData = values.length ? Math.max(...values) : 0;
@@ -379,7 +400,7 @@ export default function ElectricityChart({
       </div>
 
       <div className="flex-1 flex items-center">
-        {showEmpty ? (
+        {/* {showEmpty ? (
           <div className="h-full flex items-center">
             <EmptyState
               title={emptyTitle ?? "Keine Daten verfügbar."}
@@ -390,10 +411,10 @@ export default function ElectricityChart({
               imageAlt="Stromverbrauch"
             />
           </div>
-        ) : (
+        ) : ( */}
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
-              data={chartData}
+            data={dummyChartData}
               margin={{ left: 4, right: 12, top: 8 }}
             >
               <defs>
@@ -441,7 +462,7 @@ export default function ElectricityChart({
               />
             </ComposedChart>
           </ResponsiveContainer>
-        )}
+        {/* )} */}
       </div>
     </div>
   );

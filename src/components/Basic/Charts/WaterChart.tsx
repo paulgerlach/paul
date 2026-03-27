@@ -298,6 +298,26 @@ const generateZeroPaddedData = (
   return result;
 };
 
+
+
+const getRandomPlaceholder = () => {
+  return Math.floor(Math.random() * 9501) + 500;
+}
+
+const generateZeroPaddedDummyData = (): ChartDataPoint[] => {
+  return Array.from({ length: 12 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - (11 - i));
+    date.setDate(1);
+
+    return {
+      label: date.toLocaleString("default", { month: "short", year: "numeric" }),
+      value: getRandomPlaceholder(),
+      date,
+    };
+  });
+};
+
 export default function WaterChart({
   color,
   title,
@@ -325,6 +345,9 @@ export default function WaterChart({
   const { startDate, endDate } = useChartStore();
 
   useEffect(() => {
+    const dummyData = generateZeroPaddedDummyData();
+    setChartData(dummyData);
+    return;
     if (isEmpty || csvText.length === 0) {
       setChartData([]);
       setHasDataInRange(false);
@@ -414,13 +437,7 @@ export default function WaterChart({
     );
 
     // Step 5: Generate zero-padded data for consistent chart display
-    const zeroPaddedData = generateZeroPaddedData(
-      aggregatedData,
-      granularity,
-      startDate,
-      endDate
-    );
-
+    const zeroPaddedData = generateZeroPaddedData(aggregatedData, granularity, startDate, endDate);
     setChartData(zeroPaddedData);
 
     // Step 6: Calculate Y-axis domain and formatter
@@ -466,7 +483,7 @@ export default function WaterChart({
       </div>
 
       <div className="flex-1">
-        {isEmpty || !hasDataInRange ? (
+        {/* {isEmpty || !hasDataInRange ? (
           <EmptyState
             title={
               !hasDataInRange && startDate && endDate
@@ -485,7 +502,7 @@ export default function WaterChart({
             imageSrc={chartType === "hot" ? hot_water.src : cold_water.src}
             imageAlt={chartType === "hot" ? "Warmwasser" : "Kaltwasser"}
           />
-        ) : (
+        ) : ( */}
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData.map((d) => ({ month: d.label, actual: d.value }))}
@@ -539,7 +556,7 @@ export default function WaterChart({
               />
             </ComposedChart>
           </ResponsiveContainer>
-        )}
+        {/* )} */}
       </div>
     </div>
   );

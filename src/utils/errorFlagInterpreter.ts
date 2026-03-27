@@ -198,7 +198,7 @@ export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretati
 
   for (let bit = 0; bit < 8; bit++) {
     if (errorFlag & (1 << bit)) {
-      const errorMessage = getErrorMessages(bit, deviceType, manufacturer);
+      const errorMessage = getErrorMessages(bit, deviceType, manufacturer ?? "");
       errors.push(errorMessage);
     }
   }
@@ -210,7 +210,7 @@ export function interpretErrorFlags(device: MeterReadingType): ErrorInterpretati
   return {
     deviceId,
     deviceType,
-    manufacturer,
+    manufacturer: manufacturer ?? "",
     errorFlag: String(errorFlagRaw),
     errors,
     severity: getErrorSeverity(errors)

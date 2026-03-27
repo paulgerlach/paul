@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     // Filter by device types ONLY if specific ones were requested
     // Otherwise, allow all data that has a valid date field
-    const filteredData = transformedData.filter(item => {
+    let filteredData = transformedData.filter(item => {
       const hasDate = (item['IV,0,0,0,,Date/Time'] || item['Actual Date'] || item['Raw Date']);
       if (!hasDate) return false;
 
@@ -171,6 +171,18 @@ export async function POST(request: NextRequest) {
     const actualMeterIds = Array.from(new Set(
       filteredData.map(reading => reading.ID).filter(Boolean)
     ));
+
+    // Remove uneeded lines in response
+    // Lord forgive me
+    filteredData = filteredData.map(item => {
+      return {
+        ID: item['ID'],                                     // required
+        'Device Type': item['Device Type'],                 // required
+        Status: item['Status'],                             // required
+        'IV,0,0,0,,Date/Time': item['IV,0,0,0,,Date/Time'], // required
+        'IV,0,0,0,,Units HCA': item['IV,0,0,0,,Units HCA'], // required
+      };
+    });
 
     return NextResponse.json({
       data: filteredData,

@@ -1,16 +1,10 @@
-import accentro_colored from "@/asset/accentro_colored.png";
-import accentro from "@/asset/accentro.png";
-import accentrosvg from "@/asset/accentro.svg";
 import arrow from "@/asset/arrow.png";
-import article_image from "@/asset/article_image.png";
 import article1 from "@/asset/article1.png";
 import article2 from "@/asset/article2.png";
 import article3 from "@/asset/article3.png";
 import article4 from "@/asset/article4.png";
 import big_x_icon from "@/asset/big_x_icon.png";
 import box_brands from "@/asset/box_brands.png";
-import buderus from "@/asset/buderus.png";
-import buderussvg from "@/asset/buderus.svg";
 import caract_battery from "@/asset/caract_battery.png";
 import caract_files from "@/asset/caract_files.png";
 import caract_mark from "@/asset/caract_mark.png";
@@ -30,28 +24,15 @@ import checkmark_bold from "@/asset/checkmark_bold.png";
 import checkmark_icon_big from "@/asset/checkmark_icon_big.png";
 import checkmark_icon from "@/asset/checkmark_icon.png";
 import checkmark_shield from "@/asset/checkmark_shield.png";
-import checkmarks1 from "@/asset/checkmarks1.png";
-import checkmarks2 from "@/asset/checkmarks2.png";
 import checkmarks3 from "@/asset/checkmarks3.png";
 import chess_shield from "@/asset/chess_shield.png";
 import chevron from "@/asset/chevron.png";
 import clock from "@/asset/clock.png";
-import clocksvg from "@/asset/clock.svg";
-import colored_google from "@/asset/colored_google.png";
-import counter_numbers from "@/asset/counter_numbers.png";
-import counter_numbers2 from "@/asset/counter_numbers2.png";
 import counter_small from "@/asset/counter_small.png";
 import counter from "@/asset/counter.png";
-import cursor from "@/asset/cursor.svg";
 import daten from "@/asset/daten.png";
-import dehoust from "@/asset/dehoust.png";
-import dehoustsvg from "@/asset/dehoust.svg";
-import deutsche_wohnen_colored from "@/asset/deutsche_wohnen_colored.png";
-import deutsche_wohnen from "@/asset/deutsche_wohnen.png";
-import deutsche_wohnensvg from "@/asset/deutsche_wohnen.svg";
 import doc_phone from "@/asset/doc_phone.png";
 import doc from "@/asset/doc.png";
-import docsvg from "@/asset/doc.svg";
 import eu_elipse from "@/asset/eu_elipse.png";
 import eu_gdpr from "@/asset/eu_gdpr.png";
 import eu_lock from "@/asset/eu_lock.png";
@@ -59,7 +40,6 @@ import fewocare from "@/asset/fewocare.svg";
 import flyla from "@/asset/flyla.svg";
 import footer_logo from "@/asset/footer_logo.png";
 import google from "@/asset/google.png";
-import googlesvg from "@/asset/google.svg";
 import handyman from "@/asset/handyman.png";
 import haus_hirst from "@/asset/haus_hirst.svg";
 import header_logo from "@/asset/header_logo.ico";
@@ -68,30 +48,25 @@ import heater_form1 from "@/asset/heater_form1.png";
 import heater_form2 from "@/asset/heater_form2.png";
 import heater_form3 from "@/asset/heater_form3.png";
 import heater from "@/asset/heater.png";
+import heating_bill_preview from "@/asset/heizkostenabrechnung_preview.png";
 import hero_counter from "@/asset/hero_counter.png";
 import hero_pointer from "@/asset/hero_pointer.png";
 import hero_process_bg from "@/asset/hero_process_bg.png";
 import hero_process_small from "@/asset/hero_process_small.png";
-import hero_review from "@/asset/hero_review.png";
 import hero_small_counter from "@/asset/hero_small_counter.png";
 import idea from "@/asset/idea.png";
 import info from "@/asset/info.png";
 import information from "@/asset/information.png";
 import insta from "@/asset/insta.png";
 import instasvg from "@/asset/insta.svg";
-import instalation from "@/asset/instalation.png";
-import install_faq1 from "@/asset/install_faq1.png";
 import install_faq2 from "@/asset/install_faq2.png";
 import install_faq3 from "@/asset/install_faq3.png";
 import install_faq5 from "@/asset/install_faq5.png";
 import instruments from "@/asset/instruments.png";
-import instrumentssvg from "@/asset/instruments.svg";
 import ki_akademie from "@/asset/ki_akademie.svg";
 import linkedin from "@/asset/linkedin.png";
 import linkedinsvg from "@/asset/linkedin.svg";
-import list1 from "@/asset/list1.png";
 import list2 from "@/asset/list2.png";
-import list3 from "@/asset/list3.png";
 import lock from "@/asset/lock.png";
 import logo from "@/asset/logo_new.png";
 import logosvg from "@/asset/logo.svg";
@@ -120,21 +95,13 @@ import numbered_counter4 from "@/asset/numbered_counter4.png";
 import nunbered_counter from "@/asset/nunbered_counter.png";
 import paket_im from "@/asset/paket_im.png";
 import parkdepot from "@/asset/parkdepot.svg";
-import partner_1 from "@/asset/partner_1.jpg";
-import partner_2 from "@/asset/partner_2.png";
-import partner_3 from "@/asset/partner_3.jpg";
 import payment from "@/asset/payment.png";
 import person_icon from "@/asset/person_icon.png";
 import play from "@/asset/play.png";
-import playsvg from "@/asset/play.svg";
-import rate_star from "@/asset/rate_star.svg";
 import realtime from "@/asset/realtime.svg";
-import reviews_list from "@/asset/reviews_list.png";
 import reviews_mobile from "@/asset/reviews_mobile.png";
-import reviews from "@/asset/reviews.png";
 import right_arrow from "@/asset/right_arrow.png";
 import sameday1 from "@/asset/Sameday 1.png";
-import score_chart from "@/asset/score_chart.png";
 import sameday from "@/asset/sameday.svg";
 import settings_icon from "@/asset/settings_icon.png";
 import slider_counter1 from "@/asset/slider_counter1.png";
@@ -147,23 +114,10 @@ import swiper_counter2 from "@/asset/swiper_counter2.png";
 import swiper_counter3 from "@/asset/swiper_counter3.png";
 import swiper_counter4 from "@/asset/swiper_counter4.png";
 import techem from "@/asset/techem.png";
-import techemsvg from "@/asset/techem.svg";
 import trustpilot from "@/asset/trustpilot.png";
-import video_preview from "@/asset/video_preview.png";
-import viessman_colored from "@/asset/viessman_colored.png";
-import viessmann from "@/asset/viessmann.png";
-import viessmannsvg from "@/asset/viessmann.svg";
 import vitolos from "@/asset/vitolos.svg";
-import vonovia_colored from "@/asset/vonovia_colored.png";
-import vonovia_person from "@/asset/vonovia_person.png";
-import vonovia from "@/asset/vonovia.png";
-import vonoviasvg from "@/asset/vonovia.svg";
-import water_kran from "@/asset/water_kran.svg";
 import watts from "@/asset/watts.png";
-import wattssvg from "@/asset/watts.svg";
-import water_shower from "@/asset/water_shower.svg";
 import weight from "@/asset/weight.png";
-import weightsvg from "@/asset/weight.svg";
 import wemolo from "@/asset/wemolo.svg";
 import xIcon from "@/asset/x.png";
 import xIconsvg from "@/asset/x.svg";
@@ -198,8 +152,6 @@ import green_check_single from "@/asset/green_check_single.png";
 import breadcrum_arrow from "@/asset/breadcrum_arrow.png";
 import objekte1 from "@/asset/objekte1.png";
 import objekte2 from "@/asset/objekte2.png";
-import objekte3 from "@/asset/objekte3.png";
-import objekte4 from "@/asset/objekte4.png";
 import dots_button from "@/asset/dots_button.png";
 import trend_up from "@/asset/trend_up.png";
 import trend_down from "@/asset/trend_down.png";
@@ -225,7 +177,6 @@ import parking_lot from "@/asset/parking_lot.png";
 import lamp from "@/asset/lamp.png";
 import big_time_clock from "@/asset/big_time_clock.png";
 import doc_preview_building from "@/asset/doc_preview_building.png";
-import heating_bill_preview from "@/asset/heizkostenabrechnung_preview.png";
 import close_dialog from "@/asset/close_dialog.png";
 import heating_bill_builing from "@/asset/heating_bill_builing.png";
 import heating_bill_condominium from "@/asset/heating_bill_condominium.png";
@@ -260,14 +211,6 @@ import cost_type_other_operating_costs from "@/asset/cost_type_other_operating_c
 import building from "@/asset/building.svg";
 import basement from "@/asset/basement.png";
 import staircase from "@/asset/staircase.png";
-import deutscheWonhenUpd from "@/asset/deutsche_wohnen_upd.png";
-import buderusUpd from "@/asset/buderus_upd.png";
-import accentroUpd from "@/asset/accentro_upd.png";
-import vonoviaUpd from "@/asset/vonovia_upd.png";
-import viessmannUpd from "@/asset/viessmann_upd.png";
-import techemUpd from "@/asset/techem_upd.png";
-import wattsUpd from "@/asset/watts_upd.png";
-import dehoustUpd from "@/asset/dehoust_upd.png";
 import vdiv_footer from "@/asset/vdiv_footer.png";
 import personSlide1 from "@/asset/person_slide_1.png";
 import personSlide2 from "@/asset/person_slide_2.png";
@@ -300,7 +243,6 @@ import wagner_green from "@/asset/wagner_green.png";
 import vitec_green from "@/asset/vitec_green.png";
 import schleicher_green from "@/asset/schleicher_green.png";
 import raum_green from "@/asset/raum_green.png";
-import quarterback_green from "@/asset/quarterback_green.png";
 import progera_green from "@/asset/progera_green.png";
 import niesen_green from "@/asset/niesen_green.png";
 import neckar_green from "@/asset/neckar_green.png";
@@ -326,7 +268,6 @@ import ai_keys from "@/asset/ai_keys.png";
 import ai_konto from "@/asset/ai_konto.png";
 
 export {
-  accentro_colored,
   berlinBear,
   manuell,
   ai_api,
@@ -339,7 +280,6 @@ export {
   vitec_green,
   schleicher_green,
   raum_green,
-  quarterback_green,
   progera_green,
   niesen_green,
   neckar_green,
@@ -359,7 +299,6 @@ export {
   wagner,
   winfried,
   electricity,
-  dehoustUpd,
   vdiv_footer,
   personSlide1,
   personSlide2,
@@ -376,13 +315,6 @@ export {
   personSlidePerson3,
   personSlidePerson4,
   personSlidePerson5,
-  deutscheWonhenUpd,
-  buderusUpd,
-  accentroUpd,
-  vonoviaUpd,
-  viessmannUpd,
-  techemUpd,
-  wattsUpd,
   operating_cost_documents_pending,
   cold_water,
   pdf_home,
@@ -416,7 +348,6 @@ export {
   heating_bill_builing,
   corner_green_check,
   doc_preview_building,
-  heating_bill_preview,
   calendar,
   parking_lot,
   pdf_icon,
@@ -438,9 +369,7 @@ export {
   trend_check,
   green_check_single,
   blue_info,
-  objekte4,
   dots_button,
-  objekte3,
   objekte2,
   objekte1,
   breadcrum_arrow,
@@ -454,22 +383,17 @@ export {
   notification,
   smoke_detector,
   cross_arrows,
-  accentro,
   cellphone,
   login,
   blog_group_link,
   blog_dropdown,
-  accentrosvg,
   arrow,
   article1,
   article2,
   article3,
   article4,
-  article_image,
   big_x_icon,
   box_brands,
-  buderus,
-  buderussvg,
   caract_battery,
   caract_files,
   caract_mark,
@@ -489,28 +413,15 @@ export {
   checkmark_icon,
   checkmark_icon_big,
   checkmark_shield,
-  checkmarks1,
-  checkmarks2,
   checkmarks3,
   chess_shield,
   chevron,
   clock,
-  clocksvg,
-  colored_google,
   counter,
-  counter_numbers,
-  counter_numbers2,
   counter_small,
-  cursor,
   daten,
-  dehoust,
-  dehoustsvg,
-  deutsche_wohnen,
-  deutsche_wohnen_colored,
-  deutsche_wohnensvg,
   doc,
   doc_phone,
-  docsvg,
   eu_elipse,
   eu_gdpr,
   eu_lock,
@@ -518,7 +429,6 @@ export {
   flyla,
   footer_logo,
   google,
-  googlesvg,
   handyman,
   haus_hirst,
   header_logo,
@@ -527,30 +437,25 @@ export {
   heater_form1,
   heater_form2,
   heater_form3,
+  heating_bill_preview,
   hero_counter,
   hero_pointer,
   hero_process_bg,
   hero_process_small,
-  hero_review,
   hero_small_counter,
   idea,
   info,
   information,
   insta,
-  instalation,
-  install_faq1,
   install_faq2,
   install_faq3,
   install_faq5,
   instasvg,
   instruments,
-  instrumentssvg,
   ki_akademie,
   linkedin,
   linkedinsvg,
-  list1,
   list2,
-  list3,
   lock,
   logo,
   logosvg,
@@ -579,22 +484,14 @@ export {
   nunbered_counter,
   paket_im,
   parkdepot,
-  partner_1,
-  partner_2,
-  partner_3,
   payment,
   person_icon,
   play,
-  playsvg,
-  rate_star,
   realtime,
-  reviews,
-  reviews_list,
   reviews_mobile,
   right_arrow,
   sameday,
   sameday1,
-  score_chart,
   settings_icon,
   slider_counter1,
   small_counter,
@@ -606,23 +503,10 @@ export {
   swiper_counter3,
   swiper_counter4,
   techem,
-  techemsvg,
   trustpilot,
-  video_preview,
-  viessman_colored,
-  viessmann,
-  viessmannsvg,
   vitolos,
-  vonovia,
-  vonovia_colored,
-  vonovia_person,
-  vonoviasvg,
-  water_kran,
-  water_shower,
   watts,
-  wattssvg,
   weight,
-  weightsvg,
   wemolo,
   xIcon,
   xIconsvg,

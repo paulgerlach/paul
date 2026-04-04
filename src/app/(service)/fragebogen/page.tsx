@@ -111,7 +111,7 @@ export default function FragebogenPage() {
     reset,
     watch,
     setValue,
-  } = useForm({
+  } = useForm<QuestionareFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       property_count_category: null,

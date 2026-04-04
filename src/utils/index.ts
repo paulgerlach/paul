@@ -333,13 +333,3 @@ export const parseGermanDate = (dateString: string): Date | null => {
   // Fallback to standard parsing
   return new Date(dateString);
 };
-
-// Re-export CO₂ calculation utilities
-export {
-  calculateCO2Savings,
-  formatCO2Savings,
-  getCO2Context,
-  CO2_EMISSION_FACTORS,
-  ENERGY_CONVERSION,
-  type CO2CalculationResult,
-} from './co2Calculator';

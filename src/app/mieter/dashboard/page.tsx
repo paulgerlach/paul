@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import SharedDashboardWrapper from "@/app/shared/dashboard/SharedDashboardWrapper";
 import TimeFrameSelector from "./TimeFrameSelector";
 
 // Loading component matching shared dashboard style
@@ -182,29 +181,6 @@ function DashboardContent() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Dashboard Content */}
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 max-md:px-0 py-2 max-md:py-1 overflow-x-hidden max-md:max-w-full">
-        {dashboardData.length > 0 ? (
-          <SharedDashboardWrapper
-            filteredData={dashboardData}
-            filters={{
-              startDate: dateRange.startDate,
-              endDate: dateRange.endDate,
-            }}
-          />
-        ) : (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="text-5xl mb-4">📭</div>
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">Keine Daten verfügbar</h2>
-              <p className="text-gray-500">
-                Für den ausgewählten Zeitraum sind keine Verbrauchsdaten vorhanden.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

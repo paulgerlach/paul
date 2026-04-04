@@ -3,17 +3,17 @@ import { updateSession } from "@/utils/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
 	// Update the session first
-	const response = await updateSession(request);
+	// const response = await updateSession(request);
 
 	// Store current request URL in a custom header
 	const requestHeaders = new Headers(request.headers);
 	requestHeaders.set("x-url", request.url);
 
 	// If `updateSession` already returns a NextResponse, we need to patch it
-	if (response instanceof NextResponse) {
-		response.headers.set("x-url", request.url);
-		return response;
-	}
+	// if (response instanceof NextResponse) {
+	// 	response.headers.set("x-url", request.url);
+	// 	return response;
+	// }
 
 	// Otherwise, create a fresh response with the new headers
 	return NextResponse.next({

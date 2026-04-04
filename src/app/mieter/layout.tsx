@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "../(admin)/globals.css";
 import QueryProvider from "../QueryProvider";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "Mieter-Dashboard - Heidi Systems",

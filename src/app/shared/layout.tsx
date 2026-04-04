@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "../(admin)/globals.css";
+import "../globals.css";
 import QueryProvider from "../QueryProvider";
 
 export const metadata: Metadata = {

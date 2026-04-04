@@ -32,9 +32,6 @@ import type {
   UserType
 } from "@/types";
 import { parseCsv } from "@/utils/parser";
-import { MASTER_DATA, MASTER_DATA_2 } from "./data";
-import { writeFileSync } from "fs";
-import { CSVParser } from "./parse_csv_to_json";
 import { Agency } from "@/types/Agency";
 
 export type MeterReadingType = {

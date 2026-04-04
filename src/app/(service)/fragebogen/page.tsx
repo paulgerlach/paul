@@ -2,8 +2,6 @@
 
 import { LazyLottie } from "@/components/Lottie/LazyLottie";
 import { checkmark_icon_big, chevron, counter, info } from "@/static/icons";
-import animation5 from "@/animations/Animation_5.json";
-import animation6 from "@/animations/Animation_6.json";
 import Image from "next/image";
 import { Fragment, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";

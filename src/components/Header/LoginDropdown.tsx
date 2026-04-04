@@ -68,36 +68,22 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
     // Mobile version - full width buttons
     return (
       <div className="flex flex-col w-full gap-2">
-        <button
-          onClick={handleVermieterClick}
-          className="w-full p-4 flex items-center cursor-pointer gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-[48px] hover:opacity-80 transition"
-        >
-          <Image
-            width={20}
-            height={20}
-            loading="lazy"
-            className="max-w-5 max-h-5"
-            style={{ width: "100%", height: "auto" }}
-            src={login}
-            alt="login"
-          />
-          Verwaltung Login
-        </button>
-        <button
-          onClick={handleMieterClick}
-          className="w-full p-4 flex items-center cursor-pointer gap-2 justify-center text-lg text-dark_text bg-gray-100 border border-gray-300 rounded-halfbase min-h-[48px] hover:opacity-80 transition"
-        >
-          <Image
-            width={20}
-            height={20}
-            loading="lazy"
-            className="max-w-5 max-h-5"
-            style={{ width: "100%", height: "auto" }}
-            src={login}
-            alt="login"
-          />
-          Anwohner Login
-        </button>
+        <a href="">
+          <button
+            className="w-full p-4 flex items-center cursor-pointer gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-[48px] hover:opacity-80 transition"
+          >
+            <Image
+              width={20}
+              height={20}
+              loading="lazy"
+              className="max-w-5 max-h-5"
+              style={{ width: "100%", height: "auto" }}
+              src={login}
+              alt="login"
+            />
+            Einloggen
+          </button>
+        </a>
       </div>
     );
   }
@@ -105,8 +91,8 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
   // Desktop version - dropdown
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
+      <a href="">
       <button
-        onClick={() => setIsOpen(!isOpen)}
         className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition"
       >
         <Image
@@ -119,15 +105,8 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
           alt="login"
         />
         Einloggen
-        <svg 
-          className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+        </button>
+      </a>
 
       {/* Dropdown Menu - Matches Heidi Design */}
       {isOpen && (

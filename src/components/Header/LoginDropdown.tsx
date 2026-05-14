@@ -28,8 +28,6 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-
   const handleVermieterClick = () => {
     setIsOpen(false);
     openDialog("login");
@@ -65,9 +63,6 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
       }
     }
   };
-
-
-
 
   if (isMobile) {
     // Mobile version - full width buttons

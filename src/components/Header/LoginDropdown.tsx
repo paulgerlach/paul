@@ -105,29 +105,32 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
   // Desktop version - dropdown
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition"
-      >
-        <Image
-          width={16}
-          height={16}
-          loading="lazy"
-          className="max-w-4 max-h-4"
-          style={{ width: "100%", height: "auto" }}
-          src={login}
-          alt="login"
-        />
-        Einloggen
-        <svg 
-          className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
+
+      <a href={process.env.NEXT_PUBLIC_PLATFORM_URL}>
+        <button
+          // onClick={() => setIsOpen(!isOpen)}
+          className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          <Image
+            width={16}
+            height={16}
+            loading="lazy"
+            className="max-w-4 max-h-4"
+            style={{ width: "100%", height: "auto" }}
+            src={login}
+            alt="login"
+          />
+          Einloggen
+          <svg
+            className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </a>
 
       {/* Dropdown Menu - Matches Heidi Design */}
       {isOpen && (

@@ -28,6 +28,8 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+
   const handleVermieterClick = () => {
     setIsOpen(false);
     openDialog("login");
@@ -63,6 +65,9 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
       }
     }
   };
+
+
+
 
   if (isMobile) {
     // Mobile version - full width buttons
@@ -105,8 +110,9 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
   // Desktop version - dropdown
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
+      <a href={process.env.NEXT_PUBLIC_PLATFORM_URL}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        // onClick={() => setIsOpen(!isOpen)}
         className="p-2 flex items-center cursor-pointer gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition"
       >
         <Image
@@ -126,8 +132,9 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
           viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          </svg>
+        </button>
+      </a>
 
       {/* Dropdown Menu - Matches Heidi Design */}
       {isOpen && (

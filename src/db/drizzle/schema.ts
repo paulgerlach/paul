@@ -186,7 +186,34 @@ export const local_meters = pgTable("local_meters", {
 		foreignColumns: [locals.id],
 		name: "local_meters_local_id_fkey"
 	}),
-	pgPolicy("Only admin can edit this data", { as: "permissive", for: "all", to: ["public"], using: sql`is_admin()`, withCheck: sql`is_admin()` }),
+	pgPolicy("access_local_meters_through_properties", {
+		as: "permissive",
+		for: "all",
+		to: ["public"],
+		using: sql`can_access_property(local_id)`
+	}),
+	pgPolicy("Users can update their own meters", {
+		as: "permissive",
+		for: "update",
+		to: ["authenticated"],
+		using: sql`(EXISTS (
+            SELECT 1 FROM locals
+            JOIN objekte ON locals.objekt_id = objekte.id
+            WHERE locals.id = local_meters.local_id 
+            AND objekte.user_id = auth.uid()
+        ))`
+	}),
+	pgPolicy("Users can delete their own meters", {
+		as: "permissive",
+		for: "delete",
+		to: ["authenticated"],
+		using: sql`(EXISTS (
+            SELECT 1 FROM locals
+            JOIN objekte ON locals.objekt_id = objekte.id
+            WHERE locals.id = local_meters.local_id 
+            AND objekte.user_id = auth.uid()
+        ))`
+	}),
 ]);
 
 export const users_in_auth = pgTable("users_in_auth", {

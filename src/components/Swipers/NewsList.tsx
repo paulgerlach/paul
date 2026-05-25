@@ -24,7 +24,7 @@ export const newsSlides = [
 		image: news3,
 		title: "72 Standorte deutschlandweit",
 		subtitle:
-			"Die Heidi- Gruppe ist mit Standorten deutschlandweit vertreten und agiert auch in Österreich und der Schweiz",
+			"Die Heidi- Gruppe ist mit Standorten deutschlandweit vertreten und agiert auch in Österreich, Dänemark und der Schweiz",
 	},
 ];
 

@@ -76,7 +76,7 @@ export default function HomeHero() {
             4.8 Rating
           </span>
           <span className="text-[15px] max-small:text-xs leading-[18px] text-white/70 text-center whitespace-nowrap">
-            470 Bewertungen
+            1.850+ Bewertungen
           </span>
         </div>
         <Link

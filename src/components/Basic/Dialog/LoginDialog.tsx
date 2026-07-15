@@ -38,70 +38,44 @@ export default function LoginDialog() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const { email, password } = data;
-      const { data: sessionData, error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const v2Url = process.env.HEIDI_V2_URL;
 
-      if (error) {
-        toast.error("Login fehlgeschlagen");
-        console.error("Login failed:", error.message);
+      // sign in via heidi-v2 public oRPC endpoint
+      const response = await fetch(`${v2Url}/rpc/public/userSession/signIn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email, password } }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        toast.error("Login failed. Please check your credentials.");
         return;
       }
 
-      const { session } = sessionData;
+      const result = await response.json();
+      const session = result.json;
 
-      if (session?.access_token && session.refresh_token) {
-        setCookie(null, "sb-access-token", session.access_token, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-          secure: process.env.NODE_ENV === "production",
-        });
-        setCookie(null, "sb-refresh-token", session.refresh_token, {
-          maxAge: 30 * 24 * 60 * 60,
-          path: "/",
-          secure: process.env.NODE_ENV === "production",
-        });
-
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("permission")
-          .eq("id", session.user.id)
-          .single();
-
-        if (userError) {
-          console.error("Failed to fetch user role:", userError.message);
-          toast.error("Konnte Benutzerrolle nicht abrufen");
-          return;
-        }
-
-        // Send login event to Make.com webhook via API (server has env var; client does not)
-        try {
-          const response = await fetch('/api/notify-login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: session.user.email || email }),
-          });
-          if (!response.ok) {
-            console.error(`Failed to notify login: ${response.status} ${response.statusText}`);
-          }
-        } catch (err) {
-          console.error('Error notifying login:', err);
-        }
-
-        toast.success("Login erfolgreich");
-        closeDialog("login");
-
-        if (userData?.permission === "admin") {
-          router.push("/admin");
-        } else {
-          router.push(ROUTE_DASHBOARD);
+      // 2. Set the client-side 'atx' cookie for heidi-v2
+      const expiryDate = new Date(session.expires_at * 1000);
+      let cookieDomain = "";
+      const hostname = window.location.hostname;
+      if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+        const parts = hostname.split(".");
+        if (parts.length >= 2) {
+          cookieDomain = `; domain=.${parts.slice(-2).join(".")}`;
         }
       }
+      document.cookie = `atx=${session.access_token}; path=/; expires=${expiryDate.toUTCString()}${cookieDomain};`;
+
+      toast.success("Login successful. Redirecting...");
+      closeDialog("login");
+
+      // 3. Redirect to heidi-v2 admin panel
+      window.location.href = `${v2Url}/admin`;
     } catch (e) {
       console.error("Unexpected login error:", e);
-      toast.error("Ein unerwarteter Fehler ist aufgetreten");
+      toast.error("An unexpected error occurred");
     }
   };
 
@@ -171,9 +145,12 @@ disabled={methods.formState.isSubmitting}
               {methods.formState.isSubmitting ? "Einloggen..." : "Anmelden"}
             </Button>
             <button
+              type="button"
               onClick={() => {
-                openDialog("register");
-                closeDialog("login");
+                const v2Url = process.env.HEIDI_V2_URL;
+                if (v2Url) {
+                  window.location.href = v2Url;
+                }
               }}
               className="text-link cursor-pointer underline mx-auto text-base leading-[19.2px] flex items-center justify-start"
             >

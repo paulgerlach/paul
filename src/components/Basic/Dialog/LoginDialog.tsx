@@ -38,7 +38,7 @@ export default function LoginDialog() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const { email, password } = data;
-      const v2Url = process.env.HEIDI_V2_URL;
+      const v2Url = process.env.NEXT_PUBLIC_HEIDI_V2_URL;
 
       // sign in via heidi-v2 public oRPC endpoint
       const response = await fetch(`${v2Url}/rpc/public/userSession/signIn`, {
@@ -147,7 +147,7 @@ disabled={methods.formState.isSubmitting}
             <button
               type="button"
               onClick={() => {
-                const v2Url = process.env.HEIDI_V2_URL;
+                const v2Url = process.env.NEXT_PUBLIC_HEIDI_V2_URL;
                 if (v2Url) {
                   window.location.href = v2Url;
                 }

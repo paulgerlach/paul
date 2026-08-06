@@ -125,6 +125,9 @@ import partner_2 from "@/asset/partner_2.png";
 import partner_3 from "@/asset/partner_3.jpg";
 import payment from "@/asset/payment.png";
 import person_icon from "@/asset/person_icon.png";
+import private_person_icon from "@/asset/private_person.png";
+import group_icon from "@/asset/group.png";
+import fund_icon from "@/asset/fund.png";
 import play from "@/asset/play.png";
 import playsvg from "@/asset/play.svg";
 import rate_star from "@/asset/rate_star.svg";
@@ -584,6 +587,9 @@ export {
   partner_3,
   payment,
   person_icon,
+	private_person_icon,
+	group_icon,
+	fund_icon,
   play,
   playsvg,
   rate_star,

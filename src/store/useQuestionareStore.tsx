@@ -8,8 +8,8 @@ export type QuestionareStoreType = {
 	resetQuestionnaire: () => void;
 	increment: () => void;
 	decrement: () => void;
-	totalStepsNumber: number;
-	totalSteps: number[];
+	totalSteps: number;
+	setTotalSteps: (value: number) => void;
 	activeStep: number;
 	setActiveStep: (step: number) => void;
 	handleNextStep: () => void;
@@ -26,6 +26,7 @@ export type QuestionareStoreType = {
 
 export const useQuestionareStore = create<QuestionareStoreType>((set, get) => ({
 	formData: {
+		customer_type: null,
 		property_count_category: null,
 		// TOP FLOW fields
 		messdienstleister_count: 10,
@@ -49,31 +50,33 @@ export const useQuestionareStore = create<QuestionareStoreType>((set, get) => ({
 	},
 	setFormData: (data) => set({ formData: data }),
 	resetFormData: () => set({ formData: {} as QuestionareFormData }),
-	resetQuestionnaire: () => set({ 
-		activeStep: 0,
-		formData: {
-			property_count_category: null,
-			messdienstleister_count: 10,
-			zusammenarbeit_status: null,
-			akuter_handlungsbedarf: null,
-			wohnungen_count: 3,
-			funkzaehler_status: null,
-			standort_schwerpunkt: "",
-			verwaltung_name: "",
-			postleitzahl: "",
-			ort: "",
-			email: "",
-			first_name: "",
-			last_name: "",
-			form_confirm: false,
-			appartment_number: 2,
-			central_heating_system: null,
-			energy_sources: "Fernwärme",
-			heating_costs: null,
-			central_water_supply: null,
-			heating_available: null,
-		} as QuestionareFormData
-	}),
+	resetQuestionnaire: () =>
+		set({
+			activeStep: 0,
+			formData: {
+				customer_type: null,
+				property_count_category: null,
+				messdienstleister_count: 10,
+				zusammenarbeit_status: null,
+				akuter_handlungsbedarf: null,
+				wohnungen_count: 3,
+				funkzaehler_status: null,
+				standort_schwerpunkt: "",
+				verwaltung_name: "",
+				postleitzahl: "",
+				ort: "",
+				email: "",
+				first_name: "",
+				last_name: "",
+				form_confirm: false,
+				appartment_number: 2,
+				central_heating_system: null,
+				energy_sources: "Fernwärme",
+				heating_costs: null,
+				central_water_supply: null,
+				heating_available: null,
+			} as QuestionareFormData,
+		}),
 	increment: () =>
 		set((state) => ({
 			formData: {
@@ -106,10 +109,13 @@ export const useQuestionareStore = create<QuestionareStoreType>((set, get) => ({
 		set(() => ({
 			activeStep: step,
 		})),
-	totalSteps: [0, 1, 2, 3, 4, 5],
-	totalStepsNumber: 6,
+	totalSteps: 6,
+	setTotalSteps: (v) =>
+		set(() => ({
+			totalSteps: v,
+		})),
 	handleNextStep: () => {
-		if (get().activeStep < get().totalStepsNumber - 1) {
+		if (get().activeStep < get().totalSteps - 1) {
 			get().setActiveStep(get().activeStep + 1);
 		}
 	},

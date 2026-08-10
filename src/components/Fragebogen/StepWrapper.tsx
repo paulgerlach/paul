@@ -1,4 +1,5 @@
 import { QuestionareFormData } from "@/app/(service)/fragebogen/page";
+import StepZero from "@/components/Fragebogen/Steps/StepZero";
 import FragebogenStepOne from "@/components/Fragebogen/Steps/StepOne";
 // Over50 Flow (51-800 & über 800 Immobilien)
 import StepTwoOver50 from "@/components/Fragebogen/Steps/Over50/StepTwoOver50";
@@ -37,13 +38,28 @@ export default function StepWrapper({
 }: StepWrapperProps) {
 	const propertyCategory = watch("property_count_category");
 	// Over50 flow: 51-800 and über 800 Immobilien
-	const isOver50Flow = propertyCategory === "51-800 Immobilien" || propertyCategory === "über 800 Immobilien";
+	const isOver50Flow =
+		propertyCategory === "51-800 Immobilien" ||
+		propertyCategory === "über 800 Immobilien";
 	// Under50 flow: 1-50 Immobilien
 	const isUnder50Flow = propertyCategory === "1-50 Immobilien";
 
 	const renderStep = () => {
-		// Step 0 is always the same (property count selection)
+		// Step 0 is always the same (Customer type)
 		if (activeStep === 0) {
+			return (
+				<StepZero
+					register={register}
+					watch={watch}
+					errors={errors}
+					setValue={setValue}
+					key="step-0"
+				></StepZero>
+			);
+		}
+
+		// Step 1 is always the same (property count selection)
+		if (activeStep === 1) {
 			return (
 				<FragebogenStepOne
 					register={register}
@@ -58,7 +74,7 @@ export default function StepWrapper({
 		// Over50 Flow: 51-800 and über 800 Immobilien
 		if (isOver50Flow) {
 			switch (activeStep) {
-				case 1:
+				case 2:
 					return (
 						<StepTwoOver50
 							register={register}
@@ -68,7 +84,7 @@ export default function StepWrapper({
 							key="step-2-over50"
 						/>
 					);
-				case 2:
+				case 3:
 					return (
 						<StepThreeOver50
 							register={register}
@@ -78,7 +94,7 @@ export default function StepWrapper({
 							key="step-3-over50"
 						/>
 					);
-				case 3:
+				case 4:
 					return (
 						<StepFourOver50
 							register={register}
@@ -88,7 +104,7 @@ export default function StepWrapper({
 							key="step-4-over50"
 						/>
 					);
-				case 4:
+				case 5:
 					return (
 						<StepFiveOver50
 							register={register}
@@ -98,7 +114,7 @@ export default function StepWrapper({
 							key="step-5-over50"
 						/>
 					);
-				case 5:
+				case 6:
 					return (
 						<StepSixOver50
 							register={register}
@@ -116,7 +132,7 @@ export default function StepWrapper({
 		// Under50 Flow: 1-50 Immobilien
 		if (isUnder50Flow) {
 			switch (activeStep) {
-				case 1:
+				case 2:
 					return (
 						<StepTwoUnder50
 							register={register}
@@ -126,7 +142,7 @@ export default function StepWrapper({
 							key="step-2-under50"
 						/>
 					);
-				case 2:
+				case 3:
 					return (
 						<StepThreeUnder50
 							register={register}
@@ -136,7 +152,7 @@ export default function StepWrapper({
 							key="step-3-under50"
 						/>
 					);
-				case 3:
+				case 4:
 					return (
 						<StepFourUnder50
 							register={register}
@@ -146,7 +162,7 @@ export default function StepWrapper({
 							key="step-4-under50"
 						/>
 					);
-				case 4:
+				case 5:
 					// Reuse StepSixOver50 for personal contact form
 					return (
 						<StepSixOver50

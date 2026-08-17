@@ -7,93 +7,126 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
 const emailSchema = z.object({
-  email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
+	email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein."),
 });
 
 type EmailFormValues = z.infer<typeof emailSchema>;
 
 const sendEmail = async (email: string) => {
-  const response = await fetch("/api/send-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
+	const response = await fetch("/api/send-email", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ email }),
+	});
 
-  if (!response.ok) {
-    throw new Error("Fehler beim Senden der E-Mail.");
-  }
-  return response.json();
+	if (!response.ok) {
+		throw new Error("Fehler beim Senden der E-Mail.");
+	}
+	return response.json();
 };
 
 export default function FooterEmailForm() {
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<EmailFormValues>({
-    resolver: zodResolver(emailSchema),
-  });
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm<EmailFormValues>({
+		resolver: zodResolver(emailSchema),
+	});
 
-  const mutation = useMutation({
-    mutationFn: ({ email }: EmailFormValues) => sendEmail(email),
-    onSuccess: () => {
-      setSuccessMessage("Danke! Ihre E-Mail wurde gesendet.");
-      reset();
-    },
-    onError: () => {
-      setSuccessMessage("Fehler! Bitte versuchen Sie es erneut.");
-    },
-  });
+	const [showConfirmation, setShowConfirmation] = useState(true);
 
-  return (
-    <div className="max-medium:w-full">
-      <form
-        onSubmit={handleSubmit((data) => mutation.mutate(data))}
-        className="relative w-fit mb-4 mx-auto max-medium:w-full"
-      >
-        <label className="sr-only" htmlFor="footer_contact_email">
-          Los gehts
-        </label>
-        <input
-          {...register("email")}
-          className="py-5 px-7 max-small:py-3 max-small:px-4 min-w-[500px] max-small:min-w-fit max-medium:w-full border border-border_base rounded-halfbase placeholder:text-dark_text/50 text-dark_text text-xl max-small:text-base placeholder:text-xl max-small:placeholder:text-base placeholder:leading-6 leading-6 bg-white"
-          placeholder="Wie lautet Ihre email?"
-          type="email"
-          id="footer_contact_email"
-        />
-        <button
-          className="absolute max-medium:relative max-medium:right-0 max-medium:w-full py-4 px-8 max-small:py-3 max-small:px-6 whitespace-nowrap text-xl max-small:text-base leading-6 bg-green rounded-halfbase flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
-          type="submit"
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? "Senden..." : "Los gehts"}
-        </button>
-      </form>
+	const mutation = useMutation({
+		mutationFn: async ({ email }: EmailFormValues) => {
+			await sendEmail(email);
 
-      {/* ✅ Display validation errors */}
-      {errors.email && (
-        <p className="text-red-600 text-sm mt-2">{errors.email.message}</p>
-      )}
+			setShowConfirmation(true);
+		},
+		onSuccess: () => {
+			setSuccessMessage("Danke! Ihre E-Mail wurde gesendet.");
+			reset();
+		},
+		onError: () => {
+			setSuccessMessage("Fehler! Bitte versuchen Sie es erneut.");
+		},
+	});
 
-      {/* ✅ Display success/error messages */}
-      {successMessage && (
-        <p
-          className={`text-sm mt-2 ${
-            successMessage.includes("Fehler")
-              ? "text-red-600"
-              : "text-green-600"
-          }`}
-        >
-          {successMessage}
-        </p>
-      )}
+	return (
+		<>
+			<div className="max-medium:w-full">
+				<form
+					onSubmit={handleSubmit((data) => mutation.mutate(data))}
+					className="relative w-fit mb-4 mx-auto max-medium:w-full"
+				>
+					<label className="sr-only" htmlFor="footer_contact_email">
+						Los gehts
+					</label>
+					<input
+						{...register("email")}
+						className="py-5 px-7 max-small:py-3 max-small:px-4 min-w-[500px] max-small:min-w-fit max-medium:w-full border border-border_base rounded-halfbase placeholder:text-dark_text/50 text-dark_text text-xl max-small:text-base placeholder:text-xl max-small:placeholder:text-base placeholder:leading-6 leading-6 bg-white"
+						placeholder="Wie lautet Ihre email?"
+						type="email"
+						id="footer_contact_email"
+					/>
+					<button
+						className="absolute max-medium:relative max-medium:right-0 max-medium:w-full py-4 px-8 max-small:py-3 max-small:px-6 whitespace-nowrap text-xl max-small:text-base leading-6 bg-green rounded-halfbase flex duration-300 hover:opacity-80 items-center justify-center top-1.5 right-1.5 text-dark_text"
+						type="submit"
+						disabled={mutation.isPending}
+					>
+						{mutation.isPending ? "Senden..." : "Los gehts"}
+					</button>
+				</form>
 
-      <p className="text-dark_text text-sm mt-4 leading-4">
-        Bleiben Sie bei allen Themen auf dem aktuellsten Stand
-      </p>
-    </div>
-  );
+				{/* ✅ Display validation errors */}
+				{errors.email && (
+					<p className="text-red-600 text-sm mt-2">{errors.email.message}</p>
+				)}
+
+				{/* ✅ Display success/error messages */}
+				{/*{successMessage && (
+					<p
+						className={`text-sm mt-2 ${
+							successMessage.includes("Fehler")
+								? "text-red-600"
+								: "text-green-600"
+						}`}
+					>
+						{successMessage}
+					</p>
+				)}*/}
+
+				<p className="text-dark_text text-sm mt-4 leading-4">
+					Bleiben Sie bei allen Themen auf dem aktuellsten Stand
+				</p>
+			</div>
+			{showConfirmation && (
+				<div
+					aria-hidden={true}
+					onClick={() => setShowConfirmation(false)}
+					className={
+						"fixed z-50 inset-0 bg-black/50 flex items-center justify-center"
+					}
+				>
+					<div
+						aria-hidden={true}
+						onClick={(e) => e.stopPropagation()}
+						className={
+							"absolute  flex flex-col gap-8 py-12 px-20 rounded-2xl bg-white items-center justify-center"
+						}
+					>
+						<div className={"text-xl"}>{successMessage}</div>
+						<button
+							onClick={() => setShowConfirmation(false)}
+							className="py-2 px-16 whitespace-nowrap  bg-green rounded-halfbase flex  hover:opacity-80 items-center justify-center text-dark_text"
+						>
+							Ok
+						</button>
+					</div>
+				</div>
+			)}
+		</>
+	);
 }

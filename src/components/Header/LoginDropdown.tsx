@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { login } from "@/static/icons";
+import { useDialogStore } from "@/store/useDIalogStore";
 
 interface LoginDropdownProps {
   className?: string;
@@ -9,14 +10,13 @@ interface LoginDropdownProps {
 }
 
 export default function LoginDropdown({ className = "", isMobile = false }: LoginDropdownProps) {
+  const { openDialog } = useDialogStore();
 
   if (isMobile) {
     return (
-      <a
-        href="https://platform.heidisystems.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full p-4 flex items-center gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-12 hover:opacity-80 transition"
+      <button
+        onClick={() => openDialog("login")}
+        className="w-full p-4 flex items-center gap-2 justify-center text-lg text-dark_text bg-white border-2 border-green rounded-halfbase min-h-12 hover:opacity-80 transition cursor-pointer"
       >
         <Image
           width={20}
@@ -28,17 +28,15 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
           alt="login"
         />
         Einloggen
-      </a>
+      </button>
     );
   }
 
   // Desktop version - direct link
   return (
-    <a
-      href="https://platform.heidisystems.com/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition ${className}`}
+    <button
+      onClick={() => openDialog("login")}
+      className={`p-2 flex items-center gap-1.5 justify-center text-base max-xl:text-sm text-dark_text hover:opacity-80 transition cursor-pointer ${className}`}
     >
       <Image
         width={16}
@@ -50,6 +48,6 @@ export default function LoginDropdown({ className = "", isMobile = false }: Logi
         alt="login"
       />
       Einloggen
-    </a>
+    </button>
   );
 }

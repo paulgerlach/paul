@@ -37,7 +37,7 @@ export default function FooterEmailForm() {
 		resolver: zodResolver(emailSchema),
 	});
 
-	const [showConfirmation, setShowConfirmation] = useState(true);
+	const [showConfirmation, setShowConfirmation] = useState(false);
 
 	const mutation = useMutation({
 		mutationFn: async ({ email }: EmailFormValues) => {

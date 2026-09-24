@@ -51,7 +51,7 @@ const formSchema = z.object({
 	phone: z
 		.string()
 		.transform((val) => val.replace(/[\s-]/g, ""))
-		.refine((val) => /^\+?[1-9]\d{1,14}$/.test(val), {
+		.refine((val) => /^\+?[0-9]\d{1,14}$/.test(val), {
 			message: "Bitte geben Sie eine gültige Telefonnummer ein",
 		}),
 	email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),

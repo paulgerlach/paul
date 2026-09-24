@@ -11,6 +11,7 @@ export async function POST(req: Request) {
 			customer_type: data.customer_type,
 			first_name: data.first_name,
 			last_name: data.last_name,
+			phone: data.phone,
 			// Over50 flow fields
 			property_count_category: data.property_count_category,
 			messdienstleister_count: data.messdienstleister_count,

@@ -45,6 +45,18 @@ export default function StepSixOver50({
 					)}
 					</label>
 				</div>
+				<label className="block max-w-[509px]" htmlFor="phone">
+					<input
+						className="border border-dark_green/20 w-full rounded-xl py-4 px-5 duration-300 outline-none focus:ring-4 focus:ring-green/40 text-[16px]"
+						{...register("phone")}
+						placeholder="Telefonnummer*"
+						type="phone"
+						id="phone"
+					/>
+					{errors.phone && (
+						<p className="text-dark_text/50 text-sm mt-1">{errors.phone.message}</p>
+					)}
+				</label>
 				<label className="block max-w-[509px]" htmlFor="email">
 					<input
 						className="border border-dark_green/20 w-full rounded-xl py-4 px-5 duration-300 outline-none focus:ring-4 focus:ring-green/40 text-[16px]"

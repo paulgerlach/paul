@@ -48,6 +48,12 @@ const formSchema = z.object({
 	ort: z.string().optional().or(z.literal("")),
 
 	// Contact form fields (Q6 - Personal)
+	phone: z
+		.string()
+		.transform((val) => val.replace(/[\s-]/g, ""))
+		.refine((val) => /^\+?[1-9]\d{1,14}$/.test(val), {
+			message: "Bitte geben Sie eine gültige Telefonnummer ein",
+		}),
 	email: z.string().email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
 	first_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
 	last_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),

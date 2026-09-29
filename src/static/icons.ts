@@ -272,6 +272,7 @@ import techemUpd from "@/asset/techem_upd.png";
 import wattsUpd from "@/asset/watts_upd.png";
 import dehoustUpd from "@/asset/dehoust_upd.png";
 import vdiv_footer from "@/asset/vdiv_footer.png";
+import vdiv_footer_new from "@/asset/vdiv_footer_new.png";
 import personSlide1 from "@/asset/person_slide_1.png";
 import personSlide2 from "@/asset/person_slide_2.png";
 import personSlide3 from "@/asset/person_slide_3.png";
@@ -364,6 +365,7 @@ export {
   electricity,
   dehoustUpd,
   vdiv_footer,
+	vdiv_footer_new,
   personSlide1,
   personSlide2,
   personSlide3,

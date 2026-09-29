@@ -12,7 +12,7 @@ import {
 	linkedin,
 	xIcon,
 	youtube,
-	vdiv_footer,
+	vdiv_footer_new,
 } from "@/static/icons";
 import Image from "next/image";
 import Link from "next/link";
@@ -409,7 +409,7 @@ export default function Footer() {
 									sizes="100vw"
 									loading="lazy"
 									className="block mb-2 max-h-[92px] max-w-[150px]"
-									src={vdiv_footer}
+									src={vdiv_footer_new}
 									alt="footer logo"
 								/>
 							</Link>

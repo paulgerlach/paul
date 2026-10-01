@@ -16,10 +16,6 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.qrserver.com",
       },
-      {
-        protocol: "https",
-        hostname: "gjyzysizrvtqthttctlb.supabase.co",
-      }
     ],
   },
   output: "standalone",
@@ -28,14 +24,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: [
       "lucide-react",
       "react-icons",
-      "lodash",
-      "date-fns",
-      "@radix-ui/react-dialog",
-      "@radix-ui/react-popover",
-      "@radix-ui/react-checkbox",
-      "@radix-ui/react-radio-group",
-      "@radix-ui/react-switch",
-      "recharts",
     ],
   },
 };

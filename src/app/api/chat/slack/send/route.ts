@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/utils/supabase/server';
 import { slackHttp } from '@/lib/slackHttp';
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await supabaseServer();
-    // const { data: { user } } = await supabase.auth.getUser();
-    // if (!user) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
-
     const { message, threadTs }: { message: string; threadTs: string | null } = await req.json();
 
     const formattedMessage = threadTs

@@ -1,6 +1,3 @@
-## Prerequisites
-
-1. SupabaseCLI v2.75.0
 ## Info
 1. comstar-system: Digital Ocean Droplet (Github) - Dashboard
     1. comstar-ingestion-service -> Ingestion-Service -> Server, server logs
@@ -9,7 +6,7 @@
 2.  
 
 ## Infrastructure
-1. Supabase - Primary Database
+1. Postgres (`DATABASE_URL`) - stores newsletter leads
 2. Vercel - Main App
 3. DigitalOcean - Droplet for running MQTT service
 

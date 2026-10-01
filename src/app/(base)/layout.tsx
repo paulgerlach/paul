@@ -3,15 +3,6 @@ import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import QueryProvider from "../QueryProvider";
 import { Toaster } from "@/components/Basic/ui/Sonner";
-import { Suspense, lazy } from "react";
-import TenantLoginAutoOpen from "@/components/Basic/TenantLoginAutoOpen";
-
-// Lazy-load the dialogs
-const LazyLoginDialog = lazy(() => import("@/components/Basic/Dialog/LoginDialog"));
-const LazyRegisterDialog = lazy(() => import("@/components/Basic/Dialog/RegisterDialog"));
-const LazyForgotPasswordDialog = lazy(() => import("@/components/Basic/Dialog/ForgotPasswordDialog"));
-const LazyTenantLoginDialog = lazy(() => import("@/components/Basic/Dialog/TenantLoginDialog"));
-const LazyTenantForgotPasswordDialog = lazy(() => import("@/components/Basic/Dialog/TenantForgotPasswordDialog"));
 
 export const metadata: Metadata = {
   title: "Heidi Systems",
@@ -29,25 +20,6 @@ export default function BaseLayout({
       <Header />
       {children}
       <Footer />
-      {/* Wrap each in Suspense with a fallback (e.g., loading spinner or nothing) */}
-      <Suspense fallback={null}>
-        <LazyLoginDialog />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LazyRegisterDialog />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LazyForgotPasswordDialog />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LazyTenantLoginDialog />
-      </Suspense>
-      <Suspense fallback={null}>
-        <LazyTenantForgotPasswordDialog />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TenantLoginAutoOpen />
-      </Suspense>
       <Toaster />
     </QueryProvider>
   );

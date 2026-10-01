@@ -8,9 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/api/',
-          '/admin/',
-          '/shared/',
-          '/(admin)/',
           '/(service)/fragebogen',
         ],
       },

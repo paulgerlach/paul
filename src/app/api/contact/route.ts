@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sendWebhookEvent } from "@/utils/webhooks";
-import { checkIPRateLimit, getClientIP } from "@/app/api/bved/v1/_lib/rate-limit";
+import { checkIPRateLimit, getClientIP } from "@/lib/rateLimit";
 
 // ─── Server-side validation (mirrors frontend schema) ───────────────────────
 const contactSchema = z.object({
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         }
 
         // Layer 5: IP-based rate limiting (max 3 submissions per 10 minutes)
-        // Reuses the existing BVED rate-limit utility
+        // Uses the shared in-memory rate-limit utility
         const ip = getClientIP(req);
         const rateLimit = checkIPRateLimit(ip, 3, 600); // 3 per 600s (10 min)
         if (!rateLimit.allowed) {

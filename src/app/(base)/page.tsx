@@ -36,15 +36,13 @@ import {
 import animation1 from "@/animations/Animation_1.json";
 import animation2 from "@/animations/Animation_2.json";
 import animation3 from "@/animations/Animation_3.json";
-import AuthRedirect from "@/components/Basic/AuthRedirect";
 import Image from "next/image";
 import Link from "next/link";
 import ChatBotContainer from "@/components/Common/ChatBot";
-import { supabaseServer } from "@/utils/supabase/server";
 import { Suspense } from "react";
 import Loading from "@/components/Basic/Loading/Loading";
 
-export default async function Home() {
+export default function Home() {
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -146,13 +144,6 @@ export default async function Home() {
     ],
   };
 
-  const supabase = await supabaseServer();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const isExistingClient = !!user;
-
   return (
     <Suspense fallback={<Loading />}>
       <main id="content">
@@ -160,7 +151,6 @@ export default async function Home() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <AuthRedirect />
         <HomeHero />
         <div className="mt-28 px-[140px] max-megalarge:px-16 max-large:px-6 max-medium:px-5 hero max-small:mt-6">
           <h2 className="section-title hero-title hidden max-large:block text-[50px] max-medium:text-4xl max-small:text-3xl leading-[60px] max-medium:leading-tight mb-10 max-small:mb-12 text-center relative text-dark_text">
@@ -716,7 +706,7 @@ export default async function Home() {
           </div>
         </div>
         <Subscription />
-        <ChatBotContainer isExistingClient={isExistingClient} />
+        <ChatBotContainer isExistingClient={false} />
       </main>
     </Suspense>
   );

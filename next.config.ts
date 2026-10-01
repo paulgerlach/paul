@@ -32,7 +32,6 @@ const nextConfig: NextConfig = {
       "date-fns",
       "@radix-ui/react-dialog",
       "@radix-ui/react-popover",
-      "@radix-ui/react-select",
       "@radix-ui/react-checkbox",
       "@radix-ui/react-radio-group",
       "@radix-ui/react-switch",

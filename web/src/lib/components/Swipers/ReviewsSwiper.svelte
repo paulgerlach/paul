@@ -33,6 +33,10 @@
 		},
 	];
 
+	// First-frame stills generated next to each video. With preload="none" the
+	// page doesn't fetch ~100 MB of video up front (KI-09).
+	const posterOf = (video: string) => video.replace(/\.mp4$/, ".jpg");
+
 	const videos: HTMLVideoElement[] = $state([]);
 	const mobileVideos: HTMLVideoElement[] = $state([]);
 
@@ -98,6 +102,8 @@
 					<video
 						bind:this={videos[index]}
 						onclick={() => toggleVideo(videos, index)}
+						poster={posterOf(item.video)}
+						preload="none"
 						class="relative -mt-20 aspect-video h-[336px] w-[200px] cursor-pointer rounded-[40px] object-cover duration-300 max-medium:mt-0 max-medium:h-auto max-medium:w-full"
 						loop
 					>
@@ -147,6 +153,8 @@
 						<video
 							bind:this={mobileVideos[index]}
 							onclick={() => toggleVideo(mobileVideos, index)}
+							poster={posterOf(item.video)}
+							preload="none"
 							class="h-[400px] w-full cursor-pointer rounded-[20px] object-cover"
 							loop
 							playsinline

@@ -9,13 +9,13 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/layout.tsx` | – | root layout, global meta, font | `src/routes/+layout.svelte` + `src/app.html` | [x] |
 | `app/(base)/layout.tsx` | – | Header, Footer, Toaster, QueryProvider | `src/routes/(base)/+layout.svelte` (+ `+layout.server.ts` for nav posts) | [x] |
 | `app/(service)/layout.tsx` | – | FragebogenHeader, ChatBot, Suspense | `src/routes/(service)/+layout.svelte` | [x] |
-| `app/(base)/page.tsx` (713 lines) | `/` | static, heavy | `(base)/+page.svelte` | [ ] |
-| `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(base)/funktionen/+page.svelte` | [ ] |
-| `app/(base)/geraete/page.tsx` | `/geraete` | static | `(base)/geraete/+page.svelte` | [ ] |
-| `app/(base)/preise/page.tsx` | `/preise` | static | `(base)/preise/+page.svelte` | [ ] |
-| `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | [ ] |
-| `app/(base)/impressum/page.tsx` | `/impressum` | static text | `(base)/impressum/+page.svelte` | [ ] |
-| `app/(base)/datenschutzhinweise/page.tsx` | `/datenschutzhinweise` | static text | `(base)/datenschutzhinweise/+page.svelte` | [ ] |
+| `app/(base)/page.tsx` (713 lines) | `/` | static, heavy | `(base)/+page.svelte` | [x] |
+| `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(base)/funktionen/+page.svelte` | [x] |
+| `app/(base)/geraete/page.tsx` | `/geraete` | static | `(base)/geraete/+page.svelte` | [x] |
+| `app/(base)/preise/page.tsx` | `/preise` | static | `(base)/preise/+page.svelte` | [x] |
+| `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | page [x], action phase 7 [ ] |
+| `app/(base)/impressum/page.tsx` | `/impressum` | static text | `(base)/impressum/+page.svelte` | [x] |
+| `app/(base)/datenschutzhinweise/page.tsx` | `/datenschutzhinweise` | static text | `(base)/datenschutzhinweise/+page.svelte` | [x] |
 | `app/(base)/blog/page.tsx` | `/blog` | Prismic list + tag filter | `(base)/blog/+page.svelte` + `+page.server.ts` | [ ] |
 | `app/(base)/blog/[uid]/page.tsx` | `/blog/:uid` | Prismic SliceZone + metadata | `(base)/blog/[uid]/+page.svelte` + `+page.server.ts` | [ ] |
 | `app/(service)/fragebogen/page.tsx` | `/fragebogen` | client wizard | `(service)/fragebogen/+page.svelte` | [ ] |
@@ -71,10 +71,10 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `FunctionsList`, `NewsList` (non-swiper)
 
 **Page sections**
-- [ ] `Funktionen/AnimationsSection`, `Funktionen/Grid`
-- [ ] `Geraete/ChessSection`, `Geraete/Eigenschaften`
-- [ ] `Preise/PriceCards`, `Preise/PriceTable`
-- [ ] `Kontakt/ContactForm`
+- [x] `Funktionen/AnimationsSection`, `Funktionen/Grid`
+- [x] `Geraete/ChessSection`, `Geraete/Eigenschaften`
+- [x] `Preise/PriceCards`, `Preise/PriceTable`
+- [x] `Kontakt/ContactForm` (markup only; phase 7 wires it up)
 - [x] `Lottie/LazyLottie`
 
 **Blog**

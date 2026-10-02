@@ -1,9 +1,27 @@
 <!--
-  Drop-in for next/image with local assets. Renders the same <picture> markup
-  as <enhanced:img>. As with next/image, a width/height of 0 (the
-  `width={0} height={0}` pattern) falls back to the intrinsic size, and
-  loading defaults to "lazy".
+  Drop-in for next/image with local assets. Like next/image it renders a bare
+  <img> (no <picture>), so it behaves as the layout box everywhere: flex/grid
+  item, `space-y-*` child, etc. As with next/image, a width/height of 0 (the
+  `width={0} height={0}` pattern) falls back to the intrinsic size, and loading
+  defaults to "lazy".
+
+  Images load the full-size WebP variant from enhanced-img (supported by every
+  current browser). With `sizes`, the srcset lists that file under Next's
+  `deviceSizes` (+ `imageSizes`) width descriptors, as next/image does. The browser derives the
+  image's natural size from the chosen descriptor, and that natural size decides
+  how far the image shrinks in flex rows. Mirroring Next keeps those layouts
+  identical at every viewport.
 -->
+<script lang="ts" module>
+	/** `images.deviceSizes` / `images.imageSizes` from the Next config. */
+	const DEVICE_SIZES = [640, 750, 828, 1080, 1200, 1920];
+	const IMAGE_SIZES = [16, 32, 48, 64, 96, 128, 256, 384];
+
+	/** Largest candidate of an enhanced-img srcset ("a 1x, b 2x" → "b"). */
+	const largest = (srcset: string | undefined) =>
+		srcset?.split(",").at(-1)?.trim().split(" ")[0];
+</script>
+
 <script lang="ts">
 	import type { HTMLImgAttributes } from "svelte/elements";
 	import type { ImageAsset } from "./types";
@@ -25,32 +43,33 @@
 		...rest
 	}: Props = $props();
 
-	const sources = $derived(Object.entries(src.sources));
+	const webp = $derived(largest(src.sources.webp));
+	const url = $derived(webp ?? src.img.src);
+	// SVGs have no variants; next/image serves them unoptimized, without srcset.
+	// Like next/image: viewport-relative `sizes` use the device buckets only,
+	// fixed `sizes` (e.g. "25px") also get the small image buckets.
+	const srcset = $derived.by(() => {
+		if (!webp || !sizes) return undefined;
+		const widths = /\d+vw/.test(sizes)
+			? DEVICE_SIZES
+			: [...IMAGE_SIZES, ...DEVICE_SIZES];
+		// Next serves bucket `w` resized to min(w, file width). We only have the
+		// full file, so buckets narrower than it are declared at the file's own
+		// width: the browser then derives the same natural size as with Next.
+		const fileW = src.img.w;
+		const descriptors = [...new Set(widths.map((w) => Math.max(w, fileW)))];
+		return descriptors.map((w) => `${webp} ${w}w`).join(", ");
+	});
 </script>
 
-{#snippet img()}
-	<img
-		src={src.img.src}
-		width={width || src.img.w}
-		height={height || src.img.h}
-		{sizes}
-		{loading}
-		fetchpriority={priority ? "high" : undefined}
-		decoding="async"
-		{...rest}
-	/>
-{/snippet}
-
-{#if sources.length}
-	<!-- display: contents keeps the <img> as the layout box (flex item etc.),
-	     as with next/image, which renders a bare <img>. The <source>s are
-	     hidden so they don't become flex items; selection still works. -->
-	<picture class="contents">
-		{#each sources as [format, srcset] (format)}
-			<source class="hidden" {srcset} {sizes} type="image/{format}" />
-		{/each}
-		{@render img()}
-	</picture>
-{:else}
-	{@render img()}
-{/if}
+<img
+	src={url}
+	{srcset}
+	width={width || src.img.w}
+	height={height || src.img.h}
+	{sizes}
+	{loading}
+	fetchpriority={priority ? "high" : undefined}
+	decoding="async"
+	{...rest}
+/>

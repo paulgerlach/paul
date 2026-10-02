@@ -343,10 +343,24 @@
 			grid-template-columns: 1fr;
 		}
 	}
+	@media (max-width: 560px) {
+		/* Smaller tiles, so the pile stays readable on phones */
+		.tile {
+			scale: 0.78;
+			transform-origin: left top;
+		}
+	}
 	@media (max-width: 520px) {
-		.oldway,
-		.newway {
+		.oldway {
 			height: 520px;
+		}
+		/* The bubble wraps to more lines; let the card grow instead of clipping. */
+		.newway {
+			height: auto;
+			min-height: 520px;
+		}
+		.phone {
+			padding-bottom: 28px;
 		}
 		.newway h3,
 		.lbl {

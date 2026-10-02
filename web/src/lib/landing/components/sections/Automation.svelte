@@ -39,7 +39,7 @@
 					/>
 				</svg>
 			</div>
-			<div class="amt">Whg. 3.2 · Heizung +64 %</div>
+			<div class="amt">Whg. 3.2 · Heizung +64&nbsp;%</div>
 			<div class="flag a-pop" style="--d:.3s">
 				<b>Genauer prüfen</b>
 				{#each warnings as warning, i (warning)}

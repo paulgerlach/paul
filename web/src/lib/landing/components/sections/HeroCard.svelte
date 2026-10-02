@@ -112,6 +112,8 @@
 		place-items: center;
 		padding: 48px 24px;
 		min-height: 520px;
+		/* The hero centres its text below 980px; the card stays left-aligned. */
+		text-align: left;
 	}
 	.stack {
 		width: min(420px, 100%);
@@ -153,6 +155,7 @@
 		font-size: 19px;
 		font-variant-numeric: tabular-nums;
 		padding-right: 8px;
+		white-space: nowrap;
 	}
 	.status {
 		background: #fff;
@@ -233,6 +236,16 @@
 		}
 	}
 	@media (max-width: 520px) {
+		.hero-visual {
+			min-height: 0;
+			padding: 24px 12px;
+		}
+		.card-row .t {
+			font-size: 17px;
+		}
+		.card-row .amt {
+			font-size: 17px;
+		}
 		.status {
 			font-size: 19px;
 		}

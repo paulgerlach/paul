@@ -117,6 +117,14 @@
 		.pbanner :global(img) {
 			object-position: 72% 20%;
 		}
+		/* The text sits on the photo here; darken behind it for contrast. */
+		.pbanner::after {
+			content: "";
+			position: absolute;
+			inset: 40% 0 0;
+			z-index: 1;
+			background: linear-gradient(transparent, rgba(20, 28, 25, 0.7));
+		}
 		.cap {
 			top: 18px;
 			bottom: auto;

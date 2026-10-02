@@ -122,8 +122,33 @@ The `slideUp/slideDown` DOM helpers become `{#if open}<div transition:slide={{ d
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-07** (High): Nav fetches all blog posts client-side on every page; move to the layout `load` with `pageSize: 6`
-- [ ] **KI-08** (Low): Fragebogen imports Lottie JSON statically; use `LazyLottie`
+- [x] **KI-07** (High): Nav fetches all blog posts client-side on every page; move to the layout `load` with `pageSize: 6`
+- [ ] **KI-08** (Low): Fragebogen imports Lottie JSON statically; use `LazyLottie`. `LazyLottie` supports `eager`; the switch happens when phase 7 ports the Fragebogen page
+- [x] **KI-31** (Low): `LazyLottie` showed a stale animation when `animationName` changed (found in this phase)
+- [x] **KI-32** (Low): Relative video URLs in `ReviewsSwiper` (found in this phase)
+
+## Status (done 2026-10-02)
+
+All exit criteria are met. `/kitchen-sink` (in the `(base)` group, so it has the real header and footer) renders every shared component. It returns 404 in production unless `KITCHEN_SINK=1` is set; Playwright sets it. Checks live in `web/e2e/shared-components.e2e.ts`.
+
+**Visual parity:** header, footer, the mobile menu (375px) and the nav dropdown (1280px) were pixel-compared with the Next site at 375 / 768 / 992 / 1280 / 1640px. All differences are under 1% (antialiasing and image encoding). Footer heights are identical.
+
+**Swipers:** all 10 Swiper instances initialise, navigate/paginate, and autoplay where configured, at 1280 and 375px. There are no console errors or hydration warnings. Swiper's loop warning also appears on the Next site (KI-29).
+
+Differences from the steps above:
+- **Swiper is pinned to 11.2.10**, the version Next uses (decision #6). `app.css` has about 100 rules written against Swiper 11's markup, including the `:after` arrow icons.
+- **Swiper markup follows what `swiper/react` actually renders, not the JSX.** `swiper/react` hoists `SwiperSlide`s out of hand-written `.swiper-wrapper` divs, so classes on those divs never reached the DOM. It also renders `.swiper-button-prev/next` and `.swiper-pagination` after the wrapper (when no `el` is given), puts other children after that, and never passes `wrapperClass` to Swiper core. The `swiper` attachment (`$lib/attachments/swiper.ts`) picks up those child elements for `navigation: true` / `pagination: true`.
+- **`Image.svelte` replaces `next/image`** for local assets. Use `<Image src={icon} …>` with the same props as before (`width`, `height`, `sizes`, `priority`, `class`, `style`). It renders the `<picture>` markup that `enhanced:img` would, with three adjustments for parity:
+  - `width={0}`/`height={0}` fall back to the intrinsic size, as next/image does.
+  - `<picture>` is `display: contents`, so the `<img>` stays the flex item.
+  - The `<source>`s are `display: none`, because the spec doesn't hide them and they would otherwise become flex items.
+  - The 11 SVG icons are exported with their intrinsic size in the same shape.
+- **FAQ/accordion:** the original `slideUp`/`slideDown` helpers were kept (`$lib/utils/slide.ts`, via the `slideToggle` attachment) instead of `transition:slide`, so closed answers stay in the HTML as before. `InstallFaq` and phase 7's `StepInfo` use them too.
+- **Mobile menu:** a `menu` rune singleton (`Header/menu.svelte.ts`) replaces the `classList` toggling on the burger, its parent and `<html>`. The resulting classes are the same (`active`, `_lock`). The menu also closes after navigation.
+- **Nav blog teaser (KI-07):** `(base)/+layout.server.ts` loads the 6 newest posts with `getNavPosts` (`$lib/server/blog.ts`), reduced to uid, title, subtitle and image. The layout sets `cache-control: s-maxage=60, stale-while-revalidate=600` for the whole group (decision #3), so **pages in `(base)` must not set `cache-control` themselves**. A minimal `$lib/prismicio.ts` exists; phase 5 completes it. `prismicio-types.d.ts` lives in `web/src/` so SvelteKit's tsconfig includes it.
+- **Spinner and icon replacements** (`react-loader-spinner`, `react-icons`, `lucide-react`) are only used by the ChatBot, so they move to phase 8.
+- `FooterEmailForm` and `Subscription` are ported as markup with the submit disabled; phase 7 wires them up.
+- Types were renamed: `NymberedSwiper*` became `NumberedSwiper*` and `GeräteangebotSwiperType` became `GeraeteangebotSwiperType`.
 
 ## Exit criteria
 - A `/_kitchen-sink` dev-only route renders every shared component. It is deleted before cutover.

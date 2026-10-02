@@ -46,36 +46,36 @@ Tick items as they are ported **and** verified against the Next version.
 Keep the folder structure and rename `.tsx` → `.svelte`.
 
 **Basic**
-- [ ] `Basic/CopyLinkButton/CopyLinkButton` (`usePathname` → `page.url`)
-- [ ] `Basic/FAQ/FAQItem`, `Basic/FAQ/FAQSection` (uses `slideUp/slideDown` utils)
-- [ ] `Basic/Kostenfrei/Kostenfrei`
-- [ ] `Basic/Loading/Loading`
-- [ ] `Basic/MobileDifference/MobileDifference`
+- [x] `Basic/CopyLinkButton/CopyLinkButton` (`usePathname` → `page.url`)
+- [x] `Basic/FAQ/FAQItem`, `Basic/FAQ/FAQSection` (uses `slideUp/slideDown` utils)
+- [x] `Basic/Kostenfrei/Kostenfrei`
+- [x] `Basic/Loading/Loading`
+- [x] `Basic/MobileDifference/MobileDifference`
 - [ ] `Basic/RichTextBlockImage/RichTextBlockImage`
-- [ ] `Basic/Subscription/Subscription` (form + mutation)
-- [ ] `Basic/Ticker/HeroTicker` (295), `Basic/Ticker/GeraeteHeroTicker` (401)
+- [ ] `Basic/Subscription/Subscription` (form + mutation). Markup ported in phase 3 with the submit disabled; submission is phase 7
+- [x] `Basic/Ticker/HeroTicker` (295), `Basic/Ticker/GeraeteHeroTicker` (401)
 - [x] `Basic/ui/Sonner` → `svelte-sonner` `<Toaster>`
 
 **Header / Footer**
-- [ ] `Header/Header`, `Header/HeaderButton`, `Header/LoginDropdown`
-- [ ] `Header/Nav` (259; client-side Prismic fetch via React Query → layout `load`)
-- [ ] `Header/NavGroup`, `Header/NavFunktionenRightSide`
-- [ ] `Header/FragebogenHeader`
-- [ ] `Footer/Footer` (504), `Footer/FooterLink`, `Footer/FooterEmailForm` (form + mutation)
+- [x] `Header/Header`, `Header/HeaderButton`, `Header/LoginDropdown`
+- [x] `Header/Nav` (259; client-side Prismic fetch via React Query → layout `load`)
+- [x] `Header/NavGroup`, `Header/NavFunktionenRightSide`
+- [x] `Header/FragebogenHeader`
+- [x] `Footer/Footer` (504), `Footer/FooterLink`, `Footer/FooterEmailForm` (form + mutation). `FooterEmailForm` is markup only until phase 7
 
 **Hero**
-- [ ] `Hero/HomeHero`, `Hero/FunktionenHero`, `Hero/GeraeteHero`, `Hero/BlogHero`
+- [x] `Hero/HomeHero`, `Hero/FunktionenHero`, `Hero/GeraeteHero`, `Hero/BlogHero`
 
 **Swipers** (Swiper attachment, see phase 3)
-- [ ] `ChartSwiper`, `FunctionsSwiper`, `GeräteangebotSwiper` (rename to `GeraeteangebotSwiper`; avoid umlauts in filenames), `InstallFaq`, `NewsSwiper`, `NumberedSwiper` (355), `PersonSwiper`, `ReviewsSwiper` (videos)
-- [ ] `FunctionsList`, `NewsList` (non-swiper)
+- [x] `ChartSwiper`, `FunctionsSwiper`, `GeräteangebotSwiper` (rename to `GeraeteangebotSwiper`; avoid umlauts in filenames), `InstallFaq`, `NewsSwiper`, `NumberedSwiper` (355), `PersonSwiper`, `ReviewsSwiper` (videos)
+- [x] `FunctionsList`, `NewsList` (non-swiper)
 
 **Page sections**
 - [ ] `Funktionen/AnimationsSection`, `Funktionen/Grid`
 - [ ] `Geraete/ChessSection`, `Geraete/Eigenschaften`
 - [ ] `Preise/PriceCards`, `Preise/PriceTable`
 - [ ] `Kontakt/ContactForm`
-- [ ] `Lottie/LazyLottie`
+- [x] `Lottie/LazyLottie`
 
 **Blog**
 - [ ] `Blog/BlogFilters` (React Query → URL `?tag=` + load), `Blog/BlogPost`, `Blog/BlogPostsList`, `Blog/NewestBlogs` (async RSC), `Blog/RecomendedPosts` (async RSC)

@@ -69,7 +69,7 @@ Reference:
 | 3 | Prismic caching / revalidation | **Not decided. Defaulting to Option A** | SSR with `cache-control: s-maxage=60, stale-while-revalidate=600`. The `/api/revalidate` endpoint and the Prismic webhook are removed. See the reasoning below |
 | 4 | Drop unused `public/` files? | **Yes** | Not copied to `static/` (phase 2, KI-06) |
 | 5 | SvelteKit 2 or 3? | **Kit 2** (pinned `^2.70`) | `sv create` now scaffolds Kit 3, but `@prismicio/svelte`, `sveltekit-superforms` and `@slicemachine/adapter-sveltekit` declare `@sveltejs/kit ^2` peers. Kit 2.70 runs on Vite 8 / vite-plugin-svelte 7 / TS 6. Revisit once those libraries support Kit 3 |
-| 6 | Library major versions | Latest majors installed in `web/` | `ai` 7 (Next uses 5), `zod` 4 (Next uses 3), `swiper` 14 (Next uses 11). Check for API changes when porting phases 3, 6, 7, 8 |
+| 6 | Library major versions | Latest majors installed in `web/`, **except Swiper, which is pinned to 11.2.10** like Next | `ai` 7 (Next uses 5) and `zod` 4 (Next uses 3): check for API changes when porting phases 6, 7, 8. Swiper stays on 11 because `app.css` targets Swiper 11 markup; upgrade it after cutover |
 
 **Why Option A for #3.** Today production fetches from Prismic on *every* request (`revalidate: 0`), so the revalidate webhook does nothing (KI-11). Option A is the simplest setup that is at least as fresh for editors: a published post shows up within about 60 seconds. It also takes load off Prismic, because Vercel's CDN serves repeat hits. There are no extra tokens or webhooks to maintain. Switching to Option B (Vercel ISR with an on-demand bypass token) later is a contained change to the two blog `+page.server.ts` files. Revisit only if editors complain about the 60-second delay.
 

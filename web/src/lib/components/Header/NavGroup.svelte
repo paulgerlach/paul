@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { right_arrow } from "$lib/assets/icons";
+	import type { PostSummary } from "$lib/server/blog";
 	import type { NavGroupType } from "$lib/types";
+	import NavHighlight from "./highlights/NavHighlight.svelte";
 	import { menu } from "./menu.svelte";
 
-	let { group }: { group: NavGroupType } = $props();
-	const { title, route, groupTitle, groupLinks, rightSide } = $derived(group);
+	let { group, posts }: { group: NavGroupType; posts: PostSummary[] } =
+		$props();
+	const { title, route, groupTitle, groupLinks, highlight } = $derived(group);
 
 	let isMobileDropdownOpen = $state(false);
 
@@ -106,6 +109,6 @@
 				{/each}
 			</ul>
 		</div>
-		{@render rightSide()}
+		<NavHighlight key={highlight} {posts} />
 	</div>
 </div>

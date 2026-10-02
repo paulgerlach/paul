@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { login } from "$lib/assets/icons";
+	import { LOGIN_URL } from "./navGroups";
 
 	let {
 		class: className = "",
@@ -10,7 +11,7 @@
 
 {#if isMobile}
 	<a
-		href="https://platform.heidisystems.com/"
+		href={LOGIN_URL}
 		target="_blank"
 		rel="noopener noreferrer"
 		class="flex min-h-12 w-full items-center justify-center gap-2 rounded-halfbase border-2 border-green bg-white p-4 text-lg text-dark_text transition hover:opacity-80"
@@ -28,7 +29,7 @@
 {:else}
 	<!-- Desktop version - direct link -->
 	<a
-		href="https://platform.heidisystems.com/"
+		href={LOGIN_URL}
 		target="_blank"
 		rel="noopener noreferrer"
 		class="flex items-center justify-center gap-1.5 p-2 text-base text-dark_text transition hover:opacity-80 max-xl:text-sm {className}"

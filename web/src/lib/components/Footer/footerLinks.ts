@@ -1,3 +1,4 @@
+import { insta, linkedin, xIcon, youtube } from "$lib/assets/icons";
 import {
 	ROUTE_BLOG,
 	ROUTE_DATENSCHUTZHINWEISE,
@@ -285,4 +286,32 @@ export const newsInfoLinksGroup: FooterLinkGroupType = {
 			isNeu: false,
 		},
 	],
+};
+
+export const socials = [
+	{
+		href: "https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q",
+		icon: youtube,
+		alt: "youtube",
+	},
+	{ href: "https://x.com/Heidisystems", icon: xIcon, alt: "x" },
+	{
+		href: "https://www.linkedin.com/company/heidisystems/",
+		icon: linkedin,
+		alt: "linkedin",
+	},
+	{
+		href: "https://www.instagram.com/heidisystems/",
+		icon: insta,
+		alt: "insta",
+	},
+];
+
+export const VDIV_PARTNER_URL =
+	"https://vdiv.de/partneruebersicht/heidi-systems";
+
+export const ADDRESS = {
+	company: "Heidi Systems GmbH",
+	street: "Monbijoupl. 4",
+	city: "10178 Berlin",
 };

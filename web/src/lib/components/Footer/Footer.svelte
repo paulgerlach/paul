@@ -1,44 +1,21 @@
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
-	import {
-		footer_logo,
-		insta,
-		linkedin,
-		vdiv_footer_new,
-		xIcon,
-		youtube,
-	} from "$lib/assets/icons";
+	import { footer_logo, vdiv_footer_new } from "$lib/assets/icons";
 	import type { FooterLinkGroupType } from "$lib/types";
 	import FooterEmailForm from "./FooterEmailForm.svelte";
 	import FooterLink from "./FooterLink.svelte";
 	import {
+		ADDRESS,
 		DienstleistungenLinksGroup,
+		VDIV_PARTNER_URL,
 		datenschutzLinksGroup,
 		gerateLinksGroup,
 		kundenLinksGroup,
 		newsInfoLinksGroup,
 		rechtlichesLinksGroup,
+		socials,
 		standorteLinksGroup,
 	} from "./footerLinks";
-
-	const socials = [
-		{
-			href: "https://www.youtube.com/channel/UCv0HIBEJGgD_vNRIkNg6--Q",
-			icon: youtube,
-			alt: "youtube",
-		},
-		{ href: "https://x.com/Heidisystems", icon: xIcon, alt: "x" },
-		{
-			href: "https://www.linkedin.com/company/heidisystems/",
-			icon: linkedin,
-			alt: "linkedin",
-		},
-		{
-			href: "https://www.instagram.com/heidisystems/",
-			icon: insta,
-			alt: "insta",
-		},
-	];
 </script>
 
 {#snippet linkGroup(group: FooterLinkGroupType)}
@@ -75,10 +52,7 @@
 			<div class="flex flex-col justify-between">
 				{@render linkGroup(newsInfoLinksGroup)}
 				<div class="flex flex-col items-start justify-center">
-					<a
-						target="_blank"
-						href="https://vdiv.de/partneruebersicht/heidi-systems"
-					>
+					<a target="_blank" href={VDIV_PARTNER_URL}>
 						<p class="text-xs text-dark_text">Kooperationspartner:</p>
 						<Image
 							width={0}
@@ -106,7 +80,9 @@
 				alt="footer logo"
 			/>
 			<p class="max-w-[180px] text-lg leading-[21px] text-dark_text/50">
-				Heidi Systems GmbH Monbijoupl. 4 <br /> 10178 Berlin
+				{ADDRESS.company}
+				{ADDRESS.street} <br />
+				{ADDRESS.city}
 			</p>
 		</div>
 		<div

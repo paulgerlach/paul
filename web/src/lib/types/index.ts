@@ -12,8 +12,11 @@ export type NavGroupType = {
 	route: string;
 	groupTitle: string;
 	groupLinks: NavGroupLink[];
-	rightSide: Snippet;
+	highlight: NavHighlightKey;
 };
+
+/** Which right-side panel a nav dropdown shows (see `Header/highlights`). */
+export type NavHighlightKey = "geraete" | "funktionen" | "blog";
 
 export type FooterLinkType = {
 	url: string;

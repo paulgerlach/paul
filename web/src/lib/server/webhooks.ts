@@ -2,11 +2,16 @@
  * Webhook utilities for Make.com integrations
  * Sends events to Denis's Make.com workflows
  *
- * UNIFIED webhook: newsletter, newinquiry, contactform
+ * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry
  */
 import { env } from "$env/dynamic/private";
 
-type EventType = "newsletter" | "newinquiry" | "contactform";
+type EventType =
+	| "newsletter"
+	| "newinquiry"
+	| "contactform"
+	// Signup on the /messdienstwechsel landing page
+	| "switchinquiry";
 
 interface WebhookPayload {
 	event_type: EventType;

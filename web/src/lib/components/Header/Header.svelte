@@ -7,6 +7,7 @@
 	import HeaderButton from "./HeaderButton.svelte";
 	import LoginDropdown from "./LoginDropdown.svelte";
 	import Nav from "./Nav.svelte";
+	import { PHONE, PHONE_HREF } from "./navGroups";
 	import { menu } from "./menu.svelte";
 
 	let { posts }: { posts: PostSummary[] } = $props();
@@ -86,7 +87,7 @@
 			>
 				<LoginDropdown class="max-large:hidden" />
 				<a
-					href="tel:+493052001352"
+					href={PHONE_HREF}
 					class="flex items-center justify-center gap-1.5 p-2 text-base text-dark_text max-xl:text-sm max-large:text-lg"
 				>
 					<Image
@@ -97,7 +98,7 @@
 						src={cellphone}
 						alt="cellphone"
 					/>
-					+49 30 52001352
+					{PHONE}
 				</a>
 				<a
 					href={ROUTE_FRAGEBOGEN}

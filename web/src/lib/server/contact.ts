@@ -50,17 +50,17 @@ function silentReject(reason: string): ContactResult {
 }
 
 /**
- * Honeypot → timing → zod → gibberish → rate limit, then the Make.com
- * webhook. Shared by `/api/contact` and the /kontakt form action (phase 7).
+ * Layers 1 and 2, shared with the other public forms: why a submission looks
+ * like a bot, or `null` if it passed.
  */
-export async function runContactPipeline(
-	body: Record<string, unknown>,
-	ip: string,
-): Promise<ContactResult> {
+export function spamTrapReason(body: {
+	_hp?: unknown;
+	_t?: unknown;
+}): string | null {
 	// Layer 1: Honeypot check
 	// Bots auto-fill the hidden "website" field; real users never see it
 	if (typeof body._hp === "string" && body._hp.length > 0) {
-		return silentReject(`honeypot filled: "${body._hp}"`);
+		return `honeypot filled: "${body._hp}"`;
 	}
 
 	// Layer 2: Timing check
@@ -68,9 +68,22 @@ export async function runContactPipeline(
 	if (typeof body._t === "number" && body._t) {
 		const elapsed = Date.now() - body._t;
 		if (elapsed < 3000) {
-			return silentReject(`too fast: ${elapsed}ms`);
+			return `too fast: ${elapsed}ms`;
 		}
 	}
+	return null;
+}
+
+/**
+ * Honeypot → timing → zod → gibberish → rate limit, then the Make.com
+ * webhook. Shared by `/api/contact` and the /kontakt form action (phase 7).
+ */
+export async function runContactPipeline(
+	body: Record<string, unknown>,
+	ip: string,
+): Promise<ContactResult> {
+	const trap = spamTrapReason(body);
+	if (trap) return silentReject(trap);
 
 	// Layer 3: Server-side Zod validation
 	const parsed = contactSchema.safeParse(body);

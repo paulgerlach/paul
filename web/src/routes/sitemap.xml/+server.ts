@@ -13,6 +13,7 @@ const pages: Entry[] = [
 	{ path: "/funktionen", changefreq: "monthly", priority: 0.8 },
 	{ path: "/preise", changefreq: "monthly", priority: 0.8 },
 	{ path: "/geraete", changefreq: "monthly", priority: 0.8 },
+	{ path: "/messdienstwechsel", changefreq: "monthly", priority: 0.8 },
 	{ path: "/kontakt", changefreq: "monthly", priority: 0.7 },
 	{ path: "/blog", changefreq: "weekly", priority: 0.7 },
 	{ path: "/impressum", changefreq: "yearly", priority: 0.3 },

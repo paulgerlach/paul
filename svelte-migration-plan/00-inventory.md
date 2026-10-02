@@ -25,6 +25,12 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/sitemap.ts` | `/sitemap.xml` | metadata route | `src/routes/sitemap.xml/+server.ts` | [x] |
 | `public/slice-simulator/page.tsx` | `/slice-simulator` | Slice Machine | `src/routes/slice-simulator/+page.svelte` | [x] |
 
+### New pages (no Next counterpart)
+
+| Route | Target | Notes | Done |
+|---|---|---|---|
+| `/messdienstwechsel` | `src/routes/(landing-page)/messdienstwechsel/+page.svelte` | Landing page, own header/footer. Plan: `new-landing-page-plan/` | [x] |
+
 ### API routes
 
 | Next.js | Method | Target | Done |

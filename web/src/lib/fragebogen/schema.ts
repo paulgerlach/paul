@@ -80,3 +80,38 @@ export const questionnaireSchema = z.object({
 export type QuestionnaireInput = z.input<typeof questionnaireSchema>;
 /** What `/api/fragebogen` receives after validation. */
 export type QuestionnaireData = z.output<typeof questionnaireSchema>;
+
+/**
+ * Starting values for the wizard (KI-17). Next defined these three times; this
+ * is the react-hook-form `defaultValues` set, the one Next actually submitted.
+ * `phone` had no RHF default, but its input registered an empty string.
+ */
+export const questionnaireDefaults: QuestionnaireInput = {
+	customer_type: null,
+	property_count_category: null,
+	// Over50 Flow fields
+	messdienstleister_count: 10,
+	zusammenarbeit_status: null,
+	akuter_handlungsbedarf: null,
+	// Under50 Flow fields
+	wohnungen_count: 3,
+	funkzaehler_status: null,
+	standort_schwerpunkt: "",
+	// Contact form fields (Q5 - Location)
+	verwaltung_name: "",
+	postleitzahl: "",
+	ort: "",
+	// Contact form fields (Q6 - Personal)
+	phone: "",
+	email: "",
+	first_name: "",
+	last_name: "",
+	form_confirm: false,
+	// Legacy fields
+	appartment_number: 2,
+	heating_costs: null,
+	heating_available: null,
+	central_water_supply: null,
+	central_heating_system: null,
+	energy_sources: "Fernwärme",
+};

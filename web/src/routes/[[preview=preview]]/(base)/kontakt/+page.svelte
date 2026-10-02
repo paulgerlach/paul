@@ -17,6 +17,8 @@
 		wemolo,
 	} from "$lib/assets/icons";
 
+	let { data } = $props();
+
 	const ratings = ["5/5 Google Bewertungen", "4.8 / 5 Trustpilot"];
 
 	// The alt texts don't match the logos; kept as in Next.
@@ -78,7 +80,7 @@
 				{/each}
 			</div>
 		</div>
-		<ContactForm />
+		<ContactForm data={data.form} />
 	</div>
 	<Kostenfrei />
 	<ChartSwiper />

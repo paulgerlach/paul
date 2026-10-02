@@ -112,11 +112,19 @@ export const getQuestionnaire = () => getContext<Questionnaire>(KEY);
 - `StepWrapper` (progress bar, back/next) reads `q.step` / `q.totalSteps`.
 - Consider adding `beforeNavigate` to warn when leaving mid-questionnaire. It is optional and not in the current site.
 
+## Implementation notes (as built)
+- **Contact `_t`:** the action's `load` stamps `_t` so the form works without JS, but `/kontakt` is CDN-cached (`s-maxage=60, stale-while-revalidate=600`), so a cached stamp can be minutes old and would weaken the 3s check. `ContactForm` re-stamps `_t` on mount, which is what Next did.
+- **Contact action order:** the spam pipeline runs before validation errors are returned, so a bot that trips a layer always gets the silent success. Server-only length limits (`max`) fall back to the generic "Fehler beim Senden…" message, as in Next.
+- **Feedback UI:** none of the Next forms used toasts. The contact form shows the inline `role="alert"` message, `Subscription` shows inline text, and the footer shows its confirmation modal (success only). All of these are kept.
+- **Validation timing:** the Fragebogen and newsletter forms copy react-hook-form: no errors until the first submit, then errors update as the user types. The contact form uses superforms' default `auto` mode, which can also show an error when a field loses focus.
+- **Fragebogen defaults:** `questionnaireDefaults` in `schema.ts` copies the RHF `defaultValues`, because those are what Next actually submitted. The Zustand copies never reached the API. **Still to confirm with the business owner.**
+- **Dev only:** on the first visit after `sveltekit-superforms` is added, Vite re-optimizes its dependencies, briefly loads two Svelte copies (`lifecycle_outside_component` from `superForm`), and then reloads the page by itself. This doesn't affect builds.
+
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-17** (Med): Fragebogen state split between RHF and Zustand, with 3 diverging default sets
-- [ ] **KI-18** (Low): `QuestionareFormData` type exported from a page file
+- [x] **KI-17** (Med): Fragebogen state split between RHF and Zustand, with 3 diverging default sets
+- [x] **KI-18** (Low): `QuestionareFormData` type exported from a page file
 
 ## Exit criteria
 - Contact form: client errors match the current German messages. It submits without JS. Spam layers silently succeed. The webhook payload is identical.

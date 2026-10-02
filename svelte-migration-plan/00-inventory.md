@@ -13,12 +13,12 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(base)/funktionen/+page.svelte` | [x] |
 | `app/(base)/geraete/page.tsx` | `/geraete` | static | `(base)/geraete/+page.svelte` | [x] |
 | `app/(base)/preise/page.tsx` | `/preise` | static | `(base)/preise/+page.svelte` | [x] |
-| `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | page [x], action phase 7 [ ] |
+| `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | page [x], action phase 7 [x] |
 | `app/(base)/impressum/page.tsx` | `/impressum` | static text | `(base)/impressum/+page.svelte` | [x] |
 | `app/(base)/datenschutzhinweise/page.tsx` | `/datenschutzhinweise` | static text | `(base)/datenschutzhinweise/+page.svelte` | [x] |
 | `app/(base)/blog/page.tsx` | `/blog` | Prismic list + tag filter | `(base)/blog/+page.svelte` + `+page.server.ts` | [x] |
 | `app/(base)/blog/[uid]/page.tsx` | `/blog/:uid` | Prismic SliceZone + metadata | `(base)/blog/[uid]/+page.svelte` + `+page.server.ts` | [x] |
-| `app/(service)/fragebogen/page.tsx` | `/fragebogen` | client wizard | `(service)/fragebogen/+page.svelte` | [ ] |
+| `app/(service)/fragebogen/page.tsx` | `/fragebogen` | client wizard | `(service)/fragebogen/+page.svelte` | [x] |
 | `app/emails/preview/page.tsx` | `/emails/preview` | React Email preview | **deleted** (phase 9) | [ ] |
 | `app/error.tsx` / `app/not-found.tsx` | – | error UI | `src/routes/+error.svelte` | [x] |
 | `app/robots.ts` | `/robots.txt` | metadata route | `src/routes/robots.txt/+server.ts` | [x] |
@@ -32,7 +32,7 @@ Tick items as they are ported **and** verified against the Next version.
 | `api/chat/route.ts` | POST (stream) | `src/routes/api/chat/+server.ts` | [ ] |
 | `api/chat/slack/send/route.ts` | POST | `src/routes/api/chat/slack/send/+server.ts` | [ ] |
 | `api/chat/slack/messages/route.ts` | POST | `src/routes/api/chat/slack/messages/+server.ts` | [ ] |
-| `api/contact/route.ts` | POST | `kontakt/+page.server.ts` action (keep `/api/contact` too until cutover) | `/api/contact` phase 6 [x], action phase 7 [ ] |
+| `api/contact/route.ts` | POST | `kontakt/+page.server.ts` action (keep `/api/contact` too until cutover) | `/api/contact` phase 6 [x], action phase 7 [x] |
 | `api/fragebogen/route.ts` | POST | `src/routes/api/fragebogen/+server.ts` | [x] |
 | `api/leads/route.ts` | POST | `src/routes/api/leads/+server.ts` | [x] |
 | `api/send-email/route.ts` | POST | `src/routes/api/send-email/+server.ts` (newsletter webhook) | [x] |
@@ -52,7 +52,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `Basic/Loading/Loading`
 - [x] `Basic/MobileDifference/MobileDifference`
 - [ ] `Basic/RichTextBlockImage/RichTextBlockImage`
-- [ ] `Basic/Subscription/Subscription` (form + mutation). Markup ported in phase 3 with the submit disabled; submission is phase 7
+- [x] `Basic/Subscription/Subscription` (form + mutation). Submission shared with the footer through `Basic/NewsletterForm/NewsletterForm` (phase 7)
 - [x] `Basic/Ticker/HeroTicker` (295), `Basic/Ticker/GeraeteHeroTicker` (401)
 - [x] `Basic/ui/Sonner` → `svelte-sonner` `<Toaster>`
 
@@ -61,7 +61,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `Header/Nav` (259; client-side Prismic fetch via React Query → layout `load`)
 - [x] `Header/NavGroup`, `Header/NavFunktionenRightSide`
 - [x] `Header/FragebogenHeader`
-- [x] `Footer/Footer` (504), `Footer/FooterLink`, `Footer/FooterEmailForm` (form + mutation). `FooterEmailForm` is markup only until phase 7
+- [x] `Footer/Footer` (504), `Footer/FooterLink`, `Footer/FooterEmailForm` (form + mutation). `FooterEmailForm` submits through `NewsletterForm` (phase 7)
 
 **Hero**
 - [x] `Hero/HomeHero`, `Hero/FunktionenHero`, `Hero/GeraeteHero`, `Hero/BlogHero`
@@ -81,10 +81,10 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `Blog/BlogFilters` (React Query → URL `?tag=` + load), `Blog/BlogPost`, `Blog/BlogPostsList`, `Blog/NewestBlogs` (async RSC), `Blog/RecomendedPosts` (async RSC)
 
 **Fragebogen**
-- [ ] `StepWrapper`, `StepInfo`
-- [ ] `Steps/StepZero`, `Steps/StepOne`
-- [ ] `Steps/Over50/StepTwo…StepSixOver50` (5 files)
-- [ ] `Steps/Under50/StepTwo…StepFourUnder50` (3 files)
+- [x] `StepWrapper`, `StepInfo`
+- [x] `Steps/StepZero`, `Steps/StepOne` (pick-one card lists shared as `Steps/StepChoices`, headings as `Steps/StepHeading`)
+- [x] `Steps/Over50/StepTwo…StepSixOver50` (5 files)
+- [x] `Steps/Under50/StepTwo…StepFourUnder50` (3 files)
 
 **ChatBot** (`Common/ChatBot`)
 - [ ] `index` (container), `ChatHeader`, `AIChatInput`, `SlackChatInput`, `AnonymousChatBanner`, `VisitorEmailFormContainer`, `icons`, `AIChatBot.css`
@@ -114,7 +114,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 | `src/hooks/useSlackChat.tsx` | `src/lib/chat/slackChat.svelte.ts` | runes class |
 | `src/store/useQuestionareStore.tsx` | `src/lib/fragebogen/questionnaire.svelte.ts` | runes class + context |
 | `src/store/useAIMessagesStore.tsx` | fold into chat state | |
-| `src/types/*` | `src/lib/types/*` | `QuestionareFormData` currently imported from a **page file**; move it into types |
+| `src/types/*` | `src/lib/types/*` | `QuestionareFormData` is now `QuestionnaireInput` / `QuestionnaireData` in `$lib/fragebogen/schema.ts` (KI-18) |
 | `src/routes/routes.ts` | `src/lib/routes.ts` | rename to avoid confusion with `src/routes/` |
 | `src/static/icons.ts` (300 lines, 148 asset imports) | `src/lib/assets/icons.ts` | append `?enhanced` (phase 2) |
 | `src/asset/*` (~170 images) | `src/lib/assets/*` | processed by Vite / enhanced-img |

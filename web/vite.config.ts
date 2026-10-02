@@ -15,8 +15,8 @@ export default defineConfig({
 				test: {
 					name: "server",
 					environment: "node",
+					// *.svelte.test.ts files use runes; the svelte plugin compiles them.
 					include: ["src/**/*.{test,spec}.{js,ts}"],
-					exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
 				},
 			},
 		],

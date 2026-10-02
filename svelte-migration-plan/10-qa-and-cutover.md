@@ -23,6 +23,16 @@ Generate the baseline screenshots from the **Next** app (`BASE_URL=http://localh
 
 **Unit tests (vitest):** `isGibberish`, rate limiter, `formatDate`, `isWithinBusinessHours`, `Questionnaire` class (flow branching, step bounds, increment/decrement floors).
 
+### Results (2026-10-02, Next prod `:3000` vs Svelte `vite preview` `:4173`)
+
+- **Sitemap:** all 245 URLs (9 pages + 236 posts) return 200 on Svelte.
+- **SEO diff:** clean. The only differences are the planned fixes: per-path canonical/`og:url`/hreflang (KI-28), no verification placeholder (KI-03), blog post titles (KI-12), `robots.txt` (KI-01), and the 404 page is `noindex` with no canonical.
+- **Smoke** (`playwright.parity.config.ts`): every page is 200 with no console errors or hydration warnings; unknown URLs return 404. `/fragebogen` has no `<h1>` in either app.
+- **Visual:** pixel screenshots turned out too noisy to gate on. They also flag image recompression, Lottie frames, Next's client-side blog loading, and lazy images caught mid-load. **`web/scripts/layout-diff.ts`** compares the box of every text element once the page has fully loaded. It matches at all 5 widths on `/`, `/funktionen`, `/preise`, `/geraete`, `/kontakt`, the blog post, `/datenschutzhinweise` and `/fragebogen`. The remaining differences are deliberate and listed in the script header: Impressum spacing (JSX dropped the spaces, so Next overflows at 375px), the `h-ful` typo in `AnimationsSection`, and the blog tag filters being links. Against Next *prod*, off-screen lazy content (Lotties, the last blog images) sometimes hasn't loaded at capture time. Re-check any flagged diff before treating it as real.
+- **Header @992/1200:** the phone number is hidden between `large` and `megalarge` to make room for the "Anbieterwechsel" link (commit `37a3e73c`). This is deliberate.
+- **Unit tests:** `isGibberish`, rate limiter, `formatDate`, `isWithinBusinessHours`, `Questionnaire`. 36 pass.
+- **e2e:** 32/35 pass. The 3 `/messdienstwechsel` signup tests need the local Postgres (`127.0.0.1:54322`), which wasn't running.
+
 ## 10.2 Manual QA checklist
 - [ ] Safari iOS, Chrome Android, desktop Chrome/Firefox/Safari
 - [ ] Swipers: touch swipe, autoplay, pagination dots, arrows
@@ -37,6 +47,21 @@ Generate the baseline screenshots from the **Next** app (`BASE_URL=http://localh
 Run Lighthouse (mobile) on `/`, `/funktionen`, `/blog`, `/blog/<post>`, `/fragebogen` for both apps. Targets:
 - Performance and SEO ≥ the Next scores. CLS ≤ 0.05. LCP not worse.
 - Total JS on `/` lower than Next. Expect a large drop, since React, React Query and Zustand runtimes go away.
+
+### Results (2026-10-02, local, Lighthouse 12 mobile)
+
+| Page | Next perf / SEO | Svelte perf / SEO | Next LCP / CLS | Svelte LCP / CLS | JS transferred Next → Svelte |
+|---|---|---|---|---|---|
+| `/` | 64 / 100 | 90 / 100 | 8.4 s / 0.127 | 3.2 s / 0.011 | 677 → 253 KB |
+| `/funktionen` | 90–94 / 100 | 83 / 100 | 3.0–3.5 s / 0.004 | 4.2 s / 0 | 502 → 152 KB |
+| `/blog` | 62 / 100 | 83 / 100 | 6.5 s / 0.088 | 3.1 s / 0.001 | 241 → 47 KB |
+| `/blog/<post>` | 77 / 100 | 89 / 100 | 3.5 s / 0.119 | 2.9 s / 0.001 | 498 → 119 KB |
+| `/fragebogen` | 93 / 100 | 96 / 69 | 3.2 s / 0 | 2.7 s / 0 | 483 → 95 KB |
+
+- `/fragebogen` SEO 69 is the KI-01 fix: `robots.txt` now really disallows it. Expected.
+- Home CLS 0.138 → 0.011: `LazyLottie` takes a `size` and renders a same-sized placeholder `<svg>` until lottie-web's SVG replaces it (hero `Animation_2`). The same shift exists on Next (0.127).
+- `Image` with `priority` now emits `<link rel="preload" as="image">`, as `next/image` does.
+- **`/funktionen` is below Next locally.** Next prerenders it (TTFB ≈ 5 ms). Svelte server-renders every request because the layout loads the nav's blog teaser from Prismic (TTFB ≈ 0.75 s locally, ≈ 1.6–1.9 s under Lighthouse). Lighthouse's simulation also queues the hero image behind ~22 `modulepreload`s over HTTP/1.1. In production the CDN (`s-maxage=60, stale-while-revalidate=600`) serves cached HTML, and Vercel uses HTTP/2. **Re-measure on the Vercel preview (10.4 step 5).** `kit.output.bundleStrategy: "single"` was tried: 93 / LCP 2.6 s, but 1 MB of JS on every page. Rejected.
 
 ## 10.4 Cutover
 

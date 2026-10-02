@@ -68,8 +68,8 @@ Write a small `scripts/compare-endpoints.ts` that posts the same fixtures to `:3
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-15** (Low): Newsletter webhook never sends the IP
-- [ ] **KI-16** (Med): No server-side validation on `/api/fragebogen` and `/api/leads`
+- [x] **KI-15** (Low): Newsletter webhook never sends the IP
+- [x] **KI-16** (Med): No server-side validation on `/api/fragebogen` and `/api/leads`
 
 ## Exit criteria
 - All endpoints return the same status codes and bodies for the fixture set (valid, invalid, honeypot, too fast, gibberish, rate-limited).

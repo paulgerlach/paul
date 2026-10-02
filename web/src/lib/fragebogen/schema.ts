@@ -1,0 +1,82 @@
+import { z } from "zod";
+
+/**
+ * Fragebogen fields and validation. Shared by the wizard (phase 7) and
+ * `/api/fragebogen`, so the server checks exactly what the client does (KI-16).
+ */
+export const questionnaireSchema = z.object({
+	// Step 0: Customer type
+	customer_type: z
+		.enum([
+			"Privatperson",
+			"Hausverwaltung",
+			"Assetmanager, Fonds & Bestandshalter",
+		])
+		.nullable(),
+
+	// Step 1: Property count category (determines flow)
+	property_count_category: z
+		.enum(["1-50 Immobilien", "51-800 Immobilien", "über 800 Immobilien"])
+		.nullable(),
+
+	// Over50 Flow (51-800 & über 800 Immobilien) fields
+	messdienstleister_count: z.number().min(1).optional(),
+	zusammenarbeit_status: z
+		.enum(["Sehr zufrieden", "Teils / teils", "Stark unzufrieden"])
+		.nullable()
+		.optional(),
+	akuter_handlungsbedarf: z.enum(["Ja", "Nein"]).nullable().optional(),
+
+	// Under50 Flow (1-50 Immobilien) fields
+	wohnungen_count: z.number().min(1).optional(),
+	funkzaehler_status: z.enum(["Ja", "Nein"]).nullable().optional(),
+	standort_schwerpunkt: z.string().optional().or(z.literal("")),
+
+	// Contact form fields (Q5 - Location)
+	verwaltung_name: z.string().optional().or(z.literal("")),
+	postleitzahl: z.string().optional().or(z.literal("")),
+	ort: z.string().optional().or(z.literal("")),
+
+	// Contact form fields (Q6 - Personal)
+	phone: z
+		.string()
+		.transform((val) => val.replace(/[\s-]/g, ""))
+		.refine((val) => /^\+?[0-9]\d{1,14}$/.test(val), {
+			message: "Bitte geben Sie eine gültige Telefonnummer ein",
+		}),
+	email: z.email("Bitte geben Sie eine gültige E-Mail-Adresse ein"),
+	first_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
+	last_name: z.string().min(1, "Bitte füllen Sie dieses Feld aus"),
+	form_confirm: z.boolean().refine((val) => val === true, {
+		message: "Bitte akzeptieren Sie die Datenschutzbestimmungen",
+	}),
+	// Legacy fields (kept for backwards compatibility, will be removed after full migration)
+	appartment_number: z
+		.number()
+		.min(1, "Wohnungsnummer ist erforderlich")
+		.optional(),
+	heating_costs: z
+		.enum([
+			"Durch mich persönlich",
+			"Durch einen anderen Messdienstleister",
+			"Bisher noch gar nicht",
+		])
+		.nullable()
+		.optional(),
+	heating_available: z.enum(["Ja", "Nein"]).nullable().optional(),
+	central_water_supply: z.enum(["Ja", "Nein"]).nullable().optional(),
+	central_heating_system: z
+		.enum([
+			"Nur Heizkörper",
+			"Nur Fußbodenheizung",
+			"Heizkörper und Fußbodenheizung",
+		])
+		.nullable()
+		.optional(),
+	energy_sources: z.string().nullable().optional(),
+});
+
+/** What the wizard holds while it's being filled in (before the phone transform). */
+export type QuestionnaireInput = z.input<typeof questionnaireSchema>;
+/** What `/api/fragebogen` receives after validation. */
+export type QuestionnaireData = z.output<typeof questionnaireSchema>;

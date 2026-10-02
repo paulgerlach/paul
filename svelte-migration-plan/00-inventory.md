@@ -32,10 +32,10 @@ Tick items as they are ported **and** verified against the Next version.
 | `api/chat/route.ts` | POST (stream) | `src/routes/api/chat/+server.ts` | [ ] |
 | `api/chat/slack/send/route.ts` | POST | `src/routes/api/chat/slack/send/+server.ts` | [ ] |
 | `api/chat/slack/messages/route.ts` | POST | `src/routes/api/chat/slack/messages/+server.ts` | [ ] |
-| `api/contact/route.ts` | POST | `kontakt/+page.server.ts` action (keep `/api/contact` too until cutover) | [ ] |
-| `api/fragebogen/route.ts` | POST | `src/routes/api/fragebogen/+server.ts` | [ ] |
-| `api/leads/route.ts` | POST | `src/routes/api/leads/+server.ts` | [ ] |
-| `api/send-email/route.ts` | POST | `src/routes/api/send-email/+server.ts` (newsletter webhook) | [ ] |
+| `api/contact/route.ts` | POST | `kontakt/+page.server.ts` action (keep `/api/contact` too until cutover) | `/api/contact` phase 6 [x], action phase 7 [ ] |
+| `api/fragebogen/route.ts` | POST | `src/routes/api/fragebogen/+server.ts` | [x] |
+| `api/leads/route.ts` | POST | `src/routes/api/leads/+server.ts` | [x] |
+| `api/send-email/route.ts` | POST | `src/routes/api/send-email/+server.ts` (newsletter webhook) | [x] |
 | `api/preview/route.ts` | GET | `src/routes/api/preview/+server.ts` (`redirectToPreviewURL`) | [x] |
 | `api/exit-preview/route.ts` | GET | `src/routes/api/exit-preview/+server.ts` | [x] |
 | `api/revalidate/route.ts` | POST | **Deleted**; replaced by a CDN cache header (phase 5) | [x] |

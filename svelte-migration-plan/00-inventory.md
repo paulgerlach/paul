@@ -29,9 +29,9 @@ Tick items as they are ported **and** verified against the Next version.
 
 | Next.js | Method | Target | Done |
 |---|---|---|---|
-| `api/chat/route.ts` | POST (stream) | `src/routes/api/chat/+server.ts` | [ ] |
-| `api/chat/slack/send/route.ts` | POST | `src/routes/api/chat/slack/send/+server.ts` | [ ] |
-| `api/chat/slack/messages/route.ts` | POST | `src/routes/api/chat/slack/messages/+server.ts` | [ ] |
+| `api/chat/route.ts` | POST (stream) | `src/routes/api/chat/+server.ts` | [x] |
+| `api/chat/slack/send/route.ts` | POST | `src/routes/api/chat/slack/send/+server.ts` | [x] |
+| `api/chat/slack/messages/route.ts` | POST | `src/routes/api/chat/slack/messages/+server.ts` | [x] |
 | `api/contact/route.ts` | POST | `kontakt/+page.server.ts` action (keep `/api/contact` too until cutover) | `/api/contact` phase 6 [x], action phase 7 [x] |
 | `api/fragebogen/route.ts` | POST | `src/routes/api/fragebogen/+server.ts` | [x] |
 | `api/leads/route.ts` | POST | `src/routes/api/leads/+server.ts` | [x] |
@@ -87,8 +87,8 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `Steps/Under50/StepTwo…StepFourUnder50` (3 files)
 
 **ChatBot** (`Common/ChatBot`)
-- [ ] `index` (container), `ChatHeader`, `AIChatInput`, `SlackChatInput`, `AnonymousChatBanner`, `VisitorEmailFormContainer`, `icons`, `AIChatBot.css`
-- [ ] `Messages/AiMessagesContainer`, `SlackMessagesContainer`, `Message`, `SlackMessage`, `DefaultChatMessage`, `LoadingMessage`
+- [x] `index` (container → `ChatBot` launcher + lazy `ChatPanel`), `ChatHeader`, `AIChatInput`, `SlackChatInput`, `AnonymousChatBanner`, `VisitorEmailFormContainer`, `icons` (→ `SupportAgentIcon`, `BrainCircuitIcon`, inline SVGs), `AIChatBot.css`; `react-loader-spinner` → `TriangleSpinner`
+- [x] `Messages/AiMessagesContainer`, `SlackMessagesContainer`, `Message`, `SlackMessage`, `DefaultChatMessage`, `LoadingMessage`
 
 **Prismic slices** (`src/slices` → `src/lib/slices`)
 - [x] `AuthorImage`, `AuthorName`, `BlogAuthor` (does its own Prismic fetch), `BlogImage`, `BussinessText`, `MainTitle`, `Quote`, `RichTextBlock`, `Subtitle`, plus the generated `index.ts`
@@ -110,10 +110,10 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 | `src/lib/constants/ai/personas.ts` | `src/lib/server/ai/personas.ts` | unchanged |
 | `src/db/*` | `src/lib/server/db/*` | unchanged |
 | `src/services/leadsService.ts` | `src/lib/server/leads.ts` | unchanged |
-| `src/actions/slackChat.ts` | `src/lib/chat/slackClient.ts` | axios → fetch |
-| `src/hooks/useSlackChat.tsx` | `src/lib/chat/slackChat.svelte.ts` | runes class |
+| `src/actions/slackChat.ts` | folded into `src/lib/chat/slackChat.svelte.ts` | axios → fetch (phase 8) |
+| `src/hooks/useSlackChat.tsx` | `src/lib/chat/slackChat.svelte.ts` | runes class, one instance via `$lib/chat/context` (phase 8) |
 | `src/store/useQuestionareStore.tsx` | `src/lib/fragebogen/questionnaire.svelte.ts` | runes class + context |
-| `src/store/useAIMessagesStore.tsx` | fold into chat state | |
+| `src/store/useAIMessagesStore.tsx` | fold into chat state | `ChatState` in `$lib/chat/chatState.svelte.ts` outlives the panel, so no store is needed (phase 8) |
 | `src/types/*` | `src/lib/types/*` | `QuestionareFormData` is now `QuestionnaireInput` / `QuestionnaireData` in `$lib/fragebogen/schema.ts` (KI-18) |
 | `src/routes/routes.ts` | `src/lib/routes.ts` | rename to avoid confusion with `src/routes/` |
 | `src/static/icons.ts` (300 lines, 148 asset imports) | `src/lib/assets/icons.ts` | append `?enhanced` (phase 2) |

@@ -96,12 +96,12 @@ Lazy-load the widget. It is not needed for first paint: render only the launcher
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-19** (High): `useSlackChat` instantiated 6×, giving 6 parallel Slack polling loops
-- [ ] **KI-20** (Med): Polling interval recreated on every tick
-- [ ] **KI-21** (Med): 5-minute "no human reply" timeout never fires (stale closure)
-- [ ] **KI-22** (Med): Chat always starts in Slack mode, even outside office hours
-- [ ] **KI-23** (Med): "New conversation" clears sessionStorage, but the thread id is in localStorage
-- [ ] **KI-24** (Low): Chat widget code is in the initial `/fragebogen` bundle
+- [x] **KI-19** (High): `useSlackChat` instantiated 6×, giving 6 parallel Slack polling loops
+- [x] **KI-20** (Med): Polling interval recreated on every tick
+- [x] **KI-21** (Med): 5-minute "no human reply" timeout never fires (stale closure)
+- [x] **KI-22** (Med): Chat always starts in Slack mode, even outside office hours
+- [x] **KI-23** (Med): "New conversation" clears sessionStorage, but the thread id is in localStorage
+- [x] **KI-24** (Low): Chat widget code is in the initial `/fragebogen` bundle
 
 ## Exit criteria
 - AI chat streams responses token by token. Stop works.
@@ -109,3 +109,16 @@ Details are in [known-issues.md](known-issues.md). Tick them there as well.
 - Inside and outside office hours, the banner and auto-reply behave as today (mock the clock in a Playwright test).
 - DevTools Network shows **one** polling loop, not six.
 - All known issues listed above are fixed.
+
+## Port notes (done)
+
+- **Structure.** `ChatBot.svelte` renders only the launcher. On first open it `import()`s `ChatBot/lazy.ts` (the `ChatPanel` and `ChatState`) and keeps the `ChatState` instance, so closing the panel loses nothing. `ChatPanel` puts that instance in context. The lazy chunk is about 248 KB and holds `ai`, `@ai-sdk/svelte` and exmarkdown; none of it is in the initial bundle.
+- **Polling** runs only while the panel is open and the tab is visible: 1s while waiting for a human, otherwise 2s.
+- **Optimistic Slack messages** use role `assistant`, because bot-posted messages are the visitor's own. Each is replaced when polling returns the confirmed copy from Slack.
+- **Spinner.** The Slack spinner shows only while sending or restoring. Next flashed "Nachrichten laden..." on every poll.
+- **`/api/chat/slack/send`** now also returns `messageTs`. Next stored the thread `ts` as "last sent", so any earlier human reply counted as an answer.
+- **AI input** stays usable after `status === 'error'`. Next disabled it permanently.
+- **Lead save failure** in the email form now shows the server's error. Next threw silently.
+- **KI-23 decision.** "Andere E-Mail verwenden" / "Ändern" forget the Slack thread: `localStorage` is cleared and the messages are reset. Confirm this with the product owner.
+- **Gateway key.** Locally, `AI_GATEWAY_API_KEY` from `.env` is passed to `createGateway` explicitly, because Vite doesn't populate `process.env`. On Vercel, OIDC is used when the key is unset.
+- **Still open: Playwright test with a mocked clock** (exit criterion). It was verified manually in the browser with mocked `fetch` and a mocked clock. Add the test in phase 10.

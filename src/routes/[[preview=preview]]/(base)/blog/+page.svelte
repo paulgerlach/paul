@@ -7,6 +7,12 @@
 	let { data } = $props();
 </script>
 
+<svelte:head>
+	<!-- Post images come straight from Prismic's CDN (Next proxied them through
+	     /_next/image), so open that connection before the parser finds them. -->
+	<link rel="preconnect" href="https://images.prismic.io" />
+</svelte:head>
+
 <main id="content">
 	<BlogHero />
 	<NewestBlogs posts={data.newest} />

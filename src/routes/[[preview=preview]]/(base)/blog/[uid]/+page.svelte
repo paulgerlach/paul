@@ -14,6 +14,12 @@
 	});
 </script>
 
+<svelte:head>
+	<!-- Post images come straight from Prismic's CDN (Next proxied them through
+	     /_next/image), so open that connection before the parser finds them. -->
+	<link rel="preconnect" href="https://images.prismic.io" />
+</svelte:head>
+
 <!-- Next had id="content relative" (KI-13). -->
 <main id="content" class="relative">
 	<div class="px-20 max-medium:px-10 max-small:px-5">

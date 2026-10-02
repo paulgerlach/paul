@@ -85,6 +85,7 @@
 		<LazyLottie
 			animationName="Animation_2"
 			id="animation2hero"
+			size={{ w: 1456, h: 1082 }}
 			wrapperClassName="w-fit col-span-2 max-medium:col-span-4 max-medium:bg-transparent max-medium:ml-auto max-medium:mr-0 bg-card_bg rounded-base max-h-[324px] overflow-hidden"
 		/>
 		<div

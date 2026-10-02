@@ -62,6 +62,21 @@
 	});
 </script>
 
+<!-- Like next/image `priority`: preload so the request starts before the JS
+     module preloads instead of when the parser reaches the <img>. -->
+<svelte:head>
+	{#if priority}
+		<link
+			rel="preload"
+			as="image"
+			href={url}
+			imagesrcset={srcset}
+			imagesizes={sizes}
+			fetchpriority="high"
+		/>
+	{/if}
+</svelte:head>
+
 <img
 	src={url}
 	{srcset}

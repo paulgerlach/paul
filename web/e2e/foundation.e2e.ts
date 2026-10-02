@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("home page renders with SEO tags and an enhanced image", async ({
+test("home page renders with SEO tags and an optimized image", async ({
 	page,
 }) => {
 	const response = await page.goto("/");
@@ -10,9 +10,8 @@ test("home page renders with SEO tags and an enhanced image", async ({
 		"href",
 		"https://heidisystems.com",
 	);
-	await expect(
-		page.locator('picture source[type="image/avif"]').first(),
-	).toBeAttached();
+	// Image.svelte serves enhanced-img's WebP variant (phase 4).
+	await expect(page.locator('img[src$=".webp"]').first()).toBeAttached();
 });
 
 test("unknown URL renders the 404 page with noindex", async ({ page }) => {
@@ -32,7 +31,12 @@ test("robots.txt disallows /fragebogen", async ({ request }) => {
 	expect(body).toContain("Sitemap: https://heidisystems.com/sitemap.xml");
 });
 
-test("sitemap.xml lists the static pages", async ({ request }) => {
+test("sitemap.xml lists the static pages and blog posts", async ({
+	request,
+}) => {
 	const body = await (await request.get("/sitemap.xml")).text();
-	expect(body.match(/<url>/g)).toHaveLength(8);
+	expect(body).toContain("<loc>https://heidisystems.com/preise</loc>");
+	// Blog posts from Prismic (KI-05).
+	expect(body).toMatch(/<loc>https:\/\/heidisystems\.com\/blog\/[^<]+<\/loc>/);
+	expect(body.match(/<url>/g)!.length).toBeGreaterThan(8);
 });

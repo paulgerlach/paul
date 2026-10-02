@@ -2,6 +2,9 @@
 	import "../app.css";
 	import exo2Latin from "@fontsource-variable/exo-2/files/exo-2-latin-wght-normal.woff2?url";
 	import exo2LatinExt from "@fontsource-variable/exo-2/files/exo-2-latin-ext-wght-normal.woff2?url";
+	import { page } from "$app/state";
+	import { PrismicPreview } from "@prismicio/svelte/kit";
+	import { repositoryName } from "$lib/prismicio";
 	import Seo from "$lib/seo/Seo.svelte";
 
 	let { children } = $props();
@@ -27,5 +30,11 @@
 </svelte:head>
 
 <Seo />
+
+<!-- Only during preview sessions, so regular visitors don't load the Prismic
+     toolbar script. It keeps navigation under /preview/… until the editor exits. -->
+{#if page.params.preview}
+	<PrismicPreview {repositoryName} />
+{/if}
 
 {@render children()}

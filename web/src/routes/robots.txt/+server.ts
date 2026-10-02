@@ -8,6 +8,8 @@ export const GET = () =>
 Allow: /
 Disallow: /api/
 Disallow: /fragebogen
+Disallow: /preview/
+Disallow: /slice-simulator
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `,

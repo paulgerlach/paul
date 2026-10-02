@@ -3,13 +3,13 @@
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { cellphone, logo } from "$lib/assets/icons";
 	import { ROUTE_FRAGEBOGEN, ROUTE_HOME } from "$lib/routes";
-	import type { NavPost } from "$lib/server/blog";
+	import type { PostSummary } from "$lib/server/blog";
 	import HeaderButton from "./HeaderButton.svelte";
 	import LoginDropdown from "./LoginDropdown.svelte";
 	import Nav from "./Nav.svelte";
 	import { menu } from "./menu.svelte";
 
-	let { posts }: { posts: NavPost[] } = $props();
+	let { posts }: { posts: PostSummary[] } = $props();
 
 	let header = $state<HTMLElement>();
 	let scrollY = $state(0);

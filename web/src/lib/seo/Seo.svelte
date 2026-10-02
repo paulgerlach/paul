@@ -22,7 +22,10 @@
 	);
 	const ogTitle = $derived(seo.ogTitle ?? DEFAULT_OG_TITLE);
 	const ogDescription = $derived(seo.ogDescription ?? DEFAULT_OG_DESCRIPTION);
-	const noindex = $derived(seo.noindex ?? isError);
+	// Prismic preview sessions (/preview/…) show drafts.
+	const noindex = $derived(
+		seo.noindex ?? (isError || page.params.preview !== undefined),
+	);
 	// Next pointed every page's canonical at the home page (KI-28).
 	const canonical = $derived(
 		page.url.pathname === "/" ? SITE_URL : SITE_URL + page.url.pathname,

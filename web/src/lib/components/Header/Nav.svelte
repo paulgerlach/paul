@@ -22,13 +22,13 @@
 		ROUTE_GERAETE,
 		ROUTE_PREISE,
 	} from "$lib/routes";
-	import type { NavPost } from "$lib/server/blog";
+	import type { PostSummary } from "$lib/server/blog";
 	import type { NavGroupType } from "$lib/types";
 	import NavFunktionenRightSide from "./NavFunktionenRightSide.svelte";
 	import NavGroup from "./NavGroup.svelte";
 	import { menu } from "./menu.svelte";
 
-	let { posts }: { posts: NavPost[] } = $props();
+	let { posts }: { posts: PostSummary[] } = $props();
 
 	const lastPost = $derived(posts[0]);
 
@@ -129,7 +129,7 @@
 	<a class="group" href="{ROUTE_BLOG}/{lastPost.uid}">
 		{@render highlightTitle("Blog Artikel Highlights")}
 		<div class="mb-2.5 flex items-center justify-center rounded-base">
-			{#if lastPost.image}
+			{#if lastPost.image.url}
 				<img
 					loading="lazy"
 					decoding="async"

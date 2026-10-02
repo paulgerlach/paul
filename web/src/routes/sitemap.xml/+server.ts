@@ -1,6 +1,12 @@
 import { SITE_URL } from "$lib/seo/site";
+import { getSitemapPosts } from "$lib/server/blog";
 
-type Entry = { path: string; changefreq: string; priority: number };
+type Entry = {
+	path: string;
+	changefreq: string;
+	priority: number;
+	lastmod?: string;
+};
 
 const pages: Entry[] = [
 	{ path: "", changefreq: "weekly", priority: 1 },
@@ -13,14 +19,24 @@ const pages: Entry[] = [
 	{ path: "/datenschutzhinweise", changefreq: "yearly", priority: 0.3 },
 ];
 
-// TODO(phase 5): add /blog/:uid entries from Prismic with last_publication_date (KI-05)
-export const GET = () => {
-	const lastmod = new Date().toISOString();
-	const urls = pages
+export const GET = async ({ fetch, setHeaders }) => {
+	// Blog posts with their real last change (KI-05).
+	const posts: Entry[] = (await getSitemapPosts({ fetch })).map((post) => ({
+		path: `/blog/${post.uid}`,
+		changefreq: "monthly",
+		priority: 0.6,
+		lastmod: post.lastmod,
+	}));
+	const now = new Date().toISOString();
+	setHeaders({
+		"cache-control": "s-maxage=3600, stale-while-revalidate=86400",
+	});
+
+	const urls = [...pages, ...posts]
 		.map(
 			(p) => `<url>
 <loc>${SITE_URL}${p.path}</loc>
-<lastmod>${lastmod}</lastmod>
+<lastmod>${p.lastmod ?? now}</lastmod>
 <changefreq>${p.changefreq}</changefreq>
 <priority>${p.priority}</priority>
 </url>`,

@@ -16,14 +16,14 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | page [x], action phase 7 [ ] |
 | `app/(base)/impressum/page.tsx` | `/impressum` | static text | `(base)/impressum/+page.svelte` | [x] |
 | `app/(base)/datenschutzhinweise/page.tsx` | `/datenschutzhinweise` | static text | `(base)/datenschutzhinweise/+page.svelte` | [x] |
-| `app/(base)/blog/page.tsx` | `/blog` | Prismic list + tag filter | `(base)/blog/+page.svelte` + `+page.server.ts` | [ ] |
-| `app/(base)/blog/[uid]/page.tsx` | `/blog/:uid` | Prismic SliceZone + metadata | `(base)/blog/[uid]/+page.svelte` + `+page.server.ts` | [ ] |
+| `app/(base)/blog/page.tsx` | `/blog` | Prismic list + tag filter | `(base)/blog/+page.svelte` + `+page.server.ts` | [x] |
+| `app/(base)/blog/[uid]/page.tsx` | `/blog/:uid` | Prismic SliceZone + metadata | `(base)/blog/[uid]/+page.svelte` + `+page.server.ts` | [x] |
 | `app/(service)/fragebogen/page.tsx` | `/fragebogen` | client wizard | `(service)/fragebogen/+page.svelte` | [ ] |
 | `app/emails/preview/page.tsx` | `/emails/preview` | React Email preview | **deleted** (phase 9) | [ ] |
 | `app/error.tsx` / `app/not-found.tsx` | – | error UI | `src/routes/+error.svelte` | [x] |
 | `app/robots.ts` | `/robots.txt` | metadata route | `src/routes/robots.txt/+server.ts` | [x] |
 | `app/sitemap.ts` | `/sitemap.xml` | metadata route | `src/routes/sitemap.xml/+server.ts` | [x] |
-| `public/slice-simulator/page.tsx` | `/slice-simulator` | Slice Machine | `src/routes/slice-simulator/+page.svelte` | [ ] |
+| `public/slice-simulator/page.tsx` | `/slice-simulator` | Slice Machine | `src/routes/slice-simulator/+page.svelte` | [x] |
 
 ### API routes
 
@@ -36,9 +36,9 @@ Tick items as they are ported **and** verified against the Next version.
 | `api/fragebogen/route.ts` | POST | `src/routes/api/fragebogen/+server.ts` | [ ] |
 | `api/leads/route.ts` | POST | `src/routes/api/leads/+server.ts` | [ ] |
 | `api/send-email/route.ts` | POST | `src/routes/api/send-email/+server.ts` (newsletter webhook) | [ ] |
-| `api/preview/route.ts` | GET | `src/routes/api/preview/+server.ts` (`redirectToPreviewURL`) | [ ] |
-| `api/exit-preview/route.ts` | GET | `src/routes/api/exit-preview/+server.ts` | [ ] |
-| `api/revalidate/route.ts` | POST | **Deleted**; replaced by a CDN cache header (phase 5) | [ ] |
+| `api/preview/route.ts` | GET | `src/routes/api/preview/+server.ts` (`redirectToPreviewURL`) | [x] |
+| `api/exit-preview/route.ts` | GET | `src/routes/api/exit-preview/+server.ts` | [x] |
+| `api/revalidate/route.ts` | POST | **Deleted**; replaced by a CDN cache header (phase 5) | [x] |
 | `api/email-preview/route.ts` | GET | **Deleted** (phase 9) | [ ] |
 
 ## Components → `src/lib/components/`
@@ -78,7 +78,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [x] `Lottie/LazyLottie`
 
 **Blog**
-- [ ] `Blog/BlogFilters` (React Query → URL `?tag=` + load), `Blog/BlogPost`, `Blog/BlogPostsList`, `Blog/NewestBlogs` (async RSC), `Blog/RecomendedPosts` (async RSC)
+- [x] `Blog/BlogFilters` (React Query → URL `?tag=` + load), `Blog/BlogPost`, `Blog/BlogPostsList`, `Blog/NewestBlogs` (async RSC), `Blog/RecomendedPosts` (async RSC)
 
 **Fragebogen**
 - [ ] `StepWrapper`, `StepInfo`
@@ -91,7 +91,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [ ] `Messages/AiMessagesContainer`, `SlackMessagesContainer`, `Message`, `SlackMessage`, `DefaultChatMessage`, `LoadingMessage`
 
 **Prismic slices** (`src/slices` → `src/lib/slices`)
-- [ ] `AuthorImage`, `AuthorName`, `BlogAuthor` (does its own Prismic fetch), `BlogImage`, `BussinessText`, `MainTitle`, `Quote`, `RichTextBlock`, `Subtitle`, plus the generated `index.ts`
+- [x] `AuthorImage`, `AuthorName`, `BlogAuthor` (does its own Prismic fetch), `BlogImage`, `BussinessText`, `MainTitle`, `Quote`, `RichTextBlock`, `Subtitle`, plus the generated `index.ts`
 
 **Emails**: `components/emails/*` (7 files), **deleted** (phase 9).
 

@@ -1,73 +1,47 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+# Playwright
+test-results
+e2e/parity/__screenshots__
 
 # IDE settings (personal preferences - never commit)
 .idea/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
+# Testing / TypeScript
 /coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# Added these for multiple environments
-.prod.env*
-*.env*
-
-# vercel
-.vercel
-
-# typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # ===========================================
 # Internal/Debug files - NEVER commit these
 # ===========================================
-
-# Debug and diagnostic files
 debug-*.sql
 debug-*.js
 *-diagnose-*.sql
 check-*.sql
 URGENT-*.sql
-test-*.js
-
-# Test/sample data files
-meters.json
-src/api/data.json
 **/sample-data*.json
 **/test-data*.json
-public/data/TEST_*.csv
-public/data/*test*.csv
-
-# Internal documentation
 *INTERNAL*.md
 *ATOMIC-WORKFLOW*.md
 PAUL-*.md
@@ -81,7 +55,5 @@ IMPLEMENTATION_*.md
 *-TEST_RESULTS.md
 *-REVIEW-FEEDBACK.md
 *-MOVED-SAFELY.md
-
-# Allow docs folder (legitimate documentation)
 !docs/*.md
 !**/README.md

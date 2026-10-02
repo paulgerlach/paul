@@ -1,0 +1,19 @@
+name: web
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run lint
+      - run: bun run build
+      - name: No React/Next imports
+        run: "! grep -rnE \"from ['\\\"](next|react|react-dom)(/|['\\\"])\" src"

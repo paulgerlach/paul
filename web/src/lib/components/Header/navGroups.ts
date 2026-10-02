@@ -16,6 +16,7 @@ import {
 	ROUTE_BLOG,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_PREISE,
 } from "$lib/routes";
 import type { PostSummary } from "$lib/server/blog";
@@ -34,6 +35,7 @@ export const PHONE_HREF = "tel:+493052001352";
 export const navLinks = [
 	{ title: "Kunden", href: "/#kunden" },
 	{ title: "Preise", href: ROUTE_PREISE },
+	{ title: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 ];
 
 export function buildNavGroups(posts: PostSummary[]): NavGroupType[] {

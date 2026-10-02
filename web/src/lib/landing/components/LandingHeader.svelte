@@ -5,6 +5,7 @@
 -->
 <script lang="ts">
 	import { afterNavigate } from "$app/navigation";
+	import { page } from "$app/state";
 	import { menu } from "$lib/components/Header/menu.svelte";
 	import {
 		buildNavGroups,
@@ -58,7 +59,13 @@
 				<LandingNavGroup {group} {posts} variant="desktop" />
 			{/each}
 			{#each navLinks as link (link.href)}
-				<li><a href={link.href}>{link.title}</a></li>
+				<li>
+					<a
+						href={link.href}
+						aria-current={page.url.pathname === link.href ? "page" : undefined}
+						>{link.title}</a
+					>
+				</li>
 			{/each}
 		</ul>
 		<div class="navright">
@@ -98,7 +105,13 @@
 				{/each}
 				{#each navLinks as link (link.href)}
 					<li class="mlink">
-						<a href={link.href} onclick={() => menu.close()}>{link.title}</a>
+						<a
+							href={link.href}
+							aria-current={page.url.pathname === link.href
+								? "page"
+								: undefined}
+							onclick={() => menu.close()}>{link.title}</a
+						>
 					</li>
 				{/each}
 				<li class="mcta">
@@ -176,6 +189,10 @@
 	}
 	.phone {
 		white-space: nowrap;
+	}
+	.navlinks a[aria-current="page"],
+	.mlink a[aria-current="page"] {
+		font-weight: 500;
 	}
 	.burger {
 		display: none;

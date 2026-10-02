@@ -10,7 +10,7 @@
 </script>
 
 <nav
-	class="flex items-center justify-center gap-8 max-large:w-full max-large:flex-col max-large:items-center max-large:justify-center max-large:gap-0 max-medium:gap-4"
+	class="flex items-center justify-center gap-8 max-xl:gap-5 max-megalarge:gap-3 max-large:w-full max-large:flex-col max-large:items-center max-large:justify-center max-large:gap-0 max-medium:gap-4"
 >
 	{#each navGroups as group (group.title)}
 		<NavGroup {group} {posts} />

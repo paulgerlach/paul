@@ -88,7 +88,7 @@
 				<LoginDropdown class="max-large:hidden" />
 				<a
 					href={PHONE_HREF}
-					class="flex items-center justify-center gap-1.5 p-2 text-base text-dark_text max-xl:text-sm max-large:text-lg"
+					class="flex items-center justify-center gap-1.5 p-2 text-base text-dark_text max-xl:text-sm max-megalarge:hidden max-large:flex max-large:text-lg"
 				>
 					<Image
 						width={16}

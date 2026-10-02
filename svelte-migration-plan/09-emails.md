@@ -26,7 +26,7 @@ That shrinks the port and the cutover diff, and production stops shipping dead r
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-25** (Low): React Email templates and preview routes: delete
+- [x] **KI-25** (Low): React Email templates and preview routes: delete
 
 ## Exit criteria
 - Email code and `@react-email/*` are removed from the Next codebase. Nothing email-related exists in `web/`.

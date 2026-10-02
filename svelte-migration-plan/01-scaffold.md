@@ -78,6 +78,17 @@
 
 10. **Preview deploy.** Create a second Vercel project pointing at `web/` (root directory = `web`) so every PR gets a Svelte preview URL next to the Next one.
 
+## Status (done 2026-10-02)
+
+Steps 1–9 are done. Differences from the steps above:
+- `sv create` (v1.0.1) scaffolds **Kit 3**. It was downgraded to `@sveltejs/kit@^2.70.3` + `@sveltejs/adapter-vercel@^6.3.4` (decision #5). The Kit 3 conventions were reverted: config is back in `svelte.config.js` (with `runes: true` forced for project files), `$lib` replaces the `#lib` subpath imports, and `tsconfig.json` extends `.svelte-kit/tsconfig.json`.
+- Vitest uses `passWithNoTests` until real tests exist. A Playwright smoke test is in `src/routes/page.svelte.e2e.ts`.
+- `prettier.config.js` copies the root `.prettierrc` (tabs, width 80, double quotes, trailing commas).
+- The root `.env` has no Prismic/Slack/AI keys (they live in Vercel), so nothing needed renaming. `.env.example` lists every key.
+- The root `tsconfig.json` now excludes `web/`. Otherwise `next build` would type-check the Svelte app.
+- CI: `.github/workflows/web.yml` (check, lint, build on changes under `web/`).
+- **Step 10 is still open:** the second Vercel project (root directory `web`) has to be created in the Vercel dashboard.
+
 ## Exit criteria
 - `bun run dev` serves the default page. `bun run build` and `bun run check` pass.
 - The Vercel preview for `web/` deploys.

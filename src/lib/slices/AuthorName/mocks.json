@@ -1,0 +1,14 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"authorname": {
+				"__TYPE__": "FieldContent",
+				"value": "second",
+				"type": "Text"
+			}
+		},
+		"items": []
+	}
+]

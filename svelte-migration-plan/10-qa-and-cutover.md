@@ -83,8 +83,8 @@ Run Lighthouse (mobile) on `/`, `/funktionen`, `/blog`, `/blog/<post>`, `/frageb
 ## 10.4a Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-26** (Low): Stale shadcn `components.json` (removed by the `git rm` in step 2)
-- [ ] **KI-27** (Low): React-specific agent skills in `.agents/` (removed in step 2)
+- [x] **KI-26** (Low): Stale shadcn `components.json` (removed by the `git rm` in step 2)
+- [x] **KI-27** (Low): React-specific agent skills in `.agents/` (removed in step 2)
 - [ ] Final sweep: every item in `known-issues.md` is ticked before production promote
 
 ## 10.5 Rollback

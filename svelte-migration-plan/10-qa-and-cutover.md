@@ -63,6 +63,29 @@ Run Lighthouse (mobile) on `/`, `/funktionen`, `/blog`, `/blog/<post>`, `/frageb
 - `Image` with `priority` now emits `<link rel="preload" as="image">`, as `next/image` does.
 - **`/funktionen` is below Next locally.** Next prerenders it (TTFB ≈ 5 ms). Svelte server-renders every request because the layout loads the nav's blog teaser from Prismic (TTFB ≈ 0.75 s locally, ≈ 1.6–1.9 s under Lighthouse). Lighthouse's simulation also queues the hero image behind ~22 `modulepreload`s over HTTP/1.1. In production the CDN (`s-maxage=60, stale-while-revalidate=600`) serves cached HTML, and Vercel uses HTTP/2. **Re-measure on the Vercel preview (10.4 step 5).** `kit.output.bundleStrategy: "single"` was tried: 93 / LCP 2.6 s, but 1 MB of JS on every page. Rejected.
 
+### Results on the Vercel preview (2026-10-03, PR #440 vs live heidisystems.com)
+
+Both sides are behind Vercel's CDN, so TTFB is equal (~870 ms under Lighthouse throttling). The parity tools reach a protected preview with `VERCEL_AUTOMATION_BYPASS_SECRET` in `.env` (see `e2e/parity/vercelBypass.ts`).
+
+- **Sitemap:** all 246 URLs are 200. Unknown pages and posts are 404. CDN caching works (`x-vercel-cache` STALE → HIT).
+- **SEO tags and smoke suite:** the `<head>` tags are identical to the local build. The smoke suite passes 11/11.
+- **Layout diff vs production Next:** 34/50 exact. All 16 other cases are explained:
+  - the deliberate fixes listed in `scripts/layout-diff.ts`
+  - Next still loading at capture time (client-side blog list, off-screen Lotties)
+  - `InstallFaq`'s 5 s autoplay landing on a different step at 375 px
+- **Lighthouse mobile:**
+
+  | Page | Next perf / LCP | Svelte perf / LCP |
+  |---|---|---|
+  | `/` | 80–92 / 1.7–3.7 s | 95–96 / 2.7 s |
+  | `/funktionen` | 99 / 1.7–1.9 s | 94–98 / 2.2–2.8 s |
+  | `/blog` | 87–93 / 2.1–2.5 s | 95 / 2.9 s |
+  | `/blog/<post>` | 87–88 / 2.9 s | 92–94 / 3.0–3.1 s |
+  | `/fragebogen` | 100 / 1.6 s | 99 / 1.8 s |
+
+  - Preview SEO shows 69 because Vercel sends `x-robots-tag: noindex` on preview domains. This doesn't apply to production.
+  - Blog images now come straight from `images.prismic.io` (Next proxied them through `/_next/image`). Pages that use them preconnect to it, which cut `/blog` LCP from 3.4 s to 2.9 s. The remaining gap is the larger card image (750 px AVIF, 39 KB vs Next's 23 KB).
+
 ## 10.4 Cutover
 
 1. **Freeze** content-structure changes in Prismic (slice models) for the cutover window.

@@ -1,0 +1,35 @@
+# Known Issues in the Current Next.js Code
+
+These problems were found while surveying the codebase. Each one has an owning phase and **must be fixed there**. Don't port the bug across. A phase isn't done until its issues are ticked here.
+
+Severity: **High** = user-visible bug or wasted resources in production. **Med** = SEO or correctness gap. **Low** = cleanup.
+
+| ID | Issue | Where today | Fix | Phase | Sev | Done |
+|---|---|---|---|---|---|---|
+| KI-01 | `robots.txt` disallows `/(service)/fragebogen`. That is a route-group path that never matches a URL, so `/fragebogen` is crawlable | `src/app/robots.ts` | Disallow `/fragebogen` | 2 | Med | [ ] |
+| KI-02 | `/fragebogen` loads **both** global stylesheets (root layout imports `(base)/globals.css`, service layout imports its own): about 2k lines, mostly duplicated | `src/app/layout.tsx`, `src/app/(service)/layout.tsx` | Merge into `app.css` plus a small `service.css` with only the unique rules | 2 | Med | [ ] |
+| KI-03 | Google `verification` meta ships the placeholder `"your-google-verification-code"` | `src/app/layout.tsx` | Drop it, or use the real code from Search Console | 2 | Low | [ ] |
+| KI-04 | Exo 2 font is instantiated twice (root layout and ChatBot) | `src/components/Common/ChatBot/index.tsx` | One self-hosted font in the root layout | 2 | Low | [ ] |
+| KI-05 | Sitemap lists no blog posts | `src/app/sitemap.ts` | Add `/blog/:uid` entries from Prismic with `lastmod` | 2 / 5 | Med | [ ] |
+| KI-06 | Unused files in `public/`: `data/*.csv`, `next.svg`, `vercel.svg`, `globe.svg`, `file.svg`, `window.svg`, … | `public/` | Don't copy them to `static/`. Verify each with a grep before dropping | 2 | Low | [ ] |
+| KI-07 | `Nav` fetches **all** blog posts from Prismic **in the browser** on every page via React Query, only to show 6. The nav teaser is also missing from the SSR HTML | `src/components/Header/Nav.tsx` | `+layout.server.ts` `load` with `pageSize: 6`, passed as a prop | 3 | High | [ ] |
+| KI-08 | Fragebogen imports `Animation_5/6.json` statically, so both Lottie files land in the page bundle | `src/app/(service)/fragebogen/page.tsx` | Use `LazyLottie` (`eager`) | 3 | Low | [ ] |
+| KI-09 | Review videos use relative paths (`videos/video1.mp4`), which break on nested routes | `src/components/Swipers/ReviewsSwiper.tsx` | Absolute `/videos/…`, `preload="none"` + poster | 4 | Med | [ ] |
+| KI-10 | Prismic route resolver is an empty `TODO`, so `link.url` for blog posts is `null` | `src/prismicio.ts` | `routes: [{ type: 'blogpost', path: '/blog/:uid' }]` | 5 | Med | [ ] |
+| KI-11 | Revalidation is a no-op: production uses `revalidate: 0` (always fresh), so `/api/revalidate` busts a cache that isn't used | `src/prismicio.ts`, `src/app/api/revalidate/route.ts` | Replace with a CDN cache header and delete the endpoint (decision in README) | 5 | Low | [ ] |
+| KI-12 | Every blog post's `<title>` is the generic "Heidi Systems" | `src/app/(base)/blog/[uid]/page.tsx` | Use the post title | 5 | Med | [ ] |
+| KI-13 | `<main id="content relative">`: a class name written into an `id` | `src/app/(base)/blog/[uid]/page.tsx` | `id="content" class="relative"` | 5 | Low | [ ] |
+| KI-14 | `BlogFilters` keeps a `cachedPosts` state to work around React Query refetches, and tag filters aren't linkable or crawlable | `src/components/Blog/BlogFilters.tsx` | `?tag=` search param + server `load` | 5 | Low | [ ] |
+| KI-15 | Newsletter webhook always sends `ip_address: undefined`; the parameter is never passed | `src/app/api/send-email/route.ts` | Pass `getClientAddress()` | 6 | Low | [ ] |
+| KI-16 | `/api/fragebogen` and `/api/leads` do no server-side validation | `src/app/api/fragebogen/route.ts`, `src/app/api/leads/route.ts` | zod schema shared with the client | 6 | Med | [ ] |
+| KI-17 | Fragebogen state lives in **two** places (react-hook-form **and** Zustand), and the defaults are defined **three** times with differences (`wohnungen_count`, `funkzaehler_status`, `standort_schwerpunkt` are missing from the store's initial state) | `fragebogen/page.tsx`, `src/store/useQuestionareStore.tsx` | One `Questionnaire` runes class. Defaults defined once in `schema.ts` (confirm the values with the business) | 7 | Med | [ ] |
+| KI-18 | `QuestionareFormData` type is exported from a **page file** and imported by the store | `src/store/useQuestionareStore.tsx` | Move it to `$lib/fragebogen/schema.ts` | 7 | Low | [ ] |
+| KI-19 | `useSlackChat` is instantiated **6 times**. Once a thread exists, each instance has separate state and **runs its own 1–2s Slack polling loop**. Sent messages appear only after a poll | `src/hooks/useSlackChat.tsx` + 6 ChatBot components | One `SlackChat` instance shared through context | 8 | High | [ ] |
+| KI-20 | The polling effect depends on `status`, which flips every tick, so the interval is torn down and recreated on every poll | `src/hooks/useSlackChat.tsx` | Interval depends only on `threadTs` and the waiting flag; in-flight flag is non-reactive | 8 | Med | [ ] |
+| KI-21 | The 5-minute "no human reply" timeout reads a stale `status` closure and never fires | `src/hooks/useSlackChat.tsx` | Read the live state when the timer fires | 8 | Med | [ ] |
+| KI-22 | `isSlackChat` is initialised from `isOutOfOffice` before that is computed, so the chat always starts in Slack mode, even outside office hours | `src/components/Common/ChatBot/index.tsx` | Derive the initial mode from the computed office hours | 8 | Med | [ ] |
+| KI-23 | "New conversation" removes `slack_thread_visitor` from **sessionStorage**, but the thread id is in **localStorage**, so the old thread is restored | `src/components/Common/ChatBot/Messages/AiMessagesContainer.tsx` | Clear localStorage (confirm intended behaviour) | 8 | Med | [ ] |
+| KI-24 | Chat widget code (`ai`, markdown, Slack) is in the initial bundle of `/fragebogen` | `src/app/(service)/layout.tsx` | Render the launcher only, and `import()` the panel on first open | 8 | Low | [ ] |
+| KI-25 | React Email templates and the two preview routes are leftovers from the platform app; nothing sends email | `src/components/emails/*`, `api/email-preview`, `emails/preview` | **Delete** (decided) | 9 | Low | [ ] |
+| KI-26 | `components.json` (shadcn) points to a non-existent `src/app/globals.css` | repo root | Delete at cutover | 10 | Low | [ ] |
+| KI-27 | React-specific agent skills (`.agents/skills/vercel-*`, `skills-lock.json`) won't apply after the port | repo root | Remove, or replace with Svelte skills, at cutover | 10 | Low | [ ] |

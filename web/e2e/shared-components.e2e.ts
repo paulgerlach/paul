@@ -15,30 +15,50 @@ test.describe("kitchen sink", () => {
 		const problems: string[] = [];
 		page.on("pageerror", (e) => problems.push(e.message));
 		page.on("console", (m) => {
-			// Swiper's loop warning also appears on the Next site (KI-29).
-			if (m.type() === "error" && !m.text().includes("Loop Warning"))
-				problems.push(m.text());
+			if (m.type() === "error") problems.push(m.text());
+			// Hidden loop swipers wait for a size before init (KI-29).
+			if (m.text().includes("Loop Warning")) problems.push(m.text());
 		});
 		await page.goto("/kitchen-sink", { waitUntil: "networkidle" });
 		expect(problems).toEqual([]);
 	});
 
-	test("every swiper initializes", async ({ page }) => {
+	for (const width of [375, 1280])
+		test(`every swiper initializes at ${width}px`, async ({ page }) => {
+			await page.setViewportSize({ width, height: 900 });
+			await page.goto("/kitchen-sink", { waitUntil: "networkidle" });
+			const count = await page.evaluate(
+				() =>
+					[
+						...document.querySelectorAll<HTMLElement & { swiper?: unknown }>(
+							".swiper",
+						),
+					]
+						// PersonSwiper keeps an outer non-swiper `.swiper` wrapper (as in Next).
+						.filter((el) =>
+							el.querySelector(":scope > .swiper-wrapper:not(.swiper)"),
+						)
+						// Loop swipers hidden at this width init once shown (KI-29).
+						.filter((el) => el.offsetWidth > 0)
+						.filter((el) => !el.swiper).length,
+			);
+			expect(count).toBe(0);
+		});
+
+	test("a hidden loop swiper initializes once shown (KI-29)", async ({
+		page,
+	}) => {
 		await page.goto("/kitchen-sink", { waitUntil: "networkidle" });
-		const count = await page.evaluate(
-			() =>
-				[
-					...document.querySelectorAll<HTMLElement & { swiper?: unknown }>(
-						".swiper",
-					),
-				]
-					// PersonSwiper keeps an outer non-swiper `.swiper` wrapper (as in Next).
-					.filter((el) =>
-						el.querySelector(":scope > .swiper-wrapper:not(.swiper)"),
-					)
-					.filter((el) => !el.swiper).length,
-		);
-		expect(count).toBe(0);
+		expect(
+			(await swiperState(page, ".mobile-reviews-swiper")).initialized,
+		).toBe(false);
+		await page.setViewportSize({ width: 375, height: 900 });
+		await expect
+			.poll(
+				async () =>
+					(await swiperState(page, ".mobile-reviews-swiper")).initialized,
+			)
+			.toBe(true);
 	});
 
 	test("NumberedSwiper keeps its paired swipers in sync", async ({ page }) => {

@@ -8,7 +8,7 @@
 <div class="news-swiper relative">
 	<!-- Swipe indicator - mobile only -->
 	<div
-		class="animate-fade-out absolute top-8 left-1/2 z-10 hidden -translate-x-1/2 max-medium:block"
+		class="animate-fade-out pointer-events-none absolute top-8 left-1/2 z-10 hidden -translate-x-1/2 max-medium:block"
 	>
 		<div
 			class="animate-swipe-hint flex items-center gap-2 text-sm text-dark_text/60"

@@ -36,8 +36,30 @@ export function swiper(
 			}
 		}
 
-		const instance = new Swiper(el, params);
-		onInit?.(instance);
-		return () => instance.destroy(true, true);
+		let instance: Swiper | undefined;
+		const init = () => {
+			instance = new Swiper(el, params);
+			onInit?.(instance);
+		};
+
+		// A loop swiper that mounts hidden (the mobile-only ones on desktop) has
+		// no size, so Swiper sees no slides, warns, and sets the loop up empty
+		// (KI-29). Wait until it first gets a size.
+		let observer: ResizeObserver | undefined;
+		if (params.loop && el.offsetWidth === 0) {
+			observer = new ResizeObserver(() => {
+				if (el.offsetWidth === 0) return;
+				observer?.disconnect();
+				init();
+			});
+			observer.observe(el);
+		} else {
+			init();
+		}
+
+		return () => {
+			observer?.disconnect();
+			instance?.destroy(true, true);
+		};
 	};
 }

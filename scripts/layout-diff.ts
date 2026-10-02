@@ -12,6 +12,9 @@
  *   bun scripts/layout-diff.ts [nextOrigin] [svelteOrigin]
  *   PAGES=/,/preise WIDTHS=375,1200 bun scripts/layout-diff.ts
  *
+ * Either origin may be a protected Vercel preview: bun loads
+ * VERCEL_AUTOMATION_BYPASS_SECRET from .env.
+ *
  * Known, deliberate differences (phase 10 review):
  * - /impressum: "E-Mail: info@…" and "…unter https://ec.europa.eu/… aufrufen"
  *   keep their spaces. JSX dropped them, so Next overflows at 375px.
@@ -22,6 +25,7 @@
  *   by capture time: Next collapses those to 0px, Svelte reserves their box.
  */
 import { chromium } from "@playwright/test";
+import { passVercelProtection } from "../e2e/parity/vercelBypass";
 
 const [next = "http://localhost:3000", svelte = "http://localhost:4173"] =
 	process.argv.slice(2);
@@ -44,6 +48,7 @@ const browser = await chromium.launch();
 
 async function capture(origin: string, path: string, width: number) {
 	const page = await browser.newPage({ viewport: { width, height: 900 } });
+	await passVercelProtection(page.context(), origin);
 	await page.goto(origin + path, { waitUntil: "load" });
 	// Next's production build can keep polling, so networkidle may never come.
 	const settle = () =>

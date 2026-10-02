@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { PAGES } from "./pages";
+import { passVercelProtection } from "./vercelBypass";
+
+test.beforeEach(({ context, baseURL }) =>
+	passVercelProtection(context, baseURL!),
+);
 
 for (const path of PAGES)
 	test(`${path} renders without errors`, async ({ page }) => {

@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { PAGES, WIDTHS, settle, slug } from "./pages";
+import { passVercelProtection } from "./vercelBypass";
+
+test.beforeEach(({ context, baseURL }) =>
+	passVercelProtection(context, baseURL!),
+);
 
 // The nav link to /messdienstwechsel is new in Svelte; hide it so the rest of
 // the nav lines up with the Next baseline.

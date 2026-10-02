@@ -6,12 +6,12 @@ Severity: **High** = user-visible bug or wasted resources in production. **Med**
 
 | ID | Issue | Where today | Fix | Phase | Sev | Done |
 |---|---|---|---|---|---|---|
-| KI-01 | `robots.txt` disallows `/(service)/fragebogen`. That is a route-group path that never matches a URL, so `/fragebogen` is crawlable | `src/app/robots.ts` | Disallow `/fragebogen` | 2 | Med | [ ] |
-| KI-02 | `/fragebogen` loads **both** global stylesheets (root layout imports `(base)/globals.css`, service layout imports its own): about 2k lines, mostly duplicated | `src/app/layout.tsx`, `src/app/(service)/layout.tsx` | Merge into `app.css` plus a small `service.css` with only the unique rules | 2 | Med | [ ] |
-| KI-03 | Google `verification` meta ships the placeholder `"your-google-verification-code"` | `src/app/layout.tsx` | Drop it, or use the real code from Search Console | 2 | Low | [ ] |
-| KI-04 | Exo 2 font is instantiated twice (root layout and ChatBot) | `src/components/Common/ChatBot/index.tsx` | One self-hosted font in the root layout | 2 | Low | [ ] |
+| KI-01 | `robots.txt` disallows `/(service)/fragebogen`. That is a route-group path that never matches a URL, so `/fragebogen` is crawlable | `src/app/robots.ts` | Disallow `/fragebogen` | 2 | Med | [x] |
+| KI-02 | `/fragebogen` loads **both** global stylesheets (root layout imports `(base)/globals.css`, service layout imports its own): about 2k lines, mostly duplicated | `src/app/layout.tsx`, `src/app/(service)/layout.tsx` | Merge into `app.css` plus a small `service.css` with only the unique rules | 2 | Med | [x] |
+| KI-03 | Google `verification` meta ships the placeholder `"your-google-verification-code"` | `src/app/layout.tsx` | Drop it, or use the real code from Search Console | 2 | Low | [x] |
+| KI-04 | Exo 2 font is instantiated twice (root layout and ChatBot) | `src/components/Common/ChatBot/index.tsx` | One self-hosted font in the root layout | 2 | Low | [x] |
 | KI-05 | Sitemap lists no blog posts | `src/app/sitemap.ts` | Add `/blog/:uid` entries from Prismic with `lastmod` | 2 / 5 | Med | [ ] |
-| KI-06 | Unused files in `public/`: `data/*.csv`, `next.svg`, `vercel.svg`, `globe.svg`, `file.svg`, `window.svg`, … | `public/` | Don't copy them to `static/`. Verify each with a grep before dropping | 2 | Low | [ ] |
+| KI-06 | Unused files in `public/`: `data/*.csv`, `next.svg`, `vercel.svg`, `globe.svg`, `file.svg`, `window.svg`, … | `public/` | Don't copy them to `static/`. Verify each with a grep before dropping | 2 | Low | [x] |
 | KI-07 | `Nav` fetches **all** blog posts from Prismic **in the browser** on every page via React Query, only to show 6. The nav teaser is also missing from the SSR HTML | `src/components/Header/Nav.tsx` | `+layout.server.ts` `load` with `pageSize: 6`, passed as a prop | 3 | High | [ ] |
 | KI-08 | Fragebogen imports `Animation_5/6.json` statically, so both Lottie files land in the page bundle | `src/app/(service)/fragebogen/page.tsx` | Use `LazyLottie` (`eager`) | 3 | Low | [ ] |
 | KI-09 | Review videos use relative paths (`videos/video1.mp4`), which break on nested routes | `src/components/Swipers/ReviewsSwiper.tsx` | Absolute `/videos/…`, `preload="none"` + poster | 4 | Med | [ ] |
@@ -33,3 +33,4 @@ Severity: **High** = user-visible bug or wasted resources in production. **Med**
 | KI-25 | React Email templates and the two preview routes are leftovers from the platform app; nothing sends email | `src/components/emails/*`, `api/email-preview`, `emails/preview` | **Delete** (decided) | 9 | Low | [x] |
 | KI-26 | `components.json` (shadcn) points to a non-existent `src/app/globals.css` | repo root | Delete at cutover | 10 | Low | [ ] |
 | KI-27 | React-specific agent skills (`.agents/skills/vercel-*`, `skills-lock.json`) won't apply after the port | repo root | Remove, or replace with Svelte skills, at cutover | 10 | Low | [ ] |
+| KI-28 | Every page's `<link rel="canonical">`, `hreflang` alternate and `og:url` point to the home page (`canonical: "/"` in the root layout is inherited), so Google treats all pages as duplicates of `/` | `src/app/layout.tsx` | Per-path canonical in `Seo.svelte` | 2 | **High** | [x] |

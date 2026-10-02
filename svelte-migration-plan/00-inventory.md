@@ -6,9 +6,9 @@ Tick items as they are ported **and** verified against the Next version.
 
 | Next.js path | URL | Kind | SvelteKit target | Done |
 |---|---|---|---|---|
-| `app/layout.tsx` | – | root layout, global meta, font | `src/routes/+layout.svelte` + `src/app.html` | [ ] |
-| `app/(base)/layout.tsx` | – | Header, Footer, Toaster, QueryProvider | `src/routes/(base)/+layout.svelte` (+ `+layout.server.ts` for nav posts) | [ ] |
-| `app/(service)/layout.tsx` | – | FragebogenHeader, ChatBot, Suspense | `src/routes/(service)/+layout.svelte` | [ ] |
+| `app/layout.tsx` | – | root layout, global meta, font | `src/routes/+layout.svelte` + `src/app.html` | [x] |
+| `app/(base)/layout.tsx` | – | Header, Footer, Toaster, QueryProvider | `src/routes/(base)/+layout.svelte` (+ `+layout.server.ts` for nav posts) | [x] |
+| `app/(service)/layout.tsx` | – | FragebogenHeader, ChatBot, Suspense | `src/routes/(service)/+layout.svelte` | [x] |
 | `app/(base)/page.tsx` (713 lines) | `/` | static, heavy | `(base)/+page.svelte` | [ ] |
 | `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(base)/funktionen/+page.svelte` | [ ] |
 | `app/(base)/geraete/page.tsx` | `/geraete` | static | `(base)/geraete/+page.svelte` | [ ] |
@@ -20,9 +20,9 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/(base)/blog/[uid]/page.tsx` | `/blog/:uid` | Prismic SliceZone + metadata | `(base)/blog/[uid]/+page.svelte` + `+page.server.ts` | [ ] |
 | `app/(service)/fragebogen/page.tsx` | `/fragebogen` | client wizard | `(service)/fragebogen/+page.svelte` | [ ] |
 | `app/emails/preview/page.tsx` | `/emails/preview` | React Email preview | **deleted** (phase 9) | [ ] |
-| `app/error.tsx` / `app/not-found.tsx` | – | error UI | `src/routes/+error.svelte` | [ ] |
-| `app/robots.ts` | `/robots.txt` | metadata route | `src/routes/robots.txt/+server.ts` | [ ] |
-| `app/sitemap.ts` | `/sitemap.xml` | metadata route | `src/routes/sitemap.xml/+server.ts` | [ ] |
+| `app/error.tsx` / `app/not-found.tsx` | – | error UI | `src/routes/+error.svelte` | [x] |
+| `app/robots.ts` | `/robots.txt` | metadata route | `src/routes/robots.txt/+server.ts` | [x] |
+| `app/sitemap.ts` | `/sitemap.xml` | metadata route | `src/routes/sitemap.xml/+server.ts` | [x] |
 | `public/slice-simulator/page.tsx` | `/slice-simulator` | Slice Machine | `src/routes/slice-simulator/+page.svelte` | [ ] |
 
 ### API routes
@@ -54,7 +54,7 @@ Keep the folder structure and rename `.tsx` → `.svelte`.
 - [ ] `Basic/RichTextBlockImage/RichTextBlockImage`
 - [ ] `Basic/Subscription/Subscription` (form + mutation)
 - [ ] `Basic/Ticker/HeroTicker` (295), `Basic/Ticker/GeraeteHeroTicker` (401)
-- [ ] `Basic/ui/Sonner` → `svelte-sonner` `<Toaster>`
+- [x] `Basic/ui/Sonner` → `svelte-sonner` `<Toaster>`
 
 **Header / Footer**
 - [ ] `Header/Header`, `Header/HeaderButton`, `Header/LoginDropdown`

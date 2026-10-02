@@ -1,0 +1,19 @@
+# /funktionen (200)
+<title>Heidi Systems</title>
+<meta name="description" content="Digitale Erfassung aller Verbrauchsdaten im Gebäude Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung."/>
+<meta name="keywords" content="Fernablesbare Zähler,Funkzähler,Warmwasserzähler,Kaltwasserzähler,Heizkostenabrechnung,Betriebskostenabrechnung,Energiemanagement,Verbrauchserfassung,Digitale Zähler,Deutschland,Kostenlose Installation"/>
+<meta name="robots" content="index, follow"/>
+<meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"/>
+<link rel="canonical" href="https://heidisystems.com"/>
+<link rel="alternate" hrefLang="de-DE" href="https://heidisystems.com"/>
+<meta name="google-site-verification" content="your-google-verification-code"/>
+<meta property="og:title" content="Heidi Systems | Fernablesbare Funkzähler für Deutschland"/>
+<meta property="og:description" content="Kostenlose Installation fernablesbarer Funkzähler für Warmwasser, Kaltwasser und Heizung. Automatisierte Betriebskostenabrechnung in Deutschland."/>
+<meta property="og:url" content="https://heidisystems.com"/>
+<meta property="og:site_name" content="Heidi Systems"/>
+<meta property="og:locale" content="de_DE"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Heidi Systems | Fernablesbare Funkzähler für Deutschland"/>
+<meta name="twitter:description" content="Kostenlose Installation fernablesbarer Funkzähler für Warmwasser, Kaltwasser und Heizung. Automatisierte Betriebskostenabrechnung in Deutschland."/>
+<link rel="icon" href="/favicon.ico?favicon.e29e97fe.ico" sizes="38x36" type="image/x-icon"/>

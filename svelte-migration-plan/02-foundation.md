@@ -186,12 +186,27 @@ Use stub Header/Footer components until phase 3 lands.
 ## Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
 
-- [ ] **KI-01** (Med): robots.txt disallows the wrong path; should be `/fragebogen`
-- [ ] **KI-02** (Med): `/fragebogen` loads both global stylesheets; merge into `app.css` + `service.css`
-- [ ] **KI-03** (Low): Placeholder Google verification meta tag
-- [ ] **KI-04** (Low): Exo 2 font instantiated twice
-- [ ] **KI-05** (Med): Sitemap has no blog post URLs (phase 2 creates the route, phase 5 adds the Prismic entries)
-- [ ] **KI-06** (Low): Unused `public/` files: don't copy them to `static/`
+- [x] **KI-01** (Med): robots.txt disallows the wrong path; should be `/fragebogen`
+- [x] **KI-02** (Med): `/fragebogen` loads both global stylesheets; merge into `app.css` + `service.css`
+- [x] **KI-03** (Low): Placeholder Google verification meta tag
+- [x] **KI-04** (Low): Exo 2 font instantiated twice
+- [ ] **KI-05** (Med): Sitemap has no blog post URLs (phase 2 creates the route, phase 5 adds the Prismic entries). Route done; Prismic entries are still open
+- [x] **KI-28** (High): Every page canonicalises to the home page (found while taking the SEO baseline)
+- [x] **KI-06** (Low): Unused `public/` files: don't copy them to `static/`
+
+## Status (done 2026-10-02)
+
+All exit criteria are met. The checks live in `web/e2e/foundation.e2e.ts`. Differences from the steps above:
+- **SEO baseline:** captured from a production build of the Next app in `seo-baseline/` at the repo root (one file per route, plus `robots.txt` and `sitemap.xml`).
+- **`<Seo>` is rendered once, in the root layout**, not per page. It reads `page.data.seo` (type `SeoData` in `$lib/seo/site.ts`, declared on `App.PageData`), so a page overrides tags by returning `seo` from its `load`. The defaults reproduce the effective Next values: title "Heidi Systems", the `(base)` description, the root OG/Twitter texts, and keywords. Error pages fall back to the root title and description with `noindex` and no canonical. Twitter tags were added because Next emits them. Rendering it once avoids duplicate `<head>` tags from layered components.
+- **Head diff against the baseline:** the only differences are the dropped verification tag (KI-03), the per-path canonical/`og:url` (KI-28), and a 404 that sends only `noindex` instead of conflicting `noindex` and `index, follow`.
+- **CSS:** the `(service)` stylesheet is an older copy of the `(base)` one. All 10 blocks that differ are subsets of the base rules or target ticker/swiper markup that doesn't appear on `/fragebogen`. So `app.css` is the base stylesheet as-is, and **no `service.css` was created**. Re-check `/fragebogen` visually in phase 7.
+- **Font:** `next/font` registered the family as `"Exo 2"`, and 10 CSS rules use that name. Fontsource's own CSS (`"Exo 2 Variable"`) is therefore not imported. Instead, the root layout declares `@font-face "Exo 2"` for latin and latin-ext with `?url` imports of the fontsource woff2 files and preloads the latin file. The 404 page is pixel-identical to Next at 1280px.
+- **Assets:** only the 147 files `icons.ts` imports were copied to `src/lib/assets/` (`Vector.svg` is unused). `icons.ts` lives at `src/lib/assets/icons.ts`. `static/` holds only `favicon.ico`, `admin_logo.png` (used by the home JSON-LD) and `videos/`. `gmail.png` and `doc_download.png` were used only by the deleted email templates.
+- **Phase 8 note:** the ChatBot uses `max_chat_avatar.src`. With `?enhanced` imports that becomes `max_chat_avatar.img.src`.
+- `svelte/no-navigation-without-resolve` is turned off in `eslint.config.js`, because the site has no `paths.base`.
+- CI fails if `web/src` imports `next`, `react` or `react-dom`.
+- The stub `Header`, `Footer`, `FragebogenHeader` and `ChatBot` components and the placeholder home page will be replaced in phases 3, 4 and 8.
 
 ## Exit criteria
 - `/does-not-exist` renders the 404 page. A thrown error renders the error page.

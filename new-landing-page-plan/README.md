@@ -4,7 +4,7 @@ A family of landing pages that target meter-service searches ("Messdienstanbiete
 
 - **Design reference (Berlin):** https://claude.ai/artifact/FxQX9JtVueXdSSvCBRoEoW ("Heidi Berlin"). It is one HTML file: about 1,100 lines of CSS (the same tokens and base primitives as the `/messdienstwechsel` design), 4 vanilla scripts, and embedded images and video.
 - **Germany design:** https://claude.ai/artifact/ParAyztPNrjpUJLvWqfEyG ("Heidi Deutschland", the "Ganz Deutschland" link in the footer). **The same 13 sections and markup as the city designs.** Only the content differs (nationwide copy, the example property "Bahnhofstraße 12"), and so does the map: the 16 Bundesländer plus 25 clickable city dots that open the city pages. Details in [08-germany-page.md](08-germany-page.md).
-- **Other cities:** linked from the Berlin design's footer. 21 of the 24 links can be read; Hamburg, Nürnberg and Münster can't (not found or not shared) and are skipped for now. Inventory in [07-other-cities.md](07-other-cities.md).
+- **Other cities:** linked from the Berlin design's footer. All 24 links can be read (Hamburg, Nürnberg and Münster only since 2026-10-05; added in §7.8). Inventory in [07-other-cities.md](07-other-cities.md).
 - **Previous plan:** the `/messdienstwechsel` plan used to live in this folder. It is in git history (last version at `65470139`). Its open go-live gate moved to [06-qa-and-cutover.md §6.5](06-qa-and-cutover.md).
 
 ## Phases
@@ -17,7 +17,7 @@ A family of landing pages that target meter-service searches ("Messdienstanbiete
 | 4 | [04-interactions.md](04-interactions.md) | Hero loop, map, billing button with confetti, count-ups, uVI phone, portfolio browser, the three trio demos | L |
 | 5 | [05-signup-form.md](05-signup-form.md) | Hero and final signup: reuse of the `/messdienstwechsel` form with a per-page lead source | S |
 | 6 | [06-qa-and-cutover.md](06-qa-and-cutover.md) | Checks, tests, go-live gate for these pages, and the carried-over `/messdienstwechsel` gate | S |
-| 7 | [07-other-cities.md](07-other-cities.md) | The 20 other cities: extraction script, content modules, the 3 map variants, photos, rollout in batches | L |
+| 7 | [07-other-cities.md](07-other-cities.md) | The 24 other cities: extraction script, content modules, the 3 map variants, photos, rollout in batches | L |
 | 8 | [08-germany-page.md](08-germany-page.md) | `/messdienstanbieter`: route, content, the Bundesländer map with links to the city pages | S |
 
 Do phase 1 on its own and check that `/messdienstwechsel` looks and works exactly as before. Then phases 2 and 3 give a static, design-matched Berlin page, and phases 4 and 5 add the behaviour. Phases 7 and 8 start once Berlin is complete, because the template must be finished first. Phase 8 can run in parallel with phase 7 (it uses the same extraction script), but its city dots only link to cities that are live.
@@ -110,12 +110,12 @@ Every city page (and the Germany page) is treated as **its own landing page**, n
 | Form | The same `switchInquiry` schema and action as `/messdienstwechsel`, extracted into `$lib/server/switchSignup.ts`. Lead `source = "messdienstanbieter-<slug>"` (Germany: `"messdienstanbieter"`), webhook event `switchinquiry` with `page` and, on city pages, `city` in the payload. Button text "Bestand kostenlos prüfen" |
 | Demo CTAs | "Demo buchen" and the demo card link to `#start`, as on `/messdienstwechsel`, because there's no booking URL. One constant (`DEMO_HREF` in `cta.ts`) switches every demo CTA at once when a URL exists |
 | Dates in the visuals | The timeline (2026–2030, "Heute" marker) and the appointment dates ("Di, 14.10.", "Fr, 16.10." …) stay static, as in the designs. They are reviewed with the copy at the start of 2027 (go-live gate) |
-| Copy errors in the designs | Fixed only with the content owner's sign-off, like KI-36 on the site. Found so far: the "can we switch before the contract ends?" FAQ answer starts with "Nein" in 9 designs although the question was reworded (phase 7.2) |
+| Copy errors in the designs | Fixed only with the content owner's sign-off, like KI-36 on the site. Found so far: the "can we switch before the contract ends?" FAQ answer starts with "Nein" in 10 designs although the question was reworded (phase 7.2) |
 | Rendering | SSR with the `(landing-page)` cache header, not prerendered (form action and blog dropdown). Outside `[[preview=preview]]`: no Prismic content |
 
 ## Implementation notes (2026-10-05)
 
-Phases 1–8 are built on `feat/landing-pages` (phase 1 on its own in `38701efa`). All 22 readable cities and the Germany page render; only Berlin is `live`, the others carry `noindex` (with a self-referencing canonical, `seo.keepCanonical`) until their go-live items (§6.4) are done. Defaults of the open questions below are what's built.
+Phases 1–8 are built on `feat/landing-pages` (phase 1 on its own in `38701efa`). All 25 cities and the Germany page render; only Berlin is `live`, the others carry `noindex` (with a self-referencing canonical, `seo.keepCanonical`) until their go-live items (§6.4) are done. Defaults of the open questions below are what's built.
 
 **Deviations from the plan, and why**
 - **Content model (§2.4).** The analysis of all 23 designs showed that the phone values, the portfolio counts and table rows, the billing card figures and the hero card's "24 WE" are the same everywhere, so they stay in the components; only the addresses vary. `example` instead also holds what does vary: the AllInOne unit count (differs from the hero's 24), the appointment date, the tenant avatars and the second portfolio address. Card H3s that never vary are in the components. The map's copy is in `<slug>.ts`, its geometry in `<slug>-map.ts` (`MapGeometry`).
@@ -127,8 +127,8 @@ Phases 1–8 are built on `feat/landing-pages` (phase 1 on its own in `38701efa`
 - **Germany map dots** get a transparent 12-unit hit circle, so they stay tappable on phones.
 
 **For the content owner (before go-live)**
-- FAQ answers that start with "Nein" although the question doesn't ask "Müssen …": Bochum, Bremen, Dortmund, Düsseldorf, Duisburg, Karlsruhe, Mönchengladbach, Stuttgart, Germany. Imported as designed.
-- Ledes that name neither the city nor a district on its map: Berlin, München, Köln (no place) and Frankfurt, Düsseldorf, Hannover (a Stadtteil that isn't on the map). Listed in `cities.test.ts` (`LEDE_WITHOUT_MAP_PLACE`).
+- FAQ answers that start with "Nein" although the question doesn't ask "Müssen …": Bochum, Bremen, Dortmund, Düsseldorf, Duisburg, Karlsruhe, Mönchengladbach, Münster, Stuttgart, Germany. Imported as designed.
+- Ledes that name neither the city nor a district on its map: Berlin, München, Köln, Hamburg (no place) and Frankfurt, Düsseldorf, Hannover, Münster (a Stadtteil that isn't on the map). Listed in `cities.test.ts` (`LEDE_WITHOUT_MAP_PLACE`).
 - The Germany map's fallback hints for states without a live city page (`FALLBACK_HINTS` in `pages/messdienstanbieter/map.ts`, new copy).
 - The "Auch in der Nähe" line and "Messdienst in ganz Deutschland →" under the map info panel (designer review, see core requirement).
 
@@ -140,12 +140,12 @@ Phases 1–8 are built on `feat/landing-pages` (phase 1 on its own in `38701efa`
 
 1. **Nav.** The designs have their own nav (Produkt, Lösungen, Kunden, Ressourcen, with links to future pages marked "bald"; right side Anmelden, Demo buchen, Bestand prüfen). *Default: the site nav, as on `/messdienstwechsel`, and only the CTA label changes. If the new nav is wanted, it becomes a separate task for all landing pages (and maybe the site header), not part of these pages.*
 2. **Footer "Städte".** *Default: add the group to the landing footer only, listing live cities and "Ganz Deutschland". Adding it to the site footer is good for internal links, but it changes the live site and needs its own decision.*
-3. ~~Other cities.~~ *Answered: yes, they follow the Berlin layout (all 21 readable designs checked). Every city design has a map, so `map` is required.*
+3. ~~Other cities.~~ *Answered: yes, they follow the Berlin layout (all 24 designs checked). Every city design has a map, so `map` is required.*
 4. **Duplicate billing demo.** Every design shows "Abrechnung erstellen" with progress and confetti twice: in the dark section (`OneClickBilling`) and in the first trio card (`TrioBilling`). *Default: build both, as designed, and flag it to the designer.*
 5. **Lead source and Make.com.** *Default: `source = "messdienstanbieter-<slug>"` / `"messdienstanbieter"` and the existing `switchinquiry` event with `city`. Sales needs the Make.com `switchinquiry` route anyway (already in the `/messdienstwechsel` gate); it can branch on `city`.*
 6. **References copy.** The quotes exist on the site (`PersonSwiper`), but the designs write "Geschäftsführer & Gesellschafter, Vitolus GmbH" where the site has "Geschäftsführer, Vitolus". *Default: the design's wording; the content owner confirms it in the gate.*
-7. **Missing designs.** Hamburg, Nürnberg and Münster can't be read. *Default: skipped. They are added with the phase 7 script once the links work, without code changes. Their dots on the Germany map stay hidden until then.*
-8. **Germany map hints that list city pages.** Some Bundesland hints name the city pages in that state ("Eigene Seiten: München, Nürnberg und Augsburg."), including the missing ones. *Default: generate that sentence from the live cities in the state; when a state has none, use the state's fallback hint (phase 8.3), which the content owner signs off.*
+7. ~~Missing designs.~~ *Answered: the Hamburg, Nürnberg and Münster designs became readable and were added with the script, without code changes (phase 7.8). Their Germany map dots appear once they're live.*
+8. **Germany map hints that list city pages.** Some Bundesland hints name the city pages in that state ("Eigene Seiten: München, Nürnberg und Augsburg.") *Default: generate that sentence from the live cities in the state; when a state has none, use the state's fallback hint (phase 8.3), which the content owner signs off.*
 
 ## Risks
 
@@ -155,5 +155,4 @@ Phases 1–8 are built on `feat/landing-pages` (phase 1 on its own in `38701efa`
 ## Out of scope
 
 - The designs' new nav and the "bald" pages it links to (Fristenrechner, Portfolio-Scanner …).
-- Hamburg, Nürnberg and Münster until their designs can be read.
 - A/B testing and analytics events.

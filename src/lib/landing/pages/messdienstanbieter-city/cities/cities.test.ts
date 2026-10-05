@@ -46,6 +46,8 @@ const LEDE_WITHOUT_MAP_PLACE = [
 	"frankfurt",
 	"duesseldorf",
 	"hannover",
+	"hamburg",
+	"muenster",
 ];
 
 describe("city index", () => {
@@ -63,7 +65,7 @@ describe("city index", () => {
 	it("uses ASCII slugs", () => {
 		for (const c of CITIES) expect(c.slug).toMatch(/^[a-z]+$/);
 		expect(isCitySlug("berlin")).toBe(true);
-		expect(isCitySlug("hamburg")).toBe(false);
+		expect(isCitySlug("potsdam")).toBe(false);
 	});
 });
 
@@ -186,7 +188,7 @@ describe("Germany map", () => {
 		const map = germanyMap(germanyData, CITIES);
 		const nrw = map.districts.find((d) => d.name === "Nordrhein-Westfalen")!;
 		expect(nrw.hint).toBe(
-			"Eigene Seiten: Köln, Düsseldorf, Dortmund, Essen, Duisburg, Bochum, Wuppertal, Bielefeld, Bonn und Mönchengladbach.",
+			"Eigene Seiten: Köln, Düsseldorf, Dortmund, Essen, Duisburg, Bochum, Wuppertal, Bielefeld, Bonn, Münster und Mönchengladbach.",
 		);
 		expect(map.districts.filter((d) => d.href)).toHaveLength(CITIES.length);
 	});

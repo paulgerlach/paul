@@ -120,7 +120,7 @@ test("no horizontal page scroll at 375px on any page", async ({ page }) => {
 
 test("unknown cities 404, and a trailing slash redirects", async ({ page }) => {
 	expect((await page.goto(`${HUB}/foo`))?.status()).toBe(404);
-	expect((await page.goto(`${HUB}/hamburg`))?.status()).toBe(404);
+	expect((await page.goto(`${HUB}/potsdam`))?.status()).toBe(404);
 	const response = await page.goto(`${BERLIN}/`);
 	expect(response?.status()).toBe(200);
 	expect(new URL(page.url()).pathname).toBe(BERLIN);

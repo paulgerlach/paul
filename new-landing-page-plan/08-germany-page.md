@@ -56,8 +56,8 @@ The design's map has two layers in one SVG (viewBox `-6 -6 612 572`):
 
 How this maps onto `RegionMap` (phase 2.4): the states are `districts` with path shapes; the dots are `districts` with dot shapes and an `href`. The data is built in `germany-map.ts`:
 
-- **The dots are generated from `CITIES`, not copied from the design.** `germany-map.ts` stores only each city's dot position keyed by slug (from the design: all 25, including Hamburg, Nürnberg and Münster). The page renders a dot for every city with `live: true`, with `href = cityRoute(slug)` and the dot's texts built from the city name. Hamburg, Nürnberg and Münster stay hidden until their pages exist, and a city that isn't live yet never gets a dot that leads to a `noindex` page.
-- **"Eigene Seiten" hints are generated too.** 9 of the 16 state hints list the city pages in that state ("Eigene Seiten: Stuttgart, Mannheim und Karlsruhe."), and some list missing cities (Bayern: Nürnberg; Hamburg; Nordrhein-Westfalen: Münster). Those hints are built from the live cities whose `state` matches: "Eigene Seite: X." / "Eigene Seiten: A, B und C." (German list with "und"), plus an optional suffix from the design (Berlin: "Unser Team sitzt hier."). A state with no live city (Hamburg, until its design exists) uses a **fallback hint** in the same style as the other 7 states' hints ("Funkablesung ohne Termin vor Ort …"); the content owner signs it off (open question 8).
+- **The dots are generated from `CITIES`, not copied from the design.** `germany-map.ts` stores only each city's dot position keyed by slug (from the design: all 25, including Hamburg, Nürnberg and Münster). The page renders a dot for every city with `live: true`, with `href = cityRoute(slug)` and the dot's texts built from the city name. A city that isn't live yet never gets a dot that leads to a `noindex` page.
+- **"Eigene Seiten" hints are generated too.** 9 of the 16 state hints list the city pages in that state ("Eigene Seiten: Stuttgart, Mannheim und Karlsruhe."), including Hamburg, Nürnberg and Münster, whose pages came last (§7.8). Those hints are built from the live cities whose `state` matches: "Eigene Seite: X." / "Eigene Seiten: A, B und C." (German list with "und"), plus an optional suffix from the design (Berlin: "Unser Team sitzt hier."). A state with no live city (Hamburg, until its page is live) uses a **fallback hint** in the same style as the other 7 states' hints ("Funkablesung ohne Termin vor Ort …"); the content owner signs it off (open question 8).
 - The 7 other state hints (Brandenburg, Mecklenburg-Vorpommern, Rheinland-Pfalz, Saarland, Sachsen-Anhalt, Schleswig-Holstein, Thüringen) are plain copy from the design.
 - Dots are links: an SVG `<a href>` around the circle (phase 4), so crawlers and "open in new tab" work. That's the internal-link hub that ties the city pages together (README, risks).
 - Labels: the design draws a label for every city dot. With 22 dots, labels in the Ruhr area overlap at small sizes. Check at 560 and 375 px; hiding `.dl` labels below 560 px (as `.sm` labels already are) is the fallback, the dots stay tappable (≥ 24 px hit area via a transparent stroke).
@@ -74,7 +74,7 @@ How this maps onto `RegionMap` (phase 2.4): the states are `districts` with path
 ## 8.6 Checks
 
 - Visual match with the design at 1440, 1100, 980, 700, 560 and 375 px. It's a separate design, so it gets the full set of widths, not the 2 used for cities.
-- Map: Tab reaches each state and each live city dot in a sensible order; Enter on a dot opens the city page; the state hint lists exactly the live cities of that state; no dot for Hamburg, Nürnberg or Münster.
+- Map: Tab reaches each state and each live city dot in a sensible order; Enter on a dot opens the city page; the state hint lists exactly the live cities of that state; no dot for a city that isn't live.
 - The e2e checks from phase 6.2 (Germany bullet).
 - Lighthouse mobile as for the city pages.
 

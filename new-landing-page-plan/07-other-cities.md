@@ -10,7 +10,7 @@ Footer order of the Berlin design, which is also the order of `CITIES` and the f
 |---|---|---|---|---|---|---|---|---|
 | 1 | Berlin | `berlin` | [FxQX9JtVueXdSSvCBRoEoW](https://claude.ai/artifact/FxQX9JtVueXdSSvCBRoEoW) | polygons | 12 | Kastanienallee 12 · Prenzlauer Berg · Altbau | Messdienst wechseln in Berlin. Ohne Wartezeit. |
 | 2 | München | `muenchen` | [CySgA2PkPfXBCS1VV37mg8](https://claude.ai/artifact/CySgA2PkPfXBCS1VV37mg8) | polygons (small labels) | 25 | Clemensstraße 12 · Schwabing-West · Altbau | Messdienst wechseln in München. Ohne Hürden. |
-| 3 | Hamburg | `hamburg` | [JaHqbeaXHPcw8PiHZJ7Wr1](https://claude.ai/artifact/JaHqbeaXHPcw8PiHZJ7Wr1) | **not readable, skipped** | | | |
+| 3 | Hamburg | `hamburg` | [JaHqbeaXHPcw8PiHZJ7Wr1](https://claude.ai/artifact/JaHqbeaXHPcw8PiHZJ7Wr1) | polygons | 7 | Isestraße 12 · Harvestehude · Altbau | Messdienst wechseln in Hamburg. Ohne Umwege. |
 | 4 | Köln | `koeln` | [9tTTuZrVurirZYAiwUcXkC](https://claude.ai/artifact/9tTTuZrVurirZYAiwUcXkC) | polygons | 9 | Brüsseler Straße 12 · Belgisches Viertel · Altbau | Messdienst wechseln in Köln. Ohne Aufwand. |
 | 5 | Frankfurt | `frankfurt` | [Ju5jKgyBLCEAvKDTi6aroi](https://claude.ai/artifact/Ju5jKgyBLCEAvKDTi6aroi) | polygons (small labels) | 16 | Oeder Weg 12 · Nordend · Altbau | Messdienst wechseln in Frankfurt. Ganz einfach. |
 | 6 | Düsseldorf | `duesseldorf` | [7ngcmkonN51an61Sggtk5V](https://claude.ai/artifact/7ngcmkonN51an61Sggtk5V) | polygons | 10 | Lindemannstraße 12 · Düsseltal · Altbau | Messdienst wechseln in Düsseldorf. Ohne Stillstand. |
@@ -20,14 +20,14 @@ Footer order of the Berlin design, which is also the order of `CITIES` and the f
 | 10 | Bremen | `bremen` | [CKZrdZ17CsAYGHKw9p2Xjn](https://claude.ai/artifact/CKZrdZ17CsAYGHKw9p2Xjn) | polygons | 5 | Humboldtstraße 12 · Ostertor · Altbau | Messdienst wechseln in Bremen. Ganz unkompliziert. |
 | 11 | Essen | `essen` | [1MbdSxSc269m8kUiGGkkN2](https://claude.ai/artifact/1MbdSxSc269m8kUiGGkkN2) | polygons | 9 | Isenbergstraße 12 · Rüttenscheid · Altbau | Messdienst wechseln in Essen. Ohne Stress. |
 | 12 | Dresden | `dresden` | [SYu9TxSWW911G6gQhcS1Tf](https://claude.ai/artifact/SYu9TxSWW911G6gQhcS1Tf) | polygons | 10 | Alaunstraße 12 · Äußere Neustadt · Altbau | Messdienst wechseln in Dresden. Ohne Verzögerung. |
-| 13 | Nürnberg | `nuernberg` | [67f9j2BeUxhg3UzoPpC7ED](https://claude.ai/artifact/67f9j2BeUxhg3UzoPpC7ED) | **not readable, skipped** | | | |
+| 13 | Nürnberg | `nuernberg` | [67f9j2BeUxhg3UzoPpC7ED](https://claude.ai/artifact/67f9j2BeUxhg3UzoPpC7ED) | outline + dots | 10 | Johannisstraße 12 · St. Johannis · Altbau | Messdienst wechseln in Nürnberg. Mit einer Unterschrift. |
 | 14 | Hannover | `hannover` | [WNCTYA7PL2AWpkuq8Zqmfw](https://claude.ai/artifact/WNCTYA7PL2AWpkuq8Zqmfw) | polygons | 13 | Lister Meile 12 · List · Altbau | Messdienst wechseln in Hannover. Ohne Mehraufwand. |
 | 15 | Duisburg | `duisburg` | [Wc5UvjnShyWJFgEacKLgJg](https://claude.ai/artifact/Wc5UvjnShyWJFgEacKLgJg) | polygons | 7 | Düsseldorfer Straße 12 · Dellviertel · Altbau | Messdienst wechseln in Duisburg. Einfach und sofort. |
 | 16 | Bochum | `bochum` | [Lry9uHketBLVcK5WySqFgc](https://claude.ai/artifact/Lry9uHketBLVcK5WySqFgc) | outline + polygons | 6 | Königsallee 12 · Ehrenfeld · Altbau | Messdienst wechseln in Bochum. Ohne Hin und Her. |
 | 17 | Wuppertal | `wuppertal` | [YRuLTCNL2JvvsPruVWQm88](https://claude.ai/artifact/YRuLTCNL2JvvsPruVWQm88) | outline + dots | 10 | Luisenstraße 12 · Luisenviertel · Altbau | Messdienst wechseln in Wuppertal. Ganz entspannt. |
 | 18 | Bielefeld | `bielefeld` | [15RHkomTT9avFUktxTLfxq](https://claude.ai/artifact/15RHkomTT9avFUktxTLfxq) | outline + polygons | 10 | Arndtstraße 12 · Bielefelder Westen · Altbau | Messdienst wechseln in Bielefeld. Ohne Mehrarbeit. |
 | 19 | Bonn | `bonn` | [Q8yednsFZXxuxXWeCs5H2F](https://claude.ai/artifact/Q8yednsFZXxuxXWeCs5H2F) | outline + polygons | 4 | Poppelsdorfer Allee 12 · Südstadt · Altbau | Messdienst wechseln in Bonn. Ohne Reibungsverluste. |
-| 20 | Münster | `muenster` | [UxpTtkZ1K96qYD1SS6AxJw](https://claude.ai/artifact/UxpTtkZ1K96qYD1SS6AxJw) | **not readable, skipped** | | | |
+| 20 | Münster | `muenster` | [UxpTtkZ1K96qYD1SS6AxJw](https://claude.ai/artifact/UxpTtkZ1K96qYD1SS6AxJw) | outline + polygons | 6 | Hammer Straße 12 · Südviertel · Altbau | Messdienst wechseln in Münster. Reibungslos und sofort. |
 | 21 | Mannheim | `mannheim` | [UeybWQRF9M3rP6YQqdNmfd](https://claude.ai/artifact/UeybWQRF9M3rP6YQqdNmfd) | outline + polygons | 17 | Augartenstraße 12 · Schwetzingerstadt · Altbau | Messdienst wechseln in Mannheim. Ohne Doppelarbeit. |
 | 22 | Karlsruhe | `karlsruhe` | [8zwAuPCW3dTwpmYyNabXkt](https://claude.ai/artifact/8zwAuPCW3dTwpmYyNabXkt) | outline + polygons (small labels) | 27 | Kaiserallee 12 · Weststadt · Altbau | Messdienst wechseln in Karlsruhe. Schnell und einfach. |
 | 23 | Augsburg | `augsburg` | [JogTwYnwDSBC1DUqoAj6sQ](https://claude.ai/artifact/JogTwYnwDSBC1DUqoAj6sQ) | outline + dots | 10 | Bismarckstraße 12 · Bismarckviertel · Altbau | Messdienst wechseln in Augsburg. Ohne Umstellungsstress. |
@@ -51,7 +51,7 @@ Footer order of the Berlin design, which is also the order of `CITIES` and the f
 - The logo order in the strip. München also swaps one logo for "Landeshauptstadt München" (a new asset).
 - The portfolio tab names and table rows, and the uVI phone values.
 
-**Copy errors found in the designs.** The FAQ question about switching before the contract ends was reworded per city, but in 9 designs the answer still starts with "Nein", which now contradicts the question. For example, Karlsruhe: "Können wir wechseln, obwohl der Vertrag noch läuft?" → "Nein. Heidi übernimmt ab sofort …". Affected: Bochum, Bremen, Dortmund, Duisburg, Düsseldorf, Karlsruhe, Mönchengladbach, Stuttgart and the Germany page. *Default: import them as designed, list them for the content owner with a proposed fix ("Ja." or dropping the first word), and change them only after sign-off.* The extraction script warns about any FAQ answer that starts with "Nein" when its question doesn't start with "Müssen".
+**Copy errors found in the designs.** The FAQ question about switching before the contract ends was reworded per city, but in 10 designs the answer still starts with "Nein", which now contradicts the question. For example, Karlsruhe: "Können wir wechseln, obwohl der Vertrag noch läuft?" → "Nein. Heidi übernimmt ab sofort …". Affected: Bochum, Bremen, Dortmund, Duisburg, Düsseldorf, Karlsruhe, Mönchengladbach, Münster, Stuttgart and the Germany page. *Default: import them as designed, list them for the content owner with a proposed fix ("Ja." or dropping the first word), and change them only after sign-off.* The extraction script warns about any FAQ answer that starts with "Nein" when its question doesn't start with "Müssen".
 
 ## 7.3 Map variants
 
@@ -59,9 +59,9 @@ The `RegionMap` component (phase 3) handles all of them from the start, so it is
 
 | Variant | Cities | Markup in the design |
 |---|---|---|
-| polygons | Berlin, München, Köln, Frankfurt, Düsseldorf, Stuttgart, Leipzig, Bremen, Essen, Dresden, Hannover, Duisburg | `path.bz` per district |
-| outline + polygons | Bochum, Bielefeld, Bonn, Mannheim, Karlsruhe, Wiesbaden | `path.bz-out` (non-interactive city outline) under `path.bz` districts that don't cover the whole city |
-| outline + dots | Dortmund, Wuppertal, Augsburg, Mönchengladbach | `path.bz-out` plus `circle.bz.dot` per district, labels as `text.dl` |
+| polygons | Berlin, München, Köln, Frankfurt, Düsseldorf, Stuttgart, Leipzig, Bremen, Essen, Dresden, Hannover, Duisburg, Hamburg | `path.bz` per district |
+| outline + polygons | Bochum, Bielefeld, Bonn, Mannheim, Karlsruhe, Wiesbaden, Münster | `path.bz-out` (non-interactive city outline) under `path.bz` districts that don't cover the whole city |
+| outline + dots | Dortmund, Wuppertal, Augsburg, Mönchengladbach, Nürnberg | `path.bz-out` plus `circle.bz.dot` per district, labels as `text.dl` |
 
 CSS: the later designs add rules Berlin doesn't have. Port the **union** into `RegionMap`'s `<style>`: `.bz-out`, `.bz.dot` (+ hover/focus/`.on`), `.bz-l .sm` (8.5 px, hidden below 560 px), `.bm-copy { min-width: 0 }`, `.bm-n { overflow-wrap: anywhere }` (long names like "Thalkirchen-Obersendling-Forstenried-Fürstenried-Solln"), `.bm-map svg { max-height: 600px }` (tall maps: Duisburg's viewBox is 612 × 1080) and `.bm-map { padding-bottom: 44px }` (46 px in München). Apply them to Berlin too and check that Berlin still matches its design. If it doesn't, the padding becomes a `style` override. München's thinner strokes (1.6) and smaller labels (10.5 px) go through `map.style`.
 
@@ -132,16 +132,29 @@ Status table (update while working). "Reviewed" = the script's strict checks plu
 | Augsburg | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
 | Wiesbaden | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
 | Mönchengladbach | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Hamburg | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Nürnberg | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Münster | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
 
 ## 7.7 Build and bundle impact
 
 - Each city's content and map are a separate lazy chunk (phase 2.3), so a page loads only its own city. The `CITIES` index (slugs, names, `live`) is the only part in every landing page's bundle, a few hundred bytes.
 - 42 new photos go through `?enhanced`, which generates several sizes and formats for each one. Check the build time and the size of the Vercel output after batch A. If either grows too much, limit the generated widths for these imports (hero: up to 1280 px, references: up to 1440 px).
-- The sitemap and the footer grow to 21 city entries once all are live.
+- The sitemap grows to 25 city entries once all are live.
+
+## 7.8 Hamburg, Nürnberg and Münster (2026-10-05)
+
+Their links became readable later. Compared with the designs of the same map variant (Köln, Bonn, Dortmund): the CSS and the markup skeleton (tags, classes, attributes) are identical, and the scripts differ only in the default district. So only the data differs, and the three were added with the script and no component change:
+
+- **Hamburg:** polygons, the 7 Bezirke, default Eimsbüttel. **Nürnberg:** outline + dots, 10 Stadtteile, default St. Johannis. **Münster:** outline + polygons, the 6 Stadtbezirke, default Mitte.
+- New logo order in each strip, no new logo. Photos: Hamburg 121 + 203 KB, Nürnberg 83 + 215 KB, Münster 296 + 107 KB (Münster's hero photo is among the larger ones, see §7.5 step 7).
+- Münster's FAQ "Ist ein Wechsel vor Vertragsende möglich?" answers "Nein. …" (the copy error of §7.2). The ledes of Hamburg (no place) and Münster (Kreuzviertel and Kinderhaus, not on the map of Stadtbezirke) are in `LEDE_WITHOUT_MAP_PLACE`.
+- SEO titles/descriptions and nearby links are proposals: Hamburg → Bremen, Hannover; Nürnberg → Augsburg, München; Münster → Bielefeld, Dortmund, Bochum. The other cities' `links.nearby` weren't changed (Bremen/Hannover could link Hamburg, Augsburg/München Nürnberg, Bielefeld/Dortmund Münster; for the SEO sign-off).
+- On the Germany map their dots appear once they're live; until then Hamburg uses its fallback hint. The 404 tests now use `potsdam` as the unknown city.
 
 ## Done when
 
-- All 21 readable cities render at `/messdienstanbieter/<slug>`, match their designs at 1440 and 375 px, and pass the e2e smoke loop.
+- All 24 cities besides Berlin render at `/messdienstanbieter/<slug>`, match their designs at 1440 and 375 px, and pass the e2e smoke loop.
 - No section component was copied for a single city. Everything city-specific is in `cities/<slug>.ts`, `cities/<slug>-map.ts` and `$lib/assets/landing/cities/<slug>/`.
 - The sitemap lists exactly the cities with `live: true`; the footer "Städte" group lists every city.
-- Hamburg, Nürnberg and Münster are listed in the README as waiting for their designs.
+- Hamburg, Nürnberg and Münster are added once their designs can be read (done 2026-10-05, §7.8).

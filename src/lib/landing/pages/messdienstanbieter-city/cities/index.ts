@@ -9,8 +9,6 @@
  * out of the sitemap, the Germany map and other pages' "nearby" links. The
  * footer "Städte" group lists every city. Set it `live: true`
  * once its go-live items are done (plan §6.4 / §7.6).
- *
- * Hamburg, Nürnberg and Münster wait for readable designs.
  */
 export type CityEntry = {
 	slug: string;
@@ -24,6 +22,7 @@ export type CityEntry = {
 export const CITIES = [
 	{ slug: "berlin", name: "Berlin", state: "Berlin", live: true },
 	{ slug: "muenchen", name: "München", state: "Bayern", live: false },
+	{ slug: "hamburg", name: "Hamburg", state: "Hamburg", live: false },
 	{ slug: "koeln", name: "Köln", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "frankfurt", name: "Frankfurt", state: "Hessen", live: false },
 	{ slug: "duesseldorf", name: "Düsseldorf", state: "Nordrhein-Westfalen", live: false },
@@ -33,12 +32,14 @@ export const CITIES = [
 	{ slug: "bremen", name: "Bremen", state: "Bremen", live: false },
 	{ slug: "essen", name: "Essen", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "dresden", name: "Dresden", state: "Sachsen", live: false },
+	{ slug: "nuernberg", name: "Nürnberg", state: "Bayern", live: false },
 	{ slug: "hannover", name: "Hannover", state: "Niedersachsen", live: false },
 	{ slug: "duisburg", name: "Duisburg", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "bochum", name: "Bochum", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "wuppertal", name: "Wuppertal", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "bielefeld", name: "Bielefeld", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "bonn", name: "Bonn", state: "Nordrhein-Westfalen", live: false },
+	{ slug: "muenster", name: "Münster", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "mannheim", name: "Mannheim", state: "Baden-Württemberg", live: false },
 	{ slug: "karlsruhe", name: "Karlsruhe", state: "Baden-Württemberg", live: false },
 	{ slug: "augsburg", name: "Augsburg", state: "Bayern", live: false },

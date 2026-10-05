@@ -1,9 +1,10 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { LIVE_CITIES } from "../src/lib/landing/pages/messdienstanbieter-city/cities/index.ts";
 
 // The signup tests save leads, so they need a database with the `leads` table
 // (`bunx drizzle-kit push` on a fresh local DB). Webhooks go to the local sink
-// from playwright.config.ts. Three tests send valid signups, which is exactly
-// the action's rate limit per IP (3 in 10 minutes) for one server run.
+// from playwright.config.ts. The action's per-IP limit (3 in 10 minutes,
+// shared by all landing pages) is raised on the e2e server (KITCHEN_SINK=1).
 
 const PATH = "/messdienstwechsel";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -67,8 +68,15 @@ test("nav and footer link to the same pages as the site's", async ({
 		...(await hrefs(page.locator("footer a[href]"))),
 	]);
 
-	// Landing-only: the logo links home, the CTAs go to the page's own anchors.
-	const landingOnly = ["/", "#start", "#faq"];
+	// Landing-only: the logo links home, the CTAs go to the page's own anchors,
+	// and the footer's "Städte" group links the city pages and their hub.
+	const landingOnly = [
+		"/",
+		"#start",
+		"#faq",
+		"/messdienstanbieter",
+		...LIVE_CITIES.map((c) => `/messdienstanbieter/${c.slug}`),
+	];
 	// Site-only: the "Angebot einholen" CTA.
 	const siteOnly = ["/fragebogen"];
 

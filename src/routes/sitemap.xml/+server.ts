@@ -1,3 +1,5 @@
+import { LIVE_CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
+import { cityRoute, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 import { SITE_URL } from "$lib/seo/site";
 import { getSitemapPosts } from "$lib/server/blog";
 
@@ -14,6 +16,14 @@ const pages: Entry[] = [
 	{ path: "/preise", changefreq: "monthly", priority: 0.8 },
 	{ path: "/geraete", changefreq: "monthly", priority: 0.8 },
 	{ path: "/messdienstwechsel", changefreq: "monthly", priority: 0.8 },
+	// The hub of the city pages, above them
+	{ path: ROUTE_MESSDIENSTANBIETER, changefreq: "monthly", priority: 0.9 },
+	// Only live cities; the others render with noindex until their go-live
+	...LIVE_CITIES.map((c) => ({
+		path: cityRoute(c.slug),
+		changefreq: "monthly",
+		priority: 0.8,
+	})),
 	{ path: "/kontakt", changefreq: "monthly", priority: 0.7 },
 	{ path: "/blog", changefreq: "weekly", priority: 0.7 },
 	{ path: "/impressum", changefreq: "yearly", priority: 0.3 },

@@ -5,6 +5,7 @@
 import type { ImageAsset } from "$lib/components/Basic/Image/types";
 import berlin from "$lib/assets/landing/logos/berlin.png?enhanced";
 import dumax from "$lib/assets/landing/logos/dumax.png?enhanced";
+import lhm from "$lib/assets/landing/logos/lhm.png?enhanced";
 import harte from "$lib/assets/landing/logos/harte.png?enhanced";
 import hsp from "$lib/assets/landing/logos/hsp.png?enhanced";
 import neckar from "$lib/assets/landing/logos/neckar.png?enhanced";
@@ -36,9 +37,24 @@ export const customerLogos = {
 	neckar: { src: neckar, alt: "Neckar Immobilienverwaltung", h: 30.7 },
 	niesen: { src: niesen, alt: "Niesen", h: 52.0 },
 	progera: { src: progera, alt: "Pro Gera Immobilien", h: 36.7 },
+	/** Only on the München page, in place of "Berlin". */
+	lhm: { src: lhm, alt: "Landeshauptstadt München", h: 40 },
 } satisfies Record<string, CustomerLogo>;
 
 export type LogoKey = keyof typeof customerLogos;
 
 /** The order of the /messdienstwechsel design, also Berlin's. */
-export const DEFAULT_LOGO_ORDER = Object.keys(customerLogos) as LogoKey[];
+export const DEFAULT_LOGO_ORDER: LogoKey[] = [
+	"berlin",
+	"dumax",
+	"harte",
+	"hsp",
+	"raumgold",
+	"schleicher",
+	"vitec",
+	"wagner",
+	"werne",
+	"neckar",
+	"niesen",
+	"progera",
+];

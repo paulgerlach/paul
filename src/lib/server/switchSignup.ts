@@ -3,6 +3,7 @@
  * and its city pages): empty forms for the page load and the form action.
  */
 import { fail, type RequestEvent } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
 import {
 	message,
 	superValidate,
@@ -65,8 +66,11 @@ export async function handleSwitchSignup(
 	// As in the contact pipeline, only valid submissions count. The counter
 	// is separate from the contact form's, and shared by all landing pages:
 	// one person signing up on two of them is still one person.
+	// The e2e server (KITCHEN_SINK=1) sends more valid signups from one IP
+	// than a person would, across all landing pages.
 	const ip = getClientAddress();
-	if (!checkIPRateLimit(`switch:${ip}`, 3, 600).allowed)
+	const limit = env.KITCHEN_SINK ? 50 : 3;
+	if (!checkIPRateLimit(`switch:${ip}`, limit, 600).allowed)
 		return blocked(form, `rate limit exceeded for IP: ${ip}`);
 
 	try {

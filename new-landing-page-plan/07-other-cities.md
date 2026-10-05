@@ -143,5 +143,5 @@ Status table (update while working). "Reviewed" = the script's strict checks plu
 
 - All 21 readable cities render at `/messdienstanbieter/<slug>`, match their designs at 1440 and 375 px, and pass the e2e smoke loop.
 - No section component was copied for a single city. Everything city-specific is in `cities/<slug>.ts`, `cities/<slug>-map.ts` and `$lib/assets/landing/cities/<slug>/`.
-- The footer "Städte" group and the sitemap list exactly the cities with `live: true`.
+- The sitemap lists exactly the cities with `live: true`; the footer "Städte" group lists every city.
 - Hamburg, Nürnberg and Münster are listed in the README as waiting for their designs.

@@ -126,12 +126,10 @@ test("unknown cities 404, and a trailing slash redirects", async ({ page }) => {
 	expect(new URL(page.url()).pathname).toBe(BERLIN);
 });
 
-test("the footer lists exactly the live cities and the hub", async ({
-	page,
-}) => {
+test("the footer lists every city and the hub", async ({ page }) => {
 	await page.goto(BERLIN);
 	const links = await hrefs(page.locator("footer .cities a"));
-	expect(links).toEqual([...LIVE_PATHS, HUB]);
+	expect(links).toEqual([...CITIES.map((c) => `${HUB}/${c.slug}`), HUB]);
 });
 
 test("the nav links to the same pages as the site's", async ({ page }) => {
@@ -145,19 +143,22 @@ test("the nav links to the same pages as the site's", async ({ page }) => {
 	).toEqual([]);
 });
 
-test("internal links resolve and never lead to a city that isn't live", async ({
+test("internal links resolve; page content never leads to a city that isn't live", async ({
 	page,
 }) => {
 	const all = new Set<string>();
 	for (const p of PAGES) {
 		await page.goto(p.path);
-		for (const href of await hrefs(
-			page.locator('main a[href^="/"], footer a[href^="/"]'),
-		))
+		// The map's dots and nearby links only name live cities; the footer
+		// lists every city page.
+		for (const href of await hrefs(page.locator('main a[href^="/"]'))) {
+			expect(NOT_LIVE_PATHS, `${p.path} → ${href}`).not.toContain(href);
+			all.add(href);
+		}
+		for (const href of await hrefs(page.locator('footer a[href^="/"]')))
 			all.add(href);
 	}
 	for (const href of all) {
-		expect(NOT_LIVE_PATHS, href).not.toContain(href);
 		const response = await page.request.get(href);
 		expect(response.status(), href).toBe(200);
 	}

@@ -9,7 +9,7 @@ The implementations live in `$lib/landing/sections/region/`, because the Germany
 | Component | Design element | Notes |
 |---|---|---|
 | `LandingHeader` (shared) | `.banner` + `nav.top` | Banner `city.bannerText`, "Mehr erfahren" → `#faq`. Site nav items. CTA "Bestand prüfen" → `#start` (README decision, open question 1) |
-| `LandingFooter` (shared) | `footer` | Site footer groups plus "Städte" (live cities only). The design's own columns (Über uns, Partner, Plattform …) are not used |
+| `LandingFooter` (shared) | `footer` | Site footer groups plus "Städte" (every city page). The design's own columns (Über uns, Partner, Plattform …) are not used |
 | `ChatBot` (layout) | `.chatfab` | already in the landing layout |
 
 ## Page sections, in order

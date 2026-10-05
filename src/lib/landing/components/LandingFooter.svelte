@@ -19,7 +19,7 @@
 		socials,
 		standorteLinksGroup,
 	} from "$lib/components/Footer/footerLinks";
-	import { LIVE_CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
+	import { CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
 	import { cityRoute, ROUTE_HOME, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 
@@ -70,11 +70,12 @@
 			</div>
 		{/each}
 
-		{#if LIVE_CITIES.length}
+		<!-- Every city page, also those not live yet (they render with noindex). -->
+		{#if CITIES.length}
 			<nav class="cities" aria-labelledby="f-cities-h">
 				<h4 id="f-cities-h">Städte</h4>
 				<ul>
-					{#each LIVE_CITIES as city (city.slug)}
+					{#each CITIES as city (city.slug)}
 						<li><a class="city" href={cityRoute(city.slug)}>{city.name}</a></li>
 					{/each}
 					<li class="all">

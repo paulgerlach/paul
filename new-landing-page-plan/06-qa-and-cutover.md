@@ -2,15 +2,16 @@
 
 ## 6.1 Before the localhost demo
 
-- [ ] `bun run dev` → `http://localhost:5173/messdienstanbieter/berlin`
-- [ ] Visual match with the design at 1440, 1100, 980, 700, 560 and 375 px (compared with the design, not Next: Next has no such page)
-- [ ] `/messdienstwechsel` still matches its pre-refactor screenshots (phase 1)
+- [x] `bun run dev` → `http://localhost:5173/messdienstanbieter/berlin`
+- [x] Visual match with the design at 1440, 1100, 980, 700, 560 and 375 px (compared with the design, not Next: Next has no such page). Section heights equal the design's at all six widths, with Geist loaded into the design file; the only differences are the site nav/footer and the added map links (+48 px)
+- [x] `/messdienstwechsel` still matches its pre-refactor screenshots (phase 1): pixel-identical at 1440/1100/980/700/375
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host`
 - [ ] Keyboard-only walkthrough: nav, burger, both forms, map districts, billing buttons, phone tabs, portfolio tabs, trio buttons, FAQ
-- [ ] Reduced-motion emulation
+- [x] Reduced-motion emulation (e2e `interactions` run with it)
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05. The hero photo is the LCP element and must be preloaded (`priority`)
-- [ ] No hydration warnings or console errors
-- [ ] `/messdienstanbieter/foo` and `/messdienstanbieter` return 404; `/messdienstanbieter/berlin/` redirects
+  - Local result (2026-10-05, Lighthouse 12 mobile, `bun run preview`): Berlin 84 / a11y 96 / CLS 0, Germany 82 / 96 / 0; `/messdienstwechsel` 87 / 92 under the same conditions. LCP (4.2 s simulated) is the hero lede, not the photo; locally TTFB is ~650 ms because the layout fetches the nav's blog teaser from Prismic (the same caveat as in the migration's phase 10 QA). Re-measure on the Vercel preview. Possible win for all landing pages: the root layout preloads Exo 2 (41 KB), which they don't use. The contrast findings are the design's eyebrow/grey tokens, as on `/messdienstwechsel`
+- [x] No hydration warnings or console errors (e2e checks every page)
+- [x] `/messdienstanbieter/foo` returns 404 and `/messdienstanbieter/berlin/` redirects (`/messdienstanbieter` is the Germany page now)
 - [ ] For the phase 7 cities: the per-city checks in §7.5
 - [ ] For the Germany page: the checks in §8.6
 

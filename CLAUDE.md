@@ -9,7 +9,7 @@ Marketing site for Heidi Systems (heidisystems.com): SvelteKit 2, Svelte 5 (rune
   - Preview QA done (2026-10-03): all 246 sitemap URLs 200, SEO diff clean, smoke suite green, Lighthouse at or above Next on most pages. Results in `svelte-migration-plan/10-qa-and-cutover.md`.
   - Still open before/at cutover: the manual QA checklist (§10.2), the Vercel/Prismic dashboard steps (§10.4 steps 3–4), and the two unticked known issues: **KI-34** (placeholder phone in home JSON-LD, needs business confirmation) and **KI-36** (copy typos, need content-owner sign-off). Fragebogen defaults in `$lib/fragebogen/schema.ts` also still need business confirmation.
 - **`/messdienstwechsel` landing page** (branch `feat/landing-pages`, plan in `new-landing-page-plan/`) is built: route group `(landing-page)`, own header/footer, signup form → `leads` table + `switchinquiry` Make.com event. Its go-live gate (now `new-landing-page-plan/06-qa-and-cutover.md` §6.5; the old plan is in git history at `65470139`) is open: KPIs (`XX`), testimonial, customer logos, demo video and the Make.com route are still placeholders. If not resolved by cutover, set `seo.noindex = true` and drop it from the sitemap.
-- **City landing pages `/messdienstanbieter/[city]`** and the Germany page `/messdienstanbieter` (Berlin first, then Germany and 20 more cities from their designs, all one shared 13-section template; Hamburg, Nürnberg and Münster wait for readable designs): planned in `new-landing-page-plan/`, not built yet.
+- **City landing pages `/messdienstanbieter/[city]` and the Germany hub `/messdienstanbieter`** (same branch, plan in `new-landing-page-plan/`, status in its README "Implementation notes") are built: one 13-section template in `$lib/landing/sections/region/`, filled per page from a content module. 22 cities exist; only `live: true` cities in `cities/index.ts` are indexed, in the sitemap, the footer "Städte" group and the Germany map (Berlin so far). The others render with `noindex` for review. Their go-live gate (§6.4: KPIs, logos, photos, copy/SEO sign-off, the FAQ "Nein" answers) is open. Hamburg, Nürnberg and Münster wait for readable designs.
 - **After cutover:** delete the phase-1 second Vercel project; consider removing `/api/contact` once nothing external uses it; upgrade Swiper past 11.
 
 Plans and history: `svelte-migration-plan/` (README has the decisions log, `known-issues.md` the KI list) and `new-landing-page-plan/`.
@@ -29,8 +29,9 @@ Package manager is **bun**.
 | `bunx playwright test -c playwright.parity.config.ts` | Parity smoke/visual checks (`e2e/parity/`), `BASE_URL` selects the target; `VERCEL_AUTOMATION_BYPASS_SECRET` reaches protected previews |
 | `bun run slicemachine`                                | Prismic Slice Machine                                                                                                                   |
 
-- The `/messdienstwechsel` signup e2e tests need the local Postgres from `DATABASE_URL` (`127.0.0.1:54322`).
+- The landing signup e2e tests need the local Postgres from `DATABASE_URL` (`127.0.0.1:54322`) with the `leads` table.
 - CI (`.github/workflows/web.yml`): `check`, `lint`, `build`, and fails on any `next`/`react`/`react-dom` import in `src`.
+- `bun scripts/extract-city.ts <design.html> <slug>|--germany` turns a saved city design into `cities/<slug>.ts`, `<slug>-map.ts` and its photos (strict; keeps the hand-written `seo`/`links`). The designs aren't in the repo; save one with the Artifact tool's `read` action.
 - Other scripts: `scripts/layout-diff.ts` (compares text-element boxes between two deployments; its header lists the known deliberate diffs), `scripts/compare-endpoints.ts` (webhook payload parity).
 
 ## Layout
@@ -42,7 +43,7 @@ src/
     [[preview=preview]]/        Prismic preview prefix (/preview/…), matcher in src/params/preview.ts
       (base)/                   site Header/Footer/ChatBot; layout loads nav blog teaser + sets cache-control
       (service)/fragebogen/     questionnaire, FragebogenHeader
-    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css)
+    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts)
     api/                        +server.ts JSON/streaming endpoints (chat, slack, contact, fragebogen, leads, send-email, preview)
     robots.txt/, sitemap.xml/, slice-simulator/
   lib/
@@ -52,7 +53,8 @@ src/
       pages/<landing>/sections/ every section of a page, one file each (thin wrappers where shared); page data
       sections/                 shared section implementations (LogoStrip, Faq, FinalCta; region/ = city/Germany template)
       components/               building blocks: LandingHeader/Footer, SignupForm, DemoCard, EasyChecks, icons
-      attachments/ data/        landing attachments; customer logos
+      pages/messdienstanbieter-city/cities/  index.ts (CITIES, live flags), <slug>.ts + <slug>-map.ts (generated), cities.test.ts
+      attachments/ data/        landing attachments; customer logos; confetti.ts (canvas burst)
     server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), rateLimit, slack, webhooks, ai/personas
     chat/                       SlackChat + chat context, businessHours
     fragebogen/                 Questionnaire rune class + zod schema (shared client/server)
@@ -97,7 +99,7 @@ Prettier with tabs, double quotes, semicolons, trailing commas, `prettier-plugin
 - The site font is registered as `"Exo 2"` (manual `@font-face` in the root layout, not fontsource's CSS), because existing CSS rules use that name.
 - **Swiper is pinned to 11.2.10**: ~100 rules in `app.css` target Swiper 11 markup. Swiper markup mirrors what `swiper/react` rendered (slides directly in `.swiper-wrapper`, nav/pagination elements after it); the `swiper` attachment picks those up for `navigation: true` / `pagination: true` and defers init of hidden loop swipers until they have a size (KI-29).
 - Accordions use `slideToggle` / `$lib/utils/slide.ts`, not `transition:slide`, so closed content stays in the HTML.
-- Landing pages: port design CSS as **component-scoped `<style>` blocks** with tokens as CSS custom properties (`$lib/landing/tokens.css`, imported only in the landing layout). Keep the design's own breakpoints; don't map them to the site's. Tailwind only for simple layout utilities. Every animation respects `prefersReducedMotion()` from `$lib/landing/motion.ts` (render the end state, no loops/counting); timers/observers are created only in the browser and cleaned up on teardown. No new runtime dependencies for interactions.
+- Landing pages: port design CSS as **component-scoped `<style>` blocks** with tokens as CSS custom properties (`$lib/landing/tokens.css`, imported only in the landing layout). Keep the design's own breakpoints; don't map them to the site's. Tailwind only for simple layout utilities. Every animation respects `prefersReducedMotion()` from `$lib/landing/motion.ts` (render the end state, no loops/counting); timers/observers are created only in the browser and cleaned up on teardown. No new runtime dependencies for interactions. A landing page returns `landing` (banner text, CTA label) from its `load`; the layout passes it to the header. On the region pages, nothing city-specific goes into a component: it lives in the content module, and a design change is re-imported with the extraction script.
 
 ### Images and assets
 

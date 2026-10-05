@@ -106,32 +106,32 @@ Batches, so the variants get tested before the bulk:
 
 One commit per city (generated module + map + photos + `CITIES` entry) keeps each reviewable. Setting `live: true` is a separate change, made after the city's go-live items (phase 6.4) are done.
 
-Status table (update while working):
+Status table (update while working). "Reviewed" = the script's strict checks plus the section-height comparison with the design; copy sign-off, photo licences and claims are business items (§6.4). Only Berlin is `live`; the others render with `noindex` for review:
 
 | City | Generated | SEO title/desc + links written | Reviewed | Visual check | Copy sign-off | Photos licensed | On-site claims confirmed | Live |
 |---|---|---|---|---|---|---|---|
-| Berlin | | | | | | | | |
-| München | | | | | | | | |
-| Köln | | | | | | | | |
-| Frankfurt | | | | | | | | |
-| Düsseldorf | | | | | | | | |
-| Stuttgart | | | | | | | | |
-| Leipzig | | | | | | | | |
-| Dortmund | | | | | | | | |
-| Bremen | | | | | | | | |
-| Essen | | | | | | | | |
-| Dresden | | | | | | | | |
-| Hannover | | | | | | | | |
-| Duisburg | | | | | | | | |
-| Bochum | | | | | | | | |
-| Wuppertal | | | | | | | | |
-| Bielefeld | | | | | | | | |
-| Bonn | | | | | | | | |
-| Mannheim | | | | | | | | |
-| Karlsruhe | | | | | | | | |
-| Augsburg | | | | | | | | |
-| Wiesbaden | | | | | | | | |
-| Mönchengladbach | | | | | | | | |
+| Berlin | ✓ | ✓ (proposal) | ✓ | ✓ all 6 widths | | | | yes |
+| München | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Köln | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Frankfurt | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Düsseldorf | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Stuttgart | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Leipzig | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Dortmund | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Bremen | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Essen | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Dresden | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Hannover | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Duisburg | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Bochum | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Wuppertal | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Bielefeld | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Bonn | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Mannheim | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Karlsruhe | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Augsburg | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Wiesbaden | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
+| Mönchengladbach | ✓ | ✓ (proposal) | ✓ | ✓ 1440/375 | | | |  |
 
 ## 7.7 Build and bundle impact
 

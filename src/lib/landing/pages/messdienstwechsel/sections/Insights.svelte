@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ROUTE_FUNKTIONEN } from "$lib/routes";
-	import { equalHeights } from "../../attachments/equalHeights";
-	import { askSuggestions } from "../../data";
+	import { equalHeights } from "$lib/landing/attachments/equalHeights";
+	import { askSuggestions } from "$lib/landing/pages/messdienstwechsel/data";
 	import BudgetChart from "./BudgetChart.svelte";
 	import RiskChart from "./RiskChart.svelte";
 </script>

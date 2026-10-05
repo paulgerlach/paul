@@ -1,7 +1,7 @@
 <script lang="ts">
 	import banner from "$lib/assets/landing/banner.jpg?enhanced";
-	import { playOnView } from "../../attachments/playOnView";
-	import { focusSignup, START_HREF } from "../../cta";
+	import { playOnView } from "$lib/landing/attachments/playOnView";
+	import { focusSignup, START_HREF } from "$lib/landing/cta";
 </script>
 
 <!-- Photo, name and company are placeholders: see the go-live gate, plan 5.4. -->

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { equalHeights } from "../../attachments/equalHeights";
-	import { playOnView } from "../../attachments/playOnView";
-	import CheckBadge from "../icons/CheckBadge.svelte";
-	import HeidiMark from "../icons/HeidiMark.svelte";
+	import { equalHeights } from "$lib/landing/attachments/equalHeights";
+	import { playOnView } from "$lib/landing/attachments/playOnView";
+	import CheckBadge from "$lib/landing/components/icons/CheckBadge.svelte";
+	import HeidiMark from "$lib/landing/components/icons/HeidiMark.svelte";
 
 	const appointmentChecks = [
 		"Mieter rechtzeitig informiert",

@@ -20,7 +20,15 @@
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 	import LandingNavGroup from "./LandingNavGroup.svelte";
 
-	let { posts }: { posts: PostSummary[] } = $props();
+	let {
+		posts,
+		bannerText,
+		ctaLabel = "Wechsel starten",
+	}: {
+		posts: PostSummary[];
+		bannerText: string;
+		ctaLabel?: string;
+	} = $props();
 
 	const navGroups = $derived(buildNavGroups(posts));
 
@@ -47,8 +55,7 @@
 <svelte:window {onkeydown} />
 
 <div class="banner">
-	Ab 1.1.2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Jetzt den
-	Wechsel prüfen.<a href="#faq">Mehr erfahren</a>
+	{bannerText}<a href="#faq">Mehr erfahren</a>
 </div>
 
 <nav class="top" aria-label="Hauptnavigation">
@@ -74,7 +81,7 @@
 			</a>
 			<a class="phone" href={PHONE_HREF}>{PHONE}</a>
 			<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
-				Wechsel starten
+				{ctaLabel}
 			</a>
 		</div>
 		<button
@@ -116,7 +123,7 @@
 				{/each}
 				<li class="mcta">
 					<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
-						Wechsel starten
+						{ctaLabel}
 					</a>
 					<a
 						class="btn btn-ghost"

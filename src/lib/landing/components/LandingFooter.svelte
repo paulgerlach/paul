@@ -19,7 +19,8 @@
 		socials,
 		standorteLinksGroup,
 	} from "$lib/components/Footer/footerLinks";
-	import { ROUTE_HOME } from "$lib/routes";
+	import { LIVE_CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
+	import { cityRoute, ROUTE_HOME, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 
 	const groups = [
@@ -68,6 +69,20 @@
 				</ul>
 			</div>
 		{/each}
+
+		{#if LIVE_CITIES.length}
+			<nav class="cities" aria-labelledby="f-cities-h">
+				<h4 id="f-cities-h">Städte</h4>
+				<ul>
+					{#each LIVE_CITIES as city (city.slug)}
+						<li><a class="city" href={cityRoute(city.slug)}>{city.name}</a></li>
+					{/each}
+					<li class="all">
+						<a class="city" href={ROUTE_MESSDIENSTANBIETER}>Ganz Deutschland</a>
+					</li>
+				</ul>
+			</nav>
+		{/if}
 
 		<div class="legal">
 			<span>© {year} {ADDRESS.company}, Berlin</span>
@@ -179,6 +194,29 @@
 		font-size: 11px;
 		font-weight: 600;
 	}
+	.cities {
+		grid-column: 1 / -1;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		padding-top: 32px;
+	}
+	.cities ul {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		column-gap: 28px;
+	}
+	.cities .all {
+		font-weight: 600;
+		white-space: nowrap;
+		grid-column: -2 / -1;
+	}
+	a.city {
+		color: #fff;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: rgba(255, 255, 255, 0.35);
+	}
+	a.city:hover {
+		text-decoration-color: var(--accent);
+	}
 	.legal {
 		grid-column: 1 / -1;
 		border-top: 1px solid #36504a;
@@ -230,6 +268,9 @@
 		.first {
 			grid-column: 1 / -1;
 		}
+		.cities ul {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
 	}
 	@media (max-width: 980px) {
 		/* Long German words would otherwise widen the two columns. */
@@ -241,6 +282,9 @@
 		.fgrid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			padding-block: 96px 56px;
+		}
+		.cities ul {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>

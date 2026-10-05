@@ -9,7 +9,7 @@
 		riskAverage,
 		riskLabels,
 		riskProperties,
-	} from "../../data";
+	} from "$lib/landing/pages/messdienstwechsel/data";
 
 	let active = $state(0);
 	let tipOn = $state(false);

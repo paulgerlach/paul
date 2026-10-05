@@ -3,9 +3,9 @@
 	import thumb1 from "$lib/assets/landing/steps/thumb-1.jpg?enhanced";
 	import thumb2 from "$lib/assets/landing/steps/thumb-2.jpg?enhanced";
 	import thumb3 from "$lib/assets/landing/steps/thumb-3.jpg?enhanced";
-	import { equalHeights } from "../../attachments/equalHeights";
-	import { steps } from "../../data";
-	import CheckBadge from "../icons/CheckBadge.svelte";
+	import { equalHeights } from "$lib/landing/attachments/equalHeights";
+	import { steps } from "$lib/landing/pages/messdienstwechsel/data";
+	import CheckBadge from "$lib/landing/components/icons/CheckBadge.svelte";
 
 	const visuals = [analyse, contracts, sign, billing, sync];
 </script>

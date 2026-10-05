@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { countUp } from "../../attachments/countUp";
-	import { equalHeights } from "../../attachments/equalHeights";
-	import { playOnView } from "../../attachments/playOnView";
-	import { focusSignup, START_HREF } from "../../cta";
-	import CheckBadge from "../icons/CheckBadge.svelte";
+	import { countUp } from "$lib/landing/attachments/countUp";
+	import { equalHeights } from "$lib/landing/attachments/equalHeights";
+	import { playOnView } from "$lib/landing/attachments/playOnView";
+	import { focusSignup, START_HREF } from "$lib/landing/cta";
+	import CheckBadge from "$lib/landing/components/icons/CheckBadge.svelte";
 
 	const warnings = [
 		"Verbrauch deutlich über Vorjahr",

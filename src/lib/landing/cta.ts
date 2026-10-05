@@ -12,3 +12,9 @@ export function focusSignup() {
 		document.getElementById(HERO_EMAIL_ID)?.focus({ preventScroll: true }),
 	);
 }
+
+/**
+ * Target of every "Demo buchen" CTA. There's no booking URL yet, so they lead
+ * to the signup form; set a URL here to switch all of them at once.
+ */
+export const DEMO_HREF: string = START_HREF;

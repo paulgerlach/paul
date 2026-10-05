@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { inView } from "../../attachments/inView";
-	import { playOnView } from "../../attachments/playOnView";
-	import { initials, oldWayTiles } from "../../data";
-	import { prefersReducedMotion } from "../../motion";
-	import HeidiMark from "../icons/HeidiMark.svelte";
+	import { inView } from "$lib/landing/attachments/inView";
+	import { playOnView } from "$lib/landing/attachments/playOnView";
+	import {
+		initials,
+		oldWayTiles,
+	} from "$lib/landing/pages/messdienstwechsel/data";
+	import { prefersReducedMotion } from "$lib/landing/motion";
+	import HeidiMark from "$lib/landing/components/icons/HeidiMark.svelte";
 
 	const FIRST = 400; // ms until the first tile
 	const STEP = 650; // ms between tiles

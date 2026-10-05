@@ -4,7 +4,7 @@
   BUDGET_NOW are a forecast.
 -->
 <script lang="ts">
-	import { playOnView } from "../../attachments/playOnView";
+	import { playOnView } from "$lib/landing/attachments/playOnView";
 	import {
 		BUDGET_NOW,
 		budgetSeries,
@@ -13,7 +13,7 @@
 		eur,
 		MONTHS,
 		type BudgetKey,
-	} from "../../data";
+	} from "$lib/landing/pages/messdienstwechsel/data";
 
 	const keys = Object.keys(budgetSeries) as BudgetKey[];
 

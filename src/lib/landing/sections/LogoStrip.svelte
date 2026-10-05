@@ -1,15 +1,32 @@
+<!--
+  Customer logo strip of the landing pages. Each page passes its own claim
+  and logo order.
+-->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
-	import { customerLogos } from "../../data";
+	import {
+		customerLogos,
+		DEFAULT_LOGO_ORDER,
+		type LogoKey,
+	} from "$lib/landing/data/logos";
+
+	let {
+		text,
+		placeholder = false,
+		logos = DEFAULT_LOGO_ORDER,
+	}: {
+		text: string;
+		/** Marks the claim as unconfirmed (go-live gate). */
+		placeholder?: boolean;
+		logos?: LogoKey[];
+	} = $props();
 </script>
 
-<!-- "Über 200" and the logos are unconfirmed: see the go-live gate, plan 5.4. -->
 <section class="logos wrap" aria-label="Kunden">
-	<p data-placeholder>
-		Über 200 Hausverwaltungen rechnen bereits mit Heidi ab.
-	</p>
+	<p data-placeholder={placeholder ? "" : undefined}>{text}</p>
 	<div class="logo-row">
-		{#each customerLogos as logo (logo.alt)}
+		{#each logos as key (key)}
+			{@const logo = customerLogos[key]}
 			<Image src={logo.src} alt={logo.alt} style="--h:{logo.h}px" />
 		{/each}
 	</div>

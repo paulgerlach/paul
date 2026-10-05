@@ -4,9 +4,9 @@
   decoration (aria-hidden); the text alternative is in the sr-only paragraph.
 -->
 <script lang="ts">
-	import { inView } from "../../attachments/inView";
-	import { prefersReducedMotion } from "../../motion";
-	import Check from "../icons/Check.svelte";
+	import { inView } from "$lib/landing/attachments/inView";
+	import { prefersReducedMotion } from "$lib/landing/motion";
+	import Check from "$lib/landing/components/icons/Check.svelte";
 
 	let visible = $state(false);
 	let reviewing = $state(false);

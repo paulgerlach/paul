@@ -4,7 +4,7 @@
 		ganttColumns,
 		ganttKindLabels,
 		ganttRows,
-	} from "../../data";
+	} from "$lib/landing/pages/messdienstwechsel/data";
 
 	const legend = [
 		{ color: "var(--ink)", label: "Heidi übernimmt operativ" },

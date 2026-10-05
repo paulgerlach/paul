@@ -1,20 +1,30 @@
+<script lang="ts" module>
+	/** `answer` may contain <b> and <a>; it comes from trusted content modules. */
+	export type FaqItem = { question: string; answer: string };
+</script>
+
+<!-- FAQ of the landing pages, with its FAQPage JSON-LD. -->
 <script lang="ts">
-	import { faqItems } from "../../data";
-	import Chevron from "../icons/Chevron.svelte";
+	import Chevron from "$lib/landing/components/icons/Chevron.svelte";
+
+	let { items, title = "FAQ" }: { items: FaqItem[]; title?: string } = $props();
 
 	// FAQPage structured data. Answers may contain <b>, which schema.org allows.
-	const jsonLd = JSON.stringify({
-		"@context": "https://schema.org",
-		"@type": "FAQPage",
-		mainEntity: faqItems.map((item) => ({
-			"@type": "Question",
-			name: item.question,
-			acceptedAnswer: { "@type": "Answer", text: item.answer },
-		})),
-	}).replace(/</g, "\\u003c");
+	const jsonLd = $derived(
+		JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "FAQPage",
+			mainEntity: items.map((item) => ({
+				"@type": "Question",
+				name: item.question,
+				acceptedAnswer: { "@type": "Answer", text: item.answer },
+			})),
+		}).replace(/</g, "\\u003c"),
+	);
 	// Split so the closing tag doesn't end this <script> block.
-	const jsonLdTag =
-		`<script type="application/ld+json">${jsonLd}<` + "/script>";
+	const jsonLdTag = $derived(
+		`<script type="application/ld+json">${jsonLd}<` + "/script>",
+	);
 </script>
 
 <svelte:head>
@@ -23,15 +33,15 @@
 </svelte:head>
 
 <section class="sec wrap faq" id="faq">
-	<h2>FAQ</h2>
+	<h2>{title}</h2>
 	<div class="faq-list">
-		{#each faqItems as item, i (item.question)}
+		{#each items as item, i (item.question)}
 			<details open={i === 0}>
 				<summary>
 					{item.question}
 					<span class="tg" aria-hidden="true"><Chevron width={14} /></span>
 				</summary>
-				<!-- eslint-disable-next-line svelte/no-at-html-tags -- static copy from data.ts -->
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
 				<div class="ans">{@html item.answer}</div>
 			</details>
 		{/each}
@@ -88,6 +98,11 @@
 	}
 	.ans :global(b) {
 		font-weight: 600;
+	}
+	.ans :global(a) {
+		color: var(--ink);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 	/* Animated open/close where the browser supports it */
 	details::details-content {

@@ -3,43 +3,7 @@
  * artifact. It's kept as typed constants (not Prismic), so the section
  * components stay small and the copy can move to a CMS later.
  */
-import type { ImageAsset } from "$lib/components/Basic/Image/types";
-import berlin from "$lib/assets/landing/logos/berlin.png?enhanced";
-import dumax from "$lib/assets/landing/logos/dumax.png?enhanced";
-import harte from "$lib/assets/landing/logos/harte.png?enhanced";
-import hsp from "$lib/assets/landing/logos/hsp.png?enhanced";
-import neckar from "$lib/assets/landing/logos/neckar.png?enhanced";
-import niesen from "$lib/assets/landing/logos/niesen.png?enhanced";
-import progera from "$lib/assets/landing/logos/progera.png?enhanced";
-import raumgold from "$lib/assets/landing/logos/raumgold.png?enhanced";
-import schleicher from "$lib/assets/landing/logos/schleicher.png?enhanced";
-import vitec from "$lib/assets/landing/logos/vitec.png?enhanced";
-import wagner from "$lib/assets/landing/logos/wagner.png?enhanced";
-import werne from "$lib/assets/landing/logos/werne.png?enhanced";
-
-/* Logo strip */
-
-export type CustomerLogo = {
-	src: ImageAsset;
-	alt: string;
-	/** Display height in px, chosen in the design to balance the logos optically. */
-	h: number;
-};
-
-export const customerLogos: CustomerLogo[] = [
-	{ src: berlin, alt: "Berlin", h: 43.7 },
-	{ src: dumax, alt: "Dumax", h: 42.0 },
-	{ src: harte, alt: "Harte Hausverwaltung", h: 42.4 },
-	{ src: hsp, alt: "HSP", h: 37.7 },
-	{ src: raumgold, alt: "raumgold", h: 36.2 },
-	{ src: schleicher, alt: "Schleicher", h: 52.0 },
-	{ src: vitec, alt: "Vitec", h: 44.2 },
-	{ src: wagner, alt: "Wagner", h: 32.2 },
-	{ src: werne, alt: "Werne Immobilien", h: 45.6 },
-	{ src: neckar, alt: "Neckar Immobilienverwaltung", h: 30.7 },
-	{ src: niesen, alt: "Niesen", h: 52.0 },
-	{ src: progera, alt: "Pro Gera Immobilien", h: 36.7 },
-];
+import type { FaqItem } from "$lib/landing/sections/Faq.svelte";
 
 /* Steps (Portfolio-Checker) */
 
@@ -477,8 +441,6 @@ export const askSuggestions = [
 ];
 
 /* FAQ */
-
-export type FaqItem = { question: string; answer: string };
 
 /** Answers may contain <b>; they're static strings from this file. */
 export const faqItems: FaqItem[] = [

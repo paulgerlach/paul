@@ -116,4 +116,4 @@ The previous Next deployment stays in Vercel's deployment history. Rollback is "
 ## 10.6 After cutover
 - Delete the second Vercel project created in phase 1.
 - Remove `/api/contact` if the form action fully replaces it and nothing external uses it.
-- Write a `CLAUDE.md` / contributor notes describing the Svelte conventions (`patterns.md` is a good start).
+- Write a `CLAUDE.md` / contributor notes describing the Svelte conventions. Done: [`CLAUDE.md`](../CLAUDE.md) (2026-10-05).

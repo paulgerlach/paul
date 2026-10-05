@@ -163,7 +163,11 @@ export async function getBlogPost(config: CreateClientConfig, uid: string) {
 
 /** Every post's URL and last change, for the sitemap. */
 export async function getSitemapPosts(config: CreateClientConfig) {
-	const posts = await getAllPosts(createClient(config), { fetch: [] });
+	// uid and dates are metadata, returned regardless. `fetch: []` would be
+	// ignored and return full documents (~4.5 MB per 100 posts).
+	const posts = await getAllPosts(createClient(config), {
+		fetch: ["blogpost.uid"],
+	});
 	return posts.map((post) => ({
 		uid: post.uid ?? "",
 		lastmod: post.last_publication_date,

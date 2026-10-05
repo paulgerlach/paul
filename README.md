@@ -25,4 +25,4 @@ The Playwright signup specs need the local Postgres from `DATABASE_URL`.
 
 ## Conventions
 
-See [`svelte-migration-plan/patterns.md`](svelte-migration-plan/patterns.md) for the Svelte 5 conventions used here, and [`svelte-migration-plan/`](svelte-migration-plan/) for how the site was ported from Next.js.
+See [`CLAUDE.md`](CLAUDE.md) for the project state and the Svelte 5 conventions used here, and [`svelte-migration-plan/`](svelte-migration-plan/) for how the site was ported from Next.js.

@@ -69,11 +69,13 @@ test("nav and footer link to the same pages as the site's", async ({
 	]);
 
 	// Landing-only: the logo links home, the CTAs go to the page's own anchors,
-	// and the footer's "Städte" group links the city pages and their hub.
+	// the footer's "Städte" group links the city pages and their hub, and its
+	// "Produkt" group the landing pages.
 	const landingOnly = [
 		"/",
 		"#start",
 		"#faq",
+		"/upgrade-now",
 		"/messdienstanbieter",
 		...CITIES.map((c) => `/messdienstanbieter/${c.slug}`),
 	];

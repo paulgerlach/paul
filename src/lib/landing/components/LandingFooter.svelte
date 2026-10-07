@@ -1,7 +1,7 @@
 <!--
-  Footer of the landing pages: the site footer's link groups, socials, partner
-  badge, address and disclaimer (Footer/footerLinks.ts), in the landing
-  design's dark layout. The site's tagline and newsletter form are left out,
+  Footer of the landing pages: a "Produkt" group with the landing pages, some
+  of the site footer's link groups, socials, partner badge, address and
+  disclaimer (Footer/footerLinks.ts), in the landing design's dark layout. The site's tagline and newsletter form are left out,
   so the page's own signup stays the only email form.
 -->
 <script lang="ts">
@@ -12,22 +12,18 @@
 		DienstleistungenLinksGroup,
 		VDIV_PARTNER_URL,
 		datenschutzLinksGroup,
-		gerateLinksGroup,
 		kundenLinksGroup,
 		newsInfoLinksGroup,
-		rechtlichesLinksGroup,
+		produktLinksGroup,
 		socials,
-		standorteLinksGroup,
 	} from "$lib/components/Footer/footerLinks";
 	import { CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
 	import { cityRoute, ROUTE_HOME, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 
 	const groups = [
-		gerateLinksGroup,
+		produktLinksGroup,
 		DienstleistungenLinksGroup,
-		standorteLinksGroup,
-		rechtlichesLinksGroup,
 		kundenLinksGroup,
 		newsInfoLinksGroup,
 	];
@@ -130,7 +126,7 @@
 	.fgrid {
 		padding-block: 120px 80px;
 		display: grid;
-		grid-template-columns: 1.3fr repeat(6, 1fr);
+		grid-template-columns: 1.3fr repeat(4, 1fr);
 		gap: 28px;
 		font-size: 15px;
 	}

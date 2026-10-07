@@ -10,7 +10,8 @@ type EventType =
 	| "newsletter"
 	| "newinquiry"
 	| "contactform"
-	// Signup on the /messdienstwechsel landing page
+	// Signup on a landing page (/messdienstwechsel, /messdienstanbieter and
+	// its city pages). Payload: placement, page, and `city` (slug) on city pages.
 	| "switchinquiry";
 
 interface WebhookPayload {

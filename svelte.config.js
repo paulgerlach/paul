@@ -10,7 +10,9 @@ const config = {
 			filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
 	},
 	kit: {
-		adapter: adapter({ runtime: "nodejs22.x" }),
+		// fra1: the audience is German, so render next to it instead of in the
+		// default iad1 (a transatlantic hop on every CDN cache miss).
+		adapter: adapter({ runtime: "nodejs22.x", regions: ["fra1"] }),
 		alias: { $slices: "src/lib/slices" },
 	},
 };

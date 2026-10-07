@@ -1,44 +1,51 @@
-# Phase 2: Sections (static)
+# Phase 2: sections (static markup and CSS)
 
-Each section is its own component in `$lib/landing/components/sections/`, with its CSS ported from the design into a scoped `<style>`. `+page.svelte` only composes them in order. The content (lists, rows, chart data) is in `$lib/landing/data.ts` as typed constants, not inline markup. That keeps the components small and makes a later move to Prismic possible.
+Goal: the page matches the design at 1440 / 1100 / 980 / 700 / 375 px with static, server-rendered content. Behaviour comes in phase 3, so every dynamic number is rendered from the SSR `now` already here (the functions of `deadline.ts` can be written first, see §3.1).
 
-This phase produces the **final static markup**: every animated element is already in its end state. Phase 3 adds the motion. The page is presentable after this phase.
+## 2.1 Porting rules
 
-## Layout pieces (from phase 1)
+- CSS from the design's `#umr-css` goes into the section that uses it, as a scoped `<style>` block; class names keep the design's `um-` prefix so the two can be diffed. Shared `.dm-*` primitives (`dm-in`, `dm-h2`, `dm-pill`, `bk-next`) come from `tokens.css` and the shared sections; check each against `tokens.css` before copying anything.
+- The design's reveal-on-scroll (`.rv` → `.in`) is the existing `inView` attachment.
+- Inline SVG icons stay inline in the section (as in the design), except icons that already exist in `$lib/landing/components/icons/` (check, chevron, verified badge).
+- No umlauts in file names: `Deadlines.svelte` (Fristen), `Consequences.svelte` (Folgen), `WhyHeidi.svelte`.
 
-| Component | Design element | Notes |
-|---|---|---|
-| `LandingHeader` | `.banner` + `nav.top` | The banner reads "Ab 1.1.2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Jetzt den Wechsel prüfen." and links to `#faq` with "Mehr erfahren". The nav has the **site's items and dropdowns** (Geräte, Funktionen, Blog, Kunden, Preise) from `navGroups.ts`, in the design's visual style. The design's own items (Produkt, Partner, Lösungen, Ressourcen) are **not** used. Details in phase 1.3 |
-| `LandingFooter` | `footer` | The **site's footer link groups** from `footerLinks.ts`, laid out and styled like the design's footer. Details in phase 1.3. The design's own footer columns (Über uns, Karriere, Plattform …) are **not** used |
+## 2.2 The sections, in page order
 
-## Page sections, in order
+| # | Section (design comment) | File | Reuse | Notes |
+|---|---|---|---|---|
+| 1 | HERO + COUNTDOWN | `Hero.svelte`, `Countdown.svelte`, `YearBand.svelte` | new | Pill with a pulsing dot, H1 with a dynamic `<em>` ("knapp drei Monate"), lede, 4-unit countdown (`role="timer"`, `aria-live="off"`), two CTAs, the 12-month year band, 3 fact checks. Hidden "expired" paragraph (phase 3.2) |
+| 2 | LOGOS | `LogoStrip.svelte`* | `sections/LogoStrip` | Text from content, default logo order |
+| 3 | FRISTEN | `Deadlines.svelte` | new | `<ol>` timeline, 4 entries; state classes `done` / `now` / future from `deadline.ts`, not hard-coded. The `now` entry shows "Noch N Tage" |
+| 4 | FOLGEN | `Consequences.svelte` | new | 3 cards with big numbers (count up, phase 3), the first one highlighted (`hot`), § source under each; the WEG note |
+| 5 | RECHNER (`#risiko`) | `RiskCalculator.svelte` | new | Two range inputs, a 4-button segment (radiogroup), a switch, the result card with bar and two sub-values, CTA. Phase 3.5 |
+| 6 | ZEIT | `TimeWindow.svelte`, `MonthCalendar.svelte`, `Steps.svelte` | new | 3 KPIs (Werktage, Wochen, Feiertage), the month calendars from the current month to December, a legend, the 5-step `<ol>` |
+| 7 | WARUM HEIDI | `WhyHeidi.svelte` | new | Bento: one big card with the radio-wave animation (CSS only), four small cards |
+| 8 | STIMMEN | `Testimonials.svelte`* | new shared `sections/Testimonials` | See §2.3 |
+| 9 | FAQ | `Faq.svelte`* | `sections/Faq` | Needs a `lead` prop (§2.3) |
+| 10 | ABSCHLUSS | `FinalCta.svelte`* | `sections/FinalCta` | Needs a kicker ("Noch N Tage") and gets the form (phase 4) |
+| 11 | Partner und Verbände | `Trust.svelte`* | `sections/Trust` (moved) | Unchanged |
 
-| # | Component | Design selector | Content and markup notes |
-|---|---|---|---|
-| 1 | `Hero` | `header.hero` | H1 "Messdienst&shy;leister wechseln.<br>So einfach wie nie." (keep the `&shy;` for German hyphenation). Lede. `SignupForm` with `id="start"` (phase 4). 3 check bullets. A `DemoCard` link with a looping video thumbnail. On the right, the `HeroCard` visual: Lindenallee 8 · Mehrfamilienhaus · 36 WE, a status pill, and 3 checks. Mark the visual `aria-hidden` and give it a text alternative |
-| 2 | `LogoStrip` | `section.logos` | "Über 200 Hausverwaltungen rechnen bereits mit Heidi ab." and 12 logos with `alt` text |
-| 3 | `Steps` | `section.steps` | Eyebrow "Heidi Portfolio-Checker", H2, intro text, `<ol>` with 5 steps. Each step has a mini visual, a number, an H3 and a paragraph. Each mini visual is a small snippet in the same file, because they differ too much for one shared component |
-| 4 | `OldVsNewWay` | first `section.block` | H2 "Weniger Nachfragen. Zufriedenere Mieter.". On the left, "Der alte Weg.": 12 positioned tiles (8 tenant or provider issues, 4 bad reviews) from `oldWayTiles` in `data.ts`. They are generated by JS in the design, so here they're an `{#each}` over the data, with `left`/`top` and initials computed. On the right, "Der Heidi-Weg.": a phone mock-up with a message bubble of 4 lines |
-| 5 | `Rollout` | `section.rollout` | Eyebrow "Für Hausverwaltungen", H2, intro text. A Gantt card: a title, a 3-item legend, 4 phase bands, a header row (Arbeitspaket, W1–W8, laufend) and 7 rows from `ganttRows`. Each bar is a focusable `<button>` with a type (`op`/`co`/`uvi`), a column span, an optional milestone and an optional arrow. The tooltip details (`t`, `w`, `p[]`, `m`) are in the same data. The Gantt keeps its `role="img"` + `aria-label` summary. Horizontal scroll and the "Zum Ansehen seitlich wischen →" hint show below 700px. Footer: a statement and the pill "**8** Wochen bis zur ersten uVI" |
-| 6 | `Service` | `section.dark#service` | A dark section with 2 panels. The first is "Ein Ansprechpartner. Für alles." with a chat vignette (question, typing dots, answer). The second is "Monteure, die den Termin halten." with an appointment card, 3 checks and 3 KPIs. **The KPIs `XX %` and `XX` are placeholders, kept as in the design for now**. Render them with a `data-placeholder` attribute and a visible dashed outline in dev, so they can't ship unnoticed |
-| 7 | `Automation` | second `section.block` | H2 "Heidi liest ab, prüft und rechnet ab.". A review card: copy plus an anomaly document (Whg. 3.2 +64 %, 3 warnings, "Rückfrage senden"). Make that button `type="button"` and inert; it's decoration. Below it, 3 cards: "Umlage, die mitwächst." (with a link: "Kostenlosen Abrechnungscheck starten →" → `#start`), "Pflichten ohne Aufwand." (a counter showing 212 of 216 sent), and "Direkt in Ihre Software." (an ERP mapping card) |
-| 8 | `Insights` | third `section.block` | H2 "Entscheiden mit Verbrauchsdaten in Echtzeit." and a link "Auswertungen ansehen →" (target: `/funktionen` unless told otherwise). 3 columns: a **budget chart** (a ring with 62 % and 12 monthly bars with tabs for Heizung, Warmwasser and Kaltwasser), a **risk chart** (4 property bars and an average line), and an "Ask Heidi" input mock-up with 5 suggestion chips. Each has an H3 and a paragraph |
-| 9 | `TestimonialBanner` | `section.banner-sec` | A photo, a 3-line H2 ("Persönlich betreut." / "Zuverlässig montiert." / "Pünktlich abgerechnet."), a CTA "Demo ansehen" and a caption. **Placeholder, kept as in the design for now** (go-live gate in phase 5) |
-| 10 | `Faq` | `section.faq#faq` | H2 "FAQ" and 8 native `<details>`/`<summary>` items from `faqItems`. The first is `open`. Keep native `<details>` instead of reusing `Basic/FAQ`, because the design is different and native details work without JS. JSON-LD is described in phase 1.7 |
-| 11 | `FinalCta` | `section.final` | H2 "Wechseln war nie einfacher.", a subline, and a second `SignupForm` |
+The design's nav, banner and footer are replaced by `LandingHeader` / `LandingFooter`.
 
-## Shared small components
-- `SignupForm`: used twice. It takes an `id` prop for the anchor and an `inputId` prop. See phase 4.
-- `CheckBadge` (`.okb` with a check SVG), `Arrow`, `Chevron`: icon components.
-- `Eyebrow` and `SectionHead`: optional. Only extract them if they remove real repetition (they appear in 6 or more sections).
+## 2.3 Changes to shared code
 
-## Accessibility in this phase
-- The heading order is H1 → H2 per section → H3. The design already follows it.
-- Decorative mock-ups (phone, documents, cards) get `aria-hidden="true"` when their meaning is already in the nearby text. The interactive charts (phase 3) stay accessible with labelled buttons.
-- Every `href="#"` in the design becomes a real target or is removed. None are shipped.
-- The nav dropdowns open on keyboard focus as well as hover (phase 1.3).
+Each change keeps the existing pages pixel-identical (check `/messdienstwechsel`, `/messdienstanbieter`, `/messdienstanbieter/berlin` at the five widths before and after).
+
+- **`Faq`:** optional `lead?: string` rendered under the title, as in the design's `.dm-faq-g` left column (`dm-lead`). Check that the existing two-column FAQ layout is the same as the design's; if the design differs, add a variant prop rather than a copy.
+- **`FinalCta`:** optional `kicker?: Snippet` above the title (the design's `um-cta-k`, which shows the live day count). Check whether the design's `um-cta` layout (text left, button right) differs from the existing final CTA with form; phase 4 decides the final layout because the form is added.
+- **Testimonials:** move the quotes out of `region/References.svelte` into `$lib/landing/data/testimonials.ts` (Werne, Vitolus, Gerhard: quote, name, role, badge). New `sections/Testimonials.svelte` renders the design's three-card row (`tm2 um-tm3`: verified badge, quote, initials avatar, name and role). `References` reads its two mini quotes from the same module. Copy stays word for word.
+- **`Trust`:** move `sections/region/Trust.svelte` to `sections/Trust.svelte` and update the region wrappers' imports. It's now used by two page families, so it no longer belongs in `region/`.
+- **`confetti.ts`:** this design's burst differs (120 pieces, slower fall, white instead of ink in the palette, fade from 3.4 s). Add options (`count`, `colors`, `gravity`/`maxFall`, `fadeAfter`) with the current values as defaults, so the city pages don't change.
+
+## 2.4 Layout and accessibility details from the design
+
+- The countdown digits are `<span>`s inside a fixed-width box, so a digit change never shifts the layout. Use `font-variant-numeric: tabular-nums` as the design does.
+- The calculator's labels are real `<label>`s; the segment buttons get `role="radio"` and `aria-checked` (the design adds them in JS; render them in markup).
+- Calendar day cells carry `title` attributes ("Heute", the holiday name, "Frist: 31.12.2026"); also give them an `aria-label` with the date, and give each month grid a heading (the design's `<h3>` with "N Werktage übrig").
+- Exactly one `<h1>`. Section headings are `<h2>`, card titles `<h3>`, as in the design.
 
 ## Done when
-- A side-by-side comparison with the design artifact at 1440, 1100, 980, 700, 560 and 375 px shows no layout differences, apart from known placeholders.
-- No horizontal page scroll at 375 px. Only the Gantt scrolls, inside its own container.
-- `bun run check` is clean.
+
+- All 11 sections render server-side with the design's spacing at the five widths, with JS disabled too (numbers from the SSR `now`).
+- The other landing pages are unchanged after the shared-code changes.
+- No hydration warnings.

@@ -38,4 +38,6 @@ export type SeoData = {
 	ogDescription?: string;
 	ogImage?: string;
 	noindex?: boolean;
+	/** Keep the self-referencing canonical on a noindex page (a city page before its go-live). */
+	keepCanonical?: boolean;
 };

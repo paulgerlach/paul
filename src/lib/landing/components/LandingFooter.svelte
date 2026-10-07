@@ -1,7 +1,7 @@
 <!--
-  Footer of the landing pages: the site footer's link groups, socials, partner
-  badge, address and disclaimer (Footer/footerLinks.ts), in the landing
-  design's dark layout. The site's tagline and newsletter form are left out,
+  Footer of the landing pages: a "Produkt" group with the landing pages, some
+  of the site footer's link groups, socials, partner badge, address and
+  disclaimer (Footer/footerLinks.ts), in the landing design's dark layout. The site's tagline and newsletter form are left out,
   so the page's own signup stays the only email form.
 -->
 <script lang="ts">
@@ -12,21 +12,18 @@
 		DienstleistungenLinksGroup,
 		VDIV_PARTNER_URL,
 		datenschutzLinksGroup,
-		gerateLinksGroup,
 		kundenLinksGroup,
 		newsInfoLinksGroup,
-		rechtlichesLinksGroup,
+		produktLinksGroup,
 		socials,
-		standorteLinksGroup,
 	} from "$lib/components/Footer/footerLinks";
-	import { ROUTE_HOME } from "$lib/routes";
+	import { CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
+	import { cityRoute, ROUTE_HOME, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 
 	const groups = [
-		gerateLinksGroup,
+		produktLinksGroup,
 		DienstleistungenLinksGroup,
-		standorteLinksGroup,
-		rechtlichesLinksGroup,
 		kundenLinksGroup,
 		newsInfoLinksGroup,
 	];
@@ -68,6 +65,21 @@
 				</ul>
 			</div>
 		{/each}
+
+		<!-- Every city page, also those not live yet (they render with noindex). -->
+		{#if CITIES.length}
+			<nav class="cities" aria-labelledby="f-cities-h">
+				<h4 id="f-cities-h">Städte</h4>
+				<ul>
+					{#each CITIES as city (city.slug)}
+						<li><a class="city" href={cityRoute(city.slug)}>{city.name}</a></li>
+					{/each}
+					<li class="all">
+						<a class="city" href={ROUTE_MESSDIENSTANBIETER}>Ganz Deutschland</a>
+					</li>
+				</ul>
+			</nav>
+		{/if}
 
 		<div class="legal">
 			<span>© {year} {ADDRESS.company}, Berlin</span>
@@ -114,7 +126,7 @@
 	.fgrid {
 		padding-block: 120px 80px;
 		display: grid;
-		grid-template-columns: 1.3fr repeat(6, 1fr);
+		grid-template-columns: 1.3fr repeat(4, 1fr);
 		gap: 28px;
 		font-size: 15px;
 	}
@@ -179,6 +191,29 @@
 		font-size: 11px;
 		font-weight: 600;
 	}
+	.cities {
+		grid-column: 1 / -1;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		padding-top: 32px;
+	}
+	.cities ul {
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		column-gap: 28px;
+	}
+	.cities .all {
+		font-weight: 600;
+		white-space: nowrap;
+		grid-column: -2 / -1;
+	}
+	a.city {
+		color: #fff;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: rgba(255, 255, 255, 0.35);
+	}
+	a.city:hover {
+		text-decoration-color: var(--accent);
+	}
 	.legal {
 		grid-column: 1 / -1;
 		border-top: 1px solid #36504a;
@@ -230,6 +265,9 @@
 		.first {
 			grid-column: 1 / -1;
 		}
+		.cities ul {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
 	}
 	@media (max-width: 980px) {
 		/* Long German words would otherwise widen the two columns. */
@@ -241,6 +279,9 @@
 		.fgrid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			padding-block: 96px 56px;
+		}
+		.cities ul {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>

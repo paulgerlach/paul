@@ -6,6 +6,7 @@ import {
 	ROUTE_GERAETE,
 	ROUTE_HOME,
 	ROUTE_IMPRESSUM,
+	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
 import type { FooterLinkGroupType } from "$lib/types";
 
@@ -36,6 +37,19 @@ export const gerateLinksGroup: FooterLinkGroupType = {
 		{
 			url: ROUTE_GERAETE,
 			text: "Gas",
+			isNeu: false,
+		},
+	],
+};
+
+/** Landing footer only (the site footer keeps its own groups). */
+export const produktLinksGroup: FooterLinkGroupType = {
+	title: "Produkt",
+	mainUrl: ROUTE_FUNKTIONEN,
+	groupLinks: [
+		{
+			url: ROUTE_UPGRADE_NOW,
+			text: "Jetzt noch umrüsten",
 			isNeu: false,
 		},
 	],

@@ -1,5 +1,6 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
+import type { LandingChrome } from "$lib/landing/chrome";
 import type { SeoData } from "$lib/seo/site";
 
 declare global {
@@ -8,6 +9,8 @@ declare global {
 		// interface Locals {}
 		interface PageData {
 			seo?: SeoData;
+			/** Header texts of a landing page, read by the landing layout. */
+			landing?: LandingChrome;
 		}
 		// interface PageState {}
 		// interface Platform {}

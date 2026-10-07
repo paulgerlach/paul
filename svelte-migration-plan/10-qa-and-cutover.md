@@ -17,9 +17,9 @@ for (const path of SITEMAP) for (const width of [375, 768, 992, 1200, 1640]) {
   await expect(page).toHaveScreenshot(`${slug(path)}-${width}.png`, { fullPage: true, maxDiffPixelRatio: 0.01, animations: 'disabled', mask: [page.locator('.swiper, [data-lottie], video')] });
 }
 ```
-Generate the baseline screenshots from the **Next** app (`BASE_URL=http://localhost:3000 --update-snapshots`), then run against Svelte. **Exclude `/messdienstwechsel`** from this loop: Next has no such page, so there's no baseline. It gets its own Svelte-generated snapshots once the design is signed off.
+Generate the baseline screenshots from the **Next** app (`BASE_URL=http://localhost:3000 --update-snapshots`), then run against Svelte. **Exclude `/messdienstwechsel`, `/messdienstanbieter`, `/messdienstanbieter/*` and `/upgrade-now`** from this loop: Next has no such pages, so there's no baseline. It gets its own Svelte-generated snapshots once the design is signed off.
 
-**SEO diff:** re-run the phase 2.6 head-snapshot script against Svelte and `diff -r seo-baseline seo-svelte`. The only allowed differences are the deliberate fixes (robots path, blog titles, verification tag) and the new `/messdienstwechsel` page, which isn't in `seo-baseline/`.
+**SEO diff:** re-run the phase 2.6 head-snapshot script against Svelte and `diff -r seo-baseline seo-svelte`. The only allowed differences are the deliberate fixes (robots path, blog titles, verification tag) and the new landing pages `/messdienstwechsel`, `/messdienstanbieter`, `/messdienstanbieter/<city>` and `/upgrade-now`, which aren't in `seo-baseline/`.
 
 **Unit tests (vitest):** `isGibberish`, rate limiter, `formatDate`, `isWithinBusinessHours`, `Questionnaire` class (flow branching, step bounds, increment/decrement floors).
 
@@ -101,7 +101,7 @@ Both sides are behind Vercel's CDN, so TTFB is equal (~870 ms under Lighthouse t
 3. **Vercel project settings:** framework preset → SvelteKit, root directory → `/`, output auto-detected. Copy env vars and rename `NEXT_PUBLIC_PRISMIC_ENVIRONMENT` → `PUBLIC_PRISMIC_ENVIRONMENT`. Make sure AI Gateway access is enabled.
 4. **Prismic dashboard:** preview URL → `https://heidisystems.com/api/preview`. Remove or replace the revalidate webhook (phase 5.3). Push slice models from the Svelte Slice Machine.
 5. **Deploy to a preview URL, rerun the full Playwright suite plus the visual diff against production Next, then promote to production.**
-6. **Post-deploy checks (first hour):** Search Console has no spike in 404s or coverage errors. Vercel logs are free of 5xx. Each form submits once on prod. The `/messdienstwechsel` signup creates a lead and its `switchinquiry` webhook reaches Make.com. The chat works.
+6. **Post-deploy checks (first hour):** Search Console has no spike in 404s or coverage errors. Vercel logs are free of 5xx. Each form submits once on prod. The `/messdienstwechsel` signup creates a lead and its `switchinquiry` webhook reaches Make.com. A city-page signup creates a lead with the city source (`messdienstanbieter-<slug>`) and its webhook carries `city`. An `/upgrade-now` signup creates a lead with `source = upgrade-now` and its webhook carries `page: "/upgrade-now"`. The chat works.
 
 ## 10.4a Known issues fixed in this phase
 Details are in [known-issues.md](known-issues.md). Tick them there as well.
@@ -116,4 +116,4 @@ The previous Next deployment stays in Vercel's deployment history. Rollback is "
 ## 10.6 After cutover
 - Delete the second Vercel project created in phase 1.
 - Remove `/api/contact` if the form action fully replaces it and nothing external uses it.
-- Write a `CLAUDE.md` / contributor notes describing the Svelte conventions (`patterns.md` is a good start).
+- Write a `CLAUDE.md` / contributor notes describing the Svelte conventions. Done: [`CLAUDE.md`](../CLAUDE.md) (2026-10-05).

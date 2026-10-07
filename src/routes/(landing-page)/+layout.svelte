@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { dev } from "$app/environment";
+	import { page } from "$app/state";
 	import "$lib/landing/tokens.css";
 	import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 	import geistLatinExt from "@fontsource-variable/geist/files/geist-latin-ext-wght-normal.woff2?url";
 	import ChatBot from "$lib/components/Common/ChatBot/ChatBot.svelte";
 	import LandingFooter from "$lib/landing/components/LandingFooter.svelte";
 	import LandingHeader from "$lib/landing/components/LandingHeader.svelte";
+	import { DEFAULT_CHROME } from "$lib/landing/chrome";
 
 	let { data, children } = $props();
+
+	// Each page returns its header texts from its load as `landing`.
+	const chrome = $derived(page.data.landing ?? DEFAULT_CHROME);
 
 	// Geist is only used on the landing pages, so it's registered here and not
 	// in the root layout. Same pattern as Exo 2 there.
@@ -30,7 +35,12 @@
 </svelte:head>
 
 <div class="lp" data-dev={dev || undefined}>
-	<LandingHeader posts={data.navPosts} />
+	<LandingHeader
+		posts={data.navPosts}
+		bannerText={chrome.bannerText}
+		bannerHref={chrome.bannerHref}
+		ctaLabel={chrome.ctaLabel}
+	/>
 	{@render children()}
 	<LandingFooter />
 </div>

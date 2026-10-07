@@ -17,12 +17,14 @@
 		placement,
 		id,
 		inputId,
+		submitLabel = "Wechsel kostenlos prüfen",
 	}: {
 		form: SuperValidated<SwitchInquiry>;
 		placement: SwitchPlacement;
 		/** Anchor of the form element (the hero's is `start`). */
 		id?: string;
 		inputId: string;
+		submitLabel?: string;
 	} = $props();
 
 	const { form, errors, enhance, message, submitting, formId } = superForm(
@@ -76,7 +78,7 @@
 		/>
 		<button class="btn btn-accent" type="submit" disabled={$submitting || sent}>
 			{#if $submitting}<span class="spinner" aria-hidden="true"></span>{/if}
-			{sent ? "Wir melden uns" : "Wechsel kostenlos prüfen"}
+			{sent ? "Wir melden uns" : submitLabel}
 		</button>
 	</form>
 	<p class="status" aria-live="polite">

@@ -7,26 +7,13 @@
 	import VerifiedBadge from "$lib/landing/components/icons/VerifiedBadge.svelte";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 	import { customerLogos } from "$lib/landing/data/logos";
+	import { testimonial } from "$lib/landing/data/testimonials";
 	import type { RegionContent } from "./types";
 
 	let { content }: { content: RegionContent } = $props();
 
-	const minis = [
-		{
-			badge: "Verifizierter Heidi-Kunde",
-			quote:
-				"„Mit Heidi Systems erfassen wir den Verbrauch vollautomatisch – das spart Aufwand und schafft Transparenz für uns und unsere Bewohner.“",
-			name: "Fabian Höhne",
-			role: "Geschäftsführer & Gesellschafter, Vitolus GmbH",
-		},
-		{
-			badge: "Verifizierter Gewerbekunde",
-			quote:
-				"„Heidi hat uns bei der Sanierung einer Gewerbefläche durch die Installation einer zuverlässigen Verbrauchserfassung optimal unterstützt.“",
-			name: "Klaus Gerhard",
-			role: "Immobilienmanager, Gerhard Real Estate Management",
-		},
-	];
+	const werne = testimonial("werne");
+	const minis = [testimonial("vitolus"), testimonial("gerhard")];
 </script>
 
 <section class="ref" aria-label="Kundenreferenz">
@@ -42,15 +29,9 @@
 				<div class="ref-logo">
 					<Image src={customerLogos.werne.src} alt={customerLogos.werne.alt} />
 				</div>
-				<blockquote>
-					„Die Ablesungen und Verbrauchserfassungen laufen reibungslos und
-					pünktlich ab – sowohl für uns als Hausverwaltung als auch für unsere
-					Mieter.“
-				</blockquote>
+				<blockquote>{werne.quote}</blockquote>
 				<p class="ref-who">
-					<b>Gotthard Werne</b><span
-						>Geschäftsführer, Werne Immobilien GmbH</span
-					>
+					<b>{werne.name}</b><span>{werne.role}</span>
 				</p>
 				<a
 					class="ref-btn"

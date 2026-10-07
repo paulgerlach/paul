@@ -38,6 +38,7 @@
 	<LandingHeader
 		posts={data.navPosts}
 		bannerText={chrome.bannerText}
+		bannerHref={chrome.bannerHref}
 		ctaLabel={chrome.ctaLabel}
 	/>
 	{@render children()}

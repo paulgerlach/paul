@@ -6,6 +6,8 @@ export type LandingChrome = {
 	bannerText: string;
 	/** Label of the nav CTA to `#start`. */
 	ctaLabel?: string;
+	/** Target of the banner's "Mehr erfahren" link (default `#faq`). */
+	bannerHref?: string;
 };
 
 /** /messdienstwechsel's texts, also the fallback (e.g. on an error page). */

@@ -2,14 +2,14 @@
 
 ## 5.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/upgrade-now`
+- [x] `bun run dev` → `http://localhost:5173/upgrade-now`
 - [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (the design's widths). Load Geist into the saved design file for the comparison, as for the city pages. Expected differences: the site nav and footer, the form in the final CTA (phase 4.3)
 - [ ] The other landing pages unchanged after the shared-code changes of phase 2.3 (`/messdienstwechsel`, `/messdienstanbieter`, `/messdienstanbieter/berlin` at the same widths)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host`
 - [ ] Keyboard-only: banner link, CTAs, both sliders (arrow keys), the segment buttons, the switch, FAQ, the form
 - [ ] Reduced-motion emulation: final numbers immediately, no countdown slide, no confetti, no wave loop
 - [ ] JS disabled: every number server-rendered and plausible, the form submits
-- [ ] Time zone: the browser in UTC and in America/New_York shows the same days and calendar as in Europe/Berlin
+- [ ] Time zone (unit tests pass with `TZ=UTC` and `TZ=America/New_York`; browser check open): the browser in UTC and in America/New_York shows the same days and calendar as in Europe/Berlin
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05. The countdown and the year band must not shift the layout when the client takes over
 - [ ] No hydration warnings or console errors
 

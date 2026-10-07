@@ -10,7 +10,7 @@ Marketing site for Heidi Systems (heidisystems.com): SvelteKit 2, Svelte 5 (rune
   - Still open before/at cutover: the manual QA checklist (§10.2), the Vercel/Prismic dashboard steps (§10.4 steps 3–4), and the two unticked known issues: **KI-34** (placeholder phone in home JSON-LD, needs business confirmation) and **KI-36** (copy typos, need content-owner sign-off). Fragebogen defaults in `$lib/fragebogen/schema.ts` also still need business confirmation.
 - **`/messdienstwechsel` landing page** (branch `feat/landing-pages`, plan in git history at `65470139`) is built: route group `(landing-page)`, own header/footer, signup form → `leads` table + `switchinquiry` Make.com event. Its go-live gate (now `new-landing-page-plan/05-qa-and-go-live.md` §5.6) is open: KPIs (`XX`), testimonial, customer logos, demo video and the Make.com route are still placeholders. If not resolved by cutover, set `seo.noindex = true` and drop it from the sitemap.
 - **City landing pages `/messdienstanbieter/[city]` and the Germany hub `/messdienstanbieter`** (same branch, plan in git history at `be2c1feb`, status in its README "Implementation notes") are built: one 13-section template in `$lib/landing/sections/region/`, filled per page from a content module. 25 cities exist (every city in the designs' footer); only `live: true` cities in `cities/index.ts` are indexed, in the sitemap and on the Germany map (Berlin so far); the footer "Städte" group links every city. The others render with `noindex` for review. Their go-live gate (`new-landing-page-plan/05-qa-and-go-live.md` §5.5: KPIs, logos, photos, copy/SEO sign-off, the FAQ "Nein" answers) is open.
-- **`/upgrade-now` landing page ("Jetzt noch umrüsten", Heizkostenverordnung retrofit deadline 31.12.2026)** is planned in `new-landing-page-plan/`, not built yet. The landing footer's "Produkt" group already links to it. All its date logic must run in Europe/Berlin from one `now` passed from `load` (plan phase 3).
+- **`/upgrade-now` landing page ("Jetzt noch umrüsten", Heizkostenverordnung retrofit deadline 31.12.2026)** is built (plan and implementation notes in `new-landing-page-plan/`), `noindex` and out of the sitemap until its go-live gate (`05-qa-and-go-live.md` §5.4: legal sign-off, KPIs, expired-state copy, slug). All date logic is in `pages/upgrade-now/deadline.ts` (Europe/Berlin, pure, takes `now`); sections read the per-page `DeadlineClock` (`clock.svelte.ts`), which starts at the `now` from `load` and ticks in the browser. Never call `Date.now()` in its components.
 - **After cutover:** delete the phase-1 second Vercel project; consider removing `/api/contact` once nothing external uses it; upgrade Swiper past 11.
 
 Plans and history: `svelte-migration-plan/` (README has the decisions log, `known-issues.md` the KI list) and `new-landing-page-plan/`.
@@ -52,10 +52,11 @@ src/
     attachments/                {@attach} helpers: swiper, lottie, clickOutside, slideToggle, scrollToBottom
     landing/                    landing pages: tokens.css, motion.ts, cta.ts, chrome.ts (header texts per page)
       pages/<landing>/sections/ every section of a page, one file each (thin wrappers where shared); page data
-      sections/                 shared section implementations (LogoStrip, Faq, FinalCta; region/ = city/Germany template)
+      sections/                 shared section implementations (LogoStrip, Faq, FinalCta, Testimonials, Trust; region/ = city/Germany template)
       components/               building blocks: LandingHeader/Footer, SignupForm, DemoCard, EasyChecks, icons
       pages/messdienstanbieter-city/cities/  index.ts (CITIES, live flags), <slug>.ts + <slug>-map.ts (generated), cities.test.ts
-      attachments/ data/        landing attachments; customer logos; confetti.ts (canvas burst)
+      pages/upgrade-now/        content.ts, deadline.ts + clock.svelte.ts (time source), calculator.ts, sections/, components/
+      attachments/ data/        landing attachments (inView, countUp, reveal …); customer logos, testimonials; confetti.ts (canvas burst)
     server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), rateLimit, slack, webhooks, ai/personas
     chat/                       SlackChat + chat context, businessHours
     fragebogen/                 Questionnaire rune class + zod schema (shared client/server)

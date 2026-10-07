@@ -1,8 +1,9 @@
 /**
  * Confetti burst on a canvas, ported from the city designs (both billing
  * demos use the same one): 60 pieces in 6 colours, falling for about 3.8 s,
- * then the canvas is cleared. No dependency. Does nothing with reduced
- * motion. Returns a function that stops it (for teardown).
+ * then the canvas is cleared. The options default to that burst; /upgrade-now
+ * passes its slower one. No dependency. Does nothing with reduced motion.
+ * Returns a function that stops it (for teardown).
  */
 import { prefersReducedMotion } from "./motion";
 
@@ -22,6 +23,23 @@ type Options = {
 	size?: { w: [number, number]; h: [number, number] };
 	/** Horizontal spread of the launch point, as a share of `origin.width`. */
 	spread?: number;
+	count?: number;
+	colors?: string[];
+	/** Launch angle range around straight up, as a share of π. */
+	angle?: number;
+	/** Added to the fall speed per frame. */
+	gravity?: number;
+	/** Maximum fall speed. */
+	maxFall?: number;
+	/** Fade-out start and length, ms. */
+	fadeAfter?: number;
+	fadeMs?: number;
+	/** The burst ends after this many ms at the latest. */
+	maxTime?: number;
+	/** Sideways wobble: period (ms) and amplitude. */
+	wobble?: [period: number, amplitude: number];
+	/** Spin speed range. */
+	spin?: number;
 };
 
 /**
@@ -36,6 +54,16 @@ export function burst(
 		speed = [2.6, 3.6],
 		size = { w: [5, 5], h: [7, 7] },
 		spread = 0.7,
+		count = 60,
+		colors = COLORS,
+		angle = 1.1,
+		gravity = 0.085,
+		maxFall = 1.6,
+		fadeAfter = 2800,
+		fadeMs = 900,
+		maxTime = 3800,
+		wobble = [380, 0.45],
+		spin = 0.16,
 	}: Options = {},
 ): () => void {
 	const ctx = canvas.getContext("2d");
@@ -46,8 +74,8 @@ export function burst(
 	canvas.height = height * dpr;
 	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-	const pieces = Array.from({ length: 60 }, (_, i) => {
-		const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.1;
+	const pieces = Array.from({ length: count }, (_, i) => {
+		const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * angle;
 		const v = speed[0] + Math.random() * speed[1];
 		return {
 			x: origin.x + (Math.random() - 0.5) * origin.width * spread,
@@ -57,9 +85,9 @@ export function burst(
 			w: size.w[0] + Math.random() * size.w[1],
 			h: size.h[0] + Math.random() * size.h[1],
 			r: Math.random() * 6.28,
-			vr: (Math.random() - 0.5) * 0.16,
+			vr: (Math.random() - 0.5) * spin,
 			ph: Math.random() * 6.28,
-			c: COLORS[i % COLORS.length],
+			c: colors[i % colors.length],
 			round: Math.random() < 0.25,
 		};
 	});
@@ -71,14 +99,14 @@ export function burst(
 		const k = Math.min(2, (now - last) / 16.67);
 		last = now;
 		ctx.clearRect(0, 0, width, height);
-		const fade = Math.max(0, 1 - Math.max(0, t - 2800) / 900);
+		const fade = Math.max(0, 1 - Math.max(0, t - fadeAfter) / fadeMs);
 		let alive = 0;
 		for (const p of pieces) {
-			p.vy += 0.085 * k;
+			p.vy += gravity * k;
 			p.vx *= 0.975 ** k;
 			p.vy *= 0.975 ** k;
-			if (p.vy > 1.6) p.vy = 1.6;
-			p.x += (p.vx + Math.sin(t / 380 + p.ph) * 0.45) * k;
+			if (p.vy > maxFall) p.vy = maxFall;
+			p.x += (p.vx + Math.sin(t / wobble[0] + p.ph) * wobble[1]) * k;
 			p.y += p.vy * k;
 			p.r += p.vr * k;
 			if (fade <= 0 || p.y > height + 20) continue;
@@ -102,7 +130,7 @@ export function burst(
 			}
 			ctx.restore();
 		}
-		if (alive && t < 3800) frame = requestAnimationFrame(tick);
+		if (alive && t < maxTime) frame = requestAnimationFrame(tick);
 		else ctx.clearRect(0, 0, width, height);
 	});
 

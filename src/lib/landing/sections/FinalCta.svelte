@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from "svelte";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
 	import SignupForm from "$lib/landing/components/SignupForm.svelte";
@@ -9,19 +10,26 @@
 		form,
 		submitLabel,
 		compact = false,
+		id,
+		kicker,
 	}: {
 		title: string;
-		sub: string;
+		sub?: string;
 		form: SuperValidated<SwitchInquiry>;
 		submitLabel?: string;
 		/** Less bottom padding, for pages where another section follows. */
 		compact?: boolean;
+		/** Anchor of the section (`start` where this is the page's only form). */
+		id?: string;
+		/** Rendered above the title (e.g. /upgrade-now's day count). */
+		kicker?: Snippet;
 	} = $props();
 </script>
 
-<section class={["final wrap", compact && "compact"]}>
+<section class={["final wrap", compact && "compact"]} {id}>
+	{@render kicker?.()}
 	<h2>{title}</h2>
-	<p class="final-sub">{sub}</p>
+	{#if sub}<p class="final-sub">{sub}</p>{/if}
 	<SignupForm {form} {submitLabel} placement="final" inputId="email-bottom" />
 </section>
 
@@ -29,6 +37,7 @@
 	.final {
 		text-align: center;
 		padding-block: 120px 160px;
+		scroll-margin-top: 64px;
 	}
 	h2 {
 		font-size: clamp(28px, 3vw, 38px);

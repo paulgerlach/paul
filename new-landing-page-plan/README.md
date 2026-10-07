@@ -13,6 +13,18 @@ The page is about a deadline **12 weeks away** (today is 2026-10-07). It only do
 - Its go-live gate (§5.4) is mostly legal and business sign-off. Start those requests **now**, in parallel with the build.
 - It needs a defined state for **after** the deadline (§3.2), because the page will still be online on 1.1.2027.
 
+## Implementation notes (2026-10-07)
+
+Phases 1–4 are built, phase 5's automated tests are written; the manual checks of §5.1 and the go-live gate §5.4 are open.
+
+- **Built as planned:** route with `noindex` + self-canonical (not in the sitemap), `bannerHref: "#risiko"`, header CTA "Bestand prüfen"; `content.ts`; `deadline.ts` (Europe/Berlin, tested also with `TZ=UTC` and `TZ=America/New_York`); `calculator.ts`; `DeadlineClock` (`clock.svelte.ts`, context per page). Sections read `clock.today` (changes once a day) for every day-based value and `clock.now` only in the countdown.
+- **Shared code:** `Faq` got `lead` and `variant="split"` (the design's two-column FAQ, plus icons, all closed); `FinalCta` got `id`, `kicker` and an optional `sub`; `Trust` moved to `sections/`; quotes moved to `data/testimonials.ts` (`References` reads them, new `sections/Testimonials.svelte`); `confetti.ts` has options with the old values as defaults; new `attachments/reveal.ts` (reveal on scroll, hides only elements below the fold at mount, so no-JS and above-the-fold content never flash).
+- **CTAs:** `focusSignup()` now focuses `#start input[name=email]` instead of a fixed id, so it works for the hero form of the other pages and for this page's final form (`id="start"`). No other page changed behaviour.
+- **Design bugs fixed** (tell the designer): the last day said "Frist abgelaufen"/"null Tage" (now "Letzter Tag" / "Nur noch heute"); `moText` read past "zwölf" (clamped); the year band's "letztes Zeitfenster" months now come from the current Berlin month instead of the elapsed share of the year; calendar "today" uses Berlin, not the browser's time zone.
+- **Deviations from the design:** the final CTA is the shared centred block with the signup form instead of the dark two-column card (§4.3), its kicker restyled for the light background; the logo strip uses the shared `LogoStrip` look (88/40 px padding, 19 px text instead of 72/64 px and 17 px muted). Show both to the designer.
+- **Expired-state copy** (`hero.expired`, `deadlines.h2Expired`, `calculator.switchLabelExpired`, the step's `timingExpired`, `finalCta.titleExpired`) are placeholders, marked `data-placeholder` in dev (open question 3).
+- **Tests:** `deadline.test.ts`, `calculator.test.ts`, `e2e/upgrade-now.e2e.ts` (SEO, 375 px overflow, the four clock scenarios incl. crossing the deadline, calculator, CTAs, signup, no-JS). The signup test that stores a lead needs the local Postgres (`127.0.0.1:54322`); it wasn't running on 2026-10-07, so that test (and the 4 lead tests of `messdienstanbieter.e2e.ts`) failed with `ECONNREFUSED`. Everything else passed.
+
 ## Phases
 
 | # | File | Scope | Size |

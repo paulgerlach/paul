@@ -23,10 +23,12 @@
 	let {
 		posts,
 		bannerText,
+		bannerHref = "#faq",
 		ctaLabel = "Wechsel starten",
 	}: {
 		posts: PostSummary[];
 		bannerText: string;
+		bannerHref?: string;
 		ctaLabel?: string;
 	} = $props();
 
@@ -55,7 +57,7 @@
 <svelte:window {onkeydown} />
 
 <div class="banner">
-	{bannerText}<a href="#faq">Mehr erfahren</a>
+	{bannerText}<a href={bannerHref}>Mehr erfahren</a>
 </div>
 
 <nav class="top" aria-label="Hauptnavigation">

@@ -4,9 +4,9 @@
 -->
 <script lang="ts">
 	import { countUp } from "$lib/landing/attachments/countUp";
-	import SectionHead from "../components/SectionHead.svelte";
+	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { consequences } from "../content";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 </script>

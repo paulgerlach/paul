@@ -70,6 +70,17 @@ src/lib/landing/
 | Indexing | `noindex` + self-canonical and out of the sitemap until the go-live gate (§4.4), like the other new landing pages |
 | Rendering | SSR with the `(landing-page)` cache header, not prerendered (the day count depends on the request time) |
 
+## Implementation notes (2026-10-12)
+
+Phases 1–3 are built; phase 4's tests are written (`e2e/ueber-uns.e2e.ts`, `content.test.ts`, `retrofitProgress` in `deadline.test.ts`). Open in §4.1: the visual comparison at all five widths, Safari/Firefox/iOS, keyboard-only, Lighthouse. The signup e2e tests need the `leads` table in the local Postgres. Deviations from the plan:
+
+- `ArrowLink` got an `ink` prop: the hero's "Demo buchen" is the design's dark `bk-next`, not the green `.inv`.
+- The career links open in a new tab (`target="_blank" rel="noopener"`), since `CAREERS_HREF` is external.
+- The founder card's "Berlin" pill keeps the design's house icon instead of `icons/Pin.svelte`.
+- Gerhard's badge comes from `data/testimonials.ts` ("Verifizierter Gewerbekunde"); the design says "Verifizierter Heidi-Kunde". Settle with the references sign-off (§4.6).
+- The checklist starts 300 ms after it comes into view (the plan's timing); the design waits another 300 ms before `play()`.
+- `SplitHeading` moved to `$lib/landing/types.ts`.
+
 ## Open questions (the default is built unless answered)
 
 1. **Slug.** *Default: `/ueber-uns`.* `/unternehmen` or `/about` are the alternatives; decide before go-live.

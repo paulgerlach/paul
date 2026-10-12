@@ -8,8 +8,8 @@
 	import { cubicIn, cubicOut } from "svelte/easing";
 	import { prefersReducedMotion } from "$lib/landing/motion";
 	import { hero } from "../content";
-	import { remaining } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { remaining } from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 	const pad = (n: number) => String(n).padStart(2, "0");

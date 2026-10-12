@@ -10,8 +10,8 @@ Marketing site for Heidi Systems (heidisystems.com): SvelteKit 2, Svelte 5 (rune
   - Still open before/at cutover: the manual QA checklist (§10.2), the Vercel/Prismic dashboard steps (§10.4 steps 3–4), and the two unticked known issues: **KI-34** (placeholder phone in home JSON-LD, needs business confirmation) and **KI-36** (copy typos, need content-owner sign-off). Fragebogen defaults in `$lib/fragebogen/schema.ts` also still need business confirmation.
 - **`/messdienstwechsel` landing page** (branch `feat/landing-pages`, plan in git history at `65470139`) is built: route group `(landing-page)`, own header/footer, signup form → `leads` table + `switchinquiry` Make.com event. Its go-live gate (now `new-landing-page-plan/04-qa-and-go-live.md` §4.7) is open: testimonial, customer logos, demo video and the Make.com route are still placeholders (KPIs confirmed 2026-10-12). If not resolved by cutover, set `seo.noindex = true` and drop it from the sitemap.
 - **City landing pages `/messdienstanbieter/[city]` and the Germany hub `/messdienstanbieter`** (same branch, plan in git history at `be2c1feb`, status in its README "Implementation notes") are built: one 13-section template in `$lib/landing/sections/region/`, filled per page from a content module. 26 cities exist (every city in the designs' footer; Gera, added 2026-10-12, isn't in the Germany design, so its map dot is hand-placed in `EXTRA_CITY_DOTS`, `messdienstanbieter/map.ts`); only `live: true` cities in `cities/index.ts` are indexed, in the sitemap and on the Germany map (Berlin so far); the footer "Städte" group links every city. The others render with `noindex` for review. Their go-live gate (`new-landing-page-plan/04-qa-and-go-live.md` §4.6: KPIs, logos, photos, copy/SEO sign-off, the FAQ "Nein" answers) is open.
-- **`/upgrade-now` landing page ("Jetzt noch umrüsten", Heizkostenverordnung retrofit deadline 31.12.2026)** is built (plan in git history at `ddde6575`), `noindex` and out of the sitemap until its go-live gate (now `new-landing-page-plan/04-qa-and-go-live.md` §4.5: legal sign-off, KPIs, expired-state copy, slug). All date logic is in `pages/upgrade-now/deadline.ts` (Europe/Berlin, pure, takes `now`); sections read the per-page `DeadlineClock` (`clock.svelte.ts`), which starts at the `now` from `load` and ticks in the browser. Never call `Date.now()` in its components.
-- **`/ueber-uns` ("Über uns") is planned** in `new-landing-page-plan/` (design https://claude.ai/artifact/TYGNNySnjJfz1jcwJbUMbT), not built yet. It moves the deadline module/clock to `$lib/landing/deadline/` (phase 1.4); update the `/upgrade-now` bullet's paths when that lands.
+- **`/upgrade-now` landing page ("Jetzt noch umrüsten", Heizkostenverordnung retrofit deadline 31.12.2026)** is built (plan in git history at `ddde6575`), `noindex` and out of the sitemap until its go-live gate (now `new-landing-page-plan/04-qa-and-go-live.md` §4.5: legal sign-off, KPIs, expired-state copy, slug). All date logic is in `$lib/landing/deadline/deadline.ts` (Europe/Berlin, pure, takes `now`); sections read the per-page `DeadlineClock` (`$lib/landing/deadline/clock.svelte.ts`), which starts at the `now` from `load` and ticks in the browser. Never call `Date.now()` in its components (same for `/ueber-uns`).
+- **`/ueber-uns` ("Über uns")** (plan in `new-landing-page-plan/`, design https://claude.ai/artifact/TYGNNySnjJfz1jcwJbUMbT) is built, `noindex` and out of the sitemap until its go-live gate (`new-landing-page-plan/04-qa-and-go-live.md` §4.4: company claims, founder role, careers target, copy/SEO sign-off, expired texts, slug). The landing footer's "Über uns" and `/messdienstwechsel`'s "Mehr über Heidi" link to it. Career links use `CAREERS_HREF` (`$lib/landing/cta.ts`, LinkedIn for now).
 - **After cutover:** delete the phase-1 second Vercel project; consider removing `/api/contact` once nothing external uses it; upgrade Swiper past 11.
 
 Plans and history: `svelte-migration-plan/` (README has the decisions log, `known-issues.md` the KI list) and `new-landing-page-plan/`.
@@ -45,7 +45,7 @@ src/
     [[preview=preview]]/        Prismic preview prefix (/preview/…), matcher in src/params/preview.ts
       (base)/                   site Header/Footer/ChatBot; layout loads nav blog teaser + sets cache-control
       (service)/fragebogen/     questionnaire, FragebogenHeader
-    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts)
+    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts), upgrade-now, ueber-uns
     api/                        +server.ts JSON/streaming endpoints (chat, slack, contact, fragebogen, leads, send-email, preview)
     robots.txt/, sitemap.xml/, slice-simulator/
   lib/
@@ -53,10 +53,12 @@ src/
     attachments/                {@attach} helpers: swiper, lottie, clickOutside, slideToggle, scrollToBottom
     landing/                    landing pages: tokens.css, motion.ts, cta.ts, chrome.ts (header texts per page)
       pages/<landing>/sections/ every section of a page, one file each (thin wrappers where shared); page data
-      sections/                 shared section implementations (LogoStrip, Faq, FinalCta, Testimonials, Trust; region/ = city/Germany template)
-      components/               building blocks: LandingHeader/Footer, SignupForm, DemoCard, EasyChecks, icons
+      sections/                 shared section implementations (LogoStrip, Faq, FinalCta, Testimonials, Trust, TrustCards; region/ = city/Germany template)
+      components/               building blocks: LandingHeader/Footer, SignupForm, DemoCard, EasyChecks, SectionHead, ArrowLink, icons
+      deadline/                 retrofit deadline: deadline.ts (pure date logic) + clock.svelte.ts (DeadlineClock), used by upgrade-now and ueber-uns
       pages/messdienstanbieter-city/cities/  index.ts (CITIES, live flags), <slug>.ts + <slug>-map.ts (generated), cities.test.ts
-      pages/upgrade-now/        content.ts, deadline.ts + clock.svelte.ts (time source), calculator.ts, sections/, components/
+      pages/upgrade-now/        content.ts, calculator.ts, sections/
+      pages/ueber-uns/          content.ts, sections/, components/StrokeIcon
       attachments/ data/        landing attachments (inView, countUp, reveal …); customer logos, testimonials; confetti.ts (canvas burst)
     server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), rateLimit, slack, webhooks, ai/personas
     chat/                       SlackChat + chat context, businessHours

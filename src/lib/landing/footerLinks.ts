@@ -3,6 +3,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_MESSDIENSTWECHSEL,
+	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
 import { DEMO_HREF } from "./cta";
@@ -17,7 +18,7 @@ export type LandingFooterGroup = { title: string; links: LandingFooterLink[] };
 
 /** Under the logo, in the first column. */
 export const companyLinks: LandingFooterLink[] = [
-	{ text: "Über uns" },
+	{ text: "Über uns", href: ROUTE_UEBER_UNS },
 	{ text: "Karriere" },
 	{ text: "Kunden", href: "/#kunden" },
 	{ text: "Hilfe-Center" },

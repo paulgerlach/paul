@@ -8,8 +8,8 @@
 	import { onDestroy, untrack } from "svelte";
 	import { burst } from "$lib/landing/confetti";
 	import { tweenNumber } from "$lib/landing/motion";
-	import ArrowLink from "../components/ArrowLink.svelte";
-	import SectionHead from "../components/SectionHead.svelte";
+	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
+	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import {
 		COST,
 		DEFAULT_SHARE,
@@ -20,7 +20,7 @@
 		UNIT_STOPS,
 	} from "../calculator";
 	import { calculator as t } from "../content";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 

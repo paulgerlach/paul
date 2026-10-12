@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, untrack } from "svelte";
 	import { reveal } from "$lib/landing/attachments/reveal";
-	import { setDeadlineClock } from "$lib/landing/pages/upgrade-now/clock.svelte";
+	import { setDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 	import Consequences from "$lib/landing/pages/upgrade-now/sections/Consequences.svelte";
 	import Deadlines from "$lib/landing/pages/upgrade-now/sections/Deadlines.svelte";
 	import Faq from "$lib/landing/pages/upgrade-now/sections/Faq.svelte";

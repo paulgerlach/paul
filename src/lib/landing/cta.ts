@@ -1,3 +1,5 @@
+import { socials } from "$lib/components/Footer/footerLinks";
+
 /**
  * Anchor of the page's signup form (the hero's on most pages, the final
  * CTA's on /upgrade-now). Every "start" CTA on the page links here.
@@ -23,3 +25,11 @@ export function focusSignup() {
  * to the signup form; set a URL here to switch all of them at once.
  */
 export const DEMO_HREF: string = START_HREF;
+
+/**
+ * Target of every careers link ("Karriere bei Heidi", "Offene Stellen", "Zur
+ * Karriereseite"). There's no careers page yet, so they lead to the LinkedIn
+ * company page; set a careers URL here to switch all of them at once.
+ */
+export const CAREERS_HREF: string =
+	socials.find((social) => social.alt === "linkedin")?.href ?? "";

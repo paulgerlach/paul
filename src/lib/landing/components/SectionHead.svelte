@@ -1,7 +1,7 @@
 <!-- Eyebrow pill with an icon, and the H2 with its muted second part (the design's dm-pill + dm-h2). -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import type { SplitHeading } from "../content";
+	import type { SplitHeading } from "$lib/landing/types";
 
 	let {
 		id,

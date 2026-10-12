@@ -1,8 +1,8 @@
 /**
- * Date logic of /upgrade-now: everything that depends on "now", computed in
- * Europe/Berlin. Pure functions, no DOM and no `Date.now()`: every function
- * takes `now` (ms), so SSR and hydration render the same values from the
- * single `now` that `load` passes down.
+ * Date logic of the retrofit deadline (/upgrade-now, /ueber-uns): everything
+ * that depends on "now", computed in Europe/Berlin. Pure functions, no DOM
+ * and no `Date.now()`: every function takes `now` (ms), so SSR and hydration
+ * render the same values from the single `now` that `load` passes down.
  */
 
 /** 31.12.2026, 24:00 in Berlin (= 1.1.2027, 00:00 CET). */
@@ -185,6 +185,20 @@ export function monthsText(now: number) {
 	if (r >= 0.6) return `knapp ${NUM[f + 1]} Monate`;
 	if (r <= 0.2) return months(f);
 	return `gut ${months(f)}`;
+}
+
+/** 1.1.2022, 00:00 Berlin: the start of /ueber-uns's retrofit progress bar. */
+export const RETROFIT_START = Date.UTC(2021, 11, 31, 23, 0, 0);
+
+/**
+ * Elapsed share of the retrofit period, 1.1.2022 to the deadline (/ueber-uns's
+ * progress bar), clamped to 0–1.
+ */
+export function retrofitProgress(now: number) {
+	return Math.min(
+		1,
+		Math.max(0, (now - RETROFIT_START) / (DEADLINE - RETROFIT_START)),
+	);
 }
 
 export type YearMonth = {

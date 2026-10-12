@@ -1,18 +1,28 @@
-<!-- The design's light-green CTA button with an arrow ("bk-next inv"). -->
+<!-- The design's CTA button with an arrow: light green ("bk-next inv") or, with `ink`, dark ("bk-next"). -->
 <script lang="ts">
 	import { focusSignup, START_HREF } from "$lib/landing/cta";
 
 	let {
 		href = START_HREF,
 		label,
+		ink = false,
 		class: className = "",
-	}: { href?: string; label: string; class?: string } = $props();
+		...rest
+	}: {
+		href?: string;
+		label: string;
+		ink?: boolean;
+		class?: string;
+		target?: string;
+		rel?: string;
+	} = $props();
 </script>
 
 <a
-	class={["bk", className]}
+	class={["bk", ink && "ink", className]}
 	{href}
 	onclick={href === START_HREF ? focusSignup : undefined}
+	{...rest}
 >
 	{label} <span class="ar" aria-hidden="true">→</span>
 </a>
@@ -35,6 +45,13 @@
 	}
 	.bk:hover {
 		background: #fff;
+	}
+	.bk.ink {
+		background: var(--ink);
+		color: #fff;
+	}
+	.bk.ink:hover {
+		background: #2a443d;
 	}
 	.bk:active {
 		transform: scale(0.98);

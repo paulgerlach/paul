@@ -9,11 +9,19 @@
 		type Testimonial,
 	} from "$lib/landing/data/testimonials";
 
-	let { title, items = all }: { title: string; items?: Testimonial[] } =
-		$props();
+	let {
+		title,
+		items = all,
+		id,
+	}: {
+		title: string;
+		items?: Testimonial[];
+		/** Anchor of the section (`stimmen` on /ueber-uns). */
+		id?: string;
+	} = $props();
 </script>
 
-<section class="tm" aria-labelledby="tm-h2">
+<section class="tm" aria-labelledby="tm-h2" {id}>
 	<div class="wrap">
 		<h2 id="tm-h2">{title}</h2>
 		<div class="tm-row" style:--n={items.length}>
@@ -36,6 +44,7 @@
 		background: var(--bg, var(--stone));
 		padding: 104px 0;
 		border-top: 1px solid var(--hair, var(--line));
+		scroll-margin-top: 64px;
 	}
 	h2 {
 		font-size: clamp(30px, 3.6vw, 48px);

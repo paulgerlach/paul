@@ -5,10 +5,10 @@
 -->
 <script lang="ts">
 	import { START_HREF } from "$lib/landing/cta";
-	import ArrowLink from "../components/ArrowLink.svelte";
+	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import { hero } from "../content";
-	import { monthsText } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { monthsText } from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 	import Countdown from "./Countdown.svelte";
 	import YearBand from "./YearBand.svelte";
 

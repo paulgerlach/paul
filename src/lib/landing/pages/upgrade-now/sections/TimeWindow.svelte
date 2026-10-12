@@ -8,10 +8,13 @@
 	import { countUp } from "$lib/landing/attachments/countUp";
 	import { inView } from "$lib/landing/attachments/inView";
 	import { prefersReducedMotion } from "$lib/landing/motion";
-	import SectionHead from "../components/SectionHead.svelte";
+	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { timeWindow } from "../content";
-	import { calendarMonths, DEADLINE_YEAR } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import {
+		calendarMonths,
+		DEADLINE_YEAR,
+	} from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 	import MonthCalendar from "./MonthCalendar.svelte";
 	import Steps from "./Steps.svelte";
 

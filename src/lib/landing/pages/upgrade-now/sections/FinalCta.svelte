@@ -8,8 +8,8 @@
 	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
 	import FinalCta from "$lib/landing/sections/FinalCta.svelte";
 	import { finalCta } from "../content";
-	import { daysLeftText } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { daysLeftText } from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
 

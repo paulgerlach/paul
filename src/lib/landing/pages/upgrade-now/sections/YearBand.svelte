@@ -8,8 +8,8 @@
 	import { inView } from "$lib/landing/attachments/inView";
 	import { prefersReducedMotion } from "$lib/landing/motion";
 	import { hero } from "../content";
-	import { yearProgress } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { yearProgress } from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 	const year = $derived(yearProgress(clock.today));

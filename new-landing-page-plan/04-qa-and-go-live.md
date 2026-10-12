@@ -2,16 +2,16 @@
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/ueber-uns`
+- [x] `bun run dev` → `http://localhost:5173/ueber-uns`
 - [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the form in the final CTA, the dropped links (README, "Links without a page")
-- [ ] The pages touched by the moves of §1.4 unchanged: `/upgrade-now`, `/messdienstwechsel` (trust cards, now with the `/ueber-uns` link), `/messdienstanbieter`, `/messdienstanbieter/berlin`
+- [x] The pages touched by the moves of §1.4 unchanged: `/upgrade-now`, `/messdienstwechsel` (trust cards, now with the `/ueber-uns` link), `/messdienstanbieter`, `/messdienstanbieter/berlin`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host`
 - [ ] Keyboard-only: banner link, CTAs, replay button, the 4 principle buttons, team links, the form
 - [ ] Reduced-motion emulation: checklist and "Ein Partner" shown at once, no confetti, no count-up, bar at its width, no panel animation, no replay button
 - [ ] JS disabled: final state everywhere, principle 01 open, the day count server-rendered, the form submits
-- [ ] Browser in UTC and America/New_York shows the same day count as Europe/Berlin and as `/upgrade-now`
+- [x] Browser in UTC and America/New_York shows the same day count as Europe/Berlin and as `/upgrade-now`
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

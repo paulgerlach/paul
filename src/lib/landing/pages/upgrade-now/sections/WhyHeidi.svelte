@@ -1,6 +1,6 @@
 <!-- "Umrüsten mit Heidi": bento with one big card (CSS-only radio waves) and four small ones. -->
 <script lang="ts">
-	import SectionHead from "../components/SectionHead.svelte";
+	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { whyHeidi, type BentoIcon } from "../content";
 
 	const icons: Record<BentoIcon, string[]> = {

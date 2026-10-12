@@ -1,16 +1,13 @@
 /**
  * Every text of /upgrade-now ("Jetzt noch umrüsten"), word for word from the
  * design. Components hold markup and behaviour only. Date-dependent words
- * ("knapp drei Monate", "Noch 85 Tage") come from `deadline.ts`.
+ * ("knapp drei Monate", "Noch 85 Tage") come from `$lib/landing/deadline/deadline.ts`.
  *
  * Every legal statement here (dates, §§, 3 %, 15 %, the WEG note, the FAQ)
  * needs legal sign-off before go-live (plan §4.5). The `expired` texts are
  * placeholders until the content owner writes them (plan open question 3).
  */
 import type { FaqItem } from "$lib/landing/sections/Faq.svelte";
-
-/** A heading with a muted second part (`<span>` in the design). */
-export type SplitHeading = { text: string; muted?: string };
 
 const nbsp = "\u00a0";
 

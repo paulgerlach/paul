@@ -9,6 +9,8 @@ import {
 	isExpired,
 	monthsText,
 	remaining,
+	RETROFIT_START,
+	retrofitProgress,
 	startOfBerlinDay,
 	yearProgress,
 } from "./deadline";
@@ -169,5 +171,37 @@ describe("monthsText", () => {
 		[1, "1 Tag"],
 	])("%i days → %s", (days, text) => {
 		expect(monthsText(at(days))).toBe(text);
+	});
+});
+
+describe("retrofitProgress", () => {
+	it("starts at 1.1.2022 00:00 Berlin", () => {
+		expect(RETROFIT_START).toBe(berlinMidnight(2022, 0, 1));
+		expect(retrofitProgress(RETROFIT_START)).toBe(0);
+		expect(retrofitProgress(RETROFIT_START - 86_400_000)).toBe(0);
+	});
+
+	it("is half way in the middle of the period", () => {
+		expect(retrofitProgress((RETROFIT_START + DEADLINE) / 2)).toBeCloseTo(0.5);
+	});
+
+	it("is just below 1 on the last day", () => {
+		const p = retrofitProgress(DEC_31_NOON);
+		expect(p).toBeGreaterThan(0.999);
+		expect(p).toBeLessThan(1);
+		expect(retrofitProgress(DEC_31_LAST_SECOND)).toBeLessThan(1);
+	});
+
+	it("is 1 once expired", () => {
+		expect(retrofitProgress(DEADLINE)).toBe(1);
+		expect(retrofitProgress(FEB_1_2027)).toBe(1);
+	});
+
+	it("is the elapsed share of real time on 7.10.2026", () => {
+		// 1740.5 calendar days of 1826, minus the hour summer time skips.
+		expect(retrofitProgress(OCT_7_NOON)).toBeCloseTo(
+			(1740.5 * 24 - 1) / (1826 * 24),
+			9,
+		);
 	});
 });

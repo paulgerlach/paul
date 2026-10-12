@@ -1,7 +1,7 @@
 <!-- One month grid of the time window: past days, today, weekends, holidays, the deadline. -->
 <script lang="ts">
 	import { timeWindow } from "../content";
-	import type { CalendarMonth } from "../deadline";
+	import type { CalendarMonth } from "$lib/landing/deadline/deadline";
 
 	let { month, year }: { month: CalendarMonth; year: number } = $props();
 	const headingId = $derived(`cal-${month.month}`);

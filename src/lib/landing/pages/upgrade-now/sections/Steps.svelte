@@ -1,7 +1,7 @@
 <!-- The five steps from the portfolio check to "Fernablesbar". -->
 <script lang="ts">
 	import { timeWindow } from "../content";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 </script>

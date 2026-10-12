@@ -4,10 +4,10 @@
   the day count until then.
 -->
 <script lang="ts">
-	import SectionHead from "../components/SectionHead.svelte";
+	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { deadlines } from "../content";
-	import { daysLeftText } from "../deadline";
-	import { getDeadlineClock } from "../clock.svelte";
+	import { daysLeftText } from "$lib/landing/deadline/deadline";
+	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";
 
 	const clock = getDeadlineClock();
 	const badge = $derived(daysLeftText(clock.today));

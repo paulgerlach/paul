@@ -1,4 +1,4 @@
-import { socials } from "$lib/components/Footer/footerLinks";
+import { ROUTE_KARRIERE } from "$lib/routes";
 
 /**
  * Anchor of the page's signup form (the hero's on most pages, the final
@@ -27,9 +27,9 @@ export function focusSignup() {
 export const DEMO_HREF: string = START_HREF;
 
 /**
- * Target of every careers link ("Karriere bei Heidi", "Offene Stellen", "Zur
- * Karriereseite"). There's no careers page yet, so they lead to the LinkedIn
- * company page; set a careers URL here to switch all of them at once.
+ * Target of every careers link ("Karriere bei Heidi", "Zur Karriereseite"):
+ * the /karriere page. Set another URL here to switch all of them at once.
  */
-export const CAREERS_HREF: string =
-	socials.find((social) => social.alt === "linkedin")?.href ?? "";
+export const CAREERS_HREF: string = ROUTE_KARRIERE;
+/** Target of the "Offene Stellen" links: the job list on /karriere. */
+export const CAREERS_JOBS_HREF = `${ROUTE_KARRIERE}#stellen`;

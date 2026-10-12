@@ -25,11 +25,13 @@
 		bannerText,
 		bannerHref = "#faq",
 		ctaLabel = "Wechsel starten",
+		ctaHref = START_HREF,
 	}: {
 		posts: PostSummary[];
 		bannerText: string;
 		bannerHref?: string;
 		ctaLabel?: string;
+		ctaHref?: string;
 	} = $props();
 
 	const navGroups = $derived(buildNavGroups(posts));
@@ -50,7 +52,7 @@
 
 	function onStart() {
 		menu.close();
-		focusSignup();
+		if (ctaHref === START_HREF) focusSignup();
 	}
 </script>
 
@@ -82,7 +84,7 @@
 				Einloggen
 			</a>
 			<a class="phone" href={PHONE_HREF}>{PHONE}</a>
-			<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
+			<a class="btn btn-ink" href={ctaHref} onclick={onStart}>
 				{ctaLabel}
 			</a>
 		</div>
@@ -124,7 +126,7 @@
 					</li>
 				{/each}
 				<li class="mcta">
-					<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
+					<a class="btn btn-ink" href={ctaHref} onclick={onStart}>
 						{ctaLabel}
 					</a>
 					<a

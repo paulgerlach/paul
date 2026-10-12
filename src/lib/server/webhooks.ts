@@ -2,8 +2,10 @@
  * Webhook utilities for Make.com integrations
  * Sends events to Denis's Make.com workflows
  *
- * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry
+ * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
+ * jobapplication
  */
+import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
 
 type EventType =
@@ -12,7 +14,10 @@ type EventType =
 	| "contactform"
 	// Signup on a landing page (/messdienstwechsel, /messdienstanbieter and
 	// its city pages). Payload: placement, page, and `city` (slug) on city pages.
-	| "switchinquiry";
+	| "switchinquiry"
+	// Application on /karriere. Payload: role, role_title, name, link, message,
+	// page. Make.com forwards it to the hiring inbox; nothing is stored here.
+	| "jobapplication";
 
 interface WebhookPayload {
 	event_type: EventType;
@@ -73,6 +78,45 @@ export async function sendWebhookEvent(
 		console.error(`[WEBHOOK] Error sending ${eventType} event:`, error);
 		// Don't throw - webhook failures shouldn't break user flow
 	}
+}
+
+/**
+ * Like `sendWebhookEvent`, but for events that exist nowhere else (job
+ * applications): it throws when the event can't be delivered, so the caller
+ * can tell the visitor. A missing URL only throws in production; in dev it
+ * skips, so the page works without Make.com.
+ *
+ * It logs nothing about the person; the caller logs what it needs.
+ */
+export async function sendWebhookEventOrThrow(
+	eventType: EventType,
+	email: string,
+	additionalData?: Record<string, unknown>,
+): Promise<void> {
+	const webhookUrl = env.MAKE_WEBHOOK_UNIFIED;
+	if (!webhookUrl) {
+		if (!dev) throw new Error("MAKE_WEBHOOK_UNIFIED is not set");
+		console.warn(
+			`[WEBHOOK] MAKE_WEBHOOK_UNIFIED is not set. Skipping ${eventType} webhook.`,
+		);
+		return;
+	}
+
+	const payload: WebhookPayload = {
+		event_type: eventType,
+		email,
+		timestamp: new Date().toISOString(),
+		...additionalData,
+	};
+	const response = await fetch(webhookUrl, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+	if (!response.ok)
+		throw new Error(
+			`${eventType} webhook answered ${response.status} ${response.statusText}`,
+		);
 }
 
 /**

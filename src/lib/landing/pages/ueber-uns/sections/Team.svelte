@@ -2,7 +2,7 @@
 <script lang="ts">
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { careers, team } from "../content";
-	import StrokeIcon from "../components/StrokeIcon.svelte";
+	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 </script>
 
 {#snippet people()}
@@ -42,7 +42,7 @@
 					>{team.testimonials.text} <span class="ar" aria-hidden="true">→</span>
 				</a>
 				{#if careers.show}
-					<a href={team.jobs.href} target="_blank" rel="noopener">
+					<a href={team.jobs.href}>
 						<StrokeIcon>{@render people()}</StrokeIcon>{team.jobs.text}
 						<span class="ar" aria-hidden="true">→</span>
 					</a>

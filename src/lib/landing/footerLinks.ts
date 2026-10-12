@@ -2,6 +2,7 @@ import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
@@ -19,7 +20,7 @@ export type LandingFooterGroup = { title: string; links: LandingFooterLink[] };
 /** Under the logo, in the first column. */
 export const companyLinks: LandingFooterLink[] = [
 	{ text: "Über uns", href: ROUTE_UEBER_UNS },
-	{ text: "Karriere" },
+	{ text: "Karriere", href: ROUTE_KARRIERE },
 	{ text: "Kunden", href: "/#kunden" },
 	{ text: "Hilfe-Center" },
 	{ text: "Sicherheit" },

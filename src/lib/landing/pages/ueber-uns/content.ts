@@ -4,10 +4,10 @@
  * `$lib/landing/deadline/deadline.ts`.
  *
  * The company claims, the founder's role and the careers target need sign-off
- * before go-live (plan §4.4). The `expired` texts are placeholders until the
+ * before go-live (plan §4.5). The `expired` texts are placeholders until the
  * content owner writes them.
  */
-import { CAREERS_HREF, DEMO_HREF } from "$lib/landing/cta";
+import { CAREERS_HREF, CAREERS_JOBS_HREF, DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { SplitHeading } from "$lib/landing/types";
 import { ROUTE_UPGRADE_NOW } from "$lib/routes";
@@ -208,7 +208,7 @@ export const team = {
 		text: "Kundenstimmen lesen",
 		href: "#stimmen",
 	} satisfies Link,
-	jobs: { text: "Offene Stellen", href: CAREERS_HREF } satisfies Link,
+	jobs: { text: "Offene Stellen", href: CAREERS_JOBS_HREF } satisfies Link,
 };
 
 export const testimonials = {

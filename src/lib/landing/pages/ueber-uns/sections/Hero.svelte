@@ -3,7 +3,7 @@
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import Check from "$lib/landing/components/icons/Check.svelte";
 	import { careers, hero } from "../content";
-	import StrokeIcon from "../components/StrokeIcon.svelte";
+	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 	import ServiceStack from "./ServiceStack.svelte";
 </script>
 
@@ -22,12 +22,7 @@
 			<div class="ctas rv">
 				<ArrowLink href={hero.cta.href} label={hero.cta.text} ink />
 				{#if careers.show}
-					<a
-						class="ghost"
-						href={hero.careers.href}
-						target="_blank"
-						rel="noopener"
-					>
+					<a class="ghost" href={hero.careers.href}>
 						{hero.careers.text} <span class="ar" aria-hidden="true">→</span>
 					</a>
 				{/if}

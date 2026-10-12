@@ -6,5 +6,5 @@
 	const items = testimonials.keys.map(testimonial);
 </script>
 
-<!-- Copy and roles need sign-off: see the go-live gate, plan §4.4. -->
+<!-- Copy and roles need sign-off: see the go-live gate, plan §4.5. -->
 <Testimonials id="stimmen" title={testimonials.title} {items} />

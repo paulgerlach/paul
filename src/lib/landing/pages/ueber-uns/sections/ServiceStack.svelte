@@ -12,7 +12,7 @@
 	import { burst } from "$lib/landing/confetti";
 	import { prefersReducedMotion } from "$lib/landing/motion";
 	import { services, type ServiceIcon } from "../content";
-	import StrokeIcon from "../components/StrokeIcon.svelte";
+	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 
 	let card: HTMLElement;
 	let one: HTMLElement;

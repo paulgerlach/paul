@@ -1,103 +1,101 @@
-# Page `/ueber-uns` ("Über uns"): plan
+# Page `/karriere` ("Karriere"): plan
 
-The company page of Heidi Systems: who Heidi is (a Berlin PropTech that runs the whole Messdienst for Hausverwaltungen), the mission (every meter remotely readable by 1.1.2027), four principles, the service KPIs, the founder, two customer quotes, a careers teaser and a closing CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`. The landing footer's "Über uns" entry (plain text today) links to it once phase 1 is done.
+The careers page of Heidi Systems. It opens with a dark hero ("Bauen Sie mit uns den Messdienst von morgen.") next to an animated "Ein Tag bei Heidi" feed. Then come four reasons to join, the four areas (Engineering, Operations, Kundenservice, Vertrieb) as switchable panels, the open positions as expandable cards (one job today, Frontend Engineer, plus the open application), the three-step hiring process, an application form, a "Mehr über Heidi erfahren?" card linking to `/ueber-uns`, and the partner cards. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`. Once phase 1 is done, the landing footer's "Karriere" entry (plain text today) and the three career links on `/ueber-uns` (LinkedIn today, via `CAREERS_HREF`) link here.
 
-- **Design reference:** https://claude.ai/artifact/TYGNNySnjJfz1jcwJbUMbT ("Über uns · Heidi"). One HTML file: the shared base CSS of the landing designs (`:root` tokens, `.dm-*` primitives, nav), the "Lösungsseiten" building blocks (`#pg-common-css`, prefix `pg-`, ~40 lines), the page CSS (`#ub-css`, prefix `ub-`, ~85 lines), the card-style trust block (`#trust-css`), a shared helper script (`#pg-common`: reveal, count-up, confetti, smooth anchors) and the page script (`#ub-js`, ~35 lines). Embedded images: the 12 customer logos and the 3 partner logos, all already in `$lib/landing/data/logos.ts` and the Trust section. Save it locally with the Artifact tool's `read` action; it isn't in the repo.
-- **Previous plans:** the `/upgrade-now` plan used to live in this folder (last version at `ddde6575`), before it the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates moved to [04-qa-and-go-live.md §4.5–4.7](04-qa-and-go-live.md).
+- **Design reference:** https://claude.ai/artifact/QjHMhzF3c7Mhbuik5Ndzy8 ("Karriere · Heidi"). It's one HTML file, laid out like the "Über uns" design: the shared base CSS (`:root` tokens, `.dm-*` primitives, nav), the "Lösungsseiten" blocks (`#pg-common-css`, prefix `pg-`, including the dark `.pg-hero.ink` and the segmented control `.pg-seg`), the page CSS (`#kr-css`, prefix `kr-`, ~110 lines), the card-style trust block (`#trust-css`), the shared helper script (`#pg-common`: reveal, onShow, seg, confetti) and the page script (`#kr-js`, ~50 lines: feed, areas, role preselection, form). The only embedded images are the 3 partner logos, which the Trust section already has. To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/ueber-uns` plan used to live in this folder (last version at `7a777e92`). Before it came the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.8](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, content module, SEO, footer link, the signup form; moving the pieces the page shares with `/upgrade-now` and `/messdienstwechsel` | S |
-| 2 | [02-sections.md](02-sections.md) | The 10 sections with static markup and the design's CSS | M |
-| 3 | [03-interactions.md](03-interactions.md) | Hero checklist animation + confetti, the deadline card, the principle tabs, count-ups, reveal on scroll | M |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, content module, SEO, the application form's schema and action, the `jobapplication` webhook, switching the career links and the footer entry, the shared segmented control | M |
+| 2 | [02-sections.md](02-sections.md) | The 8 sections with static markup and the design's CSS | M |
+| 3 | [03-interactions.md](03-interactions.md) | The hero feed, the area switcher, choosing the role from any "bewerben" link, the form's client behaviour and success state, reveal on scroll | M |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-Phase 1 goes first and on its own: once the footer entry links to `/ueber-uns`, the `messdienstanbieter` e2e check "internal links resolve" needs the route. Phases 2 and 3 can overlap (3 needs the markup of 2).
+Phase 1 goes first, in one commit. Once the footer entry and `CAREERS_HREF` point to `/karriere`, the e2e check "internal links resolve" needs the route, and `e2e/ueber-uns.e2e.ts` checks the career links. Phases 2 and 3 can overlap, since phase 3 only needs phase 2's markup.
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/ueber-uns/
-├── +page.server.ts        # load: seo, landing chrome, `now`, the signup form; the form action
-└── +page.svelte           # sets the deadline clock, composes the sections
+src/routes/(landing-page)/karriere/
+├── +page.server.ts        # load: seo, landing chrome, the application form; the form action
+└── +page.svelte           # sets the application context, composes the sections
+
+src/lib/forms/
+└── application.ts  application.test.ts         # zod schema, German messages, role ids (shared client/server)
+
+src/lib/server/
+├── application.ts                               # the action: spam pipeline → jobapplication webhook
+└── webhooks.ts                                  # + "jobapplication", + a send that reports failure
 
 src/lib/landing/
-├── deadline/                                    (moved from pages/upgrade-now/, phase 1.4)
-│   ├── deadline.ts  deadline.test.ts            # + retrofitProgress(now)
-│   └── clock.svelte.ts
+├── chrome.ts                                    # + ctaHref
+├── cta.ts                                       # CAREERS_HREF = ROUTE_KARRIERE, + CAREERS_JOBS_HREF
 ├── components/
-│   ├── SectionHead.svelte  ArrowLink.svelte     (moved from pages/upgrade-now/components/)
-├── sections/
-│   ├── TrustCards.svelte                        (moved from pages/messdienstwechsel/sections/Trust.svelte)
-│   └── Testimonials.svelte                      # + optional `id`
-└── pages/ueber-uns/
-    ├── content.ts  content.test.ts              # all copy: hero, services, mission, principles, KPIs, team, careers, CTA
+│   ├── Segmented.svelte                         (moved out of upgrade-now/sections/RiskCalculator.svelte)
+│   └── icons/StrokeIcon.svelte                  (moved from pages/ueber-uns/components/)
+└── pages/karriere/
+    ├── content.ts  content.test.ts              # all copy: hero, feed events, reasons, areas, jobs, process, form, more card
+    ├── application.svelte.ts                    # Application context: the chosen role, apply(roleId)
+    ├── components/ApplyLink.svelte              # <a href="#bewerben"> that preselects a role
     └── sections/
-        ├── Hero.svelte                          # text + CTAs + ticks
-        ├── ServiceStack.svelte                  # "Was Heidi übernimmt" checklist card (hero right column)
-        ├── LogoStrip.svelte*
-        ├── Mission.svelte                       # text + DeadlineCard
-        ├── DeadlineCard.svelte                  # "Bis zur Fernablesepflicht … Tage" + progress bar
-        ├── Principles.svelte                    # 4 tabs + detail panel
-        ├── Numbers.svelte                       # 4 KPI tiles
-        ├── Team.svelte                          # founder card + text + links
-        ├── Testimonials.svelte*                 # Werne + Gerhard
-        ├── Careers.svelte                       # dark "Wir wachsen" teaser
-        ├── FinalCta.svelte*                     # id="start", the signup form
-        └── Trust.svelte*                        # TrustCards without the "Mehr über Heidi" link
+        ├── Hero.svelte                          # dark hero: text + CTAs
+        ├── DayFeed.svelte                       # "Ein Tag bei Heidi" ticker (hero right column)
+        ├── Reasons.svelte                       # "Warum Heidi": 4 cards, first dark
+        ├── Areas.svelte                         # segmented control + area panel
+        ├── Jobs.svelte                          # id="stellen", <details> per job + open application
+        ├── Process.svelte                       # 3 steps
+        ├── Apply.svelte                         # id="bewerben": text column + ApplicationForm
+        ├── ApplicationForm.svelte               # the form, errors, success overlay
+        ├── MoreAbout.svelte                     # dark "Mehr über Heidi erfahren?" card → /ueber-uns
+        └── Trust.svelte*                        # TrustCards with "Mehr über Heidi" → /ueber-uns
 ```
 
-`*` = a thin wrapper around the shared section, the same rule as the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
+`*` marks a thin wrapper around the shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/ueber-uns` (German, no umlaut, the usual spelling of German sites), as `ROUTE_UEBER_UNS` in `$lib/routes.ts` |
-| Route group | `(landing-page)`, outside `[[preview=preview]]`: the design is a landing design (Geist, `dm-*` tokens, landing nav/footer) and there's no Prismic content |
-| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner text and "Mehr erfahren" → `/upgrade-now` are exactly that). Nav CTA "Bestand prüfen" → `#start` |
-| Footer | The shared `LandingFooter`; `companyLinks` "Über uns" gets `href: ROUTE_UEBER_UNS`. The site (`(base)`) header/footer stay as they are until the cutover (Next parity; open question 5) |
-| Styling | The `ub-*` and `pg-*` CSS goes into the sections' scoped `<style>` blocks; tokens from `tokens.css`. The design's breakpoints stay (1040, 640 for the page; 820 for the trust cards). The `pg-*` blocks are page-local for now; extract them when a second "Lösungsseite" design arrives |
-| Reuse | LogoStrip, Testimonials, FinalCta, the trust cards, `SectionHead`/`ArrowLink`, the deadline module and clock, `confetti.ts`, the `reveal`/`countUp`/`playOnView` attachments. Shared pieces move to `$lib/landing/` instead of being copied (phase 1.4) |
-| Deadline | The mission card uses `daysLeft()` from the shared deadline module (Europe/Berlin, `now` from `load`, the `DeadlineClock` takes over in the browser). It shows the same number as `/upgrade-now` ("Noch 80 Tage" on 12.10.2026), not the design's `ceil((1.1.2027 − now) / day)` in browser time, which is one higher for most of the day. The bar is the elapsed share from 1.1.2022 to the deadline, a new tested `retrofitProgress(now)` |
-| After the deadline | The card and the mission lead switch to an expired text (phase 3.2); the rest of the page is timeless. Copy is a placeholder until the content owner writes it |
-| Form and CTAs | The design has no form: "Demo buchen" goes to a booking design, "Bestand prüfen" to the hero. As on `/upgrade-now`: the final CTA gets the shared `SignupForm` (`id="start"`, button "Demo buchen"), lead `source = "ueber-uns"`, and every demo/start CTA scrolls there and focuses the email field (`DEMO_HREF`, `focusSignup()`). The hero has no `id="start"` |
-| Careers | There's no careers page. The three career links ("Karriere bei Heidi", "Offene Stellen", "Zur Karriereseite") go to one constant `CAREERS_HREF` in `cta.ts`, by default the LinkedIn company page from `Footer/footerLinks.ts` (external, `rel="noopener"`), so a real careers URL is a one-line change (open question 2) |
-| Links without a page | "Kundenstimmen lesen" → `#stimmen` (this page's testimonials). The principle panels' "Dashboard ansehen" and "Zum Portfolio-Checker" are dropped until those pages exist (`link?` in the content stays). The trust block's "Mehr über Heidi" is dropped here (it points to this page); on `/messdienstwechsel` it now links to `/ueber-uns` instead of `/` |
-| No JS | Every section renders its final state on the server: all services ticked, "Ein Partner für alles" shown, the day count and bar filled, the KPIs at their values, principle 01 open. The principle buttons need JS to switch; the form works without it |
-| Indexing | `noindex` + self-canonical and out of the sitemap until the go-live gate (§4.4), like the other new landing pages |
-| Rendering | SSR with the `(landing-page)` cache header, not prerendered (the day count depends on the request time) |
-
-## Implementation notes (2026-10-12)
-
-Phases 1–3 are built; phase 4's tests are written (`e2e/ueber-uns.e2e.ts`, `content.test.ts`, `retrofitProgress` in `deadline.test.ts`). Open in §4.1: the visual comparison at all five widths, Safari/Firefox/iOS, keyboard-only, Lighthouse. The signup e2e tests need the `leads` table in the local Postgres. Deviations from the plan:
-
-- `ArrowLink` got an `ink` prop: the hero's "Demo buchen" is the design's dark `bk-next`, not the green `.inv`.
-- The career links open in a new tab (`target="_blank" rel="noopener"`), since `CAREERS_HREF` is external.
-- The founder card's "Berlin" pill keeps the design's house icon instead of `icons/Pin.svelte`.
-- Gerhard's badge comes from `data/testimonials.ts` ("Verifizierter Gewerbekunde"); the design says "Verifizierter Heidi-Kunde". Settle with the references sign-off (§4.6).
-- The checklist starts 300 ms after it comes into view (the plan's timing); the design waits another 300 ms before `play()`.
-- `SplitHeading` moved to `$lib/landing/types.ts`.
+| URL | `/karriere` as `ROUTE_KARRIERE` in `$lib/routes.ts` (German, matches the footer label) |
+| Route group | `(landing-page)`, outside `[[preview=preview]]`, because the design is a landing design and there's no Prismic content |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME`'s banner. The design's nav CTA "Bestand prüfen" → `#start` lands on the careers hero, which is useless for a customer, so `LandingChrome` gets an optional `ctaHref` and this page sends the CTA to `ROUTE_MESSDIENSTWECHSEL` (its hero form is `#start` there). The hero gets no `id="start"` (open question 6) |
+| Footer | The shared `LandingFooter`. `companyLinks` "Karriere" gets `href: ROUTE_KARRIERE` |
+| Career links | `CAREERS_HREF` becomes `ROUTE_KARRIERE`, which switches `/ueber-uns`'s "Karriere bei Heidi" and "Zur Karriereseite". "Offene Stellen" gets the new `CAREERS_JOBS_HREF` (`/karriere#stellen`). They're internal now, so the `target="_blank" rel="noopener"` added for LinkedIn goes |
+| Styling | The `kr-*` and `pg-*` CSS goes into the sections' scoped `<style>` blocks, with tokens from `tokens.css`. The design's breakpoints stay: 1040, 760 and 640 for the page, 1040 for the hero grid from `#pg-common-css`, and 820 for the trust cards |
+| Reuse | `SectionHead`, `ArrowLink` (`inv` on the dark hero and card, `ink` elsewhere), `TrustCards` with `more`, `confetti.ts`, the `reveal`/`inView` attachments, `icons/Check.svelte`. The segmented control is the second use of `/upgrade-now`'s `.seg`, so it moves to `$lib/landing/components/Segmented.svelte` instead of being copied (phase 1.6) |
+| Jobs | Jobs live in `content.ts` (`jobs[]` plus the fixed open application), and every count and option is derived from that list: the area panel's "1 offene Stelle · ansehen", the form's `<select>`, and the server's allowed role ids. Opening or closing a position is a one-file change. No Prismic custom type before the cutover, because the repo is shared with Next (open question 5) |
+| Application form | A SvelteKit form action with superforms + zod (`$lib/forms/application.ts`) that works without JS. Fields as designed: role, name, email, optional link, a few sentences. The spam pipeline matches the other forms: honeypot → timing → zod → gibberish (name, message) → rate limit, and a bot gets a silent success |
+| Where applications go | A new Make.com event `jobapplication` on `MAKE_WEBHOOK_UNIFIED` (role id and title, name, email, link, message, page), which Make forwards to the hiring inbox. **Nothing is stored in our database**: applicants aren't leads, and not keeping the data means no retention rules on our side. Unlike the lead webhooks, a failed send isn't swallowed: the visitor sees an error with a fallback address (open question 2) |
+| Privacy | A short notice under the submit button links to `ROUTE_DATENSCHUTZHINWEISE`. There's no consent checkbox, because processing an application doesn't rest on consent. The wording and an applicant section in the privacy notice are a gate item (§4.4, open question 3). Server logs never contain the name, link or message, and the `jobapplication` log line leaves out the email too |
+| Role choice | Every "bewerben" link (job cards, area panel, hero "Initiativ bewerben") is an `ApplyLink`: a plain `#bewerben` anchor that, with JS, also sets the role in the page's `Application` context, smooth-scrolls and focuses the name field. The `<select>` binds to that context. Without JS, the anchor just scrolls and the select keeps its default (the first job) |
+| No JS | Everything renders its final state on the server: the feed's first 4 events, Engineering's area panel, the job cards (native `<details>`, collapsed), and the form. The form posts and comes back with errors or the success state. Only the area switcher needs JS |
+| Hero feed | Decorative, labelled "Beispiel". It adds an event every 2.6 s, but only while it's in view and the tab is visible. It has a pause button (auto-updating content, WCAG 2.2.2), and there's no ticker and no blinking dot with reduced motion. It isn't `aria-live` |
+| Indexing | `noindex` + self-canonical and out of the sitemap until the go-live gate (§4.4), like the other new landing pages. `JobPosting` structured data is left out until jobs have the fields Google requires (open question 5) |
+| Rendering | SSR with the `(landing-page)` cache header. The page could be prerendered, but the form action and the CDN cache make that pointless; it follows the other landing pages |
 
 ## Open questions (the default is built unless answered)
 
-1. **Slug.** *Default: `/ueber-uns`.* `/unternehmen` or `/about` are the alternatives; decide before go-live.
-2. **Careers target.** *Default: the LinkedIn company page.* A real careers page or job-board URL (Personio, Join …) replaces it via `CAREERS_HREF`. If there are no open positions at go-live, hide the careers teaser and the two career links (one flag in `content.ts`).
-3. **The final CTA.** The design ends with a dark card "Lernen Sie Heidi kennen." and a "Demo buchen" button; we render the shared centred signup block with that title (the same deviation as on `/upgrade-now`). *Default: the form. If a booking URL exists by then, `DEMO_HREF` switches all demo CTAs and the design's dark card can come back without a form.*
-4. **Founder card.** The design shows initials ("PG") instead of a photo. *Default: initials. A licensed portrait can replace them (`Image`, 96 px round); "Gründer und Geschäftsführer" needs confirmation (the Impressum only says "Vertreten durch: Paul Gerlach").*
-5. **Discoverability.** *Default: only the landing footer links here.* After the cutover, the site footer and the header could link to it too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
-6. **Lead routing.** *Default: the existing `switchinquiry` Make.com event with `page: "/ueber-uns"`.*
+1. **Slug.** *Default: `/karriere`.* `/jobs` is the alternative. Decide before go-live.
+2. **Application routing.** *Default: the Make.com `jobapplication` event, forwarded to a hiring inbox.* Business has to name that inbox and the fallback address shown on errors (`jobs@heidisystems.com` is a placeholder in `content.ts`, marked `data-placeholder` in dev). If an applicant tracking system (Personio, Join …) is planned, its postings replace the form and the job cards link out, and the plan's form work shrinks to a link per job.
+3. **Privacy notice.** *Default: an information line under the button (draft: "Wie wir mit Ihren Daten umgehen, lesen Sie in den Datenschutzhinweisen."), with the final text from legal. Not a consent line.* The privacy notice needs an applicant section (purpose, retention, Make.com as processor) before go-live.
+4. **CV upload.** *Default: none*, as designed ("Link zu LinkedIn, GitHub oder Portfolio genügt"). A file upload would mean storing files and a different retention story; only add it if hiring asks.
+5. **Managing jobs.** *Default: `content.ts`.* After the cutover, a Prismic `job` custom type (or an ATS feed) would let non-developers post jobs; then `JobPosting` JSON-LD (`datePosted`, `validThrough`, `employmentType`, `hiringOrganization`, `jobLocation`) can come with it.
+6. **Header CTA.** *Default: "Bestand prüfen" → `/messdienstwechsel`.* Alternatives: hide the CTA on this page, or replace it with "Offene Stellen" → `#stellen` (a `ctaLabel` change, since `ctaHref` exists after phase 1).
+7. **Discoverability.** *Default: the landing footer and `/ueber-uns` link here.* After the cutover, the site footer could link here too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
 
 ## Risks
 
-- **Unconfirmed claims.** "0 € Installationskosten", "Mieter 14 Tage vorher informiert", "Ein fester Ansprechpartner", "Wechsel auch bei laufendem Vertrag", "Daten direkt in Ihrem ERP- oder CRM-System", "Kündigung … per Vollmacht", "Unser Team in Berlin entwickelt Zähler-Anbindung, Dashboard und Abrechnung selbst" and "Installationspartner" are company statements. 92 %, 14 Tage and 1–2 h were confirmed on 2026-10-12; the rest is in the gate (§4.4).
-- **Time-dependent copy.** "Ab dem 1. Januar 2027 müssen …" and the day count go stale on 1.1.2027. Mitigation: the expired state of phase 3.2, driven by the shared clock.
-- **Hero animation flash.** The checklist is above the fold; if the animation's start state were the server markup, no-JS visitors would see dimmed items, and if the reset ran after hydration, JS visitors would see a tick → untick flash. Mitigation: CSS keyframe animations started by `.play` (the `playOnView` pattern), with the final state as the default style (phase 3.1).
+- **Personal data.** Applications carry names, emails, links and free text. Mitigation: no storage on our side, no PII in logs, the Make.com scenario as the only processor (it needs a data processing agreement, which is part of the gate), and HTTPS only.
+- **Stale postings.** A closed position that's still listed costs applicants and reputation. Mitigation: an owner for the job list is named in the gate, and the job count isn't written anywhere else (it's derived).
+- **Lost applications.** `sendWebhookEvent` swallows errors by design. Mitigation: the strict send of phase 1.4, an error with the fallback address, an e2e test against a failing sink, and a manual end-to-end test into the real inbox before go-live.
+- **Unconfirmed claims.** "Ein kleines Team in Berlin", "Funkzähler, Montage, Dashboard und Abrechnung gehören bei uns zusammen", the feed's examples ("Funkzähler in 24 Wohnungen installiert", "Monatlich an alle Mieter") and the three process steps describe the company. They're in the gate (§4.4).
+- **Spam.** It's a public form with a free-text field. Mitigation: the shared pipeline, with its own rate-limit key (`apply:<ip>`, 3 per 10 minutes).
 
 ## Out of scope
 
 - The design's nav (Produkt / Lösungen / Kunden / Ressourcen with "bald" pages).
-- The pages the design links to (Karriere, Kundenreferenzen, Dashboard, Portfolio-Checker, Demo buchen).
-- A team section with more people, a timeline or press logos (not in the design).
+- A CV upload, an applicant confirmation email (Make.com can send one), job detail pages per position, and `JobPosting` JSON-LD (open question 5).
+- Team photos, benefits, salary ranges (not in the design).

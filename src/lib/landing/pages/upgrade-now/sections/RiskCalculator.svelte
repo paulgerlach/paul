@@ -10,6 +10,7 @@
 	import { tweenNumber } from "$lib/landing/motion";
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
+	import Segmented from "$lib/landing/components/Segmented.svelte";
 	import {
 		COST,
 		DEFAULT_SHARE,
@@ -138,17 +139,12 @@
 				</label>
 				<div class="f">
 					<span><b id="share-l">{t.share}</b></span>
-					<div class="seg" role="radiogroup" aria-label={t.shareAria}>
-						{#each SHARES as option (option.value)}
-							<button
-								type="button"
-								role="radio"
-								aria-checked={share === option.value}
-								class={[share === option.value && "on"]}
-								onclick={() => (share = option.value)}>{option.label}</button
-							>
-						{/each}
-					</div>
+					<Segmented
+						options={SHARES}
+						bind:value={share}
+						label={t.shareAria}
+						look="ink"
+					/>
 				</div>
 				<label class="sw">
 					<input
@@ -269,35 +265,6 @@
 		background: #fff;
 		border: 2px solid var(--ink);
 		cursor: pointer;
-	}
-	.seg {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 4px;
-		background: #fff;
-		border: 1px solid var(--hair);
-		border-radius: 12px;
-		padding: 4px;
-	}
-	.seg button {
-		border: 0;
-		background: none;
-		font-size: 14.5px;
-		font-weight: 500;
-		padding: 10px 6px;
-		border-radius: 9px;
-		cursor: pointer;
-		color: var(--muted);
-		transition:
-			background 0.2s,
-			color 0.2s;
-	}
-	.seg button:hover {
-		color: var(--ink);
-	}
-	.seg button.on {
-		background: var(--ink);
-		color: #fff;
 	}
 	.sw {
 		display: flex;

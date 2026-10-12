@@ -8,7 +8,6 @@ import { expect, test, type Page } from "@playwright/test";
 
 const PATH = "/ueber-uns";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const CAREERS_HREF = "https://www.linkedin.com/company/heidisystems/";
 
 /** A Berlin wall-clock time as an instant (+01:00 in winter, +02:00 in summer). */
 const berlin = (iso: string) => new Date(iso);
@@ -38,7 +37,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page).toHaveTitle(/^Über uns/);
 	await expect(page.locator("h1")).toHaveCount(1);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.4), with a self-canonical
+	// noindex until the go-live gate (plan §4.5), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
 		"noindex",
@@ -175,15 +174,18 @@ test.describe("CTAs", () => {
 		await expect(page.locator("#stimmen")).toBeInViewport();
 	});
 
-	test("career links go to the careers target", async ({ page }) => {
+	test("career links go to /karriere in the same tab", async ({ page }) => {
 		await page.goto(PATH);
-		const links = page.getByRole("link", {
-			name: /Karriere bei Heidi|Offene Stellen|Zur Karriereseite/,
-		});
-		await expect(links).toHaveCount(3);
-		for (const link of await links.all()) {
-			await expect(link).toHaveAttribute("href", CAREERS_HREF);
-			await expect(link).toHaveAttribute("rel", "noopener");
+		const main = page.locator("main");
+		for (const [name, href] of [
+			["Karriere bei Heidi", "/karriere"],
+			["Offene Stellen", "/karriere#stellen"],
+			["Zur Karriereseite", "/karriere"],
+		]) {
+			const link = main.getByRole("link", { name });
+			await expect(link).toHaveAttribute("href", href);
+			await expect(link).not.toHaveAttribute("target");
+			await expect(link).not.toHaveAttribute("rel");
 		}
 	});
 });

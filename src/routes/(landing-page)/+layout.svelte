@@ -40,6 +40,7 @@
 		bannerText={chrome.bannerText}
 		bannerHref={chrome.bannerHref}
 		ctaLabel={chrome.ctaLabel}
+		ctaHref={chrome.ctaHref}
 	/>
 	{@render children()}
 	<LandingFooter />

@@ -6,8 +6,13 @@ import { ROUTE_UPGRADE_NOW } from "$lib/routes";
  */
 export type LandingChrome = {
 	bannerText: string;
-	/** Label of the nav CTA to `#start`. */
+	/** Label of the nav CTA. */
 	ctaLabel?: string;
+	/**
+	 * Target of the nav CTA (default `#start`, the page's signup form). A
+	 * page without a signup form sends it elsewhere.
+	 */
+	ctaHref?: string;
 	/** Target of the banner's "Mehr erfahren" link (default `#faq`). */
 	bannerHref?: string;
 };

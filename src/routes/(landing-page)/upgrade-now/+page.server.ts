@@ -9,7 +9,7 @@ export const load: PageServerLoad = async () => ({
 		description:
 			"Bis 31.12.2026 müssen Heizkostenverteiler und Wärmezähler fernablesbar sein, sonst dürfen Mieter um 3\u00a0% kürzen. Heidi rüstet um, die Installation ist kostenlos.",
 		ogTitle: "Nur noch wenige Monate bis zur Umrüstpflicht.",
-		// Until its go-live gate is done (plan §4.5). Then also add it to the sitemap.
+		// Until its go-live gate is done (plan §4.6). Then also add it to the sitemap.
 		noindex: true,
 		keepCanonical: true,
 	},

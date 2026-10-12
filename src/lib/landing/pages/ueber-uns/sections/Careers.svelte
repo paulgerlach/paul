@@ -2,7 +2,7 @@
 <script lang="ts">
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import { careers } from "../content";
-	import StrokeIcon from "../components/StrokeIcon.svelte";
+	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 </script>
 
 {#if careers.show}
@@ -20,12 +20,7 @@
 					<h2 id="kt-h">{careers.title}</h2>
 					<p>{careers.text}</p>
 				</div>
-				<ArrowLink
-					href={careers.cta.href}
-					label={careers.cta.text}
-					target="_blank"
-					rel="noopener"
-				/>
+				<ArrowLink href={careers.cta.href} label={careers.cta.text} />
 			</div>
 		</div>
 	</section>

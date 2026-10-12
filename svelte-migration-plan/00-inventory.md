@@ -32,6 +32,7 @@ Tick items as they are ported **and** verified against the Next version.
 | `/messdienstwechsel` | `src/routes/(landing-page)/messdienstwechsel/+page.svelte` | Landing page, own header/footer. Plan: `ddde6575` (`new-landing-page-plan/`) | [x] |
 | `/ueber-uns` | `src/routes/(landing-page)/ueber-uns/+page.svelte` | Company page ("Über uns"), `noindex` until its go-live gate. Plan: `7a777e92` (`new-landing-page-plan/`) | [x] |
 | `/karriere` | `src/routes/(landing-page)/karriere/+page.svelte` | Careers page ("Karriere"): jobs and an application form → Make.com `jobapplication`, `noindex` until its go-live gate. Plan: `d9e105d8` (`new-landing-page-plan/`) | [x] |
+| `/hilfe` | `src/routes/(landing-page)/hilfe/+page.svelte` | Help center ("Hilfe-Center"): 22 answers in 6 topics with live search (server-rendered for `?q=`) and a "War das hilfreich?" vote → Make.com `helpfeedback`, `noindex` until its go-live gate. Plan: `new-landing-page-plan/` | [x] |
 | `/messdienstanbieter` | `src/routes/(landing-page)/messdienstanbieter/+page.svelte` | Germany landing page, hub of the city pages. Plan: `new-landing-page-plan/08-germany-page.md` | [x] |
 | `/messdienstanbieter/[city]` | `src/routes/(landing-page)/messdienstanbieter/[city=city]/+page.svelte` | City landing pages (22 cities, only `live` ones indexed). Plan: `new-landing-page-plan/` | [x] |
 | `/upgrade-now` | `src/routes/(landing-page)/upgrade-now/+page.svelte` | Retrofit-deadline landing page ("Jetzt noch umrüsten"), `noindex` until its go-live gate. Plan: `new-landing-page-plan/` | [x] |

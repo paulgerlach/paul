@@ -3,7 +3,7 @@
  * Sends events to Denis's Make.com workflows
  *
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
- * jobapplication
+ * jobapplication, helpfeedback
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -17,11 +17,15 @@ type EventType =
 	| "switchinquiry"
 	// Application on /karriere. Payload: role, role_title, name, link, message,
 	// page. Make.com forwards it to the hiring inbox; nothing is stored here.
-	| "jobapplication";
+	| "jobapplication"
+	// "War das hilfreich?" vote on /hilfe. Payload: question (id), vote
+	// ("yes" | "no"), page. No email, nothing personal; Make.com writes it to
+	// the content owner's sheet.
+	| "helpfeedback";
 
 interface WebhookPayload {
 	event_type: EventType;
-	email: string;
+	email?: string;
 	timestamp?: string;
 	ip_address?: string;
 	[key: string]: unknown; // Additional data for complex events
@@ -30,12 +34,13 @@ interface WebhookPayload {
 /**
  * Send event to Make.com webhook
  * @param eventType - Type of event
- * @param email - User email
+ * @param email - User email (`null` for events without a person, which
+ *   leave the field out)
  * @param additionalData - Any additional data for the event
  */
 export async function sendWebhookEvent(
 	eventType: EventType,
-	email: string,
+	email: string | null,
 	additionalData?: Record<string, unknown>,
 ): Promise<void> {
 	try {
@@ -51,12 +56,16 @@ export async function sendWebhookEvent(
 
 		const payload: WebhookPayload = {
 			event_type: eventType,
-			email,
+			...(email !== null && { email }),
 			timestamp: new Date().toISOString(),
 			...additionalData,
 		};
 
-		console.log(`[WEBHOOK] Sending ${eventType} event for ${email}`);
+		console.log(
+			email === null
+				? `[WEBHOOK] Sending ${eventType} event`
+				: `[WEBHOOK] Sending ${eventType} event for ${email}`,
+		);
 
 		const response = await fetch(webhookUrl, {
 			method: "POST",

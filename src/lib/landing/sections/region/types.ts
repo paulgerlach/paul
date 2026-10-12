@@ -11,7 +11,7 @@
 import type { ImageAsset } from "$lib/components/Basic/Image/types";
 import type { LogoKey } from "$lib/landing/data/logos";
 import type { CitySlug } from "$lib/landing/pages/messdienstanbieter-city/cities";
-import type { FaqItem } from "$lib/landing/sections/Faq.svelte";
+import type { FaqItem } from "$lib/landing/faqJsonLd";
 
 export type SectionHead = { eyebrow: string; title: string; text: string };
 export type CardHead = { title: string; text: string };

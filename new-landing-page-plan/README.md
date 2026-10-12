@@ -56,6 +56,17 @@ src/lib/landing/
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
 
+## Implementation notes (2026-10-12)
+
+Phases 1–3 are built, with the Vitest and Playwright tests of §4.2 (`e2e/hilfe.e2e.ts`, 15 tests) and the `svelte-migration-plan/` changes of §4.3. Open: the manual checks of §4.1 (visual comparison per width, other browsers, iOS, VoiceOver, Lighthouse, a vote reaching the sheet) and the go-live gate §4.4. Deviations from the plan:
+
+- **Feedback form on the client:** each `Feedback` form posts with SvelteKit's `enhance` (`$app/forms`), not one superForm shared by 22 forms; the action still uses superforms + zod and only its `message.question` is read (no-JS votes come back through the page's `form` prop). So `load` returns no `feedbackForm`. An invalid vote is answered as valid (no `fail(400)`), so the page never shows an error for it.
+- **`sendWebhookEvent(…, email: string | null, …)`:** `null` leaves `email` out of the payload and the log line. The other events' payloads are unchanged.
+- **Result line:** the visible text and the live region are the same element, so it follows the query after the 300 ms settle (with the URL), not per keystroke.
+- **Initial deep link** runs from `afterNavigate` ("enter", deferred a microtask): `replaceState` throws in `onMount`, before Kit's router has started.
+- **Topic icons** are drawn by `pages/hilfe/components/Icon.svelte` by name (`icons.ts`), as on `/karriere`.
+- **Reduced motion:** `tokens.css` turns off `app.css`'s smooth scrolling as `html:has(.lp)`, so the rule stays scoped to landing pages.
+
 ## Key decisions
 
 | Topic | Decision |

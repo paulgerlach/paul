@@ -13,7 +13,7 @@ Marketing site for Heidi Systems (heidisystems.com): SvelteKit 2, Svelte 5 (rune
 - **`/upgrade-now` landing page ("Jetzt noch umrüsten", Heizkostenverordnung retrofit deadline 31.12.2026)** is built (plan in git history at `ddde6575`), `noindex` and out of the sitemap until its go-live gate (now `new-landing-page-plan/04-qa-and-go-live.md` §4.7: legal sign-off, KPIs, expired-state copy, slug). All date logic is in `$lib/landing/deadline/deadline.ts` (Europe/Berlin, pure, takes `now`); sections read the per-page `DeadlineClock` (`$lib/landing/deadline/clock.svelte.ts`), which starts at the `now` from `load` and ticks in the browser. Never call `Date.now()` in its components (same for `/ueber-uns`).
 - **`/ueber-uns` ("Über uns")** (plan in git history at `7a777e92`, design https://claude.ai/artifact/TYGNNySnjJfz1jcwJbUMbT) is built, `noindex` and out of the sitemap until its go-live gate (`new-landing-page-plan/04-qa-and-go-live.md` §4.6: company claims, founder role, careers target, copy/SEO sign-off, expired texts, slug). The landing footer's "Über uns" and `/messdienstwechsel`'s "Mehr über Heidi" link to it. Career links use `CAREERS_HREF` / `CAREERS_JOBS_HREF` (`$lib/landing/cta.ts`, `/karriere`).
 - **`/karriere` ("Karriere")** (plan in git history at `d9e105d8`, design https://claude.ai/artifact/QjHMhzF3c7Mhbuik5Ndzy8) is built, `noindex` and out of the sitemap until its go-live gate (`new-landing-page-plan/04-qa-and-go-live.md` §4.5: jobs and their owner, company claims, application routing and the hiring inbox, privacy text, copy/SEO sign-off, slug). Jobs live in its `content.ts` (`jobs.list`, ids also in `ROLE_IDS`, `$lib/forms/application.ts`); counts and form options derive from it. The application form → Make.com `jobapplication` via `sendWebhookEventOrThrow` (a failed send shows the fallback address); nothing is stored and nothing personal is logged. Its nav CTA goes to `/messdienstwechsel` (`LandingChrome.ctaHref`). The e2e webhook sink answers 500 for emails at `@sink-fails.example`.
-- **`/hilfe` ("Hilfe-Center")** is planned, not built: plan in `new-landing-page-plan/`, design https://claude.ai/artifact/SqREeUtRo8jL153iMHcKyC. Its go-live gate is §4.4 there.
+- **`/hilfe` ("Hilfe-Center")** (plan in `new-landing-page-plan/`, design https://claude.ai/artifact/SqREeUtRo8jL153iMHcKyC) is built, `noindex` and out of the sitemap until its go-live gate (§4.4 there: legal statements, company claims, the expired deadline answer, the feedback sheet and its owner, copy/SEO sign-off, slug). The 22 answers live in its `content.ts` (`topics`; plain text, a `more` link without `href` renders nothing until its page exists). The search (`search.ts`, pure) runs in `load` for `?q=` (no JS) and live in the browser through the `HelpSearch` context; `?q=` URLs stay `noindex` with the canonical `/hilfe`. "War das hilfreich?" → Make.com `helpfeedback` (question id, vote, page; no email); every vote, even an invalid or rate-limited one, gets the thanks. The landing footer's "Hilfe-Center" links here.
 - **After cutover:** delete the phase-1 second Vercel project; consider removing `/api/contact` once nothing external uses it; upgrade Swiper past 11.
 
 Plans and history: `svelte-migration-plan/` (README has the decisions log, `known-issues.md` the KI list) and `new-landing-page-plan/`.
@@ -47,26 +47,27 @@ src/
     [[preview=preview]]/        Prismic preview prefix (/preview/…), matcher in src/params/preview.ts
       (base)/                   site Header/Footer/ChatBot; layout loads nav blog teaser + sets cache-control
       (service)/fragebogen/     questionnaire, FragebogenHeader
-    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts), upgrade-now, ueber-uns, karriere
+    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts), upgrade-now, ueber-uns, karriere, hilfe
     api/                        +server.ts JSON/streaming endpoints (chat, slack, contact, fragebogen, leads, send-email, preview)
     robots.txt/, sitemap.xml/, slice-simulator/
   lib/
     components/<Area>/          ported components, PascalCase.svelte
     attachments/                {@attach} helpers: swiper, lottie, clickOutside, slideToggle, scrollToBottom
-    landing/                    landing pages: tokens.css, motion.ts, cta.ts, chrome.ts (header texts per page)
+    landing/                    landing pages: tokens.css, motion.ts, cta.ts, chrome.ts (header texts per page), faqJsonLd.ts (FAQPage JSON-LD)
       pages/<landing>/sections/ every section of a page, one file each (thin wrappers where shared); page data
-      sections/                 shared section implementations (LogoStrip, Faq, FinalCta, Testimonials, Trust, TrustCards; region/ = city/Germany template)
+      sections/                 shared section implementations (LogoStrip, Faq, FinalCta, CtaCard, Testimonials, Trust, TrustCards; region/ = city/Germany template)
       components/               building blocks: LandingHeader/Footer, SignupForm, DemoCard, EasyChecks, SectionHead, ArrowLink, Segmented (radiogroup), icons (incl. StrokeIcon)
       deadline/                 retrofit deadline: deadline.ts (pure date logic) + clock.svelte.ts (DeadlineClock), used by upgrade-now and ueber-uns
       pages/messdienstanbieter-city/cities/  index.ts (CITIES, live flags), <slug>.ts + <slug>-map.ts (generated), cities.test.ts
       pages/upgrade-now/        content.ts, calculator.ts, sections/
       pages/ueber-uns/          content.ts, sections/
       pages/karriere/           content.ts (copy + jobs), application.svelte.ts (chosen role context), icons.ts, components/ (ApplyLink, Icon), sections/
+      pages/hilfe/              content.ts (copy + the 22 answers), search.ts (pure search + highlight), search.svelte.ts (HelpSearch context), icons.ts, components/Icon, sections/
       attachments/ data/        landing attachments (inView, countUp, reveal …); customer logos, testimonials; confetti.ts (canvas burst)
-    server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), application (/karriere action), rateLimit, slack, webhooks, ai/personas
+    server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), application (/karriere action), helpFeedback (/hilfe vote action), rateLimit, slack, webhooks, ai/personas
     chat/                       SlackChat + chat context, businessHours
     fragebogen/                 Questionnaire rune class + zod schema (shared client/server)
-    forms/                      superforms schemas (contact, switchInquiry, application)
+    forms/                      superforms schemas (contact, switchInquiry, application, helpFeedback)
     seo/                        Seo.svelte, site.ts (defaults, SeoData)
     slices/                     Prismic slices ($slices alias)
     assets/icons.ts             image imports (`?enhanced`)

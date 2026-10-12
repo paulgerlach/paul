@@ -7,7 +7,7 @@
  * needs legal sign-off before go-live (plan §4.7). The `expired` texts are
  * placeholders until the content owner writes them (plan open question 3).
  */
-import type { FaqItem } from "$lib/landing/sections/Faq.svelte";
+import type { FaqItem } from "$lib/landing/faqJsonLd";
 
 const nbsp = "\u00a0";
 

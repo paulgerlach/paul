@@ -3,7 +3,7 @@
  * artifact. It's kept as typed constants (not Prismic), so the section
  * components stay small and the copy can move to a CMS later.
  */
-import type { FaqItem } from "$lib/landing/sections/Faq.svelte";
+import type { FaqItem } from "$lib/landing/faqJsonLd";
 
 /* Steps (Portfolio-Checker) */
 

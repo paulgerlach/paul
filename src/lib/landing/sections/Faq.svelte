@@ -1,8 +1,3 @@
-<script lang="ts" module>
-	/** `answer` may contain <b> and <a>; it comes from trusted content modules. */
-	export type FaqItem = { question: string; answer: string };
-</script>
-
 <!--
   FAQ of the landing pages, with its FAQPage JSON-LD. `split` is the
   two-column variant of the /upgrade-now design (title and lead on the left,
@@ -10,6 +5,7 @@
 -->
 <script lang="ts">
 	import Chevron from "$lib/landing/components/icons/Chevron.svelte";
+	import { faqJsonLd, type FaqItem } from "$lib/landing/faqJsonLd";
 
 	let {
 		items,
@@ -24,22 +20,8 @@
 		variant?: "default" | "split";
 	} = $props();
 
-	// FAQPage structured data. Answers may contain <b>, which schema.org allows.
-	const jsonLd = $derived(
-		JSON.stringify({
-			"@context": "https://schema.org",
-			"@type": "FAQPage",
-			mainEntity: items.map((item) => ({
-				"@type": "Question",
-				name: item.question,
-				acceptedAnswer: { "@type": "Answer", text: item.answer },
-			})),
-		}).replace(/</g, "\\u003c"),
-	);
-	// Split so the closing tag doesn't end this <script> block.
-	const jsonLdTag = $derived(
-		`<script type="application/ld+json">${jsonLd}<` + "/script>",
-	);
+	// FAQPage structured data.
+	const jsonLdTag = $derived(faqJsonLd(items));
 </script>
 
 <svelte:head>

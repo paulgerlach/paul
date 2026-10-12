@@ -359,3 +359,10 @@
 		overflow-x: clip;
 	}
 }
+
+/* app.css scrolls anchor jumps smoothly; not with reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+	html:has(.lp) {
+		scroll-behavior: auto;
+	}
+}

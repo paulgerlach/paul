@@ -1,51 +1,24 @@
-# Phase 2: sections (static markup and CSS)
+# Phase 2: Sections
 
-Goal: the page matches the design at 1440 / 1100 / 980 / 700 / 375 px with static, server-rendered content. Behaviour comes in phase 3, so every dynamic number is rendered from the SSR `now` already here (the functions of `deadline.ts` can be written first, see §3.1).
+Static markup and CSS of every section, ported from the design with its class names shortened to the component's scope (`ub-` / `pg-` prefixes dropped where the scope makes them unique). Icons: the design's inline 20×20 stroke SVGs stay inline (passed to `SectionHead` as the `icon` snippet), the check marks use `icons/Check.svelte`, the logo mark `icons/HeidiMark.svelte`. Every revealable element keeps the design's `rv` class for phase 3.
 
-## 2.1 Porting rules
+| # | Section | Design | Implementation |
+|---|---|---|---|
+| 1 | `Hero` | `.pg-hero` two-column grid (`minmax(0,1fr) minmax(0,560px)`, 64 px gap), H1 `clamp(38px,4.6vw,62px)` | Pill, H1 with `<em>` in `--ok`, lead, CTAs: `ArrowLink` "Demo buchen" (`DEMO_HREF`) + ghost link "Karriere bei Heidi" (`CAREERS_HREF`), the ticks list. Right column: `ServiceStack`. One column at 1040 px (44 px gap), from `#pg-common-css` |
+| 1a | `ServiceStack` | `.ub-stack` card | Header "Was Heidi übernimmt" + replay button (`aria-label="Animation wiederholen"`, rendered only after mount, see 3.1), `<ol>` of 5 items (icon tile, title, sub, check circle), dark "Ein Partner für alles" row. Server markup = final state |
+| 2 | `LogoStrip` | `.dm-logos` | Wrapper around the shared `LogoStrip` with `content.logos` |
+| 3 | `Mission` | `.ub-ms` grid 1.2fr/.8fr | `SectionHead` + lead + ghost link to `/upgrade-now`; right: `DeadlineCard` (dark card, day number `clamp(64px,7vw,96px)` in `--accent`, 6 px bar, labels "Heute" / "1.1.2027") |
+| 4 | `Principles` | `.pg-sec.alt`, `.ub-val` 4-col buttons + `.ub-vd` panel | 4 `<button type="button" aria-pressed>` with number, title, sub; the panel (`aria-live="polite"`) with text and 3 check points. 2 columns at 1040 px, panel one column at 640 px |
+| 5 | `Numbers` | `.ub-nums` 4 tiles, first dark | `SectionHead center`, tiles from `content.numbers`. 2 cols at 1040, 1 at 640 |
+| 6 | `Team` | `.ub-team` .7fr/1.3fr | Founder card (96 px initials avatar, name, role, "Berlin" pin pill with `icons/Pin.svelte`), text column with `SectionHead`, lead and the two outline links |
+| 7 | `Testimonials` | `.dm-tm` with `.tm2` (2 cards) | Shared `Testimonials` with `id="stimmen"` and the two items; the shared `--n` column count handles 2 |
+| 8 | `Careers` | `.ub-kt` dark rounded card | Dark pill ("Wir wachsen"), H2, text, `ArrowLink` "Zur Karriereseite" (`CAREERS_HREF`, external). Rendered only if `content.careers.show` |
+| 9 | `FinalCta` | `.dm-end` dark card | Shared `FinalCta` with `id="start"`, `content.finalCta`, the form (README, open question 3) |
+| 10 | `Trust` | `.trust` cards | Shared `TrustCards` without `more` |
 
-- CSS from the design's `#umr-css` goes into the section that uses it, as a scoped `<style>` block; class names keep the design's `um-` prefix so the two can be diffed. Shared `.dm-*` primitives (`dm-in`, `dm-h2`, `dm-pill`, `bk-next`) come from `tokens.css` and the shared sections; check each against `tokens.css` before copying anything.
-- The design's reveal-on-scroll (`.rv` → `.in`) is the existing `inView` attachment.
-- Inline SVG icons stay inline in the section (as in the design), except icons that already exist in `$lib/landing/components/icons/` (check, chevron, verified badge).
-- No umlauts in file names: `Deadlines.svelte` (Fristen), `Consequences.svelte` (Folgen), `WhyHeidi.svelte`.
+Notes:
 
-## 2.2 The sections, in page order
-
-| # | Section (design comment) | File | Reuse | Notes |
-|---|---|---|---|---|
-| 1 | HERO + COUNTDOWN | `Hero.svelte`, `Countdown.svelte`, `YearBand.svelte` | new | Pill with a pulsing dot, H1 with a dynamic `<em>` ("knapp drei Monate"), lede, 4-unit countdown (`role="timer"`, `aria-live="off"`), two CTAs, the 12-month year band, 3 fact checks. Hidden "expired" paragraph (phase 3.2) |
-| 2 | LOGOS | `LogoStrip.svelte`* | `sections/LogoStrip` | Text from content, default logo order |
-| 3 | FRISTEN | `Deadlines.svelte` | new | `<ol>` timeline, 4 entries; state classes `done` / `now` / future from `deadline.ts`, not hard-coded. The `now` entry shows "Noch N Tage" |
-| 4 | FOLGEN | `Consequences.svelte` | new | 3 cards with big numbers (count up, phase 3), the first one highlighted (`hot`), § source under each; the WEG note |
-| 5 | RECHNER (`#risiko`) | `RiskCalculator.svelte` | new | Two range inputs, a 4-button segment (radiogroup), a switch, the result card with bar and two sub-values, CTA. Phase 3.5 |
-| 6 | ZEIT | `TimeWindow.svelte`, `MonthCalendar.svelte`, `Steps.svelte` | new | 3 KPIs (Werktage, Wochen, Feiertage), the month calendars from the current month to December, a legend, the 5-step `<ol>` |
-| 7 | WARUM HEIDI | `WhyHeidi.svelte` | new | Bento: one big card with the radio-wave animation (CSS only), four small cards |
-| 8 | STIMMEN | `Testimonials.svelte`* | new shared `sections/Testimonials` | See §2.3 |
-| 9 | FAQ | `Faq.svelte`* | `sections/Faq` | Needs a `lead` prop (§2.3) |
-| 10 | ABSCHLUSS | `FinalCta.svelte`* | `sections/FinalCta` | Needs a kicker ("Noch N Tage") and gets the form (phase 4) |
-| 11 | Partner und Verbände | `Trust.svelte`* | `sections/Trust` (moved) | Unchanged |
-
-The design's nav, banner and footer are replaced by `LandingHeader` / `LandingFooter`.
-
-## 2.3 Changes to shared code
-
-Each change keeps the existing pages pixel-identical (check `/messdienstwechsel`, `/messdienstanbieter`, `/messdienstanbieter/berlin` at the five widths before and after).
-
-- **`Faq`:** optional `lead?: string` rendered under the title, as in the design's `.dm-faq-g` left column (`dm-lead`). Check that the existing two-column FAQ layout is the same as the design's; if the design differs, add a variant prop rather than a copy.
-- **`FinalCta`:** optional `kicker?: Snippet` above the title (the design's `um-cta-k`, which shows the live day count). Check whether the design's `um-cta` layout (text left, button right) differs from the existing final CTA with form; phase 4 decides the final layout because the form is added.
-- **Testimonials:** move the quotes out of `region/References.svelte` into `$lib/landing/data/testimonials.ts` (Werne, Vitolus, Gerhard: quote, name, role, badge). New `sections/Testimonials.svelte` renders the design's three-card row (`tm2 um-tm3`: verified badge, quote, initials avatar, name and role). `References` reads its two mini quotes from the same module. Copy stays word for word.
-- **`Trust`:** move `sections/region/Trust.svelte` to `sections/Trust.svelte` and update the region wrappers' imports. It's now used by two page families, so it no longer belongs in `region/`.
-- **`confetti.ts`:** this design's burst differs (120 pieces, slower fall, white instead of ink in the palette, fade from 3.4 s). Add options (`count`, `colors`, `gravity`/`maxFall`, `fadeAfter`) with the current values as defaults, so the city pages don't change.
-
-## 2.4 Layout and accessibility details from the design
-
-- The countdown digits are `<span>`s inside a fixed-width box, so a digit change never shifts the layout. Use `font-variant-numeric: tabular-nums` as the design does.
-- The calculator's labels are real `<label>`s; the segment buttons get `role="radio"` and `aria-checked` (the design adds them in JS; render them in markup).
-- Calendar day cells carry `title` attributes ("Heute", the holiday name, "Frist: 31.12.2026"); also give them an `aria-label` with the date, and give each month grid a heading (the design's `<h3>` with "N Werktage übrig").
-- Exactly one `<h1>`. Section headings are `<h2>`, card titles `<h3>`, as in the design.
-
-## Done when
-
-- All 11 sections render server-side with the design's spacing at the five widths, with JS disabled too (numbers from the SSR `now`).
-- The other landing pages are unchanged after the shared-code changes.
-- No hydration warnings.
+- Section order and backgrounds follow the design: hero (`--bg`), logos, mission (white), principles (`alt`), numbers (white), team (`alt`), testimonials, careers (white), CTA, trust (`#F6F7F6`).
+- Headings: one `<h1>`; every section has `aria-labelledby` on its H2 as in the design (unique ids: the design uses `tm-h` for the team and `tm-h2` for the testimonials; rename the team's to `team-h`).
+- The hero ticks and principle points use `<ul>`; the services `<ol>` (ordered, as designed).
+- Text that the design truncates with `text-overflow: ellipsis` (service subs) must fit at 375 px; check, and allow wrapping below 640 px instead of cutting German text.

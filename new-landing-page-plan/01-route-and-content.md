@@ -1,59 +1,64 @@
-# Phase 1: route skeleton, content, SEO
-
-Goal: `/upgrade-now` exists and returns 200 with the landing header and footer, its own SEO, and an H1. The rest is filled in by phases 2–4.
+# Phase 1: Route, content and shared pieces
 
 ## 1.1 Route
 
-- `ROUTE_UPGRADE_NOW = "/upgrade-now"` is already in `$lib/routes.ts` (added with the footer link).
-- `src/routes/(landing-page)/upgrade-now/+page.server.ts`:
-  - `load` returns `seo`, `landing` (header chrome), `now: Date.now()` (the single time source for SSR, phase 3.1) and `finalForm: await emptySwitchForm("final")` (phase 4).
-  - `actions.default` calls `handleSwitchSignup(event, { source: "upgrade-now", page: ROUTE_UPGRADE_NOW })` (phase 4).
-  - No `cache-control`: the `(landing-page)` layout sets it.
-- `+page.svelte` composes the sections from `$lib/landing/pages/upgrade-now/sections/` (phase 2). For phase 1 a minimal hero with the H1 is enough.
-- Outside `[[preview=preview]]`: no Prismic content.
+- `ROUTE_UEBER_UNS = "/ueber-uns"` in `$lib/routes.ts`.
+- `src/routes/(landing-page)/ueber-uns/+page.server.ts`, modelled on `upgrade-now/+page.server.ts`:
 
-## 1.2 Content module
+```ts
+export const load: PageServerLoad = async () => ({
+	seo: {
+		title: "Über uns: Messdienst aus Berlin | Heidi Systems",
+		description:
+			"Heidi Systems übernimmt für Hausverwaltungen den kompletten Messdienst: eigene Funkzähler, kostenlose Installation, Ablesung per Funk und die Heizkostenabrechnung auf Knopfdruck.",
+		ogTitle: "Messdienst, wie er heute sein sollte.",
+		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
+		noindex: true,
+		keepCanonical: true,
+	},
+	landing: DEFAULT_CHROME,
+	now: Date.now(),
+	finalForm: await emptySwitchForm("final"),
+});
 
-`src/lib/landing/pages/upgrade-now/content.ts` holds every text of the page, copied word for word from the design (German, typographic quotes, `&nbsp;` before `%` as ` `). Components hold markup and behaviour only, as on the other landing pages. Typed exports, one per section:
+export const actions: Actions = {
+	default: (event) =>
+		handleSwitchSignup(event, { source: "ueber-uns", page: ROUTE_UEBER_UNS }),
+};
+```
 
-| Export | Content |
-|---|---|
-| `hero` | pill ("Heizkostenverordnung · Nachrüstpflicht nach § 5 Abs. 3"), H1 parts ("Nur noch", the dynamic `<em>`, "bis zur Umrüstpflicht."), lede, the 3 facts, CTA labels, the expired-state texts (open question 3) |
-| `logoStripText` | "Hausverwaltungen in ganz Deutschland rechnen bereits mit Heidi ab." (logo order = `DEFAULT_LOGO_ORDER`) |
-| `deadlines` | eyebrow, H2, the 4 timeline entries (date, title, text) |
-| `consequences` | eyebrow "Ab 1. Januar 2027", H2, the 3 cards (number, prefix/suffix, title, text, § source), the WEG note |
-| `calculator` | eyebrow, H2, labels, the two result texts, the note "Vereinfachte Rechnung … Keine Rechtsberatung." |
-| `timeWindow` | eyebrow, H2, KPI labels, legend, the 5 steps (title, text, timing) |
-| `whyHeidi` | H2 and the 5 bento cards |
-| `faq` | title "Häufige Fragen zur Umrüstpflicht", the lead (legal basis, "ersetzt keine Rechtsberatung"), the 7 Q&As |
-| `finalCta` | H2 "Genug Zeit, wenn Sie jetzt anfangen.", CTA label |
+  SEO title and description are drafts for the content owner (gate §4.4). No `cache-control` here (the layout sets it).
+- `+page.svelte`: `setDeadlineClock(data.now)`, `onMount(() => clock.start())` (as on `/upgrade-now`), then the sections in design order.
 
-The 2026 holidays and the deadline constants live in `deadline.ts`, not here (phase 3).
+## 1.2 Footer link
 
-## 1.3 SEO
+`$lib/landing/footerLinks.ts`: `{ text: "Über uns", href: ROUTE_UEBER_UNS }`. With this, the landing footer on every landing page links here, so the route has to exist in the same commit.
 
-Returned from `load` as `seo` (never `<svelte:head>` meta in the page). The design has no title beyond "Jetzt noch umrüsten · Heidi", so these are proposals for sign-off:
+## 1.3 Content module
 
-- `title`: "Umrüstpflicht 2026: Zähler fernablesbar machen | Heidi Systems" (62 characters; the city-page rule is 30–60, so shorten if the content owner agrees, e.g. without "Systems")
-- `description`: "Bis 31.12.2026 müssen Heizkostenverteiler und Wärmezähler fernablesbar sein, sonst dürfen Mieter um 3 % kürzen. Heidi rüstet um, die Installation ist kostenlos." (160)
-- `ogTitle`: "Nur noch wenige Monate bis zur Umrüstpflicht."
-- Canonical and `og:url` come from the path (`<Seo>`).
-- JSON-LD: the shared `Faq` already emits `FAQPage`. Nothing else.
-- Sitemap: add `{ path: ROUTE_UPGRADE_NOW, changefreq: "weekly", priority: 0.8 }` to `src/routes/sitemap.xml/+server.ts` **only at go-live** (§5.4). Until then the page sets `seo.noindex = true`, like the non-live cities.
+`$lib/landing/pages/ueber-uns/content.ts` holds every text of the page, word for word from the design (headings as the existing `SplitHeading` type: main part + muted `<span>` part):
 
-## 1.4 Header chrome
+- `hero`: pill "Über Heidi Systems", H1 "Messdienst, wie er heute" + em "sein sollte.", lead, CTAs ("Demo buchen", "Karriere bei Heidi"), ticks (Sitz in Berlin / Kunden in ganz Deutschland / Hardware und Software aus einer Hand).
+- `services`: card title "Was Heidi übernimmt", the 5 items (title + sub), the closing "Ein Partner für alles" / "Ein Ansprechpartner, ein Dashboard".
+- `logos`: "Hausverwaltungen in ganz Deutschland arbeiten bereits mit Heidi." (same 12 logos, `DEFAULT_LOGO_ORDER`).
+- `mission`: pill, H2, lead, `leadExpired` (placeholder), link "Mehr zur Umrüstpflicht" → `ROUTE_UPGRADE_NOW`, card texts ("Bis zur Fernablesepflicht", "Tage", "Heute", "1.1.2027", `expired` placeholder).
+- `principles`: pill "Wofür wir stehen", H2 "Vier Grundsätze." / "Jeden Tag.", 4 × `{ title, sub, text, points[3], link? }` (texts from the design's `V` array).
+- `numbers`: pill, H2 "Weniger Aufwand am Montagetag." / "Für alle.", 4 × `{ value, unit, label, dark?, countTo? }` (92 %, 14 Tage, "1–2" Std., 0 €).
+- `team`: name, role, location, initials, pill "Das Team", H2, lead, links ("Kundenstimmen lesen" → `#stimmen`, "Offene Stellen" → `CAREERS_HREF`).
+- `testimonials`: title "Was Verwaltungen über Heidi sagen", keys `["werne", "gerhard"]` (quotes come from `data/testimonials.ts`; the wording in the design is identical).
+- `careers`: `show: true`, pill "Wir wachsen", title, text, button "Zur Karriereseite".
+- `finalCta`: title "Lernen Sie Heidi kennen.", submit label "Demo buchen".
 
-- `LandingChrome` gets an optional `bannerHref` (default `#faq`); `LandingHeader` uses it for the banner's "Mehr erfahren" link. This page returns `{ ...DEFAULT_CHROME, bannerHref: "#risiko", ctaLabel: "Bestand prüfen" }` (the design's nav CTA label).
-- The other landing pages are unchanged (they don't pass `bannerHref`).
+Placeholders (expired texts) are marked with `data-placeholder` in dev, as on `/upgrade-now`.
 
-## 1.5 Assets
+## 1.4 Shared pieces (moves, no behaviour change)
 
-- Customer logos: `$lib/landing/data/logos.ts` (same 12 logos, same order as the design).
-- Partner logos: the existing `Trust` section's webp files (DEUMESS, VDIV, bved).
-- No photos, no video. Every other visual is inline SVG or CSS, so the page adds no image files.
+| From | To | Why |
+|---|---|---|
+| `pages/upgrade-now/deadline.ts`, `deadline.test.ts`, `clock.svelte.ts` | `$lib/landing/deadline/` | Second page uses the deadline. Add `retrofitProgress(now)`: share of 1.1.2022 00:00 → `DEADLINE` (Berlin), clamped to 0…1, with tests (start, mid, last day, expired = 1) |
+| `pages/upgrade-now/components/SectionHead.svelte`, `ArrowLink.svelte` | `$lib/landing/components/` | Same pill + split H2 and the `bk-next` button. `SplitHeading` moves with them (into the component's module script or `$lib/landing/types.ts`) |
+| `pages/messdienstwechsel/sections/Trust.svelte` (cards) | `$lib/landing/sections/TrustCards.svelte` | Same DEUMESS/VDIV/bved cards. Prop `more?: { text, href }`; `/messdienstwechsel` passes "Mehr über Heidi" → `ROUTE_UEBER_UNS`, this page passes nothing |
+| — | `$lib/landing/sections/Testimonials.svelte` gets `id?` | Anchor `#stimmen` for "Kundenstimmen lesen" |
+| — | `$lib/landing/cta.ts` gets `CAREERS_HREF` | One place for the career links (README, open question 2) |
 
-## Done when
-
-- `/upgrade-now` renders 200 with header, footer and H1; `/upgrade-now/` redirects.
-- The footer link resolves; `e2e/messdienstanbieter.e2e.ts` "internal links resolve" passes again.
-- `bun run check` and `bun run lint` pass.
+Update `CLAUDE.md` (the `/upgrade-now` bullet names `pages/upgrade-now/deadline.ts`) and the layout tree.

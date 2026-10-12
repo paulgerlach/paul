@@ -1,73 +1,52 @@
-# Landing page `/upgrade-now` ("Jetzt noch umrüsten"): plan
+# Page `/ueber-uns` ("Über uns"): plan
 
-A landing page about the **retrofit obligation of the Heizkostenverordnung**: every Heizkostenverteiler, Wärme- and Warmwasserzähler must be remotely readable by **31.12.2026**, otherwise tenants may cut their heating-cost share by 3 % per billing period. The page counts down to the deadline, shows what waiting costs, and leads to a Heidi retrofit request. Like the other landing pages it lives in the `(landing-page)` route group, with the landing header and footer, the Geist font and `tokens.css`. The landing footer's new "Produkt" group links to it ("Jetzt noch umrüsten", already built).
+The company page of Heidi Systems: who Heidi is (a Berlin PropTech that runs the whole Messdienst for Hausverwaltungen), the mission (every meter remotely readable by 1.1.2027), four principles, the service KPIs, the founder, two customer quotes, a careers teaser and a closing CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`. The landing footer's "Über uns" entry (plain text today) links to it once phase 1 is done.
 
-- **Design reference:** https://claude.ai/artifact/Jp8tqY82m7FZqMnWU4z9x9 ("Jetzt noch umrüsten · Heidi"). One HTML file: the shared base CSS of the landing designs (`:root` tokens, `.dm-*` primitives, nav), about 250 lines of page CSS (`#umr-css`, prefix `um-`), one page script (`#umr-js`, ~130 lines) and embedded images (the 12 customer logos, the 3 partner logos).
-- **Previous plan:** the `/messdienstanbieter` (city and Germany pages) plan used to live in this folder, and before it the `/messdienstwechsel` plan. Both are in git history (last versions at `be2c1feb` and `65470139`). Their open go-live gates moved to [05-qa-and-go-live.md §5.5 and §5.6](05-qa-and-go-live.md).
-
-## Time pressure
-
-The page is about a deadline **12 weeks away** (today is 2026-10-07). It only does its job before 31.12.2026, and it can only go live with the SvelteKit cutover (PR #440), because production still runs the Next app. So:
-
-- Build it as the next landing task, and keep it small: reuse the shared sections, no new dependencies.
-- Its go-live gate (§5.4) is mostly legal and business sign-off. Start those requests **now**, in parallel with the build.
-- It needs a defined state for **after** the deadline (§3.2), because the page will still be online on 1.1.2027.
-
-## Implementation notes (2026-10-07)
-
-Phases 1–4 are built, phase 5's automated tests are written; the manual checks of §5.1 and the go-live gate §5.4 are open.
-
-- **Built as planned:** route with `noindex` + self-canonical (not in the sitemap), `bannerHref: "#risiko"`, header CTA "Bestand prüfen"; `content.ts`; `deadline.ts` (Europe/Berlin, tested also with `TZ=UTC` and `TZ=America/New_York`); `calculator.ts`; `DeadlineClock` (`clock.svelte.ts`, context per page). Sections read `clock.today` (changes once a day) for every day-based value and `clock.now` only in the countdown.
-- **Shared code:** `Faq` got `lead` and `variant="split"` (the design's two-column FAQ, plus icons, all closed); `FinalCta` got `id`, `kicker` and an optional `sub`; `Trust` moved to `sections/`; quotes moved to `data/testimonials.ts` (`References` reads them, new `sections/Testimonials.svelte`); `confetti.ts` has options with the old values as defaults; new `attachments/reveal.ts` (reveal on scroll, hides only elements below the fold at mount, so no-JS and above-the-fold content never flash).
-- **CTAs:** `focusSignup()` now focuses `#start input[name=email]` instead of a fixed id, so it works for the hero form of the other pages and for this page's final form (`id="start"`). No other page changed behaviour.
-- **Design bugs fixed** (tell the designer): the last day said "Frist abgelaufen"/"null Tage" (now "Letzter Tag" / "Nur noch heute"); `moText` read past "zwölf" (clamped); the year band's "letztes Zeitfenster" months now come from the current Berlin month instead of the elapsed share of the year; calendar "today" uses Berlin, not the browser's time zone.
-- **Deviations from the design:** the final CTA is the shared centred block with the signup form instead of the dark two-column card (§4.3), its kicker restyled for the light background; the logo strip uses the shared `LogoStrip` look (88/40 px padding, 19 px text instead of 72/64 px and 17 px muted). Show both to the designer.
-- **Expired-state copy** (`hero.expired`, `deadlines.h2Expired`, `calculator.switchLabelExpired`, the step's `timingExpired`, `finalCta.titleExpired`) are placeholders, marked `data-placeholder` in dev (open question 3).
-- **Tests:** `deadline.test.ts`, `calculator.test.ts`, `e2e/upgrade-now.e2e.ts` (SEO, 375 px overflow, the four clock scenarios incl. crossing the deadline, calculator, CTAs, signup, no-JS). The signup test that stores a lead needs the local Postgres (`127.0.0.1:54322`); it wasn't running on 2026-10-07, so that test (and the 4 lead tests of `messdienstanbieter.e2e.ts`) failed with `ECONNREFUSED`. Everything else passed.
+- **Design reference:** https://claude.ai/artifact/TYGNNySnjJfz1jcwJbUMbT ("Über uns · Heidi"). One HTML file: the shared base CSS of the landing designs (`:root` tokens, `.dm-*` primitives, nav), the "Lösungsseiten" building blocks (`#pg-common-css`, prefix `pg-`, ~40 lines), the page CSS (`#ub-css`, prefix `ub-`, ~85 lines), the card-style trust block (`#trust-css`), a shared helper script (`#pg-common`: reveal, count-up, confetti, smooth anchors) and the page script (`#ub-js`, ~35 lines). Embedded images: the 12 customer logos and the 3 partner logos, all already in `$lib/landing/data/logos.ts` and the Trust section. Save it locally with the Artifact tool's `read` action; it isn't in the repo.
+- **Previous plans:** the `/upgrade-now` plan used to live in this folder (last version at `ddde6575`), before it the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates moved to [04-qa-and-go-live.md §4.5–4.7](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route skeleton (so the footer link resolves), content module, SEO, sitemap, header banner | S |
-| 2 | [02-sections.md](02-sections.md) | The 11 sections with static markup, CSS ported from the design; reuse of the shared sections | M |
-| 3 | [03-deadline-and-interactions.md](03-deadline-and-interactions.md) | The deadline clock (time zone, SSR/hydration, after-deadline state), countdown, year band, calendar, count-ups, risk calculator with confetti | L |
-| 4 | [04-cta-and-signup.md](04-cta-and-signup.md) | CTA targets and the signup form with its own lead source | S |
-| 5 | [05-qa-and-go-live.md](05-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, content module, SEO, footer link, the signup form; moving the pieces the page shares with `/upgrade-now` and `/messdienstwechsel` | S |
+| 2 | [02-sections.md](02-sections.md) | The 10 sections with static markup and the design's CSS | M |
+| 3 | [03-interactions.md](03-interactions.md) | Hero checklist animation + confetti, the deadline card, the principle tabs, count-ups, reveal on scroll | M |
+| 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-Phase 1 goes first and on its own: until the route exists, the footer link 404s and the `messdienstanbieter` e2e check "internal links resolve" fails. Phases 2 and 3 can overlap (3 needs the markup of 2); phase 4 is small and can come any time after 2.
+Phase 1 goes first and on its own: once the footer entry links to `/ueber-uns`, the `messdienstanbieter` e2e check "internal links resolve" needs the route. Phases 2 and 3 can overlap (3 needs the markup of 2).
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/upgrade-now/
+src/routes/(landing-page)/ueber-uns/
 ├── +page.server.ts        # load: seo, landing chrome, `now`, the signup form; the form action
-└── +page.svelte           # composes the sections
+└── +page.svelte           # sets the deadline clock, composes the sections
 
 src/lib/landing/
+├── deadline/                                    (moved from pages/upgrade-now/, phase 1.4)
+│   ├── deadline.ts  deadline.test.ts            # + retrofitProgress(now)
+│   └── clock.svelte.ts
+├── components/
+│   ├── SectionHead.svelte  ArrowLink.svelte     (moved from pages/upgrade-now/components/)
 ├── sections/
-│   ├── LogoStrip.svelte  Faq.svelte  FinalCta.svelte      # shared, small prop additions (phase 2)
-│   ├── Testimonials.svelte(new)                         # 3 verified-customer cards (also used by region/References)
-│   └── Trust.svelte(moved from region/)                 # partner logos, now used by two page families
-├── data/
-│   ├── logos.ts
-│   └── testimonials.ts(new)                             # the quotes, shared with region/References
-└── pages/upgrade-now/
-    ├── content.ts                                       # all copy: hero, deadlines, cards, steps, bento, FAQ, final CTA
-    ├── deadline.ts  deadline.test.ts                    # pure date logic (Europe/Berlin), no DOM
-    ├── calculator.ts  calculator.test.ts                # the risk formula and slider stops
+│   ├── TrustCards.svelte                        (moved from pages/messdienstwechsel/sections/Trust.svelte)
+│   └── Testimonials.svelte                      # + optional `id`
+└── pages/ueber-uns/
+    ├── content.ts  content.test.ts              # all copy: hero, services, mission, principles, KPIs, team, careers, CTA
     └── sections/
-        ├── Hero.svelte  Countdown.svelte  YearBand.svelte
+        ├── Hero.svelte                          # text + CTAs + ticks
+        ├── ServiceStack.svelte                  # "Was Heidi übernimmt" checklist card (hero right column)
         ├── LogoStrip.svelte*
-        ├── Deadlines.svelte                             # "Vier Fristen" timeline
-        ├── Consequences.svelte                          # the 3 % / 12× / +15 % cards and the WEG note
-        ├── RiskCalculator.svelte                        # #risiko
-        ├── TimeWindow.svelte  MonthCalendar.svelte  Steps.svelte
-        ├── WhyHeidi.svelte                              # bento with the radio-wave visual
-        ├── Testimonials.svelte*
-        ├── Faq.svelte*
-        ├── FinalCta.svelte*
-        └── Trust.svelte*
+        ├── Mission.svelte                       # text + DeadlineCard
+        ├── DeadlineCard.svelte                  # "Bis zur Fernablesepflicht … Tage" + progress bar
+        ├── Principles.svelte                    # 4 tabs + detail panel
+        ├── Numbers.svelte                       # 4 KPI tiles
+        ├── Team.svelte                          # founder card + text + links
+        ├── Testimonials.svelte*                 # Werne + Gerhard
+        ├── Careers.svelte                       # dark "Wir wachsen" teaser
+        ├── FinalCta.svelte*                     # id="start", the signup form
+        └── Trust.svelte*                        # TrustCards without the "Mehr über Heidi" link
 ```
 
 `*` = a thin wrapper around the shared section, the same rule as the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
@@ -76,36 +55,38 @@ src/lib/landing/
 
 | Topic | Decision |
 |---|---|
-| URL | `/upgrade-now`, as requested, as `ROUTE_UPGRADE_NOW` in `$lib/routes.ts` (already added). See open question 1 |
-| Header | The shared `LandingHeader` with the site nav, as on the other landing pages. The design's banner text is the same as `DEFAULT_CHROME`, but its "Mehr erfahren" link goes to `#risiko`: add an optional `bannerHref` to `LandingChrome` (default `#faq`) |
-| Footer | The shared `LandingFooter` (done: "Produkt" → "Jetzt noch umrüsten"; "Geräte", "Standorte", "Rechtliches" removed). **Superseded 2026-10-12:** business decided to port the landing design's footer in full to all landing pages (company links, Produkt, Plattform, Partner, Kunden, Ressourcen, Städte, claim + newsletter, disclaimer + socials). Link data in `$lib/landing/footerLinks.ts`; entries without a page render as plain text, as in the design |
-| Styling | The design's `um-*` CSS goes into the sections' scoped `<style>` blocks; tokens from `tokens.css` (same `:root`). The design's breakpoints stay as they are (1240/1180/1100/1080/1040/980/760/700/640/560/520) |
-| Reuse | LogoStrip, Faq, FinalCta, Trust, the testimonial cards and `confetti.ts` exist already with the same design CSS (`.dm-*`, `tm-*`, `trust`). They get small prop additions instead of copies (phase 2) |
-| Dates | All date logic in one pure module, `deadline.ts`, computed in **Europe/Berlin** (the server runs in UTC, the design uses the browser's local time). The deadline is `2027-01-01T00:00:00+01:00`. SSR renders the state at the request time passed from `load`, the browser takes over on mount (phase 3) |
-| After the deadline | The page switches to an "expired" state instead of counting to zero forever (phase 3.2). The copy for it needs the content owner (open question 3) |
-| Interactivity | Runes, the existing attachments (`inView`, `countUp`) and `tweenNumber`/`prefersReducedMotion` from `motion.ts`. Without JS the page shows the server-rendered numbers and a working calculator default; nothing important is client-only |
-| Form | The shared `SignupForm` with the `switchInquiry` schema and `handleSwitchSignup`, lead `source = "upgrade-now"`, in the final CTA. All "Umrüstung anfragen" / "Bestand prüfen" CTAs lead there (phase 4, open question 2) |
-| Legal copy | Every legal statement (dates, §§, 3 %, 15 %, WEG note, FAQ) is signed off by someone who checks it against the HeizkostenV before go-live. Until then it's imported as designed |
-| Rendering | SSR with the `(landing-page)` cache header (`s-maxage=60, stale-while-revalidate=600`), not prerendered. A cached page can be up to ~11 minutes old; the client clock corrects every number on mount |
+| URL | `/ueber-uns` (German, no umlaut, the usual spelling of German sites), as `ROUTE_UEBER_UNS` in `$lib/routes.ts` |
+| Route group | `(landing-page)`, outside `[[preview=preview]]`: the design is a landing design (Geist, `dm-*` tokens, landing nav/footer) and there's no Prismic content |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner text and "Mehr erfahren" → `/upgrade-now` are exactly that). Nav CTA "Bestand prüfen" → `#start` |
+| Footer | The shared `LandingFooter`; `companyLinks` "Über uns" gets `href: ROUTE_UEBER_UNS`. The site (`(base)`) header/footer stay as they are until the cutover (Next parity; open question 5) |
+| Styling | The `ub-*` and `pg-*` CSS goes into the sections' scoped `<style>` blocks; tokens from `tokens.css`. The design's breakpoints stay (1040, 640 for the page; 820 for the trust cards). The `pg-*` blocks are page-local for now; extract them when a second "Lösungsseite" design arrives |
+| Reuse | LogoStrip, Testimonials, FinalCta, the trust cards, `SectionHead`/`ArrowLink`, the deadline module and clock, `confetti.ts`, the `reveal`/`countUp`/`playOnView` attachments. Shared pieces move to `$lib/landing/` instead of being copied (phase 1.4) |
+| Deadline | The mission card uses `daysLeft()` from the shared deadline module (Europe/Berlin, `now` from `load`, the `DeadlineClock` takes over in the browser). It shows the same number as `/upgrade-now` ("Noch 80 Tage" on 12.10.2026), not the design's `ceil((1.1.2027 − now) / day)` in browser time, which is one higher for most of the day. The bar is the elapsed share from 1.1.2022 to the deadline, a new tested `retrofitProgress(now)` |
+| After the deadline | The card and the mission lead switch to an expired text (phase 3.2); the rest of the page is timeless. Copy is a placeholder until the content owner writes it |
+| Form and CTAs | The design has no form: "Demo buchen" goes to a booking design, "Bestand prüfen" to the hero. As on `/upgrade-now`: the final CTA gets the shared `SignupForm` (`id="start"`, button "Demo buchen"), lead `source = "ueber-uns"`, and every demo/start CTA scrolls there and focuses the email field (`DEMO_HREF`, `focusSignup()`). The hero has no `id="start"` |
+| Careers | There's no careers page. The three career links ("Karriere bei Heidi", "Offene Stellen", "Zur Karriereseite") go to one constant `CAREERS_HREF` in `cta.ts`, by default the LinkedIn company page from `Footer/footerLinks.ts` (external, `rel="noopener"`), so a real careers URL is a one-line change (open question 2) |
+| Links without a page | "Kundenstimmen lesen" → `#stimmen` (this page's testimonials). The principle panels' "Dashboard ansehen" and "Zum Portfolio-Checker" are dropped until those pages exist (`link?` in the content stays). The trust block's "Mehr über Heidi" is dropped here (it points to this page); on `/messdienstwechsel` it now links to `/ueber-uns` instead of `/` |
+| No JS | Every section renders its final state on the server: all services ticked, "Ein Partner für alles" shown, the day count and bar filled, the KPIs at their values, principle 01 open. The principle buttons need JS to switch; the form works without it |
+| Indexing | `noindex` + self-canonical and out of the sitemap until the go-live gate (§4.4), like the other new landing pages |
+| Rendering | SSR with the `(landing-page)` cache header, not prerendered (the day count depends on the request time) |
 
 ## Open questions (the default is built unless answered)
 
-1. **Slug.** `/upgrade-now` is English on a German site, and the search terms are German ("Umrüstpflicht", "fernablesbar 2026"). *Default: `/upgrade-now` as requested. A German slug (`/jetzt-umruesten`, `/umruestpflicht`) costs one constant now and a redirect later; decide before go-live, not after.*
-2. **Where the CTAs go.** The design has no form: "Umrüstung anfragen" and "Kürzung vermeiden" link to a "Demo buchen" design, "Bestand prüfen" to the hero (`#start`), which has no form. *Default: the final CTA section gets the shared signup form (button "Umrüstung anfragen"), every CTA scrolls there and focuses the email field. If a booking URL exists by then, `DEMO_HREF` switches the demo CTAs.*
-3. **After 31.12.2026.** The design only swaps one hero line ("Die Frist ist abgelaufen. … Umrüsten lohnt sich trotzdem sofort.") and would show "Nur noch null Tage bis zur Umrüstpflicht". *Default: the expired state in §3.2 (new H1, no countdown, no calendar, the timeline marks the deadline as passed, the calculator stays). The content owner writes the H1 and lede; review the whole page in January.*
-4. **Lead routing.** *Default: the existing `switchinquiry` Make.com event with `page: "/upgrade-now"`, so sales can branch on it. A separate event (e.g. `upgradeinquiry`) needs a new Make.com scenario.*
-5. **Discoverability.** The footer link is the only way in. *Default: that's all for now. Candidates once the page is live: the landing banner on the other pages ("Ab 1.1.2027 … fernablesbar sein") could link here instead of `#faq`, and a site blog post about the Heizkostenverordnung.*
-6. **Testimonial wording.** The design shows three quotes (Werne, Vitolus, Gerhard) with the same wording as the city pages' references. *Default: one shared data module; the content owner's sign-off for the references (already in the city gate) covers this page too.*
+1. **Slug.** *Default: `/ueber-uns`.* `/unternehmen` or `/about` are the alternatives; decide before go-live.
+2. **Careers target.** *Default: the LinkedIn company page.* A real careers page or job-board URL (Personio, Join …) replaces it via `CAREERS_HREF`. If there are no open positions at go-live, hide the careers teaser and the two career links (one flag in `content.ts`).
+3. **The final CTA.** The design ends with a dark card "Lernen Sie Heidi kennen." and a "Demo buchen" button; we render the shared centred signup block with that title (the same deviation as on `/upgrade-now`). *Default: the form. If a booking URL exists by then, `DEMO_HREF` switches all demo CTAs and the design's dark card can come back without a form.*
+4. **Founder card.** The design shows initials ("PG") instead of a photo. *Default: initials. A licensed portrait can replace them (`Image`, 96 px round); "Gründer und Geschäftsführer" needs confirmation (the Impressum only says "Vertreten durch: Paul Gerlach").*
+5. **Discoverability.** *Default: only the landing footer links here.* After the cutover, the site footer and the header could link to it too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
+6. **Lead routing.** *Default: the existing `switchinquiry` Make.com event with `page: "/ueber-uns"`.*
 
 ## Risks
 
-- **Short shelf life.** If the cutover slips past December, the page never goes live in its main form. Mitigation: build it now, keep the expired state ready, and decide in December whether it's still worth launching.
-- **Legal claims.** The page states legal consequences (§ 12 Abs. 1, § 6a, § 5 Abs. 3 HeizkostenV) and does arithmetic with them. A wrong claim is a liability. Mitigation: legal sign-off in the gate, the design's "Keine Rechtsberatung" notes stay.
-- **Time-dependent rendering.** Countdown, calendar and year band depend on "now" and the time zone. Done naively (local `new Date()` in components), they cause hydration mismatches and off-by-one days around midnight. Mitigation: one pure, tested module and a single `now` passed from `load` (phase 3).
-- **Unconfirmed KPIs.** "Installation kostenlos" still needs confirmation. "92 % der Montagen beim ersten Termin", "14 Tage vorher" and "1–2 Stunden" were confirmed by business on 2026-10-12.
+- **Unconfirmed claims.** "0 € Installationskosten", "Mieter 14 Tage vorher informiert", "Ein fester Ansprechpartner", "Wechsel auch bei laufendem Vertrag", "Daten direkt in Ihrem ERP- oder CRM-System", "Kündigung … per Vollmacht", "Unser Team in Berlin entwickelt Zähler-Anbindung, Dashboard und Abrechnung selbst" and "Installationspartner" are company statements. 92 %, 14 Tage and 1–2 h were confirmed on 2026-10-12; the rest is in the gate (§4.4).
+- **Time-dependent copy.** "Ab dem 1. Januar 2027 müssen …" and the day count go stale on 1.1.2027. Mitigation: the expired state of phase 3.2, driven by the shared clock.
+- **Hero animation flash.** The checklist is above the fold; if the animation's start state were the server markup, no-JS visitors would see dimmed items, and if the reset ran after hydration, JS visitors would see a tick → untick flash. Mitigation: CSS keyframe animations started by `.play` (the `playOnView` pattern), with the final state as the default style (phase 3.1).
 
 ## Out of scope
 
-- The design's nav (Produkt / Lösungen / Kunden / Ressourcen with "bald" pages). (Its footer was ported after all, see "Footer" above.)
-- The pages the design links to (Portfolio-Checker, Selbstabrechnung, Demo buchen …).
-- A/B tests and analytics events.
+- The design's nav (Produkt / Lösungen / Kunden / Ressourcen with "bald" pages).
+- The pages the design links to (Karriere, Kundenreferenzen, Dashboard, Portfolio-Checker, Demo buchen).
+- A team section with more people, a timeline or press logos (not in the design).

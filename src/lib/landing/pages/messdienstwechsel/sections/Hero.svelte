@@ -57,6 +57,19 @@
 		margin-top: 22px;
 		max-width: 34ch;
 	}
+	@media (max-width: 1040px) and (min-width: 621px) {
+		h1 {
+			font-size: clamp(48px, 7.4vw, 68px);
+		}
+	}
+	@media (max-width: 620px) {
+		h1 {
+			font-size: clamp(36px, 10vw, 48px);
+			line-height: 1.04;
+			overflow-wrap: break-word;
+			hyphens: auto;
+		}
+	}
 	@media (max-width: 980px) {
 		.hero .wrap {
 			grid-template-columns: 1fr;

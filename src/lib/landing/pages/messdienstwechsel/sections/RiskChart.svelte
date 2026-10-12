@@ -18,7 +18,7 @@
 
 	let chart: HTMLElement;
 	let tip = $state<HTMLElement>();
-	const bars: HTMLElement[] = [];
+	const bars: HTMLElement[] = $state([]);
 	let tipPos = $state({ x: 0, bottom: 0 });
 
 	$effect(() => {

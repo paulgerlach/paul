@@ -128,7 +128,7 @@ test("unknown cities 404, and a trailing slash redirects", async ({ page }) => {
 
 test("the footer lists every city and the hub", async ({ page }) => {
 	await page.goto(BERLIN);
-	const links = await hrefs(page.locator("footer .cities a"));
+	const links = await hrefs(page.locator("footer .f-cities a"));
 	expect(links).toEqual([...CITIES.map((c) => `${HUB}/${c.slug}`), HUB]);
 });
 

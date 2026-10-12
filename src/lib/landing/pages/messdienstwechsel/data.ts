@@ -199,6 +199,10 @@ export type GanttRow = {
 	ticks?: number;
 	/** Milestone label at the end of the bar. */
 	milestone?: string;
+	/** Milestone text in the tooltip, if it differs from the bar label. */
+	milestoneTip?: string;
+	/** Highlighted (green) milestone, e.g. the signed power of attorney. */
+	milestoneSig?: boolean;
 	/** Tooltip */
 	title: string;
 	weeks: string;
@@ -242,12 +246,15 @@ export const ganttRows: GanttRow[] = [
 		bar: "Planung",
 		from: 4,
 		to: 4,
+		milestone: "Eine Unterschrift genügt",
+		milestoneTip: "Vollmacht unterschrieben",
+		milestoneSig: true,
 		title: "Rollout-Planung",
 		weeks: "Woche 4",
 		points: [
 			"Reihenfolge der Objekte und Wechseltermine festlegen",
-			"Vollmacht für Kündigungen abstimmen",
-			"Mieterinformation und Montagefenster planen",
+			"Eine Unterschrift von Eigentümer oder Verwaltung auf der Vollmacht genügt",
+			"Ab hier übernimmt Heidi Kündigung, Termine und Mieterinformation",
 		],
 	},
 	{
@@ -457,7 +464,7 @@ export const faqItems: FaqItem[] = [
 	{
 		question: "Was kostet der Wechsel?",
 		answer:
-			"Die Installation der Funkzähler ist in allen Tarifen kostenlos. Der Tarif richtet sich nach der Zahl Ihrer Wohneinheiten: <b>Heidi</b> für 2 bis 50 Wohneinheiten ab 200 € pro Jahr, <b>HeidiPlus</b> für 50 bis 200 Wohneinheiten ab 150 € pro Jahr inklusive kostenloser Wartung sowie Verbrauchs- und Mieterinformation, <b>HeidiGroßkunde</b> ab 201 Wohneinheiten mit individuellem Angebot.",
+			"Sie zahlen nur für das, was tatsächlich verbaut ist: Abgerechnet wird nach der Anzahl der installierten Zähler. Dazu kommt eine Abrechnungspauschale für die Heizkostenabrechnung. Ein konkretes Angebot für Ihren Bestand erhalten Sie nach dem Portfolio-Check.",
 	},
 	{
 		question: "Habe ich einen festen Ansprechpartner?",
@@ -467,7 +474,7 @@ export const faqItems: FaqItem[] = [
 	{
 		question: "Was passiert, wenn beim Montagetermin niemand öffnet?",
 		answer:
-			"Wir kündigen Termine frühzeitig an und stimmen den Zugang vorab mit Ihnen oder dem Hausmeister ab. Klappt ein Termin trotzdem nicht, organisieren wir den Ersatztermin direkt mit dem Mieter, ohne dass Sie sich darum kümmern müssen.",
+			"Wir kündigen Termine 14 Tage vorher an und stimmen den Zugang vorab mit Ihnen oder dem Hausmeister ab. Klappt ein Termin trotzdem nicht, organisieren wir den Ersatztermin direkt mit dem Mieter, ohne dass Sie sich darum kümmern müssen.",
 	},
 	{
 		question: "Sind die Heidi-Zähler fernablesbar nach Heizkostenverordnung?",

@@ -8,6 +8,7 @@ import germany from "$lib/landing/pages/messdienstanbieter/content";
 import germanyData from "$lib/landing/pages/messdienstanbieter/germany-map";
 import {
 	cityHint,
+	EXTRA_CITY_DOTS,
 	FALLBACK_HINTS,
 	germanList,
 	germanyMap,
@@ -16,7 +17,7 @@ import {
 	districtId,
 	type RegionContent,
 } from "$lib/landing/sections/region/types";
-import { CITIES, isCitySlug, LIVE_CITIES } from "./index";
+import { CITIES, type CityEntry, isCitySlug, LIVE_CITIES } from "./index";
 
 const modules = import.meta.glob<{ default: RegionContent }>(
 	["./*.ts", "!./index.ts", "!./*-map.ts", "!./*.test.ts"],
@@ -169,7 +170,13 @@ describe("Germany map", () => {
 
 	it("has a dot position for every city and a fallback for every city state", () => {
 		for (const c of CITIES)
-			expect(germanyData.cityDots[c.slug], c.slug).toBeDefined();
+			expect(
+				germanyData.cityDots[c.slug] ?? EXTRA_CITY_DOTS[c.slug],
+				c.slug,
+			).toBeDefined();
+		// Extra dots are only for cities the design doesn't have.
+		for (const slug of Object.keys(EXTRA_CITY_DOTS))
+			expect(germanyData.cityDots[slug], slug).toBeUndefined();
 		for (const s of germanyData.states)
 			if ("cityHint" in s) expect(FALLBACK_HINTS[s.name], s.name).toBeTruthy();
 	});
@@ -178,9 +185,9 @@ describe("Germany map", () => {
 		const map = germanyMap(germanyData);
 		const links = map.districts.filter((d) => d.href).map((d) => d.href);
 		expect(links).toEqual(
-			LIVE_CITIES.filter((c) => germanyData.cityDots[c.slug]).map(
-				(c) => `/messdienstanbieter/${c.slug}`,
-			),
+			LIVE_CITIES.filter(
+				(c) => germanyData.cityDots[c.slug] ?? EXTRA_CITY_DOTS[c.slug],
+			).map((c) => `/messdienstanbieter/${c.slug}`),
 		);
 	});
 
@@ -191,5 +198,16 @@ describe("Germany map", () => {
 			"Eigene Seiten: Köln, Düsseldorf, Dortmund, Essen, Duisburg, Bochum, Wuppertal, Bielefeld, Bonn, Münster und Mönchengladbach.",
 		);
 		expect(map.districts.filter((d) => d.href)).toHaveLength(CITIES.length);
+	});
+
+	it("keeps a state's design hint until one of its cities is live", () => {
+		const hintOf = (cities: readonly CityEntry[]) =>
+			germanyMap(germanyData, cities).districts.find(
+				(d) => d.name === "Thüringen",
+			)!.hint;
+		expect(hintOf([])).toBe(
+			"Viele Einheiten pro Objekt: Rollout im Cluster statt Haus für Haus.",
+		);
+		expect(hintOf(CITIES)).toBe("Eigene Seite: Gera.");
 	});
 });

@@ -9,6 +9,7 @@
 	import Rollout from "$lib/landing/pages/messdienstwechsel/sections/Rollout.svelte";
 	import Service from "$lib/landing/pages/messdienstwechsel/sections/Service.svelte";
 	import Steps from "$lib/landing/pages/messdienstwechsel/sections/Steps.svelte";
+	import Trust from "$lib/landing/pages/messdienstwechsel/sections/Trust.svelte";
 	import TestimonialBanner from "$lib/landing/pages/messdienstwechsel/sections/TestimonialBanner.svelte";
 
 	let { data } = $props();
@@ -26,4 +27,5 @@
 	<TestimonialBanner />
 	<Faq />
 	<FinalCta form={data.finalForm} />
+	<Trust />
 </main>

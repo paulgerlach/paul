@@ -17,7 +17,7 @@
 
 	let card: HTMLElement;
 	let tip = $state<HTMLElement>();
-	const bars: HTMLElement[] = [];
+	const bars: HTMLElement[] = $state([]);
 	let tipPos = $state({ x: 0, y: 0, ax: 0, below: false });
 
 	/** Places the tooltip above the active bar (below if there's no room). */
@@ -141,7 +141,9 @@
 									</span>
 								{/if}
 								{#if r.milestone}
-									<span class="ms"><span>{r.milestone}</span></span>
+									<span class="ms" class:ms-sig={r.milestoneSig}
+										><span>{r.milestone}</span></span
+									>
 								{/if}
 							</button>
 						</div>
@@ -169,18 +171,21 @@
 					{#each row.points as point (point)}<li>{point}</li>{/each}
 				</ul>
 				{#if row.milestone}
-					<div class="ms-t">◆ Meilenstein: {row.milestone}</div>
+					<div class="ms-t">
+						◆ Meilenstein: {row.milestoneTip ?? row.milestone}
+					</div>
 				{/if}
 			</div>
 		{/if}
 		<div class="gfoot">
 			<div>
 				<strong
-					>Die Verwaltung steuert, Heidi übernimmt Technik, Daten und Betrieb.</strong
+					>Eine Unterschrift von Eigentümer oder Verwaltung. Um den Rest kümmern
+					wir uns.</strong
 				>
 				<p>
-					Erst analysieren, dann ein Pilotobjekt, dann der Bestand. Weitere
-					Portfolios folgen im selben Ablauf.
+					Heidi übernimmt Kündigung, Montage, Daten und Betrieb. Erst Analyse,
+					dann Pilotobjekt, dann der Bestand.
 				</p>
 			</div>
 			<div class="gpill"><b>8</b> Wochen bis zur ersten uVI</div>
@@ -460,6 +465,10 @@
 		border-radius: 3px;
 		z-index: 2;
 	}
+	.ms.ms-sig {
+		border-color: #2f7a3c;
+		background: var(--accent);
+	}
 	.ms span {
 		position: absolute;
 		left: 14px;
@@ -475,6 +484,11 @@
 		border-radius: 999px;
 		padding: 2px 9px;
 		box-shadow: 0 2px 8px rgba(30, 50, 45, 0.08);
+	}
+	.ms.ms-sig span {
+		background: #e6f5e7;
+		border-color: #bfe3c2;
+		color: #24452f;
 	}
 
 	.gtip {
@@ -610,6 +624,19 @@
 		}
 		.scroll-hint {
 			display: block;
+		}
+	}
+	/* Larger section heading on tablets and phones. */
+	@media (max-width: 1040px) and (min-width: 621px) {
+		.shead h2 {
+			font-size: clamp(36px, 5.6vw, 52px);
+			line-height: 1.06;
+		}
+	}
+	@media (max-width: 620px) {
+		.shead h2 {
+			font-size: clamp(30px, 8.4vw, 40px);
+			line-height: 1.08;
 		}
 	}
 </style>

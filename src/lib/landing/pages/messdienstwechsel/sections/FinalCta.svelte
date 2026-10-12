@@ -10,4 +10,5 @@
 	title="Wechseln war nie einfacher."
 	sub="Ein Gespräch, ein Vertrag, fertig. Den Rest übernimmt Heidi."
 	{form}
+	compact
 />

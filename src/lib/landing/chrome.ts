@@ -1,3 +1,5 @@
+import { ROUTE_UPGRADE_NOW } from "$lib/routes";
+
 /**
  * Texts of the landing header that differ per page. A landing page returns
  * them from its `load` as `landing`; the layout passes them to the header.
@@ -14,4 +16,6 @@ export type LandingChrome = {
 export const DEFAULT_CHROME: LandingChrome = {
 	bannerText:
 		"Ab 1.1.2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Jetzt den Wechsel prüfen.",
+	bannerHref: ROUTE_UPGRADE_NOW,
+	ctaLabel: "Bestand prüfen",
 };

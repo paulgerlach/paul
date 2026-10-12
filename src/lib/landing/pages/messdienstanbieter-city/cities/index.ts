@@ -16,6 +16,8 @@ export type CityEntry = {
 	/** Bundesland, for the Germany map. */
 	state: string;
 	live: boolean;
+	/** Shows a "neu" badge in the footer "Städte" group. */
+	isNew?: boolean;
 };
 
 // prettier-ignore
@@ -35,9 +37,9 @@ export const CITIES = [
 	{ slug: "nuernberg", name: "Nürnberg", state: "Bayern", live: false },
 	{ slug: "hannover", name: "Hannover", state: "Niedersachsen", live: false },
 	{ slug: "duisburg", name: "Duisburg", state: "Nordrhein-Westfalen", live: false },
-	{ slug: "bochum", name: "Bochum", state: "Nordrhein-Westfalen", live: false },
-	{ slug: "wuppertal", name: "Wuppertal", state: "Nordrhein-Westfalen", live: false },
-	{ slug: "bielefeld", name: "Bielefeld", state: "Nordrhein-Westfalen", live: false },
+	{ slug: "bochum", name: "Bochum", state: "Nordrhein-Westfalen", live: false, isNew: true },
+	{ slug: "wuppertal", name: "Wuppertal", state: "Nordrhein-Westfalen", live: false, isNew: true },
+	{ slug: "bielefeld", name: "Bielefeld", state: "Nordrhein-Westfalen", live: false, isNew: true },
 	{ slug: "bonn", name: "Bonn", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "muenster", name: "Münster", state: "Nordrhein-Westfalen", live: false },
 	{ slug: "mannheim", name: "Mannheim", state: "Baden-Württemberg", live: false },
@@ -45,6 +47,7 @@ export const CITIES = [
 	{ slug: "augsburg", name: "Augsburg", state: "Bayern", live: false },
 	{ slug: "wiesbaden", name: "Wiesbaden", state: "Hessen", live: false },
 	{ slug: "moenchengladbach", name: "Mönchengladbach", state: "Nordrhein-Westfalen", live: false },
+	{ slug: "gera", name: "Gera", state: "Thüringen", live: false, isNew: true },
 ] as const satisfies readonly CityEntry[];
 
 export type CitySlug = (typeof CITIES)[number]["slug"];

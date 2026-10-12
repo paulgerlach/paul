@@ -335,4 +335,17 @@
 			grid-template-columns: 1fr;
 		}
 	}
+	/* Larger section heading on tablets and phones. */
+	@media (max-width: 1040px) and (min-width: 621px) {
+		.shead h2 {
+			font-size: clamp(36px, 5.6vw, 52px);
+			line-height: 1.06;
+		}
+	}
+	@media (max-width: 620px) {
+		.shead h2 {
+			font-size: clamp(30px, 8.4vw, 40px);
+			line-height: 1.08;
+		}
+	}
 </style>

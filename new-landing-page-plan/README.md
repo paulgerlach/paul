@@ -78,7 +78,7 @@ src/lib/landing/
 |---|---|
 | URL | `/upgrade-now`, as requested, as `ROUTE_UPGRADE_NOW` in `$lib/routes.ts` (already added). See open question 1 |
 | Header | The shared `LandingHeader` with the site nav, as on the other landing pages. The design's banner text is the same as `DEFAULT_CHROME`, but its "Mehr erfahren" link goes to `#risiko`: add an optional `bannerHref` to `LandingChrome` (default `#faq`) |
-| Footer | The shared `LandingFooter` (done: "Produkt" → "Jetzt noch umrüsten"; "Geräte", "Standorte", "Rechtliches" removed). The design's own footer columns (Plattform, Partner, Ressourcen …) are not ported, the same decision as for the design nav |
+| Footer | The shared `LandingFooter` (done: "Produkt" → "Jetzt noch umrüsten"; "Geräte", "Standorte", "Rechtliches" removed). **Superseded 2026-10-12:** business decided to port the landing design's footer in full to all landing pages (company links, Produkt, Plattform, Partner, Kunden, Ressourcen, Städte, claim + newsletter, disclaimer + socials). Link data in `$lib/landing/footerLinks.ts`; entries without a page render as plain text, as in the design |
 | Styling | The design's `um-*` CSS goes into the sections' scoped `<style>` blocks; tokens from `tokens.css` (same `:root`). The design's breakpoints stay as they are (1240/1180/1100/1080/1040/980/760/700/640/560/520) |
 | Reuse | LogoStrip, Faq, FinalCta, Trust, the testimonial cards and `confetti.ts` exist already with the same design CSS (`.dm-*`, `tm-*`, `trust`). They get small prop additions instead of copies (phase 2) |
 | Dates | All date logic in one pure module, `deadline.ts`, computed in **Europe/Berlin** (the server runs in UTC, the design uses the browser's local time). The deadline is `2027-01-01T00:00:00+01:00`. SSR renders the state at the request time passed from `load`, the browser takes over on mount (phase 3) |
@@ -102,10 +102,10 @@ src/lib/landing/
 - **Short shelf life.** If the cutover slips past December, the page never goes live in its main form. Mitigation: build it now, keep the expired state ready, and decide in December whether it's still worth launching.
 - **Legal claims.** The page states legal consequences (§ 12 Abs. 1, § 6a, § 5 Abs. 3 HeizkostenV) and does arithmetic with them. A wrong claim is a liability. Mitigation: legal sign-off in the gate, the design's "Keine Rechtsberatung" notes stay.
 - **Time-dependent rendering.** Countdown, calendar and year band depend on "now" and the time zone. Done naively (local `new Date()` in components), they cause hydration mismatches and off-by-one days around midnight. Mitigation: one pure, tested module and a single `now` passed from `load` (phase 3).
-- **Unconfirmed KPIs.** "92 % der Montagen beim ersten Termin", "14 Tage vorher", "1–2 Stunden", "Installation kostenlos" are the same claims as on the city pages and need the same confirmation.
+- **Unconfirmed KPIs.** "Installation kostenlos" still needs confirmation. "92 % der Montagen beim ersten Termin", "14 Tage vorher" and "1–2 Stunden" were confirmed by business on 2026-10-12.
 
 ## Out of scope
 
-- The design's nav (Produkt / Lösungen / Kunden / Ressourcen with "bald" pages) and its footer columns.
+- The design's nav (Produkt / Lösungen / Kunden / Ressourcen with "bald" pages). (Its footer was ported after all, see "Footer" above.)
 - The pages the design links to (Portfolio-Checker, Selbstabrechnung, Demo buchen …).
 - A/B tests and analytics events.

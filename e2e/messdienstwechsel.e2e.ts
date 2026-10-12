@@ -1,5 +1,4 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { CITIES } from "../src/lib/landing/pages/messdienstanbieter-city/cities/index.ts";
 
 // The signup tests save leads, so they need a database with the `leads` table
 // (`bunx drizzle-kit push` on a fresh local DB). Webhooks go to the local sink
@@ -53,32 +52,15 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	expect(faq.mainEntity).toHaveLength(8);
 });
 
-test("nav and footer link to the same pages as the site's", async ({
-	page,
-}) => {
+test("the nav links to the same pages as the site's", async ({ page }) => {
 	await page.goto("/");
-	const site = new Set([
-		...(await hrefs(page.locator("#header a[href]"))),
-		...(await hrefs(page.locator("footer a[href]"))),
-	]);
+	const site = new Set(await hrefs(page.locator("#header a[href]")));
 
 	await page.goto(PATH);
-	const landing = new Set([
-		...(await hrefs(page.locator("nav.top a[href]"))),
-		...(await hrefs(page.locator("footer a[href]"))),
-	]);
+	const landing = new Set(await hrefs(page.locator("nav.top a[href]")));
 
-	// Landing-only: the logo links home, the CTAs go to the page's own anchors,
-	// the footer's "Städte" group links the city pages and their hub, and its
-	// "Produkt" group the landing pages.
-	const landingOnly = [
-		"/",
-		"#start",
-		"#faq",
-		"/upgrade-now",
-		"/messdienstanbieter",
-		...CITIES.map((c) => `/messdienstanbieter/${c.slug}`),
-	];
+	// Landing-only: the logo links home, the CTA goes to the page's signup.
+	const landingOnly = ["/", "#start"];
 	// Site-only: the "Angebot einholen" CTA.
 	const siteOnly = ["/fragebogen"];
 
@@ -88,6 +70,54 @@ test("nav and footer link to the same pages as the site's", async ({
 	expect(
 		[...site].filter((h) => !landing.has(h) && !siteOnly.includes(h)),
 	).toEqual([]);
+});
+
+// The footer is the landing design's own (not the site's); every internal
+// link in it must resolve.
+test("the footer's internal links resolve", async ({ page, request }) => {
+	await page.goto(PATH);
+	const links = new Set(await hrefs(page.locator('footer a[href^="/"]')));
+	for (const href of links) {
+		const response = await request.get(href);
+		expect(response.status(), href).toBe(200);
+	}
+});
+
+test.describe("footer newsletter", () => {
+	test("rejects an invalid address, then thanks and sends the event", async ({
+		page,
+	}) => {
+		await page.goto(PATH);
+		const form = page.locator("footer .f-form");
+		await form.getByLabel("E-Mail-Adresse").fill("not-an-email");
+		await form.getByRole("button", { name: "Los geht’s" }).click();
+		await expect(form).toHaveClass(/err/);
+		await expect(page.locator("#f-mail-err")).toHaveText(
+			"Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+		);
+
+		const email = testEmail("newsletter");
+		await form.getByLabel("E-Mail-Adresse").fill(email);
+		await form.getByRole("button", { name: "Los geht’s" }).click();
+		await expect(page.locator("footer .f-ok")).toHaveText(
+			"Danke! Wir halten Sie auf dem Laufenden.",
+		);
+		await expect.poll(() => webhookFor(page, email)).toBeTruthy();
+	});
+
+	test.describe("without JS", () => {
+		test.use({ javaScriptEnabled: false });
+
+		test("posts the form and returns to the page", async ({ page }) => {
+			await page.goto(PATH);
+			const email = testEmail("newsletter-nojs");
+			const form = page.locator("footer .f-form");
+			await form.getByLabel("E-Mail-Adresse").fill(email);
+			await form.getByLabel("E-Mail-Adresse").press("Enter");
+			await expect(page).toHaveURL(PATH);
+			await expect.poll(() => webhookFor(page, email)).toBeTruthy();
+		});
+	});
 });
 
 test.describe("signup", () => {

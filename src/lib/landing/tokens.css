@@ -133,6 +133,7 @@
 	flex: none;
 }
 .lp .okb svg {
+	display: block;
 	width: 10px;
 }
 .lp .pill-s {
@@ -349,5 +350,12 @@
 	.lp *::after {
 		transition: none !important;
 		animation: none !important;
+	}
+}
+
+/* Nothing on a landing page may scroll the page sideways on phones. */
+@media (max-width: 900px) {
+	.lp {
+		overflow-x: clip;
 	}
 }

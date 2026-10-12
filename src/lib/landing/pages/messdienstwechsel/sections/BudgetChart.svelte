@@ -27,7 +27,7 @@
 
 	let box: HTMLElement;
 	let tip = $state<HTMLElement>();
-	const bars: HTMLElement[] = [];
+	const bars: HTMLElement[] = $state([]);
 	let tipIndex = $state<number | null>(null);
 	let tipPos = $state({ x: 0, y: 0 });
 
@@ -43,7 +43,7 @@
 		tipPos = { x, y: r.top - br.top - 6 };
 	});
 
-	const tabs: HTMLElement[] = [];
+	const tabs: HTMLElement[] = $state([]);
 	function onTabKey(event: KeyboardEvent, i: number) {
 		const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[
 			event.key

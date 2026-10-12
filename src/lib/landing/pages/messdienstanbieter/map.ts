@@ -38,6 +38,21 @@ export type GermanyMapData = Omit<MapGeometry, "districts" | "marker"> & {
 };
 
 /**
+ * Dots of cities added after the Germany design, which doesn't have them, so
+ * a re-run of scripts/extract-city.ts doesn't drop them. Placed with the
+ * design's projection (an affine fit of longitude/latitude to the existing
+ * dots, under 1 px off for every one of them); the label sits below the dot.
+ */
+export const EXTRA_CITY_DOTS: GermanyMapData["cityDots"] = {
+	gera: {
+		cx: 373.4,
+		cy: 300.4,
+		r: 6,
+		label: { x: 373.4, y: 316.4, lines: ["Gera"], fontSize: 8.5 },
+	},
+};
+
+/**
  * Hints for states whose city pages aren't live (yet). Not in the design:
  * written in the style of its other state hints, to be signed off by the
  * content owner (plan, open question 8).
@@ -86,15 +101,16 @@ export function germanyMap(
 ): MapGeometry {
 	const stateDistricts: MapDistrict[] = states.map((s) => {
 		const { name, shape, label, stock } = s;
+		// A state with a fixed design hint still lists its city pages once one
+		// is live (Thüringen: Gera, added after the design).
 		const hint =
-			"hint" in s
-				? s.hint
-				: (cityHint(name, cities, s.cityHint.suffix) ?? FALLBACK_HINTS[name]);
+			cityHint(name, cities, "cityHint" in s ? s.cityHint.suffix : undefined) ??
+			("hint" in s ? s.hint : FALLBACK_HINTS[name]);
 		if (!hint) throw new Error(`No hint for ${name}`);
 		return { name, shape, label, stock, hint };
 	});
 	const dots: MapDistrict[] = cities.flatMap((city) => {
-		const dot = cityDots[city.slug];
+		const dot = cityDots[city.slug] ?? EXTRA_CITY_DOTS[city.slug];
 		if (!dot) return [];
 		return {
 			id: `city:${city.slug}`,

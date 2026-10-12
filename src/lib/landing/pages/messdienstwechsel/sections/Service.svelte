@@ -1,14 +1,28 @@
 <script lang="ts">
+	import { countUp } from "$lib/landing/attachments/countUp";
 	import { equalHeights } from "$lib/landing/attachments/equalHeights";
 	import { playOnView } from "$lib/landing/attachments/playOnView";
 	import CheckBadge from "$lib/landing/components/icons/CheckBadge.svelte";
 	import HeidiMark from "$lib/landing/components/icons/HeidiMark.svelte";
 
 	const appointmentChecks = [
-		"Mieter rechtzeitig informiert",
+		"Mieter 14 Tage vorher informiert",
 		"Zugang mit Hausmeister bestätigt",
 		"36 von 36 Einheiten montiert",
 	];
+
+	/** Numbers count up from 0 when the KPIs scroll into view. */
+	const kpis: { label: string; value: (number | string)[] }[] = [
+		{ label: "Montagen beim ersten Termin erfolgreich", value: [92, " %"] },
+		{ label: "Tage Vorankündigung an Mieter", value: [14] },
+		{ label: "Zeitfenster für Mieter am Montagetag", value: [1, "–", 2, " h"] },
+	];
+	const countOpts = (to: number) => ({
+		to,
+		duration: 1500,
+		viewDelay: 0,
+		threshold: 0.5,
+	});
 </script>
 
 <section class="dark" id="service">
@@ -67,20 +81,21 @@
 							<div class="appt-r"><CheckBadge />{check}</div>
 						{/each}
 					</div>
-					<!-- The XX values are placeholders: see the go-live gate, plan 5.4. -->
 					<dl class="kpis">
-						<div class="kpi">
-							<dt>Montagen beim ersten Termin erfolgreich</dt>
-							<dd data-placeholder>XX %</dd>
-						</div>
-						<div class="kpi">
-							<dt>Tage Vorankündigung an Mieter</dt>
-							<dd data-placeholder>XX</dd>
-						</div>
-						<div class="kpi">
-							<dt>Kosten für Installation</dt>
-							<dd>0 €</dd>
-						</div>
+						{#each kpis as kpi (kpi.label)}
+							<div class="kpi">
+								<dt>{kpi.label}</dt>
+								<dd>
+									{#each kpi.value as part, i (i)}
+										{#if typeof part === "number"}
+											<span class="cu" {@attach countUp(countOpts(part))}
+												>{part}</span
+											>
+										{:else}{part}{/if}
+									{/each}
+								</dd>
+							</div>
+						{/each}
 					</dl>
 				</div>
 			</div>
@@ -314,12 +329,10 @@
 		font-variant-numeric: tabular-nums;
 		align-self: flex-start;
 	}
-	/* As in the design: the XX values are outlined in production too. */
-	.kpi dd[data-placeholder] {
-		color: var(--muted);
-		outline: 1.5px dashed #b9c4c0;
-		outline-offset: 2px;
-		border-radius: 4px;
+	.cu {
+		display: inline-block;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
 	}
 	.kpi dt {
 		font-size: 12.5px;
@@ -329,7 +342,7 @@
 
 	@media (max-width: 980px) {
 		.twocol {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 		.panel {
 			padding: 32px 24px;

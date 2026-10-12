@@ -60,6 +60,7 @@ export const SLUGS: Record<string, string> = {
 	Augsburg: "augsburg",
 	Wiesbaden: "wiesbaden",
 	Mönchengladbach: "moenchengladbach",
+	Gera: "gera",
 };
 
 /** `alt` of the logo strip images → keys of `customerLogos`. */

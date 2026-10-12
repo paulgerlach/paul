@@ -45,7 +45,7 @@ The page goes live with the cutover. Until every item is done it keeps `seo.noin
 
 ## 5.5 Carried over: city pages and the Germany page
 
-The pages go live with the cutover. Each city is gated on its own: a city whose items aren't done gets `live: false` in `cities/index.ts`, which sets `noindex` and keeps it out of the sitemap and off the Germany map (the page itself still renders, for review, and the footer "Städte" group links it). Items marked *(all)* apply to every city once; the rest are per city, tracked in the status table of the previous plan (`be2c1feb`, `07-other-cities.md` §7.6: all 25 cities generated and reviewed, only Berlin live, no business column ticked yet). Phase references below (7.2, 8.3) are to that plan. The items are copied unchanged from its §6.4:
+The pages go live with the cutover. Each city is gated on its own: a city whose items aren't done gets `live: false` in `cities/index.ts`, which sets `noindex` and keeps it out of the sitemap and off the Germany map (the page itself still renders, for review, and the footer "Städte" group links it). Items marked *(all)* apply to every city once; the rest are per city, tracked in the status table of the previous plan (`be2c1feb`, `07-other-cities.md` §7.6: all 25 cities generated and reviewed, only Berlin live, no business column ticked yet; Gera was added on 2026-10-12 as the 26th, generated the same way and not yet reviewed). Phase references below (7.2, 8.3) are to that plan. The items are copied unchanged from its §6.4:
 
 - [ ] *(all)* KPIs confirmed: 92 % at the first appointment, 14 days' notice, 1–2 h window (also in the AllInOne text and the FAQ)
 - [ ] Berlin: "Heidi sitzt in Berlin" confirmed. Every city: the fixed contact person, and the map headline's on-site claims (e.g. "Wir sind vor Ort"), confirmed
@@ -62,8 +62,8 @@ The pages go live with the cutover. Each city is gated on its own: a city whose 
 
 Unchanged since the `/messdienstwechsel` plan (`65470139`). Before the cutover PR is merged, these must be resolved; otherwise set `seo.noindex = true` on `/messdienstwechsel` and remove it from the sitemap:
 
-- [ ] Real KPI numbers instead of `XX`
+- [x] Real KPI numbers instead of `XX` (92 %, 14 Tage, 1–2 h; confirmed by business 2026-10-12)
 - [ ] Approved testimonial photo, name and company
-- [ ] Permission to show the 12 customer logos, and the "Über 200" claim confirmed
+- [ ] Permission to show the 12 customer logos (the "Über 200" claim was dropped by the design update of 2026-10-12)
 - [ ] The real demo video
 - [ ] The Make.com `switchinquiry` route is live

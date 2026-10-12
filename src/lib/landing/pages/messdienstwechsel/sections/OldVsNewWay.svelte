@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Attachment } from "svelte/attachments";
 	import { inView } from "$lib/landing/attachments/inView";
 	import { playOnView } from "$lib/landing/attachments/playOnView";
 	import {
@@ -41,6 +42,27 @@
 		return stop;
 	});
 
+	// On narrow cards, tiles are pulled left so they stay inside the card.
+	let lefts = $state(oldWayTiles.map((tile) => tile.left));
+	const fitTiles: Attachment<HTMLElement> = (box) => {
+		const fit = () => {
+			const w = box.clientWidth;
+			if (!w) return;
+			const els = box.querySelectorAll<HTMLElement>(".tile");
+			lefts = oldWayTiles.map((tile, i) =>
+				w < 700
+					? Math.max(
+							2,
+							Math.min(tile.left, ((w - els[i].offsetWidth - 10) / w) * 100),
+						)
+					: tile.left,
+			);
+		};
+		const observer = new ResizeObserver(fit);
+		observer.observe(box);
+		return () => observer.disconnect();
+	};
+
 	// Pauses off screen and starts over on the way back in.
 	const view = inView({
 		threshold: 0.25,
@@ -59,7 +81,13 @@
 		<p>Wenn Ablesung, Montage und Abrechnung laufen, hören die Anfragen auf.</p>
 	</div>
 	<div class="ways">
-		<div class="oldway" class:anim={animated} class:out={fading} {@attach view}>
+		<div
+			class="oldway"
+			class:anim={animated}
+			class:out={fading}
+			{@attach view}
+			{@attach fitTiles}
+		>
 			<h3 class="lbl">Der alte Weg.</h3>
 			<p class="sr-only">
 				Offene Mieteranfragen, verpasste Fristen und schlechte Bewertungen.
@@ -69,7 +97,7 @@
 					class="tile"
 					class:review={tile.kind === "review"}
 					class:in={i < shown}
-					style="left:{tile.left}%;top:{tile.top}%;z-index:{10 + i}"
+					style="left:{lefts[i]}%;top:{tile.top}%;z-index:{10 + i}"
 					aria-hidden="true"
 				>
 					{#if tile.kind === "review"}
@@ -343,20 +371,51 @@
 
 	@media (max-width: 980px) {
 		.ways {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
-	@media (max-width: 560px) {
-		/* Smaller tiles, so the pile stays readable on phones */
+	@media (max-width: 700px) {
+		.oldway {
+			height: 560px;
+		}
+		.lbl {
+			font-size: 24px;
+			top: 22px;
+			padding: 4px 14px;
+		}
 		.tile {
-			scale: 0.78;
-			transform-origin: left top;
+			padding: 8px 12px 8px 8px;
+			gap: 9px;
+			border-radius: 12px;
+			max-width: calc(100% - 20px);
+		}
+		.av {
+			width: 30px;
+			height: 30px;
+			font-size: 11px;
+			border-radius: 8px;
+		}
+		.n {
+			font-size: 12px;
+		}
+		.st {
+			font-size: 13.5px;
+			white-space: normal;
+		}
+		.meta {
+			font-size: 9.5px;
+		}
+		.tile.review {
+			width: 230px;
+		}
+		.q {
+			font-size: 12.5px;
+		}
+		.stars {
+			font-size: 12px;
 		}
 	}
 	@media (max-width: 520px) {
-		.oldway {
-			height: 520px;
-		}
 		/* The bubble wraps to more lines; let the card grow instead of clipping. */
 		.newway {
 			height: auto;
@@ -365,8 +424,7 @@
 		.phone {
 			padding-bottom: 28px;
 		}
-		.newway h3,
-		.lbl {
+		.newway h3 {
 			font-size: 32px;
 		}
 	}

@@ -1,84 +1,123 @@
-# Phase 1: Route, content, the form backend and the career links
+# Phase 1: Route, content, search, the feedback backend and the footer entry
 
 ## 1.1 Route
 
-- `ROUTE_KARRIERE = "/karriere"` in `$lib/routes.ts`.
-- `src/routes/(landing-page)/karriere/+page.server.ts`, modelled on `ueber-uns/+page.server.ts`:
+- `ROUTE_HILFE = "/hilfe"` in `$lib/routes.ts`.
+- `src/routes/(landing-page)/hilfe/+page.server.ts`, modelled on `karriere/+page.server.ts`:
 
 ```ts
-export const load: PageServerLoad = async () => ({
-	seo: {
-		// Drafts for the content owner (plan §4.4).
-		title: "Karriere: Jobs bei Heidi Systems in Berlin",
-		description:
-			"Bauen Sie mit uns den Messdienst von morgen: Funkzähler, Software und Service aus Berlin. Offene Stellen in Engineering, Operations, Kundenservice und Vertrieb, Initiativbewerbungen willkommen.",
-		ogTitle: "Bauen Sie mit uns den Messdienst von morgen.",
-		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
-		keepCanonical: true,
-	},
-	landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
-	applicationForm: await emptyApplicationForm(),
-});
+export const load: PageServerLoad = async ({ url }) => {
+	const q = readQuery(url); // trimmed, max 100 chars, "" when absent
+	return {
+		seo: {
+			// Drafts for the content owner (plan §4.4).
+			title: "Hilfe-Center: Antworten zu Messdienst und Heizkostenabrechnung",
+			description:
+				"Antworten zu Messdienstwechsel, Montage, Funkablesung, unterjähriger Verbrauchsinformation und Heizkostenabrechnung. Finden Sie Ihre Frage oder sprechen Sie mit Ihrem Ansprechpartner.",
+			ogTitle: "Wie können wir helfen?",
+			// Until its go-live gate is done (plan §4.4). Then also add it to
+			// the sitemap. A search URL (?q=) stays noindex after that.
+			noindex: true,
+			keepCanonical: true,
+		},
+		// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 6).
+		landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+		now: Date.now(),
+		q,
+		feedbackForm: await superValidate(zod4(helpFeedbackSchema)),
+	};
+};
 
 export const actions: Actions = {
-	default: (event) => handleApplication(event, { page: ROUTE_KARRIERE }),
+	feedback: (event) => handleHelpFeedback(event, { page: ROUTE_HILFE }),
 };
 ```
 
-  The page sets no `cache-control`, because the layout does.
-- `+page.svelte`: `setApplication(...)` (1.5), then the sections in design order inside `<main id="content" class="kr" {@attach reveal()}>`, with the page tokens (`--bg`, `--hair`) as on `/ueber-uns`.
+  `Seo.svelte` builds the canonical from the path alone, so `/hilfe?q=uvi` has the canonical `/hilfe`. The page sets no `cache-control`, because the layout does.
+- `+page.svelte`: `setHelpSearch(...)` (1.5), then the sections in design order inside `<main id="content" class="hc" {@attach reveal()}>`, with the page tokens (`--bg`, `--hair`) as on `/karriere`. The FAQPage JSON-LD (1.4) is rendered here.
 
-## 1.2 Footer, career links, header CTA
+## 1.2 Footer and header
 
-- `$lib/landing/footerLinks.ts`: `{ text: "Karriere", href: ROUTE_KARRIERE }`.
-- `$lib/landing/cta.ts`: `CAREERS_HREF = ROUTE_KARRIERE` (update the comment) and the new `CAREERS_JOBS_HREF = \`${ROUTE_KARRIERE}#stellen\``. `/ueber-uns`: its team "Offene Stellen" uses `CAREERS_JOBS_HREF`, and the hero, team and careers links drop `target="_blank" rel="noopener"`. `e2e/ueber-uns.e2e.ts`: the career links expect `/karriere` and `/karriere#stellen`, without `rel`.
-- `$lib/landing/chrome.ts`: `ctaHref?: string` (default `START_HREF`). In `LandingHeader`, both CTAs (desktop and mobile) use it, and `focusSignup()` only runs when the target is `START_HREF`.
+- `$lib/landing/footerLinks.ts`: `{ text: "Hilfe-Center", href: ROUTE_HILFE }`.
+- Header: `ctaHref: ROUTE_MESSDIENSTWECHSEL` (above). `LandingChrome.ctaHref` already exists since `/karriere`.
 
-These three changes and the route ship in one commit (README, phases).
+These and the route ship in one commit (README, phases).
 
 ## 1.3 Content module
 
-`$lib/landing/pages/karriere/content.ts` holds every text of the page, word for word from the design. Headings use the `SplitHeading` type from `$lib/landing/types.ts`.
+`$lib/landing/pages/hilfe/content.ts` holds every text of the page, word for word from the design. The H1 keeps its `<em>` part as a separate field (`h1: { text, em }`).
 
-- `hero`: pill "Karriere bei Heidi", H1 "Bauen Sie mit uns den Messdienst" + em "von morgen.", lead, CTAs "Offene Stellen" (`#stellen`, arrow ↓) and "Initiativ bewerben" (role `initiative`).
-- `feed`: title "Ein Tag bei Heidi", badge "Beispiel", aria label "Beispiel: Ein Tag bei Heidi", 7 events `{ icon, title, sub, area }` from the design's `EV` array. Area labels: Operations, Engineering, Service, Vertrieb. The feed says "Service" where the areas say "Kundenservice", so keep the label per event and don't derive it.
-- `reasons`: pill "Warum Heidi", H2 "Arbeit, die man sieht." / "In jedem Gebäude.", 4 × `{ icon, title, text, dark? }`.
-- `areas`: pill "Bereiche", H2 "Wo Sie bei Heidi" / "mitwirken können.", the control's label "Bereich", 4 × `{ id: "eng" | "ops" | "cs" | "sales", label, title, text, points: { icon, text }[3] }` from the design's `A` object. The links "1 offene Stelle · ansehen" (→ `#stellen`) and "Initiativbewerbung willkommen · bewerben" (→ role `initiative`) come from functions of the job count (`n === 1 ? "1 offene Stelle" : \`${n} offene Stellen\``).
-- `jobs`: pill "Offene Stellen", H2 "Aktuell suchen wir." / "Und freuen uns auf Initiative.", `list: Job[]` with one job:
-  `{ id: "frontend-engineer", title: "Frontend Engineer", sub: "SvelteKit · TypeScript", area: "eng", location: "Berlin", formLabel: "Frontend Engineer (SvelteKit, TypeScript)", build: [3], bring: [3], applyLabel: "Auf diese Stelle bewerben" }`,
-  headings "Was Sie bauen" / "Was Sie mitbringen". There's also `initiative`: `{ id: "initiative", title: "Initiativbewerbung", sub: "Ihre Stelle ist nicht dabei?", tag: "Alle Bereiche", location: "Berlin", text, formLabel: "Initiativbewerbung", applyLabel: "Initiativ bewerben" }`.
-- `process`: pill "Bewerbungsprozess", H2 "Drei Schritte." / "Ohne Umwege.", 3 × `{ title, text }`.
-- `apply`: pill "Bewerben", H2 "Erzählen Sie uns" / "von sich.", lead, the 2 ticks, field labels and placeholders, "optional", submit "Bewerbung absenden", sending "Wird gesendet …", success "Danke für Ihre Bewerbung!" + `successText(formLabel)` ("Ihre Bewerbung als „…“ ist angekommen. Wir melden uns bei Ihnen."), "Weitere Bewerbung", the privacy line (placeholder, open question 3), the error text with `fallbackEmail` (placeholder, open question 2).
-- `more`: "Mehr über Heidi erfahren?", button "Über uns" → `ROUTE_UEBER_UNS`.
+- `hero`: pill "Hilfe-Center", H1 "Wie können wir" + em "helfen?", lead "Antworten zu Wechsel, Montage, Ablesung und Heizkostenabrechnung.", search placeholder "Frage eingeben, z. B. „Vertrag läuft noch“", aria label "Hilfe-Center durchsuchen", submit label "Suchen" (visually hidden, for the no-JS form).
+- `popular`: label "Häufig gesucht:", 4 question ids (`laufender-vertrag`, `installation-kosten`, `uvi`, `abrechnung-frist`). The button text is the question itself, so it's looked up, not repeated.
+- `results`: `resultsText(n, q)` → "1 Ergebnis für „…“" / "n Ergebnisse für „…“" (the design's wording).
+- `topics: Topic[]`, `{ id, title, sub, icon, questions: Question[] }`, in design order. The card's "4 Artikel" is `articlesText(questions.length)` ("1 Artikel" / "n Artikel").
+- `Question`: `{ id, question, answer, answerExpired?, more?: { text, href? } }`. Answers are plain text (no HTML), so they work for the search, the JSON-LD and the page without `{@html}`.
+- `feedback`: "War das hilfreich?", "Ja", "Nein", "Danke für Ihr Feedback!".
+- `noResults`: "Keine passende Antwort gefunden.", "Schreiben Sie uns, Ihr Ansprechpartner hilft gern weiter.", "Kontakt aufnehmen" → `ROUTE_KONTAKT`.
+- `endCta`: "Frage nicht dabei? Ihr Ansprechpartner hilft persönlich.", "Gespräch vereinbaren" → `ROUTE_KONTAKT`.
+- `trustMore`: "Mehr über Heidi" → `ROUTE_UEBER_UNS`.
 
-The role ids live in `$lib/forms/application.ts` as `ROLE_IDS = ["frontend-engineer", "initiative"] as const`, because the schema shouldn't import page content. `content.test.ts` checks that `jobs.list` plus `initiative` match them one to one, so adding a job without its id fails the tests.
+Topics and question ids (`c-<topic>` and `q-<question>` in the page):
 
-## 1.4 Form schema, action and webhook
+| Topic (`id`) | Card sub | Questions (`id`) |
+|---|---|---|
+| Wechsel & Vertrag (`wechsel`) | Kündigung, Vollmacht, laufende Verträge | `laufender-vertrag`, `kuendigung`, `vertragsende`, `ab-wie-vielen-einheiten` |
+| Montage & Geräte (`montage`) | Termine, Funkzähler, Fernablesbarkeit | `installation-kosten`, `mieter-information`, `mieter-nicht-da`, `fernablesbar-frist` |
+| Ablesung & uVI (`ablesung`) | Funk, monatliche Verbrauchsinformation | `ablesung-wohnung`, `uvi`, `uvi-fehlt`, `verbraeuche-sehen` |
+| Heizkostenabrechnung (`abrechnung`) | Erstellung, Fristen, Nachfragen | `abrechnung-entstehung`, `abrechnung-frist`, `selbst-abrechnen`, `abrechnung-pruefen` |
+| Dashboard & Schnittstellen (`software`) | ERP, CRM, Datenübergabe | `zweite-software`, `dashboard`, `datenverarbeitung` |
+| Für Mieter (`mieter`) | Fragen zur eigenen Abrechnung | `mieter-verbrauch`, `mieter-abrechnung-pruefen`, `monteure` |
 
-- `$lib/forms/application.ts` (shared client/server, German messages in the schema):
-  - `role`: `z.enum(ROLE_IDS)`, default the first job
-  - `name`: trimmed, 2–100 chars, "Bitte ergänzen Sie Ihren Namen."
-  - `email`: trimmed email, "Bitte ergänzen Sie eine gültige E-Mail-Adresse."
-  - `link`: optional, empty → `undefined`, otherwise `z.url()` with `http(s)` only, max 300, "Bitte geben Sie einen vollständigen Link an (https://…)." The design accepts anything here; we validate, because the link ends up in an inbox
-  - `message`: optional, max 2000
-  - `website` (honeypot) and `_t` (timing), as in `switchInquiry`
-- `$lib/server/application.ts`: `emptyApplicationForm()` (stamps `_t`, like `emptySwitchForm`) and `handleApplication(event, { page })`, which runs honeypot/timing → `fail(400)` on invalid → gibberish (name, and the message if present) → rate limit `apply:${ip}` (3 per 600 s, 50 with `KITCHEN_SINK`) → send. A blocked bot gets the success message.
-- `$lib/server/webhooks.ts`: add the event type `"jobapplication"` (payload: `role`, `role_title`, `name`, `link`, `message`, `page`), and `sendWebhookEventOrThrow()` (the same request, but it throws on a missing URL in production, a non-2xx response or a network error). `sendWebhookEvent` stays as it is for the other events. Log `[APPLICATION] Sent (role)` without PII. The existing `[WEBHOOK] Sending … for <email>` line must not run for this event.
-- On a send error, the action returns `message(form, { type: "error", text }, { status: 502 })` with the fallback-address text, and the form keeps its values.
+The answers' links (the design's `.hc-more`, all pointing to other designs):
 
-Tests (Vitest): `application.test.ts` for the schema (empty and invalid link, trimming, unknown role rejected, message too long) and `handleApplication` with a mocked webhook (honeypot → success without sending, invalid → 400, send failure → error message, success → payload without `_t`/`website`).
+| Question | Link text | `href` |
+|---|---|---|
+| `kuendigung` | Muster-Kündigung → | none yet |
+| `vertragsende` | Portfolio-Checker → | none yet |
+| `fernablesbar-frist` | Jetzt noch umrüsten → | `ROUTE_UPGRADE_NOW` |
+| `uvi` | Mehr zur uVI → | `ROUTE_FUNKTIONEN` (the landing footer's "Verbrauchsinformation (uVI)" target) |
+| `verbraeuche-sehen`, `dashboard` | Dashboard ansehen → | none yet |
+| `abrechnung-entstehung` | Heizkostenabrechnung → | `ROUTE_FUNKTIONEN` (the landing footer's target) |
+| `selbst-abrechnen` | Selbstabrechnung → | none yet |
+| `abrechnung-pruefen` | Abrechnung prüfen → | none yet |
+| `zweite-software` | Schnittstellen → | none yet |
+| `datenverarbeitung` | Sicherheit & Datenschutz → | none yet |
+| `mieter-abrechnung-pruefen` | Zum Mieter-Check → | none yet |
 
-## 1.5 Application context
+A `more` without `href` renders nothing (the answer reads fine without it). When one of these pages exists, its `href` is the only change.
 
-`$lib/landing/pages/karriere/application.svelte.ts`: `class Application { role = $state<RoleId>(firstJob); apply(id) }` with `setApplication()` / `getApplication()`, per the shared-state rule in `CLAUDE.md`. `apply(id)` sets the role, scrolls `#bewerben` into view (smooth, `auto` with reduced motion; the 72 px offset is `scroll-margin-top`), and focuses the name field with `preventScroll` once the scroll ends (`scrollend`, with a 600 ms fallback timer as in the design).
+`fernablesbar-frist` gets `answerExpired` (draft for the content owner, placeholder until §4.4: "Seit dem 1. Januar 2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Heidi baut ausschließlich fernablesbare Funkzähler ein und rüstet Ihren Bestand um."). `resolveTopics(now)` returns the topics with each question's current `answer`, and everything else (search, JSON-LD, sections) reads that, so the two variants can't disagree.
 
-## 1.6 Shared segmented control
+`content.test.ts`: 6 topics, 22 questions, unique question ids, ids are lowercase ASCII slugs (no umlauts, they end up in URLs), popular ids exist, no empty strings, no `XX`, every `more.href` is a route constant or starts with `/` and has a route in `src/routes` (checked against the known route list), the expired variant differs from the current one.
 
-Move `/upgrade-now`'s `.seg` (`RiskCalculator.svelte`) to `$lib/landing/components/Segmented.svelte`:
+## 1.4 Structured data
 
-- Props: `options: { value, label }[]`, `value = $bindable()`, `label` (aria), `class`.
-- Semantics: `role="radiogroup"` with `role="radio"` / `aria-checked` buttons, which is what `RiskCalculator` has today. Add roving `tabindex` and arrow-key handling if it doesn't have them yet; a radiogroup without arrow keys is the same problem the `/ueber-uns` plan avoided with `aria-pressed`.
-- The design's styles (`#EEF1EF` track, white `.on` pill). `RiskCalculator` uses it with no visual change (check `/upgrade-now` at 375 and 1440 px).
+Move the FAQPage builder out of `$lib/landing/sections/Faq.svelte` into `$lib/landing/faqJsonLd.ts` (`faqJsonLd(items: FaqItem[]): string`, including the `</script>`-safe escaping it has today). `Faq.svelte` uses it unchanged; `/hilfe`'s `+page.svelte` renders `faqJsonLd` of all 22 resolved questions (the answer text without the `more` link). Check `/messdienstwechsel` and `/upgrade-now` still output byte-identical JSON-LD.
 
-Update `CLAUDE.md` (the `/ueber-uns` bullet's "Career links use `CAREERS_HREF` … LinkedIn for now", the layout tree, a new `/karriere` bullet).
+## 1.5 Search module and context
+
+`$lib/landing/pages/hilfe/search.ts` (pure, no runes, shared by `load` and the browser):
+
+- `normalize(s)`: lowercase, `NFD` + strip combining marks, `ß` → `ss`.
+- `terms(q)`: `normalize(q)` split on whitespace, words of 2+ characters.
+- `matches(question, topicTitle, terms)`: every term occurs in `normalize(question + " " + answer + " " + topicTitle)`. No terms = everything matches.
+- `search(topics, q)` → `{ terms, ids: Set<string>, count, autoOpen: boolean }`. `autoOpen` when there are terms and 1–3 results (the design's rule).
+- `highlight(text, terms)` → `{ text: string; hit: boolean }[]`: case- and diacritics-insensitive, so it maps positions back to the original string (normalise per character and keep an index map; `ß` → `ss` changes the length, so the map is needed). Overlapping matches merge.
+
+`$lib/landing/pages/hilfe/search.svelte.ts`: `class HelpSearch { query = $state(""); results = $derived(search(topics, this.query)); open = new SvelteSet<string>(); }` with `setHelpSearch(topics, initialQuery)` / `getHelpSearch()`, per the shared-state rule in `CLAUDE.md`. The initial query is `data.q`, so the server and the first client render agree. `open` starts with the auto-opened ids when `autoOpen`.
+
+`search.test.ts`: "lauft" finds "läuft", "strasse" finds "Straße", "uVI" and "UVI" match, one-letter words are ignored, two words must both match, the topic title counts ("mieter" finds the whole "Für Mieter" topic), `highlight` on "Kündigung" for "kundigung" marks the whole word, overlapping terms merge, no match → no segments with `hit`.
+
+## 1.6 Feedback schema, action and webhook
+
+- `$lib/forms/helpFeedback.ts`: `{ question: z.enum(QUESTION_IDS), vote: z.enum(["yes", "no"]) }`. `QUESTION_IDS` is exported from `content.ts`'s topics (the schema may import page content here: it's plain data, and the ids are the contract). Add a test that unknown ids and votes fail.
+- `$lib/server/helpFeedback.ts`: `handleHelpFeedback(event, { page })`: zod → rate limit `helpfb:${ip}` (20 per 600 s, 200 with `KITCHEN_SINK`) → `sendWebhookEvent("helpfeedback", { question, vote, page })` (the non-throwing send: a lost vote doesn't matter) → `message(form, { type: "success", question })`. Invalid or rate-limited requests return the same success, so the UI never shows an error for a vote.
+- `$lib/server/webhooks.ts`: the event type `"helpfeedback"`. Its payload has no email, so the `[WEBHOOK] Sending … for <email>` log line must handle a missing email (log the event type only).
+
+Tests (Vitest): the action with a mocked webhook (valid → one payload, unknown id → success without sending, rate limit → success without sending).
+
+## 1.7 Shared CTA card
+
+Move the dark card of `/karriere`'s `MoreAbout.svelte` to `$lib/landing/sections/CtaCard.svelte` (props: `id` for `aria-labelledby`, `title`, `cta: { text, href }`). Compare its CSS with the Hilfe design's `.dm-end` / `.dm-cta` first; the base CSS is the same in both designs. `MoreAbout.svelte` becomes a thin wrapper; check `/karriere` at 375 and 1440 px for no visual change.
+
+Update `CLAUDE.md` (a `/hilfe` bullet under "Current state", the layout tree, `faqJsonLd.ts` and `CtaCard` in the landing lines).

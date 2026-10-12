@@ -8,12 +8,12 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => ({
 	seo: {
-		// Drafts for the content owner (plan §4.4).
+		// Drafts for the content owner (plan §4.5).
 		title: "Karriere: Jobs bei Heidi Systems in Berlin",
 		description:
 			"Bauen Sie mit uns den Messdienst von morgen: Funkzähler, Software und Service aus Berlin. Offene Stellen in Engineering, Operations, Kundenservice und Vertrieb, Initiativbewerbungen willkommen.",
 		ogTitle: "Bauen Sie mit uns den Messdienst von morgen.",
-		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
+		// Until its go-live gate is done (plan §4.5). Then also add it to the sitemap.
 		noindex: true,
 		keepCanonical: true,
 	},

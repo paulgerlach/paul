@@ -1,41 +1,42 @@
 # Phase 3: Interactions
 
-The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` renders the end state, and the server markup is the end state, so no-JS and above-the-fold content never flashes or stays hidden.
+The rules match the other landing pages: runes and the existing attachments, no new dependencies, listeners and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means instant scrolling and no transitions. The server markup is a complete page for `/hilfe` and `/hilfe?q=…`, so no-JS visitors get the same list, only filtered by submitting the form.
 
-## 3.1 Hero feed ("Ein Tag bei Heidi")
+## 3.1 Live search
 
-In the design, a new event slides in at the top every 2.6 s (`kr-in`: 10 px drop + fade, .5 s), and once there are more than 5 the oldest fades out (`kr-out`, .4 s) and is removed. The interval starts when the feed is shown and runs forever. The dot blinks forever.
+- `SearchBox` binds the input to `search.query`. `search.results` is `$derived`, so topics, questions, highlights, the result line and `NoResults` follow on every keystroke. No `$effect` syncs any of it.
+- Auto-open: when a query change gives 1–3 results, their ids are added to `search.open` (in the `oninput` handler, not an effect). Opened cards stay open when the query is cleared, as in the design.
+- The form's `onsubmit` prevents the navigation with JS (the list is already filtered) and blurs nothing; on mobile, `enterkeyhint="search"` closes the keyboard via the submit.
+- URL: on input, a 300 ms debounced `replaceState` from `$app/navigation` writes `?q=…` (or removes it), so reload, back/forward and sharing keep the query. The timer is cleared on teardown.
+- The result line is `aria-live="polite"` and only changes with the query, so screen readers hear "3 Ergebnisse für „uvi“" once the typing settles. The debounce of the live region text is the same 300 ms, so it isn't announced per keystroke.
 
-- State: `let items = $state<{ key: number; event: FeedEvent }[]>()` initialised with the first 4 (keys 0–3), and a plain `let next = 4` counter. `tick()` prepends `EV[next % 7]` with key `next++` and drops the last item when there are more than 5.
-- Markup: keyed `{#each items as item (item.key)}`. Items added in the browser get the `kr-in` keyframe through a class (`new`), so the server's first 4 don't animate on load. The leaving item uses an `out:` transition with the `kr-out` keyframe's values (a small `css` transition function, no library).
-- Timer: a `setInterval(tick, 2600)` that runs only while all of these hold: in view (`inView` attachment), `document.visibilityState === "visible"`, not paused, and no reduced motion. It's created and cleared in an `$effect` on those flags. The design never stops; we stop off-screen.
-- Pause: a small icon button in the feed header ("Animation anhalten" / "Animation fortsetzen", `aria-pressed`). It's rendered after mount and not at all with reduced motion. Hovering or focusing the feed also pauses it. Paused, the dot stops blinking.
-- Reduced motion: no ticker, no blink. The server's 4 items stay.
-- A11y: the list has no `aria-live`. The feed wrapper is `role="group"` with the design's aria label.
+## 3.2 Keyboard
 
-## 3.2 Areas
+- `/` focuses the search (`<svelte:document onkeydown>`), but only when no modifier is held and focus isn't in an `input`, `textarea`, `select` or `contenteditable` (the design steals `/` from every field, including the footer's newsletter input).
+- `Escape` in the search field clears it (and the URL's `q`). The native `type="search"` clear button does the same through `oninput`.
 
-- `let area = $state<AreaId>("eng")`, bound to `Segmented`. The panel renders `content.areas` for that id inside `{#key area}` with the design's `.in` (`kr-in`, .45 s) on the text and list. There's no animation with reduced motion, and the panel's `min-height: 250px` keeps the layout from jumping.
-- The design writes the panel with `innerHTML` and re-binds its `data-role` links; we render from content, and the link is an `ApplyLink`.
+## 3.3 Popular questions
 
-## 3.3 Choosing a role
+`<a href="#q-<id>">` with an `onclick` that, with JS: clears the query, adds the id to `search.open`, scrolls the card to the centre (`block: "center"`, smooth or `auto` with reduced motion) after the DOM update (`tick()`), and adds `.flash` for 1.2 s. `preventDefault` so the hash scroll doesn't fight the centred one; `history.replaceState` sets the `#q-<id>` hash so the link is shareable. Without JS: the browser jumps to the closed card.
 
-- `ApplyLink` props: `role`, `class`, children. It renders `<a href="#bewerben">` with `onclick={(e) => { e.preventDefault(); application.apply(role); }}`. Without JS, it's a normal anchor.
-- In `ApplicationForm`, the `<select name="role">` uses `bind:value={application.role}`. On a validation error, superforms returns the submitted role, which already equals `application.role`, so there's no syncing and no `$effect`.
-- The job cards' "Auf diese Stelle bewerben", the open application's "Initiativ bewerben", the area panel's "bewerben" and the hero's "Initiativ bewerben" all use `ApplyLink`.
+## 3.4 Deep links and topic cards
 
-## 3.4 Form
+- On mount and on `hashchange`: a `#q-<id>` hash for a known question clears the query if that question is hidden, opens it and scrolls it into view; a `#c-<id>` hash does nothing more than the browser's jump. `ontoggle` on each `<details>` keeps `search.open` in sync with the user's own clicks.
+- Topic cards (`href="#c-<id>"`): with JS, the click clears the query (so the topic isn't hidden) and opens the topic's first question, as the design does. The design opens it after 400 ms; we open it right away, before the smooth scroll starts, so the scroll target is final. The 96 px offset is the section's `scroll-margin-top`, so the design's scroll script isn't needed.
 
-- Superforms with `use:enhance`, the zod schema on the client too (`validators: zod4Client(applicationSchema)`). Errors appear only after the first submit (as on the other landing forms). `_t` is re-stamped on mount (CDN-cached page).
-- Error line: the design shows one sentence, "Bitte ergänzen Sie Ihren Namen und eine gültige E-Mail-Adresse." It's built from the name/email errors ("Ihren Namen", "eine gültige E-Mail-Adresse", joined by " und "). A link error gets its own sentence. The fields get the `.bad` border and `aria-invalid`.
-- While submitting: the button is disabled and reads "Wird gesendet …" (`$submitting`). No artificial delay, unlike the design's 800 ms `setTimeout`.
-- Success (the message type is `success`): the form gets `.sent`, the dark overlay fades in, and the check circle pops (`cubic-bezier(.3,1.6,.5,1)`). The text names the chosen role (`successText(formLabel)`). `confetti.ts` bursts from the check circle inside the form, but not with reduced motion. Focus moves to the overlay's heading (`tabindex="-1"`), so keyboard and screen-reader users notice the change, and the fields behind it get `inert`.
-- "Weitere Bewerbung": `<a href="/karriere#bewerben">`, so it works without JS (a fresh page). With JS, it resets the form (`reset()`, role back to the first job), removes `.sent` and focuses the name field.
-- Send error (status 502): the error line shows the message with the fallback address as a `mailto:` link. Values stay.
-- Without JS: the post reloads the page at the form (the action's response renders `#bewerben` with errors or the success overlay; add `#bewerben` to the form's `action` so the browser scrolls there).
+## 3.5 Topic scroll-spy
 
-## 3.5 Reveal and the rest
+An attachment on `Toc` observes the 6 topic sections with `IntersectionObserver({ rootMargin: "-30% 0px -60% 0px" })` (the design's) and sets the active id in a local `$state`; the link gets `.on` and `aria-current="location"`. Hidden topics (search) are skipped. The observer is disconnected on teardown. Nothing is created below 900 px, where the list is hidden (`matchMedia`, re-checked on change).
 
-- `{@attach reveal()}` on `<main>` with the design's `.rv` transition styles, the same as `/ueber-uns`. The trust cards keep their own reveal.
-- The `<details>` cards need no JS. The `+` rotation and border change are CSS on `[open]`, with no transition under reduced motion.
-- The design's pill hover wiggles (`#pillfx`) aren't ported, the same as on the other landing pages.
+## 3.6 Feedback
+
+- One superform for the page (`superForm(data.feedbackForm, { id: "help-feedback", resetForm: true })`), shared by all 22 `Feedback` forms through the `HelpSearch` context, each with its own hidden `question`. With `use:enhance`, a click posts in the background; the voted ids go into a `SvelteSet` and their form shows "Danke für Ihr Feedback!" (`role="status"`), the buttons go away. The answer is always success (phase 1.6), so there's no error state.
+- Voting twice on the same question in one visit isn't possible (the buttons are gone); a reload allows it again. No `localStorage`.
+- Without JS: the post reloads the page at `#q-<id>` (the form's `action`), and the action's message (`question`) marks that one as voted in the server render, with its card open.
+- While a vote is in flight, both buttons are disabled.
+
+## 3.7 Reveal and the rest
+
+- `{@attach reveal()}` on `<main>` with the design's `.rv` transition styles, the same as `/karriere`. Hidden questions and topics aren't `.rv`, so the search never waits for a reveal. The trust cards keep their own reveal.
+- The `<details>` cards need no JS. The `+` → `−` rotation, the dark fill and the border change are CSS on `[open]`, with no transition under reduced motion.
+- The design's global smooth-scroll handler for `a[href^="#"]` isn't ported; `scroll-margin-top` and `app.css`'s `html { scroll-behavior: smooth }` do the same, as on the other landing pages. That rule has no reduced-motion exception yet; add `@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }` to `$lib/landing/tokens.css`.

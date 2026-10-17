@@ -20,7 +20,19 @@
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 	import LandingNavGroup from "./LandingNavGroup.svelte";
 
-	let { posts }: { posts: PostSummary[] } = $props();
+	let {
+		posts,
+		bannerText,
+		bannerHref = "#faq",
+		ctaLabel = "Wechsel starten",
+		ctaHref = START_HREF,
+	}: {
+		posts: PostSummary[];
+		bannerText: string;
+		bannerHref?: string;
+		ctaLabel?: string;
+		ctaHref?: string;
+	} = $props();
 
 	const navGroups = $derived(buildNavGroups(posts));
 
@@ -40,15 +52,14 @@
 
 	function onStart() {
 		menu.close();
-		focusSignup();
+		if (ctaHref === START_HREF) focusSignup();
 	}
 </script>
 
 <svelte:window {onkeydown} />
 
 <div class="banner">
-	Ab 1.1.2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Jetzt den
-	Wechsel prüfen.<a href="#faq">Mehr erfahren</a>
+	{bannerText}<a href={bannerHref}>Mehr erfahren</a>
 </div>
 
 <nav class="top" aria-label="Hauptnavigation">
@@ -73,8 +84,8 @@
 				Einloggen
 			</a>
 			<a class="phone" href={PHONE_HREF}>{PHONE}</a>
-			<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
-				Wechsel starten
+			<a class="btn btn-ink" href={ctaHref} onclick={onStart}>
+				{ctaLabel}
 			</a>
 		</div>
 		<button
@@ -115,8 +126,8 @@
 					</li>
 				{/each}
 				<li class="mcta">
-					<a class="btn btn-ink" href={START_HREF} onclick={onStart}>
-						Wechsel starten
+					<a class="btn btn-ink" href={ctaHref} onclick={onStart}>
+						{ctaLabel}
 					</a>
 					<a
 						class="btn btn-ghost"

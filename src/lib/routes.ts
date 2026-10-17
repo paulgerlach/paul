@@ -8,3 +8,12 @@ export const ROUTE_IMPRESSUM = "/impressum";
 export const ROUTE_PREISE = "/preise";
 export const ROUTE_BLOG = "/blog";
 export const ROUTE_MESSDIENSTWECHSEL = "/messdienstwechsel";
+export const ROUTE_MESSDIENSTANBIETER = "/messdienstanbieter";
+export const ROUTE_UPGRADE_NOW = "/upgrade-now";
+export const ROUTE_UEBER_UNS = "/ueber-uns";
+export const ROUTE_KARRIERE = "/karriere";
+export const ROUTE_HILFE = "/hilfe";
+export const ROUTE_SELBSTABRECHNUNG = "/selbstabrechnung";
+export const ROUTE_VORGEHEN = "/vorgehen";
+export const cityRoute = (slug: string) =>
+	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

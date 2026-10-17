@@ -1,41 +1,34 @@
-# Phase 3: Interactions and animation
+# Phase 3: Interactions
 
-The design wires everything with one vanilla script that uses `getElementById` and `innerHTML`. Port each behaviour into the component that owns its markup, using runes for state and attachments for DOM behaviour (see `svelte-migration-plan/patterns.md`). No new dependencies.
+The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means the end state, no loops, no zoom. Loops run only while their block is in view and the tab is visible (`document.visibilityState`), unlike the design's timers.
 
-**Global rule:** every animation checks `prefers-reduced-motion`. With reduced motion, elements render in their end state, and nothing loops or counts. Put one shared helper in `$lib/landing/motion.ts` (`prefersReducedMotion()`, browser-only).
+## 3.1 Step tabs
 
-## 3.1 Reusable attachments (`$lib/landing/attachments/`)
+State in `Steps`: `active` (`$state`, 0–2) and `auto` (`$state`, true until the visitor takes over).
 
-| Attachment | Replaces in design | Behaviour |
-|---|---|---|
-| `inView({ threshold, once })` | `IntersectionObserver` setup repeated across the script | Calls `onEnter`/`onLeave` handlers. Disconnects on cleanup |
-| `playOnView({ loop?: ms })` | `[data-anim]` + `.play` class + `data-loop` replay | Adds `.play` when the element is visible. If `loop` is set, it restarts the animation every `loop` ms while the element is visible (remove the class, force a reflow, add it back). The CSS keyframes (`a-up`, `a-pop`, … with a `--d` delay) stay in CSS as they are |
-| `countUp({ to, duration: 1400, trigger: 'view' \| 'hover' })` | `[data-count]` + the hover counter in "Pflichten ohne Aufwand" | `requestAnimationFrame` with an ease-out cubic, as in the design. On `mouseleave` it resets to the final value |
-| `equalHeights(selector)` | `equalize()` on resize | Sets the same `min-height` on headings in a row so the paragraphs line up. Uses `ResizeObserver` instead of the window `resize` event. Turns off below the stacking breakpoint |
+- **Selecting:** a click on a tab sets `active` and `auto = false` for good (the design's `user = true`). Keyboard per the WAI-ARIA tabs pattern, vertical: ↑/↓ (and ←/→) move focus and select (automatic activation, since the panels are already rendered), Home/End jump to the first/last; only the active tab has `tabindex="0"`. Any keyboard selection also sets `auto = false`.
+- **Auto-advance:** once the block is 35 % in view (`inView`, the design's threshold), `active` advances every `steps.intervalMs` (6 s), wrapping to 0, while `auto` is true. It pauses while the pointer is over the block or focus is inside it (`pointerenter`/`pointerleave`, `focusin`/`focusout`), when the block leaves the view and in a hidden tab, and resumes from the current step. One `setTimeout` at a time, cleared on every change and on teardown; the remaining time isn't kept across a pause (a resumed step gets the full 6 s, and the bar restarts with it).
+- **Progress bar:** `.ar-bar i` runs the design's 6 s `arbar` width animation while auto-advance runs, in step with the timer. It restarts through a `{#key}` on a counter that goes up with every new timer (step change or resume), not with the design's reflow trick. While paused it's empty, and once `auto` is false it isn't rendered.
+- **Transitions:** texts fade and rise 6 px (0.4 s), pictures cross-fade (0.7 s) and the active picture eases from `scale(1.05)` to 1 over 6 s, the chip slides in 0.25 s after its picture. All are CSS on the `.on` class.
+- **Reduced motion:** no auto-advance and no bar (`auto` starts false), no zoom, no fades (instant swap). The tabs still work.
+- **No JS:** step 1 is shown (server render), the other texts are in the HTML but `inert` and invisible. Accepted as on `/selbstabrechnung`'s task toggle; the headings and the FAQ carry the process too.
 
-## 3.2 Per-section behaviour
+The screen reader hears the tab change through the tab's `aria-selected` and the panel it controls; there's no live region (auto-advance must not talk every 6 s).
 
-| Section | Behaviour | Implementation |
-|---|---|---|
-| Hero card | Every 6 s the status goes to "Heidi prüft den Vertrag" (spinner, last check pending), then after 2.2 s back to "Wechsel freigegeben" (check) | `let reviewing = $state(false)` with an interval in `$effect` that is cleared on teardown. It only runs while the card is in view (`inView`), so a background tab doesn't keep timers. The status text is in an `aria-live="polite"` region, **or** the card stays `aria-hidden` (pick the second, because it's decoration) |
-| Demo card | The video plays on hover, focus or touch, and pauses on leave or blur | `onmouseenter`/`onfocus`/`ontouchstart` call `video.play().catch(() => {})`. Use `bind:this` for the video |
-| Old way | Tiles pop in one by one, every 650 ms after 400 ms. They hold for 3.5 s, fade out, and the cycle repeats. It starts at 25 % visibility | A `visibleCount = $state(0)` driven by a timer chain in `$effect`, started by `inView`. Each tile gets `class:in={i < visibleCount}`. Clear all timers on teardown. With reduced motion, all tiles are shown |
-| Heidi way (phone) | Bubble lines animate in and replay every 10 s | `playOnView({ loop: 10000 })` |
-| Service chat | Question, then typing dots, then the answer. Replays every 9 s | `playOnView({ loop: 9000 })` |
-| Automation doc / clarify | Flag and warnings pop in | `playOnView()` |
-| "Pflichten ohne Aufwand" | 212 counts up on view and again on hover | `countUp({ to: 212, trigger: 'view' })` plus a hover trigger on the card |
-| Rollout Gantt | Hovering, focusing or clicking a row highlights it, dims the others, and positions a tooltip near the bar (title, week, kind label, bullet list, milestone). Clicking the same row again hides it. Leaving or blurring hides it. The tooltip moves when the Gantt scrolls horizontally | `activeRow = $state<number \| null>(null)`. The tooltip is a single element rendered from `ganttRows[activeRow]`, positioned in an `$effect` from the bar's `getBoundingClientRect()` relative to the card, and re-run on the scroll event. The tooltip has `role="tooltip"`, and the active bar gets `aria-describedby` |
-| Budget chart | Tabs switch the series (Heizung, Warmwasser, Kaltwasser). Bars are scaled to the series max. Bars after month 9 (September, `NOW = 9`) are "plan" style. Each tab shows the sum so far ("bisher 12.345 €"). The ring percentage animates. Hovering, focusing or clicking a bar shows a tooltip with the month and the € amount | `series = $state<'hz' \| 'ww' \| 'kw'>('hz')` with `$derived` heights and sums. Use `Intl.NumberFormat('de-DE')` for the € values. Bars are `<button>`s with `aria-label="März: 5.100 €"`. Tabs use `role="tablist"`/`tab` and `aria-selected`, with arrow-key navigation |
-| Risk chart | 4 bars (168/121/104/84 kWh/m², max 190) and an average line at Ø 119. A bar more than 15 % above the average is highlighted. Hovering, focusing or clicking a bar changes the tag text, the action link and the highlighted label, and shows a tooltip ("7 von 25 Einheiten"). Leaving resets to bar 0 | `active = $state(0)` and `$derived` average and heights. The data is in `data.ts` |
-| FAQ | Native `<details>` | Nothing to add. Optional: animate the height with the `::details-content` CSS transition where the browser supports it |
-| Header | Dropdowns (hover and focus-within on desktop, accordion on mobile) and the burger menu | See phase 1.3. Reuse the `menu` singleton and `clickOutside`. Esc closes an open dropdown or the menu |
+## 3.2 Wide image
 
-## 3.3 Performance notes
-- Timers and observers are only created in the browser (`$effect` and attachments don't run during SSR). Every one of them is cleaned up on teardown, so client-side navigation away from the page leaves nothing running.
-- Loops pause when their section is off-screen. The design keeps `setInterval`s running and only skips the replay. Here, clear the interval on `onLeave` and restart it on `onEnter`.
-- Animate only `transform` and `opacity` where the design allows it. The design animates `width` in the progress bars (`a-w`, `a-growx`). Keep that (it's cheap at this size), but check that CLS stays 0.
+Once the figure is in view (`inView({ once: true })`), it gets `.in` and the photo eases from `scale(1.04)` to none over 1.6 s. The server renders it without the scale (end state); the scale is applied only by a `.js-zoom` class set on mount when the figure is still below the viewport's bottom edge, so a visitor who loads the page with the image already visible doesn't see it jump. Reduced motion: nothing.
 
-## Done when
-- Every behaviour above works with the mouse, the keyboard (Tab, Enter, arrow keys on tabs) and touch.
-- With `prefers-reduced-motion: reduce` (Chrome DevTools rendering emulation) nothing moves and all content is visible.
-- No console errors. Navigating from `/messdienstwechsel` to `/preise` and back doesn't duplicate timers (check with the Performance panel or a temporary `console.count`).
+The caption's dot pulses with the design's `arp` keyframes (2.4 s, infinite, CSS only); `animation: none` under reduced motion. It's a single tiny compositor animation; no in-view pausing.
+
+## 3.3 Day count
+
+`RemoteDuty` shows `daysUntilObligation(clock.now)`. The clock starts at the server's `now` and ticks in the browser (the shared `DeadlineClock`), so the number is right after hydration and changes at Berlin midnight. No count-up animation (the design writes the number directly). Hydration: the server and the first client render use the same `now`, so there's no mismatch warning; the corrected value comes one tick later.
+
+## 3.4 Reveal, links and the rest
+
+- `{@attach reveal()}` on `<main>` with the design's reveal (`.rv`, threshold 0.15, `opacity`/`translateY(16px)` over 0.7 s), the same styles as `/selbstabrechnung`'s `+page.svelte`.
+- Feature cards: hover background `--soft2` and a 2 px lift (CSS); buttons: the design's hover and `:active` scale 0.98.
+- "Angebot einholen" and "Demo buchen" are plain anchors to `#start`; `scroll-margin-top: 72px` on the contact card gives the design's offset, and `tokens.css` already turns off smooth scrolling under reduced motion. The design's global anchor-scroll script isn't ported.
+- FAQ: the shared `Faq`'s behaviour (native `<details>`, the `::details-content` transition), the plus turning into a minus on `[open]`.
+- `FloatingCta`, `TrustSeals`, `SignupForm` bring their own behaviour (unchanged). `FloatingCta` hides while `section.final` (the contact card) is in view.

@@ -10,5 +10,11 @@ export const load = async ({ fetch, cookies, params, setHeaders }) => {
 			: "s-maxage=60, stale-while-revalidate=600",
 	});
 
-	return { navPosts: await getNavPosts({ fetch, cookies }) };
+	// Only the Blog dropdown in the nav needs these. If loading fails, the page
+	// still renders and the Blog group is hidden.
+	const navPosts = await getNavPosts({ fetch, cookies }).catch((error) => {
+		console.error("[BASE] Loading nav posts failed:", error);
+		return [];
+	});
+	return { navPosts };
 };

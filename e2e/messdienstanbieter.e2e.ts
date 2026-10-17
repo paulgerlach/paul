@@ -309,8 +309,15 @@ test.describe("interactions", () => {
 		await billing.click();
 		await expect(billing).toContainText("Abrechnung erstellen");
 
-		await page.getByRole("button", { name: "Eine Unterschrift" }).click();
-		await expect(page.locator(".t2-txt")).toHaveText("Heidi übernimmt alles");
+		const sign = page.getByRole("button", { name: "Vollmacht unterschreiben" });
+		await sign.scrollIntoViewIfNeeded();
+		await expect(page.locator(".sg-st")).toHaveText(
+			"Erledigt. Ihr Team musste nichts koordinieren.",
+			{ timeout: 10_000 },
+		);
+		await expect(page.locator(".sg-steps li.on")).toHaveCount(4);
+		await sign.click();
+		await expect(page.locator(".sg-steps li.on")).toHaveCount(0);
 
 		await page.getByRole("button", { name: "Zugang an Mieter senden" }).click();
 		await expect(page.locator(".t3-3 small")).toHaveText(
@@ -320,6 +327,24 @@ test.describe("interactions", () => {
 			.getByRole("button", { name: "Klicken zum Zurücksetzen" })
 			.click();
 		await expect(page.locator(".t3-3 small")).toHaveText("Wartet auf Zugang");
+	});
+
+	test("the comparison opens a criterion and filters a column", async ({
+		page,
+	}) => {
+		const row = page.getByRole("button", { name: "Fernablesbare Funkzähler" });
+		await row.click();
+		await expect(row).toHaveAttribute("aria-expanded", "true");
+		await expect(page.locator("#vc-d1")).toContainText(
+			"Heidi installiert fernablesbare Funkzähler",
+		);
+		const large = page.getByRole("button", { name: "Großem Messdienst" });
+		await large.click();
+		await expect(large).toHaveAttribute("aria-pressed", "true");
+		await expect(page.locator(".vc-t")).toHaveClass(/\bf1\b/);
+		await expect(
+			page.getByRole("img", { name: "Großer Messdienst: Ja" }),
+		).not.toHaveCount(0);
 	});
 
 	test("the city links to the hub and to its live neighbours", async ({

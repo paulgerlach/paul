@@ -1,7 +1,8 @@
 <!--
   "Partner und Verbände" as cards (DEUMESS, VDIV, bved), on /messdienstwechsel
-  and /ueber-uns. The other landing pages use the plain logo row of
-  $lib/landing/sections/Trust.svelte.
+  and /ueber-uns. /upgrade-now uses the plain logo row of
+  $lib/landing/sections/Trust.svelte, the city and Germany pages the seals of
+  $lib/landing/sections/region/TrustSeals.svelte.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";

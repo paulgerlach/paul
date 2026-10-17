@@ -281,6 +281,14 @@
 		height: 100%;
 		display: block;
 	}
+	.ph-chart path {
+		transition: d 0.4s;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ph-chart path {
+			transition: none;
+		}
+	}
 	.ph-vl {
 		position: absolute;
 		top: 0;

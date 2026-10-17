@@ -87,7 +87,29 @@
 						<div class="s">Heizkostenabrechnung 2026 · {ex.address}</div>
 						<div class="mini-btn">Abrechnung erstellen</div>
 						<div class="row cnt">
-							<span class="docs"><i></i><i></i><i></i></span>
+							<span class="docs" aria-hidden="true">
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.6"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									><path class="b" d="M5 6.5H3.8v15h11.4v-1.3" /><path
+										d="M6.5 2.5h9.2l3.8 3.8v13.9h-13z"
+									/><path d="M15.7 2.5v3.8h3.8" /><rect
+										class="l"
+										x="9"
+										y="5.6"
+										width="2.6"
+										height="2.6"
+										rx=".4"
+									/><path
+										class="l"
+										d="M9 11h.5M11.4 11h5.3M9 13.6h.5M11.4 13.6h5.3M9 16.2h.5M11.4 16.2h5.3"
+									/></svg
+								>
+							</span>
 							<span><b {@attach count(24, 4)}>24</b> Abrechnungen erstellt</span
 							>
 						</div>
@@ -305,31 +327,53 @@
 		border-radius: 8px;
 		padding: 7px 12px;
 	}
+	/* A stack of documents whose back sheet slides in and lines draw (`#dci-css`) */
 	.docs {
-		position: relative;
-		width: 20px;
-		height: 18px;
+		width: 22px;
+		height: 22px;
 		flex: none;
+		color: var(--ink);
 	}
-	.docs i {
-		position: absolute;
-		width: 13px;
-		height: 16px;
-		border-radius: 2px;
-		background: #fff;
-		border: 1.5px solid var(--ink);
+	.docs svg {
+		width: 22px;
+		height: 22px;
+		display: block;
 	}
-	.docs i:nth-child(1) {
-		left: 0;
-		top: 2px;
+	.docs .b {
+		animation: dcB 0.45s 0.45s both;
 	}
-	.docs i:nth-child(2) {
-		left: 3px;
-		top: 1px;
+	.docs .l {
+		stroke-dasharray: 8;
+		stroke-dashoffset: 8;
+		animation: dcL 0.5s 0.8s forwards;
 	}
-	.docs i:nth-child(3) {
-		left: 6px;
-		top: 0;
+	.c4:hover .docs .b {
+		animation: dcB 0.45s 0.1s both;
+	}
+	.c4:hover .docs .l {
+		animation: dcL 0.5s 0.35s forwards;
+	}
+	@keyframes dcB {
+		from {
+			opacity: 0;
+			transform: translate(2px, -2px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@keyframes dcL {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.docs .b,
+		.docs .l {
+			animation: none;
+			stroke-dashoffset: 0;
+		}
 	}
 
 	/* Hover animations of the four visuals */
@@ -421,15 +465,6 @@
 			filter: brightness(0.9);
 		}
 	}
-	@keyframes k-doc {
-		0% {
-			opacity: 0;
-			transform: translate(-6px, 6px) rotate(0);
-		}
-		100% {
-			opacity: 1;
-		}
-	}
 	@keyframes k-av {
 		from {
 			opacity: 0;
@@ -517,18 +552,6 @@
 	/* 4 Abrechnung */
 	.c4:hover .mini-btn {
 		animation: k-press 0.5s 0.15s both;
-	}
-	.c4:hover .docs i {
-		animation: k-doc 0.3s both;
-	}
-	.c4:hover .docs i:nth-child(1) {
-		animation-delay: 0.5s;
-	}
-	.c4:hover .docs i:nth-child(2) {
-		animation-delay: 0.75s;
-	}
-	.c4:hover .docs i:nth-child(3) {
-		animation-delay: 1s;
 	}
 	.c4:hover .pop {
 		animation: k-in 0.4s 1.75s both;

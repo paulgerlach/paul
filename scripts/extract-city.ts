@@ -9,10 +9,13 @@
  * City output:
  *   src/lib/landing/pages/messdienstanbieter-city/cities/<slug>.ts      copy, example property, FAQ
  *   src/lib/landing/pages/messdienstanbieter-city/cities/<slug>-map.ts  districts, labels, hints
- *   src/lib/assets/landing/cities/<slug>/{hero,references}.jpg          the embedded photos
+ *   src/lib/assets/landing/cities/<slug>/{hero,references,people}.*     the embedded photos
  * Germany output:
  *   src/lib/landing/pages/messdienstanbieter/{content,germany-map}.ts
- *   src/lib/assets/landing/germany/{hero,references}.jpg
+ *   src/lib/assets/landing/germany/{hero,references,people}.*
+ *
+ * The photos the designs share (contact person, floating CTA avatars) live in
+ * src/lib/assets/landing/region/ and aren't written here.
  *
  * The script is strict: every element it reads must be found exactly as
  * often as expected, otherwise it stops with the selector's name, so a design
@@ -169,6 +172,13 @@ const texts = async (html: string, selector: string, count: number) =>
 function expectEqual(what: string, actual: string, expected: string) {
 	if (actual !== expected)
 		fail(`${what}: "${actual}" doesn't match the expected "${expected}"`);
+}
+
+/** File extension of an embedded image: "jpg", "png" or "webp". */
+function imageExt(uri: string, what: string) {
+	const m = /^data:image\/(jpeg|jpg|png|webp);base64,/.exec(uri);
+	if (!m) fail(`unexpected image data in ${what}: ${uri.slice(0, 40)}`);
+	return m[1] === "jpeg" ? "jpg" : m[1];
 }
 
 function writeDataUri(uri: string, file: string) {
@@ -343,6 +353,28 @@ function labelMatches(name: string, label: string) {
 
 /* ---------------------------------------------------------------- content */
 
+/**
+ * Texts of the template that are the same in every design and live in the
+ * components (Reasons, Compare, People, TrioSignature, TrustSeals,
+ * FloatingCta). Checked on import, so a design change there isn't missed.
+ */
+const FIXED_TEXTS: [selector: string, text: string][] = [
+	[
+		"section.hb .hb-head p",
+		"Messdienst ohne Koordinationsaufwand: Zähler rein, Abrechnung raus, Mieter informiert.",
+	],
+	["section.vc h2", "Große haben Größe. Lokale haben Nähe. Heidi hat beides."],
+	[
+		"section.vc .vc-note",
+		"Allgemeine Einordnung nach üblichem Leistungsumfang. Der konkrete Umfang hängt vom jeweiligen Anbieter und Vertrag ab.",
+	],
+	["section.pp h2", "Menschen statt Hotline."],
+	[".t2 .sg-tt small", "Messdienstwechsel · Lindenallee 8"],
+	["section.trust #trust-h", "Ihr Messdienst verdient verlässliche Partner."],
+	["section.trust .t-copy h2", "Ihre Verbrauchsdaten in sicheren Händen."],
+	[".ctab .ct-tx b", "Erstgespräch vereinbaren"],
+];
+
 async function readContent(html: string) {
 	const name = /<title>Heidi ([^<]+)<\/title>/.exec(html)?.[1];
 	if (!name) fail("<title>Heidi …</title> not found");
@@ -452,12 +484,24 @@ async function readContent(html: string) {
 	);
 
 	const refBg = await one(html, "img.ref-bg");
+	const peopleImg = await one(html, "section.pp .pp-f img");
+
+	// Copy the components hard-code: a design that changed it stops the import.
+	for (const [selector, expected] of FIXED_TEXTS)
+		expectEqual(selector, await text(html, selector), expected);
+	const reasonsTitle = await text(html, "section.hb h2");
+	if (!reasonsTitle.startsWith("Vier gute Gründe für Heidi "))
+		fail(`unexpected reasons title "${reasonsTitle}"`);
 	const svcHead = await select(html, "section.city-svc .shead", undefined);
 	if (svcHead.length !== 1) fail("section.city-svc .shead");
 
 	return {
 		name,
-		images: { hero: heroImg.attrs.src, references: refBg.attrs.src },
+		images: {
+			hero: heroImg.attrs.src,
+			references: refBg.attrs.src,
+			people: peopleImg.attrs.src,
+		},
 		content: {
 			name,
 			bannerText,
@@ -517,6 +561,8 @@ async function readContent(html: string) {
 				};
 			})(),
 			trio: await texts(html, ".trio-grid > div > p", 3),
+			reasons: { title: reasonsTitle },
+			compare: { text: await text(html, "section.vc .vc-side p") },
 			faq: faqItems,
 			final: {
 				title: await text(html, "section.final h2"),
@@ -585,6 +631,8 @@ const assetImport = isGermany
 	? "$lib/assets/landing/germany"
 	: `$lib/assets/landing/cities/${slug}`;
 const heroBytes = writeDataUri(images.hero, join(assetDir, "hero.jpg"));
+const peopleFile = `people.${imageExt(images.people, "people photo")}`;
+const peopleBytes = writeDataUri(images.people, join(assetDir, peopleFile));
 const refBytes = writeDataUri(
 	images.references,
 	join(assetDir, "references.jpg"),
@@ -615,12 +663,16 @@ const body = lit({
 	service: c.service,
 	duo: c.duo,
 	trio: c.trio,
+	reasons: c.reasons,
+	compare: c.compare,
+	peoplePhoto: "@@peoplePhoto@@",
 	referencesPhoto: "@@referencesPhoto@@",
 	faq: c.faq,
 	final: c.final,
 })
 	.replace(/"@@heroPhoto@@"/, "heroPhoto")
 	.replace(/"@@referencesPhoto@@"/, "referencesPhoto")
+	.replace(/"@@peoplePhoto@@"/, "peoplePhoto")
 	.replace(/"@@\.\.\.map@@": 0/, "...map")
 	.replace(/^\{\n/, "")
 	.replace(/\n\}$/, "");
@@ -630,6 +682,7 @@ writeFileSync(
 	`// Generated by scripts/extract-city.ts from the "Heidi ${name}" design.
 // Edit the design and re-run the script; only \`seo\` and \`links\` are hand-written.
 import heroPhoto from "${assetImport}/hero.jpg?enhanced";
+import peoplePhoto from "${assetImport}/${peopleFile}?enhanced";
 import referencesPhoto from "${assetImport}/references.jpg?enhanced";
 import type { RegionContent } from "$lib/landing/sections/region/types";
 import map from "${mapModule}";
@@ -720,7 +773,7 @@ await format([contentFile, mapFile]);
 const kinds = new Set(map.districts.map((d) => d.shape.kind));
 console.log(
 	`✓ ${name}: ${map.districts.length} districts (${map.outline ? "outline + " : ""}${[...kinds].join(" + ")}), default "${map.defaultDistrict}", ` +
-		`hero ${Math.round(heroBytes / 1024)} KB, references ${Math.round(refBytes / 1024)} KB, ` +
+		`hero ${Math.round(heroBytes / 1024)} KB, references ${Math.round(refBytes / 1024)} KB, people ${Math.round(peopleBytes / 1024)} KB, ` +
 		`logos ${content.logoStrip.logos.join(",")}`,
 );
 if (kept.seo.includes("TODO") || kept.links.includes("TODO"))

@@ -1,9 +1,11 @@
 <!--
   FAQ of the landing pages, with its FAQPage JSON-LD. `split` is the
   two-column variant of the /upgrade-now design (title and lead on the left,
-  plus icons, all closed).
+  plus icons, all closed). `cards` is /vorgehen's (centred head with an
+  eyebrow, each question a soft rounded card, a plus that turns into a minus).
 -->
 <script lang="ts">
+	import Eyebrow from "$lib/landing/components/Eyebrow.svelte";
 	import Chevron from "$lib/landing/components/icons/Chevron.svelte";
 	import { faqJsonLd, type FaqItem } from "$lib/landing/faqJsonLd";
 
@@ -11,13 +13,16 @@
 		items,
 		title = "FAQ",
 		lead,
+		eyebrow,
 		variant = "default",
 	}: {
 		items: FaqItem[];
 		title?: string;
 		/** Text under the title (split variant). */
 		lead?: string;
-		variant?: "default" | "split";
+		/** Pill above the title (cards variant). */
+		eyebrow?: string;
+		variant?: "default" | "split" | "cards";
 	} = $props();
 
 	// FAQPage structured data.
@@ -59,6 +64,26 @@
 			</div>
 		</div>
 	</section>
+{:else if variant === "cards"}
+	<section class="cards" id="faq" aria-labelledby="faq-h2">
+		<div class="wrap">
+			<div class="cards-head">
+				{#if eyebrow}<Eyebrow text={eyebrow} center class="rv" />{/if}
+				<h2 class="rv" id="faq-h2">{title}</h2>
+			</div>
+			<div class="faq-list cards-list">
+				{#each items as item (item.question)}
+					<details class="rv">
+						<summary>
+							{item.question}<span class="pl" aria-hidden="true"></span>
+						</summary>
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
+						<div class="ans">{@html item.answer}</div>
+					</details>
+				{/each}
+			</div>
+		</div>
+	</section>
 {:else}
 	<section class="sec wrap faq" id="faq">
 		<h2>{title}</h2>
@@ -79,7 +104,8 @@
 
 <style>
 	.faq,
-	.split {
+	.split,
+	.cards {
 		scroll-margin-top: 64px;
 	}
 	.faq h2 {
@@ -196,6 +222,83 @@
 		.split-g {
 			grid-template-columns: minmax(0, 1fr);
 			gap: 32px;
+		}
+	}
+	/* Cards variant (/vorgehen's .ar-faq) */
+	.cards {
+		padding-top: clamp(72px, 9vw, 128px);
+	}
+	.cards .wrap {
+		max-width: 1280px;
+	}
+	.cards-head {
+		max-width: 760px;
+		margin: 0 auto;
+		text-align: center;
+	}
+	.cards h2 {
+		font-size: clamp(30px, 3.6vw, 50px);
+		line-height: 1.06;
+		letter-spacing: -0.035em;
+		font-weight: 500;
+		text-wrap: balance;
+	}
+	.cards-list {
+		max-width: 960px;
+		margin: 48px auto 0;
+		display: grid;
+		gap: 10px;
+	}
+	.cards details {
+		background: var(--soft, #f3f4f2);
+		border-radius: 14px;
+		padding: 0 22px;
+	}
+	.cards summary {
+		list-style: none;
+		cursor: pointer;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 20px;
+		padding: 20px 0;
+		font-size: 16.5px;
+		font-weight: 500;
+	}
+	.pl {
+		position: relative;
+		width: 14px;
+		height: 14px;
+		flex: none;
+	}
+	.pl::before,
+	.pl::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 6px;
+		width: 14px;
+		height: 2px;
+		border-radius: 1px;
+		background: var(--ink);
+		transition: transform 0.3s;
+	}
+	.pl::after {
+		transform: rotate(90deg);
+	}
+	.cards details[open] .pl::after {
+		transform: rotate(0);
+	}
+	.cards .ans {
+		padding: 0 0 22px;
+		color: var(--muted);
+		line-height: 1.6;
+		max-width: 70ch;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.pl::before,
+		.pl::after {
+			transition: none;
 		}
 	}
 	.ans :global(b) {

@@ -158,6 +158,16 @@ export function daysLeft(now: number) {
 	);
 }
 
+/**
+ * Calendar days from today (Berlin) to 1.1.2027, when remote reading becomes
+ * mandatory (/vorgehen's "Tage bis zum 1. Januar 2027"): 1 on 31.12.2026,
+ * -1 once the deadline has passed.
+ */
+export function daysUntilObligation(now: number) {
+	const d = daysLeft(now);
+	return d < 0 ? -1 : d + 1;
+}
+
 /** "Noch 85 Tage", "Noch 1 Tag", "Letzter Tag", "Frist abgelaufen". */
 export function daysLeftText(now: number) {
 	const d = daysLeft(now);

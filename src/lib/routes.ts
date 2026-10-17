@@ -14,5 +14,6 @@ export const ROUTE_UEBER_UNS = "/ueber-uns";
 export const ROUTE_KARRIERE = "/karriere";
 export const ROUTE_HILFE = "/hilfe";
 export const ROUTE_SELBSTABRECHNUNG = "/selbstabrechnung";
+export const ROUTE_VORGEHEN = "/vorgehen";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

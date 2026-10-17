@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "web",
@@ -7,6 +8,7 @@
         "@ai-sdk/svelte": "^5.0.127",
         "@fontsource-variable/exo-2": "^5.3.0",
         "@fontsource-variable/geist": "^5.3.0",
+        "@fontsource-variable/geist-mono": "^5.3.0",
         "@lucide/svelte": "^1.49.0",
         "@prismicio/client": "^7.22.1",
         "@prismicio/svelte": "^2.2.2",
@@ -166,6 +168,8 @@
     "@fontsource-variable/exo-2": ["@fontsource-variable/exo-2@5.3.0", "", {}, "sha512-KgmRT6/E6y/ZwFcGnlFrFoKkizPcWtpDh1q1KlxLNA7NJWaSP4Y+nWGRlnRBiGZ8yybF8DhEWNldmDhOZkzMAQ=="],
 
     "@fontsource-variable/geist": ["@fontsource-variable/geist@5.3.0", "", {}, "sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA=="],
+
+    "@fontsource-variable/geist-mono": ["@fontsource-variable/geist-mono@5.3.0", "", {}, "sha512-vBbuwDEo9AkrqADMXOrlAR3DFcJi4/JxeuU43FoiQERnNwsfXNnvxvReZG02cQKmyk4DZkZdBZX3oTDvy2zBAw=="],
 
     "@hapi/hoek": ["@hapi/hoek@9.3.0", "", {}, "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="],
 

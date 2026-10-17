@@ -6,6 +6,7 @@ import {
 	DEADLINE,
 	daysLeft,
 	daysLeftText,
+	daysUntilObligation,
 	isExpired,
 	monthsText,
 	remaining,
@@ -155,6 +156,27 @@ describe("after the deadline", () => {
 			);
 		});
 	}
+});
+
+describe("daysUntilObligation", () => {
+	it("counts to 1.1.2027", () => {
+		expect(daysUntilObligation(Date.UTC(2026, 9, 17, 10))).toBe(76);
+		expect(daysUntilObligation(OCT_7_NOON)).toBe(86);
+		expect(daysUntilObligation(DEC_1_0030)).toBe(31);
+		expect(daysUntilObligation(DEC_31_NOON)).toBe(1);
+		expect(daysUntilObligation(DEC_31_LAST_SECOND)).toBe(1);
+	});
+	it("steps at Berlin midnight across the DST change", () => {
+		// 25.10.2026 23:59 and 26.10.2026 00:01 Berlin (UTC+1 from 25.10.)
+		expect(daysUntilObligation(Date.UTC(2026, 9, 25, 22, 59))).toBe(68);
+		expect(daysUntilObligation(Date.UTC(2026, 9, 25, 23, 1))).toBe(67);
+		// 24.10.2026 23:59 Berlin (still UTC+2)
+		expect(daysUntilObligation(Date.UTC(2026, 9, 24, 21, 59))).toBe(69);
+	});
+	it("is -1 once expired", () => {
+		expect(daysUntilObligation(JAN_1_MIDNIGHT)).toBe(-1);
+		expect(daysUntilObligation(FEB_1_2027)).toBe(-1);
+	});
 });
 
 describe("monthsText", () => {

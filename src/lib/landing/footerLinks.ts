@@ -8,6 +8,7 @@ import {
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
+	ROUTE_VORGEHEN,
 } from "$lib/routes";
 import { DEMO_HREF } from "./cta";
 
@@ -34,6 +35,8 @@ export const footerGroups: LandingFooterGroup[] = [
 	{
 		title: "Produkt",
 		links: [
+			{ text: "Vorgehen", href: ROUTE_VORGEHEN },
+			{ text: "Funktionen", href: ROUTE_FUNKTIONEN },
 			{ text: "Funkzähler", href: ROUTE_GERAETE },
 			{ text: "Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },

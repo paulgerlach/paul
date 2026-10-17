@@ -1,20 +1,25 @@
-# Phase 1: Route, content, signup, photos and shared pieces
+# Phase 1: Route, content, pure modules, signup and shared pieces
 
-## 1.1 Route
+## 1.1 Route and links
 
-- `ROUTE_MIETERPORTAL = "/mieterportal"` in `$lib/routes.ts` and the landing footer's "Mieterportal" `href` exist since the planning commit.
-- `src/routes/(landing-page)/mieterportal/+page.server.ts`, modelled on `funktionen/+page.server.ts`:
+One commit, so the footer link never points at a 404:
+
+- `ROUTE_DASHBOARD = "/dashboard"` in `$lib/routes.ts`.
+- `$lib/landing/footerLinks.ts`: "Plattform" → `{ text: "Dashboard", href: ROUTE_DASHBOARD }`.
+- `$lib/landing/pages/hilfe/content.ts`: both `more: { text: "Dashboard ansehen" }` get `href: ROUTE_DASHBOARD` (its `content.test.ts` accepts any route constant; check).
+- `src/routes/(landing-page)/dashboard/+page.server.ts`, modelled on `mieterportal/+page.server.ts`:
 
 ```ts
 export const load: PageServerLoad = async () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
-		title: "Mieterportal: monatliche Verbrauchsinformation für Ihre Mieter | Heidi Systems",
+		title: "Heidi Dashboard: Verbrauch, Kosten und Abrechnung Ihres Bestands | Heidi Systems",
 		description:
-			"Im Heidi Mieterportal sehen Ihre Mieter ihren Verbrauch jeden Monat, mit Vergleich zu Vormonat, Vorjahr und Durchschnitt. Nach § 6a HeizkostenV, ohne Aufwand für Ihr Team.",
-		ogTitle: "Das Heidi Mieterportal für Ihre Mieter",
+			"Alle Objekte in einem Dashboard: Verbräuche, Kosten und CO₂-Einsparung je Liegenschaft, Benachrichtigungen, Leckage-Wächter und Heizkostenabrechnung per Klick. Mit bedienbarer Vorschau.",
+		ogTitle: "Ihr ganzer Bestand. In einem Dashboard.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
 		noindex: true,
+		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,
 	finalForm: await emptySwitchForm("final"),
@@ -22,59 +27,43 @@ export const load: PageServerLoad = async () => ({
 
 export const actions: Actions = {
 	default: (event) =>
-		handleSwitchSignup(event, { source: "mieterportal", page: ROUTE_MIETERPORTAL }),
+		handleSwitchSignup(event, { source: "dashboard", page: ROUTE_DASHBOARD }),
 };
 ```
 
-  The page sets no `cache-control`, because the layout does. The `leads.source` column is free text, so the new source needs no migration; check that the Make.com `switchinquiry` scenario doesn't filter on known `page` values (gate §4.4).
-- `+page.svelte`: `<main id="content" class="mp" {@attach reveal()}>` with `<div class="uv">` around sections 1–12 (README, Dark page), then `Trust`; `FloatingCta` after `</main>`. The wrapper sets the page tokens and the `#hs-css` sizes, scoped: `.uv :global(section h2[id])` with the design's two media queries (621–1040 and ≤620), and the same for `Trust`'s H2 (it has an id), as on `/funktionen`. The reveal styles (`.rv`, threshold 0.15, `opacity`/`translateY` over 0.7 s) as on `/funktionen`'s `+page.svelte`.
-- `/vorgehen`'s feature card "Mieterportal" gets `href: ROUTE_MIETERPORTAL` (its `content.test.ts` accepts any route constant).
+  The page sets no `cache-control`, because the layout does. `leads.source` is free text, so the new source needs no migration; check that the Make.com `switchinquiry` scenario doesn't filter on known `page` values (gate §4.4).
+- `+page.svelte`: `<main id="content" class="db" {@attach reveal()}>` with the sections in design order and `FloatingCta` after `</main>`. The wrapper defines the page tokens (README, Styling), the section background (`--bg`) and the hairline between sections (`.db-sec + .db-sec`), the `#hs-css` sizes scoped as on `/mieterportal` (`h1[data-hs]` and `section h2[id]` in the 621–1040 and ≤620 queries, with selectors specific enough to beat the `tokens.css` heading reset), and the reveal styles (`.rv`: `opacity`/`translateY(18px)` over 0.7 s; the design's threshold is 0.18 with a −40 px bottom margin: use them if `reveal()` takes options, otherwise its defaults).
 - Sitemap: no entry until the cutover (gate §4.4).
 
-## 1.2 Photos
+## 1.2 Thumbnails
 
-Into `src/lib/assets/landing/mieterportal/`, saved from the design as they are (no re-encode; `?enhanced` builds the sizes):
-
-| File | From | Used in |
-|---|---|---|
-| `tenant.jpg` | hero, right panel (1122×1402) | `Hero`, `object-position: 45% 35%` |
-| `building.webp` | Verwalter card (1400×788) | `Audience` |
-| `facade-white.webp` | full-width photo (1232×928) | `Picture` |
-
-The hero's left panel imports `$lib/assets/landing/vorgehen/facade.webp` and the Mieter card `vorgehen/office.webp` (same bytes as the design's); the floating CTA uses the shared region avatars. Register the new imports in `$lib/assets/icons.ts` if the other landing photos are registered there; otherwise import them where used, as `/vorgehen` does. All photos `alt=""` (decorative, as in the design). No `priority`: the hero's side panels are hidden below 620 px, and the LCP is the H1 or the mock (measure, §4.1).
+The recommendation list's seven building photos (96×96 jpeg, ~3 KB each, embedded in `#dash-js` as `PLIMG`) go into `src/lib/assets/landing/dashboard/property-1.jpg` … `property-7.jpg`, saved as they are. They're imported where used (`?enhanced` makes no sense at 96 px: plain URL imports rendered with `<img width="48" height="48" loading="lazy" alt="">`, as the design draws them at 48 px; check the exact size in `.pl-n .ic`). Logos come from `customerLogos`, the floating CTA's avatars from the shared region assets.
 
 ## 1.3 Content module
 
-`$lib/landing/pages/mieterportal/content.ts` holds every text and the example data of the page, word for word from the design. Non-breaking spaces before `%` and units ("131 kWh", "14 Tage", "1–2 h", "11 % weniger").
+`$lib/landing/pages/dashboard/content.ts` holds every text and the example data outside the preview, word for word from the design. Non-breaking spaces before `%`, `€` and units ("6,8 %", "12,48 €/m²", "bis zu 200 € pro Jahr", "126 l").
 
-- `hero`: `srTitle` "Das Heidi Mieterportal für Ihre Mieter", `word` "Mieterportal", lead "Verbrauch, Verbrauchs­information und Termine. Für jede Wohnung an einem Ort." (keep the soft hyphen), `primary` "Demo buchen" (→ `DEMO_HREF`), `secondary` "Mehr erfahren" (→ `#inhalt`).
-- `portal` (the hero mock): label "Beispiel: Heidi Mieterportal", side nav `["Verbrauch", "Dokumente", "Mitteilungen"]` (first active), side footer "Mieterportal", head "Mieterportal", tag "Beispieldaten", greeting "Willkommen zurück.", sub "Wohnung 2. OG links · Beispiel", four entries `{ icon, title, sub, before, after }`:
-
-| title | sub | before | after |
-|---|---|---|---|
-| Verbrauchsinfo September | Heizung · 131 kWh | Neu | Bereitgestellt |
-| Montage Funkzähler | Do, 9 bis 11 Uhr | Angekündigt | Termin steht |
-| Vergleich Vorjahresmonat | 11 % weniger verbraucht | Wird berechnet | Aktuell |
-| Verbrauchsinfo August | Heizung · 96 kWh | Neu | Bereitgestellt |
-
-- `statement`: label "Worum es geht", text "Ihre Mieter wollen wissen, wo sie stehen. Im Heidi Mieterportal sehen sie ihren Verbrauch jeden Monat, verglichen mit dem Vormonat, dem Vorjahr und dem Durchschnitt. Mit allem, was die Heizkostenverordnung verlangt. Für Ihr Team entsteht dabei keine Arbeit."
-- `rows`: label "So arbeitet Heidi", the shared CTAs (`DEMO_HREF` "Demo buchen", `#faq` "Häufige Fragen"), four `{ tag, title: [line1, line2], paragraphs: [p1, p2], tile }`:
-  1. "Monatlich", "Jeden Monat / ein neuer Stand.", "Heidi liest die Funkzähler aus der Ferne ab und stellt den Verbrauch jeden Monat im Portal bereit." / "Ohne Termin in der Wohnung und ohne Aufwand für Ihr Team.", tile `calendar`.
-  2. "Mitteilung", "Mieter erfahren / es zuerst.", "Sobald eine neue Verbrauchsinformation da ist, bekommen Ihre Mieter eine Mitteilung." / "Ein Tipp genügt, und sie sehen ihren Verbrauch im Portal.", tile `phone`.
-  3. "Vergleich", "Klar statt / Zahlenkolonne.", "Jede Information zeigt den Verbrauch des letzten Monats und vergleicht ihn mit Vormonat, Vorjahresmonat und einem Durchschnittsnutzer." / "So, wie es § 6a HeizkostenV verlangt.", tile `statement`.
-  4. "Verwaltung", "Weniger Rückfragen / bei Ihnen.", "Wer seinen Verbrauch kennt, wird von der Jahresabrechnung nicht überrascht." / "Fragen, die sonst bei Ihrem Team landen, beantwortet das Portal.", tile `before`.
-- `calendar`: months `["Jan", …, "Dez"]`, `current: 9` (October), labels `done` "bereit", `doing` "wird erstellt", `open` "offen", note templates "{x} bereitgestellt" / "{x} wird erstellt". The end state: Jan–Sep ticked "bereit", Oct "wird erstellt", Nov–Dez "offen", note "Okt wird erstellt".
-- `phone`: time "9:41", app "Heidi", notification "Ihre Verbrauchsinfo September" / "Jetzt im Mieterportal ansehen", figure label "Heizung im September", value "131 kWh", comparison "11 % unter Vorjahresmonat", mini bars `[171, 184, 162, 131, 74, 22, 15, 14, 96, 131]` (last one accent; heights `value / (max * 1.05)`).
-- `statementTile`: title "Verbrauchsinformation September", sub "Heizung · in kWh · Beispiel", four rows `{ label, value, share }`: Letzter Monat 131 82 %, Vormonat 96 60 %, Vorjahresmonat 148 92 %, Durchschnittsnutzer 142 89 %; result "Alle Pflichtangaben enthalten". (The shares are the design's, not computed from the values; keep them.)
-- `before`: segments "Ohne Portal" / "Mit Heidi"; rows without the portal "Verbrauch erst mit der Abrechnung" → "spät", "Rückfrage per Anruf bei Ihnen" → "oft"; with Heidi "Verbrauch jeden Monat im Portal" ✓, "Montagetermin mit Zeitfenster" ✓; sum "Rückfragen an Ihr Team" "viele" → "weniger".
-- `rotator`: label "Was Heidi übernimmt", lead "Im Mieterportal:", phrases `["Verbrauch jeden Monat", "Vergleich zum Vorjahr", "Vergleich zum Durchschnitt", "Montagetermine"]`, `intervalMs: 2300`.
-- `numbers`: H2 "Das Mieterportal in Zahlen", five figures `{ value, unit?, text, count }` in design order with the dashboard tile second: `12` "×" "Verbrauchsinformationen pro Jahr und Wohnung"; `3` "Vergleiche je Information: Vormonat, Vorjahresmonat, Durchschnitt"; `14` "Tage" "vorher erfahren Mieter vom Montagetermin"; "1–2 h" (no count) "Zeitfenster am Montagetag"; `0` "Handgriffe für Ihr Team" (no count: the design skips 0).
-- `dashboard` (the mini dashboard): label "Animiertes Beispiel: Heidi Dashboard" (here: "Beispiel: Heidi Dashboard", it isn't animated for everyone), top bar "Mein Portfolio" / "370 Wohnungen ausgewählt", "Zeitraum" / "01. Jan. – 04. Okt.", "Datenansicht", "Dashboard teilen", "Mein Konto"; tabs "Täglich", "Wöchentlich", "Monatlich" (ends on Monatlich); toast "Alle Zähler übertragen" / "Funkablesung abgeschlossen · gerade eben"; two line cards `{ title, unit, ticks, max, values }`: Kaltwasser m³ `[0,100,200,300,400]` max 400 `[20,45,70,95,230,225,235,250,262,292]`, Warmwasser m³ `[0,25,50,75,100,125]` max 125 `[4,6,9,7,16,96,68,52,74,96]`, legend "— Vorjahr", x axis Jan–Okt; status card "Status" with four rows (740 Heizkostenverteiler, 370 Warmwasserzähler, 370 Kaltwasserzähler, 7 Wärmemengenzähler), each "Wird übertragen …" → "In Ordnung · heute übertragen"; "Heizvolumen" bars `[92, 84, 70, 46, 22, 8, 6, 7, 24, 58]` (%); empty cards "Einsparung", "Heizkörper".
-- `audience`: label "Für Verwalter und Mieter" (the design's "Ihr Wechsel" doesn't fit the section), two cards `{ title, text, cta?, image }`: "Sie sind Verwalter?" / "Das Mieterportal ist für Ihren ganzen Bestand dabei. Heidi stellt die Verbrauchsinformation bereit, Ihr Team muss nichts tun." / "Demo buchen" → `DEMO_HREF`; "Sie sind Mieter?" / "Prüfen Sie Ihre Heizkostenabrechnung kostenlos. Fehlt die monatliche Verbrauchsinformation, steht Ihnen eventuell eine Kürzung zu." / `cta` "Zum Mieter-Check" without `href` (not rendered; README, open question 2).
-- `quotes`: H2 "Transparenz für Bewohner." / "Unsere Kunden sagen es selbst." (two lines), keys `["vitolus", "werne", "gerhard"]`.
-- `picture`: caption "Ihr Verbrauch." / "Jederzeit im Blick.", section label "Heidi".
-- `faq`: title "Häufige Fragen", five `{ question, answer, more? }` (plain text): "Was ist das Heidi Mieterportal?", "Was sehen die Mieter?", "Muss unser Team etwas tun?", "Erfüllen wir damit die Pflicht zur monatlichen Verbrauchsinformation?" (`more` "Mehr zur uVI" → `ROUTE_FUNKTIONEN`), "Wo liegen die Daten?" (`more` "Mehr zu Sicherheit", no `href`).
-- `closing`: H2 "Transparenz für Ihre Mieter. Ohne Aufwand.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", submit label "Demo buchen". The video button's texts aren't in content until the button comes back (open question 1).
+- `hero`: pill "Heidi Dashboard" (live dot), H1 "Ihr ganzer Bestand." / "In einem Dashboard.", line 1 "Verbräuche, Kosten und Abrechnungen aller Objekte auf einer Plattform.", line 2 "Mit den Kennzahlen, die zählen:" + three chips `{ icon, text, pop }`: "Verbrauch" (bars `[70, 55, 40, 30, 35, 48]` %, the last highlighted, caption "kWh pro Monat"), "Kosten" (`count: 18420`, caption "Heizkosten 2026 · Beispiel"), "Benachrichtigungen" ("Auffälliger Verbrauch" / "Lindenallee 12 · WE 07"); CTAs "Demo buchen" (→ `DEMO_HREF`) and "Bestand kostenlos prüfen" (→ `START_HREF`); hint "Probieren Sie es aus: Das Dashboard ist voll bedienbar."; preview label "Bedienbare Vorschau des Heidi Dashboards mit Beispieldaten".
+- `logos`: text "Im Einsatz bei", strong "Hausverwaltungen in ganz Deutschland" (the default logo order; check it is the design's: Berlin, Dumax, Harte, HSP, raumgold, Schleicher, Vitec, Wagner, Werne, Neckar, Niesen, Pro Gera).
+- `kpis`: pill "Kennzahlen", H2 "Verstehen Sie Ihren Bestand auf einen Blick", lead "Die wichtigsten Kennzahlen jeder Liegenschaft, automatisch aus den Funkwerten erfasst.", three cards:
+  - "Verbrauch": "Kaltwasser, Warmwasser, Heizung und Strom je Objekt, täglich, wöchentlich oder monatlich.", figure `104` "kWh/m²", delta "↓ 6,8 %", sparkline `[62, 58, 61, 55, 57, 52, 54, 49, 50, 47, 46, 44]` (y range 35–70, as the design's `(y − 35) / 35`).
+  - "Kosten": "Gesamtkosten und Heizkosten je Monat auf einen Blick, damit Ausreißer früh auffallen.", unit "€/m²", modes "Gesamt" / "Heizung" (group label "Kostenart"), captions "Gesamtkosten 2025" / "Heizkosten 2025", per month "Gesamtkosten {Monat}" / "Heizkosten {Monat}", tooltip rows "Heizung", "Übrige Kosten", "Gesamt", chart label "Kosten je Monat. Mit Maus, Finger oder Pfeiltasten einen Monat wählen." Data from `kpi.ts`.
+  - "Einsparung": "Sehen Sie, wie viel CO₂ Ihr Bestand im gewählten Zeitraum einspart.", unit "t CO₂", modes "Kumuliert" / "Je Monat" (group label "Darstellung"), caption "eingespart Jan – Sep", per month "bis Ende {Monat}" / "im {Monat}", tooltip rows "Kumuliert" / "Im Monat", "davon im Monat", chart label "CO₂-Einsparung je Monat. Mit Maus, Finger oder Pfeiltasten einen Monat wählen." Data from `kpi.ts`.
+- `strike`: label "Was Ihnen das Dashboard abnimmt", five lines "Ablesewerte per Excel einsammeln", "Mieter für jeden Ablesetermin anschreiben", "Verbräuche aus PDFs abtippen", "Monatelang auf die Abrechnung warten", "Leckagen erst mit der Jahresrechnung bemerken", final "Alles auf einen Blick." + accent "Mit Heidi.".
+- `features`: pill "Funktionen", H2 "Aus Verbrauchsdaten werden klare Entscheidungen", lead "Objekte anlegen, Benachrichtigungen erhalten, Funktionen auf Knopfdruck nutzen und das Dashboard mit Ihrem Team teilen.", six cards `{ id, size: 7 | 5, title, text }` in design order (Objekte anlegen 7, Benachrichtigungen 5, Bestandszähler übernehmen 5, Leckage-Wächter 7, Heizkostenabrechnung per Klick 7, Dashboard teilen 5), each with its demo data:
+  - `addObject`: placeholder "Adresse der Liegenschaft …", tags "Mehrfamilienhaus", "Funk", button "Hinzufügen", entries `[Bergmannstraße 4, 24 WE]`, `[Lindenallee 12, 18 WE]`, `[Gartenweg 3, 12 WE]`, `[Am Stadtpark 7, 32 WE]`, `[Mühlenstraße 18, 18 WE]`; the list shows three, newest first; the server shows the first two (Bergmannstraße on top).
+  - `notifications`: five `{ tone: "ok" | "in", title, sub }`: Mieter eingezogen / WE PL12VH3DGr; 32 % höherer Verbrauch / WE SH39LF10Gl · Warmwasser (`in`); Alle Zähler in Ordnung / Bergmannstraße 4 · heute übertragen; 12 % weniger Heizverbrauch / Gartenweg 3 · zum Vorjahr; Funkablesung abgeschlossen / 370 Wohnungen · 05.10.2026.
+  - `takeOver`: five rows `{ type, unit, source: "funk" | "bestand" }` (Heizkostenverteiler WE 01 funk, Heizkostenverteiler WE 02 bestand, Warmwasserzähler WE 02 funk, Kaltwasserzähler WE 03 bestand, Wärmemengenzähler Keller funk), badges "Heidi-Funk" / "Bestand", note "Getauscht wird erst zum Ende des bisherigen Vertrags."
+  - `leak`: label "Kaltwasser · WE 04 · letzte 14 Tage", legend "Normalwert ~126 l", badge "Auffälligkeit erkannt (3 Tage)", 14 daily values `[128, 116, 142, 121, 111, 135, 148, 122, 119, 196, 208, 214, 126, 120]` with days 10–12 flagged, baseline 126, gridlines 150 l and 200 l, x labels Tag 1, 4, 7, 10, 14, tooltip "{v} Liter" / "Tag {t}" (+ " · auffällig"), the chart's label "Täglicher Kaltwasserverbrauch über 14 Tage, an Tag 10 bis 12 deutlich über dem Normalwert", the footnote "An 3 Tagen lief nachts durchgehend Wasser – häufigste Ursache: laufende Spülung. Ein tropfender Spülkasten kostet unbemerkt bis zu 200 € pro Jahr." Coordinates are computed (`chart.ts`), not copied: x = 48 + i × 492 / 13, y = 141.4 − (v − 126) × 1.186, which reproduces the design's points (128 → 139.0, 214 → 37.0) and gridlines (150 l at 112.9, 200 l at 53.6); the highlight band spans days 10–12.
+  - `billingRun`: three properties (Bergmannstraße 4 · 24 WE, Lindenallee 12 · 18 WE, Gartenweg 3 · 12 WE), statuses "Bereit" / "Wird erstellt" / "Erstellt", button "Abrechnungen erstellen" / "Zurücksetzen", hint "Abrechnungszeitraum 2025" / "Plausibilitätsprüfung läuft …", toast "54 Abrechnungen erstellt · zum Herunterladen bereit" (54 = the sum of the WE: test).
+  - `share`: field placeholder (typed), "Einladen", "Sie" / "Ihr Konto" (initials "HV"), invitees `[team@ihre-hausverwaltung.de, TM]`, `[buchhaltung@…, BH]`, `[technik@…, TE]`, status "Eingeladen", button "Dashboard teilen".
+- `quote`: logo key `werne`, testimonial key `werne`, emphasis "reibungslos und pünktlich".
+- `integration`: pill "Schnittstellen", H2 "Direkt in Ihre Verwaltungs­software." (soft hyphen), text "Heizkostenabrechnungen und Verbrauchsdaten gehen aus dem Dashboard direkt an Ihr ERP- oder CRM-System. Kein Abtippen, kein Hin- und Herschicken von Dateien.", link "Anbindung besprechen →" (→ `START_HREF`); the hand-over: label "Beispiel: Heidi übergibt Dokumente an Ihre Verwaltungssoftware", "Automatische Übergabe", "Heute übergeben" starting at `14`, "Heidi" / "Dashboard", "Bereit zur Übergabe", "Ihre Software" / "ERP / CRM", columns "Eingang" / "Zeit", seven items `{ icon, title, place }` (Heizkostenabrechnung Bergmannstraße 4, Verbrauchsdaten September Lindenallee 12, Heizkostenabrechnung Gartenweg 3, Verbrauchsinfo an 32 Mieter Am Stadtpark 7, Zählerstände Mühlenstraße 18, Heizkostenabrechnung Schillerhöfe, Verbrauchsdaten September Hofstraße 21), times "vor 4 Min.", "vor 9 Min.", "vor 16 Min.", "vor 23 Min.", "vor 1 Min.", "gerade eben", labels "bereit", "wird übertragen", "Neu", badge "Beispieldaten", caption "Abrechnungen, Verbrauchsdaten und Verbrauchsinfos landen ohne Export und ohne Abtippen in Ihrer Software."
+- `recommendations`: pill "Auswertungen", H2 "Für jede Liegenschaft der nächste Schritt", lead "Heidi prüft Vertragslaufzeit und Zähler jeder Liegenschaft und zeigt den nächsten Schritt: Vertrag übernehmen, Vertrag kündigen oder direkt abrechnen.", filters (group label "Empfehlungen filtern") "Alle", "Vertrag direkt übernehmen", "Vertrag kündigen", "Heizkostenabrechnung", search "Liegenschaft suchen", columns "Liegenschaft" / "Status" / "Empfehlung", "Wird geprüft", "Bestand wird geprüft …", "{n} Liegenschaften geprüft", badge "Beispieldaten"; seven rows `{ name, units, status, detail, kind, photo }` (Lindenallee 12 · 36 Einheiten · Vertrag läuft bis 03/2029 · Heidi übernimmt die Zähler sofort · take; Gartenweg 3 · 12 · Vertrag endet 12/2026 · Kündigung per Vollmacht · cancel; Bergmannstraße 4 · 24 · Heidi-Funkzähler aktiv · Abrechnung 2026 bereit · bill; Am Stadtpark 7 · 32 · Vertrag endet 08/2027 · Rechtzeitig kündigen · cancel; Mühlenstraße 18 · 18 · Vertrag läuft bis 2030 · Heidi übernimmt die Zähler sofort · take; Schillerhöfe · 48 · Heidi-Funkzähler aktiv · Abrechnung 2026 bereit · bill; Hofstraße 21 · 18 · Vertrag endet 01/2027 · Kündigung per Vollmacht · cancel); per kind the popover `{ title, text, steps[3], note }` (the design's `INFO`, word for word); the three small cards (Monatliche Verbrauchsinfo, Verbrauchsprognose, Übergabe an Ihre Software) with their texts.
+- `questions`: H2 "Hausverwaltungen stellen jeden Tag dieselben Fragen. Im Dashboard stehen die Antworten.", three rows of four `{ icon, bg, fg, text }` (the design's `R1`–`R3`), durations 70 s, 84 s (reversed), 76 s; pause labels "Anhalten" / "Abspielen" (open question 4).
+- `testimonials`: pill "Kundenstimmen", H2 "Was Verwaltungen über Heidi sagen", keys `["vitolus", "gerhard"]`.
+- `roadmap`: pill "Produkt-Updates & Roadmap", H2 "Sie bestimmen mit, was als Nächstes kommt.", text "Teilen Sie uns direkt im Dashboard Ihre Wünsche mit und geben Sie an, welche Funktionen Sie sich zukünftig wünschen.", button "Feedback geben →" (→ `START_HREF`, open question 3), items Betriebskosten / Rauchmelder hinzufügen / Feuerlöscher hinzufügen ("Im Funktionsmenü", "Verfügbar") and "Ihr Wunsch" / "Was soll Heidi als Nächstes können?" ("Feedback").
+- `closing`: H2 "Sehen Sie Ihren Bestand" + span "in einem Dashboard.", text "Wir prüfen Ihren Bestand kostenlos und zeigen Ihnen, wie er in Heidi aussieht.", submit "Bestand kostenlos prüfen", chart `{ current: [150, 120, 135, 96, 110, 82, 90, 70, 76, 58, 64, 46], previous: [140, 150, 128, 140, 124, 132, 118, 126, 112, 118, 108, 112] }` (SVG y in a 1000×210 box, lower is better). The demo link's text "Lieber direkt eine Demo buchen →" isn't in content until it comes back (open question 2).
 
 The design's links and where they go:
 
@@ -82,24 +71,33 @@ The design's links and where they go:
 |---|---|
 | Logo, nav, "Anmelden", header "Demo buchen" / "Angebot einholen" | The shared `LandingHeader` |
 | Banner "Mehr erfahren" | `/upgrade-now` (`DEFAULT_CHROME`) |
-| "Demo buchen" (hero, rows, Verwalter card, trust), floating "Erstgespräch vereinbaren" | `DEMO_HREF` (`#start`, the closing card's form) |
-| Hero "Mehr erfahren" | `#inhalt` |
-| Rows' "Häufige Fragen" | `#faq` |
-| "Zum Mieter-Check" | none (open question 2) |
-| FAQ "Mehr zur uVI" | `ROUTE_FUNKTIONEN` (the footer's "Verbrauchsinformation (uVI)" goes there too) |
-| FAQ and trust "Mehr zu Sicherheit" | none yet (`TrustSeals` leaves it out) |
-| Closing card's video button | Replaced by the signup form (open question 1) |
+| "Demo buchen" (hero, trust), floating "Erstgespräch vereinbaren" | `DEMO_HREF` (`#start`, the closing card's form) |
+| "Bestand kostenlos prüfen", "Anbindung besprechen →", "Feedback geben →" | `START_HREF` |
+| "Lieber direkt eine Demo buchen →" | left out (open question 2) |
+| Trust "Mehr zu Sicherheit" | none yet (`TrustSeals` leaves it out) |
+| The preview's "Impressum" / "Datenschutz" (plain text in the design's side nav) | plain text, as designed (part of the mock) |
 
-`content.test.ts`: no empty strings, no `XX`; four portal entries, each with `before` ≠ `after`; four rows with two title lines and two paragraphs; `calendar.current` within 0–11; the phone bars non-empty and its value matches the last bar and the portal's "131 kWh"; the statement tile has four rows with `share` in 0–100; four rotator phrases; the numbers' KPI strings match the confirmed ones ("14 Tage", "1–2 h"); the two dashboard series have 10 values each, all within 0–`max`, and `ticks` ending at `max`; three quote keys exist in the shared data; FAQ has 5 entries, every `more.href` is undefined or a route constant from `$lib/routes.ts`.
+`content.test.ts`: no empty strings, no `XX`; three chips; the sparkline has 12 values; six feature cards with sizes summing to 12 per row pair (7 + 5); the leak series has 14 values, exactly the flagged days above 1.4 × the baseline; the billing toast's 54 equals the sum of the three WE; seven recommendations with kinds and the counts 2 / 3 / 2; seven photos; every filter kind has a popover; three question rows of four; the testimonial keys exist and the Werne quote contains the emphasis; every `href` is `DEMO_HREF`, `START_HREF` or a route constant.
 
-## 1.4 Icons
+## 1.4 Pure modules
 
-The design's inline stroke SVGs (the portal's logo, nav and entry icons; the calendar tick; the phone's bell; the statement tile's check; the before/after tick; the dashboard's status and toast icons; the FAQ chevron, which `Faq` already has) become `StrokeIcon` paths in `pages/mieterportal/icons.ts`, drawn by `components/Icon.svelte` (as on `/funktionen`). Check the shared icons first (`$lib/landing/components/icons/`, `/funktionen`'s `IconPaths`): a tick, bell or document that already exists is reused, not copied. The Heidi logo in the mock comes from the landing header's logo, not a copy.
+All without DOM access, so the server and the browser draw the same thing, and unit-tested:
+
+- **`chart.ts`**: `niceScale(max)` (the design's `nice()`: steps of 0.25/0.5/1/2 × 10ⁿ, returns `{ max, step, ticks }`), `smoothPath(points)` (the design's Catmull-Rom-to-Bézier `smooth()`), `areaPath(points, baseline)`, `toBox(values, max, { x0, x1 })` (values → points in a 0–100 box, bars and points centred in their slot as the design's `X(i) = pad + (i + .5) · w / n`), `expand(values, granularity, seed)` (the design's month → 4 weeks / 7 days spread with its sine wobble), `formatNumber(v)` (the design's `fmtN`: `de-DE`, no decimals from 10, one below, thousands grouped). The closing chart's simpler `smooth()` (horizontal tangents) is `stepCurve(values, width)`.
+- **`kpi.ts`**: costs 2025 (`heat = [48, 62, 78, 84, 70, 55, 34, 22, 16, 15, 15, 30] × 6.72 / 529`, `rest = 0.48`, `all = heat + rest`; totals 6,72 and 12,48 €/m²); CO₂ 2026 (`monthly = [1.85, 1.70, 1.55, 1.25, 1.05, 0.95, 0.90, 0.95, 1.10]`, cumulative, total 11,3 t); month names short and long. Tests: the totals, `cumulative.at(-1) === 11.3`, twelve and nine months.
+- **`recommendations.ts`**: `filterRecommendations(rows, kind, query)` (kind `all` or one kind; query trimmed, lower-case, substring of the name) and `countByKind(rows)`. Tests: "Vertrag kündigen" gives 3, "garten" gives Gartenweg 3, both combined, an empty result.
+- **`demo/data.ts`**: the preview's data, from `#dash-js` ("Echtes Dashboard", v3): the seven objects `{ id, name, units, radioShare, delta }` (370 units in total), the meter types `{ label, short, icon }` (Heizkostenverteiler HKV, Warmwasserzähler WWZ, Kaltwasserzähler KWZ, Wärmemengenzähler WMZ), `BASE` (2026) and `PREV` (2025) monthly series for kalt, warm, heiz, hk (and strom, unused by any tile: leave it out), the forecast's actual / forecast / low / high values, the three periods (`ytd` "01. Jan. – 04. Okt." months 0–10 of 2026, `q3` "01. Jul. – 30. Sep.", `y25` "01. Jan. – 31. Dez. 2025", with their menu names "Dieses Jahr", "Letztes Quartal", "Vorjahr"), the documents (seven, with category, object, date, detail), the functions of the Abrechnung view (Betriebskosten, uVI hinzufügen, Heizkostenabrechnung, Rauchmelder hinzufügen, Feuerlöscher hinzufügen) with the cost types and amounts, the rooms and locations, the per-floor labels, the account menu entries, every note text. The meters are generated as in the design (up to eight units per object, two HKV + WWZ + KWZ per unit, one WMZ per object, ids like `HKV-4400-01`) with `mulberry32` seeded by the design's seeds instead of `rnd()`.
+- **`demo/model.ts`**: given the state (`scope`, `period`, `granularity`, `previousYear` per tile) the functions the views draw from: `series(key, state, previous?)` (period slice × scope factor), `expanded(…)`, `typeCounts(scope)` (all objects: 740 HKV, 370 WWZ, 370 KWZ, 7 WMZ), `co2(scope, period)` (11,3 / 2,4 / 13,9 t × scope share), `perObjectRows(scope, period)` (top five objects by units, or five floors of the chosen object), `tileSummary(key, state)` (sum, mean, change to the previous year, for the enlarged chart), `metersFor(type, scope, query)`, `documentsFor(category, scope)`, `pointLabel(i, labels, state)` ("Mär 2026", "KW 12", "Mär, Tag 3"), and `describeChart(key, state)` for the charts' text summaries (phase 3A.8). Tests: totals and counts above, period lengths (10, 3, 12 months), expand lengths (×4, ×7), a scope reduces the counts to that object, the meter ids are unique, `describeChart` names the range and the min/max.
 
 ## 1.5 Shared pieces
 
-- **`$lib/landing/attachments/loopInView.ts`**: `loopInView({ run, every, threshold = 0.15, delay = 0 })`, the design's `loop` + `onShow`. On entering the view it calls `run()` (after `delay` ms on the first enter only; the hero uses it, phase 3.1) and then every `every` ms while the element stays in view and `document.visibilityState` is `visible`; on leaving (or a hidden tab) it stops, and the next enter starts over with `run()`. Under `prefersReducedMotion()` it does nothing (the server's end state stays). `run` returns an optional cleanup that cancels its pending step timeouts, called before the next run and on teardown, so no step fires after leaving. Used by the hero list, the four tiles, the rotator and the mini dashboard (seven places, so it's shared rather than written per section).
-- **`sections/Faq.svelte`**: `tone?: "light" | "dark"` (default variant only), `openFirst?: boolean` (default `true`, today's behaviour; `false` here, the design opens none) and `FaqItem.more?: { text: string; href?: string }` in `$lib/landing/faqJsonLd.ts` (rendered as a link after the answer when it has `href`; `faqJsonLd` ignores it). Without the new props it renders exactly as today.
-- **`sections/CtaCard.svelte`**: `tone?: "dark" | "glass"` (default `dark`, today's look); `glass` per `#end-css`. The form-on-dark rules of `pages/funktionen/sections/CtaCard.svelte` move into it (scoped to the `action` slot); the `/funktionen` wrapper keeps only what's specific to it. `/karriere` and `/hilfe` don't change.
+- **`sections/LogoStrip.svelte`**: an optional `strong?: string`, rendered after `text` in `<b>` (the design's "Im Einsatz bei **Hausverwaltungen in ganz Deutschland**"). Without it, it renders as today.
+- **`sections/CtaCard.svelte`**: an optional `visual?: Snippet`, rendered after the action, full width at the bottom of the card (the design's `.cta-vis`). Without it, it renders as today; `/funktionen`, `/mieterportal`, `/karriere` and `/hilfe` don't change.
+- **`attachments/countUp.ts`**: an optional `format?: (n: number) => string` (default today's `String(Math.round(n))`), so the hero chip can count to "18.420 €" and the CO₂ card to "11,3". Existing callers don't change.
+- `loopInView`, `inView`, `reveal`, `Segmented`, `confetti.ts` (`burst`), `clickOutside` and `TrustSeals` are used as they are.
 
-Update `CLAUDE.md` once built: a `/mieterportal` bullet under "Current state", the layout tree (`pages/mieterportal/`, `loopInView`), and `(landing-page)`'s page list.
+## 1.6 Icons
+
+The design's inline stroke SVGs (the preview's `IC` set: HKV, radiator, tap, hot tap, alert, check, search, building, file, file-plus, euro, smoke, extinguisher, meter, plus, download, link, arrow, bolt, user; the page's `ICON` set: drop, flame, calendar, users, signal, chart, tool; the chip, pill, bento, hand-over and recommendation icons; the Heidi mark in the preview's top bar) become `StrokeIcon` paths in `pages/dashboard/icons.ts`, drawn by `components/Icon.svelte`. Check the shared icons first (`$lib/landing/components/icons/`, `/funktionen`'s and `/mieterportal`'s `icons.ts`): an icon that already exists is imported, not copied. The Heidi mark comes from the landing header's logo.
+
+Update `CLAUDE.md` once built: the `/dashboard` bullet under "Current state" (from "planned" to "built"), the layout tree (`pages/dashboard/`), and `(landing-page)`'s page list.

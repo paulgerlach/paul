@@ -9,7 +9,11 @@
 import { DEMO_HREF, START_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
-import { ROUTE_FUNKTIONEN, ROUTE_GERAETE } from "$lib/routes";
+import {
+	ROUTE_FUNKTIONEN,
+	ROUTE_GERAETE,
+	ROUTE_MIETERPORTAL,
+} from "$lib/routes";
 import type { IconName } from "./icons";
 
 const NB = " ";
@@ -140,6 +144,7 @@ export const features = {
 			icon: "users",
 			title: "Mieterportal",
 			text: "Die monatliche Verbrauchsinformation für Ihre Mieter, automatisch.",
+			href: ROUTE_MIETERPORTAL,
 		},
 		{
 			icon: "tool",

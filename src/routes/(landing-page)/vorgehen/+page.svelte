@@ -3,10 +3,18 @@
 	import geistMono from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url";
 	import { reveal } from "$lib/landing/attachments/reveal";
 	import { setDeadlineClock } from "$lib/landing/deadline/clock.svelte";
+	import Comparison from "$lib/landing/pages/vorgehen/sections/Comparison.svelte";
 	import ContactCard from "$lib/landing/pages/vorgehen/sections/ContactCard.svelte";
 	import Faq from "$lib/landing/pages/vorgehen/sections/Faq.svelte";
+	import Features from "$lib/landing/pages/vorgehen/sections/Features.svelte";
 	import FloatingCta from "$lib/landing/pages/vorgehen/sections/FloatingCta.svelte";
+	import Hero from "$lib/landing/pages/vorgehen/sections/Hero.svelte";
+	import Quotes from "$lib/landing/pages/vorgehen/sections/Quotes.svelte";
+	import RemoteDuty from "$lib/landing/pages/vorgehen/sections/RemoteDuty.svelte";
+	import Stats from "$lib/landing/pages/vorgehen/sections/Stats.svelte";
+	import Steps from "$lib/landing/pages/vorgehen/sections/Steps.svelte";
 	import Trust from "$lib/landing/pages/vorgehen/sections/Trust.svelte";
+	import WideImage from "$lib/landing/pages/vorgehen/sections/WideImage.svelte";
 
 	let { data } = $props();
 
@@ -28,6 +36,14 @@
 </svelte:head>
 
 <main id="content" class="vg" {@attach reveal()}>
+	<Hero />
+	<WideImage />
+	<Stats />
+	<RemoteDuty />
+	<Steps />
+	<Features />
+	<Comparison />
+	<Quotes />
 	<Faq />
 	<ContactCard form={data.finalForm} />
 	<Trust />

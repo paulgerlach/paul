@@ -5,6 +5,7 @@ import {
 	ROUTE_HILFE,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
+	ROUTE_MIETERPORTAL,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
@@ -43,7 +44,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
 			{ text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG },
 			{ text: "Verbrauchsinformation (uVI)", href: ROUTE_FUNKTIONEN },
-			{ text: "Mieterportal" },
+			{ text: "Mieterportal", href: ROUTE_MIETERPORTAL },
 		],
 	},
 	{

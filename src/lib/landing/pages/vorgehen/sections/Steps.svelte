@@ -3,15 +3,13 @@
   the step texts on the left and a picture with its example chip on the
   right. The server renders step 1.
 
-  Auto-advance (plan 03 §3.1): every 6 s while the block is in view, the tab
-  is visible and the pointer and focus are outside it; a pause restarts the
-  step's full interval. Choosing a step stops it for good. None with reduced
-  motion. The bar shows the running interval.
+  Auto-advance through the shared `AutoTabs`: every 6 s while the block is in
+  view, the tab is visible and the pointer and focus are outside it; choosing a
+  step stops it for good. The bar shows the running interval.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
-	import { inView } from "$lib/landing/attachments/inView";
-	import { prefersReducedMotion } from "$lib/landing/motion";
+	import { AutoTabs } from "$lib/landing/autoTabs.svelte";
 	import consultation from "$lib/assets/landing/vorgehen/consultation.webp?enhanced";
 	import dashboard from "$lib/assets/landing/vorgehen/dashboard.webp?enhanced";
 	import installer from "$lib/assets/landing/vorgehen/installer.webp?enhanced";
@@ -21,81 +19,17 @@
 	const photos = [consultation, installer, dashboard];
 	const count = steps.items.length;
 
-	let active = $state(0);
-	/** Until the visitor chooses a step (off on the server and with reduced motion). */
-	let auto = $state(false);
-	let seen = $state(false);
-	let hovered = $state(false);
-	let focused = $state(false);
-	let hidden = $state(false);
-	const running = $derived(auto && seen && !hovered && !focused && !hidden);
-
-	// One timer at a time; a new step or a resume starts a fresh interval.
-	$effect(() => {
-		if (!running) return;
-		const from = active;
-		const timer = setTimeout(
-			() => (active = (from + 1) % count),
-			steps.intervalMs,
-		);
-		return () => clearTimeout(timer);
+	const tabs = new AutoTabs({
+		count,
+		intervalMs: steps.intervalMs,
+		tabId: (i) => `vg-tab-${i}`,
 	});
-
-	/** Arms auto-advance and tracks what pauses it. */
-	function autoAdvance(el: HTMLElement) {
-		auto = !prefersReducedMotion();
-		const stopView = inView({
-			threshold: 0.35,
-			onEnter: () => (seen = true),
-			onLeave: () => (seen = false),
-		})(el);
-		const on = {
-			pointerenter: () => (hovered = true),
-			pointerleave: () => (hovered = false),
-			focusin: () => (focused = true),
-			focusout: (e: Event) => {
-				const to = (e as FocusEvent).relatedTarget as Node | null;
-				if (!el.contains(to)) focused = false;
-			},
-		};
-		for (const [type, fn] of Object.entries(on)) el.addEventListener(type, fn);
-		return () => {
-			stopView?.();
-			for (const [type, fn] of Object.entries(on))
-				el.removeEventListener(type, fn);
-		};
-	}
-
-	/** A step chosen by the visitor. */
-	function select(i: number, focus = false) {
-		auto = false;
-		active = (i + count) % count;
-		if (focus) document.getElementById(`vg-tab-${active}`)?.focus();
-	}
-
-	function onkeydown(e: KeyboardEvent) {
-		const next: Record<string, number> = {
-			ArrowDown: active + 1,
-			ArrowRight: active + 1,
-			ArrowUp: active - 1,
-			ArrowLeft: active - 1,
-			Home: 0,
-			End: count - 1,
-		};
-		if (!(e.key in next)) return;
-		e.preventDefault();
-		select(next[e.key], true);
-	}
 </script>
-
-<svelte:document
-	onvisibilitychange={() => (hidden = document.visibilityState === "hidden")}
-/>
 
 <section class="sec" aria-labelledby="vg-steps-h">
 	<div class="wrap">
 		<Head id="vg-steps-h" eyebrow={steps.eyebrow} title={steps.h2} center />
-		<div class="tabs rv" {@attach autoAdvance}>
+		<div class="tabs rv" {@attach tabs.attach}>
 			<div>
 				<div
 					class="list"
@@ -103,7 +37,7 @@
 					aria-orientation="vertical"
 					aria-labelledby="vg-steps-h"
 					tabindex="-1"
-					{onkeydown}
+					onkeydown={tabs.onkeydown}
 				>
 					{#each steps.items as step, i (step.title)}
 						<button
@@ -111,10 +45,10 @@
 							role="tab"
 							id="vg-tab-{i}"
 							aria-controls="vg-panel-{i}"
-							aria-selected={i === active}
-							tabindex={i === active ? 0 : -1}
-							class={["tab", i === active && "on"]}
-							onclick={() => select(i)}
+							aria-selected={i === tabs.active}
+							tabindex={i === tabs.active ? 0 : -1}
+							class={["tab", i === tabs.active && "on"]}
+							onclick={() => tabs.select(i)}
 						>
 							<span class="n">{String(i + 1).padStart(2, "0")}</span
 							>{step.title}
@@ -124,11 +58,11 @@
 				<div class="texts">
 					{#each steps.items as step, i (step.title)}
 						<div
-							class={["tx", i === active && "on"]}
+							class={["tx", i === tabs.active && "on"]}
 							role="tabpanel"
 							id="vg-panel-{i}"
 							aria-labelledby="vg-tab-{i}"
-							inert={i !== active}
+							inert={i !== tabs.active}
 						>
 							<p>{step.text}</p>
 						</div>
@@ -141,7 +75,7 @@
 				style:--interval="{steps.intervalMs}ms"
 			>
 				{#each steps.items as step, i (step.title)}
-					<figure class={["pic", i === active && "on"]}>
+					<figure class={["pic", i === tabs.active && "on"]}>
 						<Image
 							src={photos[i]}
 							alt=""
@@ -152,8 +86,8 @@
 						</figcaption>
 					</figure>
 				{/each}
-				{#if running}
-					{#key active}
+				{#if tabs.running}
+					{#key tabs.active}
 						<span class="bar"><i></i></span>
 					{/key}
 				{/if}

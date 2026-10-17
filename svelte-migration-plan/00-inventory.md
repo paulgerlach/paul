@@ -10,7 +10,7 @@ Tick items as they are ported **and** verified against the Next version.
 | `app/(base)/layout.tsx` | – | Header, Footer, Toaster, QueryProvider | `src/routes/(base)/+layout.svelte` (+ `+layout.server.ts` for nav posts) | [x] |
 | `app/(service)/layout.tsx` | – | FragebogenHeader, ChatBot, Suspense | `src/routes/(service)/+layout.svelte` | [x] |
 | `app/(base)/page.tsx` (713 lines) | `/` | static, heavy | `(base)/+page.svelte` | [x] |
-| `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(base)/funktionen/+page.svelte` | [x] |
+| `app/(base)/funktionen/page.tsx` | `/funktionen` | static | `(landing-page)/funktionen/+page.svelte` (a new design replaced the port, `new-landing-page-plan/`; the port is in git history) | [x] |
 | `app/(base)/geraete/page.tsx` | `/geraete` | static | `(base)/geraete/+page.svelte` | [x] |
 | `app/(base)/preise/page.tsx` | `/preise` | static | `(base)/preise/+page.svelte` | [x] |
 | `app/(base)/kontakt/page.tsx` | `/kontakt` | static + form | `(base)/kontakt/+page.svelte` + `+page.server.ts` (action) | page [x], action phase 7 [x] |

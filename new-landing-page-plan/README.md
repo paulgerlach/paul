@@ -1,45 +1,47 @@
-# Page `/vorgehen` ("Vorgehen"): plan
+# Page `/funktionen` ("Funktionen"): plan
 
-The product page that explains how Heidi works with a Verwaltung: "So geht Heidi vor. In drei Schritten digital." A large hero heading with a lead and two CTAs, a wide building photo, three key figures (92 %, 14 Tage, 3-in-1), the remote-reading duty with a day count to 1.1.2027, the three steps of the switch as auto-advancing tabs (Bedarfsanalyse, Installation der Funktechnik, Verbrauchsanalyse und Abrechnung), six feature cards ("Mehr als Ablesung."), a comparison "Mit Heidi oder klassisch ablesen?", three customer quotes, five FAQs, a contact card with a photo, the security block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`. The landing footer's "Produkt" group already lists "Vorgehen" as plain text; phase 1 links it.
+The new features page replaces the current `/funktionen` (the ported Next page in `(base)`). Hero "Daten mit höchster Effizienz bearbeiten." with a lead, two CTAs and an example consumption card (bars per month, switchable between Heizung, Warmwasser and Kaltwasser), a strip of four trust badges, "Was Heidi übernimmt" (three cards), the dashboard as auto-advancing tabs with three example views, "Alle Funktionen" (six cards), the five installation steps, one customer quote, eight FAQs, a dark closing card, the security block and the floating CTA. It uses the landing design system, so it moves to the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
 
-- **Design reference:** https://claude.ai/artifact/5BrUg7VjVK4QEhd7DiaSfj ("Vorgehen · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. It's one HTML file in the layout of the other designs: the shared base CSS (`:root` tokens, `.dm-*` primitives, nav), the "Lösungsseiten" blocks (`#pg-common-css`, prefix `pg-`, here only its FAQ and helper bits), the page CSS (`#ar-css`, prefix `ar-`, plus a Google Fonts import of Geist Mono), the seal-style trust block (`#trust-css`, the one `TrustSeals` ports), the heading overrides (`#hs-css`), the eyebrow pills (`#eb-css`), the floating CTA (`#cta-css`/`#cta-js`), the shared helper script (`#pg-common`) and the page script (`#ar-js`: tabs, day count, image zoom). Embedded images: 12 webp, of which 7 are new photos (listed in [01 §1.5](01-route-and-content.md)) and 3 are already in `src/lib/assets/landing/region/` with the same bytes (`contact.webp`, `avatar-1.webp`, `avatar-2.webp`); the other 2 repeat new ones. The design's links point to other design artifacts; their mapping is in [01 §1.3](01-route-and-content.md). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
-- **Previous plans:** the `/selbstabrechnung` plan used to live in this folder (last version at `9d0bab9c`). Before it came the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.11](04-qa-and-go-live.md).
+- **Design reference:** https://claude.ai/artifact/LLDy7uV51zMeq2LbyHwngP ("Funktionen · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. It's one HTML file in the layout of the other designs: the shared base CSS (`:root` tokens, `.dm-*` primitives, nav), the "Lösungsseiten" blocks (`#pg-common-css`, prefix `pg-`: hero grid, section, segmented control, the `.xfq` FAQ), the page CSS (`#fk-css`, prefix `fk-`), the closing card with the video button (`#dcta-css`/`#dcta-js`), the seal-style trust block (`#trust-css`/`#trust-js`, the one `TrustSeals` ports), the heading overrides (`#hs-css`), the eyebrow pills (`#eb-css`), the floating CTA (`#cta-css`/`#cta-js`), the shared helper script (`#pg-common`: reveal, `tween`, anchor scroll) and the page script (`#fk-js`: the hero chart, the dashboard tabs). Embedded media: the floating CTA's two avatars (same bytes as `src/lib/assets/landing/region/avatar-1.webp` and `avatar-2.webp`), and the closing card's demo clip (240×200 webm + mp4, ~30 KB each, with a JPEG poster). The clip is **not** our `static/landing/demo.*` (a different person, a different shot); see open question 2. There are no photos. The design's links point to other design artifacts; their mapping is in [01 §1.3](01-route-and-content.md). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/vorgehen` plan used to live in this folder (last version at `93952e28`). Before it came the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.12](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, content module, the day count, SEO, signup wiring, footer link, photos, the shared `Eyebrow` and Geist Mono | M |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Moving the route, content module, SEO, signup wiring, the old page's leftovers, the shared tabs logic | M |
 | 2 | [02-sections.md](02-sections.md) | The 12 sections with static markup and the design's CSS, every animated block in its end state | M |
-| 3 | [03-interactions.md](03-interactions.md) | Step tabs (auto-advance, keyboard), image zoom, the live dot, the day count's clock, reveal, floating CTA | S |
+| 3 | [03-interactions.md](03-interactions.md) | Hero chart switch and number tween, dashboard tabs (auto-advance, keyboard), the five-step line, reveal, floating CTA | S |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-Phase 1 goes first, in one commit: once the footer entry points to `/vorgehen`, the e2e check "internal links resolve" needs the route. Phases 2 and 3 can overlap section by section, since phase 3 only needs phase 2's markup.
+Phase 1 goes first, in one commit: the old route and the new one resolve to the same path, so the old `(base)/funktionen/` folder is deleted in the same commit that adds the new route (SvelteKit refuses two routes for one path). Phases 2 and 3 can overlap section by section, since phase 3 only needs phase 2's markup.
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/vorgehen/
-├── +page.server.ts        # load: seo, landing chrome, now, the signup form; the signup action
-└── +page.svelte           # composes the sections, Geist Mono @font-face
+src/routes/(landing-page)/funktionen/
+├── +page.server.ts        # load: seo, landing chrome, now (FAQ answer), the signup form; the signup action
+└── +page.svelte           # composes the sections, page tokens, #hs-css sizes
+
+src/routes/[[preview=preview]]/(base)/funktionen/   # deleted
 
 src/lib/landing/
-├── components/Eyebrow.svelte                    # the designs' eyebrow pill with the sparkle (#eb-css), new and shared
-└── pages/vorgehen/
-    ├── content.ts  content.test.ts              # all copy: figures, steps, features, comparison, quotes, FAQ, contact card
-    ├── icons.ts                                 # the six feature icons (StrokeIcon paths)
-    ├── components/Icon.svelte                   # draws an icon by name, as on /karriere, /hilfe, /selbstabrechnung
+├── autoTabs.svelte.ts                           # AutoTabs: the auto-advancing tabs' state, from /vorgehen's Steps, now shared
+├── sections/CtaCard.svelte                      # gets an optional text and an action snippet (the signup form here)
+└── pages/funktionen/
+    ├── content.ts  content.test.ts              # all copy and example data: chart series, tabs, cards, steps, FAQ, closing card
+    ├── icons.ts                                 # the pill, badge and card icons (StrokeIcon paths)
+    ├── components/Icon.svelte                   # draws an icon by name, as on /karriere, /hilfe, /selbstabrechnung, /vorgehen
     └── sections/
-        ├── Hero.svelte                          # eyebrow, H1, lead, CTAs
-        ├── WideImage.svelte                     # building photo with the "Lindenallee 12" caption
-        ├── Stats.svelte                         # 92 %, 14 Tage, 3-in-1 with their photos
-        ├── RemoteDuty.svelte                    # "Bis 2027 muss jeder Zähler fernablesbar sein." + day count
-        ├── Steps.svelte                         # "Drei Schritte. Heidi übernimmt den Rest." tabs
-        ├── Features.svelte                      # "Mehr als Ablesung." six cards
-        ├── Comparison.svelte                    # "Mit Heidi oder klassisch ablesen?" table
-        ├── Quotes.svelte                        # three quotes from the shared testimonial data
-        ├── Faq.svelte*                          # 5 questions, new "cards" variant, FAQPage JSON-LD
-        ├── ContactCard.svelte                   # id="start": text, signup form, photo
+        ├── Hero.svelte                          # pill, H1, lead, CTAs, the example consumption card
+        ├── TrustBadges.svelte                   # four badges: HKVO, DSGVO, SSL, Server in Deutschland
+        ├── Services.svelte                      # "Was Heidi übernimmt": three cards
+        ├── Dashboard.svelte                     # "Alle Verbräuche einer Wohnung als Übersicht." tabs
+        ├── FeatureGrid.svelte                   # "Alle Funktionen": six cards
+        ├── FiveSteps.svelte                     # "Fünf Schritte. Ein Ansprechpartner."
+        ├── Quote.svelte                         # the Höhne quote from the shared testimonial data
+        ├── Faq.svelte*                          # 8 questions, default variant, FAQPage JSON-LD
+        ├── CtaCard.svelte*                      # the shared CtaCard with the signup form, id="start"
         ├── Trust.svelte*                        # TrustSeals
         └── FloatingCta.svelte*                  # "Erstgespräch vereinbaren"
 ```
@@ -48,58 +50,57 @@ src/lib/landing/
 
 ## Implementation notes (2026-10-17)
 
-Phases 1–3 are built, with the Vitest tests (`content.test.ts`, `daysUntilObligation` in `deadline.test.ts`), `e2e/vorgehen.e2e.ts` (11 tests) and the `svelte-migration-plan/` changes of §4.3. The e2e suite passes except the signup tests, which need the local Postgres (not running; this affects the signup test of every landing page alike). Open: the manual checks of §4.1 not ticked there, and the go-live gate §4.4. Deviations from the plan:
+Phases 1–3 are built, with the Vitest tests (`content.test.ts`, `autoTabs.svelte.test.ts`), `e2e/funktionen.e2e.ts` (10 tests) and the `svelte-migration-plan/` changes of §4.3. The e2e suites of `/funktionen` and `/vorgehen` pass except their signup tests, which need the local Postgres (not running; this affects every landing page's signup test alike). Section heights match the design at 1440 px; no horizontal overflow at 375, 700, 980 and 1100. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
 
-- **Photos** are imported by the sections (`?enhanced` needs a static import), not listed in `content.ts`, which stays plain text. `Image` serves the WebP source with a width srcset (no AVIF).
-- **Auto-advance:** focus inside the block pauses it (as in 03 §3.1), it doesn't stop it; only choosing a step stops it for good (the Risks line above said "focus … stops it"). The bar is rendered only while the timer runs, so a pause or a choice removes it and a resume restarts it.
-- **Comparison:** no scroll box was needed. At 375 px the label column hyphenates ("Heizkostenab-rechnung"), and the value cells get 6 px side padding below 560. The design's empty foot row is the last row's rounded, taller cells.
-- **Wide image caption** gets `max-width: calc(100% - 48px)` (28 px below 560): in the design it runs out of the photo at 375 px.
-- **Pause listeners** (pointer, focus) are attached in the tabs' attachment, not as element handlers, since the block isn't an interactive element itself.
-- **Day count** reads `clock.today` (changes once a day), not `clock.now`.
-- **`Eyebrow`** got an `onDark` prop for later use; this page doesn't use it.
+- **`AutoTabs` unit test:** Vitest runs the server build, where `$effect` is a no-op, so the test covers choosing, the keys and the pause state only; the timing (advance, pause, resume) is covered by the e2e tests of both pages. A DOM test environment would be a new dev dependency.
+- **Icons:** the shapes are in `components/IconPaths.svelte` (`<svelte:options namespace="svg" />`), so `SectionHead`'s pill (which wraps its `icon` snippet in its own `<svg>`) and `Icon` share them. The pill icons are `eyebrowIcon` in `content.ts`.
+- **Landing heading reset:** `tokens.css` has `.lp :is(h1, h2, h3, h4) { margin: 0; letter-spacing: -0.02em }`, with the same specificity as a component's `h2 {…}` rule, so it wins and drops the design's 18 px H2 margin, the −0.03em H2 letter-spacing and the 22 px H3/H1 margins. This page raises the specificity locally (`Section`, `CardGrid`, `Hero`, the FAQ wrapper). `SectionHead` on `/ueber-uns` and `/karriere` very likely has the same loss; not changed here (it would shift those pages), worth a follow-up.
+- **Section class** is `fsec`, not `sec`: `.lp .sec { padding-block: 96px }` overrode the design's 104 px. The FAQ wrapper targets `section.faq` for the same reason.
+- **FAQ:** the shared default variant, with the wrapper setting the design's centred `.dm-h2` heading (18 px margin, 30–48 px, the `#hs-css` sizes) and the 56 px list margin. The answers come from `load` (`faqItems(Date.now())`).
+- **Closing card** sits 16 px under the FAQ band, as in the design (not after a full section gap). On the dark card the email field sets its own text and placeholder colours (the card's white would carry into it), and the status and error lines are light.
+- **Dashboard bar:** while paused (hover, focus, out of view) the bar isn't shown; once stopped it's full on the selected tab, as designed. On the server and with reduced motion it's full too.
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/vorgehen` as `ROUTE_VORGEHEN` in `$lib/routes.ts` (the design's title and nav label; open question 1) |
-| Route group | `(landing-page)`, outside `[[preview=preview]]`: a landing design, no Prismic content |
-| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same text, "Mehr erfahren" → `/upgrade-now`). Its CTA "Bestand prüfen" goes to `#start` |
-| Signup and CTAs | The design has "Angebot einholen" and "Demo buchen" twice each (hero, contact card), the floating CTA, and `id="start"` on the hero, but no form. Our `DEMO_HREF` is `#start`, the page's signup form, so the page needs one. The contact card at the end keeps its text and photo and gets the shared `SignupForm` in place of its two buttons, with `id="start"`; the hero gets no `id`. The hero keeps both buttons: "Angebot einholen" → `START_HREF`, "Demo buchen" → `DEMO_HREF` (the same target today, split once a booking URL exists; open question 2). Leads: `source: "vorgehen"`, `switchinquiry` with `page: "/vorgehen"` |
-| Footer | The shared `LandingFooter`. `footerGroups` "Vorgehen" (plain text today) gets `href: ROUTE_VORGEHEN`. "Funktionen" already links to `/funktionen` |
-| Content | All copy in `content.ts`, word for word from the design. The KPIs (92 %, 14 Tage, 1 bis 2 Stunden) were confirmed on 2026-10-12 |
-| Day count | "N Tage bis zum 1. Januar 2027" is computed from `now` (from `load`, ticking in the browser through `DeadlineClock`), never `Date.now()` in a component. One new pure helper next to `daysLeft` in `$lib/landing/deadline/deadline.ts`. After the deadline, the count row isn't rendered and the section shows its expired texts (open question 4) |
-| Quotes | The design's three plain quote cards (no badge) as a page section, `Quotes.svelte`, reading the shared `$lib/landing/data/testimonials.ts` (Werne, Höhne, Gerhard). The shared `Testimonials` (badge, different card) isn't used |
-| FAQ | The shared `Faq` (it owns the FAQPage JSON-LD) gets a third variant `"cards"` with the design's `.ar-faq` look (soft rounded cards, plus/minus icon, centered head with eyebrow), instead of a page copy |
-| Eyebrows | The designs' white eyebrow pill with the sparkle (`#eb-css`) becomes `components/Eyebrow.svelte` (`center` prop). Today it lives as a global rule in `RegionMain` and in `TrustSeals`; those stay as they are (moving them is a follow-up, not this page) |
-| Monospace figures | The figures (stats, day count, step numbers) use Geist Mono, as designed. Add `@fontsource-variable/geist-mono` and register only its latin subset in this page's `<svelte:head>`, with `font-display: swap` and without a preload: its first use, the stats, is below the fold, and the figures sit in boxes whose height doesn't depend on the font. Open question 5 |
-| Comparison | A real `<table>` with a visually hidden caption and text for the ✓ and – marks, not the design's `div` grid |
-| Steps | WAI-ARIA tabs (vertical `tablist`, `tab`, `tabpanel`, arrow keys), not `Segmented` (a radiogroup): each choice swaps a text and a picture |
-| Links without a page | Left out until the page exists: "Zum HKVO-Leitfaden →" (RemoteDuty), "Mehr zu Sicherheit" (FAQ answer and Trust, the existing `SECURITY_HREF`), and the feature cards Dashboard, Mieterportal, Installationstool render as cards without a link (§1.3) |
-| Styling | The `ar-*` CSS goes into the sections' scoped `<style>` blocks, with tokens from `tokens.css` and the page tokens (`--soft`, `--soft2`) on `<main>`. The design's breakpoints stay (980, 560, plus `#hs-css` 1040/620 for the H1). The `#hs-css` H2 rule (`section h2[id]`) doesn't apply in the design (its H2s have no id), so it isn't ported, even though ours get ids |
-| Structured data | FAQPage JSON-LD of the 5 questions (through `Faq`) |
-| Indexing | `noindex` + self-canonical and out of the sitemap until the go-live gate (§4.4), like the other new landing pages |
-| Rendering | SSR with the `(landing-page)` cache header. `now` from `load` for the day count (the CDN may serve it up to ~11 minutes old; the browser clock corrects it after hydration) |
+| URL | `/funktionen`, the existing `ROUTE_FUNKTIONEN`. Every link to it (site header and its `FunktionenHighlight`, site footer, home page, landing footer, `/vorgehen`, `/hilfe`, `/messdienstwechsel`, the region pages' `Duo`) keeps working unchanged |
+| Route group | `(landing-page)`, outside `[[preview=preview]]`: a landing design, no Prismic content. The old page had no Prismic content either, so `/preview/funktionen` simply stops existing |
+| Old page | `src/routes/[[preview=preview]]/(base)/funktionen/` is deleted in phase 1. The components only it used (`Funktionen/AnimationsSection`, `Funktionen/Grid`, `Hero/FunktionenHero` and its kitchen-sink entry) stay until the page is live (gate §4.4, last item), so restoring the old page stays a clean revert. Everything else it used is shared with other pages and stays |
+| Indexing | **Indexed and in the sitemap from the start** (the entry already exists): every page is indexed and in the sitemap after the cutover (decision of 2026-10-17), and `/funktionen` is already a live, indexed URL on the Next site. So its go-live gate (§4.4) must be done before the cutover PR (#440) merges, like every other page's. Emergency fallback only: reverting the phase-1 route commit brings the old page back |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same text, "Mehr erfahren" → `/upgrade-now`). The page loses the site header and footer; the site header's "Funktionen" entry still links here. `ChatBot` stays (the landing layout renders it too) |
+| Signup and CTAs | The design puts `id="start"` on the hero but has no form; its "Demo buchen" links go to a booking page that doesn't exist. Our `DEMO_HREF` is `#start`, the page's signup form, so the page needs one: the dark closing card keeps its heading and text and gets the shared `SignupForm` in place of the video button ("Demo buchen / Mit Ihrem Ansprechpartner"), with `id="start"` on its section. Submit label "Demo buchen". Hero: "Demo buchen" → `DEMO_HREF`, "So gehen wir vor" → `ROUTE_VORGEHEN`. Leads: `source: "funktionen"`, `switchinquiry` with `page: "/funktionen"`. Open question 2 |
+| Footer | The shared `LandingFooter`, unchanged: its "Funktionen", "Heizkostenabrechnung" and "Verbrauchsinformation (uVI)" entries already point to `/funktionen` |
+| Content | All copy and example data in `content.ts`, word for word from the design. The KPIs in the FAQ (92 %, 14 Tage, 1 bis 2 Stunden) were confirmed on 2026-10-12 |
+| Section heads | The shared `SectionHead` (the design's `.dm-pill` with its icon + `.dm-h2` with the muted second part) |
+| Hero chart switch | The shared `Segmented` (`look="track"` is the design's `.pg-seg`), a radiogroup. The design marks it `role="tablist"` without panels, which isn't a tabs pattern |
+| Dashboard tabs | WAI-ARIA tabs with auto-advance, the same behaviour as `/vorgehen`'s steps. That logic moves out of `vorgehen/sections/Steps.svelte` into a shared `AutoTabs` rune class (`$lib/landing/autoTabs.svelte.ts`), used by both. `/vorgehen` must behave the same afterwards (its e2e tests pass unchanged) |
+| Quote | `Quote.svelte`, reading `testimonial("vitolus")` from `$lib/landing/data/testimonials.ts` (quote, name, role, initials and the "Verifizierter Heidi-Kunde" badge are identical to the design's). The shared `Testimonials` (three cards) doesn't fit a single centred quote |
+| FAQ | The shared `Faq`, default variant (it is the design's `.xfq`: lines, 42 px chevron box, first item open), with the title "Häufige Fragen zu den Funktionen", 8 items and the FAQPage JSON-LD. The first answer has an expired variant, picked in `load` from `now` with `isExpired` (the `/hilfe` pattern; open question 3) |
+| Closing card | The shared `CtaCard` (the designs' `.dm-end`/`.dm-cta`) gets an optional `text` (the `.dcta-t p`) and an optional `action` snippet that replaces its `ArrowLink`; the page's `CtaCard` wrapper passes the signup form. `/karriere` and `/hilfe` don't change |
+| Styling | The `fk-*` and the used `pg-*` CSS go into the sections' scoped `<style>` blocks, with tokens from `tokens.css`. The design's breakpoints stay (1040, 720, 640, plus `#hs-css` 1040/620). Here the `#hs-css` H2 rule **does** apply (the design's H2s have ids), so the page ports it, scoped to its `<main>` |
+| Structured data | FAQPage JSON-LD of the 8 questions (through `Faq`) |
+| Rendering | SSR with the `(landing-page)` cache header. `now` in `load` only picks the FAQ answer (a CDN copy up to ~11 minutes old is fine for that) |
 
 ## Open questions (the default is built unless answered)
 
-1. **Slug.** *Default: `/vorgehen`.* `/so-funktioniert-heidi` or `/ablauf` read better as a URL; decide before go-live.
-2. **"Angebot einholen".** *Default: the signup form (`#start`), like every landing CTA.* On the site, "Angebot einholen" opens `/fragebogen`, which asks for the property data an offer needs. If sales prefers that, both "Angebot einholen" buttons go to `ROUTE_FRAGEBOGEN` and only "Demo buchen" stays on the form.
-3. **Feature card targets.** *Default: Digitale Funkablesung → `/geraete`, Dokumenten-Management and Heizkostenabrechnung → `/funktionen` (as the footer maps them), the other three without a link.* Confirm, or drop the links until the design's own product pages exist.
-4. **Expired state.** *Default: placeholders, as on `/upgrade-now`.* From 1.1.2027 the H2 "Bis 2027 muss jeder Zähler fernablesbar sein." and "Heidi rüstet Ihren Bestand rechtzeitig um" are past tense; the content owner writes `remoteDuty.h2Expired` and `remoteDuty.textExpired` (gate §4.4).
-5. **Geist Mono.** *Default: the font as designed (one extra ~30 KB woff2, latin only).* The alternative is the system monospace stack (no download, slightly different digits).
+1. **Feature grid targets.** *Default: no links.* The design links the six "Alle Funktionen" cards to its own product pages (Heizkostenabrechnung, Dashboard, Schnittstellen, Verbrauchsinformation), none of which exist; our footer maps Heizkostenabrechnung and uVI to `/funktionen`, which is this page. So the cards render without links (and without the hover lift) until those pages exist. Alternatively "Laufende Verbrauchsdaten" → `/geraete`.
+2. **Closing card.** *Default: the signup form in the dark card, the design's video button left out.* Once a booking URL exists (`DEMO_HREF`), the card goes back to the design: heading, text and the video button to the booking page. Then the new clip and its poster need a source and a license (gate §4.4), and go to `static/landing/` next to the existing demo clip (720p rule doesn't apply: it's 240×200).
+3. **Expired FAQ answer.** *Default: a placeholder, as on `/upgrade-now`.* From 1.1.2027 "Heidi rüstet Ihren Bestand rechtzeitig um" is past; the content owner writes `faq.items[0].answerExpired` (gate §4.4). The question "Bis wann müssen Zähler fernablesbar sein?" itself still works.
 
 ## Risks
 
-- **Legal statements.** "Die EU-Energieeffizienzrichtlinie und die Heizkostenverordnung verlangen, dass Zähler und Heizkostenverteiler ab dem 1. Januar 2027 aus der Ferne ablesbar sind." (§ 5 Abs. 2/3 HeizkostenV with its exceptions, EED Art. 9a/9b), and the comparison's "Klassisch: oft 6 bis 9 Monate" for the statement (comparative advertising, as with the region pages' provider comparison). Mitigation: legal sign-off in the gate (§4.4).
-- **Unconfirmed claims.** "Heidi übernimmt bestehende Zähler und wertet sie aus, egal wie lange Ihr aktueller Vertrag noch läuft", "Wechsel ohne Warten aufs Vertragsende", "Heidi prüft Bestand und Verträge", "Unsere Monteure", DocuScan, "Digitaler Zwilling, zwei Fotos pro Zähler", "Ab 1.000 Einheiten … individuelles Angebot", the pricing sentence (shared with `/upgrade-now`, `/hilfe`, `/selbstabrechnung`), "Auf Servern in Deutschland, verarbeitet nach DSGVO und BDSG". In the gate.
-- **Photos.** Seven new photos with unknown source; two show branded devices ("Heidi" on meters and a gateway under a kitchen sink) and one a dashboard screenshot ("370 Wohnungen", "740 Heizkostenverteiler") that may not match the real product. Licensing and accuracy are in the gate; the people photos are shown in "Bedarfsanalyse" and the stats as if they were Heidi customers or staff.
-- **Example data.** "Lindenallee 12 · 36 Einheiten" (here) vs "Lindenallee 12 · 6 Wohnungen" on `/selbstabrechnung`. Content owner aligns them (gate).
-- **Auto-advancing tabs.** Content that changes by itself every 6 s needs a way to stop it (WCAG 2.2.2). Mitigation: any click, key or focus inside the block stops it for good; hover pauses it; it runs only in view and in a visible tab; none under reduced motion (§3.1).
+- **Every gate is on the cutover's critical path**, since every page is indexed after the cutover: this page's and the carried-over ones (04 §4.5–4.12). Mitigation: start the sign-offs early.
+- **Legal statements.** "Nach der Heizkostenverordnung müssen Zähler und Heizkostenverteiler ab dem 1. Januar 2027 fernablesbar sein." (FAQ; § 5 HeizkostenV with its exceptions), the lead's "gesetzlich vorgeschriebene, fernablesbare Zähler", the badge "Gesetzeskonform · Nach Heizkostenverordnung", "Kosten nach HKVO verteilt". Mitigation: legal sign-off in the gate (§4.4).
+- **Unconfirmed claims.** "Heidi wartet die Funkzähler regelmäßig", "Mit einem persönlichen Ansprechpartner", DocuScan, "An Ihre Software übergeben" and the ERP/CRM connection ("Immobilienmanagement"), "Monatliche Verbrauchsinfo an Mieter, Hinweise zu Fristen und Auffälligkeiten", "Auf Knopfdruck nach HKVO, statt Monate zu warten", "Trends früh erkennen und auffällige Verbräuche sehen", "SSL-Verschlüsselung · Für alle Verbindungen", "Server in Deutschland · Alle Daten bleiben hier" (the old page said "Server in Europa"), the device list ("Heizkostenverteiler, Wärmezähler sowie Warm- und Kaltwasserzähler mit Funk"), the pricing sentence (shared with `/upgrade-now`, `/hilfe`, `/selbstabrechnung`, `/vorgehen`). In the gate.
+- **Betriebskostenabrechnung.** The page leads with "Betriebskostenabrechnung" twice (a service card and a feature card), while its own FAQ answer says Heidi supplies the data and creates the *Heiz*kostenabrechnung. The content owner aligns the cards with what Heidi does (gate).
+- **Example data.** "Lindenallee 12 · Whg. 7" (and "Gartenweg 3", "Am Stadtpark 7", "Hofstraße 21") next to "Lindenallee 12 · 36 Einheiten" on `/vorgehen` and "6 Wohnungen" on `/selbstabrechnung`; the chart's fixed October highlight and empty November/December under "Verbrauch 2026" look stale from 2027. Content owner aligns them (gate).
+- **SEO.** The page's text changes completely (the old page's ticker, Lottie sections, review swipers and site FAQ go), as do its title and description (the old page used the site default "Heidi Systems"). Expected, but it's a ranking URL: the new title and description get the same sign-off as the copy, and the SEO diff of `svelte-migration-plan/10-qa-and-cutover.md` lists the change as deliberate.
+- **Auto-advancing tabs.** WCAG 2.2.2, as on `/vorgehen`: handled by the shared `AutoTabs` (pause on hover/focus, stop on choice, only in view and in a visible tab, none under reduced motion).
 
 ## Out of scope
 
-- The design's nav (Produkt / Lösungen / Kunden / Ressourcen) and its newsletter script (`#fx-js`; the landing footer has its own). The design's footer groups differ from ours beyond "Vorgehen"/"Funktionen" (Plattform: "Installationstool"; Partner: "Nachfolge", "Partnerschaften"; Ressourcen: "Blog", "Presse"); only the two Produkt entries were taken over.
-- The design's dead CSS: the collage (`.ar-coll`, `.ar-cw`, `.ar-cl`, `.ar-c1`–`.ar-c6`, `@keyframes arf`), the form (`.ar-form`, `.ar-f*`, `.ar-chk`, `.ar-ok*` and the form part of `#ar-js`), `.ar-btn.g`, `.ar-hp`, and `#pg-common-css` apart from what the page uses.
-- The HKVO-Leitfaden, a security page, the design's product pages (Dashboard, Mieterportal, Installationstool).
-- The design's pill hover wiggles (`#pillfx`), its `scrollRestoration` script (`#top-js`) and its global smooth anchor scroll, as on the other landing pages.
+- The design's nav (Produkt / Lösungen / Kunden / Ressourcen), its footer (other groups, the city list, its newsletter script `#fx-js`) and the `#demo-css` block (the booking flow of another design; nothing on this page uses it).
+- The design's product pages the cards link to (Heizkostenabrechnung, Dashboard, Schnittstellen, Verbrauchsinformation), the security page ("Mehr zu Sicherheit"), a booking page.
+- The design's pill hover wiggles (`#pillfx`), the mobile fixes (`#mobfx`; `tokens.css` covers overflow), its `scrollRestoration` script (`#top-js`), its global smooth anchor scroll, and the `#end-css` rules for `.uv-end` (another page's).
+- Deleting the old page's components (`Funktionen/*`, `Hero/FunktionenHero`): after go-live (§4.4).

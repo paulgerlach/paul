@@ -1,34 +1,36 @@
 # Phase 3: Interactions
 
-The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means the end state, no loops, no zoom. Loops run only while their block is in view and the tab is visible (`document.visibilityState`), unlike the design's timers.
+The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means the end state, no loops, no tweens. Loops run only while their block is in view and the tab is visible.
 
-## 3.1 Step tabs
+## 3.1 Hero chart
 
-State in `Steps`: `active` (`$state`, 0–2) and `auto` (`$state`, true until the visitor takes over).
+State in `Hero`: `series` (`$state`, `"hz"` first, bound to `Segmented`) and `shown` (`$state`, the KPI number on screen).
 
-- **Selecting:** a click on a tab sets `active` and `auto = false` for good (the design's `user = true`). Keyboard per the WAI-ARIA tabs pattern, vertical: ↑/↓ (and ←/→) move focus and select (automatic activation, since the panels are already rendered), Home/End jump to the first/last; only the active tab has `tabindex="0"`. Any keyboard selection also sets `auto = false`.
-- **Auto-advance:** once the block is 35 % in view (`inView`, the design's threshold), `active` advances every `steps.intervalMs` (6 s), wrapping to 0, while `auto` is true. It pauses while the pointer is over the block or focus is inside it (`pointerenter`/`pointerleave`, `focusin`/`focusout`), when the block leaves the view and in a hidden tab, and resumes from the current step. One `setTimeout` at a time, cleared on every change and on teardown; the remaining time isn't kept across a pause (a resumed step gets the full 6 s, and the bar restarts with it).
-- **Progress bar:** `.ar-bar i` runs the design's 6 s `arbar` width animation while auto-advance runs, in step with the timer. It restarts through a `{#key}` on a counter that goes up with every new timer (step change or resume), not with the design's reflow trick. While paused it's empty, and once `auto` is false it isn't rendered.
-- **Transitions:** texts fade and rise 6 px (0.4 s), pictures cross-fade (0.7 s) and the active picture eases from `scale(1.05)` to 1 over 6 s, the chip slides in 0.25 s after its picture. All are CSS on the `.on` class.
-- **Reduced motion:** no auto-advance and no bar (`auto` starts false), no zoom, no fades (instant swap). The tabs still work.
-- **No JS:** step 1 is shown (server render), the other texts are in the HTML but `inert` and invisible. Accepted as on `/selbstabrechnung`'s task toggle; the headings and the FAQ carry the process too.
+- **Switching:** a new `series` sets the bar heights (`--h` per bar, CSS transition `height .7s cubic-bezier(.2,.8,.2,1)`) and tweens the KPI from 0 to the new value over 900 ms with `tweenNumber` (`$lib/landing/motion.ts`), as the design does. Unit and delta change at once. The tween runs from an `$effect` on `series` that skips its first run (the server's value is already shown) and returns the tween's cancel function, so a fast second click cancels the first tween.
+- **On load:** no animation. The design counts up from 0 and grows the bars when the card comes into view, but the hero is in view on load, so that would flash the server's "131" and bars to 0 first. The rendered end state stays.
+- **Formatting:** `toLocaleString("de-DE")` with the series' `decimals` on every frame, so "2,1" never shows as "2.1" or "2,0999".
+- **Keyboard:** `Segmented` brings the arrows, Home and End.
+- **Reduced motion:** `tweenNumber` sets the value at once; the bar transition is `none` (the design's media query).
+- **Screen reader:** the radiogroup announces the choice; the KPI isn't a live region (the visible number changes on the visitor's own action, and the hidden month list changes with it).
 
-The screen reader hears the tab change through the tab's `aria-selected` and the panel it controls; there's no live region (auto-advance must not talk every 6 s).
+## 3.2 Dashboard tabs
 
-## 3.2 Wide image
+The shared `AutoTabs` (phase 1.5) with `count: 3`, `intervalMs: 6000`, `threshold: 0.15`, attached to the tabs block.
 
-Once the figure is in view (`inView({ once: true })`), it gets `.in` and the photo eases from `scale(1.04)` to none over 1.6 s. The server renders it without the scale (end state); the scale is applied only by a `.js-zoom` class set on mount when the figure is still below the viewport's bottom edge, so a visitor who loads the page with the image already visible doesn't see it jump. Reduced motion: nothing.
+- **Behaviour** (as on `/vorgehen`): auto-advance every 6 s once in view, pausing on hover, on focus inside, out of view and in a hidden tab; a resume gets the full 6 s; a click or arrow key stops it for good. Keyboard: vertical tabs, ↑/↓ (and ←/→), Home/End, automatic activation, roving `tabindex`.
+- **Progress bar:** the active tab's `<i>` runs the design's 6 s `fkBar` width animation while auto-advance runs, restarted through a `{#key}` on the timer counter (as on `/vorgehen`). Once stopped, the design shows the active tab's bar full (`.fk-tl.stop button.on i { width: 100% }`): keep that, so the bar marks the selected tab. While paused it's empty. Reduced motion: full, no animation (the design's media query).
+- **Panel transitions** (CSS on `.on`): panels fade and rise 8 px (0.45 s); panel 1's bars grow to `--w` (0.9 s); panel 3's ticks slide in 0.25 s apart and the result chip pops in after 1 s. The server renders panel 1 with full bars. A panel that becomes active plays its entry again (the transitions are on `.on`, so they run on every switch, as in the design). Reduced motion: no transitions.
+- **No JS:** panel 1 is shown, the others are in the HTML but `inert` and invisible, as on `/vorgehen`.
 
-The caption's dot pulses with the design's `arp` keyframes (2.4 s, infinite, CSS only); `animation: none` under reduced motion. It's a single tiny compositor animation; no in-view pausing.
+## 3.3 Five steps
 
-## 3.3 Day count
-
-`RemoteDuty` shows `daysUntilObligation(clock.now)`. The clock starts at the server's `now` and ticks in the browser (the shared `DeadlineClock`), so the number is right after hydration and changes at Berlin midnight. No count-up animation (the design writes the number directly). Hydration: the server and the first client render use the same `now`, so there's no mismatch warning; the corrected value comes one tick later.
+The server renders the list with `.in` (line full, circles accent). On mount, if the list is still below the viewport's bottom edge and motion is allowed, `.in` is removed and set again by `inView({ once: true })` when it scrolls in, which plays the design's line (2.4 s) and the circles one after another. If the list is already visible on mount, it stays as rendered. Same approach as `/vorgehen`'s wide image (`js-zoom`).
 
 ## 3.4 Reveal, links and the rest
 
-- `{@attach reveal()}` on `<main>` with the design's reveal (`.rv`, threshold 0.15, `opacity`/`translateY(16px)` over 0.7 s), the same styles as `/selbstabrechnung`'s `+page.svelte`.
-- Feature cards: hover background `--soft2` and a 2 px lift (CSS); buttons: the design's hover and `:active` scale 0.98.
-- "Angebot einholen" and "Demo buchen" are plain anchors to `#start`; `scroll-margin-top: 72px` on the contact card gives the design's offset, and `tokens.css` already turns off smooth scrolling under reduced motion. The design's global anchor-scroll script isn't ported.
-- FAQ: the shared `Faq`'s behaviour (native `<details>`, the `::details-content` transition), the plus turning into a minus on `[open]`.
-- `FloatingCta`, `TrustSeals`, `SignupForm` bring their own behaviour (unchanged). `FloatingCta` hides while `section.final` (the contact card) is in view.
+- `{@attach reveal()}` on `<main>` with the design's reveal (`.rv`, threshold 0.15, `opacity`/`translateY` over 0.7 s), the same styles as `/vorgehen`'s `+page.svelte`.
+- Card hovers (lift, shadow, border), buttons' hover and `:active` scale 0.98, the arrow nudging 4 px: CSS only.
+- "Demo buchen" links are plain anchors to `#start`; `scroll-margin-top: 72px` on the closing card gives the design's offset, and `tokens.css` already turns off smooth scrolling under reduced motion. The design's global anchor-scroll script isn't ported.
+- FAQ: the shared `Faq`'s behaviour (native `<details>`, first open, the chevron rotating).
+- `FloatingCta`, `TrustSeals`, `SignupForm` bring their own behaviour (unchanged).
+- The closing card's video (`#dcta-js`: play in view, pause out of view) isn't ported while the video button is left out (README, open question 2). When it comes back, `playOnView` in `$lib/landing/attachments/` likely covers it.

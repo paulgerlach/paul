@@ -10,7 +10,7 @@
 | 2 | `/datenschutzhinweise` | 330 | text | Long legal copy. Diff the text programmatically (see below) |
 | 3 | `/preise` | 139 | `PriceCards`, `PriceTable` (client toggle), FAQ, Kostenfrei | |
 | 4 | `/geraete` | 101 | `GeraeteHero`, `GeraeteHeroTicker`, `ChessSection`, `Eigenschaften`, `GeräteangebotSwiper` | |
-| 5 | `/funktionen` | 139 | `FunktionenHero`, `AnimationsSection` (Lottie), `Grid`, `FunctionsSwiper` | |
+| 5 | `/funktionen` | 139 | `FunktionenHero`, `AnimationsSection` (Lottie), `Grid`, `FunctionsSwiper` (ported; since replaced by a new landing design, `new-landing-page-plan/`) | |
 | 6 | `/kontakt` | 212 | `ContactForm` (UI only here) | Form wiring in phase 7 |
 | 7 | `/` | 713 | `HomeHero`, `HeroTicker`, 6+ swipers, Lottie, `ReviewsSwiper` videos | Biggest page. Consider splitting it into `lib/components/Home/*` sections while porting |
 

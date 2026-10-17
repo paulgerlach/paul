@@ -4,7 +4,7 @@
  * `$lib/landing/deadline/deadline.ts`.
  *
  * The company claims, the founder's role and the careers target need sign-off
- * before go-live (plan §4.6). The `expired` texts are placeholders until the
+ * before go-live (plan §4.7). The `expired` texts are placeholders until the
  * content owner writes them.
  */
 import { CAREERS_HREF, CAREERS_JOBS_HREF, DEMO_HREF } from "$lib/landing/cta";

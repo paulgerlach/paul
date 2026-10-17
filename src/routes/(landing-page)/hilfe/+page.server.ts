@@ -6,12 +6,12 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = ({ url }) => ({
 	seo: {
-		// Drafts for the content owner (plan §4.4).
+		// Drafts for the content owner (plan §4.5).
 		title: "Hilfe-Center: Antworten zu Messdienst und Heizkostenabrechnung",
 		description:
 			"Antworten zu Messdienstwechsel, Montage, Funkablesung, unterjähriger Verbrauchsinformation und Heizkostenabrechnung. Finden Sie Ihre Frage oder sprechen Sie mit Ihrem Ansprechpartner.",
 		ogTitle: "Wie können wir helfen?",
-		// Until its go-live gate is done (plan §4.4). Then also add it to the
+		// Until its go-live gate is done (plan §4.5). Then also add it to the
 		// sitemap. A search URL (?q=) stays noindex after that; its canonical
 		// is /hilfe, since Seo builds it from the path.
 		noindex: true,

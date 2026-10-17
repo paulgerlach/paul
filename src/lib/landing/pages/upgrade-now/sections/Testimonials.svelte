@@ -3,5 +3,5 @@
 	import { testimonialsTitle } from "../content";
 </script>
 
-<!-- Copy and roles need sign-off: see the go-live gate, plan §4.7. -->
+<!-- Copy and roles need sign-off: see the go-live gate, plan §4.8. -->
 <Testimonials title={testimonialsTitle} />

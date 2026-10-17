@@ -51,3 +51,10 @@ export function risk({ units, costPerUnit, share, retrofitted }: RiskInput) {
 /** Whole numbers with German grouping: 3600 → "3.600". */
 export const formatNumber = (n: number) =>
 	Math.round(n).toLocaleString("de-DE");
+
+/** Fixed decimals with German grouping: 16 → "16,00", 1248.3 → "1.248,30". */
+export const formatDecimal = (n: number, digits = 2) =>
+	n.toLocaleString("de-DE", {
+		minimumFractionDigits: digits,
+		maximumFractionDigits: digits,
+	});

@@ -5,12 +5,12 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => ({
 	seo: {
-		// Drafts for the content owner (plan §4.6).
+		// Drafts for the content owner (plan §4.7).
 		title: "Über uns: Messdienst aus Berlin | Heidi Systems",
 		description:
 			"Heidi Systems übernimmt für Hausverwaltungen den kompletten Messdienst: eigene Funkzähler, kostenlose Installation, Ablesung per Funk und die Heizkostenabrechnung auf Knopfdruck.",
 		ogTitle: "Messdienst, wie er heute sein sollte.",
-		// Until its go-live gate is done (plan §4.6). Then also add it to the sitemap.
+		// Until its go-live gate is done (plan §4.7). Then also add it to the sitemap.
 		noindex: true,
 		keepCanonical: true,
 	},

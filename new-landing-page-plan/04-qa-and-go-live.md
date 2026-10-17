@@ -2,51 +2,72 @@
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/hilfe`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the header CTA target, answers without a `more` link (README, Links in answers), the visually hidden search button
-- [ ] `/karriere` unchanged after the `CtaCard` move (375 and 1440 px); `/messdienstwechsel` and `/upgrade-now` FAQ JSON-LD byte-identical after the `faqJsonLd` move; the landing footer on every landing page ("Hilfe-Center" linked)
-- [ ] Search: "lauft", "Kündigung", "uvi", "mieter termin", "1.000", a query with no result, Escape, the `/` shortcut (and that `/` still types in the footer's newsletter field)
-- [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (the search keyboard's "Suchen" key, `<details>`, the sticky list is hidden)
-- [ ] Keyboard-only: banner link, search, popular links, topic cards, the topic list, every `<summary>` (Enter/Space), the answer links, Ja/Nein, the empty state's link, the end card
-- [ ] Screen reader (VoiceOver): the result count is announced once after typing, not per key; highlighted questions read as one sentence; the thanks after a vote is announced
-- [ ] Reduced-motion emulation: instant scrolling (popular, topic cards, deep links), no flash, no card transitions
-- [ ] JS disabled: the whole list renders; `?q=uvi` via the form shows the filtered list, the result line and the opened cards; popular and topic links jump; a vote posts and comes back thanked at its card
-- [ ] Deep links: `/hilfe#q-installation-kosten` opens that card; `/hilfe?q=xyz#q-uvi` shows the question anyway
-- [ ] A vote reaches the Make.com scenario's sheet (on the Vercel preview, after §4.4's feedback item)
-- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors, also on `/hilfe?q=…` (server and client must agree on the query)
+- [x] `bun run dev` → `http://localhost:5173/selbstabrechnung`
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card with the signup form (README, Signup), the missing Checker row and "Mehr zu Sicherheit" button, the table as `<table>`, the key buttons, the computed "2,40 €/Einheit"
+- [ ] The region pages unchanged after the `People` / `TrustSeals` / `FloatingCta` move (a city page and `/messdienstanbieter`, 375 and 1440 px); `/hilfe`'s "Selbstabrechnung →" link at 375 px; the landing footer on every landing page ("Selbstabrechnung" linked)
+- [ ] Hero demo: the full sequence, the auto-run without confetti, a click with confetti, "Erneut ansehen", a click during "making" does nothing; leaving the tab mid-sequence and coming back
+- [ ] Calculator: both sliders at min/max, keyboard (arrow keys, Page Up/Down, Home/End), the totals add up to the costs, the 375 px table
+- [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (range sliders by touch, the key buttons by tap, the floating CTA)
+- [ ] Keyboard-only: banner link, hero CTAs, the demo button, the task toggle (arrow keys), sliders, the statement keys, FAQ, the signup form, the floating CTA
+- [ ] Screen reader (VoiceOver): demo status and toast announced once each; the mode note once per toggle; slider values read as "24.000 €" / "70 %"; the table with its caption and headers
+- [ ] Reduced-motion emulation: hero card ready at once, no confetti, no pulse; no tweens, no data-path pulse, no key cycle; static paper
+- [ ] JS disabled: every section readable, the hero card at "Daten kommen", the calculator with its defaults, the signup form posts
+- [ ] The loops stop off-screen and in a background tab (Performance panel: no timers firing)
+- [ ] A signup reaches the `leads` table with `source = "selbstabrechnung"` and the sink with `page: "/selbstabrechnung"`
+- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05 (the hero card's height must not change between idle, ready and results)
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
-- **Vitest:** `search.test.ts` (phase 1.5), `content.test.ts` (phase 1.3), `helpFeedback.test.ts` (schema and action, phase 1.6), and a `faqJsonLd` test (escaping of `<`, one entry per item).
-- **Playwright `e2e/hilfe.e2e.ts`:**
-  - 200, one `<h1>`, no site `#header`, `noindex` with a self-canonical without a trailing slash, the canonical of `/hilfe?q=uvi` is `/hilfe`, no horizontal overflow at 375 px, FAQPage JSON-LD with 22 entries.
-  - Nav/footer link parity with `/`, via the helper of `e2e/messdienstwechsel.e2e.ts` (add `/hilfe` to its `landingOnly` list). The landing footer's "Hilfe-Center" resolves; the header CTA goes to `/messdienstwechsel`.
-  - Search: typing "lauft" leaves 1 question with "läuft" highlighted in a `<mark>`, the result line says "1 Ergebnis für „lauft“" and the card is open; topics without a match are hidden; "xyz" shows the empty state with its `/kontakt` link; Escape restores all 22; the URL gets `?q=` and loses it.
-  - Server search: `/hilfe?q=uvi` without JS has the filtered list and the result line in the HTML.
-  - `/` focuses the search from the page body but not from the newsletter field.
-  - Popular: "Was kostet die Installation?" opens `#q-installation-kosten` and it's in the viewport. Topic card "Für Mieter" opens its first question. A `#q-…` deep link opens its card.
-  - Feedback, against the local webhook sink: "Ja" shows the thanks and sends one `helpfeedback` payload (`question`, `vote: "yes"`, `page: "/hilfe"`, no email); without JS (`javaScriptEnabled: false`) the post comes back with the thanks at that card; a forged unknown id shows the thanks and sends nothing. No database needed.
+- **Vitest:** `distribution.test.ts` (phase 1.4), `content.test.ts` (phase 1.3), and `formatDecimal` next to `formatNumber`'s tests.
+- **Playwright `e2e/selbstabrechnung.e2e.ts`:**
+  - 200, one `<h1>`, no site `#header`, `noindex` with a self-canonical without a trailing slash, no horizontal overflow at 375 px, FAQPage JSON-LD with 5 entries.
+  - Nav/footer link parity with `/`, via the helper of `e2e/messdienstwechsel.e2e.ts` (add `/selbstabrechnung` to its `landingOnly` list). The footer's "Selbstabrechnung" and `/hilfe`'s answer link resolve.
+  - Every "Demo buchen" and the header CTA go to `#start`, which is the `FinalCta` form; the hero has no `id="start"`.
+  - Hero demo with `reducedMotion: "reduce"`: ready on load, a click shows 6 result rows and the toast.
+  - Task split: "Vollservice" moves "Heizkostenabrechnung erstellen" to the Heidi column, counts become 6 / 3, the note changes.
+  - Calculator: setting the share to 50 % shows 12.000 € / 12.000 €; costs 80.000 € makes the sum row 80.000 €.
+  - Statement keys: focusing key 2 highlights the amount block.
+  - Signup against the local Postgres and webhook sink, as in `e2e/upgrade-now.e2e.ts`: `source` and `page` as in §4.1.
 
 ## 4.3 Changes to `svelte-migration-plan/`
 
-1. `00-inventory.md`, "New pages (no Next counterpart)": add `/hilfe` → `src/routes/(landing-page)/hilfe/+page.svelte`.
-2. `10-qa-and-cutover.md`: exclude it from the Next-baseline visual loop, list it as an allowed addition in the SEO diff, and add "a `/hilfe` vote arrives in the feedback sheet" to the post-deploy checks.
+1. `00-inventory.md`, "New pages (no Next counterpart)": add `/selbstabrechnung` → `src/routes/(landing-page)/selbstabrechnung/+page.svelte`.
+2. `10-qa-and-cutover.md`: exclude it from the Next-baseline visual loop, list it as an allowed addition in the SEO diff, and add "a `/selbstabrechnung` signup arrives with its `source`" to the post-deploy checks.
 
-## 4.4 Go-live gate: `/hilfe`
+## 4.4 Go-live gate: `/selbstabrechnung`
 
-The page goes live with the cutover. Until every item is done it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review). After go-live, `?q=` URLs stay `noindex`:
+The page goes live with the cutover. Until every item is done it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/hilfe` links stay, for review):
 
-- [ ] Legal statements checked: the 31.12.2026 retrofit deadline, § 6a HeizkostenV (monthly uVI for remotely readable meters), the 3 % cut under § 12 HeizkostenV, "spätestens zwölf Monate … danach kann keine Nachzahlung mehr verlangt werden" (§ 556 Abs. 3 BGB and its exception), "nach DSGVO und BDSG"
-- [ ] Company claims confirmed: "ab zwei Wohneinheiten", "mehr als 1.000 Einheiten … individuelles Angebot", Kündigung per Vollmacht and the template, DocuScan, the Selbstabrechnung product, ERP/CRM connection, the dashboard's features, "speichert alle Daten auf Servern in Deutschland", installation free with billing per installed meter plus Abrechnungspauschale (shared with §4.7). (92 %, 14 Tage, 1–2 h: confirmed 2026-10-12.)
-- [ ] The expired answer of `fernablesbar-frist` written and signed off
-- [ ] Feedback routing live: the Make.com `helpfeedback` route writes to a sheet, and someone reads it (open question 2); or the vote is removed
-- [ ] An owner named for the answers (they state law and prices; a wrong one is worse than none)
+- [ ] Legal statements checked: 50–70 % by consumption for heating and hot water (§§ 7, 8 HeizkostenV), "Pflicht sind 70 %, wenn …" with its three conditions (§ 7 Abs. 1 S. 2), "Sonst dürfen Mieter um 15 % kürzen" (§ 12 Abs. 1), the twelve months (§ 556 Abs. 3 BGB; "muss … spätestens zwölf Monate … vorliegen" leaves out the exception for delays the landlord isn't responsible for, as on `/hilfe`), the § 6a contents "seit 2022", the CO₂ split "seit 2023" (CO2KostAufG), the calculator note
+- [ ] Company claims confirmed: integration "in bestehende ERP- und CRM-Systeme" and "Muss ich meine Software wechseln? Nein.", the uVI sent by Heidi also when the customer bills itself, the Vollservice "per Klick, direkt im Dashboard" (open question 3), "Mit Ankündigung 14 Tage vorher" (KPI, confirmed 2026-10-12), "Ein fester Ansprechpartner, der Ihre Liegenschaften kennt", the pricing sentence (shared with §4.5 and §4.8) and the "kostenlosen Portfolio-Check" (no page; reword or link once it exists)
+- [ ] Example data consistent: the meter count (hero "18 Zähler", meter list 12 + 1 + 6 + 6 = 25 under "18 von 18"), the calculator's six flats and the €/Einheit (open question 4), the hero results; signed off by the content owner
+- [ ] Sample statement: letterhead (Heidi or neutral), sender address spelling, and that it reflects Heidi's real statement (portal login, "Heidi Nutzerportal" naming, the notes) (open question 5)
+- [ ] The people photo licensed for use, presented as a Heidi adviser (shared with the region photos in §4.9)
+- [ ] Permission to show the 12 customer logos and the Höhne and Werne quotes (shared with the gates below)
+- [ ] Security block statements: covered by the region pages' item in §4.9 (same `TrustSeals`)
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided (open question 1)
+- [ ] Make.com `switchinquiry` route live and able to tell `/selbstabrechnung` leads apart (`page: "/selbstabrechnung"`)
+- [ ] Then: remove `noindex`, add the sitemap entry
+
+## 4.5 Carried over: `/hilfe` go-live gate
+
+From the `/hilfe` plan (`3b70270e`, §4.4; its open questions are quoted here). The page goes live with the cutover. Until every item is done it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review). After go-live, `?q=` URLs stay `noindex`:
+
+- [ ] Open checks from its §4.1 (the automated tests are done): visual match with the design at 1440, 1100, 980, 700 and 375 px; Chrome, Safari, Firefox and iOS Safari; keyboard-only; VoiceOver (the result count is announced once after typing, the thanks after a vote); reduced-motion emulation; JS disabled (`?q=` via the form, a vote posts); a vote reaching the Make.com sheet; Lighthouse (mobile) Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
+- [ ] Legal statements checked: the 31.12.2026 retrofit deadline, § 6a HeizkostenV (monthly uVI for remotely readable meters), the 3 % cut under § 12 HeizkostenV, "spätestens zwölf Monate … danach kann keine Nachzahlung mehr verlangt werden" (§ 556 Abs. 3 BGB and its exception), "nach DSGVO und BDSG"
+- [ ] Company claims confirmed: "ab zwei Wohneinheiten", "mehr als 1.000 Einheiten … individuelles Angebot", Kündigung per Vollmacht and the template, DocuScan, the Selbstabrechnung product (§4.4), ERP/CRM connection, the dashboard's features, "speichert alle Daten auf Servern in Deutschland", installation free with billing per installed meter plus Abrechnungspauschale (shared with §4.8). (92 %, 14 Tage, 1–2 h: confirmed 2026-10-12.)
+- [ ] The expired answer of `fernablesbar-frist` written and signed off
+- [ ] Feedback routing live: the Make.com `helpfeedback` route writes to a sheet, and someone reads it; or the vote is removed (its open question: alternatives are dropping the vote or a "Nein" follow-up with a text field)
+- [ ] An owner named for the answers (they state law and prices; a wrong one is worse than none)
+- [ ] Page copy, SEO title and description signed off by the content owner
+- [ ] Slug decided: `/hilfe` by default, `/hilfe-center` or `/faq` are the alternatives
 - [ ] Then: remove `noindex` (keep it for `?q=`), add the sitemap entry
 
-## 4.5 Carried over: `/karriere` go-live gate
+Its open questions for after the cutover stay: a Prismic `help_article` type instead of `content.ts`, the site footer's "FAQ" pointing here instead of `/blog` (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`), and "Gespräch vereinbaren" going to `DEMO_HREF` once a booking URL exists.
+
+## 4.6 Carried over: `/karriere` go-live gate
 
 From the `/karriere` plan (`d9e105d8`, §4.4; its open questions are quoted here). The page goes live with the cutover. Until every item is done it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/ueber-uns` links stay, for review):
 
@@ -59,15 +80,15 @@ From the `/karriere` plan (`d9e105d8`, §4.4; its open questions are quoted here
 - [ ] Slug decided: `/karriere` by default, `/jobs` is the alternative
 - [ ] Then: remove `noindex`, add the sitemap entry
 
-## 4.6 Carried over: `/ueber-uns` go-live gate
+## 4.7 Carried over: `/ueber-uns` go-live gate
 
 From the `/ueber-uns` plan (`7a777e92`, §4.4; its open questions are quoted here). Until every item is done the page keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
 - [ ] Open checks from its §4.1: visual match with the design at 1440, 1100, 980, 700 and 375 px; Chrome, Safari, Firefox and iOS Safari; keyboard-only (banner link, CTAs, replay button, the 4 principle buttons, team links, the form); reduced-motion emulation; JS disabled; Lighthouse (mobile) Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
 - [ ] Company claims confirmed: free installation ("0 € Installationskosten", "Kostenlos"), "Ein fester Ansprechpartner", "Wechsel auch bei laufendem Vertrag" / "unabhängig vom Vertragsende", "Kündigung beim bisherigen Anbieter per Vollmacht", "Daten direkt in Ihrem ERP- oder CRM-System", "Monatliche Verbrauchsinfo automatisch an alle Mieter", "Kunden in ganz Deutschland", the team paragraph (own development, installation partners). (92 %, 14 Tage, 1–2 h: confirmed 2026-10-12.)
 - [ ] Paul Gerlach's card: "Gründer und Geschäftsführer" confirmed (the Impressum only says "Vertreten durch: Paul Gerlach"); initials or a licensed photo (96 px round)
-- [ ] Careers target: `/karriere` (§4.5) goes live at the same time, or `CAREERS_HREF` falls back to LinkedIn, or the careers teaser and the two career links are hidden (`content.careers.show`)
-- [ ] Gerhard's badge: "Verifizierter Gewerbekunde" (`data/testimonials.ts`) or the design's "Verifizierter Heidi-Kunde", settled with the references sign-off (§4.8)
+- [ ] Careers target: `/karriere` (§4.6) goes live at the same time, or `CAREERS_HREF` falls back to LinkedIn, or the careers teaser and the two career links are hidden (`content.careers.show`)
+- [ ] Gerhard's badge: "Verifizierter Gewerbekunde" (`data/testimonials.ts`) or the design's "Verifizierter Heidi-Kunde", settled with the references sign-off (§4.9)
 - [ ] Permission to show the 12 customer logos and the Werne and Gerhard quotes (shared with the gates below)
 - [ ] Page copy, SEO title and description signed off by the content owner; the expired texts (`mission.leadExpired`, `mission.expired`) written
 - [ ] Slug decided: `/ueber-uns` by default, `/unternehmen` or `/about` are the alternatives
@@ -77,7 +98,7 @@ From the `/ueber-uns` plan (`7a777e92`, §4.4; its open questions are quoted her
 
 Its discoverability question stays open for after the cutover: the site footer and header could link to it too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
 
-## 4.7 Carried over: `/upgrade-now` go-live gate
+## 4.8 Carried over: `/upgrade-now` go-live gate
 
 Unchanged from the `/upgrade-now` plan (`ddde6575`, §5.4; its open questions are quoted here). Until every item is done the page keeps `seo.noindex = true` and stays out of the sitemap:
 
@@ -93,7 +114,7 @@ Unchanged from the `/upgrade-now` plan (`ddde6575`, §5.4; its open questions ar
 
 Its risk stays: if the cutover slips past December, decide then whether the page is still worth launching.
 
-## 4.8 Carried over: city pages and the Germany page
+## 4.9 Carried over: city pages and the Germany page
 
 The pages go live with the cutover. Each city is gated on its own: a city whose items aren't done gets `live: false` in `cities/index.ts`, which sets `noindex` and keeps it out of the sitemap and off the Germany map (the page itself still renders, for review, and the footer "Städte" group links it). Items marked *(all)* apply to every city once; the rest are per city, tracked in the status table of the city plan (`be2c1feb`, `07-other-cities.md` §7.6: all 25 cities generated and reviewed, only Berlin live, no business column ticked yet; Gera was added on 2026-10-12 as the 26th, generated the same way and not yet reviewed). Phase references below (7.2, 8.3) are to that plan:
 
@@ -110,7 +131,7 @@ The pages go live with the cutover. Each city is gated on its own: a city whose 
 - [ ] *(all)* Static dates (timeline 2026–2030 and its tooltip, "Di, 14.10.", "Abrechnungszeitraum 2026", banner "Ab 1.1.2027") still make sense on the go-live date
 - [ ] *(all)* Make.com `switchinquiry` route live (shared with `/messdienstwechsel`)
 
-## 4.9 Carried over: `/messdienstwechsel` go-live gate
+## 4.10 Carried over: `/messdienstwechsel` go-live gate
 
 Unchanged since the `/messdienstwechsel` plan (`65470139`). Before the cutover PR is merged, these must be resolved; otherwise set `seo.noindex = true` on `/messdienstwechsel` and remove it from the sitemap:
 

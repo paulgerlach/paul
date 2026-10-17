@@ -13,12 +13,13 @@
  * change (plan 01 §1.3).
  *
  * The legal statements, the company claims and the expired deadline answer
- * need sign-off before go-live (plan §4.4).
+ * need sign-off before go-live (plan §4.5).
  */
 import { isExpired } from "$lib/landing/deadline/deadline";
 import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_KONTAKT,
+	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
@@ -134,7 +135,7 @@ export const topics: Topic[] = [
 				question: "Bis wann müssen Zähler fernablesbar sein?",
 				answer:
 					"Bestehende Zähler und Heizkostenverteiler müssen bis zum 31. Dezember 2026 fernablesbar sein. Heidi baut ausschließlich fernablesbare Funkzähler ein.",
-				// Draft for the content owner (plan §4.4).
+				// Draft for the content owner (plan §4.5).
 				answerExpired:
 					"Seit dem 1. Januar 2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Heidi baut ausschließlich fernablesbare Funkzähler ein und rüstet Ihren Bestand um.",
 				more: { text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
@@ -199,7 +200,7 @@ export const topics: Topic[] = [
 				question: "Kann ich selbst abrechnen?",
 				answer:
 					"Ja. Mit der Selbstabrechnung liefert Heidi die Verbrauchsdaten, und Sie erstellen die Abrechnung selbst.",
-				more: { text: "Selbstabrechnung" },
+				more: { text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG },
 			},
 			{
 				id: "abrechnung-pruefen",

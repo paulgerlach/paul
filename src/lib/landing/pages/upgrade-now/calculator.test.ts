@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	DEFAULT_UNIT_INDEX,
+	formatDecimal,
 	formatNumber,
 	risk,
 	UNIT_STOPS,
@@ -51,5 +52,14 @@ describe("formatNumber", () => {
 		expect(formatNumber(3600)).toBe("3.600");
 		expect(formatNumber(1234567.6)).toBe("1.234.568");
 		expect(formatNumber(0)).toBe("0");
+	});
+});
+
+describe("formatDecimal", () => {
+	it("keeps two decimals with German separators", () => {
+		expect(formatDecimal(16)).toBe("16,00");
+		expect(formatDecimal(2.4)).toBe("2,40");
+		expect(formatDecimal(1248.3)).toBe("1.248,30");
+		expect(formatDecimal(-48.2)).toBe("-48,20");
 	});
 });

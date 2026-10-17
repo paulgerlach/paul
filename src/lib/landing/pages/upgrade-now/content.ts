@@ -4,7 +4,7 @@
  * ("knapp drei Monate", "Noch 85 Tage") come from `$lib/landing/deadline/deadline.ts`.
  *
  * Every legal statement here (dates, §§, 3 %, 15 %, the WEG note, the FAQ)
- * needs legal sign-off before go-live (plan §4.7). The `expired` texts are
+ * needs legal sign-off before go-live (plan §4.8). The `expired` texts are
  * placeholders until the content owner writes them (plan open question 3).
  */
 import type { FaqItem } from "$lib/landing/faqJsonLd";

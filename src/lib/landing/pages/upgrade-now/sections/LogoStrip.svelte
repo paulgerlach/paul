@@ -3,5 +3,5 @@
 	import { logoStripText } from "../content";
 </script>
 
-<!-- The logos are unconfirmed: see the go-live gate, plan §4.7. -->
+<!-- The logos are unconfirmed: see the go-live gate, plan §4.8. -->
 <LogoStrip text={logoStripText} />

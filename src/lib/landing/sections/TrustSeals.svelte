@@ -201,6 +201,40 @@
 </section>
 
 <style>
+	/* The designs' eyebrow pill with a sparkle (`#eb-css`); the region pages
+	   style every eyebrow this way, other pages only this section's. */
+	.eyebrow {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: fit-content;
+		max-width: 100%;
+		background: #fff;
+		color: #1e322d;
+		border: 1px solid #e4e8e6;
+		border-radius: 9px;
+		padding: 6px 12px;
+		font-size: 14px;
+		font-weight: 500;
+		letter-spacing: 0;
+		text-transform: none;
+		line-height: 1.3;
+		box-shadow: 0 1px 2px rgba(30, 50, 45, 0.06);
+		margin-top: 0;
+		margin-bottom: 18px;
+	}
+	.eyebrow::before {
+		content: "";
+		width: 15px;
+		height: 15px;
+		flex: none;
+		background: #9aa5a1;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'%3E%3Cpath d='M8.5 2.5l1.4 4.1 4.1 1.4-4.1 1.4-1.4 4.1-1.4-4.1-4.1-1.4 4.1-1.4z'/%3E%3Cpath d='M15 11.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z'/%3E%3C/svg%3E")
+			center/contain no-repeat;
+	}
+	.eyebrow.c {
+		margin-inline: auto;
+	}
 	.trust {
 		padding: 110px 0 120px;
 		background: #f6f7f6;

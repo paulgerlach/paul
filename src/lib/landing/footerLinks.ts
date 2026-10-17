@@ -5,6 +5,7 @@ import {
 	ROUTE_HILFE,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
+	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
@@ -37,7 +38,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
-			{ text: "Selbstabrechnung" },
+			{ text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG },
 			{ text: "Verbrauchsinformation (uVI)", href: ROUTE_FUNKTIONEN },
 			{ text: "Mieterportal" },
 		],

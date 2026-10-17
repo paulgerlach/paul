@@ -1,123 +1,96 @@
-# Phase 1: Route, content, search, the feedback backend and the footer entry
+# Phase 1: Route, content, the distribution math, signup and the shared sections
 
 ## 1.1 Route
 
-- `ROUTE_HILFE = "/hilfe"` in `$lib/routes.ts`.
-- `src/routes/(landing-page)/hilfe/+page.server.ts`, modelled on `karriere/+page.server.ts`:
+- `ROUTE_SELBSTABRECHNUNG = "/selbstabrechnung"` in `$lib/routes.ts`.
+- `src/routes/(landing-page)/selbstabrechnung/+page.server.ts`, modelled on `upgrade-now/+page.server.ts`:
 
 ```ts
-export const load: PageServerLoad = async ({ url }) => {
-	const q = readQuery(url); // trimmed, max 100 chars, "" when absent
-	return {
-		seo: {
-			// Drafts for the content owner (plan §4.4).
-			title: "Hilfe-Center: Antworten zu Messdienst und Heizkostenabrechnung",
-			description:
-				"Antworten zu Messdienstwechsel, Montage, Funkablesung, unterjähriger Verbrauchsinformation und Heizkostenabrechnung. Finden Sie Ihre Frage oder sprechen Sie mit Ihrem Ansprechpartner.",
-			ogTitle: "Wie können wir helfen?",
-			// Until its go-live gate is done (plan §4.4). Then also add it to
-			// the sitemap. A search URL (?q=) stays noindex after that.
-			noindex: true,
-			keepCanonical: true,
-		},
-		// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 6).
-		landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
-		now: Date.now(),
-		q,
-		feedbackForm: await superValidate(zod4(helpFeedbackSchema)),
-	};
-};
+export const load: PageServerLoad = async () => ({
+	seo: {
+		// Drafts for the content owner (plan §4.4).
+		title: "Heizkostenabrechnung selbst erstellen: Zählerdaten von Heidi | Heidi Systems",
+		description:
+			"Sie erstellen die Heizkostenabrechnung selbst, Heidi liefert die Daten: Funkzähler, Fernablesung aller Zähler und Übergabe direkt in Ihr ERP- oder CRM-System.",
+		ogTitle: "Sie rechnen ab. Heidi liefert die Daten.",
+		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
+		noindex: true,
+		keepCanonical: true,
+	},
+	landing: DEFAULT_CHROME,
+	finalForm: await emptySwitchForm("final"),
+});
 
 export const actions: Actions = {
-	feedback: (event) => handleHelpFeedback(event, { page: ROUTE_HILFE }),
+	default: (event) =>
+		handleSwitchSignup(event, {
+			source: "selbstabrechnung",
+			page: ROUTE_SELBSTABRECHNUNG,
+		}),
 };
 ```
 
-  `Seo.svelte` builds the canonical from the path alone, so `/hilfe?q=uvi` has the canonical `/hilfe`. The page sets no `cache-control`, because the layout does.
-- `+page.svelte`: `setHelpSearch(...)` (1.5), then the sections in design order inside `<main id="content" class="hc" {@attach reveal()}>`, with the page tokens (`--bg`, `--hair`) as on `/karriere`. The FAQPage JSON-LD (1.4) is rendered here.
+  The page sets no `cache-control`, because the layout does. The `leads.source` column is free text, so the new source needs no migration; check that the Make.com `switchinquiry` scenario doesn't filter on known `page` values (gate §4.4).
+- `+page.svelte`: the sections in design order inside `<main id="content" class="sa" {@attach reveal()}>`, with the page tokens as on `/hilfe`. `FloatingCta` after `Trust`, as on the region pages.
 
-## 1.2 Footer and header
+## 1.2 Footer and `/hilfe`
 
-- `$lib/landing/footerLinks.ts`: `{ text: "Hilfe-Center", href: ROUTE_HILFE }`.
-- Header: `ctaHref: ROUTE_MESSDIENSTWECHSEL` (above). `LandingChrome.ctaHref` already exists since `/karriere`.
+- `$lib/landing/footerLinks.ts`: `{ text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG }`.
+- `$lib/landing/pages/hilfe/content.ts`, question `selbst-abrechnen`: `more: { text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG }`. Its answer now renders the link; check the card at 375 px.
 
 These and the route ship in one commit (README, phases).
 
 ## 1.3 Content module
 
-`$lib/landing/pages/hilfe/content.ts` holds every text of the page, word for word from the design. The H1 keeps its `<em>` part as a separate field (`h1: { text, em }`).
+`$lib/landing/pages/selbstabrechnung/content.ts` holds every text and every example number of the page, word for word from the design. Headings with a second, muted part keep it as a separate field (`h2: { text, span }`), the H1 as `h1: { text, em }`.
 
-- `hero`: pill "Hilfe-Center", H1 "Wie können wir" + em "helfen?", lead "Antworten zu Wechsel, Montage, Ablesung und Heizkostenabrechnung.", search placeholder "Frage eingeben, z. B. „Vertrag läuft noch“", aria label "Hilfe-Center durchsuchen", submit label "Suchen" (visually hidden, for the no-JS form).
-- `popular`: label "Häufig gesucht:", 4 question ids (`laufender-vertrag`, `installation-kosten`, `uvi`, `abrechnung-frist`). The button text is the question itself, so it's looked up, not repeated.
-- `results`: `resultsText(n, q)` → "1 Ergebnis für „…“" / "n Ergebnisse für „…“" (the design's wording).
-- `topics: Topic[]`, `{ id, title, sub, icon, questions: Question[] }`, in design order. The card's "4 Artikel" is `articlesText(questions.length)` ("1 Artikel" / "n Artikel").
-- `Question`: `{ id, question, answer, answerExpired?, more?: { text, href? } }`. Answers are plain text (no HTML), so they work for the search, the JSON-LD and the page without `{@html}`.
-- `feedback`: "War das hilfreich?", "Ja", "Nein", "Danke für Ihr Feedback!".
-- `noResults`: "Keine passende Antwort gefunden.", "Schreiben Sie uns, Ihr Ansprechpartner hilft gern weiter.", "Kontakt aufnehmen" → `ROUTE_KONTAKT`.
-- `endCta`: "Frage nicht dabei? Ihr Ansprechpartner hilft persönlich.", "Gespräch vereinbaren" → `ROUTE_KONTAKT`.
-- `trustMore`: "Mehr über Heidi" → `ROUTE_UEBER_UNS`.
+- `hero`: pill "Selbstabrechnung", H1 "Sie rechnen ab." + em "Heidi liefert die Daten." (non-breaking space before "Daten."), lead, CTAs "Demo buchen" (→ `DEMO_HREF`) and "Kostenverteilung ausprobieren ↓" (→ `#rechner`), ticks "Alles aus einer Hand", "Alle Zählerdaten per Funk", "Direkt in Ihr ERP".
+- `demo` (the hero card): title "Heizkostenabrechnung 2025", building `{ name: "Lindenallee 12", flats: 6, meters: 18 }` (the subline "Lindenallee 12 · 6 Wohnungen · 18 Zähler" is built from it), the three checks (`{ title, sub, value }`: meters `18` as a count, costs `12.480 €`, key `70/30`), the six results `{ flat: "WE 01", area: "74 m²", amount: -48.2 }` … (negative = "Guthaben", positive = "Nachzahlung"), statuses "Daten kommen" / "Bereit" / "Erstellt", button labels "Abrechnung erstellen" / "Wird erstellt …" / "Erneut ansehen", hints "Ein Klick, sobald alle Werte da sind." / "Alle Daten vollständig. Jetzt erstellen." / "6 Abrechnungen · Beispieldaten", toast "6 Einzelabrechnungen erstellt" + "Bereit zum Versand an Ihre Mieter.", tag "Beispieldaten". The "6" in hint and toast is `results.length`.
+- `logos`: "Hausverwaltungen in ganz Deutschland arbeiten bereits mit Heidi."
+- `tasks`: the nine tasks by key (`inst`, `read`, `uvi`, `data`, `dash`, `abr`, `key`, `send`, `ask`) as `{ icon, title, sub, subFull? }` (`abr` has "In Ihrer gewohnten Software" and, in Vollservice, "Per Klick, direkt im Dashboard"), and `modes`: `self` (Heidi: inst, read, uvi, data, dash; you: abr, key, send, ask) and `full` (Heidi: + abr; you: key, send, ask), each with its label and note. Column heads "Heidi übernimmt" / "Sie behalten", `tasksText(n)` → "1 Aufgabe" / "n Aufgaben".
+- `calculator`: pill, H2, lead; sliders `costs: { min: 6000, max: 80000, step: 500, default: 24000 }` and `share: { min: 50, max: 70, step: 5, default: 70 }`; labels; split labels "Grundkosten nach Fläche" / "Verbrauchskosten"; the § 7 Abs. 1 hint; table head "Beispielhaus · 6 Wohnungen · 450 m²" (built from `flats`), legend, column labels, "Summe"; foot "Vereinfachtes Beispiel ohne Warmwasser (§ 8) und ohne CO₂-Kostenaufteilung. Keine Rechtsberatung."; `flats`: `[["WE 01", 62, 1100], ["WE 02", 78, 1420], ["WE 03", 55, 760], ["WE 04", 91, 1650], ["WE 05", 70, 980], ["WE 06", 94, 1090]]` as `{ id, area, units }`.
+- `dataPath`: pill, H2, five stations `{ icon, title, sub }`.
+- `duties`: pill, H2, four cards `{ figure, title, text, source }`, the CTA row text "Unsicher, ob Ihre letzte Abrechnung alles erfüllt?" with "Zum Heizkostenabrechnungs-Checker" and `CHECKER_HREF: string | undefined = undefined` (README, open question 6).
+- `allMeters`: the big card (pill "Alle Zählerdaten", H2, text, the meter list `{ icon, title, count }` with "18 von 18 ausgelesen"), the two cards (titles, texts, their mock rows), the "Auf Knopfdruck" head and the three steps `{ title, text }` with their mock rows.
+- `sample`: pill, H2, lead, the four keys `{ title, sub }`, and the paper: sender line, recipient lines, title, subline, the two `<dl>`s as `[term, value][]`, intro, amount "1.248,30 €", the two notes, portal block (text, "Nutzer-ID: MUSTER-0010", "Sicherheitscode: ••••••"), the six objects, stamp "Musterabrechnung · Beispieldaten". The sender line uses the address from `Footer/footerLinks.ts` (the design writes "Monbijouplatz 4", ours is "Monbijoupl. 4"; use the design's spelling only if the content owner prefers it).
+- `people`: H2 "Selbst abrechnen." / "Nicht allein.", text, checks "Ein fester Ansprechpartner", "Verbrauchsdaten aus einer Hand", "Erreichbar, wenn Fragen kommen", CTA "Demo buchen".
+- `testimonials`: title "Was Verwaltungen über Heidi sagen", ids in design order (Höhne, then Werne).
+- `faq`: title "Häufige Fragen zur Selbstabrechnung", the five `{ q, a }` (plain text).
+- `finalCta`: title "Ihre Abrechnung. Unsere Daten.", submit label "Demo buchen" (the design's button text), `sub` none.
 
-Topics and question ids (`c-<topic>` and `q-<question>` in the page):
+The design's links and where they go:
 
-| Topic (`id`) | Card sub | Questions (`id`) |
-|---|---|---|
-| Wechsel & Vertrag (`wechsel`) | Kündigung, Vollmacht, laufende Verträge | `laufender-vertrag`, `kuendigung`, `vertragsende`, `ab-wie-vielen-einheiten` |
-| Montage & Geräte (`montage`) | Termine, Funkzähler, Fernablesbarkeit | `installation-kosten`, `mieter-information`, `mieter-nicht-da`, `fernablesbar-frist` |
-| Ablesung & uVI (`ablesung`) | Funk, monatliche Verbrauchsinformation | `ablesung-wohnung`, `uvi`, `uvi-fehlt`, `verbraeuche-sehen` |
-| Heizkostenabrechnung (`abrechnung`) | Erstellung, Fristen, Nachfragen | `abrechnung-entstehung`, `abrechnung-frist`, `selbst-abrechnen`, `abrechnung-pruefen` |
-| Dashboard & Schnittstellen (`software`) | ERP, CRM, Datenübergabe | `zweite-software`, `dashboard`, `datenverarbeitung` |
-| Für Mieter (`mieter`) | Fragen zur eigenen Abrechnung | `mieter-verbrauch`, `mieter-abrechnung-pruefen`, `monteure` |
+| Design link | Our target |
+|---|---|
+| Logo, nav, "Anmelden", "Angebot einholen" | The shared `LandingHeader` |
+| Banner "Mehr erfahren" | `/upgrade-now` (`DEFAULT_CHROME`) |
+| "Demo buchen" (hero, people, final, trust), floating "Erstgespräch vereinbaren" | `DEMO_HREF` (`#start`, the signup form in `FinalCta`) |
+| "Kostenverteilung ausprobieren ↓" | `#rechner` |
+| "Zum Heizkostenabrechnungs-Checker →" | none yet, row not rendered |
+| "Mehr zu Sicherheit" | none yet (`TrustSeals`' `SECURITY_HREF`) |
 
-The answers' links (the design's `.hc-more`, all pointing to other designs):
+`content.test.ts`: no empty strings, no `XX`; task keys in `modes` exist and every task is in exactly one column per mode; `demo.building.meters` equals the checks' meter count; `results` has `building.flats` entries; the calculator's 450 m² is the sum of `flats[].area`; slider defaults lie on their steps; FAQ has 5 entries. The 18-vs-25 mismatch of the meter list is a content question (README, Risks), so the test doesn't assert it; it asserts that the list's "18 von 18" uses `demo.building.meters`, so a fix changes one number.
 
-| Question | Link text | `href` |
-|---|---|---|
-| `kuendigung` | Muster-Kündigung → | none yet |
-| `vertragsende` | Portfolio-Checker → | none yet |
-| `fernablesbar-frist` | Jetzt noch umrüsten → | `ROUTE_UPGRADE_NOW` |
-| `uvi` | Mehr zur uVI → | `ROUTE_FUNKTIONEN` (the landing footer's "Verbrauchsinformation (uVI)" target) |
-| `verbraeuche-sehen`, `dashboard` | Dashboard ansehen → | none yet |
-| `abrechnung-entstehung` | Heizkostenabrechnung → | `ROUTE_FUNKTIONEN` (the landing footer's target) |
-| `selbst-abrechnen` | Selbstabrechnung → | none yet |
-| `abrechnung-pruefen` | Abrechnung prüfen → | none yet |
-| `zweite-software` | Schnittstellen → | none yet |
-| `datenverarbeitung` | Sicherheit & Datenschutz → | none yet |
-| `mieter-abrechnung-pruefen` | Zum Mieter-Check → | none yet |
+## 1.4 Distribution math
 
-A `more` without `href` renders nothing (the answer reads fine without it). When one of these pages exists, its `href` is the only change.
+`$lib/landing/pages/selbstabrechnung/distribution.ts` (pure, no runes):
 
-`fernablesbar-frist` gets `answerExpired` (draft for the content owner, placeholder until §4.4: "Seit dem 1. Januar 2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Heidi baut ausschließlich fernablesbare Funkzähler ein und rüstet Ihren Bestand um."). `resolveTopics(now)` returns the topics with each question's current `answer`, and everything else (search, JSON-LD, sections) reads that, so the two variants can't disagree.
+- `distribute({ costs, sharePercent, flats })` → `{ base, consumption, perM2, perUnit, rows: { id, area, units, base, consumption, total }[], max, totalArea, totalUnits }`. `base = costs × (1 − share)`, `consumption = costs × share`, `perM2 = base / totalArea`, `perUnit = consumption / totalUnits`, each row `area × perM2 + units × perUnit`; `max` is the largest row total (the bars scale to it, as in the design).
+- `clampStep(value, { min, max, step })` for the slider values (a crafted value from the URL or devtools can't produce 45 %).
+- Formatting: `formatNumber` from `upgrade-now/calculator.ts` for whole euros; add `formatDecimal(n, 2)` (de-DE, two decimals) next to it for "16,00 €/m²" and the results' cents, and use it in `BillingDemo` too.
 
-`content.test.ts`: 6 topics, 22 questions, unique question ids, ids are lowercase ASCII slugs (no umlauts, they end up in URLs), popular ids exist, no empty strings, no `XX`, every `more.href` is a route constant or starts with `/` and has a route in `src/routes` (checked against the known route list), the expired variant differs from the current one.
+`distribution.test.ts`: the defaults give 7.200 / 16.800 €, 16,00 €/m², 2,40 €/Einheit; row totals sum to `costs` (within a cent); 50 % gives an even split; `clampStep(47, share)` is 50 and `clampStep(68, share)` is 70; rounding happens only in formatting.
 
-## 1.4 Structured data
+## 1.5 Shared sections out of `region/`
 
-Move the FAQPage builder out of `$lib/landing/sections/Faq.svelte` into `$lib/landing/faqJsonLd.ts` (`faqJsonLd(items: FaqItem[]): string`, including the `</script>`-safe escaping it has today). `Faq.svelte` uses it unchanged; `/hilfe`'s `+page.svelte` renders `faqJsonLd` of all 22 resolved questions (the answer text without the `more` link). Check `/messdienstwechsel` and `/upgrade-now` still output byte-identical JSON-LD.
+Three region sections aren't city-specific and move to `$lib/landing/sections/`:
 
-## 1.5 Search module and context
+- `TrustSeals.svelte`: unchanged (it reads no `RegionContent`). Compare its markup and CSS with the design's `#trust-css` first; the cards, the split and the tray are the same block.
+- `FloatingCta.svelte`: unchanged. It hides while `section.final` is in view, which `FinalCta` renders, so it behaves on this page as designed.
+- `People.svelte`: today it takes `content: RegionContent` for the photo and hard-codes the title and checks ("Menschen statt Hotline.", "Alles aus einer Hand"). New props `{ title: { text, br? }, text, checks: string[], photo: Picture, photoAlt, objectPosition? }`; the region pages' wrappers pass their values (no visual change). Compare `#pp-css` with the region design's first.
 
-`$lib/landing/pages/hilfe/search.ts` (pure, no runes, shared by `load` and the browser):
+Update the imports in `RegionMain.svelte` and the region wrappers; check a city page and `/messdienstanbieter` at 375 and 1440 px for no visual change.
 
-- `normalize(s)`: lowercase, `NFD` + strip combining marks, `ß` → `ss`.
-- `terms(q)`: `normalize(q)` split on whitespace, words of 2+ characters.
-- `matches(question, topicTitle, terms)`: every term occurs in `normalize(question + " " + answer + " " + topicTitle)`. No terms = everything matches.
-- `search(topics, q)` → `{ terms, ids: Set<string>, count, autoOpen: boolean }`. `autoOpen` when there are terms and 1–3 results (the design's rule).
-- `highlight(text, terms)` → `{ text: string; hit: boolean }[]`: case- and diacritics-insensitive, so it maps positions back to the original string (normalise per character and keep an index map; `ß` → `ss` changes the length, so the map is needed). Overlapping matches merge.
+The new photo goes to `src/lib/assets/landing/selbstabrechnung/beratung.webp` (from the design, 78 KB; `object-position: 55% 35%`), imported `?enhanced`.
 
-`$lib/landing/pages/hilfe/search.svelte.ts`: `class HelpSearch { query = $state(""); results = $derived(search(topics, this.query)); open = new SvelteSet<string>(); }` with `setHelpSearch(topics, initialQuery)` / `getHelpSearch()`, per the shared-state rule in `CLAUDE.md`. The initial query is `data.q`, so the server and the first client render agree. `open` starts with the auto-opened ids when `autoOpen`.
-
-`search.test.ts`: "lauft" finds "läuft", "strasse" finds "Straße", "uVI" and "UVI" match, one-letter words are ignored, two words must both match, the topic title counts ("mieter" finds the whole "Für Mieter" topic), `highlight` on "Kündigung" for "kundigung" marks the whole word, overlapping terms merge, no match → no segments with `hit`.
-
-## 1.6 Feedback schema, action and webhook
-
-- `$lib/forms/helpFeedback.ts`: `{ question: z.enum(QUESTION_IDS), vote: z.enum(["yes", "no"]) }`. `QUESTION_IDS` is exported from `content.ts`'s topics (the schema may import page content here: it's plain data, and the ids are the contract). Add a test that unknown ids and votes fail.
-- `$lib/server/helpFeedback.ts`: `handleHelpFeedback(event, { page })`: zod → rate limit `helpfb:${ip}` (20 per 600 s, 200 with `KITCHEN_SINK`) → `sendWebhookEvent("helpfeedback", { question, vote, page })` (the non-throwing send: a lost vote doesn't matter) → `message(form, { type: "success", question })`. Invalid or rate-limited requests return the same success, so the UI never shows an error for a vote.
-- `$lib/server/webhooks.ts`: the event type `"helpfeedback"`. Its payload has no email, so the `[WEBHOOK] Sending … for <email>` log line must handle a missing email (log the event type only).
-
-Tests (Vitest): the action with a mocked webhook (valid → one payload, unknown id → success without sending, rate limit → success without sending).
-
-## 1.7 Shared CTA card
-
-Move the dark card of `/karriere`'s `MoreAbout.svelte` to `$lib/landing/sections/CtaCard.svelte` (props: `id` for `aria-labelledby`, `title`, `cta: { text, href }`). Compare its CSS with the Hilfe design's `.dm-end` / `.dm-cta` first; the base CSS is the same in both designs. `MoreAbout.svelte` becomes a thin wrapper; check `/karriere` at 375 and 1440 px for no visual change.
-
-Update `CLAUDE.md` (a `/hilfe` bullet under "Current state", the layout tree, `faqJsonLd.ts` and `CtaCard` in the landing lines).
+Update `CLAUDE.md` (a `/selbstabrechnung` bullet under "Current state", the layout tree, and `People`/`TrustSeals`/`FloatingCta` in the shared landing sections line).

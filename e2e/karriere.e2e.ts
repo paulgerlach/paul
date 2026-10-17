@@ -54,7 +54,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page).toHaveTitle(/^Karriere/);
 	await expect(page.locator("h1")).toHaveCount(1);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.5), with a self-canonical
+	// noindex until the go-live gate (plan §4.6), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
 		"noindex",

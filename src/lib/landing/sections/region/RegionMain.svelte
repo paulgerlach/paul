@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import FloatingCta from "./FloatingCta.svelte";
+	import FloatingCta from "$lib/landing/sections/FloatingCta.svelte";
 
 	let { children }: { children: Snippet } = $props();
 </script>

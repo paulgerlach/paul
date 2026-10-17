@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TrustSeals from "$lib/landing/sections/region/TrustSeals.svelte";
+	import TrustSeals from "$lib/landing/sections/TrustSeals.svelte";
 </script>
 
 <TrustSeals />

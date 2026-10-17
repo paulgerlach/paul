@@ -2,7 +2,7 @@
   "Partner und Verbände" as cards (DEUMESS, VDIV, bved), on /messdienstwechsel
   and /ueber-uns. /upgrade-now uses the plain logo row of
   $lib/landing/sections/Trust.svelte, the city and Germany pages the seals of
-  $lib/landing/sections/region/TrustSeals.svelte.
+  $lib/landing/sections/TrustSeals.svelte.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";

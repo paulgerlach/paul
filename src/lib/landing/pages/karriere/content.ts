@@ -7,7 +7,7 @@
  * count and option on the page is derived from that list.
  *
  * The company claims, the jobs, the privacy line and the fallback address need
- * sign-off before go-live (plan §4.5).
+ * sign-off before go-live (plan §4.6).
  */
 import type { RoleId } from "$lib/forms/application";
 import type { SplitHeading } from "$lib/landing/types";

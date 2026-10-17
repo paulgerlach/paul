@@ -18,8 +18,6 @@
  * Known, deliberate differences (phase 10 review):
  * - /impressum: "E-Mail: info@…" and "…unter https://ec.europa.eu/… aufrufen"
  *   keep their spaces. JSX dropped them, so Next overflows at 375px.
- * - /funktionen @992: the middle AnimationsSection card uses `h-full` (Next has
- *   the typo `h-ful`), so its title lines up with the first card.
  * - /blog: the tag filters are links (`?tag=`, KI-14), not buttons, so they
  *   show as "only in Next". With 236 posts, the last images may not have loaded
  *   by capture time: Next collapses those to 0px, Svelte reserves their box.
@@ -31,7 +29,7 @@ const [next = "http://localhost:3000", svelte = "http://localhost:4173"] =
 	process.argv.slice(2);
 const PAGES = (
 	process.env.PAGES ??
-	"/,/funktionen,/preise,/geraete,/kontakt,/blog,/blog/wasserzaehler-mit-fernablesung,/impressum,/datenschutzhinweise,/fragebogen"
+	"/,/preise,/geraete,/kontakt,/blog,/blog/wasserzaehler-mit-fernablesung,/impressum,/datenschutzhinweise,/fragebogen"
 ).split(",");
 const WIDTHS = (process.env.WIDTHS ?? "375,768,992,1200,1640")
 	.split(",")

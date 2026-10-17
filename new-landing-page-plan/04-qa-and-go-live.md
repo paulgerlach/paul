@@ -4,10 +4,10 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/mieterportal`: the page, with the landing header and footer; the footer's "Mieterportal" lands here from every landing page
+- [x] `bun run dev` → `http://localhost:5173/mieterportal`: the page, with the landing header and footer; the footer's "Mieterportal" lands here from every landing page
 - [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card with the signup form instead of its video button, the Mieter card without "Zum Mieter-Check", the missing "Mehr zu Sicherheit" links, the hero list showing its finished state before the first loop
-- [ ] `/funktionen` unchanged after the `CtaCard` and `Faq` changes (the dark closing card with its form, the FAQ); `/karriere`, `/hilfe` and the other `Faq` users unchanged
-- [ ] No horizontal overflow at any width from 320 to 1640 px (the hero word, the bleeding panel strip, the phone tile)
+- [x] `/funktionen` unchanged after the `CtaCard` and `Faq` changes (the dark closing card with its form, the FAQ); `/karriere`, `/hilfe` and the other `Faq` users unchanged
+- [x] No horizontal overflow at any width from 320 to 1640 px (the hero word, the bleeding panel strip, the phone tile)
 - [ ] Hero list: the finished state on load, then the loop every 9 s while in view; leaving the view or the tab stops it, coming back restarts it
 - [ ] Statement: words light up while scrolling down and dim again scrolling up; loading the page scrolled past it shows it lit
 - [ ] Tiles: each plays when its row comes into view and loops only while visible; no step fires after leaving (the calendar's note, the phone's bars)
@@ -17,16 +17,16 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (scrolling performance with the statement and the loops, the floating CTA)
 - [ ] Keyboard-only: banner link, hero CTAs, the rows' CTAs, the Verwalter card, the FAQ (incl. "Mehr zur uVI"), the signup form, the floating CTA; focus rings visible on dark
 - [ ] Screen reader (VoiceOver): the H1 read as "Das Heidi Mieterportal für Ihre Mieter"; the portal mock as one labelled figure with its four entries; the rotator's four phrases once; the mini dashboard as one image; no announcements from any loop
-- [ ] Reduced-motion emulation: every block in its end state, no loop, no counting, no zoom, the statement white
+- [x] Reduced-motion emulation: every block in its end state, no loop, no counting, no zoom, the statement white
 - [ ] JS disabled: every section readable in its end state, the signup form posts
 - [ ] Contrast on dark: `--mute` text, the lime links, the form's status and error lines, the focus rings (README, Risks)
 - [ ] A signup reaches the `leads` table with `source = "mieterportal"` and the sink with `page: "/mieterportal"`
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the hero's side photos are hidden on mobile; check the LCP element), Accessibility ≥ 95, CLS ≤ 0.05 (the mini dashboard's scale is set after mount: it must not shift layout, the tile's size is fixed by CSS)
-- [ ] No hydration warnings or console errors (at 1440, 980, 700 and 375 px)
+- [x] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
 
 ## 4.2 Tests
 
-- **Vitest:** `content.test.ts` (phase 1.3), `curve.test.ts` (path of a flat and a rising series, the end dot at the last value, values at 0 and `max`), a `loopInView` test if it can run without a DOM environment (otherwise the e2e tests cover it, as with `AutoTabs`).
+- **Vitest:** `content.test.ts` (phase 1.3), `curve.test.ts` (path of a flat and a rising series, the end dot at the last value, values at 0 and `max`). `loopInView` is covered by the e2e tests (README, Implementation notes).
 - **Playwright `e2e/mieterportal.e2e.ts`:**
   - 200, one `<h1>` with the accessible name "Das Heidi Mieterportal für Ihre Mieter", no site `#header`, `noindex`, a self-canonical without a trailing slash, **not** in `sitemap.xml`, no horizontal overflow at 375 px, FAQPage JSON-LD with 5 entries.
   - Nav/footer link parity with `/`, via the helper of `e2e/messdienstwechsel.e2e.ts`; the footer's "Mieterportal" links to `/mieterportal`; every internal link in the footer and in `main` resolves (200).

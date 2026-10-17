@@ -26,7 +26,7 @@ A new product page for the tenant portal. It is the first dark landing page: the
 | 3 | [03-interactions.md](03-interactions.md) | Hero portal list, statement, the four tiles, rotating line, numbers, mini dashboard, photo zoom, reveal | M |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-The footer link is already in place (planning commit): `ROUTE_MIETERPORTAL` exists and the landing footer's "Mieterportal" entry links to it. Until phase 1 lands, the link is a 404, so the e2e tests that open every footer link (`karriere`, `hilfe`, `messdienstwechsel`, `messdienstanbieter`) fail; phase 1 goes first. Phases 2 and 3 can overlap section by section, since phase 3 only needs phase 2's markup.
+The footer link went in with the planning commit (`ROUTE_MIETERPORTAL`, the landing footer's "Mieterportal"); phase 1 added the route, so it resolves. Phases 2 and 3 can overlap section by section, since phase 3 only needs phase 2's markup.
 
 ## Target structure
 
@@ -71,6 +71,18 @@ src/lib/landing/
 ```
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
+
+## Implementation notes (2026-10-17)
+
+Phases 1–4 are built: the route, content, the shared changes (`loopInView`, `Faq` `tone`/`openFirst`/`more`, `CtaCard` `tone="glass"` with the form-on-dark styles moved in from `/funktionen`), all sections with their loops, the Vitest tests (`content.test.ts`, `curve.test.ts`), `e2e/mieterportal.e2e.ts` (9 tests) and the `svelte-migration-plan/` changes of §4.3. All e2e tests of `/mieterportal`, `/funktionen`, `/vorgehen`, `/karriere`, `/hilfe` and `/messdienstwechsel` pass except the signup tests, which need the local Postgres (not running; this affects every landing page's signup test alike). Compared with the design at 1440 and 375 px (reduced motion, so both show their end states): the sections match, apart from the expected differences of §4.1. No horizontal overflow and no console errors at 1440, 1100, 980, 700, 375 and 320 px. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Row tags are eyebrow pills.** The design's `#eb-css` restyles `.uv-tag` as the white sparkle pill, so the rows use the shared `Eyebrow` (the plan's "no eyebrow pills here" was wrong).
+- **Tile loops attach to the tile**, not to its row: the tile is the visible block, and the threshold (0.15) behaves the same.
+- **`loopInView` has no unit test**: Vitest runs without a DOM (as with `AutoTabs`); the e2e tests cover the loops (a tile, the rotator, the hero's delayed first pass, reduced motion).
+- **Tailwind utility names.** The rotator's section was `class="blur"`, the design's `.uv-blur` without the prefix. Tailwind generates a global `.blur` utility (it scans the sources), which blurred the whole section. Renamed to `rot` (and the dashboard's `grid` to `cards`); recorded in `CLAUDE.md`.
+- **Dashboard tab pill.** Its position needs the tabs' measured offsets, so until it's placed (server, first frame) the active tab itself has the lime background.
+- **Statement:** the words are spans rendered on the server, all lit; the scroll handler dims them after mount, so a statement below the fold starts dimmed before it's seen.
+- **Numbers:** `countUp` with `viewDelay: 0` and 1100 ms, as the design's `onShow`; "1–2 h" is marked `compact` in content (the design's `.dt`).
 
 ## Key decisions
 

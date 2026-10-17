@@ -37,30 +37,4 @@
 	.closing {
 		padding-top: 16px;
 	}
-	/* The form is styled for white backgrounds; here it sits on the dark card. */
-	.closing :global(.signup-box.final) {
-		margin: 0;
-		flex: 1 1 380px;
-		max-width: 480px;
-	}
-	.closing :global(.signup) {
-		border-color: transparent;
-	}
-	/* The card's white text would carry into the field. */
-	.closing :global(.signup input[type="email"]) {
-		color: var(--ink);
-	}
-	.closing :global(.signup input[type="email"]::placeholder) {
-		color: var(--muted);
-	}
-	.closing :global(.final .status),
-	.closing :global(.final .error) {
-		text-align: left;
-	}
-	.closing :global(.final .status) {
-		color: var(--accent);
-	}
-	.closing :global(.final .error) {
-		color: #f2b8a0;
-	}
 </style>

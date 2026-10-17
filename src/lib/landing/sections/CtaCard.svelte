@@ -2,7 +2,9 @@
   The designs' dark closing card (.dm-end / .dm-cta): a heading and a light
   ArrowLink (/karriere, /hilfe). With `text`, the heading gets the line under
   it and the card the `#dcta-css` spacing; `action` replaces the ArrowLink
-  (/funktionen's signup form).
+  (the signup form on /funktionen and /mieterportal, styled here for the dark
+  card). `tone="glass"` is the translucent card of a dark page (/mieterportal,
+  the design's `#end-css`).
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
@@ -16,6 +18,7 @@
 		action,
 		sectionId,
 		final = false,
+		tone = "dark",
 	}: {
 		/** The heading's id, for the section's `aria-labelledby`. */
 		id: string;
@@ -28,12 +31,13 @@
 		sectionId?: string;
 		/** `final`: the floating CTA hides while the card is in view. */
 		final?: boolean;
+		tone?: "dark" | "glass";
 	} = $props();
 </script>
 
 <section class={["end", final && "final"]} id={sectionId} aria-labelledby={id}>
 	<div class="wrap">
-		<div class={["cta rv", text && "has-text"]}>
+		<div class={["cta rv", text && "has-text", tone === "glass" && "glass"]}>
 			{#if text}
 				<div class="t">
 					<h2 {id}>{title}</h2>
@@ -73,6 +77,10 @@
 		font-weight: 500;
 		max-width: 20ch;
 	}
+	.cta.glass {
+		background: rgba(255, 255, 255, 0.045);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+	}
 	/* #dcta-css */
 	.cta.has-text {
 		padding: 52px clamp(24px, 5vw, 64px);
@@ -93,6 +101,33 @@
 		font-size: 16.5px;
 		line-height: 1.5;
 		margin: 0;
+	}
+	/* The signup form (an `action`) is styled for white backgrounds; here it
+	   sits on the dark card. */
+	.cta :global(.signup-box.final) {
+		margin: 0;
+		flex: 1 1 380px;
+		max-width: 480px;
+	}
+	.cta :global(.signup) {
+		border-color: transparent;
+	}
+	/* The card's white text would carry into the field. */
+	.cta :global(.signup input[type="email"]) {
+		color: var(--ink);
+	}
+	.cta :global(.signup input[type="email"]::placeholder) {
+		color: var(--muted);
+	}
+	.cta :global(.final .status),
+	.cta :global(.final .error) {
+		text-align: left;
+	}
+	.cta :global(.final .status) {
+		color: var(--accent);
+	}
+	.cta :global(.final .error) {
+		color: #f2b8a0;
 	}
 	@media (max-width: 640px) {
 		.cta {

@@ -1,5 +1,13 @@
-/** `answer` may contain <b> and <a>; it comes from trusted content modules. */
-export type FaqItem = { question: string; answer: string };
+/**
+ * `answer` may contain <b> and <a>; it comes from trusted content modules.
+ * `more` is a link shown after the answer (without `href`: not shown, until
+ * its page exists); it isn't part of the structured data.
+ */
+export type FaqItem = {
+	question: string;
+	answer: string;
+	more?: { text: string; href?: string };
+};
 
 /**
  * The FAQPage structured data of `items` as a complete

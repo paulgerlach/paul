@@ -3,6 +3,8 @@
   two-column variant of the /upgrade-now design (title and lead on the left,
   plus icons, all closed). `cards` is /vorgehen's (centred head with an
   eyebrow, each question a soft rounded card, a plus that turns into a minus).
+  The default variant takes `tone="dark"` for a dark page (/mieterportal) and
+  `openFirst={false}` to start with every answer closed.
 -->
 <script lang="ts">
 	import Eyebrow from "$lib/landing/components/Eyebrow.svelte";
@@ -15,6 +17,8 @@
 		lead,
 		eyebrow,
 		variant = "default",
+		tone = "light",
+		openFirst = true,
 	}: {
 		items: FaqItem[];
 		title?: string;
@@ -23,6 +27,10 @@
 		/** Pill above the title (cards variant). */
 		eyebrow?: string;
 		variant?: "default" | "split" | "cards";
+		/** Default variant: `dark` for a dark page. */
+		tone?: "light" | "dark";
+		/** Default variant: open the first answer. */
+		openFirst?: boolean;
 	} = $props();
 
 	// FAQPage structured data.
@@ -85,17 +93,22 @@
 		</div>
 	</section>
 {:else}
-	<section class="sec wrap faq" id="faq">
+	<section class={["sec wrap faq", tone === "dark" && "dark"]} id="faq">
 		<h2>{title}</h2>
 		<div class="faq-list">
 			{#each items as item, i (item.question)}
-				<details open={i === 0}>
+				<details open={openFirst && i === 0}>
 					<summary>
 						{item.question}
 						<span class="tg" aria-hidden="true"><Chevron width={14} /></span>
 					</summary>
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
-					<div class="ans">{@html item.answer}</div>
+					<div class="ans">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
+						{@html item.answer}
+						{#if item.more?.href}
+							<a class="more" href={item.more.href}>{item.more.text}</a>
+						{/if}
+					</div>
 				</details>
 			{/each}
 		</div>
@@ -151,6 +164,34 @@
 		padding-bottom: 26px;
 		max-width: 70ch;
 		font-size: 17px;
+	}
+	.more {
+		color: var(--blue);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	/* Dark tone (/mieterportal's .uv-fl) */
+	.faq.dark details {
+		border-top-color: rgba(255, 255, 255, 0.14);
+	}
+	.faq.dark details:last-child {
+		border-bottom-color: rgba(255, 255, 255, 0.14);
+	}
+	.faq.dark .tg {
+		border-color: rgba(255, 255, 255, 0.22);
+		transition:
+			transform 0.2s,
+			border-color 0.2s;
+	}
+	.faq.dark summary:hover .tg {
+		border-color: rgba(255, 255, 255, 0.45);
+	}
+	.faq.dark .ans {
+		color: rgba(255, 255, 255, 0.68);
+		line-height: 1.55;
+	}
+	.faq.dark .more {
+		color: var(--accent);
 	}
 
 	/* Split variant (the design's .dm-faq) */

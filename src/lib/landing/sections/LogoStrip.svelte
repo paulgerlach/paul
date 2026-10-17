@@ -12,10 +12,13 @@
 
 	let {
 		text,
+		strong,
 		placeholder = false,
 		logos = DEFAULT_LOGO_ORDER,
 	}: {
 		text: string;
+		/** A bold end of the label (/dashboard's "Hausverwaltungen in ganz Deutschland"). */
+		strong?: string;
 		/** Marks the claim as unconfirmed (go-live gate). */
 		placeholder?: boolean;
 		logos?: LogoKey[];
@@ -23,7 +26,9 @@
 </script>
 
 <section class="logos wrap" aria-label="Kunden">
-	<p data-placeholder={placeholder ? "" : undefined}>{text}</p>
+	<p data-placeholder={placeholder ? "" : undefined}>
+		{#if strong}{text} <b>{strong}</b>{:else}{text}{/if}
+	</p>
 	<div class="logo-row">
 		{#each logos as key (key)}
 			{@const logo = customerLogos[key]}

@@ -4,7 +4,8 @@
   it and the card the `#dcta-css` spacing; `action` replaces the ArrowLink
   (the signup form on /funktionen and /mieterportal, styled here for the dark
   card). `tone="glass"` is the translucent card of a dark page (/mieterportal,
-  the design's `#end-css`).
+  the design's `#end-css`). `visual` is drawn below, across the card (the
+  chart on /dashboard).
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
@@ -16,6 +17,7 @@
 		text,
 		cta,
 		action,
+		visual,
 		sectionId,
 		final = false,
 		tone = "dark",
@@ -27,6 +29,8 @@
 		cta?: { text: string; href: string };
 		/** Rendered in place of the ArrowLink. */
 		action?: Snippet;
+		/** Full width at the bottom of the card. */
+		visual?: Snippet;
 		/** Anchor of the section (`start` where it holds the page's form). */
 		sectionId?: string;
 		/** `final`: the floating CTA hides while the card is in view. */
@@ -50,6 +54,9 @@
 				{@render action()}
 			{:else if cta}
 				<ArrowLink href={cta.href} label={cta.text} />
+			{/if}
+			{#if visual}
+				<div class="visual">{@render visual()}</div>
 			{/if}
 		</div>
 	</div>
@@ -80,6 +87,9 @@
 	.cta.glass {
 		background: rgba(255, 255, 255, 0.045);
 		border: 1px solid rgba(255, 255, 255, 0.12);
+	}
+	.visual {
+		flex: 1 0 100%;
 	}
 	/* #dcta-css */
 	.cta.has-text {

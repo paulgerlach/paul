@@ -17,6 +17,7 @@
  */
 import { isExpired } from "$lib/landing/deadline/deadline";
 import {
+	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
 	ROUTE_KONTAKT,
 	ROUTE_SELBSTABRECHNUNG,
@@ -172,7 +173,7 @@ export const topics: Topic[] = [
 				question: "Wie oft sehe ich die Verbräuche?",
 				answer:
 					"Monatlich. Im Heidi Dashboard sehen Sie die Verbräuche aller Liegenschaften und erkennen Auffälligkeiten früh.",
-				more: { text: "Dashboard ansehen" },
+				more: { text: "Dashboard ansehen", href: ROUTE_DASHBOARD },
 			},
 		],
 	},
@@ -229,7 +230,7 @@ export const topics: Topic[] = [
 				question: "Was zeigt das Heidi Dashboard?",
 				answer:
 					"Verbräuche, Kosten und Benachrichtigungen aller Objekte auf einer Plattform, dazu den Status jeder Liegenschaft.",
-				more: { text: "Dashboard ansehen" },
+				more: { text: "Dashboard ansehen", href: ROUTE_DASHBOARD },
 			},
 			{
 				id: "datenverarbeitung",

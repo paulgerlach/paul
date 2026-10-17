@@ -1,5 +1,6 @@
 import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
+	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_HILFE,
@@ -50,7 +51,7 @@ export const footerGroups: LandingFooterGroup[] = [
 	{
 		title: "Plattform",
 		links: [
-			{ text: "Dashboard" },
+			{ text: "Dashboard", href: ROUTE_DASHBOARD },
 			{ text: "Demo buchen", href: DEMO_HREF },
 			{ text: "Auswertungen" },
 			{ text: "Schnittstellen" },

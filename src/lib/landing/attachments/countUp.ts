@@ -5,7 +5,8 @@ import { prefersReducedMotion } from "../motion";
  * Counts the element's text up from 0 to `to` with an ease-out curve: when it
  * scrolls into view (unless `onView` is false), and again each time the
  * pointer enters `hoverTarget` (an ancestor selector, e.g. the surrounding
- * card). On leave the final value is shown at once.
+ * card). On leave the final value is shown at once. `format` writes the
+ * number (default: rounded to an integer).
  */
 export function countUp({
 	to,
@@ -15,6 +16,7 @@ export function countUp({
 	onView = true,
 	viewDelay = 300,
 	threshold = 0.35,
+	format = (n) => String(Math.round(n)),
 }: {
 	to: number;
 	duration?: number;
@@ -26,6 +28,7 @@ export function countUp({
 	viewDelay?: number;
 	/** Share of the element that must be visible to count on view. */
 	threshold?: number;
+	format?: (n: number) => string;
 }): Attachment<HTMLElement> {
 	return (el) => {
 		if (prefersReducedMotion()) return;
@@ -36,14 +39,14 @@ export function countUp({
 			const start = performance.now() + delay;
 			const tick = (now: number) => {
 				const k = Math.min(1, Math.max(0, (now - start) / duration));
-				el.textContent = String(Math.round(to * (1 - (1 - k) ** 3)));
+				el.textContent = format(to * (1 - (1 - k) ** 3));
 				if (k < 1) frame = requestAnimationFrame(tick);
 			};
 			frame = requestAnimationFrame(tick);
 		};
 		const finish = () => {
 			cancelAnimationFrame(frame);
-			el.textContent = String(to);
+			el.textContent = format(to);
 		};
 
 		const observer = new IntersectionObserver(

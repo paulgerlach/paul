@@ -46,6 +46,18 @@ src/lib/landing/
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
 
+## Implementation notes (2026-10-17)
+
+Phases 1–3 are built, with the Vitest tests (`content.test.ts`, `daysUntilObligation` in `deadline.test.ts`), `e2e/vorgehen.e2e.ts` (11 tests) and the `svelte-migration-plan/` changes of §4.3. The e2e suite passes except the signup tests, which need the local Postgres (not running; this affects the signup test of every landing page alike). Open: the manual checks of §4.1 not ticked there, and the go-live gate §4.4. Deviations from the plan:
+
+- **Photos** are imported by the sections (`?enhanced` needs a static import), not listed in `content.ts`, which stays plain text. `Image` serves the WebP source with a width srcset (no AVIF).
+- **Auto-advance:** focus inside the block pauses it (as in 03 §3.1), it doesn't stop it; only choosing a step stops it for good (the Risks line above said "focus … stops it"). The bar is rendered only while the timer runs, so a pause or a choice removes it and a resume restarts it.
+- **Comparison:** no scroll box was needed. At 375 px the label column hyphenates ("Heizkostenab-rechnung"), and the value cells get 6 px side padding below 560. The design's empty foot row is the last row's rounded, taller cells.
+- **Wide image caption** gets `max-width: calc(100% - 48px)` (28 px below 560): in the design it runs out of the photo at 375 px.
+- **Pause listeners** (pointer, focus) are attached in the tabs' attachment, not as element handlers, since the block isn't an interactive element itself.
+- **Day count** reads `clock.today` (changes once a day), not `clock.now`.
+- **`Eyebrow`** got an `onDark` prop for later use; this page doesn't use it.
+
 ## Key decisions
 
 | Topic | Decision |

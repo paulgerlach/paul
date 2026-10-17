@@ -2,9 +2,9 @@
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/vorgehen`
+- [x] `bun run dev` → `http://localhost:5173/vorgehen`
 - [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the contact card with the signup form instead of its two buttons (README, Signup), the missing "Zum HKVO-Leitfaden" and "Mehr zu Sicherheit" links, the three feature cards without a link, the comparison as `<table>`, the steps' text box sized to the longest text
-- [ ] The landing footer on every landing page: "Vorgehen" and "Funktionen" linked, first in "Produkt"
+- [x] The landing footer on every landing page: "Vorgehen" and "Funktionen" linked, first in "Produkt" (e2e: order and targets, every footer link resolves)
 - [ ] Step tabs: auto-advance only once in view; hover and focus pause it; a click or arrow key stops it for good; Home/End; leaving the view and a background tab pause it; the bar restarts in step with the timer
 - [ ] Day count: the number matches `daysUntilObligation` for today (Berlin); with the system clock set to 31.12.2026 23:59:50 Berlin, it turns into the expired state without a reload
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (the tabs by tap, the comparison at 375 px, the floating CTA)
@@ -13,8 +13,8 @@
 - [ ] Reduced-motion emulation: no auto-advance or bar, no image zoom, no pulsing dot, instant tab swaps
 - [ ] JS disabled: every section readable (step 1 shown), the day count from the server, the signup form posts
 - [ ] A signup reaches the `leads` table with `source = "vorgehen"` and the sink with `page: "/vorgehen"`
-- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the wide image is the LCP candidate: `priority`, AVIF via `?enhanced`), Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the wide image is the LCP candidate: `priority`, 206 KB WebP), Accessibility ≥ 95, CLS ≤ 0.05
+- [x] No hydration warnings or console errors (checked at 1440, 980, 700 and 375 px)
 
 ## 4.2 Tests
 
@@ -23,7 +23,7 @@
   - 200, one `<h1>`, no site `#header`, `noindex` with a self-canonical without a trailing slash, no horizontal overflow at 375 px (the comparison table), FAQPage JSON-LD with 5 entries.
   - Nav/footer link parity with `/`, via the helper of `e2e/messdienstwechsel.e2e.ts`. The footer's "Vorgehen" and "Funktionen" resolve.
   - Every "Angebot einholen", "Demo buchen" and the header CTA go to `#start`, which is the contact card's form; the hero has no `id="start"`.
-  - Tabs with `reducedMotion: "reduce"`: step 1 selected on load; clicking step 2 shows its text and chip and sets `aria-selected`; ArrowDown from step 2 selects step 3, Home selects step 1. Without reduced motion: after ~6.5 s in view, step 2 is selected (one slow test; use `page.clock` if it keeps the timers deterministic).
+  - Tabs with `reducedMotion: "reduce"`: step 1 selected on load; clicking step 2 shows its text and chip and sets `aria-selected`; ArrowDown from step 2 selects step 3, Home selects step 1. Without reduced motion: after ~6.5 s in view, step 2 is selected (with `page.clock`).
   - The day count is a positive integer (or the expired state), and equals the server's value for the request date.
   - Signup against the local Postgres and webhook sink, as in `e2e/selbstabrechnung.e2e.ts`: `source` and `page` as in §4.1.
 

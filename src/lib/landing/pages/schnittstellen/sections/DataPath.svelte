@@ -1,8 +1,33 @@
-<!-- "Datenweg" (.si-path): Funkzähler → Fernablesung → Heidi → Ihr ERP / CRM, then what arrives (.si-what). -->
+<!--
+  "Datenweg" (.si-path): Funkzähler → Fernablesung → Heidi → Ihr ERP / CRM,
+  then what arrives (.si-what). While the path is in view the nodes light up
+  in turn every 900 ms and dots run along the links; with reduced motion
+  every node is lit and nothing moves.
+-->
 <script lang="ts">
+	import { onMount } from "svelte";
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
+	import { prefersReducedMotion } from "$lib/landing/motion";
 	import Icon from "../components/Icon.svelte";
 	import { dataPath as t } from "../content";
+
+	let lit = $state(-1);
+	let all = $state(false);
+	let running = $state(false);
+
+	onMount(() => {
+		all = prefersReducedMotion();
+	});
+
+	const cycle = loopInView({
+		run: () => {
+			running = true;
+			lit = (lit + 1) % t.nodes.length;
+			return () => (running = false);
+		},
+		every: 900,
+	});
 </script>
 
 <section class="pg-sec" aria-labelledby="fl-h">
@@ -16,10 +41,18 @@
 				{/snippet}
 			</SectionHead>
 		</div>
-		<div class="path rv" role="list" aria-label={t.label}>
+		<div
+			class={["path", "rv", running && "on"]}
+			role="list"
+			aria-label={t.label}
+			{@attach cycle}
+		>
 			{#each t.nodes as node, i (node.title)}
 				{#if i > 0}<div class="lk" aria-hidden="true"><i></i></div>{/if}
-				<div class={["node", node.kind]} role="listitem">
+				<div
+					class={["node", node.kind, (all || lit === i) && "lit"]}
+					role="listitem"
+				>
 					<span class="ni"><Icon name={node.icon} /></span>
 					<b>{node.title}</b><small>{node.sub}</small>
 				</div>
@@ -102,7 +135,7 @@
 		color: var(--muted);
 		margin-top: 4px;
 	}
-	.node:global(.lit) .ni {
+	.node.lit .ni {
 		transform: translateY(-3px);
 		border-color: var(--accent-deep);
 	}
@@ -126,13 +159,13 @@
 		background: var(--accent-deep);
 		opacity: 0;
 	}
-	.path:global(.on) .lk i {
+	.path.on .lk i {
 		animation: lk 2.4s linear infinite;
 	}
-	.path:global(.on) .lk:nth-of-type(4) i {
+	.path.on .lk:nth-of-type(4) i {
 		animation-delay: 0.8s;
 	}
-	.path:global(.on) .lk:nth-of-type(6) i {
+	.path.on .lk:nth-of-type(6) i {
 		animation-delay: 1.6s;
 	}
 	@keyframes lk {
@@ -228,7 +261,7 @@
 			left: -3px;
 			top: 0;
 		}
-		.path:global(.on) .lk i {
+		.path.on .lk i {
 			animation-name: lk-v;
 		}
 	}

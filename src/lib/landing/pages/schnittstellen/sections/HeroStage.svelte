@@ -2,72 +2,163 @@
   The hero's comparison (.si-stage): a switch between "Zwei Plattformen" (the
   provider's portal, a hand in the middle, every ERP entry "Manuell
   nachtragen") and "Mit Heidi" (the portal turns into Heidi, the line fills,
-  every entry "Synchronisiert"). The server renders "Zwei Plattformen". The
-  mode is a `data-mode` attribute (the design's `.one` class on the stage).
+  every entry "Synchronisiert"). The server renders "Zwei Plattformen"; the
+  state is a `Stage` (`stage.svelte.ts`). The mode is a `data-mode` attribute
+  (the design's `.one` class on the stage).
 -->
 <script lang="ts">
+	import { onMount } from "svelte";
+	import type { Attachment } from "svelte/attachments";
 	import Segmented from "$lib/landing/components/Segmented.svelte";
+	import { inView } from "$lib/landing/attachments/inView";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
+	import { burst } from "$lib/landing/confetti";
+	import { prefersReducedMotion } from "$lib/landing/motion";
 	import Icon from "../components/Icon.svelte";
-	import { stage as t, type Mode } from "../content";
+	import { stage as t } from "../content";
+	import { AUTO_SWITCH_MS, Stage } from "../stage.svelte";
 
-	let mode = $state<Mode>("two");
-	const status = $derived(mode === "two" ? "man" : "ok");
-	const steps = $derived(t.steps[mode]);
+	const stage = new Stage(t.erp.items.length, () => prefersReducedMotion());
+	const steps = $derived(t.steps[stage.mode]);
+
+	let wrap = $state<HTMLElement>();
+	let list = $state<HTMLElement>();
+	let canvas = $state<HTMLCanvasElement>();
+	let stopConfetti = () => {};
+	let autoTimer: ReturnType<typeof setTimeout> | undefined;
+
+	// The design's #pg-common burst: 120 pieces from the ERP list.
+	function confetti() {
+		if (!wrap || !list || !canvas) return;
+		// The canvas reaches 80 px past the stage on every side.
+		const r = wrap.getBoundingClientRect();
+		const l = list.getBoundingClientRect();
+		stopConfetti();
+		stopConfetti = burst(
+			canvas,
+			{ width: r.width + 160, height: r.height + 160 },
+			{
+				x: l.left - r.left + l.width / 2 + 80,
+				y: l.top - r.top + l.height / 2 + 80,
+				width: l.width,
+			},
+			{ count: 120, speed: [2.6, 4.2] },
+		);
+	}
+
+	onMount(() => {
+		stage.onSynced = confetti;
+		return () => {
+			stage.destroy();
+			clearTimeout(autoTimer);
+			stopConfetti();
+		};
+	});
+
+	// 3.4 s after the stage first comes into view, switch to "Mit Heidi" once
+	// (not with reduced motion); leaving the view before then cancels it.
+	const autoSwitch = inView({
+		threshold: 0.15,
+		onEnter: () => {
+			if (prefersReducedMotion() || stage.chosen || stage.celebrated) return;
+			autoTimer = setTimeout(() => stage.autoSwitch(), AUTO_SWITCH_MS);
+		},
+		onLeave: () => clearTimeout(autoTimer),
+	});
+
+	// The wire's CSS packets and dots run only while the stage is in view and
+	// the tab is visible (nothing with reduced motion).
+	const wireLoop: Attachment<HTMLElement> = (el) =>
+		loopInView({
+			run: () => {
+				el.classList.add("wire-on");
+				return () => el.classList.remove("wire-on");
+			},
+			every: 60_000,
+		})(el);
 </script>
 
-<figure class="stage rv" data-mode={mode} aria-label={t.label}>
-	<div class="top">
-		<Segmented options={t.modes} bind:value={mode} label={t.modesLabel} />
-		<span class="demo">{t.tag}</span>
-	</div>
-	<div class="board">
-		<div class="src">
-			<div class="win-h">
-				<span class="wi"><Icon name="globe" /></span>
-				<span><b>{t.portal.title}</b><small>{t.portal.sub}</small></span>
+<div class="stage-wrap" bind:this={wrap}>
+	<figure
+		class="stage rv"
+		data-mode={stage.mode}
+		aria-label={t.label}
+		{@attach autoSwitch}
+		{@attach wireLoop}
+	>
+		<div class="top">
+			<Segmented
+				options={t.modes}
+				bind:value={stage.mode}
+				label={t.modesLabel}
+			/>
+			<span class="demo">{t.tag}</span>
+		</div>
+		<div class="board">
+			<div class="src">
+				<div class="win-h">
+					<span class="wi"><Icon name="globe" /></span>
+					<span><b>{t.portal.title}</b><small>{t.portal.sub}</small></span>
+				</div>
+				<ul class="src-l">
+					{#each t.portal.files as file (file)}
+						<li><Icon name="doc" />{file}</li>
+					{/each}
+				</ul>
+				<div class="hd" aria-hidden="true">
+					<Icon name="heidi" /><b>{t.portal.synced.title}</b><small
+						>{t.portal.synced.sub}</small
+					>
+				</div>
 			</div>
-			<ul class="src-l">
-				{#each t.portal.files as file (file)}
-					<li><Icon name="doc" />{file}</li>
-				{/each}
-			</ul>
-			<div class="hd" aria-hidden="true">
-				<Icon name="heidi" /><b>{t.portal.synced.title}</b><small
-					>{t.portal.synced.sub}</small
+			<div class="wire" aria-hidden="true">
+				<span class="hand"><Icon name="person" /></span>
+				<i class="pk p1"><Icon name="doc" /></i><i class="pk p2"
+					><Icon name="doc" /></i
 				>
+				<i class="wire-fill"></i><i class="bd b1"></i><i class="bd b2"></i><i
+					class="bd b3"
+				></i>
+			</div>
+			<div class="erp">
+				<div class="win-h">
+					<span class="wi dark"><Icon name="erp" /></span>
+					<span><b>{t.erp.title}</b><small>{t.erp.sub}</small></span>
+				</div>
+				<ul class="erp-l" bind:this={list}>
+					{#each t.erp.items as item, i (item.title)}
+						<li>
+							<span class="ei"><Icon name={item.icon} /></span>
+							<span><b>{item.title}</b><small>{item.sub}</small></span>
+							<em class={["st", stage.statuses[i]]}
+								>{t.status[stage.statuses[i]]}</em
+							>
+						</li>
+					{/each}
+				</ul>
 			</div>
 		</div>
-		<div class="wire" aria-hidden="true">
-			<span class="hand"><Icon name="person" /></span>
-			<i class="pk p1"><Icon name="doc" /></i><i class="pk p2"
-				><Icon name="doc" /></i
-			>
-			<i class="wire-fill"></i><i class="bd b1"></i><i class="bd b2"></i><i
-				class="bd b3"
-			></i>
+		<div class="foot">
+			<p class="steps" aria-live="polite"><b>{steps.n}</b>{steps.text}</p>
 		</div>
-		<div class="erp">
-			<div class="win-h">
-				<span class="wi dark"><Icon name="erp" /></span>
-				<span><b>{t.erp.title}</b><small>{t.erp.sub}</small></span>
-			</div>
-			<ul class="erp-l">
-				{#each t.erp.items as item (item.title)}
-					<li>
-						<span class="ei"><Icon name={item.icon} /></span>
-						<span><b>{item.title}</b><small>{item.sub}</small></span>
-						<em class={["st", status]}>{t.status[status]}</em>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	</div>
-	<div class="foot">
-		<p class="steps" aria-live="polite"><b>{steps.n}</b>{steps.text}</p>
-	</div>
-</figure>
+	</figure>
+	<canvas class="confetti" bind:this={canvas} aria-hidden="true"></canvas>
+</div>
 
 <style>
+	.stage-wrap {
+		position: relative;
+		min-width: 0;
+	}
+	.confetti {
+		position: absolute;
+		left: -80px;
+		top: -80px;
+		width: calc(100% + 160px);
+		height: calc(100% + 160px);
+		pointer-events: none;
+		z-index: 5;
+	}
 	.stage {
 		position: relative;
 		margin: 0;

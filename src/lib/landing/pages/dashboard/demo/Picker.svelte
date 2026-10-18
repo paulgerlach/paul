@@ -38,6 +38,18 @@
 		if (focus) trigger?.focus();
 	}
 
+	// Picking an entry removes the popup with the focused button in it:
+	// send focus back to the menu's button (a click outside keeps its target).
+	let wasOpen = false;
+	$effect(() => {
+		const isOpen = open;
+		if (wasOpen && !isOpen) {
+			const active = document.activeElement;
+			if (!active || active === document.body) trigger?.focus();
+		}
+		wasOpen = isOpen;
+	});
+
 	function onkeydown(event: KeyboardEvent) {
 		if (event.key === "Escape" && open) {
 			event.stopPropagation();

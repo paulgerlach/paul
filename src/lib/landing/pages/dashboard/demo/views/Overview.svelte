@@ -67,6 +67,10 @@
 			>
 		</span>
 	{/if}
+	<label class="tg-s">
+		<input type="checkbox" role="switch" bind:checked={demo.dataView} />
+		<i aria-hidden="true"></i>Datenansicht
+	</label>
 	<span class="demo-badge">Beispieldaten</span>
 </div>
 
@@ -334,8 +338,60 @@
 		padding: 3px 10px;
 		white-space: nowrap;
 	}
-	.scope + .demo-badge {
+	.scope ~ .demo-badge {
 		margin-left: 0;
+	}
+	/* The top bar hides its switch below 820 px; it moves here (plan 03, 3A.8). */
+	.tg-s {
+		display: none;
+		align-items: center;
+		gap: 7px;
+		font-size: 12px;
+		cursor: pointer;
+		position: relative;
+		white-space: nowrap;
+	}
+	.tg-s input {
+		position: absolute;
+		opacity: 0;
+		width: 30px;
+		height: 18px;
+		margin: 0;
+	}
+	.tg-s i {
+		width: 30px;
+		height: 18px;
+		border-radius: 999px;
+		background: #e3e6e3;
+		position: relative;
+		box-shadow: inset 0 0 0 1px #d5dad7;
+	}
+	.tg-s i::after {
+		content: "";
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		background: #fff;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+		transition: transform 0.25s;
+	}
+	.tg-s input:checked + i {
+		background: var(--accent);
+	}
+	.tg-s input:checked + i::after {
+		transform: translateX(12px);
+	}
+	.tg-s input:focus-visible + i {
+		outline: 2px solid var(--accent-deep);
+		outline-offset: 2px;
+	}
+	@media (max-width: 820px) {
+		.tg-s {
+			display: inline-flex;
+		}
 	}
 	.grid {
 		display: grid;

@@ -113,6 +113,10 @@
 	details[open] summary.row {
 		padding-bottom: 18px;
 	}
+	/* Inside the row: the card's overflow would clip it. */
+	summary:focus-visible {
+		outline-offset: -2px;
+	}
 	summary::-webkit-details-marker {
 		display: none;
 	}

@@ -3,15 +3,46 @@
   is shared with, and the button. Example addresses only; nothing is sent.
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import { share } from "../../content";
 
 	let typed = $state("");
 	let pressed = $state(false);
 	/** Invitees shown under "Sie" (the server shows the first one). */
 	let people = $state([{ id: 0, invitee: share.invitees[0], fresh: false }]);
+	let next = 1;
+	let lastId = 0;
+
+	function add() {
+		const invitee = share.invitees[next % share.invitees.length];
+		next++;
+		people = [...people, { id: ++lastId, invitee, fresh: true }].slice(-2);
+	}
+
+	/** One pass: type the next address, press the button, add the invitee. */
+	function run() {
+		const text = share.invitees[next % share.invitees.length][0];
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
+		typed = "";
+		for (let i = 1; i <= text.length; i++)
+			at(i * 60, () => (typed = text.slice(0, i)));
+		const end = text.length * 60;
+		at(end + 600, () => (pressed = true));
+		at(end + 760, () => {
+			pressed = false;
+			typed = "";
+			add();
+		});
+		return () => {
+			for (const t of timers) clearTimeout(t);
+			typed = "";
+			pressed = false;
+		};
+	}
 </script>
 
-<div class="sh">
+<div class="sh" {@attach loopInView({ run, every: 5600, delay: 500 })}>
 	<div class="in" aria-hidden="true">
 		<span class="mail">{typed}</span>
 		<span class="perm">{share.invite}</span>
@@ -28,7 +59,7 @@
 			</li>
 		{/each}
 	</ul>
-	<button class={["go", pressed && "press"]} type="button"
+	<button class={["go", pressed && "press"]} type="button" onclick={add}
 		>{share.button}</button
 	>
 </div>

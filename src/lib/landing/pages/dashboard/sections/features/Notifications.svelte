@@ -3,6 +3,7 @@
   the current one, which rotate one position at a time (plan 03, 3B.4).
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Icon from "../../components/Icon.svelte";
 	import { notifications } from "../../content";
 
@@ -17,7 +18,17 @@
 	}
 </script>
 
-<div class="ins" aria-hidden="true">
+<div
+	class="ins"
+	aria-hidden="true"
+	{@attach loopInView({
+		run: () => {
+			front = (front + 1) % n;
+		},
+		every: 2600,
+		delay: 2600,
+	})}
+>
 	{#each notifications as item, i (i)}
 		<div class={["c", position(i)]}>
 			<span class={["ni", item.tone]}

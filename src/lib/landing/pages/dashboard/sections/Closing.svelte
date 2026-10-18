@@ -9,9 +9,12 @@
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
 	import SignupForm from "$lib/landing/components/SignupForm.svelte";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
+	import { tweenNumber } from "$lib/landing/motion";
 	import CtaCard from "$lib/landing/sections/CtaCard.svelte";
 	import { stepCurve } from "../chart";
 	import { closing } from "../content";
+	import { enterView } from "../enterView";
 
 	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
 
@@ -22,6 +25,26 @@
 	/** Share of the width drawn (the grow-in; all on the server). */
 	let drawn = $state(1);
 	const line = $derived(stepCurve(current, W));
+
+	/** Grows in from the left once, on first view (plan 03, 3B.8). */
+	const growIn = enterView({
+		prepare: () => (drawn = 0),
+		play: () => tweenNumber(0, 1, 2000, (v) => (drawn = v)),
+	});
+
+	/** Then drifts to new nearby values every 3.2 s while in view. */
+	function drift() {
+		const fromA = current.slice();
+		const fromB = previous.slice();
+		const { current: a, previous: b } = closing.chart;
+		const toA = a.map((v) => v + (Math.random() - 0.5) * 14);
+		toA[toA.length - 1] = a[a.length - 1] - Math.random() * 10;
+		const toB = b.map((v) => v + (Math.random() - 0.5) * 8);
+		return tweenNumber(0, 1, 1500, (k) => {
+			current = fromA.map((v, i) => v + (toA[i] - v) * k);
+			previous = fromB.map((v, i) => v + (toB[i] - v) * k);
+		});
+	}
 </script>
 
 <div class="closing">
@@ -42,7 +65,12 @@
 			/>
 		{/snippet}
 		{#snippet visual()}
-			<div class="vis" aria-hidden="true">
+			<div
+				class="vis"
+				aria-hidden="true"
+				{@attach growIn}
+				{@attach loopInView({ run: drift, every: 3200, delay: 2200 })}
+			>
 				<svg viewBox="0 0 {W} {H}" preserveAspectRatio="none">
 					<defs>
 						<linearGradient id="db-cg" x1="0" x2="0" y1="0" y2="1">

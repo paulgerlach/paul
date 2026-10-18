@@ -3,6 +3,9 @@
   the button that creates their statements, the hint and the toast.
 -->
 <script lang="ts">
+	import { onDestroy } from "svelte";
+	import { burst } from "$lib/landing/confetti";
+	import { prefersReducedMotion } from "$lib/landing/motion";
 	import Icon from "../../components/Icon.svelte";
 	import { billingRun } from "../../content";
 
@@ -10,6 +13,51 @@
 	let statuses = $state<Status[]>(billingRun.properties.map(() => "ready"));
 	let finished = $state(false);
 	let running = $state(false);
+	let canvas = $state<HTMLCanvasElement>();
+	let timers: ReturnType<typeof setTimeout>[] = [];
+	let stopConfetti = () => {};
+	onDestroy(() => {
+		for (const t of timers) clearTimeout(t);
+		stopConfetti();
+	});
+
+	/** The design's sequence: each row "Wird erstellt", then "Erstellt"; a second click resets. */
+	function onclick(event: MouseEvent) {
+		if (finished) {
+			statuses = statuses.map(() => "ready");
+			finished = false;
+			return;
+		}
+		const button = event.currentTarget as HTMLElement;
+		const finish = () => {
+			statuses = statuses.map(() => "done");
+			running = false;
+			finished = true;
+			if (!canvas) return;
+			const r = canvas.getBoundingClientRect();
+			const b = button.getBoundingClientRect();
+			stopConfetti();
+			stopConfetti = burst(
+				canvas,
+				{ width: r.width, height: r.height },
+				{
+					x: b.left - r.left + b.width / 2,
+					y: b.top - r.top + 6,
+					width: b.width,
+				},
+				{ count: 80 },
+			);
+		};
+		if (prefersReducedMotion()) return finish();
+		running = true;
+		const n = statuses.length;
+		timers = [];
+		for (let i = 0; i < n; i++) {
+			timers.push(setTimeout(() => (statuses[i] = "working"), i * 380));
+			timers.push(setTimeout(() => (statuses[i] = "done"), i * 380 + 900));
+		}
+		timers.push(setTimeout(finish, n * 380 + 1000));
+	}
 </script>
 
 <div class="ab">
@@ -21,7 +69,7 @@
 		</div>
 	{/each}
 	<div class="ft">
-		<button class="go" type="button" disabled={running}>
+		<button class="go" type="button" disabled={running} {onclick}>
 			<Icon name="bolt" />{finished ? billingRun.reset : billingRun.button}
 		</button>
 		<span class="hint" role="status">
@@ -34,9 +82,19 @@
 			<span class="okb"><Icon name="check" /></span>{billingRun.toast}
 		</span>
 	</div>
+	<canvas class="cf" bind:this={canvas} aria-hidden="true"></canvas>
 </div>
 
 <style>
+	/* Over the demo area (`.vs` is positioned), like the design's `.ab-cf`. */
+	.cf {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 3;
+	}
 	.ab {
 		width: min(520px, 100%);
 		display: grid;

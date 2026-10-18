@@ -3,6 +3,7 @@
   the three newest objects below. Illustrative, so hidden from assistive tech.
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Icon from "../../components/Icon.svelte";
 	import { addObject } from "../../content";
 
@@ -14,9 +15,39 @@
 	]);
 	let typed = $state("");
 	let pressed = $state(false);
+	let next = 2;
+	let lastId = 1;
+
+	/** One pass: type the next address, press the button, add the row. */
+	function run() {
+		const entry = entries[next % entries.length];
+		const text = `${entry[0]}, ${entry[1]}`;
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
+		typed = "";
+		for (let i = 1; i <= text.length; i++)
+			at(i * 80, () => (typed = text.slice(0, i)));
+		const end = text.length * 80;
+		at(end + 500, () => (pressed = true));
+		at(end + 680, () => {
+			pressed = false;
+			typed = "";
+			rows = [{ id: ++lastId, entry, fresh: true }, ...rows].slice(0, 3);
+			next++;
+		});
+		return () => {
+			for (const t of timers) clearTimeout(t);
+			typed = "";
+			pressed = false;
+		};
+	}
 </script>
 
-<div class="add" aria-hidden="true">
+<div
+	class="add"
+	aria-hidden="true"
+	{@attach loopInView({ run, every: 4600, delay: 600 })}
+>
 	<div class="in">
 		<div class="tx">
 			{#if typed}{typed}{:else}<span class="ph">{addObject.placeholder}</span

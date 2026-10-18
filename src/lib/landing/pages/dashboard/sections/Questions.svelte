@@ -5,16 +5,26 @@
   3B.7; open question 4).
 -->
 <script lang="ts">
+	import { onMount } from "svelte";
+	import { inView } from "$lib/landing/attachments/inView";
+	import { prefersReducedMotion } from "$lib/landing/motion";
 	import Icon from "../components/Icon.svelte";
 	import { type Question, questions } from "../content";
 
 	let running = $state(false);
 	let paused = $state(false);
+	/** No pause button without motion (reduced motion, no JS). */
+	let moving = $state(false);
+	onMount(() => (moving = !prefersReducedMotion()));
 </script>
 
 <section
 	class={["sec mq-sec", running && !paused && "run"]}
 	aria-labelledby="mq-h"
+	{@attach inView({
+		onEnter: () => (running = true),
+		onLeave: () => (running = false),
+	})}
 >
 	<div class="wrap">
 		<h2 class="rv" id="mq-h">{questions.h2}</h2>
@@ -29,6 +39,17 @@
 			</div>
 		{/each}
 	</div>
+	{#if moving}
+		<div class="wrap ctl">
+			<button
+				type="button"
+				class="pause"
+				aria-pressed={paused}
+				onclick={() => (paused = !paused)}
+				>{paused ? questions.play : questions.pause}</button
+			>
+		</div>
+	{/if}
 </section>
 
 {#snippet items(list: Question[])}
@@ -95,6 +116,23 @@
 		to {
 			transform: translateX(-50%);
 		}
+	}
+	.ctl {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 14px;
+	}
+	.pause {
+		border: 1px solid var(--hair);
+		background: #fff;
+		border-radius: 999px;
+		padding: 5px 12px;
+		font-size: 12.5px;
+		color: var(--muted);
+		cursor: pointer;
+	}
+	.pause:hover {
+		color: var(--ink);
 	}
 	ul {
 		display: flex;

@@ -4,11 +4,13 @@
 -->
 <script lang="ts">
 	import Segmented from "$lib/landing/components/Segmented.svelte";
+	import { tweenNumber } from "$lib/landing/motion";
 	import { de } from "../chart";
 	import BarScrub from "../components/BarScrub.svelte";
 	import Icon from "../components/Icon.svelte";
 	import Pill from "../components/Pill.svelte";
 	import { kpis } from "../content";
+	import { enterView } from "../enterView";
 	import {
 		co2,
 		costs,
@@ -51,9 +53,28 @@
 	let co2Month = $state(-1);
 	const co2Values = $derived(co2Mode === "cum" ? co2.cumulative : co2.monthly);
 	const co2Max = $derived(Math.max(...co2Values));
+	/** The total while it counts up on first view. */
+	let co2Counting = $state<number | null>(null);
 	const co2Figure = $derived(
-		co2Month < 0 ? de(co2.total, 1) : de(co2Values[co2Month], 2),
+		co2Month < 0 ? de(co2Counting ?? co2.total, 1) : de(co2Values[co2Month], 2),
 	);
+	const countCo2 = enterView({
+		threshold: 0.35,
+		prepare: () => (co2Counting = 0),
+		play: () =>
+			tweenNumber(0, co2.total, 1400, (v) => {
+				co2Counting = v >= co2.total ? null : v;
+			}),
+	});
+
+	// The sparkline draws in on first view.
+	let sparkState = $state<"end" | "start" | "run">("end");
+	const drawSpark = enterView({
+		prepare: () => (sparkState = "start"),
+		play: () => {
+			sparkState = "run";
+		},
+	});
 	const co2Caption = $derived(
 		co2Month < 0
 			? sv.caption
@@ -78,7 +99,11 @@
 							<span class="num">{usage.value}<small>{usage.unit}</small></span>
 							<span class="delta">{usage.delta}</span>
 						</div>
-						<div class="spark" aria-hidden="true">
+						<div
+							class={["spark", sparkState]}
+							aria-hidden="true"
+							{@attach drawSpark}
+						>
 							<svg viewBox="0 0 300 120" preserveAspectRatio="none">
 								<defs>
 									<linearGradient id="kpi-spark-g" x1="0" x2="0" y1="0" y2="1">
@@ -152,7 +177,8 @@
 					<div class="vz ix">
 						<div class="top">
 							<span class="num"
-								><span class="co2">{co2Figure}</span><small>{sv.unit}</small
+								><span class="co2" {@attach countCo2}>{co2Figure}</span><small
+									>{sv.unit}</small
 								></span
 							>
 							<span class="cap">{co2Caption}</span>
@@ -307,6 +333,20 @@
 		stroke: var(--accent-deep);
 		stroke-width: 2.2;
 		vector-effect: non-scaling-stroke;
+	}
+	.spark.start svg {
+		clip-path: inset(0 100% 0 0);
+	}
+	.spark.run svg {
+		animation: spark-draw 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s both;
+	}
+	@keyframes spark-draw {
+		from {
+			clip-path: inset(0 100% 0 0);
+		}
+		to {
+			clip-path: inset(0 0 0 0);
+		}
 	}
 	.top {
 		display: flex;

@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import { enterView } from "../enterView";
 
 	let {
 		values,
@@ -31,15 +32,75 @@
 		announce: string;
 		tip: Snippet<[index: number]>;
 	} = $props();
+
+	/** Bars at full height (server); 0 until the card scrolls in. */
+	let grown = $state(true);
+	let staggered = $state(false);
+	let chart = $state<HTMLElement>();
+
+	const at = (clientX: number) => {
+		if (!chart) return -1;
+		const r = chart.getBoundingClientRect();
+		const i = Math.floor(((clientX - r.left) / r.width) * values.length);
+		return Math.max(0, Math.min(values.length - 1, i));
+	};
+
+	function onkeydown(event: KeyboardEvent) {
+		const n = values.length;
+		const moves: Record<string, () => number> = {
+			ArrowRight: () => (active < 0 ? 0 : Math.min(n - 1, active + 1)),
+			ArrowLeft: () => (active < 0 ? n - 1 : Math.max(0, active - 1)),
+			Home: () => 0,
+			End: () => n - 1,
+			Escape: () => -1,
+		};
+		const move = moves[event.key];
+		if (!move) return;
+		event.preventDefault();
+		active = move();
+	}
+
+	function onDocumentDown(event: PointerEvent) {
+		if (active > -1 && chart && !chart.contains(event.target as Node))
+			active = -1;
+	}
 </script>
 
-<div class={["scrub", tone]}>
-	<div class="chart" role="group" aria-label={label}>
+<svelte:document onpointerdown={onDocumentDown} />
+
+<div
+	class={["scrub", tone, staggered && "stagger"]}
+	{@attach enterView({
+		prepare: () => (grown = false),
+		play: () => {
+			staggered = true;
+			grown = true;
+			const t = setTimeout(() => (staggered = false), 900);
+			return () => clearTimeout(t);
+		},
+	})}
+>
+	<!-- A focusable group: arrows pick a month, announced by the live line below. -->
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+	<div
+		class="chart"
+		role="group"
+		aria-label={label}
+		tabindex="0"
+		bind:this={chart}
+		{onkeydown}
+		onpointermove={(e) => (active = at(e.clientX))}
+		onpointerdown={(e) => (active = at(e.clientX))}
+		onpointerleave={(e) => {
+			if (e.pointerType === "mouse") active = -1;
+		}}
+		onblur={() => (active = -1)}
+	>
 		<div class="bars" aria-hidden="true">
 			{#each values as value, i (i)}
 				<i
 					class={[i === active && "on", active > -1 && i !== active && "dim"]}
-					style:height="{Math.max(3, (value / max) * 100)}%"
+					style:height="{grown ? Math.max(3, (value / max) * 100) : 0}%"
 					style:--i={i}
 					><s
 						style:height="{parts
@@ -110,6 +171,10 @@
 			height 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
 			background 0.2s,
 			opacity 0.2s;
+	}
+	.stagger .bars i {
+		transition-duration: 0.9s;
+		transition-delay: calc(var(--i) * 45ms);
 	}
 	.bars s {
 		display: block;

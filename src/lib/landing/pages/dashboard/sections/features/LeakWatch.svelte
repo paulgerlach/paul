@@ -4,6 +4,7 @@
   (plan 01 §1.3); the server shows it complete with the badge.
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import { leak } from "../../content";
 
 	const W = 560;
@@ -21,63 +22,165 @@
 	/** Days revealed by the scan (all on the server). */
 	let shown = $state(leak.values.length);
 	let alert = $state(true);
+	/** The scan line's x (null: not scanning) and the fade before a new pass. */
+	let scanX = $state<number | null>(null);
+	let fading = $state(false);
+	let clipW = $state(W);
+	const X0 = x(0);
+	const X1 = x(leak.values.length - 1);
+	const scanDay = $derived(
+		scanX === null
+			? 1
+			: Math.max(
+					1,
+					Math.min(14, Math.round(((scanX - X0) / (X1 - X0)) * 13) + 1),
+				),
+	);
+	const scanAlert = $derived(
+		scanX !== null &&
+			scanDay >= leak.flagged[0] &&
+			scanDay <= leak.flagged[leak.flagged.length - 1],
+	);
+
+	/** One pass (plan 03, 3B.4): sweep 4.2 s, hold 5.2 s, fade 0.7 s. */
+	function run() {
+		let frame = 0;
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		fading = false;
+		alert = false;
+		shown = 0;
+		clipW = 0;
+		scanX = X0 - 6;
+		const t0 = performance.now();
+		const tick = (now: number) => {
+			const p = Math.min(1, (now - t0) / 4200);
+			const e = p < 0.5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2;
+			const xx = X0 - 6 + (X1 - X0 + 12) * e;
+			scanX = xx;
+			clipW = xx;
+			shown = points.filter(([px]) => px <= xx + 1).length;
+			if (
+				!alert &&
+				points.some(([px], i) => px <= xx + 1 && flagged.has(i + 1))
+			)
+				alert = true;
+			if (p < 1) frame = requestAnimationFrame(tick);
+			else {
+				scanX = null;
+				clipW = W;
+				timers.push(setTimeout(() => (fading = true), 5200));
+			}
+		};
+		frame = requestAnimationFrame(tick);
+		return () => {
+			cancelAnimationFrame(frame);
+			for (const t of timers) clearTimeout(t);
+			scanX = null;
+			clipW = W;
+			shown = leak.values.length;
+			alert = true;
+			fading = false;
+		};
+	}
+
+	let hovered = $state<number | null>(null);
 </script>
 
-<div class={["lkw", alert && "alert"]}>
+<div
+	class={["lkw", alert && "alert", fading && "fade"]}
+	{@attach loopInView({ run, every: 10100, threshold: 0.35, delay: 300 })}
+>
 	<div class="h">
 		<span class="l">{leak.label} <em class="lg"><i></i>{leak.legend}</em></span>
 		<span class="badge-l"><i></i>{leak.badge}</span>
 	</div>
-	<svg
-		class="svg"
-		viewBox="0 0 {W} 236"
-		role="img"
-		aria-label={leak.chartLabel}
-	>
-		<defs>
-			<linearGradient id="lk-ag" x1="0" x2="0" y1="0" y2="1">
-				<stop offset="0" stop-color="#8E9DD4" stop-opacity=".22" />
-				<stop offset="1" stop-color="#8E9DD4" stop-opacity="0" />
-			</linearGradient>
-		</defs>
-		<rect
-			class="band"
-			x={f(bandX)}
-			y="12"
-			width={f(bandW)}
-			height="220"
-			rx="12"
-		/>
-		{#each leak.grid as g (g)}
-			<line x1="40" x2="548" y1={f(y(g))} y2={f(y(g))} class="g" />
-			<text x="34" y={f(y(g) + 4)} class="t" text-anchor="end">{g} l</text>
-		{/each}
-		<line x1="40" x2="548" y1="200" y2="200" class="base" />
-		<line
-			class="n"
-			x1="40"
-			x2="548"
-			y1={f(y(leak.baseline))}
-			y2={f(y(leak.baseline))}
-		/>
-		<g class="data">
-			<path class="area" d={area} />
-			<polyline class="line" points={line} />
-		</g>
-		{#each points as [px, py], i (i)}
-			<circle
-				class={["d", flagged.has(i + 1) && "a", i < shown && "on"]}
-				cx={f(px)}
-				cy={f(py)}
-				r={flagged.has(i + 1) ? 2.8 : 2.3}
+	<div class="pw">
+		<svg
+			class="svg"
+			viewBox="0 0 {W} 236"
+			role="img"
+			aria-label={leak.chartLabel}
+		>
+			<defs>
+				<linearGradient id="lk-ag" x1="0" x2="0" y1="0" y2="1">
+					<stop offset="0" stop-color="#8E9DD4" stop-opacity=".22" />
+					<stop offset="1" stop-color="#8E9DD4" stop-opacity="0" />
+				</linearGradient>
+				<clipPath id="lk-cp"
+					><rect x="0" y="0" width={clipW} height="236" /></clipPath
+				>
+			</defs>
+			<rect
+				class="band"
+				x={f(bandX)}
+				y="12"
+				width={f(bandW)}
+				height="220"
+				rx="12"
 			/>
-		{/each}
-		{#each leak.xLabels as day (day)}
-			<text x={f(x(day - 1))} y="226" class="t" text-anchor="middle"
-				>{leak.day} {day}</text
+			{#each leak.grid as g (g)}
+				<line x1="40" x2="548" y1={f(y(g))} y2={f(y(g))} class="g" />
+				<text x="34" y={f(y(g) + 4)} class="t" text-anchor="end">{g} l</text>
+			{/each}
+			<line x1="40" x2="548" y1="200" y2="200" class="base" />
+			<line
+				class="n"
+				x1="40"
+				x2="548"
+				y1={f(y(leak.baseline))}
+				y2={f(y(leak.baseline))}
+			/>
+			<g class="data" clip-path="url(#lk-cp)">
+				<path class="area" d={area} />
+				<polyline class="line" points={line} />
+			</g>
+			{#if scanX !== null}
+				<g
+					class={["scan", scanAlert && "al"]}
+					transform="translate({f(scanX)} 0)"
+				>
+					<line x1="0" x2="0" y1="12" y2="200" />
+					<rect class="sl-bg" x="-36" y="-12" width="72" height="20" rx="10" />
+					<text class="sl" x="0" y="2" text-anchor="middle"
+						>{leak.day} {scanDay}</text
+					>
+				</g>
+			{/if}
+			{#each points as [px, py], i (i)}
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<circle
+					onpointerenter={() => (hovered = i < shown ? i : null)}
+					onpointerleave={() => (hovered = null)}
+					class={["d", flagged.has(i + 1) && "a", i < shown && "on"]}
+					cx={f(px)}
+					cy={f(py)}
+					r={flagged.has(i + 1) ? 2.8 : 2.3}
+				/>
+			{/each}
+			{#each leak.xLabels as day (day)}
+				<text x={f(x(day - 1))} y="226" class="t" text-anchor="middle"
+					>{leak.day} {day}</text
+				>
+			{/each}
+		</svg>
+		{#if hovered !== null}
+			{@const [px, py] = points[hovered]}
+			<div
+				class={["tip", flagged.has(hovered + 1) && "al"]}
+				style:left="{(px / W) * 100}%"
+				style:top="{(py / 236) * 100}%"
+				aria-hidden="true"
 			>
-		{/each}
-	</svg>
+				{leak.values[hovered]}
+				{leak.litres}<small
+					>{leak.day}
+					{hovered + 1}{flagged.has(hovered + 1)
+						? ` · ${leak.flaggedTip}`
+						: ""}</small
+				>
+			</div>
+		{/if}
+	</div>
 	<p class="foot">{leak.footnote}</p>
 </div>
 
@@ -152,10 +255,14 @@
 			box-shadow: 0 0 0 8px rgba(181, 101, 107, 0);
 		}
 	}
+	.pw {
+		position: relative;
+		margin-top: 14px;
+	}
 	.svg {
+		display: block;
 		width: 100%;
 		height: auto;
-		margin-top: 14px;
 		overflow: visible;
 	}
 	.g {
@@ -210,6 +317,69 @@
 	}
 	.d.a.on {
 		stroke: #b5656b;
+	}
+	.fade .d,
+	.fade .line,
+	.fade .area,
+	.fade .band {
+		transition: opacity 0.5s;
+	}
+	.fade .d {
+		opacity: 0;
+	}
+	.scan line {
+		stroke: #1e322d;
+		stroke-width: 1.2;
+		stroke-dasharray: 3 4;
+		opacity: 0.35;
+	}
+	.sl-bg {
+		fill: #1e322d;
+	}
+	.al .sl-bg {
+		fill: #b5656b;
+	}
+	.sl {
+		font-size: 11px;
+		font-weight: 600;
+		fill: #fff;
+	}
+	.d {
+		cursor: pointer;
+	}
+	.d.a.on {
+		animation: lk-hit 1.8s ease-in-out infinite;
+	}
+	@keyframes lk-hit {
+		0%,
+		100% {
+			stroke-width: 1.6;
+		}
+		50% {
+			stroke-width: 2.2;
+		}
+	}
+	.tip {
+		position: absolute;
+		pointer-events: none;
+		background: #1e322d;
+		color: #fff;
+		font-size: 12px;
+		font-weight: 600;
+		border-radius: 8px;
+		padding: 6px 9px;
+		white-space: nowrap;
+		transform: translate(-50%, calc(-100% - 12px));
+		z-index: 3;
+	}
+	.tip small {
+		display: block;
+		font-weight: 400;
+		opacity: 0.75;
+		font-size: 11px;
+	}
+	.tip.al {
+		background: #a4545b;
 	}
 	.foot {
 		font-size: 13.5px;

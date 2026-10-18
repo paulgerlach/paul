@@ -12,6 +12,7 @@
 	import p6 from "$lib/assets/landing/dashboard/property-6.jpg";
 	import p7 from "$lib/assets/landing/dashboard/property-7.jpg";
 	import Icon from "../components/Icon.svelte";
+	import { enterView } from "../enterView";
 	import Pill from "../components/Pill.svelte";
 	import { recommendations as rec } from "../content";
 	import {
@@ -28,6 +29,25 @@
 	let query = $state("");
 	/** Rows checked so far (all on the server). */
 	let checked = $state(rec.rows.length);
+	/** Rows shown so far (they come in, then get checked). */
+	let entered = $state(rec.rows.length);
+
+	/** The check run, once on first view (plan 03, 3B.6). */
+	const checkRun = enterView({
+		prepare: () => {
+			checked = 0;
+			entered = 0;
+		},
+		play: () => {
+			const timers = rec.rows.flatMap((_, i) => [
+				setTimeout(() => (entered = Math.max(entered, i + 1)), i * 140),
+				setTimeout(() => (checked = Math.max(checked, i + 1)), 700 + i * 420),
+			]);
+			return () => {
+				for (const t of timers) clearTimeout(t);
+			};
+		},
+	});
 	const visible = $derived(
 		new Set(filterRecommendations(rec.rows, filter, query)),
 	);
@@ -46,7 +66,7 @@
 		<p class="db-lead rv">{rec.lead}</p>
 	</div>
 	<div class="wrap">
-		<div class="pl rv">
+		<div class="pl rv" {@attach checkRun}>
 			<div class="top">
 				<div class="f" role="group" aria-label={rec.filterLabel}>
 					{#each FILTERS as key (key)}
@@ -75,7 +95,15 @@
 			<ul class="l">
 				{#each rec.rows as row, i (row.name)}
 					{@const info = rec.info[row.kind]}
-					<li class={["r", i < checked && "ok in"]} hidden={!visible.has(row)}>
+					<li
+						class={[
+							"r",
+							i < entered && "in",
+							i < checked && "ok",
+							i < entered && i >= checked && "scan",
+						]}
+						hidden={!visible.has(row)}
+					>
 						<div class="n">
 							<span class="ph"
 								><img
@@ -261,6 +289,9 @@
 			transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
 			background 0.4s,
 			border-color 0.4s;
+	}
+	.r.scan {
+		background: #fafbfa;
 	}
 	.r.in {
 		opacity: 1;

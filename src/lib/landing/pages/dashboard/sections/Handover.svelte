@@ -4,6 +4,7 @@
   from assistive tech; the figure's caption says what happens.
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import HeidiMark from "$lib/landing/components/icons/HeidiMark.svelte";
 	import Icon from "../components/Icon.svelte";
 	import { type HandoverItem, integration } from "../content";
@@ -27,13 +28,98 @@
 	);
 	let count = $state(h.start);
 	let syncing = $state(false);
+	let bump = $state(0);
+	let next = 3;
+	let lastId = 0;
+	let figure = $state<HTMLElement>();
+	let fly = $state<HTMLElement>();
+	let flying = $state<HandoverItem | null>(null);
+
+	/** One transfer (plan 03, 3B.5): mark, fly to the table, insert, age. */
+	function run() {
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		let animation: Animation | undefined;
+		const card = queue[0];
+		card.moving = true;
+		syncing = true;
+		timers.push(
+			setTimeout(() => {
+				const from = figure?.querySelector<HTMLElement>(".q .d");
+				const to = figure?.querySelector<HTMLElement>(".tb");
+				if (figure && from && to && fly) {
+					const f = figure.getBoundingClientRect();
+					const a = from.getBoundingClientRect();
+					const t = to.getBoundingClientRect();
+					const start = `translate(${a.left - f.left}px, ${a.top - f.top}px)`;
+					const end = `translate(${t.left - f.left}px, ${t.top - f.top}px)`;
+					flying = card.item;
+					animation = fly.animate(
+						[
+							{ transform: start, width: `${a.width}px`, opacity: 1 },
+							{
+								transform: end,
+								width: `${t.width}px`,
+								opacity: 1,
+								offset: 0.83,
+							},
+							{ transform: end, width: `${t.width}px`, opacity: 0 },
+						],
+						{ duration: 900, easing: "cubic-bezier(.65,0,.35,1)" },
+					);
+				}
+				queue = queue.slice(1);
+				timers.push(
+					setTimeout(() => {
+						flying = null;
+						rows = [
+							{ id: ++lastId, item: card.item, time: h.now, fresh: true },
+							...rows.map((row, i) => ({
+								...row,
+								fresh: false,
+								time:
+									i === 0
+										? h.oneMinute
+										: h.times[Math.min(i - 1, h.times.length - 1)],
+							})),
+						].slice(0, 5);
+						count++;
+						bump++;
+						syncing = false;
+						queue = [
+							...queue,
+							{
+								id: 100 + next,
+								item: items[next % items.length],
+								moving: false,
+							},
+						];
+						next++;
+					}, 880),
+				);
+			}, 650),
+		);
+		return () => {
+			for (const t of timers) clearTimeout(t);
+			animation?.cancel();
+			flying = null;
+			syncing = false;
+			for (const q of queue) q.moving = false;
+		};
+	}
 </script>
 
-<figure class="sx rv">
+<figure
+	class="sx rv"
+	bind:this={figure}
+	{@attach loopInView({ run, every: 3400, delay: 600 })}
+>
 	<div aria-hidden="true">
 		<div class="hd">
 			<span class="live"><i></i>{h.live}</span>
-			<span class="c">{h.counter} <b>{count}</b></span>
+			<span class="c"
+				>{h.counter}
+				{#key bump}<b class={[bump > 0 && "bump"]}>{count}</b>{/key}</span
+			>
 		</div>
 		<div class="g">
 			<div class="a">
@@ -87,6 +173,12 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="fly" bind:this={fly} aria-hidden="true">
+		{#if flying}
+			<span class="di"><Icon name={flying.icon} /></span>
+			<span class="dt"><b>{flying.title}</b><small>{flying.place}</small></span>
+		{/if}
 	</div>
 	<figcaption class="ft">
 		<span class="bd">{h.badge}</span>{h.caption}
@@ -486,6 +578,39 @@
 			opacity: 0;
 			transform: translateY(-6px);
 		}
+	}
+	.c b.bump {
+		animation: sxb 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	@keyframes sxb {
+		40% {
+			transform: translateY(-3px);
+			color: #2f9e44;
+		}
+	}
+	.fly {
+		position: absolute;
+		left: 0;
+		top: 0;
+		opacity: 0;
+		pointer-events: none;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		background: #fff;
+		color: var(--ink);
+		border: 1px solid #cdebd0;
+		border-radius: 10px;
+		padding: 9px 10px;
+		box-shadow: 0 14px 28px -12px rgba(30, 50, 45, 0.35);
+	}
+	.fly .di {
+		background: #e3f3e4;
+		color: #2f7a3c;
+	}
+	.fly .dt small {
+		color: var(--muted);
 	}
 	.ft {
 		display: flex;

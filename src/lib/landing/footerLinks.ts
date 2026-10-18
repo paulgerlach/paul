@@ -11,6 +11,7 @@ import {
 	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
+	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_VORGEHEN,
 } from "$lib/routes";
 import { DEMO_HREF } from "./cta";
@@ -45,7 +46,10 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
 			{ text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG },
-			{ text: "Verbrauchsinformation (uVI)", href: ROUTE_FUNKTIONEN },
+			{
+				text: "Verbrauchsinformation (uVI)",
+				href: ROUTE_VERBRAUCHSINFORMATION,
+			},
 			{ text: "Mieterportal", href: ROUTE_MIETERPORTAL },
 		],
 	},

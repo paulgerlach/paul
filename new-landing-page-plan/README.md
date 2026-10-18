@@ -1,116 +1,125 @@
-# Page `/sicherheit` ("Sicherheit & Datenschutz"): plan
+# Page `/verbrauchsinformation` ("Verbrauchsinformation (uVI)"): plan
 
-A new page on where Heidi keeps its customers' data. Under the headline "Ihre Daten bleiben in Deutschland." sits a map of Germany: data packets travel from 14 properties to one server in the middle, a log line changes with each arrival ("Zählerstand übertragen", "Rechnung gespeichert" …), and a badge says "Speicherort Deutschland". Then: three principles ("Deutsche Server. Deutsche Vorgaben. Ein deutsches Unternehmen.") whose icons play once in turn; "Der Weg Ihrer Daten" (Funkzähler → Gateway → Heidi-Server → Dashboard, Heizkostenabrechnung, uVI, inside a dashed "Server in Deutschland" frame that lights up step by step); "Welche Daten wo liegen" (a table of six kinds of data, each row opening to a short explanation, every location "Deutschland"); an FAQ with five questions; the dark closing card "Messdienst mit Daten in Deutschland."; the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
+A new dark page on the unterjährige Verbrauchsinformation (uVI): the monthly consumption statement every tenant with remotely readable meters must get (§ 6a HeizkostenV) and that Heidi produces automatically. Under the huge word "uVI" sit a lead and two CTAs, then a strip of three panels: a photo, a tenant-portal mock ("Ihr Verbrauch im September." with four KPIs and twelve monthly bars) and a second photo. Then: a statement whose words light up while scrolling; four feature rows with animated tiles (a 12-month calendar ticking through to "Oktober wird erstellt", a uVI document filling its four comparisons, a phone receiving "Ihre Verbrauchsinfo September", a bill switching from "Ohne uVI" (−3 % Kürzung) to "Mit Heidi"); a rotating line "Jeden Monat neu: …"; "Die uVI in Zahlen" (a bento of five figures and a photo); "Sie sind Verwalter?" / "Sie sind Mieter?"; three customer quotes; a full-width photo "Klare Verbräuche, ruhige Mieter."; six questions; the glass closing card "uVI abhaken. Jeden Monat."; then, light again, the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
 
-The page is the target of every "Sicherheit" link the landing pages already show as plain text: both entries in the landing footer, "Mehr zu Sicherheit" in the shared trust block, and three FAQ answers (01 §1.1). It's a small page next to `/dashboard`: no example data, no form in the design, one looping animation.
+It's the target of the landing footer's "Verbrauchsinformation (uVI)" (until now `/funktionen`, which is wrong: that page is about the platform as a whole) and of the "Mehr zur uVI" links on `/mieterportal` and `/hilfe` (01 §1.1).
 
-- **Design reference:** https://claude.ai/artifact/Sb54rDQd5WS2r82skPe7UQ ("Sicherheit & Datenschutz · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. It's one HTML file in the layout of the other designs: the base CSS (`:root` tokens, `.dm-*` primitives, nav `#nav-css`, footer `#fx-css`), `#demo-css` (shared with other designs; here only `.dm-end` / `.dm-cta` / `.bk-next` matter), `#pg-common-css` (the solution pages' hero `.pg-hero`, pill `.pg-pill-d`, ticks, `.pg-sec`; the same file `/funktionen` was ported from), the page CSS (`#sc-css`, ~9 KB, prefix `sc-`), `#pillfx` (the pill icon's hover wiggle), the seal-style trust block (`#trust-css`/`#trust-js`, the one `TrustSeals` ports), the heading overrides (`#hs-css`), the floating CTA (`#cta-css`/`#cta-js`), the eyebrow restyle (`#eb-css`) and two page scripts (`#pg-common`: reveal, smooth anchors and helpers; `#sc-js`, ~2.6 KB: the map, the principles, the data path, the table). Embedded media:
+**This design is `/mieterportal`'s template.** Every `<style>`/`<script>` block of the two designs is byte-identical except `#uv-css` and `#uv-js`, and the uVI design's `#uv-css` is the first 428 lines of `/mieterportal`'s: `/mieterportal` adds its extensions (`.uv-top.lg`, the hero list, the tile variants) and its mini dashboard (`#md-css`/`#md-js`). So this page doesn't port the design a second time: phase 2 first moves `/mieterportal`'s sections into a shared template, `$lib/landing/sections/uv/` (like `region/` for the cities), filled from each page's content module, and `/mieterportal` must render the same afterwards (02 §2.1). Then the uVI page is mostly content plus three page-only blocks (the hero's consumption mock, the bill's money variant, the bento photo).
 
-  | Design use | Size | In the repo |
+- **Design reference:** https://claude.ai/artifact/JjGPJV7zurEwiwEMn4hJv9 ("uVI · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs: base CSS, nav `#nav-css`, footer `#fx-css`, `#demo-css` (only `.dm-end`/`.dm-cta` matter), `#pg-common-css` and `#pg-common` (reveal, `countUp`, `tween`, `de`), the page CSS `#uv-css` (~18 KB) and script `#uv-js` (~4 KB), the closing card's video button (`#dcta-css`/`#dcta-js`) and its glass skin (`#end-css`), the seal-style trust block (`#trust-css`/`#trust-js`, the one `TrustSeals` ports), `#hs-css`, the floating CTA (`#cta-css`/`#cta-js`), the eyebrow restyle (`#eb-css`: `.uv-tag` becomes the sparkle pill). Embedded media, all already in the repo (matched by perceptual hash and by eye):
+
+  | Design use | Design file | In the repo |
   |---|---|---|
-  | Hero map: 16 Bundesländer, 14 dots, 14 curves, the server | inline SVG paths, ~70 KB | no (new data module, 01 §1.3); not the same projection as `messdienstanbieter/germany-map.ts` (viewBox `80 -6 440 576` against `-6 -6 612 572`) |
-  | Floating CTA avatars | 160×160 webp ×2 | yes: `src/lib/assets/landing/region/avatar-1.webp`, `avatar-2.webp` |
+  | Hero, left photo (corner building) | 1100×600 jpg | `src/lib/assets/landing/vorgehen/building-wide.webp` (same photo, 1400×764) |
+  | Hero, right photo (woman at a laptop) | 1122×1402 jpg | `vorgehen/office.webp` (same photo, square 1148×1148; the design's crop is taller: check the crop at 1440, 01 §1.4) |
+  | Bento photo (corner building) | 800×530 jpg | `cities/leipzig/references.jpg` (same photo, 1056×768) |
+  | "Sie sind Verwalter?" (Berlin façade) | 1100×587 jpg | `cities/koeln/hero.jpg` (identical) |
+  | "Sie sind Mieter?" (smiling woman) | 720×710 jpg | `region/contact.webp` (same photo, 640×736) |
+  | "Klare Verbräuche, ruhige Mieter." (façade) | 717×507 jpg | `cities/gera/references.jpg` (same photo, 717×615) |
+  | Closing card video button | 240×200 poster + 30 KB webm | not used: the card gets the signup form instead (as on `/mieterportal`) |
+  | Floating CTA avatars | 160×160 webp ×2 | `region/avatar-1.webp`, `avatar-2.webp` (identical) |
 
-  The design's links point to other design artifacts; their mapping is in [01 §1.4](01-route-and-content.md). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
-- **Previous plans:** the `/dashboard` plan used to live in this folder (last version at `83433739`). Before it came the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.15](04-qa-and-go-live.md).
+  The design's links point to other design artifacts; their mapping is in [01 §1.5](01-route-and-content.md). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/sicherheit` plan used to live in this folder (last version at `334b2c2d`). Before it came the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`, the template this page shares), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.16](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer and every other "Sicherheit" link, content, the map data and the pure packet path, SEO, signup wiring, the `TrustSeals` change | S |
-| 2 | [02-sections.md](02-sections.md) | The 8 sections with static markup and the design's CSS, every animated block in its end state | M |
-| 3 | [03-interactions.md](03-interactions.md) | The map's packet loop, the principles' icons, the data path sequence, the table rows, reveal | S |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer and the other uVI links, content, the deadline-dependent texts, SEO, signup wiring | S |
+| 2 | [02-sections.md](02-sections.md) | The shared `uv` template (moving `/mieterportal` onto it, no visual change), then this page's 13 sections in their end state | M |
+| 3 | [03-interactions.md](03-interactions.md) | The hero mock's entrance, the four tiles' loops, the bill's tween, statement, rotator, numbers, reveal | S |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | M |
 
-Phase 1 adds `ROUTE_SICHERHEIT`, the route and every link to it in one commit, so no link ever points at a 404. Phases 2 and 3 can run section by section.
+Done in the planning commit: `ROUTE_VERBRAUCHSINFORMATION` in `$lib/routes.ts` and the footer's "Verbrauchsinformation (uVI)" pointing at it (it pointed at `/funktionen`). Until phase 1 adds the route, that one footer link 404s, and the e2e tests that resolve every footer link fail on it; phase 1 is the first thing to build. Phase 2 §2.1 is a refactor of a finished page: land it as its own commit, checked against `/mieterportal` before any uVI section is added.
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/sicherheit/
-├── +page.server.ts        # load: seo (noindex), landing chrome, the FAQ, the signup form; the signup action
-└── +page.svelte           # composes the sections; the page tokens, #hs-css sizes, reveal styles
+src/routes/(landing-page)/verbrauchsinformation/
+├── +page.server.ts        # load: seo (noindex), landing chrome, FAQ and figures for `now`, the signup form; the signup action
+└── +page.svelte           # <main class="vi"> with UvMain (sections 1–12) and Trust; the page's #hs-css and reveal styles
 
-src/lib/landing/
-├── sections/TrustSeals.svelte           # "Mehr zu Sicherheit" links to ROUTE_SICHERHEIT; `securityLink` prop to hide it
-└── pages/sicherheit/
-    ├── content.ts  content.test.ts      # every text of the page, word for word
-    ├── map.ts                           # the hero map: 16 state paths, 14 dots, their curves to the server, the viewBox (data from the design)
-    ├── packets.ts  packets.test.ts      # pure: a point on a curve by arc length, the design's easing, the next log message
-    ├── icons.ts                         # the page's stroke icons (StrokeIcon paths)
-    ├── components/
-    │   ├── Icon.svelte                  # draws an icon by name, as on /funktionen
-    │   └── Tick.svelte                  # the hero's round check (.okb)
-    └── sections/
-        ├── Hero.svelte                  # dark .pg-hero: pill, H1, lead, two CTAs, three ticks, DataMap
-        ├── DataMap.svelte               # the map, the badge "Speicherort Deutschland", the log line
-        ├── Principles.svelte            # "Deutsche Server. Deutsche Vorgaben. Ein deutsches Unternehmen." – three cards
-        ├── DataPath.svelte              # "Der Weg Ihrer Daten"
-        ├── DataTable.svelte             # "Welche Daten wo liegen", id="daten"
-        ├── Faq.svelte*                  # "Häufige Fragen": the shared Faq, default variant
-        ├── Closing.svelte*              # the shared CtaCard with the signup form, id="start"
-        ├── Trust.svelte*                # TrustSeals without its own "Mehr zu Sicherheit" link
-        └── FloatingCta.svelte*          # "Erstgespräch vereinbaren"
+src/lib/landing/sections/uv/              # NEW: the dark template, moved out of pages/mieterportal/sections/
+├── UvMain.svelte          # the dark wrapper: page tokens (--card, --card2, --mute, --lime, --bg, --hair), .uv-btn, focus colour
+├── Hero.svelte            # .uv-hero: the word (size md | lg), lead, CTAs, the peek strip (two photos + a `mock` snippet)
+├── AppFrame.svelte        # the white app with its sidebar (logo, nav, foot) around a `children` snippet
+├── Statement.svelte       # words lighting up on scroll
+├── Rows.svelte            # feature rows: Eyebrow tag, two-line H2, paragraphs (with inline links), CTAs, a tile
+├── tiles/Calendar.svelte  # 12 months ticking to the current one
+├── tiles/Doc.svelte       # a Verbrauchsinformation with four bars and the check (was mieterportal's tiles/Statement)
+├── tiles/Phone.svelte     # notification, figure, comparison chips, mini bars
+├── tiles/Bill.svelte      # "without / with" switch: rows fold, sum swaps or tweens (was mieterportal's tiles/Before)
+├── Rotator.svelte         # "lead: phrase" with blur hand-over
+├── Numbers.svelte         # "… in Zahlen": figures with a `media` snippet in the second cell
+├── Audience.svelte        # "Sie sind Verwalter?" / "Sie sind Mieter?"
+├── Quotes.svelte          # three dark testimonial cards
+└── Picture.svelte         # the full-width photo with its caption
+
+src/lib/landing/pages/mieterportal/sections/   # become thin wrappers passing content (PortalMock, DashboardTile stay page-only)
+
+src/lib/landing/pages/verbrauchsinformation/
+├── content.ts  content.test.ts          # every text and the example data, word for word; the expired variants
+├── icons.ts                             # the page's stroke icons (sidebar nav, the bell, the tick)
+├── components/Icon.svelte
+└── sections/
+    ├── Hero.svelte*                     # uv/Hero with the word "uVI" and ConsumptionMock
+    ├── ConsumptionMock.svelte           # AppFrame + "Ihr Verbrauch im September.", four KPIs, 12 bars, month labels
+    ├── Statement.svelte*  Rows.svelte*  Rotator.svelte*
+    ├── Numbers.svelte*                  # uv/Numbers with the bento photo
+    ├── Audience.svelte*  Quotes.svelte*  Picture.svelte*
+    ├── Faq.svelte*                      # shared Faq, tone="dark", openFirst={false}, id="faq"
+    ├── CtaCard.svelte*                  # shared CtaCard tone="glass" with the SignupForm, id="start"
+    ├── Trust.svelte*                    # TrustSeals
+    └── FloatingCta.svelte*              # "Erstgespräch vereinbaren"
 ```
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
-
-## Implementation notes (2026-10-18)
-
-Phases 1–4 are built: the plan (`80b186ac`), the route, content, pure modules and every link (`82987889`), the sections with their motion (`a0e6b06c`), the table rows' focus ring (`2e79124f`), and `e2e/sicherheit.e2e.ts` (12 tests). The whole e2e suite passes (221 tests, signup tests included, against a throwaway Postgres container on :54322); one city signup test (`an invalid email shows the error`) failed once under full parallel load and passed 3/3 alone. Compared with the design at 1440 and 375 px section by section (hero, principles, data path and table match to the pixel); no horizontal overflow and no console errors at 320, 375, 700, 980, 1100, 1440 and 1640 px. Lighthouse (mobile, local `bun run preview`): Performance 79–88 (LCP is the hero lead; `/dashboard` scores the same 79 there), Accessibility 98, CLS 0, TBT 0 ms; the gzipped document is 43 KB with the map. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
-
-- **Table rows** are native `<details>` without `slideToggle` (the shared landing `Faq` doesn't use it either); the design's height transition comes from `::details-content` with `interpolate-size`, where the browser supports it, and is instant elsewhere. The closed rows keep the design's extra 14 px (its hidden detail took a grid row and gap).
-- **Location text** in the table is `#2f7a3c` instead of `--ok`: `--ok` at 12.5–13.5 px has 3.5:1 contrast on white (Lighthouse `color-contrast`); `#2f7a3c` is the green other landing pages use for small labels.
-- **The map** is an `<svg role="img">` with the label, not a labelled wrapper, so the badge stays readable text. Its packets are component state (one `requestAnimationFrame` loop for all in flight), started by `loopInView` every 900 ms plus a random 0–900 ms per pass, which gives the design's 0.9–1.8 s.
-- **One-time entrances** (the map's fade-in, the principles' icons, the data path, the table's checks) go through `enterView`, so a block already on screen at load keeps its server state and doesn't play. The data path is dark only between mount and its entrance.
-- **The hero's tick list** keeps the design's default `1em` bottom margin (the design relies on the UA margin to centre the column against the map).
-- **Class names** that would collide with `tokens.css` or Tailwind were renamed (`btn-accent`/`btn-ghost` → `b-demo`/`b-data`, `.okb` → `.tk`, `grid` → `cols`).
-- **The heading-order finding** in Lighthouse is the shared landing footer's `<h4>`, on every landing page; not changed here.
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/sicherheit`, `ROUTE_SICHERHEIT` in `$lib/routes.ts`. It's not the privacy notice: that stays `/datenschutzhinweise` (`ROUTE_DATENSCHUTZHINWEISE`), linked from the footer's legal links as today. Open question 1 |
+| URL | `/verbrauchsinformation`, `ROUTE_VERBRAUCHSINFORMATION` in `$lib/routes.ts` (added in the planning commit). The German word people search for, readable, and not an abbreviation. Open question 1 |
 | Route group | `(landing-page)`, outside `[[preview=preview]]`: a landing design, no Prismic content |
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover, like the other new pages; at the cutover it's indexed and joins the sitemap (decision of 2026-10-17), so its go-live gate (§4.4) blocks the cutover PR (#440) |
-| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same text) |
-| Footer and other links to it | The landing footer's two "Sicherheit" entries (under the logo and in "Plattform", `$lib/landing/footerLinks.ts`) get `href: ROUTE_SICHERHEIT`. The shared `TrustSeals`' "Mehr zu Sicherheit" (today `SECURITY_HREF = undefined`) links here on every page that shows the block. The FAQ answers that point at the topic get their `more` link: `/mieterportal` ("Mehr zu Sicherheit", today without `href`), `/hilfe` ("Sicherheit & Datenschutz", today without `href`) and `/vorgehen` (the design's "Mehr zu Sicherheit", left out so far). Details in 01 §1.1 |
-| The trust block on this page | The design's own trust block links "Mehr zu Sicherheit" to the page it's on. Here the link is hidden on `/sicherheit` (`securityLink={false}`), so the block doesn't point at itself; "Demo buchen" stays. Open question 2 |
-| Signup and CTAs | The design has no form: "Demo buchen" in the hero and the closing card, and the hero carries `id="start"`. Every "Demo buchen" goes to `DEMO_HREF` (`#start` today), which needs a form to land on. As on `/funktionen` and `/selbstabrechnung`, the closing card holds the shared `SignupForm` (`placement="final"`) in the shared `CtaCard`, and the closing section carries `id="start"` (the hero doesn't). Its button: "Demo buchen" (open question 3). "Welche Daten wo liegen ↓" → `#daten`. Leads: `source: "sicherheit"`, `switchinquiry` with `page: "/sicherheit"` |
-| Content | Every text in `content.ts`, word for word from the design (`content.test.ts` pins the H1, the six table rows and the five questions). The company address of the principle card and the FAQ ("Heidi Systems GmbH, Monbijouplatz 4, 10178 Berlin") stays written out as in the design (the footer's `ADDRESS` abbreviates "Monbijoupl. 4"); `content.test.ts` checks it against `ADDRESS` (company, city, and the street with "pl." expanded), so the two can't drift |
-| Hero map | The SVG is server-rendered in its end state (states, dashed curves, dots, the server with its slow pulse); only the packets, the dot pings and the server hit are added in the browser. The data (16 state paths, 14 dot positions, 14 curves, all quadratic Béziers to the server at 300,300) moves into `map.ts` as numbers, so the curves are built from their points instead of copied strings. The design moves packets with `getTotalLength()` / `getPointAtLength()`; here `packets.ts` computes the point on the quadratic curve by arc length from a small lookup table (pure, tested), so nothing reads the DOM. The map is one `role="img"` with the design's label ("Karte: Daten aus Liegenschaften in ganz Deutschland laufen auf Server in Deutschland"); the badge is visible text; the log line is `aria-hidden` |
-| Loops | One JS loop (the packets: a new one every 0.9–1.8 s, each 2.6–3.8 s long) goes through `loopInView` (in view and in a visible tab only, nothing under reduced motion). The CSS loops (the badge's breathing dot, the server's outer ring, the principles' icons while hovered) are switched off under reduced motion, as the design's `.sc *{animation:none}` does |
-| One-time entrances | The principles' icons play once in turn (300 ms + 700 ms each, 1.8 s long), the data path lights up node by node (550 ms steps), the table's location ticks pop in (0.15 s + 0.12 s each). Each block is server-rendered in its end state and goes through `enterView` (moved from `pages/dashboard/` to `$lib/landing/attachments/`, 01 §1.6): a block already on screen at load, reduced motion and no JS keep the end state |
-| Table rows | The design's rows are `<button aria-expanded>` with the explanation inside the button (so it's part of the button's name) and nothing without JS. Here each row is a `<details>` whose `<summary>` is the grid (name, purpose, location, chevron) and whose explanation follows it, like the shared `Faq`: works without JS, closed text stays in the HTML, the name is short. The header row ("Daten", "Wofür", "Speicherort") is a visual row, `aria-hidden`; each summary carries the location as text ("Speicherort: Deutschland" for screen readers, `Deutschland` visible). Open question 4 |
-| FAQ | The shared `Faq`, default variant, title "Häufige Fragen", first answer open (as designed). It brings the FAQPage JSON-LD. Its look matches `.sc-fq` (the same rules as `.xfq`, which `/funktionen`'s FAQ uses); check spacing on the `alt` background |
-| Eyebrow pill | The design's `.pg-pill-d` (dark, with a lock icon and `#pillfx`' hover wiggle) as on `/funktionen`'s hero, which ports the light `.pg-pill`; the dark variant is the page's own markup in `Hero.svelte`, not a shared component |
-| Headings | One `<h1>` ("Ihre Daten bleiben " + `<em>`"in Deutschland."); `<h2>` for the principles (with the design's `<br>`), the data path, the table, the FAQ and the closing card, then the trust block's two; `<h3>` for the three principle cards. The `#hs-css` sizes apply to the H1 (`data-hs`) and the H2s with an id |
-| Styling | `pg-*` and `sc-*` CSS into the components' scoped `<style>` blocks, with tokens from `tokens.css`. The design's colours that aren't tokens (`#E4EFE6`, `#D3E8D6`, `#B9D9BC`, `#E3F3E4`, `#F2F4F3`, the map's `rgba(138,214,143,…)`) stay literal in the component that uses them; the design's `--ok` is `#3E9A57`, the same as `tokens.css` (`#2F9E44` appears only as a fallback in `#pillfx` and in the principle icons' LED blink). The design's breakpoints stay (1040, 900, 640, 620, 560). No section or element gets a class that is also a Tailwind utility (`CLAUDE.md`): the design's `.in`, `.on`, `.play`, `.ping`, `.hit`, `.pulse`, `.core`, `.sm`, `.alt` are fine, but check each against Tailwind (e.g. rename nothing to `grid`, `hidden`, `blur`) |
-| Structured data | FAQPage through the shared `Faq` |
-| Rendering | SSR with the `(landing-page)` cache header. Nothing depends on `now` |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same text, "Mehr erfahren" → `/upgrade-now`) |
+| Links to it | The footer's "Verbrauchsinformation (uVI)" (done). Phase 1: "Mehr zur uVI" on `/mieterportal` (FAQ) and `/hilfe` (answer `uvi`), both `ROUTE_FUNKTIONEN` today and pointing at this page in the `/mieterportal` design; the city template's uVI card "Mehr erfahren" (`region/Duo.svelte`, today `ROUTE_FUNKTIONEN`; check the saved city design's target first). `/funktionen`'s "Benachrichtigungen" card (design target: uVI) stays without `href` until that page's open question 1 is answered. Details in 01 §1.1 |
+| Shared template | `/mieterportal`'s sections move to `$lib/landing/sections/uv/` and take their content as props; both pages wrap them. `/mieterportal`'s HTML and look stay the same (checked by its e2e spec and a screenshot diff before/after, 02 §2.1). Page-only: `PortalMock`, `DashboardTile`, `curve.ts` (mieterportal), `ConsumptionMock` (here) |
+| Dark page | As on `/mieterportal`: `UvMain` is a dark wrapper inside `<main>` holding sections 1–12, and the light `Trust` sits after it inside `<main>` (the design has it after `</main>`) |
+| Signup and CTAs | As on `/mieterportal`: the design's hero carries `id="start"` but has no form; our `DEMO_HREF` is `#start`, so the closing card gets the shared `SignupForm` in place of the video button and carries `id="start"`. Submit label "Demo buchen". Every "Demo buchen" (hero, four rows) → `DEMO_HREF` with `focusSignup`. Hero "Mehr erfahren" → `#inhalt`, the rows' "Häufige Fragen" → `#faq`, row 3's "Zum Mieterportal" and its inline "Mieterportal" → `ROUTE_MIETERPORTAL`. Leads: `source: "verbrauchsinformation"`, `switchinquiry` with `page: "/verbrauchsinformation"`. Open question 2 |
+| Audience buttons | The shared rule: a card's button shows only when its target exists. "Erfahren Sie mehr" (design: the Hausverwaltung page) and "Zum Mieter-Check" have no page, so both cards show no button for now. Open question 3 |
+| Content | Every text and the example data in `content.ts`, word for word from the design (soft hyphen in "Verbrauchs­information" kept). `content.test.ts` pins the H1, the four rows, the six questions and that the example data agree with each other (01 §1.2) |
+| Deadline texts | Two texts are wrong after 31.12.2026: the bento figure "31.12.2026 / Bis dahin müssen alle Zähler fernablesbar sein" and the answer "Meine Zähler sind noch nicht fernablesbar. Was nun?". Both get an `expired` variant, chosen in `load` through `isExpired(now)` (`$lib/landing/deadline/deadline.ts`), as `/funktionen`'s `faqItems(now)` does. The expired texts are placeholders until the content owner writes them (gate §4.4). Nothing else depends on `now`; components never call `Date.now()` |
+| FAQ | The shared `Faq`, default variant, `tone="dark"`, `openFirst={false}` (every `<details>` in the design is closed), title "Häufige Fragen" left-aligned, `id="faq"`. Answer 5's link "Jetzt noch umrüsten" is its `more` (→ `ROUTE_UPGRADE_NOW`); answer 6's "Mieterportal" sits inside the sentence, so it's an `<a>` in the answer (`FaqItem.answer` allows it; the JSON-LD gets the text). FAQPage JSON-LD of the six questions |
+| Closing card | The shared `CtaCard` `tone="glass"` (the design's `#end-css`) with the form, H2 "uVI abhaken. Jeden Monat.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." |
+| Loops | Five loops, all through `loopInView` (only in view and in a visible tab, nothing under reduced motion): calendar 7.6 s, document 7 s, phone 7 s, bill 6.4 s, rotator 2.3 s. The design starts them once and never stops them |
+| One-time entrances | The hero mock's KPIs and bars, the figures' count-up (12, 3, 3), the picture's zoom: through `enterView` / `countUp` / the shared `Picture` as on `/mieterportal`. The hero is on screen at load, so its mock keeps its server state there (03 §3.1) |
+| Headings | One `<h1>`: the visible word "uVI" is `aria-hidden`, the accessible text is the design's hidden "uVI: Unterjährige Verbrauchsinformation mit Heidi". `<h2>` per row, for "Die uVI in Zahlen", the two audience cards, the quotes, the FAQ and the closing card, then the trust block's. `<h3>` in the mock ("Ihr Verbrauch im September.") as designed. The `#hs-css` sizes apply to the H2s with an id (Zahlen, quotes, FAQ, trust), as on `/mieterportal` |
+| Styling | The CSS lives with the shared components (moved, not copied). This page adds what `/mieterportal` didn't port because its design had no markup for it: `.uv-kpis`, `.uv-bars`, `.uv-ml` (the mock), `.uv-c.img` (the bento photo), the bill's money rows (`.uv-bl.cut`/`.ok` with a value), the phone's second chip. Breakpoints stay the design's (980, 620, plus `#hs-css` 1040/620). No class that is also a Tailwind utility (`CLAUDE.md`) |
+| Rendering | SSR with the `(landing-page)` cache header. `now` only picks the two deadline texts in `load` |
 
 ## Open questions (the default is built unless answered)
 
-1. **Slug.** *Default: `/sicherheit`* (the footer's label). Alternatives: `/datensicherheit` or `/sicherheit-datenschutz`. Not `/datenschutz`, which reads as the privacy notice.
-2. **"Mehr zu Sicherheit" on this page.** *Default: hidden in the trust block on `/sicherheit`* (it would link to the page it's on). Alternative: link it to `#daten`.
-3. **Closing card.** The design has only "Demo buchen". *Default: the signup form with the button "Demo buchen"*, since `DEMO_HREF` is `#start` and the page needs a form for it to land on. Once a booking URL exists, the card can go back to the design's single button (and the form leave the page).
-4. **Table rows as disclosures.** *Default: `<details>` rows* (works without JS, accessible names stay short). The design's buttons would need JS and put the explanation into the button name.
-5. **Which "Sicherheit" footer entry.** Both footer entries (company column and "Plattform") get the link. *Default: both, as designed*; drop the duplicate if the content owner prefers.
+1. **Slug.** *Default: `/verbrauchsinformation`.* Alternatives: `/uvi` (short, matches the footer's abbreviation), `/unterjaehrige-verbrauchsinformation` (the full term, long).
+2. **Closing card.** The design has a video button "Demo buchen / Mit Ihrem Ansprechpartner" to a booking page that doesn't exist. *Default: the signup form with the button "Demo buchen"* (as `/mieterportal`, `/funktionen`, `/dashboard`). Once a booking URL exists, the card can go back to the video button.
+3. **The audience cards' buttons.** *Default: none* (no Hausverwaltung page, no Mieter-Check). Alternatives: "Erfahren Sie mehr" → `/funktionen` or `DEMO_HREF`; bring each back when its page exists.
+4. **The hero mock on load.** The design grows the bars and fades in the KPIs on load. *Default: server-rendered in the end state, no entrance while on screen at load* (the `enterView` rule of `/dashboard` and `/sicherheit`: no flash on hydration, LCP unaffected). Alternative: play it once after hydration.
+5. **FAQ answer 6's inline link.** *Default: the design's inline "Mieterportal" link inside the answer.* Alternative: plain text with a `more` link "Zum Mieterportal".
 
 ## Risks
 
-- **Every gate is on the cutover's critical path**, since every page is indexed after the cutover: this page's and the carried-over ones (04 §4.5–4.15). Mitigation: start the sign-offs early.
-- **The claims are the page.** "Alle Daten liegen auf Servern in Deutschland", "Das gilt für alle Daten: Verbräuche, Stammdaten, Mieterdaten, Rechnungen und Abrechnungen", "Heidi verarbeitet und speichert alle Daten nach deutschen Vorgaben", "Gespeichert und verarbeitet wird in Deutschland", the DSGVO/BDSG statements. They must hold for every subprocessor, not only the main database: the platform's hosting and backups, DocuScan's OCR, e-mail delivery, the gateways' transfer path, support tools. This marketing site itself sends leads to Make.com, chat messages to Slack and the AI gateway, and runs on Vercel, so if "alle Daten" is read as including what visitors type here, it isn't true today. Mitigation: legal and data-protection sign-off of every sentence in §4.4, with the subprocessor list from the DPA (AV-Vertrag) at hand; if needed, scope the copy to "Ihre Verbrauchs-, Stamm- und Mieterdaten" with the content owner. This is the gate most likely to change copy.
-- **The trust seals.** "VDIV: Kooperationspartner Bund", "DEUMESS: … vernetzt", the DSGVO and "Hosting in Deutschland" seals are already open in the region pages' gate (§4.14, same `TrustSeals`); this page makes them more prominent. "DSGVO" drawn as a seal suggests a certification that doesn't exist as such (open in §4.14 too).
-- **The product as described.** "Gateway im Haus" (every installation has a gateway in the building), "Rechnungen aus DocuScan", "Auf Wunsch übergibt Heidi sie an Ihre Verwaltungssoftware", the dashboard "Zugang Ihres Teams". Mitigation: listed in §4.4.
-- **Links appearing on other pages.** Turning on `SECURITY_HREF` adds "Mehr zu Sicherheit" to the trust block of eight pages (every city, the Germany page, `/selbstabrechnung`, `/vorgehen`, `/funktionen`, `/mieterportal`, `/dashboard`) while this page is still `noindex`: fine for review, the footer already links `noindex` pages. `e2e/mieterportal.e2e.ts` asserts the link is absent and must be updated (01 §1.1).
-- **Map weight.** ~70 KB of path data in the server HTML. Mitigation: round the coordinates to one decimal (they already are), check the gzipped size of the page against `/dashboard` (§4.1); if it hurts LCP, simplify the outlines with the extraction script's tolerance.
+- **Every gate is on the cutover's critical path**, since every page is indexed after the cutover: this page's and the carried-over ones (04 §4.5–4.16). Mitigation: start the sign-offs early.
+- **Refactoring a finished page.** Moving `/mieterportal` onto the shared template can change it unnoticed (class names, scoped CSS order, the heading reset's specificity, `loopInView` timing). Mitigation: its own commit; screenshots of `/mieterportal` at 1440 and 375 px (reduced motion, so the end state) before and after must match, its e2e spec passes unchanged, and its SSR HTML is diffed (only Svelte's scoping hashes may change). If that turns out costly, the fallback is copying the sections into this page's folder, at the price of ~1,500 duplicated lines.
+- **Legal statements are the page.** "Seit 2022 müssen Mieter mit fernablesbaren Zählern jeden Monat über ihren Verbrauch informiert werden", "Pflicht (§ 6a HeizkostenV)", "dürfen Mieter ihren Anteil an den Heizkosten um 3 % kürzen (§ 12 HeizkostenV)", "Das gilt auch, wenn keine fernablesbaren Geräte verbaut sind, obwohl es Pflicht wäre", the required content (kWh, Vormonat, Vorjahresmonat "soweit Daten vorliegen", Durchschnittsnutzer "derselben Nutzerkategorie"), "Bestehende Geräte müssen bis zum 31. Dezember 2026 nachgerüstet oder ersetzt werden", "In der Abrechnung gibt es dafür keinen Abzug", "Kein Kürzungsrecht. Keine Diskussion.", "Alles drin, was § 6a verlangt". The page makes them its headline, so they must hold exactly (e.g. whether the 3 % applies to the uVI duty or only to the retrofit duty, and "rechtssicher" as a promise). Mitigation: legal sign-off in §4.4, together with the same sentences on `/hilfe`, `/mieterportal`, `/upgrade-now`.
+- **The product as described.** Monthly uVI "für jede Wohnung", delivered in the Mieterportal with a notification ("Ihre Verbrauchsinfo September · Jetzt im Mieterportal ansehen"), "Ohne Termin", "Mit Heidi ist jede Information dokumentiert", "0 Handgriffe für Ihr Team". Mitigation: listed in §4.4; align with `/mieterportal`'s product item (§4.7).
+- **Example data.** The mock's twelve bars run October to September with 96 kWh heating in August and 14 kWh in July; September 131 kWh, "11 % unter Vorjahresmonat" (148), "8 % unter Durchschnitt" (142); the calendar's current month October; the bill's 1.240,00 € share and −37,20 €. They read as "now" only in autumn 2026 (gate §4.4).
+- **Photos reused from the city pages.** Four of the six photos are city-page photos (`koeln/hero.jpg`, `leipzig/references.jpg`, `gera/references.jpg`) or the region contact photo; the same building then appears on a city page as "local" and here as generic. Their licences are already in the city gate (§4.15); the content owner should accept the reuse (gate §4.4).
 
 ## Out of scope
 
-- The design's nav (Produkt / Lösungen / Plattform / Kunden / Ressourcen), its footer (other groups, the city list, the newsletter script `#fx-js`), its chat button, `#top-js` (scroll restoration), `#mobfx` (`tokens.css` covers overflow), `#eb-js`.
-- Dead code with no markup on this page: most of `#demo-css` (other designs' demos), `#pg-common-css`' `.pg-seg`, `.pg-card`, `.pg-head`, `.dbm-demo`, `canvas.cf`, `.pg-src`, `.xfq` (the shared `Faq` covers it); `#pg-common`'s `countUp`, `tween`, `confetti`, `seg`, `paintRange`; `.sc-ln b`; `#end-css` (`.uv-end`, not on this page). Not ported.
-- The pages the design links to that don't exist: a booking page, "API-Dokumentation", "Neuigkeiten", "Auswertungen", "Schnittstellen".
-- A certification or audit page (ISO 27001, TOMs as a download): not in the design.
+- The design's nav (Produkt / Lösungen / Plattform / Kunden / Ressourcen), its footer (other groups, the city list, the newsletter script `#fx-js`), its chat button, `#top-js`, `#mobfx` (`tokens.css` covers overflow), `#eb-js`.
+- The closing card's video button (`#dcta-css`/`#dcta-js`, the poster and the webm): replaced by the form (open question 2).
+- Dead code with no markup on this page: most of `#demo-css`, `#pg-common-css` (`.pg-*` isn't used here), `#pg-common`'s `seg`, `paintRange`, `confetti`, `#pillfx`.
+- The pages the design links to that don't exist: a booking page, the Hausverwaltung page, the Mieter-Check.
+- A uVI sample PDF or a live uVI for a real flat: not in the design.

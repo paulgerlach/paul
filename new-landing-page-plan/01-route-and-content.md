@@ -1,111 +1,122 @@
-# Phase 1: Route, links, content, map data and shared pieces
+# Phase 1: Route, links, content and SEO
 
 ## 1.1 Route and links
 
-One commit, so no link ever points at a 404:
+Done in the planning commit: `ROUTE_VERBRAUCHSINFORMATION = "/verbrauchsinformation"` in `$lib/routes.ts`, and the landing footer's "Verbrauchsinformation (uVI)" (`$lib/landing/footerLinks.ts`, group "Produkt") points at it instead of `ROUTE_FUNKTIONEN`. Every landing page renders this footer. The site footer (`Footer/footerLinks.ts`) has no uVI entry and stays as it is.
 
-- `ROUTE_SICHERHEIT = "/sicherheit"` in `$lib/routes.ts`.
-- **Footer** (`$lib/landing/footerLinks.ts`): both `{ text: "Sicherheit" }` entries get `href: ROUTE_SICHERHEIT`: the one in `companyLinks` (under the logo) and the one in the "Plattform" group. Every landing page renders this footer, so the link works from all of them at once. The site footer (`Footer/footerLinks.ts`) has no "Sicherheit" entry and stays as it is.
-- **Trust block** (`$lib/landing/sections/TrustSeals.svelte`): `SECURITY_HREF` becomes `ROUTE_SICHERHEIT` (and its comment goes). A new prop `securityLink = true`; `false` hides the link (this page's wrapper, open question 2). The eight pages that use the block show "Mehr zu Sicherheit" from then on.
-- **FAQ answers:**
-  - `pages/mieterportal/content.ts`: "Wo liegen die Daten?" → `more: { text: "Mehr zu Sicherheit", href: ROUTE_SICHERHEIT }` (drop the "No security page yet" comment).
-  - `pages/hilfe/content.ts`: "Wo werden meine Daten verarbeitet?" → `more: { text: "Sicherheit & Datenschutz", href: ROUTE_SICHERHEIT }`. Its `content.test.ts` accepts any route constant in `$lib/routes.ts` (check).
-  - `pages/vorgehen/content.ts`: "Wo liegen unsere Daten?" gets the design's `more: { text: "Mehr zu Sicherheit", href: ROUTE_SICHERHEIT }` (drop the comment). `/vorgehen` uses the shared `Faq`'s `cards` variant, which doesn't render `more` today: add it there, styled like the default variant's `.more` (check against the `/vorgehen` design's link in the card; if the design has none, the link is the plain `.more` under the answer).
-- **Tests that assert the missing link:** `e2e/mieterportal.e2e.ts` (`getByText("Mehr zu Sicherheit")` → count 0) now expects the FAQ's link and the trust block's link, both to `/sicherheit`. Search `e2e/` for other "Sicherheit" assertions (the region and `/dashboard` specs check that every footer link resolves: they now include `/sicherheit`, which must return 200).
-- `src/routes/(landing-page)/sicherheit/+page.server.ts`, modelled on `funktionen/+page.server.ts`:
+Phase 1, in one commit with the route:
+
+- `src/routes/(landing-page)/verbrauchsinformation/+page.server.ts`, modelled on `mieterportal/+page.server.ts`:
 
 ```ts
-export const load: PageServerLoad = async () => ({
-	seo: {
-		// Drafts for the content owner (plan §4.4).
-		title: "Sicherheit & Datenschutz: Ihre Daten bleiben in Deutschland | Heidi Systems",
-		description:
-			"Heidi speichert Verbrauchs-, Stamm- und Mieterdaten auf Servern in Deutschland und verarbeitet sie nach DSGVO und BDSG. Welche Daten wo liegen und wer Ihr Vertragspartner ist.",
-		ogTitle: "Ihre Daten bleiben in Deutschland.",
-		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
-		keepCanonical: true,
-	},
-	landing: DEFAULT_CHROME,
-	faq: faq.items,
-	finalForm: await emptySwitchForm("final"),
-});
+export const load: PageServerLoad = async () => {
+	const now = Date.now();
+	return {
+		seo: {
+			// Drafts for the content owner (plan §4.4).
+			title:
+				"uVI: unterjährige Verbrauchsinformation für Ihre Mieter | Heidi Systems",
+			description:
+				"Heidi stellt die monatliche Verbrauchsinformation nach § 6a HeizkostenV automatisch für jede Wohnung bereit: Verbrauch in kWh, Vergleich mit Vormonat, Vorjahresmonat und Durchschnitt. Ohne Aufwand für Ihr Team.",
+			ogTitle: "uVI: Unterjährige Verbrauchsinformation mit Heidi",
+			// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
+			noindex: true,
+			keepCanonical: true,
+		},
+		landing: DEFAULT_CHROME,
+		faq: faqItems(now),
+		figures: figures(now),
+		finalForm: await emptySwitchForm("final"),
+	};
+};
 
 export const actions: Actions = {
 	default: (event) =>
-		handleSwitchSignup(event, { source: "sicherheit", page: ROUTE_SICHERHEIT }),
+		handleSwitchSignup(event, {
+			source: "verbrauchsinformation",
+			page: ROUTE_VERBRAUCHSINFORMATION,
+		}),
 };
 ```
 
   The page sets no `cache-control`, because the layout does. `leads.source` is free text, so the new source needs no migration; check that the Make.com `switchinquiry` scenario doesn't filter on known `page` values (gate §4.4).
-- `+page.svelte`: `<main id="content" class="sc" {@attach reveal()}>` with the sections in design order and `FloatingCta` after `</main>`. The wrapper sets the section background, the hairline between sections (`.pg-sec` has `border-top`), the `#hs-css` sizes scoped as on `/dashboard` (`h1[data-hs]` and `section h2[id]` in the 621–1040 and ≤620 queries, with selectors specific enough to beat the `tokens.css` heading reset), and the reveal styles (`.rv`, the design's threshold 0.15).
+- **Other links to the page:**
+  - `pages/mieterportal/content.ts`: the FAQ's "Mehr zur uVI" → `ROUTE_VERBRAUCHSINFORMATION` (the `/mieterportal` design links it to this page's design).
+  - `pages/hilfe/content.ts`: answer `uvi`'s "Mehr zur uVI" → `ROUTE_VERBRAUCHSINFORMATION`. Its `content.test.ts` accepts any route constant (check). `uvi-fehlt` has no `more` and gets none (not in the `/hilfe` design).
+  - `sections/region/Duo.svelte`: the uVI card's "Mehr erfahren" (today `ROUTE_FUNKTIONEN`, both cards). Read the saved Berlin design first: if its uVI card links to the uVI design, it gets `ROUTE_VERBRAUCHSINFORMATION`; the portfolio card stays. Template change, so every city and the Germany page at once.
+  - Not changed: `/funktionen`'s "Benachrichtigungen" card (no `href` until that page's open question 1); "Heizkostenabrechnung" in the footer (still `/funktionen`, no page of its own).
+- **Tests that see the change:** the footer-link specs (every internal footer link resolves) now include `/verbrauchsinformation`; `e2e/mieterportal.e2e.ts` and `e2e/hilfe.e2e.ts` if they assert `/funktionen` for "Mehr zur uVI" (search `e2e/` for "uVI" and `/funktionen`).
+- `+page.svelte`: `<main id="content" class="vi" {@attach reveal()}>` with `UvMain` around sections 1–12 in design order, `Trust` after it, and `FloatingCta` after `</main>`. The wrapper sets the reveal styles (`.rv`, the design's threshold 0.15) and the `#hs-css` H2 sizes, scoped as on `/mieterportal` (`section h2[id]` in the 621–1040 and ≤ 620 queries, specific enough to beat the `tokens.css` heading reset; the rows and the audience cards keep their own sizes).
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/sicherheit/content.ts` holds every text, word for word from the design. "§ 6a HeizkostenV" with a non-breaking space after "§".
+`$lib/landing/pages/verbrauchsinformation/content.ts` holds every text and the example data, word for word from the design, in the shapes the shared `uv` components take (02 §2.1). `NB` (non-breaking space) between figures and units ("131 kWh", "11 %", "3 %") and after "§", as on `/mieterportal`.
 
-- `hero`: pill "Sicherheit & Datenschutz" (lock icon), H1 "Ihre Daten bleiben " + em "in Deutschland.", lead "Heidi verarbeitet und speichert alle Daten nach deutschen Vorgaben, auf Servern in Deutschland. Das gilt für die Daten Ihrer Verwaltung genauso wie für die Daten Ihrer Mieter.", CTAs "Demo buchen" (→ `DEMO_HREF`) and "Welche Daten wo liegen" (→ `#daten`, arrow ↓), ticks "Server in Deutschland", "DSGVO und BDSG", "Unternehmen aus Berlin".
-- `map`: label "Karte: Daten aus Liegenschaften in ganz Deutschland laufen auf Server in Deutschland", badge "Speicherort" / "Deutschland", log tag "Server DE", messages `["Zählerstand übertragen", "Verbrauchsinformation erstellt", "Rechnung gespeichert", "Abrechnung gespeichert"]` (the design's list repeats the first at the end; the cycle in `packets.ts` makes that unnecessary). The server shows the first.
-- `principles`: H2 "Deutsche Server. Deutsche Vorgaben." / "Ein deutsches Unternehmen." (two lines, the `<br>` stays), three cards `{ icon: "servers" | "shield" | "pin", title, text }`:
-  - "Gespeichert in Deutschland": "Alle Daten liegen auf Servern in Deutschland. Verbräuche, Abrechnungen, Rechnungen und Stammdaten Ihrer Liegenschaften."
-  - "Verarbeitet nach deutschen Vorgaben": "Heidi verarbeitet alle Daten nach der Datenschutz-Grundverordnung (DSGVO) und dem Bundesdatenschutzgesetz (BDSG)."
-  - "Ihr Partner sitzt in Berlin": "Ihr Vertragspartner ist die Heidi Systems GmbH, Monbijouplatz 4, 10178 Berlin. Vertrag und Ansprechpartner in Deutschland."
-- `path`: H2 "Der Weg Ihrer Daten", lead "Vom Zähler in der Wohnung bis zur fertigen Abrechnung. Gespeichert und verarbeitet wird in Deutschland.", frame label "Heidi · Server in Deutschland", nodes `{ icon, title, sub? }`: Funkzähler / in der Wohnung; Gateway / im Haus; Heidi-Server / in Deutschland (`core`); outputs Ihr Dashboard, Heizkostenabrechnung, uVI für Mieter.
-- `table`: H2 "Welche Daten wo liegen", lead "Alles, was Heidi für Ablesung, Verbrauchsinformation und Abrechnung braucht. Klicken Sie auf eine Zeile für Details.", columns "Daten", "Wofür", "Speicherort", the location "Deutschland" (one constant, used by every row), six rows `{ icon, name, purpose, detail }`:
-  - Verbrauchsdaten / Zählerstände der Funkzähler für Heizung und Wasser / "Grundlage für uVI und Heizkostenabrechnung. Die Funkzähler übertragen ihre Werte aus der Ferne, gespeichert wird auf Servern in Deutschland."
-  - Liegenschaften und Einheiten / Stammdaten Ihres Bestands / "Adressen, Einheiten und Zählerzuordnung. Damit jeder Verbrauch der richtigen Wohnung zugeordnet wird."
-  - Mieterdaten / Für Verbrauchsinformation und Abrechnung / "Was für die monatliche Verbrauchsinformation nach § 6a HeizkostenV und für die Abrechnung jeder Einheit nötig ist. Verarbeitet nach DSGVO und BDSG."
-  - Rechnungen aus DocuScan / Brennstoff, Betriebsstrom, Wartung / "Hochgeladene Rechnungen und die daraus erkannten Werte. Sie liegen wie alle anderen Daten in Deutschland."
-  - Heizkostenabrechnungen / Fertige Abrechnungen je Einheit / "Die erstellten Abrechnungen und ihre Berechnungsgrundlagen. Auf Wunsch übergibt Heidi sie an Ihre Verwaltungssoftware."
-  - Dashboard / Zugang Ihres Teams / "Übersicht über Verbräuche, Kosten und Benachrichtigungen aller Liegenschaften. Die Daten dahinter liegen auf Servern in Deutschland."
-- `faq`: title "Häufige Fragen", five `FaqItem`s:
-  - "Wo speichert Heidi meine Daten?" – "Auf Servern in Deutschland. Das gilt für alle Daten: Verbräuche, Stammdaten, Mieterdaten, Rechnungen und Abrechnungen."
-  - "Nach welchen Vorgaben verarbeitet Heidi die Daten?" – "Nach den deutschen Vorgaben, also der Datenschutz-Grundverordnung (DSGVO) und dem Bundesdatenschutzgesetz (BDSG)."
-  - "Welche Daten verarbeitet Heidi?" – "Nur was für Ablesung, Verbrauchsinformation und Heizkostenabrechnung nötig ist: Zählerstände, Stammdaten Ihrer Liegenschaften und Einheiten, Mieterdaten für uVI und Abrechnung sowie die Rechnungen, die Sie über DocuScan hochladen."
-  - "Gilt das auch für die Daten meiner Mieter?" – "Ja. Auch die Daten Ihrer Mieter werden nach DSGVO und BDSG verarbeitet und auf Servern in Deutschland gespeichert."
-  - "Wer ist mein Vertragspartner?" – "Die Heidi Systems GmbH, Monbijouplatz 4, 10178 Berlin."
-- `closing`: H2 "Messdienst mit Daten in Deutschland.", `submitLabel` "Demo buchen" (open question 3).
+- `hero`: `srTitle` "uVI: Unterjährige Verbrauchsinformation mit Heidi", `word` "uVI", `lead` "Unterjährige Verbrauchs­information. Jeden Monat automatisch bei Ihren Mietern." (soft hyphen as designed), `primary` "Demo buchen" → `DEMO_HREF`, `secondary` "Mehr erfahren" → `#inhalt`.
+- `mock` (the hero's middle panel): `label` "Beispiel: uVI im Mieterportal", `brand` "Heidi", `nav` Verbrauch (active) / Dokumente / Mitteilungen with icons, `navFoot` "Mieterportal", `tag` "Beispieldaten", `title` "Ihr Verbrauch im " + `month` "September" + ".", `sub` "Heizung · Wohnung 2. OG links", `kpis` `[{ label: "Letzter Monat", value: 131 }, { "Vormonat", 96 }, { "Vorjahresmonat", 148 }, { "Durchschnitt", 142 }]` with `unit` "kWh", `bars` `[62, 128, 171, 184, 162, 131, 74, 22, 15, 14, 96, 131]` (October to September, the last one highlighted) on a fixed scale `barMax: 190`, `monthLabels` Okt / Jan / Apr / Jul / Sep.
+- `statement`: label "Worum es geht", text "Seit 2022 müssen Mieter mit fernablesbaren Zählern jeden Monat über ihren Verbrauch informiert werden. Heidi übernimmt das für Sie. Jeden Monat, für jede Wohnung, mit allem, was die Heizkostenverordnung verlangt. Ihre Mieter sehen, wo sie stehen. Ihr Team hat damit keine Arbeit."
+- `rows`: label "So funktioniert die uVI mit Heidi", default CTAs "Demo buchen" → `DEMO_HREF` and "Häufige Fragen" → `#faq`, four items `{ tag, title: [a, b], paragraphs, tile, tone, secondary? }`:
+  - "Pflicht" / "Jeden Monat." "Für jede Wohnung." / "Sind fernablesbare Zähler verbaut, ist die monatliche Verbrauchsinformation Pflicht (§ 6a HeizkostenV)." + "Heidi liest die Zähler per Funk aus und stellt die uVI jeden Monat automatisch bereit. Ohne Termin, ohne Aufwand für Sie." / `calendar`, mint.
+  - "Inhalt" / "Alles drin, was" "§ 6a verlangt." / "Jede Information zeigt den Verbrauch des letzten Monats in Kilowattstunden und vergleicht ihn mit dem Vormonat, dem Vorjahresmonat und einem Durchschnittsnutzer." + "Vollständig, verständlich und für jede Wohnung einzeln." / `doc`, stone.
+  - "Mieter" / "Verständlich statt" "Zahlenkolonne." / ["Ihre Mieter bekommen eine Mitteilung und sehen ihren Verbrauch im ", { text: "Mieterportal", href: ROUTE_MIETERPORTAL }, ". Mit klaren Vergleichen statt Ablesewerten."] + "Wer seinen Verbrauch kennt, wird von der Jahresabrechnung nicht überrascht. Das spart Rückfragen bei Ihnen." / `phone`, ink / `secondary` "Zum Mieterportal" → `ROUTE_MIETERPORTAL`.
+  - "Rechtssicher" / "Kein Kürzungsrecht." "Keine Diskussion." / "Fehlt die Verbrauchsinformation, dürfen Mieter ihren Anteil an den Heizkosten um 3 % kürzen (§ 12 HeizkostenV)." + "Mit Heidi ist jede Information dokumentiert. In der Abrechnung gibt es dafür keinen Abzug." / `bill`, mint.
+- `calendar`: short labels "Jan" … "Dez", long names "Januar" … "Dezember" for the note (`MONTHS` from `deadline.ts` if it holds the German names; check), `current: 9` (October), `done` "bereitgestellt", `doing` "wird erstellt", `open` "offen", `noteDone` "{x} bereitgestellt", `noteDoing` "{x} wird erstellt". The note uses the long names here ("Oktober wird erstellt"), the short ones on `/mieterportal` (the `long` field is optional, 02 §2.1).
+- `doc`: title "Verbrauchsinformation September", sub "Heizung · in kWh", rows Letzter Monat 131 (82 %), Vormonat 96 (60 %), Vorjahresmonat 148 (92 %), Durchschnittsnutzer 142 (89 %), result "Alle Pflichtangaben enthalten". Same rows as `/mieterportal`'s tile; the widths are the design's, not computed.
+- `phone`: time "9:41", app "Heidi", title "Ihre Verbrauchsinfo September", sub "Jetzt im Mieterportal ansehen", label "Heizung im September", value "131 kWh", `comparisons` ["11 % unter Vorjahresmonat", "8 % unter Durchschnitt"], bars = the mock's last ten (`mock.bars.slice(2)`, derived, not repeated) on the scale 190.
+- `bill`: `without` "Ohne uVI", `with` "Mit Heidi", rows `[{ kind: "base", label: "Heizkosten, Ihr Anteil", value: "1.240,00 €" }, { kind: "cut", label: "Kürzung § 12 HeizkostenV (3 %)", value: "−37,20 €" }, { kind: "ok", label: "uVI monatlich bereitgestellt" }]`, `sum` `{ label: "Abgerechnet", from: 1202.8, to: 1240 }` (formatted `de-DE` with two decimals and " €"). The base row shows in both states (on `/mieterportal` every row belongs to one side).
+- `rotator`: label "Inhalte der uVI", lead "Jeden Monat neu:", phrases "Ihr Verbrauch in kWh", "Vergleich zum Vormonat", "Vergleich zum Vorjahresmonat", "Vergleich zum Durchschnitt", 2300 ms.
+- `numbers`: H2 "Die uVI in Zahlen"; `first` 12 "×" "Verbrauchsinformationen pro Jahr und Wohnung" (count); the photo second (alt ""); `rest`: 3 "%" "Kürzungsrecht für Mieter, wenn die uVI fehlt (§ 12 HeizkostenV)" (count); 3 "Vergleiche je Information: Vormonat, Vorjahresmonat, Durchschnitt" (count); "31.12.2026" compact "Bis dahin müssen alle Zähler fernablesbar sein" (`expired` variant, §1.3); 0 "Handgriffe für Ihr Team" (no count).
+- `audience`: label "Für wen"; "Sie sind Verwalter?" / "Heidi stellt die uVI für Ihren ganzen Bestand bereit, rechnet nach HKVO ab und hält Ihnen die Mieterfragen vom Tisch." / cta "Erfahren Sie mehr" without `href` / image `koeln` (Verwalter) ; "Sie sind Mieter?" / "Prüfen Sie Ihre Heizkostenabrechnung kostenlos. Fehlt die monatliche Verbrauchsinformation, steht Ihnen eventuell eine Kürzung zu." / cta "Zum Mieter-Check" without `href` / image `contact` (open question 3). The second text is `/mieterportal`'s word for word.
+- `quotes`: H2 ["Transparente Verbräuche.", "Unsere Kunden sagen es selbst."], keys `vitolus`, `werne`, `gerhard` (the design's quotes, names, roles and initials match `$lib/landing/data/testimonials.ts`; `content.test.ts` checks the three quotes against the design's text).
+- `picture`: label "Heidi", caption ["Klare Verbräuche,", "ruhige Mieter."].
+- `faq`: title "Häufige Fragen", six `FaqItem`s (answer 5 with `answerExpired`, §1.3):
+  - "Was ist die unterjährige Verbrauchsinformation (uVI)?" – "Eine monatliche Mitteilung an jeden Mieter über seinen Heiz- und Warmwasserverbrauch. Sie soll helfen, den eigenen Verbrauch besser einzuschätzen, nicht erst mit der Jahresabrechnung."
+  - "Ab wann ist die uVI Pflicht?" – "Seit dem 1. Januar 2022 müssen Gebäudeeigentümer ihre Mieter monatlich informieren, sobald fernablesbare Zähler oder Heizkostenverteiler verbaut sind (§ 6a HeizkostenV)."
+  - "Was muss in der uVI stehen?" – "Der Verbrauch des letzten Monats in Kilowattstunden, ein Vergleich mit dem Vormonat und dem Vorjahresmonat (soweit Daten vorliegen) sowie ein Vergleich mit einem Durchschnittsnutzer derselben Nutzerkategorie."
+  - "Was passiert, wenn die uVI fehlt?" – "Mieter dürfen ihren Anteil an den Heizkosten in der Abrechnung um 3 % kürzen (§ 12 HeizkostenV). Das gilt auch, wenn keine fernablesbaren Geräte verbaut sind, obwohl es Pflicht wäre."
+  - "Meine Zähler sind noch nicht fernablesbar. Was nun?" – "Bestehende Geräte müssen bis zum 31. Dezember 2026 nachgerüstet oder ersetzt werden. Heidi baut fernablesbare Funkzähler ein und übernimmt danach die uVI." `more` "Jetzt noch umrüsten" → `ROUTE_UPGRADE_NOW`.
+  - "Wie erhalten meine Mieter die uVI?" – `Heidi stellt die Verbrauchsinformation jeden Monat im <a href="${ROUTE_MIETERPORTAL}">Mieterportal</a> bereit und benachrichtigt Ihre Mieter. Für Sie entsteht dabei kein Aufwand.` (open question 5).
+- `closing`: H2 "uVI abhaken. Jeden Monat.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", `submitLabel` "Demo buchen".
 
-The address appears twice (principle card, last answer): one `COMPANY` constant (`"Heidi Systems GmbH"`, `"Monbijouplatz 4"`, `"10178 Berlin"`) builds both.
+`content.test.ts`:
+- the H1's hidden text and the word; four rows with two title lines and two paragraphs each; six questions, none empty; every `href` is a route constant or an anchor that exists on the page (`#inhalt`, `#faq`, `#start`);
+- the example data agree: the mock's last bar and first KPI are the phone's value and the doc's "Letzter Monat" (131), the second-last bar is "Vormonat" (96), the KPIs equal the doc's four values, the phone's percentages round from them (131 vs 148 → 11 %, 131 vs 142 → 8 %), the bill's cut is 3 % of the base and `sum.from = base − cut`, the calendar's `current` is the month after the mock's month;
+- `faqItems(now)` and `figures(now)` return the current texts before `DEADLINE` and the expired ones from it on.
 
-`content.test.ts`: the H1; six rows, each with name, purpose and detail, unique icons per row except where the design reuses one (Funkzähler/Verbrauchsdaten, Heizkostenabrechnung, Dashboard, Mieterdaten/uVI share icons with the path: fine); five questions, none empty; `COMPANY` against `ADDRESS` from `Footer/footerLinks.ts` (company and city equal, street equal after expanding "pl." to "platz"); every `href` in the module is a route constant or an in-page anchor that exists (`#daten`, `#start`).
+## 1.3 The deadline texts
 
-## 1.3 The map data
+Both are chosen on the server from `now`, like `/funktionen`'s FAQ:
 
-`$lib/landing/pages/sicherheit/map.ts`, taken from the design's `.sc-svg` (the `viewBox="80 -6 440 576"`):
+- `faqItems(now: number): FaqItem[]`: the six items, answer 5 replaced by `answerExpired` when `isExpired(now)`. Placeholder until the content owner writes it (gate §4.4), e.g. "Seit dem 1. Januar 2027 müssen alle Zähler fernablesbar sein. Heidi baut fernablesbare Funkzähler ein und übernimmt danach die uVI." Its `more` stays.
+- `figures(now: number)`: the bento's five figures, the date figure with its `expired` text when `isExpired(now)` (placeholder, e.g. value "1.1.2027", text "Seitdem müssen alle Zähler fernablesbar sein").
 
-- `states: string[]`: the 16 `path.st` outlines as they are (`M … L … Z` strings, one decimal). They're decorative outlines, not labelled, and don't need names; keep the design's order.
-- `server: { x: 300, y: 300 }`.
-- `dots: { x, y, c: { x, y } }[]`: the 14 `g.cy` circles with the control point of their curve (`path.ln`, `M x y Q cx cy 300 300`), so the curve is rebuilt from numbers: `M ${x} ${y} Q ${c.x} ${c.y} ${server.x} ${server.y}`.
+The rest of the copy is deadline-independent ("Seit 2022 …", "Seit dem 1. Januar 2022 …").
 
-A short note in the module says where the numbers come from and that they're not the projection of `messdienstanbieter/germany-map.ts` (different viewBox; the two maps don't share data). No extraction script: the data doesn't change per city and is copied once (a one-off Python/TS snippet in the scratchpad, not in the repo).
+## 1.4 Images
 
-## 1.4 Link mapping
+Imported from where they are (no copies), as `/mieterportal` imports from `vorgehen/`:
+
+| Use | Import | Notes |
+|---|---|---|
+| Hero left | `$lib/assets/landing/vorgehen/building-wide.webp?enhanced` | `sizes="25vw"`, eager (above the fold, but hidden ≤ 620 px) |
+| Hero right | `$lib/assets/landing/vorgehen/office.webp?enhanced` | the design shows a taller crop of the same photo: set `object-position` so the face sits where the design has it at 1440 px |
+| Bento | `$lib/assets/landing/cities/leipzig/references.jpg?enhanced` | cover |
+| Verwalter | `$lib/assets/landing/cities/koeln/hero.jpg?enhanced` | |
+| Mieter | `$lib/assets/landing/region/contact.webp?enhanced` | square crop in the design: `object-position` to match |
+| Picture | `$lib/assets/landing/cities/gera/references.jpg?enhanced` | |
+
+All decorative (`alt=""`), as in the design. The shared `uv` components take images as `Picture` props.
+
+## 1.5 Link mapping
 
 | Design link | Here |
 |---|---|
-| `44SBXKXJaSp6bvGMnbpZj6` ("Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `DEMO_HREF` (`#start` today); the floating CTA as on the other pages |
-| `#daten` ("Welche Daten wo liegen ↓") | `#daten` on the table's section |
-| `Sb54rDQd5WS2r82skPe7UQ` (this page: "Mehr zu Sicherheit", the footer's "Sicherheit") | `ROUTE_SICHERHEIT`, hidden in the trust block on this page (open question 2) |
-| `Jp8tqY82m7FZqMnWU4z9x9` (banner "Mehr erfahren") | `DEFAULT_CHROME.bannerHref` (`/upgrade-now`) |
-| Logo, nav, the design's footer artifacts | the shared landing header and footer |
-
-## 1.5 The pure packet path
-
-`$lib/landing/pages/sicherheit/packets.ts`, no DOM:
-
-- `quadPoint(p0, c, p1, t)`: the point on a quadratic Bézier at parameter `t`.
-- `arcTable(p0, c, p1, n = 32)`: cumulative lengths at `n` samples; `pointAtLength(table, curve, s)` maps a fraction `s` of the total length to a point by interpolating `t` between samples. Matches what `getPointAtLength(L × s)` returns to within ~0.5 px on these curves (test against two curves measured in a browser once and pinned).
-- `ease(p)`: the design's ease-in-out-quad (`p < .5 ? 2p² : 1 − (−2p + 2)² / 2`).
-- `opacity(p)`: the fade at both ends (`p < .1 ? 10p : p > .9 ? 10(1 − p) : 1`).
-- `nextMessage(i, n)`: `(i + 1) % n`.
-
-`packets.test.ts`: `quadPoint` at 0 and 1 is the end points; `pointAtLength` at 0, 0.5 and 1 (0.5 on a straight "curve" is the midpoint); `ease` at 0, 0.5, 1 and symmetric; `opacity` at 0, 0.05, 0.5, 0.95, 1; `nextMessage` wraps.
-
-## 1.6 Shared changes
-
-- **`enterView`** moves from `pages/dashboard/enterView.ts` to `$lib/landing/attachments/enterView.ts` (now used by two pages); `/dashboard`'s imports follow. No behaviour change.
-- **`TrustSeals`**: `securityLink` prop and the live `SECURITY_HREF` (§1.1).
-- **`Faq`**: the `cards` variant renders `more` (§1.1, for `/vorgehen`).
-- `icons.ts` holds the page's stroke icons (lock, check, servers with LEDs, shield with tick, pin, meter, gateway, server, chart, document, people, building, clipboard), drawn through `StrokeIcon` as on `/funktionen`. The principle icons keep their animated parts as separate paths with classes (`.led`, `.tick` with `pathLength="1"`, `.pin`), so they're inline in `Principles.svelte` rather than in `icons.ts`.
+| `44SBXKXJaSp6bvGMnbpZj6` ("Demo buchen" ×5, the video button, the floating CTA "Erstgespräch vereinbaren") | `DEMO_HREF` (`#start`, the closing form); the floating CTA as on the other pages |
+| `#inhalt` ("Mehr erfahren"), `#faq` ("Häufige Fragen" ×3) | the same anchors |
+| `5HTo3o7mYMjqUxPXcEyuEy` (row 3's inline "Mieterportal" and "Zum Mieterportal", answer 6's "Mieterportal") | `ROUTE_MIETERPORTAL` |
+| `Jp8tqY82m7FZqMnWU4z9x9` (answer 5's "Jetzt noch umrüsten", banner "Mehr erfahren") | `ROUTE_UPGRADE_NOW` (the banner through `DEFAULT_CHROME.bannerHref`) |
+| `EzsbDRGnCk2Z11QnjE3NgX` ("Erfahren Sie mehr": the Hausverwaltung page) | none: button hidden (open question 3) |
+| `FQ6egKN8KrFwGUMZDUaavJ` ("Zum Mieter-Check") | none: button hidden (open question 3) |
+| The trust block's "Mehr zu Sicherheit" | `ROUTE_SICHERHEIT` (the shared `TrustSeals`) |
+| Logo, nav, the design's footer | the shared landing header and footer |

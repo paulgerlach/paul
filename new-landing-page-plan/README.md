@@ -77,6 +77,20 @@ src/lib/landing/
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
 
+## Implementation notes (2026-10-18)
+
+Phases 1–4 are built: the route and links (`ea2ce2f4` plan, `6a6b9386` phase 1), the sections (`1c986f86`), the usable preview (`84bfb8d7`), the motion (`335ead4f`), and `e2e/dashboard.e2e.ts` (15 tests). All of them pass except the signup test, which needs the local Postgres (not running; it fails the same way on `/funktionen` and `/mieterportal`). Checked in Chromium at 1640, 1440, 1100, 980, 700, 375 and 320 px: no horizontal overflow and no console errors or hydration warnings; compared with the design at 1440 and 375 px; JS disabled renders the Overview, the scroll scene as a list and no preview form. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **`enterView`** (`pages/dashboard/enterView.ts`) is new: the one-time entrances (KPI bars, sparkline, CO₂ count, the recommendation check run, the closing chart's grow-in) share it. A block on screen at load keeps its server state.
+- **CO₂ count** uses `tweenNumber`, not `countUp`: `countUp` writes `textContent`, which would detach the text node Svelte keeps updating when a month is picked. `countUp`'s new `format` is used by the hero's "Kosten" chip only.
+- **`CtaCard` got `accent`** (the muted "in einem Dashboard." of the closing heading) besides the planned `visual`.
+- **Testimonials** are the page's own component reading the shared data (the shared `Testimonials` is a different layout), as the plan allowed.
+- **KPI charts** are focusable `role="group"`s with a polite live line for the picked month (not sliders).
+- **Menus** are disclosure buttons with a labelled `role="group"` popup and `aria-current` on the chosen entry; picking an entry returns focus to the menu's button. The account menu is in the side nav, so below 1120 px (side nav hidden) it isn't reachable, as in the design.
+- **Hand-over:** the flying card uses the Web Animations API (`element.animate`); everything moving stays `aria-hidden`.
+- **Strike scene:** its frame math is `strike.ts` (pure, tested).
+- **Generated values:** meters and per-object bars come from the integer PRNG, so they differ from the design's (README, Example data).
+
 ## Key decisions
 
 | Topic | Decision |

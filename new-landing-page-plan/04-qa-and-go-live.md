@@ -4,29 +4,29 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/dashboard`: the page, with the landing header and footer; the footer's "Dashboard" lands here from every landing page, `/hilfe`'s "Dashboard ansehen" too
+- [x] `bun run dev` → `http://localhost:5173/dashboard`: the page, with the landing header and footer; the footer's "Dashboard" lands here from every landing page, `/hilfe`'s "Dashboard ansehen" too
 - [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card without "Lieber direkt eine Demo buchen", the marquee's pause button, the "Datenansicht" switch in the Overview bar below 820 px, the generated example values (meters, per-object bars), the missing "Mehr zu Sicherheit" link, the hint appearing after load
-- [ ] `/funktionen`, `/mieterportal`, `/karriere`, `/hilfe` unchanged after the `CtaCard` change; the other `LogoStrip` users unchanged; existing `countUp` users unchanged
-- [ ] No horizontal overflow at any width from 320 to 1640 px (the chips, the preview's top bar and tables, the scroll scene's sentences, the recommendation popovers, the marquee)
-- [ ] Preview, Overview: portfolio, period, granularity and "Vorjahr" redraw the right numbers (Gartenweg 3: "24 Heizkostenverteiler", "12 Warmwasserzähler"; Vorjahr: CO₂ "13,9" for all objects); the scope chip's × resets; tooltips on every chart; each tile's enlarge dialog with its summary
-- [ ] Preview, views: Objekte (search, add an object, it appears in the portfolio picker, its row scopes the dashboard), Zähler (type chips, search, the drawer, "Alle im Bereich Zähler ansehen"), Dokumente (chips, the download note), Abrechnung (all five functions; the billing run's steps, confetti, the new document and the "neu" badge)
+- [x] `/funktionen`, `/mieterportal`, `/karriere`, `/hilfe` unchanged after the `CtaCard` change; the other `LogoStrip` users unchanged; existing `countUp` users unchanged
+- [x] No horizontal overflow at any width from 320 to 1640 px (the chips, the preview's top bar and tables, the scroll scene's sentences, the recommendation popovers, the marquee)
+- [x] Preview, Overview: portfolio, period, granularity and "Vorjahr" redraw the right numbers (Gartenweg 3: "24 Heizkostenverteiler", "12 Warmwasserzähler"; Vorjahr: CO₂ "13,9" for all objects); the scope chip's × resets; tooltips on every chart; each tile's enlarge dialog with its summary
+- [x] Preview, views: Objekte (search, add an object, it appears in the portfolio picker, its row scopes the dashboard), Zähler (type chips, search, the drawer, "Alle im Bereich Zähler ansehen"), Dokumente (chips, the download note), Abrechnung (all five functions; the billing run's steps, confetti, the new document and the "neu" badge)
 - [ ] Preview, keyboard: tabs with arrow keys, menus open/close with Enter/Escape and return focus, the drawer and dialog take and return focus, Escape closes the top-most layer only, the data view switch, every table control
-- [ ] Preview, nothing leaves the browser: inviting, adding objects and devices, downloading and the account menu send no request (network panel)
+- [x] Preview, nothing leaves the browser: inviting, adding objects and devices, downloading and the account menu send no request (network panel)
 - [ ] KPI cards: bars grow once on view; pointer and arrow keys pick months with the right values (Kosten März 2025 Gesamt = 0,99 + 0,48 → "1,47"; check against `kpi.ts`), the mode switch keeps the month, Escape and blur reset; "11,3" counts up once
 - [ ] Scroll scene: sentences come in, get struck and leave in order while scrolling down, and reverse scrolling up; the dots follow; no jank on a mid-range phone; no JS shows the list
 - [ ] Bento: each demo plays only in view and stops off-screen and in a background tab; no step fires after leaving (typing, the leak scan); the billing card and the share button work by click and keyboard
 - [ ] Hand-over: one transfer every 3.4 s in view, the counter grows, the table keeps five rows; stops off-screen
-- [ ] Recommendations: the check run plays once; filters and search combine; the count is announced; toggletips open on hover, focus and click and close on Escape
+- [x] Recommendations: the check run plays once; filters and search combine; the count is announced; toggletips open on hover, focus and click and close on Escape
 - [ ] Marquee: runs only in view, pauses on hover, focus and the button
 - [ ] Closing chart: grows once, then drifts only in view
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (the scroll scene, the preview's menus and tables by touch, the floating CTA)
 - [ ] Keyboard-only through the whole page: banner link, hero CTAs, the preview, the KPI charts, the bento buttons, the integration link, filters, search and toggletips, the pause button, the roadmap button, the signup form, the floating CTA
 - [ ] Screen reader (VoiceOver): the H1; the preview as a labelled region with tabs, menus and chart summaries; the KPI scrubbing announcements; the scroll scene as a list; the hand-over as one figure with its caption; no announcements from any loop
-- [ ] Reduced-motion emulation: every block in its end state, no loop, no counting, no draw-in, no confetti, the scroll scene as a list, the marquee still; the preview, the billing card and the share button still work
-- [ ] JS disabled: every section readable in its end state, the preview's Overview complete, no preview form visible, the signup form posts
+- [x] Reduced-motion emulation: every block in its end state, no loop, no counting, no draw-in, no confetti, the scroll scene as a list, the marquee still; the preview, the billing card and the share button still work
+- [x] JS disabled: every section readable in its end state, the preview's Overview complete, no preview form visible, the signup form posts
 - [ ] A signup reaches the `leads` table with `source = "dashboard"` and the sink with `page: "/dashboard"`
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the preview's DOM and script are the risk: check TBT and the lazy views' chunk), Accessibility ≥ 95, CLS ≤ 0.05 (the scroll scene's height switch on mount happens below the fold; check a load scrolled to it)
-- [ ] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
+- [x] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
 
 ## 4.2 Tests
 
@@ -48,6 +48,8 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 1. `00-inventory.md`: a `/dashboard` row (new landing page, `noindex` until its go-live gate, this plan).
 2. `10-qa-and-cutover.md`: exclude `/dashboard` from the Next-baseline visual loop and list it with the new pages in the SEO diff; add "a `/dashboard` signup arrives with its `source`" to the post-deploy checks; add this page's gate (§4.4) to the cutover blockers.
 3. `CLAUDE.md`: phase 1's last paragraph.
+
+All three done (2026-10-18).
 
 ## 4.4 Go-live gate: `/dashboard`
 

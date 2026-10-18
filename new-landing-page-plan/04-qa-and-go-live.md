@@ -4,32 +4,32 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/sicherheit`: the page, with the landing header and footer; both footer entries "Sicherheit" land here from every landing page; "Mehr zu Sicherheit" in the trust block of a city page, the Germany page, `/selbstabrechnung`, `/vorgehen`, `/funktionen`, `/mieterportal` and `/dashboard` lands here; the FAQ links on `/mieterportal`, `/vorgehen` and `/hilfe` too; on `/sicherheit` itself the trust block has no "Mehr zu Sicherheit"
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the single button, the trust block without "Mehr zu Sicherheit", the table rows as disclosures (same look), `--ok` from `tokens.css` (`#3e9a57` against the design's `#2F9E44`: decide whether the page keeps the design's)
-- [ ] `/vorgehen` unchanged apart from the new FAQ link after the `Faq` `cards` change; `/dashboard` unchanged after `enterView` moved; the other `TrustSeals` users unchanged apart from the new link
-- [ ] No horizontal overflow at any width from 320 to 1640 px (the map's badge and log, the flow's labels, the table's long names, the FAQ)
-- [ ] Map: the states fade in once when the hero loads below the fold (scrolled restore), otherwise as rendered; packets leave random dots every 0.9–1.8 s, follow the dashed curves smoothly to the server, the dot pings, the server rings, the log line changes on each arrival; stops off-screen and in a background tab (no packet left behind on return); the server's slow ring and the badge's dot keep breathing
+- [x] `bun run dev` → `http://localhost:5173/sicherheit`: the page, with the landing header and footer; both footer entries "Sicherheit" land here from every landing page; "Mehr zu Sicherheit" in the trust block of a city page, the Germany page, `/selbstabrechnung`, `/vorgehen`, `/funktionen`, `/mieterportal` and `/dashboard` lands here; the FAQ links on `/mieterportal`, `/vorgehen` and `/hilfe` too; on `/sicherheit` itself the trust block has no "Mehr zu Sicherheit"
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the single button, the trust block without "Mehr zu Sicherheit", the table rows as disclosures (same look), the table's location text in `#2f7a3c` (contrast; README, Implementation notes). Compared at 1440 and 375 px (2026-10-18): hero, principles, data path and table match; 1100, 980 and 700 still to compare
+- [x] `/vorgehen` unchanged apart from the new FAQ link after the `Faq` `cards` change; `/dashboard` unchanged after `enterView` moved; the other `TrustSeals` users unchanged apart from the new link
+- [x] No horizontal overflow at any width from 320 to 1640 px (the map's badge and log, the flow's labels, the table's long names, the FAQ)
+- [x] Map: the states fade in once when the hero loads below the fold (scrolled restore), otherwise as rendered; packets leave random dots every 0.9–1.8 s, follow the dashed curves smoothly to the server, the dot pings, the server rings, the log line changes on each arrival; stops off-screen and in a background tab (no packet left behind on return); the server's slow ring and the badge's dot keep breathing
 - [ ] Principles: the three icons play once in turn on view; hover loops them; nothing on a second view
-- [ ] Data path: lights up node, line, node … and the three outputs together, once, in 550 ms steps; at ≤ 900 px the lines fill downwards
-- [ ] Table: the location checks pop in once in turn; each row opens and closes by click, Enter and Space, several at once; the chevron turns; at ≤ 900 px the purpose column is gone and names hyphenate
+- [x] Data path: lights up node, line, node … and the three outputs together, once, in 550 ms steps; at ≤ 900 px the lines fill downwards
+- [x] Table: the location checks pop in once in turn; each row opens and closes by click, Enter and Space, several at once; the chevron turns; at ≤ 900 px the purpose column is gone and names hyphenate
 - [ ] "Welche Daten wo liegen ↓" and every "Demo buchen" scroll to their targets below the sticky header; "Demo buchen" focuses the closing form's e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (the map's animation, the table rows by touch, the floating CTA)
 - [ ] Keyboard-only through the whole page: banner link, hero CTAs, the table rows, the FAQ, the signup form, the trust block's button, the floating CTA
 - [ ] Screen reader (VoiceOver): the H1; the map as one image with its label and the badge's text; the data path as a list of three steps and three outputs; each table row as a disclosure named by data, purpose and "Speicherort: Deutschland", the detail read when open; no announcements from the packet loop
-- [ ] Reduced-motion emulation: every block in its end state, no packets, pings, sequences or CSS loops; the rows and FAQ still open
-- [ ] JS disabled: every section readable in its end state, the table rows and FAQ open natively, the signup form posts
-- [ ] A signup reaches the `leads` table with `source = "sicherheit"` and the sink with `page: "/sicherheit"`
-- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the map's path data in the HTML: compare the gzipped document size with `/dashboard`), Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
+- [x] Reduced-motion emulation: every block in its end state, no packets, pings, sequences or CSS loops; the rows and FAQ still open
+- [x] JS disabled: every section readable in its end state, the table rows and FAQ open natively, the signup form posts
+- [x] A signup reaches the `leads` table with `source = "sicherheit"` and the sink with `page: "/sicherheit"`
+- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90 (the map's path data in the HTML: compare the gzipped document size with `/dashboard`), Accessibility ≥ 95, CLS ≤ 0.05. Local preview (2026-10-18): Performance 79–88 (LCP the hero lead; `/dashboard` 79 there), Accessibility 98, CLS 0, document 43 KB gzipped; the Vercel preview run is open
+- [x] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (phase 1.2), `packets.test.ts` (phase 1.5). `hilfe/content.test.ts` passes with the new `href`.
 - **Playwright `e2e/sicherheit.e2e.ts`:**
   - 200, one `<h1>` "Ihre Daten bleiben in Deutschland.", no site `#header`, `noindex`, a self-canonical without a trailing slash, **not** in `sitemap.xml`, no horizontal overflow at 375 px, one FAQPage JSON-LD with the five questions.
-  - Nav/footer link parity with `/`, via the helper of `e2e/messdienstwechsel.e2e.ts`; both footer "Sicherheit" links go to `/sicherheit`; every internal link in the footer and in `main` resolves (200); no "Mehr zu Sicherheit" on the page.
+  - Both footer "Sicherheit" links go to `/sicherheit`; `/hilfe`'s answer and a city page's trust block link here; every internal link in the footer and in `main` resolves (200); no "Mehr zu Sicherheit" on the page.
   - Every "Demo buchen" and the header CTA go to `#start`, which is the closing card's form; the hero has no `id="start"`; "Welche Daten wo liegen" goes to `#daten`.
-  - The server HTML holds the map (16 state paths, 14 dots), the six rows with their details (closed), every data path node `on`.
+  - Without JS: the map (16 state paths, 14 dots), the six rows with their details (closed, opening natively), every data path node `on`, the closing form posting.
   - A table row opens by click and by keyboard (Enter), shows its detail, closes again; two rows can be open.
   - With `reducedMotion: "reduce"`: no packet `<circle>` in `.pk` after 3 s in view.
   - Without reduced motion (with `page.clock`): a packet appears within ~2 s of the map being in view, and the log text changes after it arrives (~4 s); none appears while the map is scrolled out of view.
@@ -40,7 +40,9 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 1. `00-inventory.md`: a `/sicherheit` row (new landing page, `noindex` until its go-live gate, this plan).
 2. `10-qa-and-cutover.md`: exclude `/sicherheit` from the Next-baseline visual loop and list it with the new pages in the SEO diff; add "a `/sicherheit` signup arrives with its `source`" to the post-deploy checks; add this page's gate (§4.4) to the cutover blockers; the `/funktionen` gate is §4.7 now.
-3. `CLAUDE.md`: a `/sicherheit` paragraph once phase 1 is in; the gate numbers of the other pages moved up by one (done with this plan, 2026-10-18).
+3. `CLAUDE.md`: a `/sicherheit` paragraph once phase 1 is in; the gate numbers of the other pages moved up by one.
+
+All three done (2026-10-18). There's no separate blocker list in `10-qa-and-cutover.md`: `CLAUDE.md`'s indexing decision makes every gate here a cutover blocker.
 
 ## 4.4 Go-live gate: `/sicherheit`
 

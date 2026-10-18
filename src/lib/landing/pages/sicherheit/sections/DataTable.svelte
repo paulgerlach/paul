@@ -152,7 +152,8 @@
 		gap: 7px;
 		font-size: 13.5px;
 		font-weight: 500;
-		color: var(--ok);
+		/* Darker than the design's --ok, for 4.5:1 at this size (plan §4.1). */
+		color: #2f7a3c;
 	}
 	.loc em {
 		width: 20px;

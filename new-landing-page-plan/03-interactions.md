@@ -29,7 +29,7 @@ The rules match the other landing pages: runes and the existing attachments, no 
 ## 3.5 The table
 
 - **Entrance:** `enterView` on `.sc-tb`: `prepare` removes `.in` (the location checks scale to 0), `play` adds it; the per-row `transition-delay` (0.15 s + 0.12 s × i) is set inline from the index.
-- **Rows:** native `<details>`; the slide uses `slideToggle` (`$lib/attachments/`) the way the shared `Faq` does, so a click animates the detail's height (0.35 s) and the chevron turns (`details[open]`). Several rows can be open at once, as in the design. Under reduced motion the row opens instantly.
+- **Rows:** native `<details>`; the detail's height animates (0.35 s) through `::details-content` where the browser supports it (README, Implementation notes) and the chevron turns (`details[open]`). Several rows can be open at once, as in the design. Under reduced motion the row opens instantly.
 
 ## 3.6 FAQ, closing, trust, floating CTA
 

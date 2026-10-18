@@ -1,7 +1,7 @@
-<!-- One of the design's 20×20 line icons on /mieterportal, by name. -->
+<!-- One of the design's 20×20 line icons of the `uv` template, by name. -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
-	import type { IconName } from "../icons";
+	import type { IconName } from "./icons";
 
 	let { name, class: className = "" }: { name: IconName; class?: string } =
 		$props();

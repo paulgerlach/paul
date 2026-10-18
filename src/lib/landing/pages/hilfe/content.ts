@@ -24,6 +24,7 @@ import {
 	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
+	ROUTE_VERBRAUCHSINFORMATION,
 } from "$lib/routes";
 import type { IconName } from "./icons";
 
@@ -161,7 +162,7 @@ export const topics: Topic[] = [
 				question: "Was ist die unterjährige Verbrauchsinformation (uVI)?",
 				answer:
 					"Mieter mit fernablesbaren Zählern müssen jeden Monat über ihren Verbrauch informiert werden (§ 6a HeizkostenV). Heidi stellt die uVI automatisch bereit.",
-				more: { text: "Mehr zur uVI", href: ROUTE_FUNKTIONEN },
+				more: { text: "Mehr zur uVI", href: ROUTE_VERBRAUCHSINFORMATION },
 			},
 			{
 				id: "uvi-fehlt",

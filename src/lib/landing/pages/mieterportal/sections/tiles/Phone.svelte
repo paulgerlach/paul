@@ -5,7 +5,7 @@
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Icon from "../../components/Icon.svelte";
+	import Icon from "$lib/landing/sections/uv/Icon.svelte";
 	import { phone } from "../../content";
 
 	const max = Math.max(...phone.bars, 1) * 1.05;

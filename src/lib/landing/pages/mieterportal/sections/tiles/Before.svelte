@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Tick from "../../components/Tick.svelte";
+	import Tick from "$lib/landing/sections/uv/Tick.svelte";
 	import { before } from "../../content";
 
 	let good = $state(true);

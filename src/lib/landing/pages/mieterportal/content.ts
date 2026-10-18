@@ -9,8 +9,8 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
-import { ROUTE_FUNKTIONEN, ROUTE_SICHERHEIT } from "$lib/routes";
-import type { IconName } from "./icons";
+import { ROUTE_SICHERHEIT, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
+import type { IconName } from "$lib/landing/sections/uv/icons";
 
 const NB = "\u00a0";
 
@@ -393,7 +393,7 @@ export const faq = {
 				"Erfüllen wir damit die Pflicht zur monatlichen Verbrauchsinformation?",
 			answer:
 				"Ja. Seit 2022 müssen Mieter mit fernablesbaren Zählern monatlich informiert werden. Heidi übernimmt das über das Portal.",
-			more: { text: "Mehr zur uVI", href: ROUTE_FUNKTIONEN },
+			more: { text: "Mehr zur uVI", href: ROUTE_VERBRAUCHSINFORMATION },
 		},
 		{
 			question: "Wo liegen die Daten?",

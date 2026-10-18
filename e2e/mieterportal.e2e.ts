@@ -119,7 +119,7 @@ test("CTAs lead to the closing card's form, the rows and the FAQ", async ({
 	// Inside a closed answer, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/funktionen");
+	).toHaveAttribute("href", "/verbrauchsinformation");
 	await expect(page.getByText("Zum Mieter-Check")).toHaveCount(0);
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zu Sicherheit" }),

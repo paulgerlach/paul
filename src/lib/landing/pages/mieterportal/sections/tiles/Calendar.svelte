@@ -5,7 +5,7 @@
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Tick from "../../components/Tick.svelte";
+	import Tick from "$lib/landing/sections/uv/Tick.svelte";
 	import { calendar } from "../../content";
 
 	/** Months processed so far (the current one included): all of them on the server. */

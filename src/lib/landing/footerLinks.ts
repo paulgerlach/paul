@@ -60,7 +60,6 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Demo buchen", href: DEMO_HREF },
 			{ text: "Auswertungen" },
 			{ text: "Schnittstellen" },
-			{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 		],
 	},
 	{

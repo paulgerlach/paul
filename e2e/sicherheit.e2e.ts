@@ -71,14 +71,14 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 	expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("the footer's Sicherheit links and internal links resolve", async ({
+test("the footer's Sicherheit link and internal links resolve", async ({
 	page,
 	request,
 }) => {
 	await page.goto(PATH);
 	expect(
 		await hrefs(page.locator("footer a", { hasText: /^Sicherheit$/ })),
-	).toEqual([PATH, PATH]);
+	).toEqual([PATH]);
 	const links = new Set([
 		...(await hrefs(page.locator('footer a[href^="/"]'))),
 		...(await hrefs(page.locator('main a[href^="/"]'))),

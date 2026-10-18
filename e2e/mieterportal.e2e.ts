@@ -121,7 +121,12 @@ test("CTAs lead to the closing card's form, the rows and the FAQ", async ({
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
 	).toHaveAttribute("href", "/funktionen");
 	await expect(page.getByText("Zum Mieter-Check")).toHaveCount(0);
-	await expect(page.getByText("Mehr zu Sicherheit")).toHaveCount(0);
+	await expect(
+		page.locator("#faq a.more", { hasText: "Mehr zu Sicherheit" }),
+	).toHaveAttribute("href", "/sicherheit");
+	await expect(
+		page.locator("section.trust a", { hasText: "Mehr zu Sicherheit" }),
+	).toHaveAttribute("href", "/sicherheit");
 });
 
 test.describe("with reduced motion", () => {

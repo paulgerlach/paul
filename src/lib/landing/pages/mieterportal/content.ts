@@ -9,7 +9,7 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
-import { ROUTE_FUNKTIONEN } from "$lib/routes";
+import { ROUTE_FUNKTIONEN, ROUTE_SICHERHEIT } from "$lib/routes";
 import type { IconName } from "./icons";
 
 const NB = "\u00a0";
@@ -398,8 +398,7 @@ export const faq = {
 		{
 			question: "Wo liegen die Daten?",
 			answer: "Auf Servern in Deutschland, verarbeitet nach DSGVO und BDSG.",
-			// No security page yet: not shown until it exists.
-			more: { text: "Mehr zu Sicherheit" },
+			more: { text: "Mehr zu Sicherheit", href: ROUTE_SICHERHEIT },
 		},
 	] satisfies FaqItem[] as FaqItem[],
 };

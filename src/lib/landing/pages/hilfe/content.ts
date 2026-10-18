@@ -21,6 +21,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_KONTAKT,
 	ROUTE_SELBSTABRECHNUNG,
+	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
@@ -237,7 +238,7 @@ export const topics: Topic[] = [
 				question: "Wo werden meine Daten verarbeitet?",
 				answer:
 					"Heidi verarbeitet die Daten von Ihnen und Ihren Mietern nach DSGVO und BDSG und speichert alle Daten auf Servern in Deutschland.",
-				more: { text: "Sicherheit & Datenschutz" },
+				more: { text: "Sicherheit & Datenschutz", href: ROUTE_SICHERHEIT },
 			},
 		],
 	},

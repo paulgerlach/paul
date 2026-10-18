@@ -85,8 +85,13 @@
 						<summary>
 							{item.question}<span class="pl" aria-hidden="true"></span>
 						</summary>
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
-						<div class="ans">{@html item.answer}</div>
+						<div class="ans">
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted content data -->
+							{@html item.answer}
+							{#if item.more?.href}
+								<a class="more" href={item.more.href}>{item.more.text}</a>
+							{/if}
+						</div>
 					</details>
 				{/each}
 			</div>

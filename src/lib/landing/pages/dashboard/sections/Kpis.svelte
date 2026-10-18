@@ -10,7 +10,7 @@
 	import Icon from "../components/Icon.svelte";
 	import Pill from "../components/Pill.svelte";
 	import { kpis } from "../content";
-	import { enterView } from "../enterView";
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import {
 		co2,
 		costs,

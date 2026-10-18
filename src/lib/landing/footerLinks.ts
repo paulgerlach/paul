@@ -8,6 +8,7 @@ import {
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_SELBSTABRECHNUNG,
+	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VORGEHEN,
@@ -28,7 +29,7 @@ export const companyLinks: LandingFooterLink[] = [
 	{ text: "Karriere", href: ROUTE_KARRIERE },
 	{ text: "Kunden", href: "/#kunden" },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
-	{ text: "Sicherheit" },
+	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 	{ text: "Neuigkeiten" },
 	{ text: "API-Dokumentation" },
 ];
@@ -55,7 +56,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Demo buchen", href: DEMO_HREF },
 			{ text: "Auswertungen" },
 			{ text: "Schnittstellen" },
-			{ text: "Sicherheit" },
+			{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 		],
 	},
 	{

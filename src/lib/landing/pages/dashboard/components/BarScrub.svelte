@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { enterView } from "../enterView";
+	import { enterView } from "$lib/landing/attachments/enterView";
 
 	let {
 		values,

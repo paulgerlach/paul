@@ -12,7 +12,7 @@
 	import p6 from "$lib/assets/landing/dashboard/property-6.jpg";
 	import p7 from "$lib/assets/landing/dashboard/property-7.jpg";
 	import Icon from "../components/Icon.svelte";
-	import { enterView } from "../enterView";
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Pill from "../components/Pill.svelte";
 	import { recommendations as rec } from "../content";
 	import {

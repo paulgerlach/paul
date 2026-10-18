@@ -9,6 +9,14 @@
 	import { inView } from "$lib/landing/attachments/inView";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 	import { prefersReducedMotion } from "$lib/landing/motion";
+	import { ROUTE_SICHERHEIT } from "$lib/routes";
+
+	let {
+		securityLink = true,
+	}: {
+		/** "Mehr zu Sicherheit"; off on /sicherheit itself. */
+		securityLink?: boolean;
+	} = $props();
 
 	type Seal = {
 		label: string;
@@ -62,9 +70,6 @@
 			return `${(cx + r * Math.cos(b)).toFixed(2)},${(cy + r * Math.sin(b)).toFixed(2)}`;
 		}).join(" ");
 	});
-
-	/** The design's "Mehr zu Sicherheit" page doesn't exist yet: no link until it does. */
-	const SECURITY_HREF: string | undefined = undefined;
 
 	let armed = $state(false);
 	let on = $state(false);
@@ -162,7 +167,7 @@
 						onclick={DEMO_HREF === START_HREF ? focusSignup : undefined}
 						>Demo buchen</a
 					>
-					{#if SECURITY_HREF}<a class="s" href={SECURITY_HREF}
+					{#if securityLink}<a class="s" href={ROUTE_SICHERHEIT}
 							>Mehr zu Sicherheit</a
 						>{/if}
 				</div>

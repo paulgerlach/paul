@@ -13,6 +13,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_MIETERPORTAL,
+	ROUTE_SICHERHEIT,
 } from "$lib/routes";
 import type { IconName } from "./icons";
 
@@ -221,8 +222,8 @@ export const faq = {
 		},
 		{
 			question: "Wo liegen unsere Daten?",
-			// The design's "Mehr zu Sicherheit" link has no page yet.
 			answer: "Auf Servern in Deutschland, verarbeitet nach DSGVO und BDSG.",
+			more: { text: "Mehr zu Sicherheit", href: ROUTE_SICHERHEIT },
 		},
 	] satisfies FaqItem[],
 };

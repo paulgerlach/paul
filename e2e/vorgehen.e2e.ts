@@ -73,6 +73,18 @@ test("the landing footer lists Vorgehen and Funktionen first", async ({
 	await expect(second).toHaveAttribute("href", "/funktionen");
 });
 
+test("the data answer and the trust block link to /sicherheit", async ({
+	page,
+}) => {
+	await page.goto(PATH);
+	await expect(
+		page.locator("#faq a.more", { hasText: "Mehr zu Sicherheit" }),
+	).toHaveAttribute("href", "/sicherheit");
+	await expect(
+		page.locator("section.trust a", { hasText: "Mehr zu Sicherheit" }),
+	).toHaveAttribute("href", "/sicherheit");
+});
+
 test("every CTA leads to the contact card's form, the hero has no #start", async ({
 	page,
 }) => {

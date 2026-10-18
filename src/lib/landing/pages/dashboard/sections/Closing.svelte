@@ -14,7 +14,7 @@
 	import CtaCard from "$lib/landing/sections/CtaCard.svelte";
 	import { stepCurve } from "../chart";
 	import { closing } from "../content";
-	import { enterView } from "../enterView";
+	import { enterView } from "$lib/landing/attachments/enterView";
 
 	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
 

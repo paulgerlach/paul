@@ -1,5 +1,5 @@
 import type { Attachment } from "svelte/attachments";
-import { prefersReducedMotion } from "$lib/landing/motion";
+import { prefersReducedMotion } from "../motion";
 
 /**
  * A one-time entrance for a block the server renders in its end state: on

@@ -1,36 +1,57 @@
 # Phase 3: Interactions
 
-The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means the end state: no entrances, no loops, no counting, no tween; the FAQ still opens and closes. Most of it comes with the shared `uv` components (02 §2.1), which already behave like this on `/mieterportal`.
+The rules match the other landing pages: runes and the existing attachments, no new dependencies, timers and observers only in the browser and cleaned up on teardown. `prefersReducedMotion()` means: no auto-switch, no staggered statuses, no confetti, no loops, no tweens; the switch, the sliders and the FAQ still work, instantly.
 
-## 3.1 Reveal and the hero mock
+## 3.1 Reveal and anchors
 
-- `reveal()` on `<main>` as on `/mieterportal`, for every `.rv` (threshold 0.15). The design's smooth scrolling for `#` links is the landing pages' existing anchor behaviour: check that `#inhalt`, `#faq` and `#start` land below the sticky header.
-- **The mock's entrance** (`ConsumptionMock`): the design adds `.go` on view (the four KPI boxes fade up, 120 ms apart) and grows the 12 bars from 4 % to their height, 250 ms + 60 ms × i. Here through `enterView` (`$lib/landing/attachments/enterView.ts`): `prepare` drops `.go` and sets every bar to 4 %, `play` adds `.go` and sets the heights on the design's schedule; the cleanup clears the timers. The hero is on screen at load, so in practice the mock keeps its server state (open question 4); it plays when the page is restored scrolled down and the hero comes into view later. Nothing loops here (unlike `/mieterportal`'s hero list).
+- `reveal()` on `<main>` as on `/sicherheit`, for every `.rv` (threshold 0.15).
+- The design scrolls `#` links smoothly with a 72 px offset (`#pg-common`). Here that's the landing pages' existing anchor behaviour (`scroll-margin-top` on the targets): check that `#doppelpflege` and `#start` land below the sticky header, and that "Demo buchen" focuses the closing form's e-mail field (`focusSignup`).
 
-## 3.2 Statement, rotator, numbers, picture
+## 3.2 The hero switch (`Stage`)
 
-All shared, unchanged from `/mieterportal`:
+`stage.svelte.ts`: a class with `$state` fields, provided per page through `setStage()` / `getStage()` (context, like `DashboardDemo`), so each visit starts fresh and nothing leaks between SSR requests.
 
-- **Statement:** the words light up with the scroll position (`(vh × 0.82 − top) / (height + vh × 0.3)`), dimming again scrolling back; every word lit on the server and under reduced motion.
-- **Rotator:** `loopInView`, every 2.3 s the next phrase sharpens in and the previous one blurs upward; the first pass keeps the server's first phrase. A `sr-only` list holds all four phrases.
-- **Numbers:** `countUp` on 12, 3 and 3 (1100 ms, `viewDelay: 0`); 0 and the date aren't counted.
-- **Picture:** the slight zoom-out once in view, only if it was below the fold on load.
+```ts
+type Mode = "two" | "one";
+type Status = "man" | "pending" | "ok";
 
-## 3.3 The four tiles
+class Stage {
+	mode = $state<Mode>("two");
+	statuses = $state<Status[]>(["man", "man", "man"]);
+	chosen = false; // the visitor used the switch (plain field)
+	celebrated = false;
+	#timers: ReturnType<typeof setTimeout>[] = [];
 
-Each tile's loop attaches to the tile itself through `loopInView` (in view and in a visible tab only; on leave the timers are cleared; the server state is the end state). Timings are the design's:
+	set(mode: Mode, opts: { reduced: boolean; onLast?: () => void }) { … }
+	autoSwitch(reduced: boolean) { … } // once, 3.4 s after first in view
+	destroy() { … } // clears every timer
+}
+```
 
-| Tile | Every | One pass |
-|---|---|---|
-| `Calendar` | 7.6 s | every month back to "offen"; months 0 … `current` step in 380 ms apart from 300 ms: before `current` "bereitgestellt" (green tick), `current` "wird erstellt" (dark, spinning ring, `scale(1.04)`); the note follows: "September bereitgestellt", then "Oktober wird erstellt" |
-| `Doc` | 7 s | rows hidden, then in one by one 520 ms apart (bars fill to their width), then "Alle Pflichtangaben enthalten" 500 ms after the last |
-| `Phone` | 7 s | empty; the notification drops in at 500 ms; at 1.8 s the figure and chips appear and the ten bars grow 60 ms apart |
-| `Bill` | 6.4 s | starts on "Ohne uVI" (thumb left, the cut row shown, sum "1.202,80 €"); at 2.6 s the thumb slides to "Mit Heidi", the cut row folds away, the tick row unfolds, and the sum counts from 1.202,80 to 1.240,00 € in 700 ms |
+The design's `setMode` (`#si-js`), step by step:
 
-**The bill's tween** is new in the shared `Bill` (the `/mieterportal` variant only swaps text): when `sum` has `from`/`to`, one `requestAnimationFrame` loop interpolates with the design's easing (`#pg-common`'s `tween`: ease-out cubic, `1 − (1 − p)³`) and writes `Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })` + " €". The loop's cleanup cancels the frame. The tile is `aria-hidden` as a whole (it illustrates the row's text), so nothing is announced.
+- **"two":** clear the timers; every status `man` ("Manuell nachtragen", amber); steps "4 / Handgriffe je Liegenschaft: einloggen, exportieren, weiterleiten, abtippen".
+- **"one":** clear the timers; every status `pending` ("…", no colour); steps "0 / Handgriffe: Die Daten liegen direkt in Ihrer Software"; then status *i* turns `ok` ("Synchronisiert", green, the `si-pop` scale) at 700 + 550 × *i* ms (0 ms under reduced motion). When the last one turns `ok` and the confetti hasn't played yet this visit, `burst()` (`$lib/landing/confetti.ts`) from the ERP list over the stage (the `#pg-common` burst: 120 pieces, about 4.6 s; pass the options that match it, or the default burst if the difference doesn't show). `burst` already does nothing under reduced motion; its stop function goes into the cleanup.
+- The `Segmented` `bind:value` drives `stage.set(…)` through its change (an `onchange`-style callback or a setter on `mode`, **not** an `$effect` that syncs state). A visitor's choice sets `chosen`.
+- **Auto-switch:** an `inView` attachment (`$lib/landing/attachments/inView.ts`) on the figure, once: unless reduced motion, 3.4 s later, if `mode` is still "two", `chosen` is false and the confetti hasn't played, switch to "one" (as if the second button were pressed, but without setting `chosen`). Leaving the view before then cancels it; coming back starts the 3.4 s again (the design fires once on first view and never cancels: ours is the same once the timer has fired).
+- The CSS reacts to `data-mode`: the portal fades to the "Heidi · synchronisiert" face, the hand fades out, the fill line grows (`scaleX`, `scaleY` ≤ 640 px), the ERP card's border turns `--accent-deep`, the number box turns `--accent`.
+- **The wire's loops** (CSS): in "two" the two packets travel portal → hand → ERP (`si-carry`, 3.2 s, the second 1.6 s later); in "one" three dots run along the fill line (`si-run`, 1.8 s, 0.6 s apart). The design starts them on `.in` and never stops them; here a `wire-on` class is set and removed by `loopInView` on the stage, so they only run while in view and in a visible tab. Reduced motion: no packets or dots (`animation: none; opacity: 0`, the design's rule).
+- Screen readers: the steps line is `aria-live="polite"` (it changes only when the mode does, not per status); the statuses aren't announced; the wire and the portal's Heidi face are `aria-hidden`.
 
-The calendar's spinning ring and the note's pulsing dot are CSS loops, off under reduced motion as in the design.
+## 3.3 The calculator
 
-## 3.4 FAQ, closing, trust, floating CTA
+- Four `$state` values from the content defaults; `doppelpflege(inputs)` through `$derived`. Each output text and each slider's `--p` (`(value − min) / (max − min) × 100 %`) are derived too.
+- The big hours and the cost **tween** from the last shown value to the new one in 350 ms with the design's easing (`#pg-common`'s `tween`: ease-out cubic, `1 − (1 − p)³`); the cost rounds each frame to 10 € (01 §1.3). One `requestAnimationFrame` per figure; a new input cancels the running frame and starts from the value on screen. The tween is a side effect of the derived target (an `$effect` that only animates the displayed text and returns the frame's cancel), not state syncing. Under reduced motion the text jumps.
+- The days line and the cells change at once (the design's); the cells' colour has a 0.3 s transition.
+- Keyboard: native range inputs (arrows, Page Up/Down, Home/End). The `<output>`s are tied to their inputs with `for`; the result card is not `aria-live` (it would speak on every arrow press); `/selbstabrechnung`'s calculator is the model, check how it announces and match it.
+- Without JS: the server's default result; the sliders move but nothing recalculates (as on `/selbstabrechnung` and `/upgrade-now`).
 
-All shared: the `Faq`'s own disclosure, the `SignupForm`, `TrustSeals`' entrance and seal sequence, `FloatingCta`'s hide-while-`final`-card-in-view. Nothing page-specific.
+## 3.4 The data path
+
+- `loopInView` on the path: every 900 ms the next node gets `lit` (`translateY(-3px)`, `--accent-deep` border), the others lose it, in order Funkzähler → Fernablesung → Heidi → Ihr ERP / CRM → again. Leaving the view or a hidden tab stops it; the server state is no node lit.
+- The links' dots (`si-lk`, 2.4 s, 0.8 s and 1.6 s offsets; vertical `si-lkv` ≤ 860 px) run while the same attachment's `on` class is set.
+- Reduced motion: every node lit at once (the design's), no dots.
+
+## 3.5 Shared sections
+
+All shared, nothing page-specific: `SectionHead`'s pill, `Testimonials`, the `Faq`'s own disclosure, the `SignupForm`, `TrustSeals`' entrance and seal sequence, `FloatingCta`'s hide-while-`final`-card-in-view.

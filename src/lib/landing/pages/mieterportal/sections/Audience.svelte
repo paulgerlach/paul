@@ -1,104 +1,14 @@
-<!--
-  "Sie sind Verwalter?" / "Sie sind Mieter?" (.uv-who): two dark cards with
-  a square photo. A card's button shows only when its target exists (the
-  Mieter-Check doesn't yet: plan README, open question 2).
--->
 <script lang="ts">
-	import office from "$lib/assets/landing/vorgehen/office.webp?enhanced";
 	import building from "$lib/assets/landing/mieterportal/building.webp?enhanced";
-	import Image from "$lib/components/Basic/Image/Image.svelte";
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
+	import office from "$lib/assets/landing/vorgehen/office.webp?enhanced";
+	import Audience from "$lib/landing/sections/uv/Audience.svelte";
 	import { audience } from "../content";
 
 	const images = { building, office };
+	const cards = audience.cards.map((card) => ({
+		...card,
+		image: images[card.image],
+	}));
 </script>
 
-<section class="who" aria-label={audience.label}>
-	<div class="wrap">
-		{#each audience.cards as card, i (card.title)}
-			<article class="card rv" aria-labelledby="mp-who-{i}">
-				<div>
-					<h2 id="mp-who-{i}">{card.title}</h2>
-					<p>{card.text}</p>
-					{#if card.cta.href}
-						<a
-							class="uv-btn w"
-							href={card.cta.href}
-							onclick={card.cta.href === START_HREF ? focusSignup : undefined}
-							>{card.cta.text}</a
-						>
-					{/if}
-				</div>
-				<figure>
-					<Image
-						src={images[card.image]}
-						alt=""
-						sizes="(max-width: 980px) 100vw, 440px"
-						style={card.objectPosition
-							? `object-position: ${card.objectPosition}`
-							: undefined}
-					/>
-				</figure>
-			</article>
-		{/each}
-	</div>
-</section>
-
-<style>
-	.who {
-		padding: 0 0 110px;
-	}
-	.card {
-		display: grid;
-		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-		gap: clamp(24px, 5vw, 80px);
-		align-items: center;
-		background: var(--card);
-		border-radius: 26px;
-		padding: clamp(24px, 4vw, 52px);
-		max-width: 1120px;
-		margin: 0 auto 28px;
-	}
-	/* Beats the landing heading reset (tokens.css). */
-	.card h2 {
-		font-size: clamp(30px, 3.4vw, 48px);
-		font-weight: 400;
-		letter-spacing: -0.04em;
-	}
-	.card p {
-		color: var(--mute);
-		font-size: clamp(16px, 1.35vw, 19px);
-		line-height: 1.5;
-		margin: 22px 0 30px;
-		max-width: 46ch;
-	}
-	figure {
-		margin: 0;
-		border-radius: 20px;
-		overflow: hidden;
-		aspect-ratio: 1/1;
-	}
-	figure :global(img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-	}
-	.card:hover figure :global(img) {
-		transform: scale(1.03);
-	}
-	@media (max-width: 980px) {
-		.card {
-			grid-template-columns: 1fr;
-		}
-		figure {
-			aspect-ratio: 16/10;
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		figure :global(img) {
-			transition: none;
-		}
-	}
-</style>
+<Audience idPrefix="mp-who" label={audience.label} {cards} />

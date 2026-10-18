@@ -1,19 +1,31 @@
 <!--
-  Row 2's tile: a phone with the new-information notification and the
-  month's figure with its bars. Every 7 s in view the notification drops in
-  again, then the figure and the bars grow.
+  A row's tile: a phone with the new-information notification and the
+  month's figure with its comparisons and bars. Every 7 s in view the
+  notification drops in again, then the figure and the bars grow.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Icon from "$lib/landing/sections/uv/Icon.svelte";
-	import { phone } from "../../content";
+	import Icon from "../Icon.svelte";
+	import type { PhoneTile } from "../types";
 
-	const max = Math.max(...phone.bars, 1) * 1.05;
-	const full = phone.bars.map((v) => Math.round((v / max) * 100));
+	let {
+		time,
+		app,
+		title,
+		sub,
+		label,
+		value,
+		comparisons,
+		bars,
+		max = Math.max(...bars, 1) * 1.05,
+	}: PhoneTile = $props();
+
+	const full = $derived(bars.map((v) => Math.round((v / max) * 100)));
 
 	/** 0: empty, 1: notification in, 2: figure in. */
 	let stage = $state(2);
-	let heights = $state(full);
+	/** Bar heights in % while animating; `null`: the full heights. */
+	let heights = $state<number[] | null>(null);
 
 	function run() {
 		stage = 0;
@@ -23,7 +35,7 @@
 			setTimeout(() => {
 				stage = 2;
 				full.forEach((h, i) =>
-					timers.push(setTimeout(() => (heights[i] = h), i * 60)),
+					timers.push(setTimeout(() => (heights![i] = h), i * 60)),
 				);
 			}, 1800),
 		];
@@ -35,17 +47,19 @@
 	class={["phone", stage >= 1 && "s1", stage >= 2 && "s2"]}
 	{@attach loopInView({ run, every: 7000 })}
 >
-	<div class="pt"><span>{phone.time}</span><span>{phone.app}</span></div>
+	<div class="pt"><span>{time}</span><span>{app}</span></div>
 	<div class="nt">
 		<span class="ni"><Icon name="bell" /></span>
-		<span><b>{phone.title}</b><small>{phone.sub}</small></span>
+		<span><b>{title}</b><small>{sub}</small></span>
 	</div>
 	<div class="pv">
-		<small>{phone.label}</small>
-		<b>{phone.value}</b>
-		<div class="cmp"><span>{phone.comparison}</span></div>
+		<small>{label}</small>
+		<b>{value}</b>
+		<div class="cmp">
+			{#each comparisons as c (c)}<span>{c}</span>{/each}
+		</div>
 		<div class="mini">
-			{#each heights as h, i (i)}<i style:height="{h}%"></i>{/each}
+			{#each heights ?? full as h, i (i)}<i style:height="{h}%"></i>{/each}
 		</div>
 	</div>
 </div>

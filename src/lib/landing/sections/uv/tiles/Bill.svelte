@@ -1,41 +1,76 @@
 <!--
-  Row 4's tile: "Ohne Portal" against "Mit Heidi". Every 6.4 s in view it
-  starts on "Ohne Portal" (late consumption, frequent calls, "viele"), then
-  the thumb slides over, those rows fold away, the portal's rows appear and
-  the sum turns to "weniger".
+  A row's tile: "without" against "with Heidi". Every 6.4 s in view it starts
+  on "without" (its `cut` rows, the sum's first value), then the thumb slides
+  over, those rows fold away, the `ok` rows appear and the sum turns to its
+  second value: swapped as text, or counted in € (03 §3.3).
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Tick from "$lib/landing/sections/uv/Tick.svelte";
-	import { before } from "../../content";
+	import Tick from "../Tick.svelte";
+	import type { BillTile } from "../types";
+
+	let { without, with: withHeidi, rows, sum }: BillTile = $props();
+
+	const euro = new Intl.NumberFormat("de-DE", {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+	});
+	const money = (n: number) => `${euro.format(n)}\u00a0€`;
 
 	let good = $state(true);
+	/** The counted sum while it counts; `null`: the sum of the current side. */
+	let counting = $state<number | null>(null);
+
+	const total = $derived(
+		"from" in sum
+			? money(counting ?? (good ? sum.to : sum.from))
+			: good
+				? sum.after
+				: sum.before,
+	);
 
 	function run() {
 		good = false;
-		const timer = setTimeout(() => (good = true), 2600);
-		return () => clearTimeout(timer);
+		counting = null;
+		let frame = 0;
+		const timer = setTimeout(() => {
+			good = true;
+			if (!("from" in sum)) return;
+			// The design's tween: 700 ms, ease-out cubic.
+			const { from, to } = sum;
+			const start = performance.now();
+			const tick = (now: number) => {
+				const p = Math.min(1, (now - start) / 700);
+				counting = from + (to - from) * (1 - (1 - p) ** 3);
+				if (p < 1) frame = requestAnimationFrame(tick);
+				else counting = null;
+			};
+			counting = from;
+			frame = requestAnimationFrame(tick);
+		}, 2600);
+		return () => {
+			clearTimeout(timer);
+			cancelAnimationFrame(frame);
+			counting = null;
+		};
 	}
 </script>
 
 <div
-	class={["bill", good && "good"]}
+	class={["bill", good && "good", "from" in sum && "money"]}
 	{@attach loopInView({ run, every: 6400 })}
 >
 	<div class="seg">
-		<span class="a">{before.without}</span><span class="b">{before.with}</span>
+		<span class="a">{without}</span><span class="b">{withHeidi}</span>
 	</div>
-	{#each before.cut as row (row.label)}
-		<div class="bl cut"><span>{row.label}</span><b>{row.value}</b></div>
+	{#each rows as row (row.label)}
+		<div class={["bl", row.kind]}>
+			<span>{row.label}</span>{#if row.value}<b>{row.value}</b>{:else}<b
+					class="tk"><Tick /></b
+				>{/if}
+		</div>
 	{/each}
-	{#each before.ok as label (label)}
-		<div class="bl ok"><span>{label}</span><b><Tick /></b></div>
-	{/each}
-	<div class="bl sum">
-		<span>{before.sum.label}</span><b
-			>{good ? before.sum.after : before.sum.before}</b
-		>
-	</div>
+	<div class="bl sum"><span>{sum.label}</span><b>{total}</b></div>
 </div>
 
 <style>
@@ -112,7 +147,11 @@
 		color: #b4472e;
 		font-size: 13px;
 	}
-	.ok b {
+	/* Amounts keep the row's size (the /mieterportal text values are 13 px). */
+	.money .cut b {
+		font-size: inherit;
+	}
+	.tk {
 		color: #2f7a3c;
 		display: grid;
 		place-items: center;
@@ -121,7 +160,7 @@
 		border-radius: 50%;
 		background: #e6f5e7;
 	}
-	.ok b :global(svg) {
+	.tk :global(svg) {
 		width: 11px;
 		height: 11px;
 	}

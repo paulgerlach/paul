@@ -13,7 +13,7 @@ const {
 	quotes,
 	rotator,
 	rows,
-	statementTile,
+	doc,
 } = content;
 
 const NB = "\u00a0";
@@ -63,12 +63,12 @@ describe("mieterportal content", () => {
 		const last = phone.bars.at(-1)!;
 		expect(phone.value).toBe(`${last}${NB}kWh`);
 		expect(portal.entries[0].sub).toContain(`${last}${NB}kWh`);
-		expect(statementTile.rows[0].value).toBe(String(last));
+		expect(doc.rows[0].value).toBe(String(last));
 	});
 
 	it("has four statement rows with shares in range", () => {
-		expect(statementTile.rows).toHaveLength(4);
-		for (const row of statementTile.rows) {
+		expect(doc.rows).toHaveLength(4);
+		for (const row of doc.rows) {
 			expect(row.share).toBeGreaterThan(0);
 			expect(row.share).toBeLessThanOrEqual(100);
 		}

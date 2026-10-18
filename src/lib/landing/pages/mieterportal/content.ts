@@ -11,6 +11,15 @@ import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import { ROUTE_SICHERHEIT, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
 import type { IconName } from "$lib/landing/sections/uv/icons";
+import type {
+	BillTile,
+	CalendarTile,
+	DocTile,
+	Figure,
+	Link,
+	PhoneTile,
+	Row,
+} from "$lib/landing/sections/uv/types";
 
 const NB = "\u00a0";
 
@@ -26,8 +35,8 @@ export const hero = {
 	word: "Mieterportal",
 	// The soft hyphen is the design's.
 	lead: "Verbrauch, Verbrauchs­information und Termine. Für jede Wohnung an einem Ort.",
-	primary: { text: "Demo buchen", href: DEMO_HREF },
-	secondary: { text: "Mehr erfahren", href: "#inhalt" },
+	primary: { text: "Demo buchen", href: DEMO_HREF } satisfies Link,
+	secondary: { text: "Mehr erfahren", href: "#inhalt" } satisfies Link,
 };
 
 export type PortalEntry = {
@@ -92,20 +101,12 @@ export const statement = {
 	text: "Ihre Mieter wollen wissen, wo sie stehen. Im Heidi Mieterportal sehen sie ihren Verbrauch jeden Monat, verglichen mit dem Vormonat, dem Vorjahr und dem Durchschnitt. Mit allem, was die Heizkostenverordnung verlangt. Für Ihr Team entsteht dabei keine Arbeit.",
 };
 
-export type TileKind = "calendar" | "phone" | "statement" | "before";
-export type Row = {
-	tag: string;
-	title: [string, string];
-	paragraphs: [string, string];
-	tile: TileKind;
-	/** The tile's background (the design's t-mint, t-ink2, t-stone). */
-	tone: "mint" | "ink" | "stone";
-};
+export type TileKind = "calendar" | "phone" | "doc" | "bill";
 
 export const rows = {
 	label: "So arbeitet Heidi",
-	primary: { text: "Demo buchen", href: DEMO_HREF },
-	secondary: { text: "Häufige Fragen", href: "#faq" },
+	primary: { text: "Demo buchen", href: DEMO_HREF } satisfies Link,
+	secondary: { text: "Häufige Fragen", href: "#faq" } satisfies Link,
 	items: [
 		{
 			tag: "Monatlich",
@@ -134,7 +135,7 @@ export const rows = {
 				"Jede Information zeigt den Verbrauch des letzten Monats und vergleicht ihn mit Vormonat, Vorjahresmonat und einem Durchschnittsnutzer.",
 				"So, wie es § 6a HeizkostenV verlangt.",
 			],
-			tile: "statement",
+			tile: "doc",
 			tone: "stone",
 		},
 		{
@@ -144,13 +145,13 @@ export const rows = {
 				"Wer seinen Verbrauch kennt, wird von der Jahresabrechnung nicht überrascht.",
 				"Fragen, die sonst bei Ihrem Team landen, beantwortet das Portal.",
 			],
-			tile: "before",
+			tile: "bill",
 			tone: "mint",
 		},
-	] satisfies Row[] as Row[],
+	] satisfies Row<TileKind>[] as Row<TileKind>[],
 };
 
-export const calendar = {
+export const calendar: CalendarTile = {
 	months: [
 		"Jan",
 		"Feb",
@@ -174,22 +175,21 @@ export const calendar = {
 	noteDoing: "{x} wird erstellt",
 };
 
-export const phone = {
+export const phone: PhoneTile = {
 	time: "9:41",
 	app: "Heidi",
 	title: "Ihre Verbrauchsinfo September",
 	sub: "Jetzt im Mieterportal ansehen",
 	label: "Heizung im September",
 	value: `131${NB}kWh`,
-	comparison: `11${NB}% unter Vorjahresmonat`,
+	comparisons: [`11${NB}% unter Vorjahresmonat`],
 	/** Monthly heating values up to the current month; the last is accent. */
 	bars: [171, 184, 162, 131, 74, 22, 15, 14, 96, 131],
 };
 
-export const statementTile = {
+export const doc: DocTile = {
 	title: "Verbrauchsinformation September",
 	sub: "Heizung · in kWh · Beispiel",
-	/** `share` is the bar's width in %, as designed (not computed). */
 	rows: [
 		{ label: "Letzter Monat", value: "131", share: 82 },
 		{ label: "Vormonat", value: "96", share: 60 },
@@ -199,14 +199,15 @@ export const statementTile = {
 	result: "Alle Pflichtangaben enthalten",
 };
 
-export const before = {
+export const bill: BillTile = {
 	without: "Ohne Portal",
 	with: "Mit Heidi",
-	cut: [
-		{ label: "Verbrauch erst mit der Abrechnung", value: "spät" },
-		{ label: "Rückfrage per Anruf bei Ihnen", value: "oft" },
+	rows: [
+		{ kind: "cut", label: "Verbrauch erst mit der Abrechnung", value: "spät" },
+		{ kind: "cut", label: "Rückfrage per Anruf bei Ihnen", value: "oft" },
+		{ kind: "ok", label: "Verbrauch jeden Monat im Portal" },
+		{ kind: "ok", label: "Montagetermin mit Zeitfenster" },
 	],
-	ok: ["Verbrauch jeden Monat im Portal", "Montagetermin mit Zeitfenster"],
 	sum: { label: "Rückfragen an Ihr Team", before: "viele", after: "weniger" },
 };
 
@@ -220,16 +221,6 @@ export const rotator = {
 		"Montagetermine",
 	],
 	intervalMs: 2300,
-};
-
-export type Figure = {
-	value: string;
-	unit?: string;
-	text: string;
-	/** Counts up from 0 when in view. */
-	count?: number;
-	/** A smaller figure (the design's .dt, for "1–2 h"). */
-	compact?: boolean;
 };
 
 export const numbers = {
@@ -328,7 +319,7 @@ export const dashboard = {
 	empty: ["Einsparung", "Heizkörper"],
 };
 
-export type AudienceCard = {
+type AudienceEntry = {
 	title: string;
 	text: string;
 	/** Without `href` the button isn't shown (README, open question 2). */
@@ -353,11 +344,14 @@ export const audience = {
 			image: "office",
 			objectPosition: "50% 35%",
 		},
-	] satisfies AudienceCard[] as AudienceCard[],
+	] satisfies AudienceEntry[] as AudienceEntry[],
 };
 
 export const quotes = {
-	h2: ["Transparenz für Bewohner.", "Unsere Kunden sagen es selbst."],
+	h2: ["Transparenz für Bewohner.", "Unsere Kunden sagen es selbst."] as [
+		string,
+		string,
+	],
 	keys: [
 		"vitolus",
 		"werne",
@@ -367,7 +361,7 @@ export const quotes = {
 
 export const picture = {
 	label: "Heidi",
-	caption: ["Ihr Verbrauch.", "Jederzeit im Blick."],
+	caption: ["Ihr Verbrauch.", "Jederzeit im Blick."] as [string, string],
 };
 
 export const faq = {

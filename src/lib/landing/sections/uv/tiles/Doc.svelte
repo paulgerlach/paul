@@ -1,26 +1,24 @@
 <!--
-  Row 3's tile: a Verbrauchsinformation with its four comparisons and the
-  "Alle Pflichtangaben enthalten" check. Every 7 s in view the rows come in
-  one by one, then the check.
+  A row's tile: a Verbrauchsinformation with its four comparisons and the
+  check. Every 7 s in view the rows come in one by one, then the check.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
-	import Tick from "$lib/landing/sections/uv/Tick.svelte";
-	import { statementTile } from "../../content";
+	import Tick from "../Tick.svelte";
+	import type { DocTile } from "../types";
 
-	const count = statementTile.rows.length;
+	let { title, sub, rows, result }: DocTile = $props();
+
 	/** Rows shown so far; all of them and the check on the server. */
-	let shown = $state(count);
+	let shown = $state(Infinity);
 	let ok = $state(true);
 
 	function run() {
 		shown = 0;
 		ok = false;
 		const timers = [
-			...statementTile.rows.map((_, i) =>
-				setTimeout(() => (shown = i + 1), 120 + i * 520),
-			),
-			setTimeout(() => (ok = true), 120 + count * 520 + 500),
+			...rows.map((_, i) => setTimeout(() => (shown = i + 1), 120 + i * 520)),
+			setTimeout(() => (ok = true), 120 + rows.length * 520 + 500),
 		];
 		return () => timers.forEach(clearTimeout);
 	}
@@ -28,15 +26,15 @@
 
 <div class={["doc", ok && "ok"]} {@attach loopInView({ run, every: 7000 })}>
 	<div class="dh">
-		<b>{statementTile.title}</b>
-		<small>{statementTile.sub}</small>
+		<b>{title}</b>
+		<small>{sub}</small>
 	</div>
-	{#each statementTile.rows as row, i (row.label)}
+	{#each rows as row, i (row.label)}
 		<div class={["dr", i < shown && "on"]} style:--w="{row.share}%">
 			<span>{row.label}</span><i></i><b>{row.value}</b>
 		</div>
 	{/each}
-	<div class="dok"><span class="ck"><Tick /></span>{statementTile.result}</div>
+	<div class="dok"><span class="ck"><Tick /></span>{result}</div>
 </div>
 
 <style>

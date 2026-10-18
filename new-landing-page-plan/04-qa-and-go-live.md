@@ -4,24 +4,24 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/verbrauchsinformation`: the page, with the landing header and footer; the footer's "Verbrauchsinformation (uVI)" lands here from every landing page; "Mehr zur uVI" on `/mieterportal` and `/hilfe` lands here; the city template's uVI card too, if changed (01 §1.1)
-- [ ] `/mieterportal` unchanged after the template move (02 §2.1): screenshots at 1440 and 375 px with reduced motion, the SSR HTML without scoping classes, its loops (hero list, four tiles, rotator, mini dashboard) as before
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the video button, no buttons on the audience cards, the hero mock in its end state on load, the right hero photo's crop (square source)
-- [ ] No horizontal overflow at any width from 320 to 1640 px (the hero word and peek strip, the KPI boxes, the calendar note, the bill, the rotator)
-- [ ] Hero mock: in its end state on load; when the page is restored scrolled down, the KPIs fade in and the bars grow once as the hero comes into view
+- [x] `bun run dev` → `http://localhost:5173/verbrauchsinformation`: the page, with the landing header and footer; the footer's "Verbrauchsinformation (uVI)" lands here from every landing page; "Mehr zur uVI" on `/mieterportal` and `/hilfe` lands here; the city template's uVI card too, if changed (01 §1.1) (2026-10-18: the city template's uVI card stays as it is: in the Berlin design it links to `#faq`)
+- [x] `/mieterportal` unchanged after the template move (02 §2.1): screenshots at 1440 and 375 px with reduced motion, the SSR HTML without scoping classes, its loops (hero list, four tiles, rotator, mini dashboard) as before (2026-10-18: screenshots pixel-identical, the HTML differs only in classes and Svelte's markers, e2e passes)
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the video button, no buttons on the audience cards, the hero mock in its end state on load, the right hero photo's crop (square source). Compared at 1440 and 375 px section by section (2026-10-18): every section has the design's height except the audience cards (no buttons) and the closing card (form); 1100, 980 and 700 px still to compare
+- [x] No horizontal overflow at any width from 320 to 1640 px (the hero word and peek strip, the KPI boxes, the calendar note, the bill, the rotator) (1440, 1100, 980, 700, 375, 320 checked in dev, 375 and 320 in e2e)
+- [ ] Hero mock: in its end state on load; when the page is restored scrolled down, the KPIs fade in and the bars grow once as the hero comes into view. On load: checked (e2e); the restored-scroll entrance still to check by hand
 - [ ] Statement: words light up while scrolling down and dim scrolling back; all lit with reduced motion and without JS
-- [ ] Tiles: each loops only while in view (calendar 7.6 s, document 7 s, phone 7 s, bill 6.4 s), stops off-screen and in a background tab, restarts cleanly on return; the bill's sum counts 1.202,80 → 1.240,00 € and lands exactly on "1.240,00 €"
-- [ ] Rotator: changes every 2.3 s only in view; the first phrase stays on the first pass
+- [x] Tiles: each loops only while in view (calendar 7.6 s, document 7 s, phone 7 s, bill 6.4 s), stops off-screen and in a background tab, restarts cleanly on return; the bill's sum counts 1.202,80 → 1.240,00 € and lands exactly on "1.240,00 €" (calendar and bill in e2e, with the clock)
+- [x] Rotator: changes every 2.3 s only in view; the first phrase stays on the first pass
 - [ ] Numbers: 12, 3 and 3 count up once; "31.12.2026" doesn't; with `now` set after 31.12.2026 (a `load` override in dev) the bento and answer 5 show their expired texts
 - [ ] Every "Demo buchen" scrolls to the closing card below the sticky header and focuses its e-mail field; "Mehr erfahren" → the rows, "Häufige Fragen" → the FAQ; the inline and button links to `/mieterportal` and "Jetzt noch umrüsten" work
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host` (the loops, the peek strip, the floating CTA)
 - [ ] Keyboard-only through the whole page: banner link, hero CTAs, row CTAs and the inline link, the FAQ, the signup form, the trust block's button, the floating CTA; the focus ring visible on dark (`--accent`)
 - [ ] Screen reader (VoiceOver): the H1 "uVI: Unterjährige Verbrauchsinformation mit Heidi" (not "uVI"); the mock as one labelled figure with its KPI sentence; the tiles silent; the rotator's list; the FAQ; no announcements from the loops
-- [ ] Reduced-motion emulation: every block in its end state, no entrance, loop, count or tween; the CSS loops (calendar ring, note dot) still
-- [ ] JS disabled: every section readable in its end state, the FAQ opens natively, the signup form posts
-- [ ] A signup reaches the `leads` table with `source = "verbrauchsinformation"` and the sink with `page: "/verbrauchsinformation"`
-- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05 (compare with `/mieterportal`, the same template)
-- [ ] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
+- [x] Reduced-motion emulation: every block in its end state, no entrance, loop, count or tween; the CSS loops (calendar ring, note dot) still
+- [x] JS disabled: every section readable in its end state, the FAQ opens natively, the signup form posts
+- [x] A signup reaches the `leads` table with `source = "verbrauchsinformation"` and the sink with `page: "/verbrauchsinformation"`
+- [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05 (compare with `/mieterportal`, the same template). Local preview (2026-10-18): Performance 75 (`/mieterportal` 74–77 on the same run; LCP is the hero word, render delay from the font), Accessibility 95 (the mock's "Beispieldaten" tag and month labels in the design's `--faint` on white, and the shared footer's `<h4>`), CLS 0, TBT ≤ 20 ms; the Vercel preview run is open
+- [x] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev) (`/verbrauchsinformation`, `/mieterportal` and `/hilfe`; a dev server left running while the sections moved showed a stale hydration error on `/mieterportal`, gone after a restart and never in the build)
 
 ## 4.2 Tests
 
@@ -42,6 +42,8 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 2. `10-qa-and-cutover.md`: exclude `/verbrauchsinformation` from the Next-baseline visual loop and list it with the new pages in the SEO diff; add "a `/verbrauchsinformation` signup arrives with its `source`" to the post-deploy checks; the `/funktionen` gate is §4.8 now (done in the planning commit).
 3. `CLAUDE.md`: a `/verbrauchsinformation` paragraph (planned now; rewritten once built, with the shared `uv` template next to `region/` in the layout tree); the gate numbers of the other pages moved up by one (done in the planning commit).
 
+All three done (2026-10-18).
+
 ## 4.4 Go-live gate: `/verbrauchsinformation`
 
 The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and FAQ links stay, for review):
@@ -50,7 +52,7 @@ The page goes live with the cutover. Every item must be done before the cutover,
 - [ ] The product as described: the uVI monthly and "für jede Wohnung", delivered in the Mieterportal with a notification, "per Funk", "Ohne Termin", "Mit Heidi ist jede Information dokumentiert", "Ihr Team hat damit keine Arbeit" / "0 Handgriffe für Ihr Team", "hält Ihnen die Mieterfragen vom Tisch"; align with `/mieterportal`'s product item (§4.7)
 - [ ] Example data signed off and made consistent: the mock's bars (October to September, 96 kWh in August), "Ihr Verbrauch im September", 131 / 96 / 148 / 142 kWh, "11 % unter Vorjahresmonat", "8 % unter Durchschnitt", the calendar at "Oktober wird erstellt", the bill's 1.240,00 € and −37,20 €, "Wohnung 2. OG links"; they read as "now" only in autumn 2026: update or make relative for 2027
 - [ ] The expired texts written (bento figure, answer 5; 01 §1.3)
-- [ ] Photos: the reuse of `vorgehen/building-wide.webp`, `vorgehen/office.webp`, `cities/leipzig/references.jpg`, `cities/koeln/hero.jpg`, `cities/gera/references.jpg` and `region/contact.webp` on a generic page accepted (licences: §4.8 for `vorgehen/`, §4.15 for the city and region photos)
+- [ ] Photos: the new hero photo `verbrauchsinformation/tenant.jpg` licensed for use; the reuse of `vorgehen/building-wide.webp`, `cities/leipzig/references.jpg`, `cities/koeln/hero.jpg`, `cities/gera/references.jpg` and `region/contact.webp` on a generic page accepted (licences: §4.8 for `vorgehen/`, §4.15 for the city and region photos)
 - [ ] Permission to show the Höhne, Werne and Gerhard quotes (shared with the gates below)
 - [ ] Security block statements: covered by the region pages' item in §4.15 (same `TrustSeals`)
 - [ ] The CTA targets decided: the closing card (open question 2); the audience cards' buttons (open question 3); FAQ answer 6's inline link (open question 5)

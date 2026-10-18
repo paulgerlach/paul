@@ -43,7 +43,7 @@ export const actions: Actions = {
 - **Other links to the page:**
   - `pages/mieterportal/content.ts`: the FAQ's "Mehr zur uVI" → `ROUTE_VERBRAUCHSINFORMATION` (the `/mieterportal` design links it to this page's design).
   - `pages/hilfe/content.ts`: answer `uvi`'s "Mehr zur uVI" → `ROUTE_VERBRAUCHSINFORMATION`. Its `content.test.ts` accepts any route constant (check). `uvi-fehlt` has no `more` and gets none (not in the `/hilfe` design).
-  - `sections/region/Duo.svelte`: the uVI card's "Mehr erfahren" (today `ROUTE_FUNKTIONEN`, both cards). Read the saved Berlin design first: if its uVI card links to the uVI design, it gets `ROUTE_VERBRAUCHSINFORMATION`; the portfolio card stays. Template change, so every city and the Germany page at once.
+  - `sections/region/Duo.svelte`: the uVI card's "Mehr erfahren" stays (`ROUTE_FUNKTIONEN`): in the Berlin design it links to `#faq`, not to the uVI page (checked 2026-10-18).
   - Not changed: `/funktionen`'s "Benachrichtigungen" card (no `href` until that page's open question 1); "Heizkostenabrechnung" in the footer (still `/funktionen`, no page of its own).
 - **Tests that see the change:** the footer-link specs (every internal footer link resolves) now include `/verbrauchsinformation`; `e2e/mieterportal.e2e.ts` and `e2e/hilfe.e2e.ts` if they assert `/funktionen` for "Mehr zur uVI" (search `e2e/` for "uVI" and `/funktionen`).
 - `+page.svelte`: `<main id="content" class="vi" {@attach reveal()}>` with `UvMain` around sections 1–12 in design order, `Trust` after it, and `FloatingCta` after `</main>`. The wrapper sets the reveal styles (`.rv`, the design's threshold 0.15) and the `#hs-css` H2 sizes, scoped as on `/mieterportal` (`section h2[id]` in the 621–1040 and ≤ 620 queries, specific enough to beat the `tokens.css` heading reset; the rows and the audience cards keep their own sizes).
@@ -100,7 +100,7 @@ Imported from where they are (no copies), as `/mieterportal` imports from `vorge
 | Use | Import | Notes |
 |---|---|---|
 | Hero left | `$lib/assets/landing/vorgehen/building-wide.webp?enhanced` | `sizes="25vw"`, eager (above the fold, but hidden ≤ 620 px) |
-| Hero right | `$lib/assets/landing/vorgehen/office.webp?enhanced` | the design shows a taller crop of the same photo: set `object-position` so the face sits where the design has it at 1440 px |
+| Hero right | `$lib/assets/landing/verbrauchsinformation/tenant.jpg?enhanced` | new: the design's own photo (`vorgehen/office.webp` is another woman in the same setting) |
 | Bento | `$lib/assets/landing/cities/leipzig/references.jpg?enhanced` | cover |
 | Verwalter | `$lib/assets/landing/cities/koeln/hero.jpg?enhanced` | |
 | Mieter | `$lib/assets/landing/region/contact.webp?enhanced` | square crop in the design: `object-position` to match |

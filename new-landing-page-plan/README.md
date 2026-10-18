@@ -6,12 +6,12 @@ It's the target of the landing footer's "Verbrauchsinformation (uVI)" (until now
 
 **This design is `/mieterportal`'s template.** Every `<style>`/`<script>` block of the two designs is byte-identical except `#uv-css` and `#uv-js`, and the uVI design's `#uv-css` is the first 428 lines of `/mieterportal`'s: `/mieterportal` adds its extensions (`.uv-top.lg`, the hero list, the tile variants) and its mini dashboard (`#md-css`/`#md-js`). So this page doesn't port the design a second time: phase 2 first moves `/mieterportal`'s sections into a shared template, `$lib/landing/sections/uv/` (like `region/` for the cities), filled from each page's content module, and `/mieterportal` must render the same afterwards (02 §2.1). Then the uVI page is mostly content plus three page-only blocks (the hero's consumption mock, the bill's money variant, the bento photo).
 
-- **Design reference:** https://claude.ai/artifact/JjGPJV7zurEwiwEMn4hJv9 ("uVI · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs: base CSS, nav `#nav-css`, footer `#fx-css`, `#demo-css` (only `.dm-end`/`.dm-cta` matter), `#pg-common-css` and `#pg-common` (reveal, `countUp`, `tween`, `de`), the page CSS `#uv-css` (~18 KB) and script `#uv-js` (~4 KB), the closing card's video button (`#dcta-css`/`#dcta-js`) and its glass skin (`#end-css`), the seal-style trust block (`#trust-css`/`#trust-js`, the one `TrustSeals` ports), `#hs-css`, the floating CTA (`#cta-css`/`#cta-js`), the eyebrow restyle (`#eb-css`: `.uv-tag` becomes the sparkle pill). Embedded media, all already in the repo (matched by perceptual hash and by eye):
+- **Design reference:** https://claude.ai/artifact/JjGPJV7zurEwiwEMn4hJv9 ("uVI · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs: base CSS, nav `#nav-css`, footer `#fx-css`, `#demo-css` (only `.dm-end`/`.dm-cta` matter), `#pg-common-css` and `#pg-common` (reveal, `countUp`, `tween`, `de`), the page CSS `#uv-css` (~18 KB) and script `#uv-js` (~4 KB), the closing card's video button (`#dcta-css`/`#dcta-js`) and its glass skin (`#end-css`), the seal-style trust block (`#trust-css`/`#trust-js`, the one `TrustSeals` ports), `#hs-css`, the floating CTA (`#cta-css`/`#cta-js`), the eyebrow restyle (`#eb-css`: `.uv-tag` becomes the sparkle pill). Embedded media, all but one already in the repo (matched by perceptual hash and by eye):
 
   | Design use | Design file | In the repo |
   |---|---|---|
   | Hero, left photo (corner building) | 1100×600 jpg | `src/lib/assets/landing/vorgehen/building-wide.webp` (same photo, 1400×764) |
-  | Hero, right photo (woman at a laptop) | 1122×1402 jpg | `vorgehen/office.webp` (same photo, square 1148×1148; the design's crop is taller: check the crop at 1440, 01 §1.4) |
+  | Hero, right photo (woman at a laptop) | 1122×1402 jpg | new: `src/lib/assets/landing/verbrauchsinformation/tenant.jpg` (the design's file; `vorgehen/office.webp` only looks alike: another woman in the same setting) |
   | Bento photo (corner building) | 800×530 jpg | `cities/leipzig/references.jpg` (same photo, 1056×768) |
   | "Sie sind Verwalter?" (Berlin façade) | 1100×587 jpg | `cities/koeln/hero.jpg` (identical) |
   | "Sie sind Mieter?" (smiling woman) | 720×710 jpg | `region/contact.webp` (same photo, 640×736) |
@@ -41,7 +41,9 @@ src/routes/(landing-page)/verbrauchsinformation/
 └── +page.svelte           # <main class="vi"> with UvMain (sections 1–12) and Trust; the page's #hs-css and reveal styles
 
 src/lib/landing/sections/uv/              # NEW: the dark template, moved out of pages/mieterportal/sections/
-├── UvMain.svelte          # the dark wrapper: page tokens (--card, --card2, --mute, --lime, --bg, --hair), .uv-btn, focus colour
+├── types.ts               # the content shapes (Row, Paragraph, the four tiles, Figure, AudienceCard …)
+├── icons.ts  Icon.svelte  Tick.svelte   # the template's line icons and tick (were /mieterportal's)
+├── UvMain.svelte          # the dark wrapper: page tokens (--card, --card2, --mute, --lime), .uv-btn, focus colour
 ├── Hero.svelte            # .uv-hero: the word (size md | lg), lead, CTAs, the peek strip (two photos + a `mock` snippet)
 ├── AppFrame.svelte        # the white app with its sidebar (logo, nav, foot) around a `children` snippet
 ├── Statement.svelte       # words lighting up on scroll
@@ -54,27 +56,39 @@ src/lib/landing/sections/uv/              # NEW: the dark template, moved out of
 ├── Numbers.svelte         # "… in Zahlen": figures with a `media` snippet in the second cell
 ├── Audience.svelte        # "Sie sind Verwalter?" / "Sie sind Mieter?"
 ├── Quotes.svelte          # three dark testimonial cards
-└── Picture.svelte         # the full-width photo with its caption
+├── Picture.svelte         # the full-width photo with its caption
+└── Faq.svelte             # the shared Faq, dark, all closed, left-aligned heading
 
 src/lib/landing/pages/mieterportal/sections/   # become thin wrappers passing content (PortalMock, DashboardTile stay page-only)
 
 src/lib/landing/pages/verbrauchsinformation/
-├── content.ts  content.test.ts          # every text and the example data, word for word; the expired variants
-├── icons.ts                             # the page's stroke icons (sidebar nav, the bell, the tick)
-├── components/Icon.svelte
+├── content.ts  content.test.ts          # every text and the example data, word for word; faqItems(now), figures(now)
 └── sections/
     ├── Hero.svelte*                     # uv/Hero with the word "uVI" and ConsumptionMock
     ├── ConsumptionMock.svelte           # AppFrame + "Ihr Verbrauch im September.", four KPIs, 12 bars, month labels
     ├── Statement.svelte*  Rows.svelte*  Rotator.svelte*
     ├── Numbers.svelte*                  # uv/Numbers with the bento photo
     ├── Audience.svelte*  Quotes.svelte*  Picture.svelte*
-    ├── Faq.svelte*                      # shared Faq, tone="dark", openFirst={false}, id="faq"
+    ├── Faq.svelte*                      # uv/Faq
     ├── CtaCard.svelte*                  # shared CtaCard tone="glass" with the SignupForm, id="start"
     ├── Trust.svelte*                    # TrustSeals
     └── FloatingCta.svelte*              # "Erstgespräch vereinbaren"
 ```
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
+
+## Implementation notes (2026-10-18)
+
+Phases 1–4 are built: the plan (`eea1085a`), the route, content and links (`f2f174eb`), the template move (`6bf969d8`), the sections with their motion (`b5c28b6b`) and `e2e/verbrauchsinformation.e2e.ts` (11 tests). The whole e2e suite passes (231 of 232, signup tests included, against a throwaway Postgres container on :54322; the one failure is the city test `an invalid email shows the error`, the same one that failed under full parallel load for `/sicherheit`, and it passed 3/3 alone). `/mieterportal` after the move: screenshots at 1440 and 375 px pixel-identical, SSR HTML equal apart from classes and Svelte's markers, its 9 e2e tests pass. Compared with the design at 1440 and 375 px section by section: every section has the design's height except the expected ones (the audience cards without buttons, the closing card's form). No overflow, hydration warnings or console errors at 320–1440 px. Lighthouse (mobile, local preview): Performance 75 (`/mieterportal` 74–77 on the same run), Accessibility 95, CLS 0. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **The right hero photo is new.** It looked like `vorgehen/office.webp` by perceptual hash, but it's another woman in the same setting; the design's file is in `assets/landing/verbrauchsinformation/tenant.jpg`.
+- **The city template's uVI card stays.** In the Berlin design its "Mehr erfahren" links to `#faq` (and the portfolio card's to `#start`), not to the uVI page; ours goes to `/funktionen` like before, a separate question for the city pages.
+- **Icons, tick and the dark FAQ are shared.** The uVI mock uses the same line icons as `/mieterportal`'s (the bell for "Mitteilungen"), so `/mieterportal`'s `icons.ts`, `Icon` and `Tick` moved to `uv/` and the page has no icon files. Both pages' FAQ wrappers were identical: `uv/Faq.svelte`.
+- **`AppFrame` takes attachments** through its rest props, so `PortalMock` keeps its `loopInView` and `ConsumptionMock` its `enterView` on the panel.
+- **The deadline figure** is a `null` slot in `numbers.rest`, filled by `figures(now)` with the current or the expired figure.
+- **The bill's amounts** get the row's 14 px (`.money`); `/mieterportal`'s text values keep 13 px. The tick of an `ok` row stays green as `/mieterportal` had it (both designs draw it in ink).
+- **The calendar note** reads "Januar bereitgestellt" from the first step of a pass (the design keeps the previous text until then).
+- **Dev server:** one left running while the sections moved to `uv/` reported a stale hydration error on `/mieterportal`; a restart cleared it, and the build never had it. Restart the dev server after moving components.
 
 ## Key decisions
 
@@ -84,7 +98,7 @@ src/lib/landing/pages/verbrauchsinformation/
 | Route group | `(landing-page)`, outside `[[preview=preview]]`: a landing design, no Prismic content |
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover, like the other new pages; at the cutover it's indexed and joins the sitemap (decision of 2026-10-17), so its go-live gate (§4.4) blocks the cutover PR (#440) |
 | Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same text, "Mehr erfahren" → `/upgrade-now`) |
-| Links to it | The footer's "Verbrauchsinformation (uVI)" (done). Phase 1: "Mehr zur uVI" on `/mieterportal` (FAQ) and `/hilfe` (answer `uvi`), both `ROUTE_FUNKTIONEN` today and pointing at this page in the `/mieterportal` design; the city template's uVI card "Mehr erfahren" (`region/Duo.svelte`, today `ROUTE_FUNKTIONEN`; check the saved city design's target first). `/funktionen`'s "Benachrichtigungen" card (design target: uVI) stays without `href` until that page's open question 1 is answered. Details in 01 §1.1 |
+| Links to it | The footer's "Verbrauchsinformation (uVI)" (done). Phase 1: "Mehr zur uVI" on `/mieterportal` (FAQ) and `/hilfe` (answer `uvi`), both `ROUTE_FUNKTIONEN` before and pointing at this page in the `/mieterportal` design. The city template's uVI card "Mehr erfahren" (`region/Duo.svelte`) stays: the Berlin design links it to `#faq` (Implementation notes). `/funktionen`'s "Benachrichtigungen" card (design target: uVI) stays without `href` until that page's open question 1 is answered. Details in 01 §1.1 |
 | Shared template | `/mieterportal`'s sections move to `$lib/landing/sections/uv/` and take their content as props; both pages wrap them. `/mieterportal`'s HTML and look stay the same (checked by its e2e spec and a screenshot diff before/after, 02 §2.1). Page-only: `PortalMock`, `DashboardTile`, `curve.ts` (mieterportal), `ConsumptionMock` (here) |
 | Dark page | As on `/mieterportal`: `UvMain` is a dark wrapper inside `<main>` holding sections 1–12, and the light `Trust` sits after it inside `<main>` (the design has it after `</main>`) |
 | Signup and CTAs | As on `/mieterportal`: the design's hero carries `id="start"` but has no form; our `DEMO_HREF` is `#start`, so the closing card gets the shared `SignupForm` in place of the video button and carries `id="start"`. Submit label "Demo buchen". Every "Demo buchen" (hero, four rows) → `DEMO_HREF` with `focusSignup`. Hero "Mehr erfahren" → `#inhalt`, the rows' "Häufige Fragen" → `#faq`, row 3's "Zum Mieterportal" and its inline "Mieterportal" → `ROUTE_MIETERPORTAL`. Leads: `source: "verbrauchsinformation"`, `switchinquiry` with `page: "/verbrauchsinformation"`. Open question 2 |

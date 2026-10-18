@@ -26,7 +26,7 @@ It's the target of the landing footer's "Schnittstellen" (group "Plattform", tod
 | 3 | [03-interactions.md](03-interactions.md) | The hero switch (auto-switch, statuses, confetti), the calculator's sliders and tweens, the data path's loop, reveal | M |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | M |
 
-Nothing is built yet: `ROUTE_SCHNITTSTELLEN` and the footer link come with the route in phase 1, so no link 404s in between.
+`ROUTE_SCHNITTSTELLEN` and the footer link came with the route in phase 1, so no link ever pointed at a missing page.
 
 ## Target structure
 
@@ -38,7 +38,7 @@ src/routes/(landing-page)/schnittstellen/
 src/lib/landing/pages/schnittstellen/
 ├── content.ts  content.test.ts          # every text and the example data, word for word
 ├── doppelpflege.ts  doppelpflege.test.ts # pure: hours, working days, cost (rounded to 10 €), lit day cells
-├── stage.svelte.ts                      # Stage: mode "two" | "one", the three statuses, the steps line, timers (per page via context)
+├── stage.svelte.ts  stage.svelte.test.ts # Stage: mode "two" | "one", the three statuses, timers, the one-time confetti
 ├── icons.ts                             # the design's inline icons (files, Heidi mark, ERP, hand, nodes, cards)
 ├── components/Icon.svelte  Tick.svelte  # as /sicherheit's
 └── sections/
@@ -58,6 +58,20 @@ src/lib/landing/pages/schnittstellen/
 ```
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder.
+
+## Implementation notes (2026-10-18)
+
+Phases 1–4 are built: the plan (`22d08c55`), the route, content, math and links (`ca402f60`), the sections (`66fce86a`), the switch, confetti and loops (`7408e839`), and `e2e/schnittstellen.e2e.ts` (14 tests, stable over three repeats). The whole e2e suite passes (246 of 246, signup tests included, against a throwaway Postgres container on :54322). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px: every section has the design's height except the closing card (form). No overflow, hydration warnings or console errors at 320–1440 px. Lighthouse (mobile, local preview): Performance 81–84 (`/selbstabrechnung` 80–81 on the same run), Accessibility 99, CLS 0. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Links to the page.** Searched the saved designs for this design's id: `/funktionen`'s "Immobilienmanagement" card links here (done); `/dashboard`'s "Anbindung besprechen →" goes to `#start` in its design and stays; the `/dashboard`, `/funktionen` and Berlin designs otherwise link it only from their nav, which the landing header doesn't have. The city template's comparison row stays plain text.
+- **`Stage` is per component instance, not a context.** Only `HeroStage` reads it, so creating it there already keeps SSR requests apart. Its `mode` setter is the visitor's choice (`Segmented` binds to it); `set()` and `autoSwitch()` are the programmatic paths.
+- **The portal's three files all use the document icon** (the design's), not table / people icons as 01 §1.2 guessed.
+- **Heading margins.** The landing heading reset (`.lp :is(h1…h4)`) beats `SectionHead`'s and `Testimonials`' `margin-top: 18px` at equal specificity, so `+page.svelte` restores it for `.pg-sec .head h2` and `section.tm h2` (each section came out 18 px short without it).
+- **The quotes stay side by side down to 641 px** (the design's `.tm2`); the shared `Testimonials` stack at 1040 px, so the page overrides `.tm .tm-row` between 641 and 1040 px.
+- **`.okb` is global.** `tokens.css` styles `.lp .okb` (the signup form's tick), which beats a component's scoped `.okb`; the hero's tick is `.tk`. `/selbstabrechnung`'s hero uses `.okb` and shows the global look (filled green, 20 px), which is a small deviation from its design; not changed here.
+- **The calculator's cards are `.inputs` / `.result`**, not the design's `.si-in` / `.si-out` shortened to `.in` / `.out`: `.in` is the designs' reveal class and collided in a test script.
+- **Confetti** is the shared `burst` on a canvas reaching 80 px past the stage (as `/selbstabrechnung`'s billing demo) with 120 pieces, not the design's full-viewport canvas.
+- **Lighthouse.** LCP is the hero lead, waiting for the reveal after hydration, the same profile as `/selbstabrechnung` (same hero and logo strip); `/sicherheit` is ~0.5 s faster with 25 fewer requests (no logo strip).
 
 ## Key decisions
 

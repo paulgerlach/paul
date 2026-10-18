@@ -1,14 +1,22 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
 	import Closing from "$lib/landing/pages/sicherheit/sections/Closing.svelte";
+	import DataPath from "$lib/landing/pages/sicherheit/sections/DataPath.svelte";
+	import DataTable from "$lib/landing/pages/sicherheit/sections/DataTable.svelte";
 	import Faq from "$lib/landing/pages/sicherheit/sections/Faq.svelte";
 	import FloatingCta from "$lib/landing/pages/sicherheit/sections/FloatingCta.svelte";
+	import Hero from "$lib/landing/pages/sicherheit/sections/Hero.svelte";
+	import Principles from "$lib/landing/pages/sicherheit/sections/Principles.svelte";
 	import Trust from "$lib/landing/pages/sicherheit/sections/Trust.svelte";
 
 	let { data } = $props();
 </script>
 
 <main id="content" class="sc" {@attach reveal()}>
+	<Hero />
+	<Principles />
+	<DataPath />
+	<DataTable />
 	<Faq items={data.faq} />
 	<Closing form={data.finalForm} />
 	<Trust />
@@ -20,6 +28,37 @@
 	.sc {
 		--bg: #f6f7f6;
 		--hair: #e5e9e7;
+	}
+	/* The design's sections (.pg-sec, .dm-h2.c, .sc-sub); `.head` and `.sub`
+	   through the section, to beat the landing heading reset. */
+	.sc :global(.pg-sec) {
+		padding: 104px 0;
+		border-top: 1px solid var(--hair);
+	}
+	.sc :global(.pg-sec.alt) {
+		background: var(--bg);
+	}
+	.sc :global(.pg-sec .head) {
+		font-size: clamp(30px, 3.6vw, 48px);
+		line-height: 1.08;
+		letter-spacing: -0.03em;
+		font-weight: 500;
+		margin-top: 18px;
+		text-align: center;
+		text-wrap: balance;
+	}
+	.sc :global(.pg-sec .sub) {
+		text-align: center;
+		color: var(--muted);
+		font-size: 17px;
+		line-height: 1.55;
+		max-width: 62ch;
+		margin: 16px auto 0;
+	}
+	@media (max-width: 640px) {
+		.sc :global(.pg-sec) {
+			padding: 72px 0;
+		}
 	}
 	.sc :global(.rv.rv-anim) {
 		transition:

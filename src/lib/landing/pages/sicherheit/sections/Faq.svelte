@@ -35,6 +35,9 @@
 	.band :global(.tg) {
 		background: #fff;
 	}
+	.band :global(.ans) {
+		line-height: 1.55;
+	}
 	/* #hs-css (the design's FAQ heading has an id) */
 	@media (max-width: 1040px) and (min-width: 621px) {
 		.band :global(.faq h2) {

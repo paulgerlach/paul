@@ -7,6 +7,7 @@ import {
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
+	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
@@ -59,7 +60,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Dashboard", href: ROUTE_DASHBOARD },
 			{ text: "Demo buchen", href: DEMO_HREF },
 			{ text: "Auswertungen" },
-			{ text: "Schnittstellen" },
+			{ text: "Schnittstellen", href: ROUTE_SCHNITTSTELLEN },
 		],
 	},
 	{

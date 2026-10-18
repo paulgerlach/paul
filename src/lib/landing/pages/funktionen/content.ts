@@ -11,7 +11,7 @@ import { isExpired } from "$lib/landing/deadline/deadline";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_VORGEHEN } from "$lib/routes";
+import { ROUTE_SCHNITTSTELLEN, ROUTE_VORGEHEN } from "$lib/routes";
 import type { IconName } from "./icons";
 
 const NB = " ";
@@ -221,6 +221,7 @@ export const features = {
 			icon: "building",
 			title: "Immobilienmanagement",
 			text: "Anbindung an Ihr ERP- oder CRM-System, nur eine Plattform pflegen.",
+			href: ROUTE_SCHNITTSTELLEN,
 		},
 		{
 			icon: "bell",

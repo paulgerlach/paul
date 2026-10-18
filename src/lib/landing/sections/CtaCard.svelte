@@ -14,6 +14,7 @@
 	let {
 		id,
 		title,
+		accent,
 		text,
 		cta,
 		action,
@@ -25,6 +26,8 @@
 		/** The heading's id, for the section's `aria-labelledby`. */
 		id: string;
 		title: string;
+		/** Rendered after the title in a span (/dashboard's muted second part). */
+		accent?: string;
 		text?: string;
 		cta?: { text: string; href: string };
 		/** Rendered in place of the ArrowLink. */
@@ -44,7 +47,9 @@
 		<div class={["cta rv", text && "has-text", tone === "glass" && "glass"]}>
 			{#if text}
 				<div class="t">
-					<h2 {id}>{title}</h2>
+					<h2 {id}>
+						{accent ? `${title} ` : title}{#if accent}<span>{accent}</span>{/if}
+					</h2>
 					<p>{text}</p>
 				</div>
 			{:else}

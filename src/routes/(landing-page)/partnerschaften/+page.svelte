@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
+	import Apply from "$lib/landing/pages/partnerschaften/sections/Apply.svelte";
+	import Audience from "$lib/landing/pages/partnerschaften/sections/Audience.svelte";
+	import Closing from "$lib/landing/pages/partnerschaften/sections/Closing.svelte";
 	import Faq from "$lib/landing/pages/partnerschaften/sections/Faq.svelte";
 	import FloatingCta from "$lib/landing/pages/partnerschaften/sections/FloatingCta.svelte";
 	import Hero from "$lib/landing/pages/partnerschaften/sections/Hero.svelte";
@@ -7,6 +10,7 @@
 	import Picture from "$lib/landing/pages/partnerschaften/sections/Picture.svelte";
 	import Quotes from "$lib/landing/pages/partnerschaften/sections/Quotes.svelte";
 	import Rotator from "$lib/landing/pages/partnerschaften/sections/Rotator.svelte";
+	import Rows from "$lib/landing/pages/partnerschaften/sections/Rows.svelte";
 	import Statement from "$lib/landing/pages/partnerschaften/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/partnerschaften/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
@@ -18,11 +22,15 @@
 	<UvMain>
 		<Hero />
 		<Statement />
+		<Rows />
 		<Rotator />
 		<Numbers />
+		<Audience form={data.connectionForm} />
 		<Quotes />
 		<Picture />
+		<Apply form={data.partnershipForm} />
 		<Faq items={data.faq} />
+		<Closing />
 	</UvMain>
 	<Trust />
 </main>

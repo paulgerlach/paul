@@ -73,6 +73,14 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `44SBXKXJaSp6bvGMnbpZj6` (the trust block's "Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `/messdienstwechsel#start` (open question 1); the shared header's nav CTA "Bestand prüfen" → `/messdienstwechsel` |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`5bcef67c`), the route, content, the form's schema and action, the shared `partner/` section moved out of `/installationspartner`, the template's additions and the footer link (`012bdeef`), the sections with the transfer list and the form (`b30b502b`), and `e2e/softwarepartner.e2e.ts` (18 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width, but the hero below 620 px (53.5 px shorter: without "API-Dokumentation" its second button row is gone, open question 3) and the trust block (3–5 px short now and then, the timing effect of the measurement noted on `/installationspartner`); screenshots of the hero, row 4's phone and the form at 1440 and 375 px match the design's (the form pixel for pixel). `/installationspartner`'s form section renders pixel-identical before and after the move (1440 and 375 px, also with its marks after an empty submit). No overflow at 320 and 375 px, also with the form's marks; no console errors or hydration warnings. Full suites: check, lint, 770 unit tests, 493 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **Phases 2 and 3 are one commit:** the page has no interaction of its own beyond the template's loops and the form.
+- **The shared frame's honeypot isn't bound** to the superForm (the page's form used to bind it): superforms posts the form's own `FormData`, so a filled honeypot still reaches the action (both pages' e2e honeypot tests).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

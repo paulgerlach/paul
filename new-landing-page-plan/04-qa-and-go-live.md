@@ -4,27 +4,27 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/softwarepartner`: the page with the landing header and footer; the footer's "Softwarepartner" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the hero without "API-Dokumentation")
-- [ ] No horizontal overflow from 320 to 1640 px, also with the form's errors and the success line shown
-- [ ] Row 4's phone: the notification drops in, then the list of transfers; again every 7 s while in view
-- [ ] The template's loops as on `/installationspartner` (the hero's list, the statement, the bill, the grid, the doc, the rotator, the figures)
-- [ ] The form: an empty submit marks every required field (not Telefon) and shows "Bitte füllen Sie die markierten Felder aus."; a valid one shows "Danke, <Name>! Wir melden uns bei Ihnen." and empties the form; a failed send shows the phone number and keeps the values
-- [ ] Every "Partner werden" lands on the form; "Häufige Fragen" on the FAQ; "Zu den Schnittstellen" leads to `/schnittstellen`, "Mehr zu Sicherheit" to `/sicherheit`; the trust block's "Demo buchen", the floating CTA and the nav CTA to `/messdienstwechsel`
-- [ ] `/installationspartner` unchanged by the shared form section (its form at 1440 and 375 px, before and after, also with its marks)
+- [x] `bun run dev` → `http://localhost:5173/softwarepartner`: the page with the landing header and footer; the footer's "Softwarepartner" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the hero without "API-Dokumentation")
+- [x] No horizontal overflow from 320 to 1640 px, also with the form's errors and the success line shown
+- [x] Row 4's phone: the notification drops in, then the list of transfers; again every 7 s while in view
+- [x] The template's loops as on `/installationspartner` (the hero's list, the statement, the bill, the grid, the doc, the rotator, the figures)
+- [x] The form: an empty submit marks every required field (not Telefon) and shows "Bitte füllen Sie die markierten Felder aus."; a valid one shows "Danke, <Name>! Wir melden uns bei Ihnen." and empties the form; a failed send shows the phone number and keeps the values
+- [x] Every "Partner werden" lands on the form; "Häufige Fragen" on the FAQ; "Zu den Schnittstellen" leads to `/schnittstellen`, "Mehr zu Sicherheit" to `/sicherheit`; the trust block's "Demo buchen", the floating CTA and the nav CTA to `/messdienstwechsel`
+- [x] `/installationspartner` unchanged by the shared form section (its form at 1440 and 375 px, before and after, also with its marks)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the fields' keyboards, the select, the chips)
 - [ ] Keyboard-only through the page (the CTAs, every form field, the chips, the consent, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Softwarepartner von Heidi Systems"; the app window as its list; the tiles skipped; the form's fields by their labels, the fieldset by its legend, the error and success lines announced
-- [ ] Reduced motion: nothing loops, slides or counts; every block in its end state
-- [ ] JS disabled: every section readable, the form posts and shows its errors and the success line
-- [ ] An inquiry reaches the sink as `softwarepartnerinquiry` with every field and `page: "/softwarepartner"`, without `_t` and `website`
+- [x] Reduced motion: nothing loops, slides or counts; every block in its end state
+- [x] JS disabled: every section readable, the form posts and shows its errors and the success line
+- [x] An inquiry reaches the sink as `softwarepartnerinquiry` with every field and `page: "/softwarepartner"`, without `_t` and `website`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2), `$lib/forms/softwarePartnerInquiry.test.ts` and `$lib/server/softwarePartnerInquiry.test.ts` (01 §1.3); `/installationspartner`'s tests unchanged.
-- **Playwright `e2e/softwarepartner.e2e.ts`**, modelled on `e2e/installationspartner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#bewerben`, `#faq`, `/schnittstellen`, `/sicherheit`, `/messdienstwechsel#start`; no "API-Dokumentation"); the server's end states (the list's statuses, "nein", the grid's note, the transfers); the form (the empty submit's marks and line, a valid inquiry with the sink's payload and the reset, the optional phone, the honeypot, the failed send with the phone link); without JS the form posts (errors, then success); reduced motion: nothing hidden; no console errors. `e2e/installationspartner.e2e.ts` passes unchanged.
+- **Playwright `e2e/softwarepartner.e2e.ts`** (18 tests), modelled on `e2e/installationspartner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#bewerben`, `#faq`, `/schnittstellen`, `/sicherheit`, `/messdienstwechsel#start`; no "API-Dokumentation"); the server's end states (the list's statuses, "nein", the grid's note, the transfers); the form (the empty submit's marks and line, a valid inquiry with the sink's payload and the reset, the optional phone, the honeypot, the failed send with the phone link); without JS the form posts (errors, then success); reduced motion: nothing hidden; no console errors. `e2e/installationspartner.e2e.ts` passes unchanged.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
 

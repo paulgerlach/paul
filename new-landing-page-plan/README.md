@@ -1,59 +1,60 @@
-# Page `/softwarepartner` ("Softwarepartner"): plan
+# Page `/verbaende` ("Verbände"): plan
 
-A page for software vendors, the second page from the landing footer's "Partner" group (Installationspartner, Softwarepartner, Verbände, Nachfolge, Partnerschaften; the last four plain text today). Dark, on the `uv` template of `/mieterportal`, the "Kunden" pages and `/installationspartner`: the huge word "Softwarepartner" with the lead and "Partner werden" / "API-Dokumentation", the three panels (a facade photo, the "Heidi Schnittstelle" app window with four transfers turning green, a flat photo), the statement lighting up word by word, four feature rows ("Eine Anbindung. Alle Daten.", "Jeden Monat automatisch.", "Server in Deutschland. Nach DSGVO.", "Mehr Wert für Ihre Kunden."), the rotating "Heidi liefert an Ihre Software:", "Die Anbindung in Zahlen", the two audience cards ("Sie sind Softwareanbieter?" / "Sie sind Verwaltung?"), three customer quotes, the wide photo "Ihre Software. Unsere Daten.", **the partner form** ("Werden Sie Heidi-Softwarepartner.": three steps beside a white form with nine fields), the FAQ (four questions), the glass closing card "Werden Sie Softwarepartner von Heidi." with "Partner werden →", the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
+A page about Heidi's association memberships, the third page from the landing footer's "Partner" group (Installationspartner, Softwarepartner, Verbände, Nachfolge, Partnerschaften; the last two plain text today). Dark, on the `uv` template of `/mieterportal`, the "Kunden" pages and the two partner pages: the huge word "Verbände" with the lead "Heidi ist Kooperationspartner des VDIV und in den Verbänden DEUMESS und bved vernetzt." and "Demo buchen" / "Mehr erfahren", the three panels (a facade photo, the app window "Gut vernetzt." with the three associations and data protection, a trade-fair photo), the statement lighting up word by word, four feature rows (VDIV, DEUMESS and bved, each with the association's logo on a white card, and "Sicher nach DSGVO." with the data-processing document), the rotating "Heidi ist vernetzt mit:", "Heidi auf einen Blick", the two audience cards ("Sie sind ein Verband?" / "Sie sind Verwaltung?"), three customer quotes, the wide photo "Gut vernetzt. Sicher aufgestellt.", the FAQ (five questions), the glass closing card "Ein verlässlicher Partner für Ihren Messdienst." with the video button "Demo buchen", the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
 
-It's the target of the landing footer's "Softwarepartner" (group "Partner", plain text today). No other built page links this design: searched the repo for the design id `Fc97HY7KUdBR38T6vPtjeY`, "Softwarepartner" and the plain-text entries without `href`: `/neuigkeiten`'s story "Heidi API: Die Dokumentation für Softwarepartner" points at the API documentation's design (`3AZnpE4apaUo694utixF1d`), not this one, and the footer's "API-Dokumentation" is that design too. So only the footer gets the route.
+It's the target of the landing footer's "Verbände" (group "Partner", plain text today). No other built page links this design: searched the repo for the design id `MepMnY7x3BPBVcsTh8nH8U`, "Verbände", "VDIV", "DEUMESS", "bved" and the plain-text entries without `href`: `/presse`'s fact "VDIV · DEUMESS · bved", the shared `Trust`, `TrustCards` and `TrustSeals` name the associations as plain text, as their designs do. So only the footer gets the route.
 
-**On the `uv` template, sharing `/installationspartner`'s form section.** Every style and script block of the design is byte-identical to the `/installationspartner` design's (compared by MD5 against a fresh read of it, 2026-10-20: `#uv-css`, `#uv-js`, `#ipf-css` and `#ipf-js` included; the part after `</main>` is identical too); it only lacks `#ipx-css` and `#ipx-js` (that design's two phone tiles). The `<main>` has the same blocks in the same order with other texts, tiles and photos. So the sections are wrappers around `$lib/landing/sections/uv/` filled from the page's `content.ts`, like `/installationspartner`'s, and the partner form section (`.ipf`), which this design repeats with other fields, moves from `/installationspartner`'s page folder into a shared `$lib/landing/sections/partner/` (the section with its steps, and the form's frame: its styles, the honeypot, the button and the message line), used by both pages. Page-only, in `$lib/landing/pages/softwarepartner/`: the transfer list inside row 4's phone (`.ip-ul`, the design's `#ipf-css` list in `uv/Phone`'s `.uv-pv`) and the form's fields. For it the template gains: the icon `server` (the design's two stacked boxes), an optional screen snippet in `Phone` (in place of its figure, chips, details and bars) and an optional second CTA in `Hero` ("API-Dokumentation" has no page yet).
+**On the `uv` template, with one page-only tile.** Every style and script block the design shares with `/softwarepartner`'s is byte-identical to it (compared by MD5 against a fresh read of that design, 2026-10-20: `#uv-css`, `#uv-js`, `#pg-common-css`, `#demo-css`, `#trust-css`, `#hs-css`, `#end-css`, `#cta-css`, `#eb-css` included; the part after `</main>` is identical too); it lacks that design's partner form (`#ipf-css`, `#ipf-js`) and adds `#dcta-css` / `#dcta-js` (the closing card's video button, as the "Ressourcen" designs) and a 530-byte `#vb-css`: the logo card `.vb-lg` (and the hero word's `lg` size, the template's own). The `<main>` has the template's blocks in its order with other texts, tiles and photos, and no form. So the sections are wrappers around `$lib/landing/sections/uv/` filled from the page's `content.ts`, like `/weg-verwaltung`'s; page-only, in `$lib/landing/pages/verbaende/`: the logo tile of rows 1–3 (`LogoTile`). For it the template gains the icon `check` (the design's tick in the hero's list).
 
-- **Design reference:** https://claude.ai/artifact/Fc97HY7KUdBR38T6vPtjeY ("Softwarepartner · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media (matched by MD5 against every file in the repo, and by eye where the bytes differ):
+- **Design reference:** https://claude.ai/artifact/MepMnY7x3BPBVcsTh8nH8U ("Verbände · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media (matched by MD5 against every file in the repo, and by eye where the bytes differ):
 
   | Design use | Design file | In the repo |
   |---|---|---|
-  | Hero, left panel; first audience card ("Sie sind Softwareanbieter?") | 1400×1050 webp | `cities/muenchen/hero.jpg` (the same photo, a light Gründerzeit facade with balconies and bicycles, 1400×1050; the design's file is a WebP of it) |
-  | Hero, right panel; the "Die Anbindung in Zahlen" photo | 1400×933 webp | `mietverwaltung/apartment.webp` (identical) |
+  | Hero, left panel | 1400×1050 webp | `vorgehen/facade.webp` (identical) |
+  | Hero, right panel | 1681×936 webp | **new**: a trade-fair booth ("Digitaler Messdienstanbieter", two conversations, meters on a counter), `verbaende/booth.webp` (the design's bytes) |
+  | Row 1's logo | 299×128 webp | `partners/vdiv.webp` (identical) |
+  | Row 2's logo | 538×128 webp | `partners/deumess.webp` (identical) |
+  | Row 3's logo | 233×128 webp | `partners/bved.webp` (identical) |
+  | "Heidi auf einen Blick" photo | 1400×933 webp | `vorgehen/kitchen-meters.webp` (identical) |
+  | First audience card ("Sie sind ein Verband?") | 1681×936 webp | **new**: an association's conference (a banner "Verband für die Wohnungswirtschaft", a panel on stage), `verbaende/conference.webp` (the design's bytes) |
   | Second audience card ("Sie sind Verwaltung?") | 1400×788 webp | `mieterportal/building.webp` (identical) |
-  | The wide photo "Ihre Software. Unsere Daten." | 1400×933 webp | `cities/berlin/references.jpg` (the same photo, a white-and-brick facade with columned loggias, 1700×1133; the design's is a smaller WebP of it) |
+  | The wide photo "Gut vernetzt. Sicher aufgestellt." | 1400×764 webp | `vorgehen/building-wide.webp` (identical) |
+  | The closing card's video button (poster, WebM, MP4) | 240×200 jpeg, webm, mp4 | `region/demo-poster.jpg`, `static/landing/region-demo.webm` / `.mp4` (identical); not used: the signup form takes the button's place (Signup) |
   | Floating CTA avatars | 160×160 webp ×2 | `region/avatar-1.webp`, `avatar-2.webp` (identical) |
 
-  No new image. Every icon is inline SVG. To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
-- **Previous plans:** the `/installationspartner` plan used to live in this folder (last version at `20093530`). Before it came the `/messdienstanbieter-vergleich` plan (`95202c27`), the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`), the `/portfolio-checker` plan (`0c44797e`), the `/energieausweis` plan (`3d31e880`), the `/muster-kuendigung` plan (`754932dc`), the `/presse` plan (`1e76f838`), the `/einsparrechner` plan (`f0d83e12`), the `/hkvo-leitfaden` plan (`a480e2cc`), the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`), the `/hausverwaltung` plan (`0b7f19b2`), the `/schnittstellen` plan (`042eb570`), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`, the company address checked against `ADDRESS`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`, the building photo), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`, the application form), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.35](04-qa-and-go-live.md).
+  Two new images. Every icon is inline SVG. To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/softwarepartner` plan used to live in this folder (last version at `2d95384e`). Before it came the `/installationspartner` plan (`20093530`), the `/messdienstanbieter-vergleich` plan (`95202c27`), the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`), the `/portfolio-checker` plan (`0c44797e`), the `/energieausweis` plan (`3d31e880`), the `/muster-kuendigung` plan (`754932dc`), the `/presse` plan (`1e76f838`), the `/einsparrechner` plan (`f0d83e12`), the `/hkvo-leitfaden` plan (`a480e2cc`), the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`), the `/hausverwaltung` plan (`0b7f19b2`), the `/schnittstellen` plan (`042eb570`), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`, the company address checked against `ADDRESS`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`, the building photo), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`, the application form), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.36](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer link, content, the form's schema and action (Make.com `softwarepartnerinquiry`), the shared partner section moved out of `/installationspartner`, SEO | M |
-| 2 | [02-sections.md](02-sections.md) | The page's sections: wrappers around `uv/` and `partner/`, the transfer list, the form's fields; every block in its end state | S |
-| 3 | [03-interactions.md](03-interactions.md) | The form's validation and states, the shared template's loops | S |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer link, content, the signup action, the two new photos, SEO | S |
+| 2 | [02-sections.md](02-sections.md) | The page's sections: wrappers around `uv/`, the logo tile, the closing card with the signup form; every block in its end state | S |
+| 3 | [03-interactions.md](03-interactions.md) | The logo cards' entrance, the shared template's loops, the signup form | S |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-`ROUTE_SOFTWAREPARTNER` and the footer link come with the route, so no link ever points at a missing page. Shared code changes only where listed above (the `uv` template's icons, `Phone`, `Hero`; `/installationspartner`'s form section becomes the shared `partner/` one), each defaulting to today's behaviour; `/installationspartner`'s e2e suite checks that page didn't change.
+`ROUTE_VERBAENDE` and the footer link come with the route, so no link ever points at a missing page. Shared code changes only where listed above (the `uv` template's icons), defaulting to today's behaviour.
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/softwarepartner/
-├── +page.server.ts        # load: seo (noindex), landing chrome (nav CTA to /messdienstwechsel), faq, the partner form; the form action
-└── +page.svelte           # <main class="sp"> with the page tokens, the reveal styles and #hs-css; UvMain around the dark sections; Trust and FloatingCta after it
+src/routes/(landing-page)/verbaende/
+├── +page.server.ts        # load: seo (noindex), landing chrome, faq, the signup form; the signup action (source "verbaende")
+└── +page.svelte           # <main class="vb"> with the page tokens, the reveal styles and #hs-css; UvMain around the dark sections; Trust after it; FloatingCta
 
-src/lib/forms/softwarePartnerInquiry.ts  softwarePartnerInquiry.test.ts      # zod schema (shared client/server), the customer counts and software kinds, German messages
-src/lib/server/softwarePartnerInquiry.ts  softwarePartnerInquiry.test.ts     # emptySoftwarePartnerForm(), handleSoftwarePartnerInquiry(): honeypot → timing → zod → gibberish → rate limit → Make.com `softwarepartnerinquiry`
+src/lib/assets/landing/verbaende/
+├── booth.webp             # the hero's right panel (new)
+└── conference.webp        # the first audience card (new)
 
-src/lib/landing/sections/partner/                # moved out of /installationspartner (its Apply and the frame of its PartnerForm)
-├── Apply.svelte           # the .ipf section: pill, H2, text, the three steps beside a `form` snippet
-├── FormFrame.svelte       # the white form: its styles for every field kind, the honeypot, _t, the button and the message line around a `children` snippet
-└── types.ts               # ApplyContent (pill, h2, text, steps), FormTexts (submit, sending, missing, sendError)
-
-src/lib/landing/pages/softwarepartner/
-├── content.ts  content.test.ts          # every text of the page, the example data of the mocks and tiles, the form's labels and messages, word for word
+src/lib/landing/pages/verbaende/
+├── content.ts  content.test.ts          # every text of the page and the example data of the mocks, word for word
 └── sections/
     ├── Hero.svelte*  Statement.svelte*  Rows.svelte*  Rotator.svelte*  Numbers.svelte*
-    ├── TransferList.svelte              # row 4: the four transfers in the phone (.ip-ul)
-    ├── Audience.svelte*  Quotes.svelte*  Picture.svelte*
-    ├── Apply.svelte*                    # #bewerben: partner/Apply with SoftwarePartnerForm
-    ├── SoftwarePartnerForm.svelte       # the fields in partner/FormFrame (superforms, works without JS)
-    └── Faq.svelte*  Closing.svelte*  Trust.svelte*  FloatingCta.svelte*
+    ├── LogoTile.svelte                  # rows 1–3: the association's logo on a white card with its line (.vb-lg)
+    ├── Audience.svelte*  Quotes.svelte*  Picture.svelte*  Faq.svelte*
+    ├── CtaCard.svelte*                  # the glass closing card with the signup form (#start)
+    └── Trust.svelte*  FloatingCta.svelte*
 ```
 
 `*` marks a thin wrapper around a shared section.
@@ -64,58 +65,47 @@ The design's links, by design id, and where they lead here. An element whose tar
 
 | Design id (use) | Here |
 |---|---|
-| `#bewerben` (the hero's and every row's "Partner werden", the first card's "Jetzt Partner werden", the closing card's "Partner werden →") | the form section |
+| `44SBXKXJaSp6bvGMnbpZj6` (the hero's, every row's and the second card's "Demo buchen", the closing card's video button, the trust block's "Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `#start`, the signup form in the closing card (`DEMO_HREF`, `focusSignup`), as on `/weg-verwaltung` |
+| `#inhalt` (the hero's "Mehr erfahren") | the rows |
 | `#faq` (every row's "Häufige Fragen") | the FAQ |
-| `#start` (the design's hero) | none: the hero has no form, and this page has no signup form (as `/installationspartner`) |
-| `3AZnpE4apaUo694utixF1d` (the hero's "API-Dokumentation") | none yet: not rendered (`Hero`'s second CTA without `href`), as the footer's "API-Dokumentation" and `/neuigkeiten`'s story |
-| `KE95icU8eKWX7TNfLerbSZ` (the second card's "Zu den Schnittstellen") | `ROUTE_SCHNITTSTELLEN` |
-| `Sb54rDQd5WS2r82skPe7UQ` (FAQ 3's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
-| `44SBXKXJaSp6bvGMnbpZj6` (the trust block's "Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `/messdienstwechsel#start` (open question 1); the shared header's nav CTA "Bestand prüfen" → `/messdienstwechsel` |
+| `#start` (the design's hero) | moved to the closing card, which holds the form |
+| `2HKfqpmyVhcXiJWmoomtHP` (the first card's "Zur Presseseite") | `ROUTE_PRESSE` |
+| `Sb54rDQd5WS2r82skPe7UQ` (FAQ 5's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
-
-## Implementation notes (2026-10-20)
-
-Phases 1–4 are built: the plan (`5bcef67c`), the route, content, the form's schema and action, the shared `partner/` section moved out of `/installationspartner`, the template's additions and the footer link (`012bdeef`), the sections with the transfer list and the form (`b30b502b`), and `e2e/softwarepartner.e2e.ts` (18 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width, but the hero below 620 px (53.5 px shorter: without "API-Dokumentation" its second button row is gone, open question 3) and the trust block (3–5 px short now and then, the timing effect of the measurement noted on `/installationspartner`); screenshots of the hero, row 4's phone and the form at 1440 and 375 px match the design's (the form pixel for pixel). `/installationspartner`'s form section renders pixel-identical before and after the move (1440 and 375 px, also with its marks after an empty submit). No overflow at 320 and 375 px, also with the form's marks; no console errors or hydration warnings. Full suites: check, lint, 770 unit tests, 493 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
-
-- **Phases 2 and 3 are one commit:** the page has no interaction of its own beyond the template's loops and the form.
-- **The shared frame's honeypot isn't bound** to the superForm (the page's form used to bind it): superforms posts the form's own `FormData`, so a filled honeypot still reaches the action (both pages' e2e honeypot tests).
-- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/softwarepartner`, `ROUTE_SOFTWAREPARTNER` in `$lib/routes.ts`: the footer's label, lower-case, as `/installationspartner`. Not confirmed (gate §4.4) |
+| URL | `/verbaende`, `ROUTE_VERBAENDE` in `$lib/routes.ts`: the footer's label, lower-case, the umlaut written out (CLAUDE.md: no umlauts in names), as `/muster-kuendigung`. Not confirmed (gate §4.4) |
 | Route group | `(landing-page)`, outside `[[preview=preview]]` |
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover; then indexed and in the sitemap (decision of 2026-10-17), so its gate (§4.4) blocks the cutover PR (#440) |
-| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same). The page has no signup form, so the nav CTA "Bestand prüfen" leads to `/messdienstwechsel`, as on `/installationspartner` |
-| Template | The `uv` template (`UvMain`, `Hero` `lg`, `ListMock`, `Statement`, `Rows` with `Bill`, `Calendar`, `Doc`, `Phone`, `Rotator`, `Numbers`, `Audience`, `Quotes`, `Picture`, `Faq`), filled from `content.ts` like `/installationspartner`. The template's additions (icon `server`, `Phone`'s screen snippet, `Hero`'s optional second CTA) are optional and change nothing on the six other `uv` pages |
-| The hero word | "Softwarepartner" in `clamp(34px, 8.6vw, 130px)` (the design's `#ipf-css` rule, the same as `/installationspartner`'s), through `Hero`'s `wordSize` |
-| Row 4's phone | `uv/Phone` (the notification "Neue Daten von Heidi" drops in, then the screen, every 7 s in view) with the new screen snippet holding `TransferList`: three done transfers (green ✓) and the current one (lime ring, "…"), static as in the design |
-| The form section | Shared with `/installationspartner`: the design's `.ipf` and `.ipf-f` CSS is the same block on both designs, so the section (`partner/Apply`) and the form's frame (`partner/FormFrame`) move into `$lib/landing/sections/partner/`; each page keeps its fields, schema and action. `/installationspartner` renders the same markup as before (its e2e suite and a screenshot comparison check it) |
-| The form | A SvelteKit form action with `sveltekit-superforms` + zod (`$lib/forms/softwarePartnerInquiry.ts`), working without JS, posting to `#bewerben`. Fields as the design: Unternehmen, Ansprechpartner, E-Mail, Software oder Produkt, Kunden in der Immobilienwirtschaft and the consent required; Telefon (checked only when given), Art der Software and Nachricht optional. The design only shows a thank-you and sends nothing (the same `#ipf-js` as `/installationspartner`'s); here a valid inquiry goes to Make.com as the new event `softwarepartnerinquiry` through `sendWebhookEventOrThrow`, like `/installationspartner`'s `partnerinquiry`: nothing is stored in our database and nothing personal is logged. Spam pipeline as there (honeypot → timing `_t`, re-stamped on mount → zod → gibberish → rate limit, 3 per 10 min per IP with its own counter, 50 under `KITCHEN_SINK`); a bot gets the success answer. Errors after the first submit with the design's one line "Bitte füllen Sie die markierten Felder aus."; success "Danke, <Name>! Wir melden uns bei Ihnen."; a failed send keeps the values and shows `PHONE`. Open question 2 |
-| Why a new event | The fields differ from the installers' (product, customer count, software kinds; no region, crew, trades or experience), and the inquiries go to someone else (partnerships / product, not operations). One event per form keeps each Make.com route simple |
-| No signup form | As `/installationspartner`: the trust block's "Demo buchen" (`TrustSeals` `demoHref`) and the floating CTA (`FloatingCta` `href`) lead to `/messdienstwechsel#start` (open question 1). The floating CTA hides while the closing card is on screen (`final`) |
-| Closing card | The shared `CtaCard`, `tone="glass"`, the title and the light `ArrowLink` "Partner werden" → `#bewerben`; no text, no form |
-| Quotes | The shared testimonials `vitolus`, `werne`, `gerhard` (word for word the shared texts) under "Daten, die ankommen." / "Unsere Kunden sagen es selbst." |
-| FAQ | The `uv` FAQ (shared `Faq`, dark, all closed) with its FAQPage JSON-LD; FAQ 3's "Mehr zu Sicherheit" → `/sicherheit` |
-| Figures | `Numbers` with "12 ×" (counts), the photo, "1" (counts), "0" (no count, as the design's `to > 0`), "DE" and "DSGVO" (compact, the design's `.dt`) |
-| Styling | Component-scoped CSS from the design; breakpoints the design's (`#ipf-css` 900 px, the template's 980/620 px, `#hs-css` 1040/620 px). The shared form frame styles its fields through `:global` under its own class, since the fields are the pages' markup. No class that is also a Tailwind utility |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same); the nav CTA "Bestand prüfen" leads to the page's own form (`#start`) |
+| Template | The `uv` template (`UvMain`, `Hero` `lg`, `ListMock`, `Statement`, `Rows` with `Doc`, `Rotator`, `Numbers`, `Audience`, `Quotes`, `Picture`, `Faq`), filled from `content.ts` like `/weg-verwaltung`. The template's addition (the icon `check`) changes nothing on the other `uv` pages |
+| The hero word | "Verbände" in the template's `lg` size (`#vb-css` repeats the template's `clamp(40px, 11.4vw, 172px)`), no `wordSize` |
+| The hero's app window | `ListMock` with the design's four entries (VDIV, DEUMESS, bved, Datenschutz). Their statuses are the same before and after ("Partner", "Vernetzt", "Vernetzt", "Konform"): the design's loop only turns the pills from amber to green, and so does `ListMock` |
+| Rows 1–3's tile | Page-only `LogoTile` (the design's `.vb-lg`): the logo (`partners/*.webp`, the same files `TrustCards` shows) on a white card with the line under it, on the stone tile. Server-rendered shown; it rises in once when its row comes into view (`enterView`) |
+| Row 4's tile | `uv/tiles/Doc` with three check rows and the result "DSGVO-konform" |
+| Signup | The design has no form; its "Demo buchen" goes to the demo-booking design, which the built pages answer with the signup form. As `/weg-verwaltung`: the glass closing card keeps its title and text and gets the shared `SignupForm` (`placement="final"`, "Demo buchen") in place of the video button, with the `start` anchor every "Demo buchen", the floating CTA and the nav CTA lead to. A SvelteKit form action through `handleSwitchSignup` (`source: "verbaende"`, `page: "/verbaende"`): lead stored, Make.com `switchinquiry`. Open question 1 |
+| Closing card | The shared `CtaCard`, `tone="glass"`, `final`, `sectionId="start"`, the title and the text |
+| Quotes | The shared testimonials `werne`, `vitolus`, `gerhard` (word for word the shared texts) under "Verlässlich." / "Unsere Kunden sagen es selbst." |
+| FAQ | The `uv` FAQ (shared `Faq`, dark, all closed) with its FAQPage JSON-LD; FAQ 5's "Mehr zu Sicherheit" → `/sicherheit` |
+| Figures | `Numbers` with "3" (counts), the photo, "Bund", "DE", "DSGVO" and "Berlin" (compact, the design's `.dt`) |
+| Styling | Component-scoped CSS from the design; breakpoints the design's (the template's 980/620 px, `#hs-css` 1040/620 px). No class that is also a Tailwind utility |
 
 ## Open questions (the default is built unless answered)
 
-1. **The managers' CTAs.** The page is for software vendors; the design keeps the managers' "Demo buchen" (trust block, floating CTA). *Default: `/messdienstwechsel#start` (its signup form), the nav CTA to `/messdienstwechsel`, as on `/installationspartner`.* Alternatives: the floating CTA to `#bewerben` ("Erstgespräch vereinbaren" fits a vendor too), or a booking page once it exists.
-2. **Where software partner inquiries go.** The design's form sends nothing yet. *Default: Make.com `softwarepartnerinquiry` with every field and `page`, for a route the business sets up (which inbox, who answers "Wir melden uns bei Ihnen.").* Until the route exists, Make.com receives the events on the unified webhook like the others.
-3. **"API-Dokumentation".** The hero's second CTA points at the API documentation's design, which has no page. *Default: hidden until that page exists (the hero shows "Partner werden" alone).*
+1. **The demo CTAs.** The design sends every "Demo buchen" to the demo-booking design, which has no page. *Default: the signup form in the closing card (`#start`), as every built page with a "Demo buchen" and no form of its own.* Alternative: `/messdienstwechsel#start`, as the partner pages, if associations shouldn't land in the managers' lead list.
+2. **The association descriptions and logos.** "Kooperationspartner Bund" (VDIV), "Verband unabhängiger Messdienstleister" (DEUMESS), "Bundesverband für Energie- und Wasserdatenmanagement" (bved) and the three logos. *Default: the design's texts (they match `TrustCards` and `/presse`) and the repo's logo files.* Each association's own wording and its permission to show the logo on a page about it belong in the gate.
+3. **The two new photos.** The booth and the conference look like generated or staged scenes (the conference's banner names a "Verband für die Wohnungswirtschaft", which isn't one of the three). *Default: used as designed, `alt=""` (decorative).* A licence or a real photo of Heidi at a VDIV event before the cutover.
 
 ## Risks
 
-- **Every gate is on the cutover's critical path** (04 §4.4–4.35).
-- **Personal data in a new form.** Company, name, e-mail and phone of a person go to Make.com. Mitigation: nothing stored here, nothing personal logged (the log lines carry the customer count only), the consent checkbox required (the design's text), a privacy sign-off in §4.4; `noindex` until then.
-- **Claims to vendors.** "Heidi übergibt Verbräuche, Heizkostenabrechnungen und Stammdaten als Datensatz an Ihre Software", "Die Verbräuche stehen jeden Monat bereit", "12 × Datenlieferungen pro Jahr", "Die Übertragung zu Ihrer Software ist verschlüsselt" describe an integration programme and an API. Mitigation: product and data-protection sign-off in §4.4; align with `/schnittstellen` (§4.22) and `/sicherheit` (§4.24).
-- **The shared form section.** Moving `/installationspartner`'s section changes a built page. Mitigation: the markup and the styles' cascade stay the same (the frame's `:global` rules keep the scoped rules' order); its e2e suite and a before/after screenshot of its form at 1440 and 375 px.
+- **Every gate is on the cutover's critical path** (04 §4.4–4.36).
+- **Claims about third parties.** "Kooperationspartner des VDIV auf Bundesebene", "vernetzt in DEUMESS und bved" and the descriptions of three real associations, with their logos. Mitigation: the membership status confirmed in writing, each association's description and logo use approved (gate §4.4); align with `/presse` (§4.12), `/ueber-uns` (§4.33) and the trust blocks (§4.35).
+- **The new photos imply an event.** A booth with Heidi's claims and an association conference read as documentary. Mitigation: licence and sign-off in §4.4, or real photos.
 
 ## Out of scope
 
-- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#pillfx` beyond the eyebrows, `#fx-js` (the design footer's newsletter; ours is the shared footer), `#pg-common-css` / `#demo-css` beyond the blocks the template uses.
-- Storing inquiries, a partner login, the API documentation page (its own design, `3AZnpE4apaUo694utixF1d`), the other "Partner" pages.
+- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#pillfx` beyond the eyebrows, `#fx-js` (the design footer's newsletter; ours is the shared footer), `#dcta-css` / `#dcta-js` (the video button the signup form replaces), `#pg-common-css` / `#demo-css` beyond the blocks the template uses.
+- The demo-booking page, the "Nachfolge" and "Partnerschaften" pages.

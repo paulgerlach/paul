@@ -132,6 +132,9 @@ test("every CTA leads to the closing card's form; pending links are hidden", asy
 	await expect(
 		page.locator("main a", { hasText: "Messdienstanbieter vergleichen" }),
 	).toHaveAttribute("href", "/messdienstanbieter-vergleich");
+	await expect(
+		page.locator("main a", { hasText: "Bisherige Abrechnung prüfen" }),
+	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
 });
 
 test.describe("without JS", () => {

@@ -103,13 +103,12 @@ describe("asset-manager content", () => {
 		expect(pain.count.many).toContain("{n}");
 	});
 
-	it("hides the links whose pages don't exist yet", () => {
+	it("links the large-stock and pain links to their pages", () => {
 		expect(large.secondary?.href).toBe(routes.ROUTE_PORTFOLIO_CHECKER);
-		// The Muster-Kündigung and the Messdienstanbieter-Vergleich have pages.
 		expect(pain.links.map((link) => link.href)).toEqual([
 			routes.ROUTE_MUSTER_KUENDIGUNG,
 			routes.ROUTE_MESSDIENSTANBIETER_VERGLEICH,
-			undefined,
+			routes.ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 		]);
 	});
 

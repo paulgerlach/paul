@@ -48,7 +48,7 @@ The page goes live with the cutover. Every item must be done before the cutover,
 - [ ] Security block statements: covered by the region pages' item in §4.32 (same `TrustSeals`)
 - [ ] The CTA targets decided: the closing card (open question 1: the signup form with "Demo buchen" in place of the design's video button); "Mit Heidi vergleichen" and "Heidi-Angebot für diesen Bestand" → the closing form (or an offer or booking page once it exists); "So funktioniert der Wechsel" → `/messdienstwechsel`
 - [ ] Without JS (open question 2): the hidden toggles and the calculator's start result accepted
-- [ ] "Bisherige Abrechnung prüfen" in the `.sg-links` row of `/wohnungsunternehmen` and `/asset-manager` links the `/heizkostenabrechnung-pruefen` design but has no `href` yet: give it `ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN` (and its tests) or confirm it stays hidden
+- [x] "Bisherige Abrechnung prüfen" in the `.sg-links` row of `/wohnungsunternehmen` and `/asset-manager` links the `/heizkostenabrechnung-pruefen` design but has no `href` yet: give it `ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN` (and its tests) or confirm it stays hidden (done: it links `/heizkostenabrechnung-pruefen`)
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided: `/messdienstanbieter-vergleich` (not confirmed; it sits beside `/messdienstanbieter` and its city pages)
 - [ ] Make.com `switchinquiry` route live and able to tell `/messdienstanbieter-vergleich` leads apart (`page: "/messdienstanbieter-vergleich"`)

@@ -32,6 +32,7 @@ import {
 	ROUTE_MUSTER_KUENDIGUNG,
 	ROUTE_PORTFOLIO_CHECKER,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 } from "$lib/routes";
 
 const NB = " ";
@@ -182,9 +183,6 @@ export const pain = {
 			text: "Heidi installiert fernablesbare Funkzähler, rechtzeitig vor der Pflicht ab 1.1.2027.",
 		},
 	],
-	// Only links with a page show (plan open question 2): the Muster-Kündigung
-	// (4WYU5hjVsWSLrxuo7wsdm6) and the Messdienstanbieter-Vergleich
-	// (Tms67Y5GnupQ4MPsxm8ux6) so far.
 	links: [
 		{
 			icon: "doc",
@@ -196,7 +194,11 @@ export const pain = {
 			text: "Messdienstanbieter vergleichen",
 			href: ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 		},
-		{ icon: "check", text: "Bisherige Abrechnung prüfen" },
+		{
+			icon: "check",
+			text: "Bisherige Abrechnung prüfen",
+			href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+		},
 	],
 } satisfies PainPicker;
 

@@ -28,6 +28,7 @@ import {
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_MUSTER_KUENDIGUNG,
 	ROUTE_PORTFOLIO_CHECKER,
+	ROUTE_SCHNITTSTELLEN,
 } from "$lib/routes";
 import type { IconName } from "./icons";
 
@@ -231,7 +232,7 @@ export const topics: Topic[] = [
 				question: "Muss ich eine zweite Software pflegen?",
 				answer:
 					"Nein. Heidi ist an Ihr ERP- oder CRM-System angebunden. Verbrauchsdaten und Abrechnungen landen direkt dort.",
-				more: { text: "Schnittstellen" },
+				more: { text: "Schnittstellen", href: ROUTE_SCHNITTSTELLEN },
 			},
 			{
 				id: "dashboard",

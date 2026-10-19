@@ -1,58 +1,51 @@
-# Phase 1: Route, links, content and the files
+# Phase 1: Route, link, content and the logic
 
-## 1.1 Route and links
+## 1.1 Route and link
 
 In one commit:
 
-- `ROUTE_MUSTER_KUENDIGUNG = "/muster-kuendigung"` in `$lib/routes.ts`, after `ROUTE_PRESSE`.
-- The landing footer's "Muster-Kündigung" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_MUSTER_KUENDIGUNG`.
-- **Other links to the page** (README, Links), each a `href` on an entry that waits for it, and their tests turned round (the link is there and resolves):
-  - `/fristenrechner` `portfolio.ctas[1]` ("Muster-Kündigung"; its comment `4WYU5…`). `Portfolio.svelte` picks each CTA's look by its place in the design (`bk` for the first, `ghost` for the second), not by its place among the shown ones, so the Muster-Kündigung stays the light button while "Zum Portfolio-Checker" is hidden. `content.test.ts` and `e2e/fristenrechner.e2e.ts`.
-  - `/weg-verwaltung` `audience[1].cta` ("Zur Muster-Kündigung"). `e2e/weg-verwaltung.e2e.ts`.
-  - `/wohnungsunternehmen` and `/asset-manager` `pain.links[0]` ("Muster-Kündigung herunterladen", icon `doc`): the `.sg-links` row renders with this one link. Both `content.ts` (the shared texts agree, `asset-manager/content.test.ts`) and both e2e tests.
-  - `/hilfe` the answer `kuendigung`'s `more` ("Muster-Kündigung").
-- `src/routes/(landing-page)/muster-kuendigung/+page.server.ts`, as `/fristenrechner`'s:
+- `ROUTE_ENERGIEAUSWEIS = "/energieausweis"` in `$lib/routes.ts`, after `ROUTE_MUSTER_KUENDIGUNG`.
+- The landing footer's "Energieausweis" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_ENERGIEAUSWEIS`. No other page links to the design (README).
+- `src/routes/(landing-page)/energieausweis/+page.server.ts`, as `/muster-kuendigung`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Muster-Kündigung Messdienst: Vorlage als Word und PDF | Heidi Systems",
+	title: "Energieausweis online beantragen: Verbrauchs- und Bedarfsausweis | Heidi Systems",
 	description:
-		"Kostenlos und ohne Anmeldung: Erstellen Sie die Kündigung für Ihren bisherigen Messdienstleister in zwei Minuten, für mehrere Liegenschaften, als Word-Datei oder PDF. Ihre Eingaben bleiben in Ihrem Browser.",
-	ogTitle: "Messdienst kündigen. In zwei Minuten.",
+		"Verbrauchsausweis ab 69,95 €, Bedarfsausweis ab 99,95 €: rechtsgültig nach GEG, online selbst erfasst oder mit unserem Expertenteam per Video-Call oder vor Ort. Der Check zeigt in vier Fragen, welchen Ausweis Sie brauchen.",
+	ogTitle: "Der Energieausweis für Ihre Liegenschaft.",
 	noindex: true,
 	keepCanonical: true,
 },
 landing: DEFAULT_CHROME,
-now: Date.now(), // the letter's date (DeadlineClock)
 finalForm: await emptySwitchForm("final"),
 ```
 
-  and `handleSwitchSignup(event, { source: "muster-kuendigung", page: ROUTE_MUSTER_KUENDIGUNG })`. No `cache-control`.
+  and `handleSwitchSignup(event, { source: "energieausweis", page: ROUTE_ENERGIEAUSWEIS })`. No `now`: nothing on the page depends on the date. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/muster-kuendigung/content.ts`, word for word from the design:
+`$lib/landing/pages/energieausweis/content.ts`, word for word from the design:
 
-- `GENERATOR_ID = "vorlage"`.
-- `hero`: pill "Muster-Kündigung · kostenlos", H1 "Messdienst kündigen." + accent "In zwei Minuten.", lead "Füllen Sie ein paar Felder aus, und Sie bekommen eine fertige Kündigung für Ihren bisherigen Messdienstleister. Als Word-Datei oder PDF, zum Unterschreiben und Versenden.", CTAs "Kündigung erstellen" → `#vorlage` and "Heidi kündigt für Sie" → `ROUTE_MESSDIENSTWECHSEL`, ticks "Word und PDF", "Mehrere Liegenschaften", "Ohne Anmeldung", the sheet's title "Kündigung des Messdienstvertrags", the badges "DOCX" and "PDF".
-- `generator`: pill "Vorlage ausfüllen", H2 "Ihre Kündigung." + muted "Live in der Vorschau.", four fieldsets with their legends ("Absender", "Bisheriger Messdienst", "Liegenschaften und Termin", "Was soll noch rein?") and fields `{ key, label, placeholder, optional?, hint?, multiline?, half? }` ("Hausverwaltung oder Eigentümer" / "Muster Hausverwaltung GmbH", "Straße und Hausnummer" / "Beispielstraße 1", "PLZ und Ort" / "10115 Berlin", "Ansprechpartner" / "Vor- und Nachname", "Funktion" optional / "Geschäftsführung"; "Name des Messdienstleisters" / "Name des Unternehmens", "Anschrift" / "Straße, PLZ Ort", "Vertrags- oder Kundennummer" optional / "z. B. 12345678"; "Liegenschaften" hint "eine pro Zeile" / "Lindenallee 12, 10115 Berlin"), the switch (label "Kündigungstermin", "Zum nächstmöglichen Zeitpunkt" / "Zu einem Datum"), the date label "Kündigen zum", the label "optional", five clauses `{ key, title, text, checked }` ("Vertragsende bestätigen lassen" ✓, "Ablesung zum Vertragsende" ✓, "Geräte klären" ✓, "Im Auftrag der Eigentümer", "Datenlöschung"), the buttons "Word herunterladen", "PDF", "Text kopieren", "Wird erstellt …", "Kopiert", the messages ("Download gestartet: ", the download error, "Kopieren nicht möglich. Markieren Sie den Text in der Vorschau."), the preview's label "Vorschau der Kündigung" (ours), the signature label "Unterschrift", the disclaimer "Vorlage ohne Gewähr, keine Rechtsberatung. Prüfen Sie Laufzeit, Kündigungsfrist und Form in Ihrem Vertrag."
-- `letterText`: the letter's sentences and placeholders, word for word from `build()` (the subject "Kündigung des Messdienstvertrags", " · Vertrags-/Kundennr. ", "Liegenschaft" / "Liegenschaften", the salutation, the termination sentence with its two endings and "fristgerecht zum nächstmöglichen Zeitpunkt" / "zum ", the five clauses' sentences, "Mit freundlichen Grüßen", the placeholders "Name der Verwaltung", "Straße, Hausnummer", "PLZ Ort", "Name des Messdienstleisters", "Anschrift", "Ort", "Adresse der Liegenschaft", "Datum", "Vor- und Nachname").
-- `checklist`: pill "Vor dem Versand", H2 "Vier Dinge, die Sie prüfen sollten." + muted "Bevor Sie unterschreiben.", four items `{ title, text }` ("Laufzeit und Frist", "Mehrere Verträge?", "Form und Versand", "Vollmacht bei WEG"), the count "{n} von {total} geprüft", the done text "Alles geprüft. Bereit zum Versand."
-- `takeover`: pill "Noch einfacher", H2 "Oder Heidi kündigt für Sie.", text "Eine Unterschrift auf der Vollmacht genügt. …", CTAs "Demo buchen" → `DEMO_HREF` and "Vertragsenden prüfen" (no `href`: hidden), three steps `{ title, text }`.
-- `faq`: title "Häufige Fragen zur Kündigung", four items (plain text answers).
-- `closing`: H2 "Lieber gar nicht selbst kündigen?", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/presse`'s), submit label "Demo buchen".
+- `CHECK_ID = "check"`, `OFFERS_ID = "produkte"`.
+- `hero`: pill "Energieausweis von Heidi", H1 "Der Energieausweis für Ihre Liegenschaft." + accent "Einfach online beantragen.", lead "Verbrauchs- oder Bedarfsausweis, rechtsgültig nach Gebäudeenergiegesetz. Online selbst erfasst oder mit unserem Expertenteam per Video-Call oder vor Ort.", CTAs "Welchen Ausweis brauche ich?" → `#check` and "Preise ansehen" → `#produkte`, ticks "Rechtsgültig nach GEG", "Schnell und einfach".
+- `scale`: the card's label "Illustration einer Energieeffizienzskala", title "Energieausweis", sub "für Wohngebäude · gemäß GEG", badge "10 Jahre gültig", the unit "kWh/(m²·a)", the tag "Beispielwerte", the class labels "A+" … "H", two types `{ key: "v" | "b", title, sub, value }` ("Verbrauchsausweis" / "auf Basis gemessener Verbräuche" / 118, "Bedarfsausweis" / "auf Basis der Gebäudesubstanz" / 142), the `sr-only` template "{value} kWh/(m²·a), Effizienzklasse {class}" (ours).
+- `check`: pill "Welchen Ausweis benötige ich?", H2 "Vier Fragen. " + muted "Dann wissen Sie es.", lead "Ob Verbrauchs- oder Bedarfsausweis hängt vom Gebäude ab: …", the source "Grundlage: Gebäudeenergiegesetz (GEG). Keine Rechtsberatung.", the wizard's label "Ausweis-Check" (ours, the card's `aria-label`), the step "Frage {n} von {total}", "Ergebnis", "Zurück", four questions `{ key, title, hint, answers: { value, label }[] }` (the design's `Q`), four results `{ key: "new" | "must" | "maybe" | "free", kind: "must" | "free", title, text }` (the design's `R`), the badges "Pflicht" / "Wahlfreiheit", "Passende Angebote ansehen" → `#produkte`, "Neu starten".
+- `offers`: pill "Unsere Angebote", H2 "Vier Wege zum Energieausweis. " + muted "Transparente Preise.", the filter (label "Angebote filtern", ours; "Alle", "Verbrauchsausweis", "Bedarfsausweis"), four offers `{ type: "v" | "b", tier, recommended?, title, points: { lead, text }[], price, cta }` (tiers "Self Service" / "Full Service", "Empfehlung", "ab", "inkl. MwSt.", "Jetzt anfragen" → `DEMO_HREF`), the note "Alle Preise inklusive MwSt.".
+- `compare`: pill "Verbrauch oder Bedarf?", H2 "Zwei Ausweise, " + muted "zwei Grundlagen.", the two columns' titles, five rows `{ label, v, b, strong? }` ("Grundlage", "Benötigte Daten", "Pflicht für", "Preis" with the offers' lowest prices, "Gültigkeit").
+- `heidi`: pill "Mit Heidi", H2 "Die Verbräuche haben Sie schon.", text, CTA "Zum Dashboard" → `ROUTE_DASHBOARD`, three years `{ label, height }` ("Jahr 1" 72 %, "Jahr 2" 64 %, "Jahr 3" 58 %), the sum "36 Monate".
+- `faq`: title "Häufige Fragen zum Energieausweis", four items (plain text answers).
+- `closing`: H2 "Ihr Energieausweis, rechtsgültig nach GEG.", submit label "Jetzt anfragen".
 
-`content.test.ts`: the H1; the field keys unique and the ones `letter.ts` reads; three clauses on by default; four checklist items; every `href` a route or an anchor; the takeover's held-back CTA has no `href`; no empty or untrimmed text; the closing text equal to `/presse`'s; the FAQ's four questions.
+`content.test.ts`: the H1; four questions with unique keys, the answer values `check.ts` reads; four results, the `kind` of each; four offers, one recommended, the types; the comparison's prices equal the cheapest offer of each type; every `href` a route or an anchor; no empty, doubled-space or untrimmed text (the split headings' first parts excepted); the FAQ's four questions.
 
 ## 1.3 Pure logic
 
-- **`letter.ts`**: `type Segment = { text: string; placeholder?: true }`, `type Paragraph = { kind: "ab" | "to" | "dt" | "bt" | "p" | "sg"; lines: Segment[][] }`, `type LetterInput = { fields: Record<FieldKey, string>; clauses: Record<ClauseKey, boolean>; term: "next" | "date"; today: string }`. `buildLetter(input)` (the design's `build()`, field values trimmed, the properties split by lines, the PLZ stripped from the date's place, the clauses in the design's order `vollmacht`, `ende`, `ablesung`, `geraete`, `daten`), `plainText(paragraphs)` (lines by `\n`, paragraphs by a blank line, placeholders in brackets), `fileName(provider, ext)`, `isoToGerman("2027-01-31")` → "31.01.2027", `germanDay(ms)` (Europe/Berlin, `berlinDate` from `deadline.ts`). `letter.test.ts`: the empty letter (every placeholder), a full one, one and several properties ("Liegenschaft" / "Liegenschaften", "die oben genannte Liegenschaft" / "die oben genannten Liegenschaften"), both terms with and without a date, each clause, the contract number in the subject, the signature lines, the file names, the plain text.
-- **`docx.ts`**: `documentXml(paragraphs)` (the design's runs, byte for byte), `zipStore(files, date)` (local headers, the central directory, the end record; CRC-32 from a table), `makeDocx(paragraphs, date)` → `Uint8Array`. `docx.test.ts`: the XML for a known letter, XML escaping and dropped control characters, the ZIP read back (signatures, offsets, sizes, each entry's CRC against Node's `zlib.crc32`).
-- **`pdf.ts`**: `splitText(text, width, font)` (jsPDF's `splitTextToSize`: words by spaces, a word wider than the line broken by characters), `makePdf(paragraphs)` → `Uint8Array` (objects, uncompressed content streams, `/F1` Helvetica and `/F2` Helvetica-Bold with `/WinAnsiEncoding`, the xref table with exact byte offsets, the trailer). `pdf.test.ts`: the header and `%%EOF`, every xref offset pointing at its `n 0 obj`, one page for a short letter and two for one with 30 properties, the date right-aligned (its `Td` x), umlauts as WinAnsi bytes, `(`, `)` and `\` escaped, line breaking against known widths.
-- **`helvetica.ts`**: the widths (1/1000 em) of Helvetica and Helvetica-Bold for the WinAnsi codes 32–255 and the map from Unicode to WinAnsi for 128–159; the values are the fonts' AFM metrics (as in jsPDF and pdf.js), checked against the system Helvetica.
+- **`scale.ts`**: `CLASS_LIMITS = [30, 50, 75, 100, 130, 160, 200, 250]`, `scaleClass(value)` (0–8, the design's `cls()`), `markerLeft(value)` (percent of the bar: `(class + (value − lower) / (upper − lower)) / 9 × 100`, the upper bound of H 300, clamped to 0–100), `formatKwh(value)` (`de-DE`, no decimals). `scale.test.ts`: the limits (29 → A+, 30 → A, 249 → G, 250 → H), 118 → D at 51.1 %, 142 → E at 60 %, 0 → 0 %, 400 → 100 %, the format.
+- **`check.ts`**: `type Step = { kind: "question"; index: number } | { kind: "result"; result: ResultKey }`, `answer(index, value)` → `Step` (the design's `next()`), `progress(step, total)` (percent: index / total, 100 at a result), `resultOffers(result, offers)` (the design's `rpick`: every offer on "free", the Bedarfsausweise otherwise; the first marked), `filterFor(result)` ("all" on "free", "b" otherwise). `check.test.ts`: every path through the four questions and its result, the progress, the offers and the filter of each result.
 
 ## 1.4 Images and files
 
-None new. The closing card's video isn't used (Key decisions); the floating CTA's avatars are the shared ones.
+None new. The floating CTA's avatars are the shared ones.

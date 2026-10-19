@@ -3,7 +3,7 @@
  * Sends events to Denis's Make.com workflows
  *
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
- * jobapplication, helpfeedback
+ * jobapplication, helpfeedback, partnerinquiry
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -21,7 +21,11 @@ type EventType =
 	// "War das hilfreich?" vote on /hilfe. Payload: question (id), vote
 	// ("yes" | "no"), page. No email, nothing personal; Make.com writes it to
 	// the content owner's sheet.
-	| "helpfeedback";
+	| "helpfeedback"
+	// Partner form on /installationspartner. Payload: company, name, phone,
+	// region, crew, trades (array), experience, message, page. Make.com
+	// forwards it to whoever answers partner inquiries; nothing is stored here.
+	| "partnerinquiry";
 
 interface WebhookPayload {
 	event_type: EventType;

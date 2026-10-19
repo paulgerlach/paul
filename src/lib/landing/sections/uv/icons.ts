@@ -8,6 +8,8 @@ export const ICON_NAMES = [
 	"building",
 	"user",
 	"key",
+	"home",
+	"tool",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

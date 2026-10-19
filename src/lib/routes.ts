@@ -38,5 +38,6 @@ export const ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN =
 	"/heizkostenabrechnung-pruefen";
 export const ROUTE_MESSDIENSTANBIETER_VERGLEICH =
 	"/messdienstanbieter-vergleich";
+export const ROUTE_INSTALLATIONSPARTNER = "/installationspartner";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

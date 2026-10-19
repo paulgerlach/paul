@@ -13,9 +13,12 @@
 
 	let {
 		securityLink = true,
+		demoHref = DEMO_HREF,
 	}: {
 		/** "Mehr zu Sicherheit"; off on /sicherheit itself. */
 		securityLink?: boolean;
+		/** Target of "Demo buchen" (a page without a signup form sends it elsewhere). */
+		demoHref?: string;
 	} = $props();
 
 	type Seal = {
@@ -163,8 +166,8 @@
 				<div class="t-btns">
 					<a
 						class="p"
-						href={DEMO_HREF}
-						onclick={DEMO_HREF === START_HREF ? focusSignup : undefined}
+						href={demoHref}
+						onclick={demoHref === START_HREF ? focusSignup : undefined}
 						>Demo buchen</a
 					>
 					{#if securityLink}<a class="s" href={ROUTE_SICHERHEIT}

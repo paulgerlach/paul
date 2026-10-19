@@ -13,6 +13,7 @@ import {
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_HILFE,
 	ROUTE_HKVO_LEITFADEN,
+	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
@@ -83,7 +84,7 @@ export const footerGroups: LandingFooterGroup[] = [
 	{
 		title: "Partner",
 		links: [
-			{ text: "Installationspartner" },
+			{ text: "Installationspartner", href: ROUTE_INSTALLATIONSPARTNER },
 			{ text: "Softwarepartner" },
 			{ text: "Verbände" },
 			{ text: "Nachfolge" },

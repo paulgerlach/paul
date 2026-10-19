@@ -26,6 +26,7 @@
 		size = "md",
 		photos,
 		mock,
+		wordSize,
 	}: {
 		/** The H1's id. */
 		id: string;
@@ -38,6 +39,8 @@
 		/** Left and right of the mock. */
 		photos: [Photo, Photo];
 		mock: Snippet;
+		/** The word's font size (a CSS length), in place of the template's. */
+		wordSize?: string;
 	} = $props();
 </script>
 
@@ -60,7 +63,9 @@
 		<div class="top rv">
 			<h1 {id}>
 				<span class="sr-only">{srTitle}</span>
-				<span class="word" aria-hidden="true">{word}</span>
+				<span class="word" aria-hidden="true" style:font-size={wordSize}
+					>{word}</span
+				>
 			</h1>
 			<div class="sub">
 				<p>{lead}</p>

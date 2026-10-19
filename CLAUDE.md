@@ -73,7 +73,7 @@ src/
     [[preview=preview]]/        Prismic preview prefix (/preview/…), matcher in src/params/preview.ts
       (base)/                   site Header/Footer/ChatBot; layout loads nav blog teaser + sets cache-control
       (service)/fragebogen/     questionnaire, FragebogenHeader
-    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts), upgrade-now, ueber-uns, karriere, hilfe, selbstabrechnung, vorgehen, funktionen, mieterportal, dashboard, sicherheit, verbrauchsinformation, schnittstellen, hausverwaltung, mietverwaltung, weg-verwaltung, wohnungsunternehmen, asset-manager, private-vermieter, neuigkeiten, fristenrechner, hkvo-leitfaden, einsparrechner, presse, muster-kuendigung, energieausweis, portfolio-checker, heizkostenabrechnung-pruefen, messdienstanbieter-vergleich
+    (landing-page)/             standalone landing pages (own header/footer, Geist font, tokens.css): messdienstwechsel, messdienstanbieter (+ [city=city], matcher in src/params/city.ts), upgrade-now, ueber-uns, karriere, hilfe, selbstabrechnung, vorgehen, funktionen, mieterportal, dashboard, sicherheit, verbrauchsinformation, schnittstellen, hausverwaltung, mietverwaltung, weg-verwaltung, wohnungsunternehmen, asset-manager, private-vermieter, neuigkeiten, fristenrechner, hkvo-leitfaden, einsparrechner, presse, muster-kuendigung, energieausweis, portfolio-checker, heizkostenabrechnung-pruefen, messdienstanbieter-vergleich, installationspartner
     api/                        +server.ts JSON/streaming endpoints (chat, slack, contact, fragebogen, leads, send-email, preview)
     robots.txt/, sitemap.xml/, slice-simulator/
   lib/
@@ -110,15 +110,16 @@ src/
       pages/portfolio-checker/  content.ts (copy, the example files, documents, steps, fields, follow-ups, FAQ), checker.ts (pure: the file check, the example evaluation for a day, the KPIs, the CSV), check.svelte.ts (PortfolioCheck: the files, the run, the result; per page via context), icons.ts, components/Icon, sections/ (Hero + Tool, Result + Overview, Documents, How, Fields, NextSteps, Decision, Quote)
       pages/heizkostenabrechnung-pruefen/ content.ts (copy, the sample bill, studies, stats, the eleven errors, FAQ), rules.ts (pure: the rules, the result's head, the paywall's rows, the letter, the example for a day), check.svelte.ts (BillCheck: the panes, files, flow, values, result, lock; per page via context), icons.ts, components/, sections/ (Hero + Checker + Upload/Wizard/Values/Result, Paywall, Letter, Scan, Numbers, Errors, Deadlines, Managers)
       pages/messdienstanbieter-vergleich/ content.ts (copy, the eight criteria, the calculator's fields and start values, the six questions, FAQ), score.ts (pure: the counts, the verdict, the gaps), cost.ts (pure: the fields, the costs per flat, year and six years), icons.ts, components/ (Icon, Shapes, Head), sections/ (Hero, Criteria, Costs, Tips, Switch)
+      pages/installationspartner/ content.ts (copy, example data of the mocks and tiles, the form's texts), tracking.ts (pure: the tenant tracking's steps), sections/ (wrappers around uv/, plus TwinPhone, TrackingPhone, MeterPhoto, Apply, PartnerForm)
       sections/sg/              the light segment template: SgMain, Hero + UnitCalc, Tabs, LargeStock, Pain, Benefits, Head, Features + FeatureRow + features/ (Meter, Billing, Monthly, Hub, Rollout), Steps; types.ts, icons.ts, units.ts (pure: the slider's log scale), confetti.ts
       pages/dashboard/          content.ts, chart.ts / kpi.ts / recommendations.ts / strike.ts (pure), icons.ts, components/ (Icon, Pill, BarScrub), demo/ (the hero preview: data.ts, model.ts, demo.svelte.ts, charts/, views/), sections/ (+ features/)
       pages/sicherheit/         content.ts, map.ts (the hero map's data), packets.ts (pure: points along the curves), icons.ts, components/Icon, sections/
       pages/schnittstellen/     content.ts, doppelpflege.ts (pure: the calculator), stage.svelte.ts (the hero switch), icons.ts, components/Icon, sections/
       attachments/ data/        landing attachments (inView, countUp, reveal, loopInView, enterView …); customer logos, testimonials, nextSteps (the shared list's rows and filter); confetti.ts (canvas burst)
-    server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), application (/karriere action), helpFeedback (/hilfe vote action), rateLimit, slack, webhooks, ai/personas
+    server/                     server-only: db (drizzle), blog (Prismic queries), contact, leads, switchSignup (landing signup action), application (/karriere action), helpFeedback (/hilfe vote action), partnerInquiry (/installationspartner action), rateLimit, slack, webhooks, ai/personas
     chat/                       SlackChat + chat context, businessHours
     fragebogen/                 Questionnaire rune class + zod schema (shared client/server)
-    forms/                      superforms schemas (contact, switchInquiry, application, helpFeedback)
+    forms/                      superforms schemas (contact, switchInquiry, application, helpFeedback, partnerInquiry)
     seo/                        Seo.svelte, site.ts (defaults, SeoData)
     slices/                     Prismic slices ($slices alias)
     assets/icons.ts             image imports (`?enhanced`)

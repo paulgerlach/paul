@@ -34,5 +34,11 @@
 		<circle cx="7" cy="13" r="3.5" /><path
 			d="M9.5 10.5l6-6M13 7l2 2M15.5 4.5l1.5 1.5"
 		/>
+	{:else if name === "home"}
+		<path d="M3 9.5L10 3.5l7 6V17H3z" /><path d="M8 17v-4.5h4V17" />
+	{:else if name === "tool"}
+		<path
+			d="M12.5 3.5a4 4 0 0 0-4.9 5.2L3 13.3 5.7 16l4.6-4.6a4 4 0 0 0 5.2-4.9l-2.4 2.4-2.2-.6-.6-2.2z"
+		/>
 	{/if}
 </StrokeIcon>

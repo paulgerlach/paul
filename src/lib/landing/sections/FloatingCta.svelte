@@ -10,6 +10,13 @@
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 
+	let {
+		href = DEMO_HREF,
+	}: {
+		/** The target (a page without a signup form sends it elsewhere). */
+		href?: string;
+	} = $props();
+
 	let on = $state(false);
 	let ticking = false;
 
@@ -42,8 +49,8 @@
 
 <a
 	class={["ctab", on && "on"]}
-	href={DEMO_HREF}
-	onclick={DEMO_HREF === START_HREF ? focusSignup : undefined}
+	{href}
+	onclick={href === START_HREF ? focusSignup : undefined}
 	aria-hidden={!on}
 	tabindex={on ? undefined : -1}
 >

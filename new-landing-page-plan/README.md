@@ -74,6 +74,17 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` (`DEFAULT_CHROME`) |
 | `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (`TrustSeals`) |
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`5cc03551`), the route, content, the pure `checker.ts`, `PortfolioCheck`, the shared list's move and the seven links (`70aa8d5a`), the sections with their interactions, and `e2e/portfolio-checker.e2e.ts` (15 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion, also after the example run and after a run with own files): every section has the design's height to the pixel at every width and matches it by eye (the hero, the tool's list after the run, the evaluation with its popovers, the steps, the list with a popover); the one difference is the planned one: the closing card holds the signup form (0 / 0 / +90 / +7 / +71 / +71 px at 1440 / 1100 / 980 / 700 / 375 / 320 px; the shared `CtaCard` puts the form under the heading below 1040 px). No overflow at 320 and 375 px, also with the evaluation; no console errors or hydration warnings. Full suites: check, lint, 670 unit tests, 428 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the run, the loop and the popovers are part of their sections.
+- **The follow-ups' ticks:** ink on the light card, as the design draws them (its SVGs hard-code ink, so its CSS colour never applies); on the dark card, where that ink tick vanishes, the accent the design's CSS asks for.
+- **No adding files while a check runs** (the tool's `add` is ignored then): the design lets a pick during the run replace the list under the running loop.
+- **`NextSteps` on `/dashboard`:** the search field gets the browser's default input padding both designs rely on (Tailwind's preflight zeroes it; +2 px on `/dashboard`), the chips' icons the designs' stroke widths (1.8 / 1.7). `/dashboard` keeps its 56 px row indent below 860 px, though its design, like this one, says 48 px (a finding for `/dashboard`, not changed here).
+- **Headings:** the landing heading reset also takes `SectionHead`'s −.03em letter-spacing; the page's `Head` restores it with the 18 px margin.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

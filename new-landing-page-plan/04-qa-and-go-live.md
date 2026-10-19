@@ -4,22 +4,22 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/portfolio-checker`: the page with the landing header and footer; the footer's "Portfolio-Checker" lands here from every landing page, and so do the links on `/fristenrechner`, `/muster-kuendigung`, `/neuigkeiten`, `/hilfe`, `/wohnungsunternehmen` and `/asset-manager`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Portfolio prüfen lassen →"); the result after the example and after own files compared too
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The tool: picking or dropping files lists them with their size and the first dot; a `.docx` or a file over 25 MB ends with the warning; × removes a file; "Unterlagen prüfen" checks them one after the other and opens the own-files panel; "Mit Beispielunterlagen testen" runs the five example files (the scan with its warning) and opens the evaluation: the four figures (the next notice date in the dark card, with confetti), three properties with their dates and recommendation, each popover on hover, focus and click; "Als CSV herunterladen" saves the file; "Beispielauswertung ansehen" runs the example from the own-files panel
-- [ ] No request leaves the page on picking, dropping or checking files (DevTools network)
-- [ ] The steps' loop plays when the cards are in view and stops out of view; the list's check run plays once; the filters and the search narrow the rows; the popovers open
-- [ ] "Bestand prüfen" (the nav CTA) lands on the tool; "Mit eigenem Bestand auswerten →", "Auswertung anfragen →", the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field
+- [x] `bun run dev` → `http://localhost:5173/portfolio-checker`: the page with the landing header and footer; the footer's "Portfolio-Checker" lands here from every landing page, and so do the links on `/fristenrechner`, `/muster-kuendigung`, `/neuigkeiten`, `/hilfe`, `/wohnungsunternehmen` and `/asset-manager`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Portfolio prüfen lassen →"); the result after the example and after own files compared too
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The tool: picking or dropping files lists them with their size and the first dot; a `.docx` or a file over 25 MB ends with the warning; × removes a file; "Unterlagen prüfen" checks them one after the other and opens the own-files panel; "Mit Beispielunterlagen testen" runs the five example files (the scan with its warning) and opens the evaluation: the four figures (the next notice date in the dark card, with confetti), three properties with their dates and recommendation, each popover on hover, focus and click; "Als CSV herunterladen" saves the file; "Beispielauswertung ansehen" runs the example from the own-files panel
+- [x] No request leaves the page on picking, dropping or checking files (DevTools network)
+- [x] The steps' loop plays when the cards are in view and stops out of view; the list's check run plays once; the filters and the search narrow the rows; the popovers open
+- [x] "Bestand prüfen" (the nav CTA) lands on the tool; "Mit eigenem Bestand auswerten →", "Auswertung anfragen →", the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the file picker, drag and drop on desktop, the CSV download)
 - [ ] Keyboard-only through the page (the file picker, the example button, ×, "Unterlagen prüfen", the overview's chips, the CSV button, the list's filters, search and chips, the FAQ); focus ring visible; after a run the focus is on the result's heading
 - [ ] Screen reader: one H1 "Vertragsunterlagen hochladen. Heidi liest den Rest."; the file list's changes announced (polite), the result's heading read on arrival, the popovers by their buttons, the list's result count announced, the step line and the steps' demo chips read as text
-- [ ] Reduced motion: nothing slides, spins, loops, counts or bursts; the run is instant; every block in its end state
-- [ ] JS disabled: every section readable, the drop zone without the example button, the list checked, the FAQ, the signup form posts
-- [ ] A signup reaches `leads` with `source = "portfolio-checker"` and the sink with `page: "/portfolio-checker"`
-- [ ] `/dashboard` unchanged (its list, filters, search and check run; its e2e tests)
+- [x] Reduced motion: nothing slides, spins, loops, counts or bursts; the run is instant; every block in its end state
+- [x] JS disabled: every section readable, the drop zone without the example button, the list checked, the FAQ, the signup form posts
+- [x] A signup reaches `leads` with `source = "portfolio-checker"` and the sink with `page: "/portfolio-checker"`
+- [x] `/dashboard` unchanged (its list, filters, search and check run; its e2e tests)
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

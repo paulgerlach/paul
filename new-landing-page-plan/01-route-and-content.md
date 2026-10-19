@@ -2,99 +2,90 @@
 
 ## 1.1 Route and links
 
-In one commit (after the template commit of 02 §2.1, since the content uses its new shapes):
+In one commit:
 
-- `ROUTE_WEG_VERWALTUNG = "/weg-verwaltung"` in `$lib/routes.ts`, after `ROUTE_MIETVERWALTUNG`.
-- The landing footer's "WEG-Verwaltung" (`$lib/landing/footerLinks.ts`, group "Kunden") gets `href: ROUTE_WEG_VERWALTUNG`. The other "Kunden" entries without a page stay plain text.
-- `src/routes/(landing-page)/weg-verwaltung/+page.server.ts`, a copy of `hausverwaltung/+page.server.ts`:
+- `ROUTE_WOHNUNGSUNTERNEHMEN = "/wohnungsunternehmen"` in `$lib/routes.ts`, after `ROUTE_WEG_VERWALTUNG`.
+- The landing footer's "Wohnungsunternehmen" (`$lib/landing/footerLinks.ts`, group "Kunden") gets `href: ROUTE_WOHNUNGSUNTERNEHMEN`. "Private Vermieter" and "Asset Manager & Fonds" stay plain text.
+- `src/routes/(landing-page)/wohnungsunternehmen/+page.server.ts`, a copy of `schnittstellen/+page.server.ts`:
 
 ```ts
 export const load: PageServerLoad = async () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
-		title: "Heizkostenabrechnung für WEG-Verwaltungen: rechtzeitig vor der ETV | Heidi Systems",
+		title: "Messdienst für Wohnungsunternehmen: der Wechsel als Rollout im Cluster | Heidi Systems",
 		description:
-			"Heidi liefert WEG-Verwaltungen die Heizkostenabrechnung rechtzeitig vor der Eigentümerversammlung, nachvollziehbar für jede Einheit. Der Wechsel des Messdienstes passt zur ETV, mit einer Vollmacht statt vieler Termine.",
-		ogTitle: "Heizkostenabrechnung für WEG-Verwaltungen mit Heidi",
+			"Heidi stellt große Bestände strukturiert um: Portfolio-Check, Pilotobjekt, Rollout im Cluster, mit einem festen Ansprechpartner. Ab 1.000 Einheiten mit einem Angebot für Ihren Bestand.",
+		ogTitle: "Große Bestände. Strukturiert umgestellt.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
 		noindex: true,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,
 	faq: faq.items,
-	figures: figures(Date.now()),
 	finalForm: await emptySwitchForm("final"),
 });
 
 export const actions: Actions = {
 	default: (event) =>
-		handleSwitchSignup(event, { source: "weg-verwaltung", page: ROUTE_WEG_VERWALTUNG }),
+		handleSwitchSignup(event, { source: "wohnungsunternehmen", page: ROUTE_WOHNUNGSUNTERNEHMEN }),
 };
 ```
 
   No `cache-control` (the layout sets it). `leads.source` is free text: no migration.
-- **Other links to the page:** none. Searched every saved design (landing pages, cities, segment siblings) for `WorTAiGvpRbkiEg1Lee25D`: the designs' nav and footer, and the segment tabs of the Wohnungsunternehmen and Asset-Manager designs (not built).
-- **Tests that see the change:** the footer-link specs (every internal footer link resolves) now include `/weg-verwaltung`.
-- `+page.svelte`: `<main id="content" class="wv" {@attach reveal()}>` with `UvMain` around sections 1–10, `Trust` after it, `FloatingCta` after `</main>`; reveal styles and the `#hs-css` H2 sizes as on `/hausverwaltung`.
+- **Other links to the page:** none. Searched every saved design (landing pages, cities, segment siblings) for `2XwVWrEs9cvcDpBtQxzGnt`: the designs' nav and footer, and the Asset-Manager design's segment tab (not built).
+- **Tests that see the change:** the footer-link specs (every internal footer link resolves) now include `/wohnungsunternehmen`.
+- `+page.svelte`: `<main id="content" class="wu" {@attach reveal()}>` with `SgMain` around every section, `FloatingCta` after `</main>`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/weg-verwaltung/content.ts`, word for word from the design, in the `uv` shapes. `NB` between figures and units, after "§". Soft hyphens where the design has `&shy;`.
+`$lib/landing/pages/wohnungsunternehmen/content.ts`, word for word from the design, in the `sg` shapes (`sg/types.ts`). `NB` between figures and units (`92 %`, `14 Tage`, `1.650 Einheiten` stay as the design spaces them: a normal space unless the design has `&nbsp;`). Soft hyphen where the design has `&shy;`.
 
-- `hero`: `srTitle` "Heizkostenabrechnung für WEG-Verwaltungen mit Heidi", `word` "WEG‑Verwaltung" (U+2011, the design's `&#8209;`, so the word never breaks), `lead` "Heizkosten­abrechnung für Eigentümer­gemeinschaften. Rechtzeitig vor der ETV." (two soft hyphens), `primary` "Demo buchen" → `DEMO_HREF`, `secondary` "Mehr erfahren" → `#inhalt`. Photos: left `vorgehen/facade.webp`, right the new `weg-verwaltung/manager.webp` with `object-position: 58% 30%`.
-- `list` (`uv/ListMock`): label "Beispiel: Heidi Dashboard", brand "Heidi", nav Gemeinschaften (active, `users`) / Abrechnungen (`doc`) / Eigentümer (`users`), navFoot "Heidi Dashboard", head "4 Gemeinschaften", tag "Beispieldaten", title "Ihre Gemeinschaften.", sub "Wirtschaftsjahr 2025", entries `{ icon: "users", before: "Abrechnung offen", after: "Vor ETV fertig" }`: "WEG Lindenallee 12" – "18 Einheiten · ETV im Mai"; "WEG Parkstraße 4" – "12 Einheiten · ETV im Juni"; "WEG Am Markt 7" – "26 Einheiten · ETV im April"; "WEG Gartenweg 21" – "9 Einheiten · ETV im Mai".
-- `statement`: label "Worum es geht", text "Für WEG-Verwaltungen zählt Planbarkeit. Ein Wechsel, der zur Eigentümerversammlung passt. Eine Heizkostenabrechnung, die rechtzeitig vor der ETV vorliegt und die Eigentümer nachvollziehen können. Und eine Vollmacht statt vieler Unterschriften."
-- `rows`: label "So arbeitet Heidi", CTAs "Demo buchen" / "Häufige Fragen" → `#faq`:
-  - "ETV" / "Passend zur" "Eigentümer­versammlung." / "Vertragsende, Kündigungsfrist und Eigentümerversammlung auf einer Zeitleiste." + "So beschließen Sie den Wechsel rechtzeitig und nicht erst, wenn sich der Vertrag schon verlängert hat." / `calendar`, stone.
-  - "Vollmacht" / "Eine Vollmacht." "Statt vieler Termine." / "Nach dem Beschluss genügt eine Unterschrift der Verwaltung." + "Heidi kündigt beim bisherigen Messdienst, plant die Montage und informiert die Bewohner." / `bill`, mint.
-  - "Abrechnung" / "Nachvollziehbar." "Für jede Einheit." / "Heidi verteilt die Heizkosten nach HKVO: einen Teil nach Fläche, 50 bis 70 % nach Verbrauch." + "Jede Einheit bekommt eine Abrechnung, die Eigentümer und Mieter verstehen." / `doc`, stone.
-  - "Eigentümer" / "Transparenz für" "alle Eigentümer." / "Selbstnutzer und Mieter sehen ihren Verbrauch jeden Monat im Portal." + "Die Verwaltung sieht alle Einheiten im Dashboard. Fragen in der ETV beantworten Sie mit Zahlen." / `phone`, ink.
-- `calendar` (02 §2.1): months "Jan" … "Dez", `current: 11`, open "offen", `cells`: placeholders except three milestones, Mai `{ label: "ETV", note: "Mai: ETV beschließt den Wechsel" }`, Sep `{ label: "Kündigung", note: "Sep: Heidi kündigt per Vollmacht" }`, Dez `{ label: "Vertragsende", note: "Dez: Heidi übernimmt" }`. No `done` / `doing` / notes of its own (the design's are empty). End state: Jan–Nov done (Mai and Sep lime with their labels, the others without tick or label), Dez current "Vertragsende", note "Dez: Heidi übernimmt".
-- `bill` (before/after, text values): without "Ohne Heidi", with "Mit Heidi", rows `cut` "Kündigung und Fristen prüfen" "Sie", `cut` "Montage mit Bewohnern abstimmen" "Sie", `ok` "Vollmacht unterschreiben" (tick), `ok` "Kündigung, Montage, Information" "Heidi" (02 §2.1), sum "Ihr Aufwand" "hoch" → "eine Unterschrift".
-- `doc` (bar rows and check rows): title "Kostenverteilung 2025", sub "WEG Lindenallee 12 · Beispiel", rows Grundkosten "30 %" (bar 30), Verbrauchskosten "70 %" (bar 70), "Verteilschlüssel nach Beschluss" (tick), "Pflichtangaben nach HKVO" (tick), result "Rechtzeitig vor der ETV".
-- `phone` (bars): time "9:41", app "Heidi", title "Ihre Verbrauchsinfo September", sub "WEG Lindenallee 12 · Einheit 7", label "Heizung im September", value "96 kWh", comparisons ["Vergleich zum Vormonat"], bars 162, 171, 150, 118, 61, 19, 12, 14, 74, 96.
-- `rotator`: label "Was Heidi übernimmt", lead "Heidi übernimmt:", phrases "Kündigung per Vollmacht", "Montage und Ablesung", "Abrechnung vor der ETV", "Verbrauchsinfo für alle Einheiten", 2300 ms.
-- `numbers`: as on `/hausverwaltung` (92 %, the photo, 14 Tage, "1–2 h", 1, the deadline figure), the photo `vorgehen/kitchen-meters.webp`.
-- `audience`: label "Ihr Wechsel"; "Wann muss die WEG kündigen?" – "Mit dem Fristenrechner sehen Sie, bis wann gekündigt werden muss. So planen Sie den Beschluss in der richtigen ETV." (cta "Zum Fristenrechner" without `href`, image `mieterportal/building.webp`); "Muster-Kündigung für den Messdienst" – "Die Vorlage für den bisherigen Anbieter. Oder Heidi kündigt für Sie per Vollmacht." (cta "Zur Muster-Kündigung" without `href`, image `cities/berlin/references.jpg`).
-- `quotes`: H2 ["Verwaltungen arbeiten mit Heidi.", "Unsere Kunden sagen es selbst."], keys `werne`, `vitolus`, `gerhard` (the design's order).
-- `picture`: label "Heidi", caption ["Ruhige ETV.", "Klare Zahlen."], photo `mieterportal/facade-white.webp`.
-- `faq`: title "Häufige Fragen":
-  - "Braucht es einen Beschluss der Eigentümer?" – "Für den Wechsel des Messdienstes sollte ein Beschluss oder eine Vollmacht vorliegen. Mit dem Fristenrechner sehen Sie, welche ETV rechtzeitig vor dem Vertragsende liegt."
-  - "Können wir mitten in der Laufzeit wechseln?" – "Heidi übernimmt bestehende Zähler und wertet sie sofort aus, auch bei laufendem Vertrag. Die Kündigung beim bisherigen Anbieter erledigen wir per Vollmacht."
-  - "Wie werden die Heizkosten verteilt?" – "Nach Heizkostenverordnung wird ein Teil der Kosten nach Fläche verteilt und 50 bis 70 % nach Verbrauch. Den genauen Schlüssel legt die Gemeinschaft fest."
-  - "Was kostet Heidi?" – as `/hausverwaltung`.
-  - "Müssen wir auf das Vertragsende warten?" – as `/hausverwaltung` ("Fristenrechner" plain text).
-  - "Ist die monatliche Verbrauchsinformation inklusive?" – as `/hausverwaltung`, `more` "Mehr zur uVI".
-- `closing`: H2 "Planbar wechseln. Vor der nächsten ETV.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", submit "Demo buchen".
+- `hero`: pill "Für Wohnungsunternehmen" (icon `house`), H1 "Große Bestände." + accent "Strukturiert umgestellt.", lead "Für Wohnungsunternehmen planen wir den Wechsel als Rollout im Cluster: erst Analyse, dann Pilotobjekt, dann der ganze Bestand. Mit klaren Übergaben und einem festen Ansprechpartner.", primary "Demo buchen" → `DEMO_HREF`, ghost "Unzufrieden mit Ihrem Messdienst?" ↓ → `#wechsel`, ticks "Alles aus einer Hand", "Wechsel auch bei laufendem Vertrag", "Fester Ansprechpartner".
+- `calc`: title "Wie viele Einheiten betreuen Sie?", hint "Ziehen Sie den Regler", unit "Einheiten", slider label "Anzahl Einheiten", start `4800`, scale "10" / "1.000" / "20.000+"; standard: tag "Ihr Angebot", ticks "Zähler, Ablesung und Abrechnung aus einer Hand", "Heizkostenabrechnung per Klick", "Abrechnung pro installiertem Zähler"; large: tag "Ab 1.000 Einheiten" (icon `star`), title "Wir machen Ihnen ein passendes Angebot.", ticks "Konditionen für Ihren Bestand", "Kostenloser Portfolio-Check", "Rollout im Cluster mit festem Ansprechpartner", CTA "Angebot anfragen" → `DEMO_HREF`.
+- `tabs`: label "Zielgruppen"; Hausverwaltung (`building`) → `ROUTE_HAUSVERWALTUNG`, Mietverwaltung (`key`) → `ROUTE_MIETVERWALTUNG`, WEG-Verwaltung (`users`) → `ROUTE_WEG_VERWALTUNG`, Wohnungsunternehmen (`house`, current) → `ROUTE_WOHNUNGSUNTERNEHMEN`, Asset Manager & Fonds (`bars`) without `href`.
+- `logos`: "Hausverwaltungen in ganz Deutschland arbeiten bereits mit Heidi.", `DEFAULT_LOGO_ORDER`.
+- `large`: figure 1000 with "+" and "Einheiten", pill "Für große Bestände" (`building`), H2 "Sie betreuen mehr als 1.000 Einheiten?" + muted "Dann haben wir ein passendes Angebot.", text "Je größer der Bestand, desto mehr zählt ein Wechsel mit Plan. Wir analysieren Ihre Verträge, planen den Rollout Objekt für Objekt und machen Ihnen ein Angebot, das zu Ihrem Bestand passt.", CTA "Angebot anfragen" → `DEMO_HREF`, secondary "Portfolio kostenlos prüfen" without `href` (hidden).
+- `pain`: pill "Unzufrieden mit Ihrem Messdienst?" (`alert`), H2 "Was stört Sie heute?" + muted "Klicken Sie an, was zutrifft.", group label "Probleme mit dem bisherigen Messdienst", empty state "Wählen Sie links, was Sie stört." / "Wir zeigen Ihnen, wie Heidi das löst.", the count "1 Grund für den Wechsel" / "{n} Gründe für den Wechsel", CTA "Wechsel besprechen" → `DEMO_HREF`; eight items `{ problem, title, text }` from the markup and `#sg-js`'s `A` (e.g. "Ablesetermine mit Mietern koordinieren" → "Ablesung per Funk" – "Keine Ablesetermine mehr. Die Werte kommen aus der Ferne, ohne Termin in der Wohnung."); links "Muster-Kündigung herunterladen" (`doc`), "Messdienstanbieter vergleichen" (`swap`), "Bisherige Abrechnung prüfen" (`check`), all without `href`.
+- `benefits`: pill "Für Wohnungsunternehmen" (`sparkle`), H2 "Was Sie mit Heidi" + muted "bekommen."; "Portfolio-Analyse" (`bars`, dark), "Rollout im Cluster" (`calendar`), "Montage mit Plan" (`wrench`), "Angebunden an Ihr ERP" (`erp`) with the design's texts.
+- `features` (section label "So arbeitet Heidi"), five rows `{ title, text, link? }` and their tiles' data:
+  1. "Verbräuche lückenlos erfasst" – link "Dashboard ansehen" → `ROUTE_DASHBOARD`; tile `meter`: "Lindenallee 12 · WE 04", 1650 "Einheiten", "Stichtag" "31.12.", "Heizkosten­verteiler", "per Funk".
+  2. "Abrechnung ohne Handarbeit" – link "Selbst abrechnen?" → `ROUTE_SELBSTABRECHNUNG`; tile `billing`: "Heizkostenabrechnung 2025", 24, "Wird erstellt …" → "Fertig für alle Einheiten".
+  3. "Verbräuche jeden Monat im Blick" – link "Zum Dashboard" → `ROUTE_DASHBOARD`; tile `monthly`: rows WE "03" 142 (Vormonat 138), "07" 318 (131, the outlier), "12" 96 (101), scale 340 kWh, "Wie im Vormonat" / "Über Vormonat", cursor "Verwaltung", toast "Zur Prüfung markiert", tag "Beispieldaten".
+  4. "Wächst mit Ihrem Bestand" – text with the inline link "Mieterportal" → `ROUTE_MIETERPORTAL`, link "Schnittstellen" → `ROUTE_SCHNITTSTELLEN`; tile `hub`: "Ihr ERP" / "Abrechnung übergeben", "Ihr CRM" / "Kontakte aktuell", "Heidi Dashboard" / "Verbräuche neu", "Mieterportal" / "Verbrauchsinfo bereit".
+  5. "Rollout Liegenschaft für Liegenschaft" – link "So gehen wir vor" → `ROUTE_VORGEHEN`; tile `rollout`: "Rollout Bestand Nord", tag "Beispieldaten", Lindenallee 12 (100, Fertig), Gartenweg 3 (100, Fertig), Am Stadtpark 7 (64, Montage läuft), Hofstraße 21 (12, Mieter informiert), the count "{n} von 4 Liegenschaften fertig" / "Alle 4 Liegenschaften fertig", badge "92 % beim ersten Termin", "Ihr Ansprechpartner koordiniert"; the loop's steps (03 §3.6).
+- `steps`: pill "So läuft der Wechsel" (`arrow`), H2 "Vier Schritte." + muted "Eine Unterschrift.", "Portfolio-Check", "Vollmacht", "Montage", "Abrechnung" with the design's texts.
+- `quotes`: H2 "Was Verwaltungen über Heidi sagen", keys `vitolus`, `gerhard` (the design's order).
+- `faq`: title "Häufige Fragen": "Wie läuft der Wechsel bei mehreren tausend Einheiten?", "Gibt es Konditionen für große Bestände?", "Was kostet Heidi?" (as `/hausverwaltung`), "Müssen wir auf das Vertragsende warten?" ("… egal wie lange Ihr aktueller Vertrag noch läuft.").
+- `closing`: H2 "Bereit für einen Messdienst, der mitdenkt?", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", submit "Demo buchen".
 
-`content.test.ts`: the H1 and word; every `href` a route or an anchor on the page; no empty or untrimmed text; four rows of two lines and two paragraphs; the list's four WEGs match the head "4 Gemeinschaften" and are `/hausverwaltung`'s buildings with the same unit counts; the doc's building is the list's first; the year grid has twelve months, the current one the last, and every milestone with a label and a note naming its month; the ETV milestone's month is the first WEG's "ETV im Mai"; the doc's bar shares add up to 100 and match their values, the consumption share within the "50 bis 70 %" of the row and the FAQ; the bill switches both manual rows for Heidi's; the quotes word for word from `testimonials.ts`; six questions; `figures(now)` switches at `DEADLINE`.
+`content.test.ts`: the H1; every `href` a route or an anchor on the page; no empty or untrimmed text; the tabs (five, one current, the built segment routes); eight problems with eight answers; four benefits and four steps; five rows, three with a tile number that matches the copy (24 Abrechnungen; 4 Liegenschaften, two of them done in the start state; the outlier above its Vormonat and every bar within the scale); the "92 %" and "14 Tage" figures the same as on the other pages; the quotes word for word from `testimonials.ts`; four questions; "Ab 1.000 Einheiten" agrees with `units.ts`'s threshold.
 
-## 1.3 The deadline figure
+## 1.3 Images
 
-`deadlineFigure(now)` from `uv/deadlineFigure.ts`, as on `/hausverwaltung`. The expired text is still a placeholder (gate §4.4, shared with §4.5, §4.6 and §4.8).
+None new: the logos come with the shared `LogoStrip`, the floating CTA's avatars with the shared `FloatingCta`.
 
-## 1.4 Images
+## 1.4 Hero and the `#start` anchor
 
-| Use | Import | Notes |
-|---|---|---|
-| Hero left | `vorgehen/facade.webp?enhanced` | `sizes="25vw"` |
-| Hero right | `weg-verwaltung/manager.webp?enhanced` (new, 1448×1086, 85 KB) | `sizes="35vw"`, `object-position: 58% 30%` |
-| Bento | `vorgehen/kitchen-meters.webp?enhanced` | cover |
-| "Wann muss die WEG kündigen?" | `mieterportal/building.webp?enhanced` | |
-| "Muster-Kündigung" | `cities/berlin/references.jpg?enhanced` | |
-| Picture | `mieterportal/facade-white.webp?enhanced` | |
-
-All decorative (`alt=""`).
+The design's hero is `#start`; here the closing card is (`DEMO_HREF`), as on `/schnittstellen`. The hero section gets `aria-labelledby="wu-h1"` and no id; the current tab links to the page itself.
 
 ## 1.5 Link mapping
 
 | Design link | Here |
 |---|---|
-| `44SBXKXJaSp6bvGMnbpZj6` ("Demo buchen" ×5, the video button, the floating CTA) | `DEMO_HREF` (`#start`, the closing form) |
-| `#inhalt`, `#faq` (×4) | the same anchors |
-| `LWEbZPCoSDLT1D59BaULyE` ("Zum Fristenrechner", answer 5's "Fristenrechner") | none: hidden / plain text (open question 2) |
-| `4WYU5hjVsWSLrxuo7wsdm6` ("Zur Muster-Kündigung") | none: hidden (open question 2) |
-| `JjGPJV7zurEwiwEMn4hJv9` (answer 6's "Mehr zur uVI") | `ROUTE_VERBRAUCHSINFORMATION` (`more`) |
+| `44SBXKXJaSp6bvGMnbpZj6` ("Demo buchen", "Angebot anfragen" ×2, "Wechsel besprechen", the video button, the floating CTA) | `DEMO_HREF` (`#start`, the closing form) |
+| `#wechsel` | the same anchor |
+| `#start` (the current tab) | `ROUTE_WOHNUNGSUNTERNEHMEN` with `aria-current="page"` |
+| `EzsbDRGnCk2Z11QnjE3NgX`, `NJDrQZKYRpBXGMNJJGXUqd`, `WorTAiGvpRbkiEg1Lee25D` (tabs) | `ROUTE_HAUSVERWALTUNG`, `ROUTE_MIETVERWALTUNG`, `ROUTE_WEG_VERWALTUNG` |
+| `AEn4zzY1ZEwShZW7cUf5fF` (tab "Asset Manager & Fonds") | none yet: plain text (open question 3) |
+| `UFviBtC2mkneFNeWnfHAWp` ("Portfolio kostenlos prüfen") | none: hidden (open question 2) |
+| `4WYU5hjVsWSLrxuo7wsdm6`, `Tms67Y5GnupQ4MPsxm8ux6`, `FQ6egKN8KrFwGUMZDUaavJ` (the three `.sg-links`) | none: hidden (open question 2) |
+| `Hnv5z6cFcw3DyXPkw9nQx1` ("Dashboard ansehen", "Zum Dashboard") | `ROUTE_DASHBOARD` |
+| `8mPPRD6tVjMYFencN8YvWX` ("Selbst abrechnen?") | `ROUTE_SELBSTABRECHNUNG` |
+| `5HTo3o7mYMjqUxPXcEyuEy` (inline "Mieterportal") | `ROUTE_MIETERPORTAL` |
+| `KE95icU8eKWX7TNfLerbSZ` ("Schnittstellen") | `ROUTE_SCHNITTSTELLEN` |
+| `5BrUg7VjVK4QEhd7DiaSfj` ("So gehen wir vor") | `ROUTE_VORGEHEN` |
 | `Jp8tqY82m7FZqMnWU4z9x9` (banner) | `ROUTE_UPGRADE_NOW` (`DEFAULT_CHROME`) |
 | The trust block's "Mehr zu Sicherheit" | `ROUTE_SICHERHEIT` (`TrustSeals`) |
+
+The design has no city links outside its footer; the landing footer's "Städte" already links every city.

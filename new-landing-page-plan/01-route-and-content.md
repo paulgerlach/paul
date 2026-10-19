@@ -4,38 +4,40 @@
 
 In one commit:
 
-- `ROUTE_PRIVATE_VERMIETER = "/private-vermieter"` in `$lib/routes.ts`, after `ROUTE_ASSET_MANAGER`.
-- The landing footer's "Private Vermieter" (`$lib/landing/footerLinks.ts`, group "Kunden") gets `href: ROUTE_PRIVATE_VERMIETER`. Every "Kunden" entry then has a page.
-- `src/routes/(landing-page)/private-vermieter/+page.server.ts`, as `/asset-manager`'s:
+- `ROUTE_NEUIGKEITEN = "/neuigkeiten"` in `$lib/routes.ts`, after `ROUTE_PRIVATE_VERMIETER`.
+- The landing footer's "Neuigkeiten" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_NEUIGKEITEN`.
+- `src/routes/(landing-page)/neuigkeiten/+page.server.ts`, as `/schnittstellen`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Messdienst für private Vermieter: Zähler, Ablesung und Heizkostenabrechnung ab 2 Wohnungen | Heidi Systems",
+	title: "Neuigkeiten von Heidi: Produkt-Updates, Werkzeuge und Fristen | Heidi Systems",
 	description:
-		"Heidi übernimmt für private Vermieter Funkzähler, Ablesung und die Heizkostenabrechnung nach HKVO, schon ab zwei Wohneinheiten, mit festem Ansprechpartner und ohne Ablesetermine.",
-	ogTitle: "Ihre Wohnungen. Unser Messdienst. Ihre Ruhe.",
+		"Neue Funktionen, kostenlose Werkzeuge und Partnerschaften von Heidi auf einen Blick, dazu die Fristen der Heizkostenverordnung. Damit Sie wissen, was sich für Ihre Verwaltung ändert.",
+	ogTitle: "Neuigkeiten von Heidi.",
 	noindex: true,
 	keepCanonical: true,
 },
 ```
 
-  and `handleSwitchSignup(event, { source: "private-vermieter", page: ROUTE_PRIVATE_VERMIETER })`. No `cache-control`.
-- **Other links to the page:** none (01 README, Links).
+  and `handleSwitchSignup(event, { source: "neuigkeiten", page: ROUTE_NEUIGKEITEN })`. No `cache-control`, no FAQ (the design has none, so no FAQPage JSON-LD).
+- **Other links to the page:** none (README, Links).
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/private-vermieter/content.ts`, word for word from the design, a non-breaking space between a figure and its unit:
+`$lib/landing/pages/neuigkeiten/content.ts`, word for word from the design:
 
-- `hero`: eyebrow "Für private Vermieter", H1 lines "Ihre Wohnungen." / "Unser Messdienst." / accent "Ihre Ruhe.", lead, "Angebot anfragen" → `DEMO_HREF`, "So funktioniert’s" → `#so`.
-- `scene`: label "Funkzähler in Ihrer Wohnung", the two layers' labels, three captions `{ title, text }`, three points `{ label }` ("Wasserzähler: mehr erfahren" …), three tags, the hint "Punkte antippen für Details", the info card's three entries `{ kind, title, text, points[] }`.
-- `stats`: "ab 2" Wohneinheiten, "1" fester Ansprechpartner für Ihre Wohnungen, "0" Ablesetermine in der Wohnung.
-- `flow`: eyebrow, H2, five steps `{ label, text }` (the design's `TX`), and the five panels' example data (Montage at "Musterstraße 5 · 6 Wohnungen" …, the readings, the bars, the Abrechnung, the messages).
-- `duo`: eyebrow, H2, two paragraphs. `benefits`: eyebrow, H2 (two lines), six cards `{ icon, title, text }`. `compare`: eyebrow, H2, the column heads, eight rows `{ label, values: [self, classic, heidi] }` with `yes` / `no` / `depends` and their labels ("Ja", "Nein", "Je nach Anbieter"), the note. `quotes`: eyebrow, H2, keys `werne`, `vitolus`, `gerhard`, the companies. `faq`: eyebrow, H2, six items (answer 6 with its `more` link). `closing`: H2 (two lines), text, submit label, "Häufige Fragen" → `#faq`.
+- `hero`: pill "Neuigkeiten" (the sparkle icon), H1 "Neuigkeiten" + accent "von Heidi.", lead, `featured` (a story, below).
+- A story: `{ topic, title, text?, image, more?: { text, href } }` with `topic` one of `p` / `w` / `u` (Produkt, Werkzeuge, Unternehmen). `more` only where the target exists (README, Links), with the design id of the target in a comment either way. The featured story: badge "Neu", topic "Produkt", title, text, "Zur Auswertung" (no page yet).
+- `news`: H2 "Neueste Meldungen", the filter's label "Thema filtern" and its options (Alle, Produkt, Werkzeuge, Unternehmen), nine stories in the design's order, the blog link "Zum Blog mit allen Artikeln" → `ROUTE_BLOG`.
+- `deadlines`: pill "Gesetz & Fristen" (calendar icon), H2 "Was die Heizkostenverordnung verlangt." + muted "Und bis wann.", four rows `{ icon, title, text, href? }`.
+- `closing`: H2 "Neugierig, wie Heidi für Ihren Bestand aussieht?", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/schnittstellen`'s), submit label "Demo buchen".
 
-`content.test.ts`: the H1; every `href` a route or an anchor on the page; no empty or untrimmed text; non-breaking spaces; three captions, points, tags and info entries; five steps and panels; six benefits; eight comparison rows with Heidi "yes" in each; the quotes word for word from `testimonials.ts`, each company the end of its role; six questions; the "92 %", "14 Tage" and "1 bis 2 Stunden" figures as on the other pages.
+`filter.ts` (pure): `TOPICS` (`all`, `p`, `w`, `u` with their labels), `shows(topic, story)`, `countText(n)` ("9 Meldungen", "1 Meldung").
+
+`content.test.ts`: the H1; every `href` a route or an anchor on the page; no empty or untrimmed text; nine stories (six Produkt, one Werkzeuge, two Unternehmen); four rows; each story's topic among the filter's; the closing text equal to `/schnittstellen`'s; the more-link texts word for word. `filter.test.ts`: the counts per topic, `countText`.
 
 ## 1.3 Images
 
-Two new files, the design's own bytes: `owner.jpg` (720×710) and `talk.jpg` (800×643) in `src/lib/assets/landing/private-vermieter/`. The rest from the repo (README table).
+One new file, the design's own bytes: `portfolio-checker.webp` (1300×1300) in `src/lib/assets/landing/neuigkeiten/`. The rest from the repo (README table).

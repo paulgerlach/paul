@@ -48,5 +48,7 @@
 			height="5"
 			rx="1.5"
 		/><path d="M6 6h.01M6 14h.01" />
+	{:else if name === "check"}
+		<path d="M5 10.5l3.2 3L15 7" />
 	{/if}
 </StrokeIcon>

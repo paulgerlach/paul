@@ -28,6 +28,7 @@ import {
 	ROUTE_SOFTWAREPARTNER,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
+	ROUTE_VERBAENDE,
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_VORGEHEN,
 	ROUTE_WEG_VERWALTUNG,
@@ -87,7 +88,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Installationspartner", href: ROUTE_INSTALLATIONSPARTNER },
 			{ text: "Softwarepartner", href: ROUTE_SOFTWAREPARTNER },
-			{ text: "Verbände" },
+			{ text: "Verbände", href: ROUTE_VERBAENDE },
 			{ text: "Nachfolge" },
 			{ text: "Partnerschaften" },
 		],

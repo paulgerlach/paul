@@ -4,23 +4,23 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/weg-verwaltung`: the page with the landing header and footer; the footer's "WEG-Verwaltung" lands here from every landing page
-- [ ] `/mieterportal`, `/verbrauchsinformation`, `/hausverwaltung` and `/mietverwaltung` unchanged after the template commit (02 §2.1): production-build screenshots at 1440 and 375 px with reduced motion, their e2e specs
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form, no buttons on the audience cards, the hero list finished on load, the current milestone's readable label)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] Hero list: finished on load; first pass after 9 s in view (e2e with the clock)
-- [ ] Tiles: the year grid ticks Jan → Dez, the milestones turn lime with their labels and move the note, the placeholders don't; the bill switches "Ohne Heidi" → "Mit Heidi" and "hoch" → "eine Unterschrift"; the doc's rows and bars come in; the phone's bars grow; each only in view
+- [x] `bun run dev` → `http://localhost:5173/weg-verwaltung`: the page with the landing header and footer; the footer's "WEG-Verwaltung" lands here from every landing page (checked on a second dev server, :5199; the footer link in e2e)
+- [x] `/mieterportal`, `/verbrauchsinformation`, `/hausverwaltung` and `/mietverwaltung` unchanged after the template commit (02 §2.1): production-build screenshots at 1440 and 375 px with reduced motion, their e2e specs (2026-10-19: pixel-identical; the later fix `11834157` only matches a current milestone, which no other page has)
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form, no buttons on the audience cards, the hero list finished on load, the current milestone's readable label) Section and row heights compared at all five widths (2026-10-19, production build): equal except the closing card and the audience cards; the hero list and the four tiles side by side at 1440 and 375 px; not yet compared by eye at 1100, 980 and 700 px
+- [x] No horizontal overflow from 320 to 1640 px (1440, 1100, 980, 700, 375 measured; 375 and 320 in e2e; 1640 not separately)
+- [x] Hero list: finished on load; first pass after 9 s in view (e2e with the clock)
+- [x] Tiles: the year grid ticks Jan → Dez, the milestones turn lime with their labels and move the note, the placeholders don't; the bill switches "Ohne Heidi" → "Mit Heidi" and "hoch" → "eine Unterschrift"; the doc's rows and bars come in; the phone's bars grow; each only in view
 - [ ] Statement, rotator, count-up and the picture's zoom as on the built pages
 - [ ] Every "Demo buchen" scrolls to the closing card and focuses its e-mail field; "Mehr erfahren" → rows, "Häufige Fragen" → FAQ; "Mehr zur uVI" works
-- [ ] The deadline figure shows its expired text with `now` after 31.12.2026 (unit test)
+- [x] The deadline figure shows its expired text with `now` after 31.12.2026 (unit test)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page; focus ring visible on dark
 - [ ] Screen reader: one H1 "Heizkostenabrechnung für WEG-Verwaltungen mit Heidi"; the mocks silent except the hero list; no announcements from the loops
-- [ ] Reduced motion: every block in its end state
-- [ ] JS disabled: every section readable; the FAQ opens; the signup form posts
-- [ ] A signup reaches `leads` with `source = "weg-verwaltung"` and the sink with `page: "/weg-verwaltung"`
+- [x] Reduced motion: every block in its end state
+- [x] JS disabled: every section readable; the FAQ opens; the signup form posts
+- [x] A signup reaches `leads` with `source = "weg-verwaltung"` and the sink with `page: "/weg-verwaltung"` (e2e against a throwaway Postgres on :54322)
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors (dev at 1440, 1100, 980, 700, 375 and 320 px, also on the other four uv pages; production preview at the five design widths)
 
 ## 4.2 Tests
 
@@ -34,6 +34,8 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 2. `10-qa-and-cutover.md`: `/weg-verwaltung` excluded from the Next-baseline visual loop, listed with the new pages in the SEO diff and in the post-deploy signup check; `/funktionen`'s gate is §4.12 now (done in the planning commit).
 3. `CLAUDE.md`: a `/weg-verwaltung` paragraph (planned now, rewritten once built), Layout entries; `/mietverwaltung`'s plan in git history; the gate numbers of the other pages moved up by one (done in the planning commit).
 4. README "Implementation notes", with notes for the next segment pages (the `sg` template for Wohnungsunternehmen / Asset Manager & Fonds, then Private Vermieter).
+
+All four done (2026-10-19).
 
 ## 4.4 Go-live gate: `/weg-verwaltung`
 

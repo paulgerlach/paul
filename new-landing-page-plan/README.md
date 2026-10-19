@@ -56,6 +56,22 @@ src/lib/landing/pages/weg-verwaltung/
 
 `*` marks a thin wrapper around a shared section: `+page.svelte` imports only from its own `sections/` folder.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`eec72b60`), the template's new variants (`b03309b1`), the route, content and footer link (`78693538`), a template fix found while comparing (`11834157`), the sections (`d1e1ca08`), and `e2e/weg-verwaltung.e2e.ts` (11 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design capped at 600 as the design loads it): every section and every row has the design's height except the expected ones (the closing card's form; the audience cards without buttons, 47 px each at ≤ 980 px, 44 px at 375 px); the hero list and the four tiles side by side at 1440 and 375 px match. No overflow at 320–1440 px; no console errors or warnings. Full e2e suite: 280 passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **The current milestone's label hyphenates** (`11834157`): once readable (open question 4), "Vertragsende" ran out of its cell at 375 px. `hyphens: auto` and `min-width: 0` apply only to `.now.milestone`, so "Kündigung" and every other page keep the design's layout; the row heights still match the design.
+- **The grid's note before the first counted cell** now shows the last pass's final note, as the design's does (it never resets); before, our template showed cell 1's note for the first 300 ms of each pass. Only the first 300 ms of a pass differ on the other pages; their end states are pixel-identical.
+- **Template checks:** `/mieterportal`, `/verbrauchsinformation`, `/hausverwaltung` and `/mietverwaltung` pixel-identical at 1440 and 375 px before and after `b03309b1` (production builds of both commits from a separate worktree, reduced motion); their e2e specs passed.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
+### For the next segment pages (Wohnungsunternehmen, Asset Manager & Fonds; Private Vermieter)
+
+- The `uv` template now draws everything the three `uv` segment designs draw (`ListMock`, `Calendar` with plain / placeholder / milestone cells, `Doc` bar / check / value rows, `Phone` bars or details, `Bill` cut / ok (tick or green value) / a / b rows with text or money sums, `deadlineFigure`, `Numbers`, `Audience` with photo or `media`, `Quotes`, `Picture`, `uv/Faq`). A new design on another template (the planned shared `sg`) shouldn't reach into `uv/`: copy what it shares (the tile CSS is component-scoped) or lift it into a shared place in its own commit, checked against the five `uv` pages.
+- The Wohnungsunternehmen and Asset-Manager designs have segment tabs (`.sg-tab`) linking to the three built segment pages (`ROUTE_HAUSVERWALTUNG`, `ROUTE_MIETVERWALTUNG`, `ROUTE_WEG_VERWALTUNG`) and to each other.
+- Check every embedded photo by MD5, then by pixel difference after resizing (the city heroes and `references.jpg` are mostly the same photos, re-encoded and smaller in the designs), then by a perceptual hash; this design's man-at-desk photo was the only new one.
+- Expect design bugs that only show once content uses a dormant rule (here: the milestone's ink-on-ink label). Render the saved design next to ours at 375 px for every tile.
+
 ## Key decisions
 
 | Topic | Decision |

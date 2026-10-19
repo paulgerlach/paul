@@ -1,6 +1,6 @@
 /**
  * Content shapes of the dark `uv` template (/mieterportal, /verbrauchsinformation,
- * /hausverwaltung, /mietverwaltung).
+ * /hausverwaltung, /mietverwaltung, /weg-verwaltung).
  * Each page fills them in its `content.ts`; the components hold markup and
  * behaviour only.
  */
@@ -40,19 +40,34 @@ export type ListEntry = {
 	after: string;
 };
 
+/**
+ * One grid cell's own behaviour (the design's .pl / .tag with data-e / data-n).
+ * A placeholder has no label and no tick and doesn't move the note; a
+ * milestone turns lime when done. `label` and `note` replace the tile's
+ * done/doing label and note templates for this cell.
+ */
+export type CalendarCell = {
+	kind?: "placeholder" | "milestone";
+	label?: string;
+	note?: string;
+};
+
 export type CalendarTile = {
 	/** Labels of the twelve cells: months, or units ("WE 01"). */
 	months: string[];
 	/** Cell names for the note (default: `months`). */
 	long?: string[];
+	/** Per cell, in the order of `months` (default: every cell plain). */
+	cells?: CalendarCell[];
 	/** The cell being prepared; the ones before are done. */
 	current: number;
-	done: string;
-	doing: string;
+	/** Labels of a done / the current cell without its own `label`. */
+	done?: string;
+	doing?: string;
 	open: string;
-	/** `{x}` is the month. */
-	noteDone: string;
-	noteDoing: string;
+	/** Notes for a cell without its own `note`; `{x}` is the month. */
+	noteDone?: string;
+	noteDoing?: string;
 };
 
 /**
@@ -88,7 +103,7 @@ export type PhoneTile = {
 
 /**
  * `base` shows on both sides, `cut` only "without", `ok` only "with" (an `ok`
- * row without `value` shows a tick). `a` / `b` also show only on one side
+ * row without `value` shows a tick, with one a green text value). `a` / `b` also show only on one side
  * ("without" / "with"), with a green value: two sides of the same kind, such
  * as two owners' objects (the design's .xa / .xb).
  */

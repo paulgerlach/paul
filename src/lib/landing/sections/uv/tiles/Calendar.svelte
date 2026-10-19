@@ -1,35 +1,55 @@
 <!--
   A row's tile: the twelve months, ticked done up to the current one, which
   is being prepared, with a note pill naming the latest step. Every 7.6 s in
-  view the months reset to "offen" and tick through again.
+  view the months reset to "offen" and tick through again. Optional per-cell
+  kinds: a placeholder (no label, no tick, leaves the note alone) and a
+  milestone (lime when done, with its own label and note).
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Tick from "../Tick.svelte";
-	import type { CalendarTile } from "../types";
+	import type { CalendarCell, CalendarTile } from "../types";
 
 	let {
 		months,
 		long,
+		cells,
 		current,
-		done,
-		doing,
+		done = "",
+		doing = "",
 		open,
-		noteDone,
-		noteDoing,
+		noteDone = "",
+		noteDoing = "",
 	}: CalendarTile = $props();
 
 	/** Months processed so far (the current one included): all of them on the server. */
 	// svelte-ignore state_referenced_locally
 	let step = $state(current + 1);
 
+	const cell = (i: number): CalendarCell => cells?.[i] ?? {};
+	const blank = (i: number) => cell(i).kind === "placeholder";
+
 	const phase = (i: number) =>
 		i >= step ? "open" : i < current ? "done" : "now";
-	const label = (i: number) => ({ open, done, now: doing })[phase(i)];
+	function label(i: number) {
+		if (blank(i)) return "";
+		const p = phase(i);
+		return p === "open"
+			? open
+			: (cell(i).label ?? (p === "done" ? done : doing));
+	}
+	const noteOf = (i: number) =>
+		cell(i).note ??
+		(i < current ? noteDone : noteDoing).replace("{x}", (long ?? months)[i]);
+	/**
+	 * The latest processed cell that moves the note (the current one, or a
+	 * done cell that isn't a placeholder). Before it, the note still names the
+	 * last pass's final step, as the design's never resets.
+	 */
 	const note = $derived.by(() => {
-		const i = Math.max(0, step - 1);
-		const template = i < current ? noteDone : noteDoing;
-		return template.replace("{x}", (long ?? months)[i]);
+		for (let i = step - 1; i >= 0; i--)
+			if (i >= current || !blank(i)) return noteOf(i);
+		return noteOf(current);
 	});
 
 	function run() {
@@ -43,7 +63,13 @@
 
 <ol class="cal" {@attach loopInView({ run, every: 7600 })}>
 	{#each months as month, i (month)}
-		<li class={phase(i)}>
+		<li
+			class={[
+				phase(i),
+				blank(i) && "blank",
+				cell(i).kind === "milestone" && "milestone",
+			]}
+		>
 			{month}
 			<small><i><Tick width={9} /></i><em>{label(i)}</em></small>
 		</li>
@@ -123,6 +149,25 @@
 		border-color: var(--accent);
 		border-top-color: transparent;
 		animation: spin 0.9s linear infinite;
+	}
+	/* Milestones (the design's span.tag): ink label, lime when done. The
+	   current one keeps the accent label (plan README, open question 4). */
+	.milestone:not(.now) small {
+		color: var(--ink);
+	}
+	.done.milestone {
+		background: var(--lime);
+	}
+	.done.milestone small i {
+		background: var(--ink);
+		border-color: var(--ink);
+	}
+	/* Placeholders (the design's span.pl): no tick, a faint done state */
+	.blank small i {
+		opacity: 0;
+	}
+	.done.blank small {
+		color: var(--faint);
 	}
 	@keyframes spin {
 		to {

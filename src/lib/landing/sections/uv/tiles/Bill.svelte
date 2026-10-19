@@ -3,7 +3,8 @@
   such as two owners). Every 6.4 s in view it starts on "without" (its `cut`
   and `a` rows, the sum's first value), then the thumb slides over, those rows
   fold away, the `ok` and `b` rows appear and the sum turns to its second
-  value: swapped as text, or counted in €.
+  value: swapped as text, or counted in €. An `ok` row shows a tick, or its
+  text value in green.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
@@ -173,6 +174,11 @@
 	.tk :global(svg) {
 		width: 11px;
 		height: 11px;
+	}
+	/* An ok row's text value in place of the tick (the design's .ok b.t) */
+	.ok b:not(.tk) {
+		color: #2f7a3c;
+		font-size: 13px;
 	}
 	/* One side's rows (kinds a / b): green text values. */
 	.xa b,

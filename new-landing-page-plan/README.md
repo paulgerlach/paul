@@ -64,6 +64,16 @@ The design's links, by design id, and where they lead here. An element whose tar
 
 Links to this page: the repo names the guide in the footer's "HKVO-Leitfaden" and in `/vorgehen`'s `HKVO_GUIDE_HREF` ("Zum HKVO-Leitfaden"); `/vorgehen`'s design links it to `SJbSeTYRqntQxpZQ8RVNf7` (checked in its design, 2026-10-19). Both get the link with the route (01 §1.1). No other content module names the guide.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`31c3855f`), the route, content, the pure check and table-of-contents logic and the links from the footer and `/vorgehen` (`253926bc`), the sections with the check and the table of contents (`b6450918`), and `e2e/hkvo-leitfaden.e2e.ts` (13 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design): the hero with the check, the guide (the table of contents and all nine articles) and the FAQ have the design's height at every width and match it by eye, as does the check's risk state (the same clicks in both, 787 px at 375 px); the differences are the planned ones: the penalty block without its "Heizkostenabrechnung prüfen" line (52 px shorter, 76 px at 375 px where the line wraps), and the closing card holds the signup form (its height +50 / +50 / −14 / +42 px at 1100 / 980 / 700 / 375 px, as on `/fristenrechner`). No overflow at 320 and 375 px (also with the risk box open); no console errors or hydration warnings. Full suites: check, lint, 581 unit tests, 359 e2e tests passed. Two earlier full e2e runs each had one unrelated timing failure under load (`/mieterportal`'s "hero list replays", then `blog.e2e.ts`'s tag filter), both green in the next run; unchanged. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the check's answers and the table of contents' scroll spy are part of their sections.
+- **The design's paragraphs have no bottom margin** (its base CSS sets `p{margin:0}`), while its lists keep theirs: the risk list keeps the browser's `1em` margins, 40 px padding and bullets.
+- **`.lf-ring` is `.dial` here:** `ring` is a Tailwind utility (a box-shadow ring), so the class drew a frame around the score.
+- **The check card is a labelled group** ("Schnell-Check Heizkostenverordnung"), each question a group with its two `aria-pressed` buttons; the score ring is an image named "N von 5 mit Ja".
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

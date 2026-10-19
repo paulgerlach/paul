@@ -4,20 +4,20 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/hkvo-leitfaden`: the page with the landing header and footer; the footer's "HKVO-Leitfaden" lands here from every landing page, so does `/vorgehen`'s "Zum HKVO-Leitfaden"
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the penalty block without its "Heizkostenabrechnung prüfen" line)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The check: each answer colours its button and moves the ring and the score; the result shows the hint, the open count ("Noch 1 Frage offen."), the risks in question order with their paragraphs, or "Alles erfüllt" with confetti; the risk link scrolls to the closing card and focuses its e-mail field
-- [ ] The table of contents: sticky above 900 px, the article being read marked, the bar filling while scrolling the guide; each link lands its article below the sticky header; below 900 px a static card in two columns (one at 560 px)
+- [x] `bun run dev` → `http://localhost:5173/hkvo-leitfaden`: the page with the landing header and footer; the footer's "HKVO-Leitfaden" lands here from every landing page, so does `/vorgehen`'s "Zum HKVO-Leitfaden"
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the penalty block without its "Heizkostenabrechnung prüfen" line)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The check: each answer colours its button and moves the ring and the score; the result shows the hint, the open count ("Noch 1 Frage offen."), the risks in question order with their paragraphs, or "Alles erfüllt" with confetti; the risk link scrolls to the closing card and focuses its e-mail field
+- [x] The table of contents: sticky above 900 px, the article being read marked, the bar filling while scrolling the guide; each link lands its article below the sticky header; below 900 px a static card in two columns (one at 560 px)
 - [ ] "Leitfaden lesen", "Kürzungsrechte" and article 09's link land below the sticky header; FAQ 2's "Jetzt noch umrüsten →" → `/upgrade-now`, FAQ 3's "Heidi Mieterportal" → `/mieterportal`; the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the sticky table of contents)
 - [ ] Keyboard-only through the page (the check's ten buttons, the TOC, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Die Heizkostenverordnung. Einfach erklärt."; each question a group with its pressed button; the result announced politely; the TOC as a navigation "Inhalt" with the current article
-- [ ] Reduced motion: nothing moves, no confetti
-- [ ] JS disabled: the check as a list of questions without buttons, the guide with working anchors, every section readable, the signup form posts
-- [ ] A signup reaches `leads` with `source = "hkvo-leitfaden"` and the sink with `page: "/hkvo-leitfaden"`
+- [x] Reduced motion: nothing moves, no confetti
+- [x] JS disabled: the check as a list of questions without buttons, the guide with working anchors, every section readable, the signup form posts
+- [x] A signup reaches `leads` with `source = "hkvo-leitfaden"` and the sink with `page: "/hkvo-leitfaden"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

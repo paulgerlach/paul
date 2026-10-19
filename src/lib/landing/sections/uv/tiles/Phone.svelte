@@ -124,9 +124,11 @@
 		width: 15px;
 		height: 15px;
 	}
+	/* 600: what the designs render (they load Geist up to 600, so their bold is 600). */
 	.nt b {
 		display: block;
 		font-size: 12.5px;
+		font-weight: 600;
 	}
 	.nt small {
 		display: block;
@@ -154,7 +156,6 @@
 		font-weight: 500;
 		letter-spacing: -0.03em;
 		margin-top: 2px;
-		font-variant-numeric: tabular-nums;
 	}
 	.cmp {
 		display: flex;

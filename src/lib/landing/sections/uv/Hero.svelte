@@ -177,7 +177,8 @@
 			grid-template-columns: 1fr;
 			gap: 18px;
 		}
-		.hero .word {
+		/* The base size only: the design's .uv-word.lg keeps its 0.86. */
+		.md .word {
 			line-height: 0.8;
 		}
 		.lg .sub {

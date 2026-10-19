@@ -1,68 +1,85 @@
-# Phase 1: Route, links, content and the logic
+# Phase 1: Route, link, content, the form and the logic
 
-## 1.1 Route and links
+## 1.1 Route and link
 
 In one commit:
 
-- `ROUTE_MESSDIENSTANBIETER_VERGLEICH = "/messdienstanbieter-vergleich"` in `$lib/routes.ts`, after `ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN`.
-- The landing footer's "Messdienstanbieter-Vergleich" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_MESSDIENSTANBIETER_VERGLEICH`. Every "Ressourcen" entry has a page then.
-- The waiting links (README): "Messdienstanbieter vergleichen" in `pain.links` of `/wohnungsunternehmen` and `/asset-manager` get the route, with their content tests ("hides the links whose pages don't exist yet") and e2e assertions updated; the `.sg-links` row then shows two links (check it against the `/wohnungsunternehmen` design's row).
-- `src/routes/(landing-page)/messdienstanbieter-vergleich/+page.server.ts`, as `/energieausweis`'s:
+- `ROUTE_INSTALLATIONSPARTNER = "/installationspartner"` in `$lib/routes.ts`, after `ROUTE_MESSDIENSTANBIETER_VERGLEICH`.
+- The landing footer's "Installationspartner" (`$lib/landing/footerLinks.ts`, group "Partner") gets `href: ROUTE_INSTALLATIONSPARTNER`. The other four "Partner" entries stay plain text.
+- No other page links this design (README).
+- `src/routes/(landing-page)/installationspartner/+page.server.ts`, as `/karriere`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Messdienstanbieter-Vergleich: Ihren Messdienst in 8 Kriterien prüfen | Heidi Systems",
+	title: "Installationspartner werden: Zähler montieren mit Heidi | Heidi Systems",
 	description:
-		"Stellen Sie Ihren Messdienst in acht Kriterien neben Heidi und rechnen Sie aus, was Sie pro Wohnung und Jahr zahlen: Gerätemiete, Ablesung und Abrechnung. Ohne Anmeldung, Ihre Angaben bleiben im Browser.",
-	ogTitle: "Wie gut ist Ihr Messdienst wirklich?",
+		"Werden Sie zertifizierter Installationspartner von Heidi Systems: Wir schulen Ihr Team auf Funkzähler und das Installationstool, informieren die Mieter und planen die Einsätze in Ihrer Region. Deutschlandweit, ohne Klemmbrett.",
+	ogTitle: "Installationspartner von Heidi Systems",
 	noindex: true,
 	keepCanonical: true,
 },
-landing: DEFAULT_CHROME,
-finalForm: await emptySwitchForm("final"),
+// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 1).
+landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+faq: faq.items,
+partnerForm: await emptyPartnerForm(),
 ```
 
-  and `handleSwitchSignup(event, { source: "messdienstanbieter-vergleich", page: ROUTE_MESSDIENSTANBIETER_VERGLEICH })`. No `now`: nothing on the page depends on the day. No `cache-control`.
+  and the default action `handlePartnerInquiry(event, { page: ROUTE_INSTALLATIONSPARTNER })`. No `now`: nothing on the page depends on the day. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/messdienstanbieter-vergleich/content.ts`, word for word from the design:
+`$lib/landing/pages/installationspartner/content.ts`, word for word from the design, in the shapes of `uv/types.ts`:
 
-- `COMPARE_ID = "vergleich"`, `COSTS_ID = "kosten"` (the design's ids).
-- `hero`: pill "Messdienstanbieter-Vergleich", H1 "Wie gut ist Ihr Messdienst" + accent "wirklich?", the lead, `start` ("Vergleich starten" → `#vergleich`), `demo` ("Demo buchen" → `DEMO_HREF`), ticks "8 Kriterien", "Kostenrechner pro Wohnung", "Keine Daten gespeichert"; `peek`: the column heads "Ihr Anbieter" / "Heidi", the five rows ("Fernablesung per Funk", "Alles aus einer Hand", "Verbrauchsinfo jeden Monat", "Abrechnung per Klick", "Direkt im ERP"), "Ergebnis", "? / 8", "8 / 8".
-- `logos.text`: "Hausverwaltungen in ganz Deutschland rechnen bereits mit Heidi ab." (as `/upgrade-now`'s), the shared order.
-- `criteria`: pill "Schritt 1 · Leistungen", H2 "Was leistet Ihr Anbieter? " + muted "Kreuzen Sie an.", the eight `{ key, icon, title, text }` (`signal` "Fernablesung per Funk", `tool` "Alles aus einer Hand", `bell` "Monatliche Verbrauchsinfo", `calc` "Abrechnung per Klick", `chart` "Dashboard für alle Objekte", `server` "Direkt in Ihrem ERP", `euro` "Klare Preise", `user` "Feste Ansprechperson", each with the design's line), the answers (`y` "Ja", `n` "Nein", `u` "?"), the group's label template "{title} bei Ihrem Anbieter", "Heidi" (the tick's title).
-- `score`: "Ihr Ergebnis", "Ihr Anbieter", "Heidi", "8 / 8", the verdicts (`empty` "Kreuzen Sie links an, was Ihr Anbieter heute leistet.", `open` "{n} Kriterien noch offen." / "1 Kriterium noch offen.", `all` "Ihr Anbieter erfüllt alle acht Kriterien. Dann lohnt der Blick auf die Kosten pro Wohnung.", `ahead` "Heidi liegt bei {n} Kriterien vorn." / "… 1 Kriterium vorn."), "Hier liegt Heidi vorn", "bei Ihnen unklar", the button "Mit Heidi vergleichen" → `DEMO_HREF`.
-- `costs`: pill "Schritt 2 · Kosten", H2 "Was zahlen Sie heute " + muted "pro Wohnung?", the lead; two groups ("Ihr Bestand"; "Ihre Kosten" + "pro Jahr") with the six fields `{ key, label, value, min?, max?, decimal?, euro? }` (`we` "Wohnungen" 120 (1–20000), `hkv` "Heizkostenverteiler je Wohnung" 5 (0–30), `wz` "Wasserzähler je Wohnung" 2 (0–10), `phkv` "Miete je Heizkostenverteiler" 8 €, `pwz` "Miete je Wasserzähler" 12 €, `pabr` "Ablesung und Abrechnung je Wohnung" 25 €); the result card: "Ihre Messdienstkosten", "€ pro Wohnung und Jahr", the legend "Heizkostenverteiler", "Wasserzähler", "Ablesung & Abrechnung", "Pro Jahr, ganzer Bestand", "Über 6 Jahre", the tooltip "6 Jahre = Eichfrist für Wasser- und Wärmezähler", the button "Heidi-Angebot für diesen Bestand" → `DEMO_HREF`; the note "Vereinfachte Rechnung ohne Wärmezähler, Rauchmelder und Sonderleistungen. Ihre Angaben bleiben in Ihrem Browser."
-- `tips`: pill "Worauf Sie achten", H2 "Sechs Fragen, " + muted "bevor Sie unterschreiben.", six `{ title, text, link? }` (the second "Zur Umrüstpflicht" → `ROUTE_UPGRADE_NOW`, the fourth "Zum Kostenrechner" → `#kosten`; the numbers 01–06 from the index). The second's text keeps its non-breaking space ("3 %").
-- `switching`: pill "Wechsel", H2 "Wechseln, ohne aufs Vertragsende zu warten.", the text, "So funktioniert der Wechsel" → `ROUTE_MESSDIENSTWECHSEL`, three `{ value, text }` ("92 %", "14 Tage", "1–2 Std.").
-- `quotes`: title "Was Verwaltungen über Heidi sagen", keys `werne`, `gerhard`.
-- `faq`: title "Häufige Fragen zum Vergleich", four items (plain text answers).
-- `closing`: H2 "Vergleichen Sie mit Ihrem eigenen Bestand.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", submit label "Demo buchen".
+- `APPLY_ID = "bewerben"`; `MANAGER_SIGNUP_HREF = ROUTE_MESSDIENSTWECHSEL + START_HREF` (open question 1).
+- `hero`: `srTitle` "Installationspartner von Heidi Systems", `word` "Installationspartner", `wordSize` "clamp(34px, 8.6vw, 130px)", the lead "Geschulte Teams, ein digitaler Zwilling jeder Liegenschaft und eine saubere Übergabe. Deutschlandweit, ohne Klemmbrett.", `primary` "Partner werden" → `#bewerben`, `secondary` "Mehr erfahren" → `#inhalt`.
+- `list` (the hero's app window, `ListMock`): label "Beispiel: Heidi Installationstool", brand "Heidi", nav `tool` "Liegenschaft", `doc` "Wohnungen", `users` "Übergabe", foot "Installationstool", head "Heidi Installationstool", tag "Beispieldaten", title "Guten Morgen, Team Nord.", sub "Lindenallee 12 · Beispiel"; entries `home` "WE 01 · EG links" / "Alt- und Neuzähler" ("Offen" → "Fotografiert"), `home` "WE 02 · EG rechts" (same), `bell` "Mieter WE 03" / "Zeitfenster 10:00 bis 11:30" ("Informiert" → "Zu Hause"), `doc` "Übergabeprotokoll" / "Lindenallee 12" ("Wird erstellt" → "Übergeben").
+- `statement`: label "Worum es geht", the text ("Eine gute Installation entscheidet sich vor Ort. … Vom alten Zähler bis zur fertigen Übergabe.").
+- `KPI` (`notice` 14, `window` "1–2 h" with a non-breaking space), as the other `uv` pages.
+- `rows`: label "So arbeitet Heidi", primary "Partner werden" → `#bewerben`, secondary "Häufige Fragen" → `#faq`; five `Row<TileKind>` (`TileKind = "doc" | "twin" | "calendar" | "tracking" | "bill"`): "Zertifiziert" (stone, `doc`), "Digitaler Zwilling" (ink, `twin`), "Dokumentation" (mint, `calendar`), "Mieterinfo" (ink, `tracking`), "Übergabe" (mint, `bill`), each with its two-line title and two paragraphs.
+- `doc` (`DocTile`): "Heidi-Zertifizierung", "Installationsbetrieb · Beispiel", the check rows "Schulung Funkzähler", "Schulung Installationstool", "Umgang mit Mietern", "Einsatzgebiet" with the value "Region Nord", the result "Zertifizierter Heidi-Partner".
+- `twin` (row 2's phone): time "9:41", app "Heidi"; the first screen: badge "Liegenschaft", "Lindenallee 12", "Mehrfamilienhaus · Beispiel", the facts ("Heizung" "Gaszentralheizung", "Wohneinheiten" "24", "Heute offen" "3"), the button "Wohnungen ansehen"; the second: back "‹ Lindenallee 12", "24 Wohneinheiten", "Gaszentralheizung · 3 offen", four units `{ name, note, state: "ok" | "cur" | "open", badge }` ("WE 01 · EG links" / "Alt- und Neuzähler fotografiert" ✓, "WE 02 · EG rechts" ✓, "WE 03 · 1. OG links" / "Altzähler fotografiert" "1/2" current, "WE 04 · 1. OG rechts" / "Termin 10:00 bis 11:30").
+- `calendar` (`CalendarTile`): the cells "WE 01" … "WE 12", `current` 9, `done` "dokumentiert", `doing` "wird erfasst", `open` "offen", `noteDone` "{x} dokumentiert", `noteDoing` "{x} wird erfasst".
+- `tracking` (row 4's phone): time, app, the push ("Heidi · jetzt", "Ihr Monteur ist noch ", "2 Wohnungen", " von Ihnen entfernt."), the floors ("EG", "1. OG", "2. OG", "3. OG"), the eight unit labels "WE 01" … "WE 08" (the last is the visitor's, "Ihre WE"), the card's heading "Ihr Monteur ist im Haus" / "Gleich klingelt es", "WE 08 · 3. OG rechts · 10:00 bis 11:30", the steps "Bestätigt", "Im Haus", "Bei Ihnen", "Erledigt", the counts' texts ("Wohnungen vor Ihnen", "Wohnung vor Ihnen", "Ihr Monteur ist bei Ihnen"), the tag "Beispiel".
+- `bill` (`BillTile`): "Klemmbrett" / "Heidi-Tool"; rows `cut` "Zählerstände per Hand notieren" "manuell", `cut` "Fotos später zuordnen" "manuell", `ok` "Alt- und Neuzähler pro Wohnung fotografiert", `ok` "Übergabeprotokoll automatisch"; sum "Nacharbeit im Büro" "Stunden" → "keine". `meterPhoto`: "WE 03 · Neuzähler", "Foto aufgenommen", "dem Übergabeprotokoll zugeordnet".
+- `rotator`: label "Was Heidi übernimmt", lead "Heidi übernimmt für Ihr Team:", the four phrases ("Mieterinformation", "Zeitfenster von 1 bis 2 Stunden", "Digitaler Zwilling", "Übergabeprotokoll"), 2300 ms.
+- `numbers`: "Installation in Zahlen"; first "14" "Tage" "vorher informiert Heidi die Mieter" (counts); rest "1–2 h" (compact) "Zeitfenster für die Mieter am Montagetag", "92" "%" "der Installationen gelingen beim ersten Termin" (counts), "2" "Fotos pro Zähler: alt mit Endstand, neu nach Montage" (counts), "0" "Klemmbretter".
+- `audience`: label "Ihr Wechsel"; "Sie sind Installationsbetrieb?" (text, "Jetzt Partner werden" → `#bewerben`, image `installer`), "Sie sind Verwaltung?" (text, "So gehen wir vor" → `ROUTE_VORGEHEN`, image `team`).
+- `quotes`: h2 "Saubere Installation." / "Unsere Kunden sagen es selbst.", keys `werne`, `vitolus`, `gerhard`.
+- `picture`: label "Heidi", caption "Deutschlandweit." / "Eigene Flotte und Partner vor Ort.".
+- `apply`: pill "Für Installationsbetriebe", h2 "Werden Sie" / "Heidi-Installationspartner.", the text, three steps `{ title, text }`; the form's labels ("Firmenname", "Ansprechpartner", "E-Mail", "Telefon", "PLZ oder Region" with the placeholder "z. B. 10115 oder Raum Leipzig", "Monteure im Team" with "Bitte wählen", "Gewerke", "Erfahrung mit Funkzählern?", "Nachricht" + "(optional)" with the placeholder "Einsatzgebiet, Kapazitäten, Fragen", the consent "Ich bin einverstanden, dass Heidi Systems meine Angaben zur Kontaktaufnahme verarbeitet."), the button "Als Partner melden", "Wird gesendet …", the messages: `missing` "Bitte füllen Sie die markierten Felder aus.", `success(name)` "Danke, <name>! Wir melden uns bei Ihnen.", `sendError` "Das hat gerade nicht geklappt. Bitte versuchen Sie es noch einmal oder rufen Sie uns an: " + `PHONE`. The options' texts live in the schema module (1.3).
+- `faq`: title "Häufige Fragen", five items (plain-text answers; FAQ 3 with `more: { text: "Mehr zum Installationstool" }` without `href`).
+- `closing`: h2 "Werden Sie Installationspartner von Heidi.", the link "Partner werden" → `#bewerben`.
 
-`content.test.ts`: the H1; three ticks; five preview rows; eight criteria with distinct keys and icons; six cost fields, three of them in euros; six questions, two with links; three band figures; four FAQ items; the quote keys exist in the shared testimonials; every `href` a route or an anchor on the page; no empty, doubled-space or untrimmed text (the split headings' first parts excepted).
+`content.test.ts`: the H1's two texts; four list entries; five rows with distinct tags and tiles, every row with two paragraphs; the doc's four rows; twelve calendar cells and `current` in range; eight tracking units; four rotator phrases; five figures; two audience cards, both with a target; the quote keys exist in the shared testimonials; five FAQ items; three steps; every `href` a route or an anchor on the page (`#bewerben`, `#inhalt`, `#faq`, `/messdienstwechsel#start`); no empty, doubled-space or untrimmed text.
 
-## 1.3 Pure logic
+## 1.3 The form: schema and action
 
-`score.ts`:
+`$lib/forms/partnerInquiry.ts` (shared client/server, German messages in the schema):
 
-- `type Answer = "y" | "n" | "u" | null`; `toggle(current, picked)` (the same answer clears it).
-- `tally(answers)` → `{ yes, no, unsure, answered }`.
-- `verdict(answers)` → the design's text for the counts (no answer; some open, "1 Kriterium" / "<n> Kriterien noch offen."; all eight "Ja"; else "Heidi liegt bei <8 − yes> Kriterium/Kriterien vorn."), the texts from `content.ts`.
-- `gaps(answers)` → the indices of every "Nein" and "?" in the criteria's order, with `unsure` for "?".
+- `CREW_SIZES = ["1 bis 2", "3 bis 5", "6 bis 15", "Mehr als 15"]`, `TRADES = ["Heizung", "Sanitär", "Messtechnik", "Elektro"]`, `EXPERIENCE = [{ value: "ja", label: "Ja" }, { value: "teilweise", label: "Teilweise" }, { value: "nein", label: "Noch nicht" }]` (the design's options and values).
+- `partnerInquirySchema`: `company` (2–200), `name` (2–100), `email` (≤ 254, valid), `phone` (6–40, digits, spaces and `+ ( ) / -`, at least six digits), `region` (2–100), `crew` (one of `CREW_SIZES`, "" invalid), `trades` (array of `TRADES`, default `[]`), `experience` (one of the values or "", default ""), `message` (≤ 2000, optional), `consent` (boolean, must be true), `website` (honeypot), `_t` (render time).
 
-`score.test.ts`: `toggle`; `verdict` for no answer, one open, three open, all "Ja", seven "Ja" and one "Nein" ("1 Kriterium"), a mix ("Heidi liegt bei 5 Kriterien vorn."); `gaps` keeps the order and marks "?".
+`$lib/server/partnerInquiry.ts`, modelled on `$lib/server/application.ts`:
 
-`cost.ts`:
+- `emptyPartnerForm()` stamps `_t`.
+- `handlePartnerInquiry(event, { page })`: honeypot and timing (`spamTrapReason`) → `fail(400)` on invalid fields → gibberish (company, name, message) → `checkIPRateLimit("partner:<ip>", KITCHEN_SINK ? 50 : 3, 600)` → `sendWebhookEventOrThrow("partnerinquiry", email, { company, name, phone, region, crew, trades, experience, message, page })`; a trap gets the success message and sends nothing; a failed send returns the error message with status 502 and keeps the values. Log lines carry the crew size only.
+- `webhooks.ts`: the new `EventType` `"partnerinquiry"` with its payload in the comment.
 
-- `parseField(text)` (the design's `num()`: "8" → 8, "12,5" → 12.5, "" / "abc" / "-3" → 0, "1e3" → 1000 as `parseFloat` reads it).
-- `costs({ we, hkv, wz, phkv, pwz, pabr })` → `{ allocators, water, billing, perFlat, perYear, sixYears, shares: [a, b, c] }` (shares in % of the flat's cost, 0 when it's 0).
-- `formatDe(n, digits = 0)` (`de-DE`, fixed digits, the design's `de()`), `euro(n, digits)` (+ " €").
+Tests: `partnerInquiry.test.ts` (forms: a valid inquiry, trimming, every required field's message, the phone pattern, unknown options, consent false) and `$lib/server/partnerInquiry.test.ts` (the payload without the spam fields, empty optional fields left out, honeypot and timing answered with success, invalid → 400, the 502 on a failed send, the rate limit), with the webhook mocked as `/karriere`'s.
 
-`cost.test.ts`: the start values (40 + 24 + 25 = 89, 10.680 a year, 64.080 over six years; shares ≈ 44.9 / 27.0 / 28.1); a comma decimal ("8,5"); an empty or negative field counts 0; zero flats; zero cost (shares 0); `formatDe` (89 → "89,00" with two digits, 10680 → "10.680").
+## 1.4 Pure logic
 
-## 1.4 Images and files
+`tracking.ts` (the design's "Tracking im Haus"):
 
-None new. The logos, the floating CTA's avatars and the testimonials are the shared ones.
+- `UNIT_POSITIONS`: the eight units' anchor points in the house drawing (the design's `data-pos`), the marker drawn 20 px to the right.
+- `TRACKING_STEPS`: the pass as data, `{ at, done, current, count, label, heading, bar, here, push }` per step (0 ms: four done, at WE 05, "3 Wohnungen vor Ihnen", 33.3 %; 1600: five done, WE 06, 2, push on; 4200: push off; 4600: six done, WE 07, "1 Wohnung vor Ihnen"; 7000: seven done, WE 08, no count, "Ihr Monteur ist bei Ihnen", "Gleich klingelt es", 66.6 %, "Bei Ihnen" on); the pass is 12.5 s.
+- `RESTING_STEP`: the server's and reduced motion's state (the design's `RM` branch: five done, WE 06, 2, the push on).
+- `countLabel(n)` ("1 Wohnung" / "n Wohnungen vor Ihnen").
+
+`tracking.test.ts`: the steps are ordered in time and within the pass; `done` grows by one per move; the marker's units exist; the resting step is the 1600 ms step; `countLabel`.
+
+## 1.5 Images
+
+Four new files from the design in `$lib/assets/landing/installationspartner/` (`facade.webp`, `fitter.webp`, `meter.jpg`, `team.jpg`, the design's bytes), imported `?enhanced`; the other photos are the repo's (README).

@@ -378,7 +378,7 @@
 	/* Nothing to pick without JS (plan open question 2). */
 	@media (scripting: none) {
 		.tg,
-		.you,
+		.bars > .you,
 		.verdict {
 			display: none;
 		}

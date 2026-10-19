@@ -4,22 +4,22 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/messdienstanbieter-vergleich`: the page with the landing header and footer; the footer's "Messdienstanbieter-Vergleich" lands here from every landing page, and so does "Messdienstanbieter vergleichen" on `/wohnungsunternehmen` and `/asset-manager`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button); step 1 with picks (a mix with the list, all "Ja") and step 2 with other values compared too
-- [ ] No horizontal overflow from 320 to 1640 px, also with every criterion picked and the tooltip shown
-- [ ] The preview's ticks pop in one by one and "8 / 8" fades in
-- [ ] Step 1: "Ja" / "Nein" / "?" pick and clear, the row's border, "<n> / 8" and the bar, the verdict's four texts, the list "Hier liegt Heidi vorn" with "bei Ihnen unklar"; Heidi's bar grows on first view
-- [ ] Step 2: typing recalculates (a comma decimal, an empty field as 0), the figures count from the shown value, the stack and the legend follow; on first view the figures count up from 0; the tooltip on hover and keyboard focus
-- [ ] No request leaves the page on picking and typing (DevTools network)
-- [ ] "Vergleich starten ↓" and "Zum Kostenrechner →" land on their sections; "Demo buchen", "Mit Heidi vergleichen", "Heidi-Angebot für diesen Bestand", the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "So funktioniert der Wechsel" leads to `/messdienstwechsel`, "Zur Umrüstpflicht" to `/upgrade-now`
+- [x] `bun run dev` → `http://localhost:5173/messdienstanbieter-vergleich`: the page with the landing header and footer; the footer's "Messdienstanbieter-Vergleich" lands here from every landing page, and so does "Messdienstanbieter vergleichen" on `/wohnungsunternehmen` and `/asset-manager`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button); step 1 with picks (a mix with the list, all "Ja") and step 2 with other values compared too
+- [x] No horizontal overflow from 320 to 1640 px, also with every criterion picked and the tooltip shown
+- [x] The preview's ticks pop in one by one and "8 / 8" fades in
+- [x] Step 1: "Ja" / "Nein" / "?" pick and clear, the row's border, "<n> / 8" and the bar, the verdict's four texts, the list "Hier liegt Heidi vorn" with "bei Ihnen unklar"; Heidi's bar grows on first view
+- [x] Step 2: typing recalculates (a comma decimal, an empty field as 0), the figures count from the shown value, the stack and the legend follow; on first view the figures count up from 0; the tooltip on hover and keyboard focus
+- [x] No request leaves the page on picking and typing (DevTools network)
+- [x] "Vergleich starten ↓" and "Zum Kostenrechner →" land on their sections; "Demo buchen", "Mit Heidi vergleichen", "Heidi-Angebot für diesen Bestand", the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "So funktioniert der Wechsel" leads to `/messdienstwechsel`, "Zur Umrüstpflicht" to `/upgrade-now`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the number fields' keyboards, the sticky score card, the tooltip on tap)
 - [ ] Keyboard-only through the page (the CTAs, the 24 toggles, the fields, the tooltip's icon, the questions' links, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Wie gut ist Ihr Messdienst wirklich?"; the preview skipped; each toggle group by its criterion and the pressed state; the verdict announced; the fields by their labels; the tooltip read with its icon
-- [ ] Reduced motion: nothing pops, fades, grows, counts or slides; every block in its end state
-- [ ] JS disabled: every section readable, the toggles hidden, the calculator's start result, the signup form posts
-- [ ] A signup reaches `leads` with `source = "messdienstanbieter-vergleich"` and the sink with `page: "/messdienstanbieter-vergleich"`
+- [x] Reduced motion: nothing pops, fades, grows, counts or slides; every block in its end state
+- [x] JS disabled: every section readable, the toggles hidden, the calculator's start result, the signup form posts
+- [x] A signup reaches `leads` with `source = "messdienstanbieter-vergleich"` and the sink with `page: "/messdienstanbieter-vergleich"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

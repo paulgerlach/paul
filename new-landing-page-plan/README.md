@@ -68,6 +68,17 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (`TrustSeals`) |
 | The first question's "Der Portfolio-Checker von Heidi" | plain text, as in the design |
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`f62001f3`), the route, content, the pure `score.ts` and `cost.ts` and the links (`0bf819ff`), the sections with their interactions (`8a8a5a38`), and `e2e/messdienstanbieter-vergleich.e2e.ts` (15 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (production preview, reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width and matches it by eye; the one difference is the planned one: the closing card holds the signup form (0 / 0 / +50 / −14 / +42 / +31 px). Step 1 with picks (a mix with the list, all "Ja") and step 2 with other values were compared the same way. No overflow at 320 and 375 px, also with every criterion picked and the tooltip shown; no console errors or hydration warnings (production and dev). Full suites: check, lint, 705 unit tests, 458 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **Phases 2 and 3 are one commit:** the preview's ticks, the toggles, the score, the counts and the tooltip are part of their sections.
+- **Toggle buttons, not radios:** each criterion's "Ja" / "Nein" / "?" are `aria-pressed` buttons in a named `role="group"`, because a second click clears the pick (the design's `role="radio"` promises arrow keys and no clearing). Only the verdict is a live region (the design makes the whole score card `aria-live`).
+- **The tooltip is a button** labelled by its own text (`aria-labelledby`, the bubble `role="tooltip"`), so it's focusable with a role; the design's `span` with `tabindex="0"` has neither.
+- **Shared blocks in the design's spacing:** the logo strip's wrapper sets `.dm-logos` (72/64 px, a hairline, the 17 px muted label, the row 32 px below), the quotes' wrapper restores the `.dm-h2` 18 px top margin (the landing heading reset takes it) and keeps the two cards side by side down to 640 px (the shared row stacks at 1040).
+- **Specificity:** the page's shared `.bk-next.inv` rule sets `margin-top: 0` at (0,2,0), so a section's own margin on it needs a more specific selector (`.sw .cta`, `.cout .cta`, `.score .cta`).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

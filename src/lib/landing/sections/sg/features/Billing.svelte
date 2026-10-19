@@ -1,5 +1,10 @@
-<!-- fr2 "Abrechnung ohne Handarbeit": the Abrechnung for every unit, rendered finished ("24 / 24"). -->
+<!--
+  fr2 "Abrechnung ohne Handarbeit": the Abrechnung for every unit, rendered
+  finished ("24 / 24"). Below the fold it starts at "0 / 24" and counts one
+  per 90 ms, 500 ms after coming into view.
+-->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Icon from "../Icon.svelte";
 	import type { BillingTile } from "../types";
 
@@ -8,9 +13,26 @@
 	// svelte-ignore state_referenced_locally
 	let count = $state(tile.total);
 	const done = $derived(count >= tile.total);
+
+	const counting = enterView({
+		prepare: () => (count = 0),
+		play: () => {
+			let interval: ReturnType<typeof setInterval> | undefined;
+			const start = setTimeout(() => {
+				interval = setInterval(() => {
+					count++;
+					if (count >= tile.total) clearInterval(interval);
+				}, 90);
+			}, 500);
+			return () => {
+				clearTimeout(start);
+				clearInterval(interval);
+			};
+		},
+	});
 </script>
 
-<div class="card c" aria-hidden="true">
+<div class="card c" aria-hidden="true" {@attach counting}>
 	<span class="ic dk"><Icon name="doc" /></span><span
 		><b>{tile.title}</b><small class={[done && "done"]}
 			>{done ? tile.done : tile.pending}</small

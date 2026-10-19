@@ -1,8 +1,11 @@
 <!--
   fr5 "Rollout Liegenschaft für Liegenschaft": a rollout of four properties
   with their bars and status. The server renders the start state (two done).
+  In view, a 15 s loop (first after 1.8 s) plays the content's timeline:
+  back to the start state, then the other two properties finish.
 -->
 <script lang="ts">
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Tick from "../Tick.svelte";
 	import type { RolloutRow, RolloutTile } from "../types";
 
@@ -12,6 +15,15 @@
 	let rows = $state<RolloutRow[]>(tile.rows.map((r) => ({ ...r })));
 	let live = $state(false);
 	const done = $derived(rows.filter((r) => r.done).length);
+	function pass() {
+		live = true;
+		rows = tile.rows.map((r) => ({ ...r }));
+		const timers = tile.timeline.map(({ at, row, ...state }) =>
+			setTimeout(() => (rows[row] = state), at),
+		);
+		return () => timers.forEach(clearTimeout);
+	}
+
 	const count = $derived(
 		(done === rows.length ? tile.count.all : tile.count.some)
 			.replace("{n}", String(done))
@@ -19,7 +31,16 @@
 	);
 </script>
 
-<div class={["ro card", live && "live"]} aria-hidden="true">
+<div
+	class={["ro card", live && "live"]}
+	aria-hidden="true"
+	{@attach loopInView({
+		run: pass,
+		every: tile.every,
+		delay: 1800,
+		threshold: 0.25,
+	})}
+>
 	<div class="h">
 		<span><b>{tile.title}</b><small class="c">{count}</small></span><span
 			class="demo">{tile.tag}</span

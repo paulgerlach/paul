@@ -1,8 +1,12 @@
 <!--
   fr4 "Wächst mit Ihrem Bestand": four systems around the Heidi hub. The
-  server renders the tiles and the hub, none lit.
+  server renders the tiles and the hub, none lit. In view, every 2.2 s (first
+  after 0.9 s) the hub pulses and a dot flies to the next tile, which lights
+  650 ms later; leaving the view unlights them.
 -->
 <script lang="ts">
+	import { inView } from "$lib/landing/attachments/inView";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Bars from "../Bars.svelte";
 	import Icon from "../Icon.svelte";
 	import type { HubTile } from "../types";
@@ -11,16 +15,47 @@
 
 	/** The lit tile, if any. */
 	let lit = $state<number | null>(null);
+
+	let dot = $state<HTMLElement>();
+	let hub = $state<HTMLElement>();
+	let next = 0;
+
+	/** Restarts a CSS animation by toggling its class. */
+	function restart(el: HTMLElement, cls: string) {
+		el.classList.remove(cls);
+		void el.offsetWidth;
+		el.classList.add(cls);
+	}
+
+	function step() {
+		const first = hub?.parentElement?.firstElementChild;
+		if (!dot || !hub || !(first instanceof HTMLElement)) return;
+		const i = next;
+		next = (next + 1) % tile.tiles.length;
+		// The design's offsets are for 150 px tiles (120 px below 480 px).
+		const scale = first.offsetWidth / 150;
+		dot.style.setProperty("--dx", `${(i % 2 ? 80 : -80) * scale}px`);
+		dot.style.setProperty("--dy", `${(i < 2 ? -80 : 80) * scale}px`);
+		restart(hub, "pulse");
+		restart(dot, "go");
+		const timer = setTimeout(() => (lit = i), 650);
+		return () => clearTimeout(timer);
+	}
 </script>
 
-<div class="tiles" aria-hidden="true">
+<div
+	class="tiles"
+	aria-hidden="true"
+	{@attach loopInView({ run: step, every: 2200, delay: 900, threshold: 0.25 })}
+	{@attach inView({ threshold: 0.25, onLeave: () => (lit = null) })}
+>
 	{#each tile.tiles as t, i (t.title)}
 		<div class={["t", lit === i && "on"]}>
 			<Icon name={t.icon} /><b>{t.title}</b><small>{t.status}</small>
 		</div>
 	{/each}
-	<span class="dot"></span>
-	<span class="hub"><Bars /></span>
+	<span class="dot" bind:this={dot}></span>
+	<span class="hub" bind:this={hub}><Bars /></span>
 </div>
 
 <style>

@@ -1,9 +1,12 @@
 <!--
   fr1 "Verbräuche lückenlos erfasst": a reading card (label, value, Stichtag),
   a tick and the device card with its "per Funk" pill. On hover the cards
-  part, the tick spins and the signal pings (CSS).
+  part, the tick spins and the signal pings (CSS), and the value is read
+  again: it counts from 85 % to its value (the design's hover re-read).
 -->
 <script lang="ts">
+	import type { Attachment } from "svelte/attachments";
+	import { prefersReducedMotion } from "$lib/landing/motion";
 	import Icon from "../Icon.svelte";
 	import Tick from "../Tick.svelte";
 	import type { MeterTile } from "../types";
@@ -11,12 +14,40 @@
 	let { tile }: { tile: MeterTile } = $props();
 
 	const format = (n: number) => Math.round(n).toLocaleString("de-DE");
+
+	const reread: Attachment<HTMLElement> = (el) => {
+		const host = el.closest(".vis");
+		if (!host || prefersReducedMotion()) return;
+		let frame = 0;
+		let busy = false;
+		const onEnter = () => {
+			if (busy) return;
+			busy = true;
+			const t0 = performance.now();
+			const tick = (now: number) => {
+				const k = Math.min(1, (now - t0) / 800);
+				el.textContent = format(
+					tile.value * (0.85 + 0.15 * (1 - (1 - k) ** 3)),
+				);
+				if (k < 1) frame = requestAnimationFrame(tick);
+				else busy = false;
+			};
+			frame = requestAnimationFrame(tick);
+		};
+		host.addEventListener("mouseenter", onEnter);
+		return () => {
+			host.removeEventListener("mouseenter", onEnter);
+			cancelAnimationFrame(frame);
+		};
+	};
 </script>
 
 <div class="a card" aria-hidden="true">
 	<span
 		><small>{tile.label}</small><b
-			><span class="n">{format(tile.value)}</span><i>{tile.unit}</i></b
+			><span class="n" {@attach reread}>{format(tile.value)}</span><i
+				>{tile.unit}</i
+			></b
 		></span
 	><em><small>{tile.dateLabel}</small>{tile.date}</em>
 </div>

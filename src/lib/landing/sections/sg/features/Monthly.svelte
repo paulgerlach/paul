@@ -2,9 +2,13 @@
   fr3 "Verbräuche jeden Monat im Blick": three flats' monthly values with
   bars; the outlier turns orange ("Über Vormonat") and gets flagged. The
   server renders the design's reduced-motion state (`s1 s2 s4`): every value
-  and bar in place, the outlier flagged, no cursor and no toast.
+  and bar in place, the outlier flagged, no cursor and no toast. In view, an
+  8.6 s loop plays it: the values count in, the outlier jumps, the cursor
+  "Verwaltung" glides to its flag, flags it, and a toast confirms.
 -->
 <script lang="ts">
+	import { onDestroy } from "svelte";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Icon from "../Icon.svelte";
 	import Tick from "../Tick.svelte";
 	import type { MonthlyTile } from "../types";
@@ -15,20 +19,99 @@
 	let stage = $state({ s1: true, s2: true, s3: false, s4: true, s5: false });
 	// svelte-ignore state_referenced_locally
 	let values = $state(tile.rows.map((r) => r.value));
+	// svelte-ignore state_referenced_locally
+	let bars = $state(tile.rows.map((r) => r.value));
 	const width = (v: number) => `${(v / tile.max) * 100}%`;
+
+	let list = $state<HTMLElement>();
+	let cursor = $state<HTMLElement>();
+	const flags: HTMLElement[] = $state([]);
+	const frames: number[] = [];
+	onDestroy(() => frames.forEach((f) => cancelAnimationFrame(f)));
+
+	/** Counts row `i`'s value from `from` to `to` (the design's PG.tween). */
+	function tween(i: number, from: number, to: number, ms: number) {
+		cancelAnimationFrame(frames[i]);
+		const t0 = performance.now();
+		const tick = (now: number) => {
+			const k = Math.min(1, (now - t0) / ms);
+			values[i] = Math.round(from + (to - from) * (1 - (1 - k) ** 3));
+			if (k < 1) frames[i] = requestAnimationFrame(tick);
+		};
+		frames[i] = requestAnimationFrame(tick);
+	}
+
+	/** Points the cursor at the flag, measured at each pass and on resize. */
+	function aim() {
+		const flag = flags[outlier];
+		if (!list || !cursor || !flag) return;
+		const l = list.getBoundingClientRect();
+		const f = flag.getBoundingClientRect();
+		cursor.style.setProperty("--x", `${f.left - l.left + f.width / 2 - 3}px`);
+		cursor.style.setProperty("--y", `${f.top - l.top + f.height / 2 - 3}px`);
+		cursor.style.setProperty("--x0", `${l.width - 30}px`);
+		cursor.style.setProperty("--y0", `${l.height + 30}px`);
+	}
+
+	const outlier = $derived(tile.rows.findIndex((r) => r.outlier));
+
+	function pass() {
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms));
+		stage = { s1: false, s2: false, s3: false, s4: false, s5: false };
+		values = tile.rows.map(() => 0);
+		bars = tile.rows.map(() => 0);
+		aim();
+		at(50, () => {
+			stage.s1 = true;
+			tile.rows.forEach((row, i) => {
+				const end = row.outlier ? row.previous : row.value;
+				at(50 + i * 150, () => {
+					tween(i, 0, end, 700);
+					bars[i] = end;
+				});
+			});
+		});
+		if (outlier >= 0) {
+			const row = tile.rows[outlier];
+			at(1700, () => {
+				tween(outlier, row.previous, row.value, 900);
+				bars[outlier] = row.value;
+				stage.s2 = true;
+			});
+		}
+		at(3000, () => {
+			aim();
+			stage.s3 = true;
+		});
+		at(4250, () => (stage.s4 = true));
+		at(4550, () => (stage.s5 = true));
+		at(7800, () => (stage.s3 = false));
+		return () => {
+			timers.forEach(clearTimeout);
+			frames.forEach(cancelAnimationFrame);
+		};
+	}
 </script>
 
-<div class={["list card", stage]} aria-hidden="true">
+<svelte:window onresize={aim} />
+
+<div
+	class={["list card", stage]}
+	aria-hidden="true"
+	bind:this={list}
+	{@attach loopInView({ run: pass, every: 8600, threshold: 0.4 })}
+>
 	{#each tile.rows as row, i (row.unit)}
 		<div class={["li", row.outlier && "sp"]}>
 			<span class="av">{row.unit}</span><span class="lt"
 				><span class="nm">{tile.same}</span><span class="w"
 					><Icon name="alert" /> {tile.above}</span
 				></span
-			><span class="bar"><i style:width={width(values[i])}></i></span><span
+			><span class="bar"><i style:width={width(bars[i])}></i></span><span
 				class="v"><b>{values[i]}</b> {tile.unit}</span
 			><span class="act"
-				><i class="ok"><Tick /></i><i class="fl"
+				><i class="ok"><Tick /></i><i class="fl" bind:this={flags[i]}
 					><svg viewBox="0 0 12 12"
 						><path d="M3 11V1.5h6.5L8 4l1.5 2.5H3" fill="currentColor" /></svg
 					></i
@@ -36,7 +119,7 @@
 			>
 		</div>
 	{/each}
-	<span class="cur"
+	<span class="cur" bind:this={cursor}
 		><svg viewBox="0 0 24 28"
 			><path
 				d="M2 2l19 11-8.5 1.8L8 24z"

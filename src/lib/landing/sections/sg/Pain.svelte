@@ -1,12 +1,14 @@
 <!--
   "Was stört Sie heute?" (.sg-pain): eight problems as toggle buttons; each
   chosen one adds Heidi's answer to the panel, newest first, with the count
-  and a CTA below. Without JS the chips stay readable and the panel shows its
+  and a CTA below; from the third choice the confetti bursts once. Without JS the chips stay readable and the panel shows its
   prompt. The resource links below (.sg-links) render only with a page.
 -->
 <script lang="ts">
+	import { onDestroy } from "svelte";
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import Bars from "./Bars.svelte";
+	import { confettiFrom } from "./confetti";
 	import Head from "./Head.svelte";
 	import Icon from "./Icon.svelte";
 	import type { PainPicker } from "./types";
@@ -22,10 +24,22 @@
 	);
 	const links = $derived(pain.links.filter((l) => l.href));
 
+	let countEl = $state<HTMLElement>();
+	let celebrated = false;
+	let stopConfetti = () => {};
+	onDestroy(() => stopConfetti());
+
 	function toggle(i: number) {
 		const k = selected.indexOf(i);
 		if (k < 0) selected.unshift(i);
 		else selected.splice(k, 1);
+		if (selected.length >= pain.celebrateFrom && !celebrated) {
+			celebrated = true;
+			// After the count is rendered, so the burst starts from it.
+			requestAnimationFrame(() => {
+				if (countEl) stopConfetti = confettiFrom(countEl);
+			});
+		}
 	}
 </script>
 
@@ -61,7 +75,7 @@
 				</ul>
 				{#if selected.length}
 					<div class="pr-f">
-						<span>{count}</span>
+						<span bind:this={countEl}>{count}</span>
 						<ArrowLink href={pain.cta.href} label={pain.cta.text} ink />
 					</div>
 				{/if}

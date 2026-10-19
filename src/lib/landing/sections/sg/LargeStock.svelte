@@ -1,5 +1,6 @@
-<!-- The dark "1000+" card (.sg-k): the figure, pill, H2, text and the CTAs (the light second one only once its page exists). -->
+<!-- The dark "1000+" card (.sg-k): the figure (counting up when it comes into view), pill, H2, text and the CTAs (the light second one only once its page exists). -->
 <script lang="ts">
+	import { countUp } from "$lib/landing/attachments/countUp";
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import Icon from "./Icon.svelte";
 	import type { LargeStock } from "./types";
@@ -13,9 +14,15 @@
 	<div class="wrap">
 		<div class="k rv">
 			<div class="n" aria-hidden="true">
-				<b>{format(large.figure)}</b><i>{large.plus}</i><small
-					>{large.unit}</small
-				>
+				<b
+					{@attach countUp({
+						to: large.figure,
+						duration: 1400,
+						viewDelay: 0,
+						threshold: 0.15,
+						format,
+					})}>{format(large.figure)}</b
+				><i>{large.plus}</i><small>{large.unit}</small>
 			</div>
 			<div>
 				<span class="pill"

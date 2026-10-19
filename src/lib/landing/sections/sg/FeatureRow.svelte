@@ -1,10 +1,12 @@
 <!--
   One feature row (.fr-row): the text with its link on one side, the tile on
   a tinted panel (.fr-vis) on the other; `rev` puts the text on the right.
-  The row carries `.in` (the tile's end state) from the server.
+  The row carries `.in` (the tile's end state) from the server; below the
+  fold it drops it and plays the tile's entrance when it comes into view.
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import type { FeatureText } from "./types";
 
 	let {
@@ -21,9 +23,17 @@
 		tone?: "g";
 		children: Snippet;
 	} = $props();
+
+	let entered = $state(true);
+	const entrance = enterView({
+		prepare: () => (entered = false),
+		play: () => {
+			entered = true;
+		},
+	});
 </script>
 
-<div class={["row in rv", rev && "rev"]} {id}>
+<div class={["row rv", entered && "in", rev && "rev"]} {id} {@attach entrance}>
 	<div class="tx">
 		<h3>{row.title}</h3>
 		<p>

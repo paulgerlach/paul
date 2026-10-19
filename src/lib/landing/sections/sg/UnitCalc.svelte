@@ -2,10 +2,13 @@
   The hero's unit calculator (.sg-calc): "Wie viele Einheiten betreuen Sie?",
   a slider on the log scale of `units.ts`, and below it either the standard
   card or, from 1.000 units, the dark large-stock offer. The server renders
-  the content's start (the design's `data-units`).
+  the content's start (the design's `data-units`). The first time the
+  visitor moves it into the offer, the confetti bursts from the offer's tag.
 -->
 <script lang="ts">
+	import { onDestroy } from "svelte";
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
+	import { confettiFrom } from "./confetti";
 	import Icon from "./Icon.svelte";
 	import Tick from "./Tick.svelte";
 	import type { UnitCalc } from "./types";
@@ -18,6 +21,20 @@
 	const units = $derived(toUnits(value));
 	const large = $derived(isLarge(units));
 	const shown = $derived(formatUnits(units));
+
+	let tag = $state<HTMLElement>();
+	let celebrated = false;
+	let stopConfetti = () => {};
+	onDestroy(() => stopConfetti());
+
+	function oninput(e: Event & { currentTarget: HTMLInputElement }) {
+		const was = large;
+		value = Number(e.currentTarget.value);
+		if (!was && isLarge(toUnits(value)) && !celebrated && tag) {
+			celebrated = true;
+			stopConfetti = confettiFrom(tag);
+		}
+	}
 </script>
 
 <div class={["calc rv", large && "big"]}>
@@ -32,7 +49,8 @@
 		min="0"
 		max={SLIDER_MAX}
 		step="1"
-		bind:value
+		{value}
+		{oninput}
 		aria-label={calc.label}
 		aria-valuetext="{shown} {calc.unit}"
 		style:--p="{(value / SLIDER_MAX) * 100}%"
@@ -52,7 +70,7 @@
 			</ul>
 		</div>
 		<div class="lg" inert={!large}>
-			<span class="tag dark"
+			<span class="tag dark" bind:this={tag}
 				><Icon name={calc.large.icon} />{calc.large.tag}</span
 			>
 			<b>{calc.large.title}</b>

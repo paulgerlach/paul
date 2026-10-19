@@ -1,52 +1,58 @@
-# Phase 1: Route, links, content and SEO
+# Phase 1: Route, links, content and the files
 
 ## 1.1 Route and links
 
 In one commit:
 
-- `ROUTE_PRESSE = "/presse"` in `$lib/routes.ts`, after `ROUTE_EINSPARRECHNER`.
-- The landing footer's "Presse" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_PRESSE`.
-- **Other links to the page** (README, Links): none; no built page names the press design.
-- `src/routes/(landing-page)/presse/+page.server.ts`, as `/einsparrechner`'s:
+- `ROUTE_MUSTER_KUENDIGUNG = "/muster-kuendigung"` in `$lib/routes.ts`, after `ROUTE_PRESSE`.
+- The landing footer's "Muster-Kündigung" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_MUSTER_KUENDIGUNG`.
+- **Other links to the page** (README, Links), each a `href` on an entry that waits for it, and their tests turned round (the link is there and resolves):
+  - `/fristenrechner` `portfolio.ctas[1]` ("Muster-Kündigung"; its comment `4WYU5…`). `Portfolio.svelte` picks each CTA's look by its place in the design (`bk` for the first, `ghost` for the second), not by its place among the shown ones, so the Muster-Kündigung stays the light button while "Zum Portfolio-Checker" is hidden. `content.test.ts` and `e2e/fristenrechner.e2e.ts`.
+  - `/weg-verwaltung` `audience[1].cta` ("Zur Muster-Kündigung"). `e2e/weg-verwaltung.e2e.ts`.
+  - `/wohnungsunternehmen` and `/asset-manager` `pain.links[0]` ("Muster-Kündigung herunterladen", icon `doc`): the `.sg-links` row renders with this one link. Both `content.ts` (the shared texts agree, `asset-manager/content.test.ts`) and both e2e tests.
+  - `/hilfe` the answer `kuendigung`'s `more` ("Muster-Kündigung").
+- `src/routes/(landing-page)/muster-kuendigung/+page.server.ts`, as `/fristenrechner`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Presse: Kontakt, Media Kit und Fakten | Heidi Systems",
+	title: "Muster-Kündigung Messdienst: Vorlage als Word und PDF | Heidi Systems",
 	description:
-		"Pressekontakt, Logos, Unternehmensprofil und die wichtigsten Fakten zu Heidi Systems, dem digitalen Messdienst aus Berlin für Hausverwaltungen in ganz Deutschland.",
-	ogTitle: "Hallo, Presse.",
+		"Kostenlos und ohne Anmeldung: Erstellen Sie die Kündigung für Ihren bisherigen Messdienstleister in zwei Minuten, für mehrere Liegenschaften, als Word-Datei oder PDF. Ihre Eingaben bleiben in Ihrem Browser.",
+	ogTitle: "Messdienst kündigen. In zwei Minuten.",
 	noindex: true,
 	keepCanonical: true,
 },
 landing: DEFAULT_CHROME,
+now: Date.now(), // the letter's date (DeadlineClock)
 finalForm: await emptySwitchForm("final"),
 ```
 
-  and `handleSwitchSignup(event, { source: "presse", page: ROUTE_PRESSE })`. No `cache-control`.
+  and `handleSwitchSignup(event, { source: "muster-kuendigung", page: ROUTE_MUSTER_KUENDIGUNG })`. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/presse/content.ts`, word for word from the design:
+`$lib/landing/pages/muster-kuendigung/content.ts`, word for word from the design:
 
-- `PRESS_EMAIL = "presse@heidisystems.com"`.
-- `hero`: H1 "Hallo," + accent "Presse." (a line break between), lead "Heidi Systems ist ein Messdienst aus Berlin. Wir digitalisieren die Heizkostenabrechnung für Hausverwaltungen in ganz Deutschland: mit eigenen Funkzählern, einem persönlichen Ansprechpartner und einer Abrechnung per Klick. Hier finden Sie alles für Ihre Berichterstattung."
-- `contact`: tag "Sag Hallo", H2 "Sprechen Sie mit uns.", text "Interviews, Hintergrundgespräche, Zahlen und Bilder: Wir melden uns schnell und persönlich.", the label "Presseanfragen", the CTA "Gespräch vereinbaren" → `DEMO_HREF` (design id `44SBXKXJaSp6bvGMnbpZj6`).
-- `kit`: tag "Media Kit", H2 "Material für Ihre Berichterstattung.", text "Logo, Bildmarke und Unternehmensprofil, sofort nutzbar.", four `downloads` `{ title, note, file }`: "Heidi Logo, dunkel" / "SVG · für helle Hintergründe" / `Heidi-Logo-dunkel.svg`; "Heidi Logo, hell" / "SVG · für dunkle Hintergründe" / `Heidi-Logo-hell.svg`; "Bildmarke" / "SVG · der Röhrenheizkörper" / `Heidi-Bildmarke.svg`; "Unternehmensprofil" / "TXT · Kurztext und Fakten" / `Heidi-Systems-Unternehmensprofil.txt`; `DOWNLOAD_BASE = "/landing/presse/"`; the message template "Gespeichert: ".
-- `name`: H2 "Name und Logo.", the big line ("Hei" accent, "zungen ", "di" accent, "gitalisieren."), the text "Der Name Heidi ist eine Abkürzung und zugleich unser Auftrag: Heizungen digitalisieren. Das Logo zeigt einen alten Röhrenheizkörper. Er steht für den Bestand, den wir modernisieren, ohne dass jemand umbauen muss.", the mark's label "Röhrenheizkörper".
-- `facts`: H2 "Heidi auf einen Blick.", six tiles `{ label, value, count?, unit?, text }`: "Unternehmen" "Heidi Systems GmbH" "Monbijouplatz 4, 10178 Berlin"; "Leistung" "Messdienst" "Funkzähler, Ablesung, monatliche Verbrauchsinfo und Heizkostenabrechnung aus einer Hand"; "Montage" 92 "%" "der Montagen gelingen beim ersten Termin"; "Mieter" 14 "Tage" "vorher über die Montage informiert, mit 1 bis 2 Stunden Zeitfenster"; "Daten" "Deutschland" "Verarbeitung nach DSGVO und BDSG, gespeichert auf Servern in Deutschland"; "Netzwerk" "VDIV · DEUMESS · bved" "Kooperationspartner des VDIV, vernetzt in den Verbänden DEUMESS und bved".
-- `boilerplate`: H2 "Über Heidi Systems.", the button "Text kopieren" / "Kopiert", the status "Text kopiert", the text "Die Heidi Systems GmbH mit Sitz in Berlin ist ein digitaler Messdienst … Der Name steht für „Heizungen digitalisieren“."
-- `pressContact`: tag "Pressekontakt", H2 "Für Interviews, Material und Anfragen.", the address lines "Heidi Systems GmbH" / "Monbijouplatz 4, 10178 Berlin", the CTA "E-Mail senden" → `mailto:` + `PRESS_EMAIL`.
-- `closing`: H2 "Heidi live erleben?", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/einsparrechner`'s), submit label "Demo buchen".
+- `GENERATOR_ID = "vorlage"`.
+- `hero`: pill "Muster-Kündigung · kostenlos", H1 "Messdienst kündigen." + accent "In zwei Minuten.", lead "Füllen Sie ein paar Felder aus, und Sie bekommen eine fertige Kündigung für Ihren bisherigen Messdienstleister. Als Word-Datei oder PDF, zum Unterschreiben und Versenden.", CTAs "Kündigung erstellen" → `#vorlage` and "Heidi kündigt für Sie" → `ROUTE_MESSDIENSTWECHSEL`, ticks "Word und PDF", "Mehrere Liegenschaften", "Ohne Anmeldung", the sheet's title "Kündigung des Messdienstvertrags", the badges "DOCX" and "PDF".
+- `generator`: pill "Vorlage ausfüllen", H2 "Ihre Kündigung." + muted "Live in der Vorschau.", four fieldsets with their legends ("Absender", "Bisheriger Messdienst", "Liegenschaften und Termin", "Was soll noch rein?") and fields `{ key, label, placeholder, optional?, hint?, multiline?, half? }` ("Hausverwaltung oder Eigentümer" / "Muster Hausverwaltung GmbH", "Straße und Hausnummer" / "Beispielstraße 1", "PLZ und Ort" / "10115 Berlin", "Ansprechpartner" / "Vor- und Nachname", "Funktion" optional / "Geschäftsführung"; "Name des Messdienstleisters" / "Name des Unternehmens", "Anschrift" / "Straße, PLZ Ort", "Vertrags- oder Kundennummer" optional / "z. B. 12345678"; "Liegenschaften" hint "eine pro Zeile" / "Lindenallee 12, 10115 Berlin"), the switch (label "Kündigungstermin", "Zum nächstmöglichen Zeitpunkt" / "Zu einem Datum"), the date label "Kündigen zum", the label "optional", five clauses `{ key, title, text, checked }` ("Vertragsende bestätigen lassen" ✓, "Ablesung zum Vertragsende" ✓, "Geräte klären" ✓, "Im Auftrag der Eigentümer", "Datenlöschung"), the buttons "Word herunterladen", "PDF", "Text kopieren", "Wird erstellt …", "Kopiert", the messages ("Download gestartet: ", the download error, "Kopieren nicht möglich. Markieren Sie den Text in der Vorschau."), the preview's label "Vorschau der Kündigung" (ours), the signature label "Unterschrift", the disclaimer "Vorlage ohne Gewähr, keine Rechtsberatung. Prüfen Sie Laufzeit, Kündigungsfrist und Form in Ihrem Vertrag."
+- `letterText`: the letter's sentences and placeholders, word for word from `build()` (the subject "Kündigung des Messdienstvertrags", " · Vertrags-/Kundennr. ", "Liegenschaft" / "Liegenschaften", the salutation, the termination sentence with its two endings and "fristgerecht zum nächstmöglichen Zeitpunkt" / "zum ", the five clauses' sentences, "Mit freundlichen Grüßen", the placeholders "Name der Verwaltung", "Straße, Hausnummer", "PLZ Ort", "Name des Messdienstleisters", "Anschrift", "Ort", "Adresse der Liegenschaft", "Datum", "Vor- und Nachname").
+- `checklist`: pill "Vor dem Versand", H2 "Vier Dinge, die Sie prüfen sollten." + muted "Bevor Sie unterschreiben.", four items `{ title, text }` ("Laufzeit und Frist", "Mehrere Verträge?", "Form und Versand", "Vollmacht bei WEG"), the count "{n} von {total} geprüft", the done text "Alles geprüft. Bereit zum Versand."
+- `takeover`: pill "Noch einfacher", H2 "Oder Heidi kündigt für Sie.", text "Eine Unterschrift auf der Vollmacht genügt. …", CTAs "Demo buchen" → `DEMO_HREF` and "Vertragsenden prüfen" (no `href`: hidden), three steps `{ title, text }`.
+- `faq`: title "Häufige Fragen zur Kündigung", four items (plain text answers).
+- `closing`: H2 "Lieber gar nicht selbst kündigen?", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/presse`'s), submit label "Demo buchen".
 
-`content.test.ts`: the H1; four downloads with unique files, each in `static/landing/presse/`; the profile's paragraph equal to the boilerplate, its title line "Heidi Systems GmbH: Unternehmensprofil", its facts naming "92 %", "14 Tage", VDIV, DEUMESS and bved as the tiles do; the logo files' path data equal to `HeidiLogo.svelte`'s; six facts with the two counted ones; the company and street equal to `ADDRESS` (written out); every `href` a route, `#start` or the `mailto:`; no empty or untrimmed text; the closing text equal to `/einsparrechner`'s.
+`content.test.ts`: the H1; the field keys unique and the ones `letter.ts` reads; three clauses on by default; four checklist items; every `href` a route or an anchor; the takeover's held-back CTA has no `href`; no empty or untrimmed text; the closing text equal to `/presse`'s; the FAQ's four questions.
 
 ## 1.3 Pure logic
 
-None: the page has no calculation. The download message and the copy state are a few lines in their components.
+- **`letter.ts`**: `type Segment = { text: string; placeholder?: true }`, `type Paragraph = { kind: "ab" | "to" | "dt" | "bt" | "p" | "sg"; lines: Segment[][] }`, `type LetterInput = { fields: Record<FieldKey, string>; clauses: Record<ClauseKey, boolean>; term: "next" | "date"; today: string }`. `buildLetter(input)` (the design's `build()`, field values trimmed, the properties split by lines, the PLZ stripped from the date's place, the clauses in the design's order `vollmacht`, `ende`, `ablesung`, `geraete`, `daten`), `plainText(paragraphs)` (lines by `\n`, paragraphs by a blank line, placeholders in brackets), `fileName(provider, ext)`, `isoToGerman("2027-01-31")` → "31.01.2027", `germanDay(ms)` (Europe/Berlin, `berlinDate` from `deadline.ts`). `letter.test.ts`: the empty letter (every placeholder), a full one, one and several properties ("Liegenschaft" / "Liegenschaften", "die oben genannte Liegenschaft" / "die oben genannten Liegenschaften"), both terms with and without a date, each clause, the contract number in the subject, the signature lines, the file names, the plain text.
+- **`docx.ts`**: `documentXml(paragraphs)` (the design's runs, byte for byte), `zipStore(files, date)` (local headers, the central directory, the end record; CRC-32 from a table), `makeDocx(paragraphs, date)` → `Uint8Array`. `docx.test.ts`: the XML for a known letter, XML escaping and dropped control characters, the ZIP read back (signatures, offsets, sizes, each entry's CRC against Node's `zlib.crc32`).
+- **`pdf.ts`**: `splitText(text, width, font)` (jsPDF's `splitTextToSize`: words by spaces, a word wider than the line broken by characters), `makePdf(paragraphs)` → `Uint8Array` (objects, uncompressed content streams, `/F1` Helvetica and `/F2` Helvetica-Bold with `/WinAnsiEncoding`, the xref table with exact byte offsets, the trailer). `pdf.test.ts`: the header and `%%EOF`, every xref offset pointing at its `n 0 obj`, one page for a short letter and two for one with 60 properties, the date right-aligned (its `Td` x), umlauts as WinAnsi bytes, `(`, `)` and `\` escaped, line breaking against known widths.
+- **`helvetica.ts`**: the widths (1/1000 em) of Helvetica and Helvetica-Bold for the WinAnsi codes 32–255 and the map from Unicode to WinAnsi for 128–159; the values are the fonts' AFM metrics (as in jsPDF and pdf.js), checked against the system Helvetica.
 
 ## 1.4 Images and files
 
-- The press card's photo is `vorgehen/building-wide.webp` (README table), rendered with `Image` (`?enhanced`, `sizes` for the card's column, lazy).
-- **New:** `static/landing/presse/` with the four download files, byte for byte the design's `F` data (the SVGs with their `fill`s `#1E322D` / `#FFFFFF`, the TXT in UTF-8 with its trailing newline).
+None new. The closing card's video isn't used (Key decisions); the floating CTA's avatars are the shared ones.

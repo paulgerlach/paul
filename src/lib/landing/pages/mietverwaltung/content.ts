@@ -248,7 +248,6 @@ export const audience = {
 };
 
 export type CheckerTone = "take" | "cancel" | "bill";
-export type CheckerPhoto = "essen" | "muenchen" | "facade" | "duesseldorf";
 
 /** The Portfolio-Checker in the first audience card (the design's #pcm). */
 export const checker = {
@@ -264,7 +263,6 @@ export const checker = {
 			status: "Vertrag läuft bis 03/2029",
 			action: "Vertrag übernehmen",
 			tone: "take",
-			photo: "essen",
 		},
 		{
 			name: "Gartenweg 3",
@@ -272,7 +270,6 @@ export const checker = {
 			status: "Vertrag endet 12/2026",
 			action: "Vertrag kündigen",
 			tone: "cancel",
-			photo: "muenchen",
 		},
 		{
 			name: "Am Stadtpark 7",
@@ -280,7 +277,6 @@ export const checker = {
 			status: "Vertrag endet 08/2027",
 			action: "Rechtzeitig kündigen",
 			tone: "cancel",
-			photo: "facade",
 		},
 		{
 			name: "Hofstraße 21",
@@ -288,7 +284,6 @@ export const checker = {
 			status: "Heidi-Funkzähler aktiv",
 			action: "Direkt abrechnen",
 			tone: "bill",
-			photo: "duesseldorf",
 		},
 	] satisfies {
 		name: string;
@@ -297,7 +292,6 @@ export const checker = {
 		status: string;
 		action: string;
 		tone: CheckerTone;
-		photo: CheckerPhoto;
 	}[],
 };
 

@@ -143,7 +143,6 @@ describe("mietverwaltung content", () => {
 	it("checks four buildings, each with a next step", () => {
 		expect(checker.rows).toHaveLength(4);
 		expect(new Set(checker.rows.map((r) => r.name)).size).toBe(4);
-		expect(new Set(checker.rows.map((r) => r.photo)).size).toBe(4);
 		for (const row of checker.rows) expect(row.action).not.toBe("");
 	});
 

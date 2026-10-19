@@ -69,6 +69,15 @@ The design's hero carries `#start` (its footer's "Muster-Kündigung" points ther
 
 Links to this page (the design id `4WYU5hjVsWSLrxuo7wsdm6` in the repo's content and plans): the footer's "Muster-Kündigung" (`$lib/landing/footerLinks.ts`); `/fristenrechner`'s "Muster-Kündigung" (portfolio block, `4WYU5…` in its content); `/weg-verwaltung`'s "Zur Muster-Kündigung" (its plan `a4de1116`); the `.sg-links` "Muster-Kündigung herunterladen" of `/wohnungsunternehmen` and `/asset-manager` (their plans `4f1f649e` / `c4a84443`; the row shows now, with this one link); `/hilfe`'s `more` "Muster-Kündigung" of the answer `kuendigung` (its plan lists it as "none yet").
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`fdcf76b1`), the route, content, the letter and the Word and PDF writers with the links from the footer and five pages (`735bd217`), the sections with their interactions (`13932635`), and `e2e/muster-kuendigung.e2e.ts` (14 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (production build, reduced motion): every section has the design's height to the pixel at every width and matches it by eye; the differences are the planned ones: the closing card holds the signup form (0 / +50 / +94 / −14 / +42 px at 1440 / 1100 / 980 / 700 / 375 px) and the dark card lacks the held-back "Vertragsenden prüfen" (−62 px at 375 px, where it wraps under "Demo buchen"). A filled-in letter downloaded as Word reads correctly in `textutil`, the PDF renders in `sips` with the design's layout. No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 626 unit tests, 398 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the preview, the downloads, the copy button and the checklist are part of their sections.
+- **Two landing-style traps:** the landing heading reset takes `.dm-h2`'s 18 px top margin from `SectionHead` (restored in `Generator` and `Checklist`), and `.lp *` sets Geist on every element, so the preview sets Arial on itself and its children (otherwise the letter wraps differently from the design's).
+- **Copy order:** the clipboard API first, the design's `execCommand` fallback second (the design tries them the other way round); same labels and messages.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

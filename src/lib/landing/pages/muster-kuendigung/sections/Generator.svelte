@@ -473,7 +473,7 @@
 		flex: none;
 	}
 	/* .bk-next */
-	.bk {
+	.dl .bk {
 		border: 0;
 		background: var(--ink);
 		color: #fff;
@@ -495,7 +495,7 @@
 		cursor: not-allowed;
 	}
 	/* .pg-ghost */
-	.ghost {
+	.dl .ghost {
 		border: 1px solid var(--hair);
 		background: #fff;
 		color: var(--ink);

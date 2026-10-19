@@ -4,24 +4,25 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/muster-kuendigung`: the page with the landing header and footer; the footer's "Muster-Kündigung" lands here from every landing page, and so do the links on `/fristenrechner`, `/weg-verwaltung`, `/wohnungsunternehmen`, `/asset-manager` and `/hilfe`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the letter's date)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The preview follows every field, the switch and the five clauses; empty fields show their placeholders
-- [ ] "Word herunterladen" and "PDF" save `Kuendigung-<Messdienst>.docx` / `.pdf` with the letter as shown, write "Download gestartet: …" and burst the confetti; the files open in Word, Pages, LibreOffice, Google Docs, Acrobat and Preview
-- [ ] "Text kopieren": the letter in the clipboard, "Kopiert" for 2 s
-- [ ] The checklist: the bar and the count follow; the fourth tick writes "Alles geprüft. Bereit zum Versand." and bursts once
-- [ ] The hero's signature draws on load, the badges pop in, the sheet floats
-- [ ] "Kündigung erstellen ↓" lands on the generator below the sticky header; "Demo buchen →", the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field; "Heidi kündigt für Sie →" opens `/messdienstwechsel`
-- [ ] Nothing leaves the page while the form is filled and the files are made
+- [x] `bun run dev` → `http://localhost:5173/muster-kuendigung`: the page with the landing header and footer; the footer's "Muster-Kündigung" lands here from every landing page, and so do the links on `/fristenrechner`, `/weg-verwaltung`, `/wohnungsunternehmen`, `/asset-manager` and `/hilfe`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the letter's date)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The preview follows every field, the switch and the five clauses; empty fields show their placeholders
+- [x] "Word herunterladen" and "PDF" save `Kuendigung-<Messdienst>.docx` / `.pdf` with the letter as shown, write "Download gestartet: …" and burst the confetti; both open in macOS's text system (`textutil`) and Preview (`sips`)
+- [ ] The files open in Word, Pages, LibreOffice, Google Docs and Acrobat
+- [x] "Text kopieren": the letter in the clipboard, "Kopiert" for 2 s
+- [x] The checklist: the bar and the count follow; the fourth tick writes "Alles geprüft. Bereit zum Versand." and bursts once
+- [x] The hero's signature draws on load, the badges pop in, the sheet floats
+- [x] "Kündigung erstellen ↓" lands on the generator below the sticky header; "Demo buchen →", the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field; "Heidi kündigt für Sie →" opens `/messdienstwechsel`
+- [x] Nothing leaves the page while the form is filled and the files are made
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the downloads, the clipboard, the sticky preview)
 - [ ] Keyboard-only through the page (the fields, the switch with the arrow keys, the clauses, the three buttons, the checklist, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Messdienst kündigen. In zwei Minuten."; the fieldsets by their legends, the switch as a radio group, the clauses as checkboxes named by their title, the preview as a document, the status announced, the checklist cards as toggle buttons, the hero's letter skipped (`aria-hidden`)
-- [ ] Reduced motion: nothing floats, draws, pops or bursts
-- [ ] JS disabled: every section readable, the preview with its placeholders, the download and copy buttons hidden, the signup form posts
-- [ ] A signup reaches `leads` with `source = "muster-kuendigung"` and the sink with `page: "/muster-kuendigung"`
+- [x] Reduced motion: nothing floats, draws, pops or bursts
+- [x] JS disabled: every section readable, the preview with its placeholders, the download and copy buttons hidden, the signup form posts
+- [x] A signup reaches `leads` with `source = "muster-kuendigung"` and the sink with `page: "/muster-kuendigung"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

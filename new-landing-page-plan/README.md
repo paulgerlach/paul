@@ -77,6 +77,16 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 | `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (`TrustSeals`) |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`4068dd3a`), the route, content, the form's schema and action, the pure `tracking.ts`, the photos, the template's additions and the footer link (`8f478aec`), the sections with their interactions and the form (`d654af2f`), and `e2e/installationspartner.e2e.ts` (17 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width, the five tiles' screenshots at 1440, 980 and 375 px match the design's, and the hero and the form match by eye (the form also with its marks after an empty submit). (The trust block measured 3–5 px short now and then on this page and on `/weg-verwaltung` alike, and matched on a rerun: a timing effect of the measurement, not a difference.) No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 741 unit tests, 475 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **Phases 2 and 3 are one commit:** the loops, the form's states and the meter photo are part of their sections.
+- **`components/PhoneFrame.svelte`:** the white phone and its status bar, shared by the two phone tiles (the design repeats the frame's CSS for `.ipx` and `.ipt`).
+- **The form's browser defaults:** Tailwind's preflight zeroes the legend's padding, the checkbox's margins and sets `small` to 80 %; the form sets the browser's values back (`padding: 0 2px`, `3px 3px 3px 4px`, `smaller`), so the consent wraps where the design's does. As in the design, "(optional)" is a row of its own under "Nachricht" (the label is a grid).
+- **Invalid fields:** the red border beats the focus colour (the design's `!important`); the consent box, whose border the browser doesn't draw, gets a red outline so its mark is visible. Superforms focuses the first invalid field after a submit (the design focuses nothing).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

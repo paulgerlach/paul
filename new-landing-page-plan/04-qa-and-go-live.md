@@ -4,28 +4,28 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/installationspartner`: the page with the landing header and footer; the footer's "Installationspartner" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
-- [ ] No horizontal overflow from 320 to 1640 px, also with the form's errors and the success line shown
-- [ ] Row 2's phone: the photo settles, the facts fade up, the cursor taps "Wohnungen ansehen", the flat list slides in; again every 10.5 s while in view
-- [ ] Row 4's phone: the marker moves from WE 05 to WE 08, the count pops (3, 2, 1, none), the push comes and goes, "Gleich klingelt es" with "Bei Ihnen"; again every 12.5 s while in view
-- [ ] Row 5: on "Heidi-Tool" the meter photo opens with the flash and the frame, then the tick line
-- [ ] The template's loops as on `/weg-verwaltung` (the hero's list, the statement, the doc, the grid, the rotator, the figures)
-- [ ] The form: an empty submit marks every required field and shows "Bitte füllen Sie die markierten Felder aus."; a valid one shows "Danke, <Name>! Wir melden uns bei Ihnen." and empties the form; a failed send shows the phone number and keeps the values
-- [ ] Every "Partner werden" lands on the form; "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "So gehen wir vor" leads to `/vorgehen`; the trust block's "Demo buchen", the floating CTA and the nav CTA to `/messdienstwechsel`
+- [x] `bun run dev` → `http://localhost:5173/installationspartner`: the page with the landing header and footer; the footer's "Installationspartner" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
+- [x] No horizontal overflow from 320 to 1640 px, also with the form's errors and the success line shown
+- [x] Row 2's phone: the photo settles, the facts fade up, the cursor taps "Wohnungen ansehen", the flat list slides in; again every 10.5 s while in view
+- [x] Row 4's phone: the marker moves from WE 05 to WE 08, the count pops (3, 2, 1, none), the push comes and goes, "Gleich klingelt es" with "Bei Ihnen"; again every 12.5 s while in view
+- [x] Row 5: on "Heidi-Tool" the meter photo opens with the flash and the frame, then the tick line
+- [x] The template's loops as on `/weg-verwaltung` (the hero's list, the statement, the doc, the grid, the rotator, the figures)
+- [x] The form: an empty submit marks every required field and shows "Bitte füllen Sie die markierten Felder aus."; a valid one shows "Danke, <Name>! Wir melden uns bei Ihnen." and empties the form; a failed send shows the phone number and keeps the values
+- [x] Every "Partner werden" lands on the form; "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "So gehen wir vor" leads to `/vorgehen`; the trust block's "Demo buchen", the floating CTA and the nav CTA to `/messdienstwechsel`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the fields' keyboards, the select, the chips)
 - [ ] Keyboard-only through the page (the CTAs, every form field, the chips and radios, the consent, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Installationspartner von Heidi Systems"; the app window as its list; the tiles skipped; the form's fields by their labels, the fieldsets by their legends, the error and success lines announced
-- [ ] Reduced motion: nothing loops, slides, flashes or counts; every block in its end state
-- [ ] JS disabled: every section readable, the form posts and shows its errors and the success line
-- [ ] An inquiry reaches the sink as `partnerinquiry` with every field and `page: "/installationspartner"`, without `_t` and `website`
+- [x] Reduced motion: nothing loops, slides, flashes or counts; every block in its end state
+- [x] JS disabled: every section readable, the form posts and shows its errors and the success line
+- [x] An inquiry reaches the sink as `partnerinquiry` with every field and `page: "/installationspartner"`, without `_t` and `website`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2), `tracking.test.ts` (01 §1.4), `$lib/forms/partnerInquiry.test.ts` and `$lib/server/partnerInquiry.test.ts` (01 §1.3).
-- **Playwright `e2e/installationspartner.e2e.ts`**, modelled on `e2e/weg-verwaltung.e2e.ts` and `e2e/karriere.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#bewerben`, `#inhalt`, `#faq`, `/vorgehen`, `/messdienstwechsel#start`); the server's end states (the list's statuses, the flat list, the resting tracking step, "keine"); the form (the empty submit's marks and line, a valid inquiry with the sink's payload and the reset, the honeypot, the failed send with the phone link); without JS the form posts (errors, then success); reduced motion: nothing hidden; no console errors.
+- **Playwright `e2e/installationspartner.e2e.ts`** (17 tests), modelled on `e2e/weg-verwaltung.e2e.ts` and `e2e/karriere.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#bewerben`, `#inhalt`, `#faq`, `/vorgehen`, `/messdienstwechsel#start`); the server's end states (the list's statuses, the flat list, the resting tracking step, "keine"); the form (the empty submit's marks and line, a valid inquiry with the sink's payload and the reset, the honeypot, the failed send with the phone link); without JS the form posts (errors, then success); reduced motion: nothing hidden; no console errors.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
 

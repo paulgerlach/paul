@@ -81,18 +81,18 @@ describe("wohnungsunternehmen content", () => {
 		}
 	});
 
-	it("has five customer tabs: the built segment pages and this one", () => {
+	it("has five customer tabs, each linking its segment page", () => {
 		expect(tabs.items).toHaveLength(5);
 		const current = tabs.items.filter((t) => "current" in t && t.current);
 		expect(current).toHaveLength(1);
 		expect(current[0].href).toBe(routes.ROUTE_WOHNUNGSUNTERNEHMEN);
-		expect(tabs.items.slice(0, 3).map((t) => t.href)).toEqual([
+		expect(tabs.items.map((t) => t.href)).toEqual([
 			routes.ROUTE_HAUSVERWALTUNG,
 			routes.ROUTE_MIETVERWALTUNG,
 			routes.ROUTE_WEG_VERWALTUNG,
+			routes.ROUTE_WOHNUNGSUNTERNEHMEN,
+			routes.ROUTE_ASSET_MANAGER,
 		]);
-		// No page yet: plain text.
-		expect(tabs.items[4]).not.toHaveProperty("href");
 	});
 
 	it("answers each of the eight problems", () => {

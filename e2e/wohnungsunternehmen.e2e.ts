@@ -92,12 +92,11 @@ test("the footer link, the tabs and the internal links resolve", async ({
 		"/mietverwaltung",
 		"/weg-verwaltung",
 		PATH,
+		"/asset-manager",
 	]);
 	await expect(tabs.locator('a[aria-current="page"]')).toHaveText(
 		"Wohnungsunternehmen",
 	);
-	// No page yet: plain text.
-	await expect(tabs.locator("span.tab")).toHaveText("Asset Manager & Fonds");
 	const links = new Set([
 		...(await hrefs(page.locator('footer a[href^="/"]'))),
 		...(await hrefs(page.locator('main a[href^="/"]'))),

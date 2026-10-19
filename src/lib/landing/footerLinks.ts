@@ -1,5 +1,6 @@
 import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
+	ROUTE_ASSET_MANAGER,
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
@@ -86,7 +87,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "WEG-Verwaltung", href: ROUTE_WEG_VERWALTUNG },
 			{ text: "Wohnungsunternehmen", href: ROUTE_WOHNUNGSUNTERNEHMEN },
 			{ text: "Private Vermieter" },
-			{ text: "Asset Manager & Fonds" },
+			{ text: "Asset Manager & Fonds", href: ROUTE_ASSET_MANAGER },
 		],
 	},
 	{

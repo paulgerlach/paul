@@ -19,6 +19,7 @@ import type {
 	UnitCalc,
 } from "$lib/landing/sections/sg/types";
 import {
+	ROUTE_ASSET_MANAGER,
 	ROUTE_DASHBOARD,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_MIETERPORTAL,
@@ -81,7 +82,7 @@ export const calc = {
 	},
 } satisfies UnitCalc;
 
-/** The customer types. Asset Manager & Fonds has no page yet (plain text). */
+/** The customer types. */
 export const tabs = {
 	label: "Zielgruppen",
 	items: [
@@ -94,7 +95,7 @@ export const tabs = {
 			href: ROUTE_WOHNUNGSUNTERNEHMEN,
 			current: true,
 		},
-		{ icon: "bars", text: "Asset Manager & Fonds" },
+		{ icon: "bars", text: "Asset Manager & Fonds", href: ROUTE_ASSET_MANAGER },
 	],
 } satisfies SegmentTabs;
 

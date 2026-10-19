@@ -9,7 +9,11 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
-import { ROUTE_SICHERHEIT, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
+import {
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+	ROUTE_SICHERHEIT,
+	ROUTE_VERBRAUCHSINFORMATION,
+} from "$lib/routes";
 import type {
 	AppNavItem,
 	BillTile,
@@ -329,7 +333,10 @@ export const audience = {
 		{
 			title: "Sie sind Mieter?",
 			text: "Prüfen Sie Ihre Heizkostenabrechnung kostenlos. Fehlt die monatliche Verbrauchsinformation, steht Ihnen eventuell eine Kürzung zu.",
-			cta: { text: "Zum Mieter-Check" },
+			cta: {
+				text: "Zum Heizkostenabrechnungs-Checker",
+				href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+			},
 			image: "office",
 			objectPosition: "50% 35%",
 		},

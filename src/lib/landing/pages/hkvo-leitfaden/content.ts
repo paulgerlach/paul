@@ -6,7 +6,11 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_MIETERPORTAL, ROUTE_UPGRADE_NOW } from "$lib/routes";
+import {
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+	ROUTE_MIETERPORTAL,
+	ROUTE_UPGRADE_NOW,
+} from "$lib/routes";
 
 export const GUIDE_ID = "leitfaden";
 export const PENALTIES_ID = "kuerzung";
@@ -256,13 +260,12 @@ export const penalties = {
 			text: "Fehlen die monatliche Verbrauchsinformation oder die Pflichtangaben in der Abrechnung, sind ebenfalls 3 % möglich.",
 		},
 	],
-	// FQ6egKN8KrFwGUMZDUaavJ ("Heizkostenabrechnungs-Checker"): no page yet,
-	// so the line isn't rendered (plan README, open question 1).
+	// FQ6egKN8KrFwGUMZDUaavJ: the Heizkostenabrechnungs-Checker.
 	cta: {
 		text: "Prüfen Sie, ob Ihre Mieter kürzen könnten:",
 		link: {
 			text: "Heizkostenabrechnung prüfen",
-			href: undefined as string | undefined,
+			href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN as string | undefined,
 		},
 	},
 };

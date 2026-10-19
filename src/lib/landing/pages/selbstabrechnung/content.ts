@@ -10,6 +10,7 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { SplitHeading } from "$lib/landing/types";
 import { formatNumber } from "$lib/landing/pages/upgrade-now/calculator";
+import { ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN } from "$lib/routes";
 import type { Flat, Range } from "./distribution";
 import type { IconName } from "./icons";
 
@@ -276,11 +277,9 @@ export const dataPath = {
 	] satisfies { icon: IconName; title: string; sub: string }[],
 };
 
-/**
- * The Heizkostenabrechnungs-Checker has no page yet; its CTA row renders once
- * this has a target (plan README, open question 6).
- */
-export const CHECKER_HREF: string | undefined = undefined;
+/** The Heizkostenabrechnungs-Checker: the duties block's CTA row leads there. */
+export const CHECKER_HREF: string | undefined =
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN;
 
 export const duties = {
 	pill: "Worauf Sie achten",

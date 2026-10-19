@@ -19,6 +19,7 @@ import { isExpired } from "$lib/landing/deadline/deadline";
 import {
 	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_KONTAKT,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SICHERHEIT,
@@ -212,7 +213,10 @@ export const topics: Topic[] = [
 				question: "Kann Heidi eine bestehende Abrechnung prüfen?",
 				answer:
 					"Ja. Mit dem kostenlosen Heizkostenabrechnungs-Checker prüfen Sie eine vorhandene Abrechnung.",
-				more: { text: "Abrechnung prüfen" },
+				more: {
+					text: "Abrechnung prüfen",
+					href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+				},
 			},
 		],
 	},
@@ -261,8 +265,11 @@ export const topics: Topic[] = [
 				id: "mieter-abrechnung-pruefen",
 				question: "Wie prüfe ich meine Heizkostenabrechnung?",
 				answer:
-					"Mit dem kostenlosen Mieter-Check laden Sie Ihre Abrechnung hoch und sehen, ob ein Anspruch auf Kürzung bestehen könnte.",
-				more: { text: "Zum Mieter-Check" },
+					"Mit dem kostenlosen Heizkostenabrechnungs-Checker laden Sie Ihre Abrechnung hoch und sehen, ob ein Anspruch auf Kürzung bestehen könnte.",
+				more: {
+					text: "Zum Heizkostenabrechnungs-Checker",
+					href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+				},
 			},
 			{
 				id: "monteure",

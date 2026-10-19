@@ -128,10 +128,10 @@ test("the CTAs lead to the guide, the penalties and the closing form", async ({
 		page.locator("section[aria-labelledby=lf-h1]"),
 	).not.toHaveAttribute("id", "start");
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
-	// The Heizkostenabrechnungs-Checker has no page yet.
+	// The line to the Heizkostenabrechnungs-Checker.
 	await expect(
-		page.locator("main").getByText("Heizkostenabrechnung prüfen"),
-	).toHaveCount(0);
+		page.locator("#kuerzung a", { hasText: "Heizkostenabrechnung prüfen" }),
+	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
 	await expect(page.locator("#kuerzung article")).toHaveCount(3);
 });
 

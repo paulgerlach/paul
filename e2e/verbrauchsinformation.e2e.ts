@@ -138,11 +138,13 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the portal", a
 	await expect(
 		page.locator("#faq a.more", { hasText: "Jetzt noch umrüsten" }),
 	).toHaveAttribute("href", "/upgrade-now");
-	// The Verwalter card leads to /hausverwaltung; no Mieter-Check page yet.
+	// The Verwalter card leads to /hausverwaltung, the Mieter card to the checker.
 	await expect(
 		page.getByRole("link", { name: "Erfahren Sie mehr" }),
 	).toHaveAttribute("href", "/hausverwaltung");
-	await expect(page.getByText("Zum Mieter-Check")).toHaveCount(0);
+	await expect(
+		page.getByRole("link", { name: "Zur Heizkosten-Prüfung" }),
+	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
 });
 
 test.describe("without JavaScript", () => {

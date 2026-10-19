@@ -120,7 +120,9 @@ test("CTAs lead to the closing card's form, the rows and the FAQ", async ({
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
 	).toHaveAttribute("href", "/verbrauchsinformation");
-	await expect(page.getByText("Zum Mieter-Check")).toHaveCount(0);
+	await expect(
+		page.getByRole("link", { name: "Zum Heizkostenabrechnungs-Checker" }),
+	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");

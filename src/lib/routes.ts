@@ -34,5 +34,7 @@ export const ROUTE_PRESSE = "/presse";
 export const ROUTE_MUSTER_KUENDIGUNG = "/muster-kuendigung";
 export const ROUTE_ENERGIEAUSWEIS = "/energieausweis";
 export const ROUTE_PORTFOLIO_CHECKER = "/portfolio-checker";
+export const ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN =
+	"/heizkostenabrechnung-pruefen";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

@@ -67,8 +67,10 @@ describe("/hkvo-leitfaden content", () => {
 		expect(links).toEqual([`#${PENALTIES_ID}`, routes.ROUTE_MIETERPORTAL]);
 		for (const item of faq.items)
 			if (item.more?.href) expect(routeValues).toContain(item.more.href);
-		// The Heizkostenabrechnungs-Checker has no page yet.
-		expect(penalties.cta.link.href).toBeUndefined();
+		// The Heizkostenabrechnungs-Checker.
+		expect(penalties.cta.link.href).toBe(
+			routes.ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+		);
 	});
 
 	it("has no empty or untrimmed text", () => {

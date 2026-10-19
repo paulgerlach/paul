@@ -23,6 +23,7 @@ import type {
 import { deadlineFigure } from "$lib/landing/sections/uv/deadlineFigure";
 import {
 	ROUTE_HAUSVERWALTUNG,
+	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_MIETERPORTAL,
 	ROUTE_UPGRADE_NOW,
 } from "$lib/routes";
@@ -236,8 +237,10 @@ export const audience = {
 		{
 			title: "Sie sind Mieter?",
 			text: "Prüfen Sie Ihre Heizkostenabrechnung kostenlos. Fehlt die monatliche Verbrauchsinformation, steht Ihnen eventuell eine Kürzung zu.",
-			// No Mieter-Check yet (plan README, open question 3).
-			cta: { text: "Zum Mieter-Check" },
+			cta: {
+				text: "Zur Heizkosten-Prüfung",
+				href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+			},
 			image: "mieter",
 			objectPosition: "50% 30%",
 		},

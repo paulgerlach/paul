@@ -61,6 +61,15 @@ The design has no in-page anchor links (its hero carries `#start` and the calcul
 
 Links to this page: the repo's history names the design's id `S3p5jbNkohWnWeZpfR75j9` for the footer's "Einsparrechner" and the second audience card's "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung` (their plans `1e372598`, `9fc4130e`). All of them get the link with the route (01 §1.1). No other content module names the Einsparrechner.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`f52214de`), the route, content, the pure savings math and the links from the footer, `/hausverwaltung` and `/mietverwaltung` (`c9da8552`), the sections with the calculator (`d48bfc3a`), and `e2e/einsparrechner.e2e.ts` (12 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design): the hero with the calculator (both cards), the formula cards and the FAQ have the design's height to the pixel at every width and match it by eye; the only difference is the planned one: the closing card holds the signup form (its height 0 / 0 / +94 / −14 / +42 px at 1440 / 1100 / 980 / 700 / 375 px). The count-up runs after hydration (sampled: 7.020 € → 1.895 € → … → 7.020 € within 1.4 s). No overflow at 320 and 375 px (also with every slider at its maximum and both toggles on, "3.060.000 €"); no console errors or hydration warnings. Full suites: check, lint, 594 unit tests, 371 e2e tests passed. One earlier full e2e run had one unrelated failure under load (`karriere.e2e.ts`'s "areas › moves with the arrow keys"), green alone and in the next full run; unchanged. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the calculator's counting, bars and confetti are part of its section.
+- **The result card's button is inline, not full width:** the design's `.bk-next.inv` (two classes) beats `.es-go`'s `width:100%` and `margin-top:22px`, so the design draws "Angebot für Ihren Bestand →" at its own width, right under the figure tiles. Built as drawn.
+- **The range inputs stay inline-block** (the browser default, as the design): in the line box they make each slider row 43 px high, the design's spacing.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

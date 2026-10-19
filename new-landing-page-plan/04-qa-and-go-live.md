@@ -4,21 +4,21 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/einsparrechner`: the page with the landing header and footer; the footer's "Einsparrechner" lands here from every landing page, so does "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button)
-- [ ] No horizontal overflow from 320 to 1640 px (also with every slider at its maximum and both toggles on)
-- [ ] The calculator: each slider moves its value and fill and the result; each toggle colours its card and adds 3 % of the heating costs to the risk bar and the total; the figures count (450 ms), the bars move; the first time both toggles are on, confetti from the total; "Angebot für Ihren Bestand →" scrolls to the closing card and focuses its e-mail field
-- [ ] The first view: the figures count from 0 over 1.4 s and the bars grow once the calculator shows
+- [x] `bun run dev` → `http://localhost:5173/einsparrechner`: the page with the landing header and footer; the footer's "Einsparrechner" lands here from every landing page, so does "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button)
+- [x] No horizontal overflow from 320 to 1640 px (also with every slider at its maximum and both toggles on)
+- [x] The calculator: each slider moves its value and fill and the result; each toggle colours its card and adds 3 % of the heating costs to the risk bar and the total; the figures count (450 ms), the bars move; the first time both toggles are on, confetti from the total; "Angebot für Ihren Bestand →" scrolls to the closing card and focuses its e-mail field
+- [x] The first view: the figures count from 0 over 1.4 s and the bars grow once the calculator shows
 - [ ] The result card sticky above 900 px while the input card scrolls, static below
 - [ ] FAQ 4's "Kündigungsfrist berechnen →" → `/fristenrechner`; the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the range inputs)
 - [ ] Keyboard-only through the page (the seven sliders with the arrow keys, the two toggles, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Was der Wechsel Ihrem Bestand bringt."; each slider named by its label with its value and unit; the toggles as pressed buttons; the result announced once per change
-- [ ] Reduced motion: nothing moves or counts, no confetti
-- [ ] JS disabled: the default example's result, every section readable, the signup form posts
-- [ ] A signup reaches `leads` with `source = "einsparrechner"` and the sink with `page: "/einsparrechner"`
+- [x] Reduced motion: nothing moves or counts, no confetti
+- [x] JS disabled: the default example's result, every section readable, the signup form posts
+- [x] A signup reaches `leads` with `source = "einsparrechner"` and the sink with `page: "/einsparrechner"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

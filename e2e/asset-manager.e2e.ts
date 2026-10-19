@@ -127,7 +127,9 @@ test("every CTA leads to the closing card's form; pending links are hidden", asy
 		page.locator("main a", { hasText: "Unzufrieden mit Ihrem Messdienst?" }),
 	).toHaveAttribute("href", "#wechsel");
 	await expect(page.locator("section#wechsel")).toHaveCount(1);
-	await expect(page.getByText("Portfolio kostenlos prüfen")).toHaveCount(0);
+	await expect(
+		page.locator("main a", { hasText: "Portfolio kostenlos prüfen" }),
+	).toHaveAttribute("href", "/portfolio-checker");
 	await expect(
 		page.locator("main a", { hasText: "Muster-Kündigung herunterladen" }),
 	).toHaveAttribute("href", "/muster-kuendigung");

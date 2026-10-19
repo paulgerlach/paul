@@ -6,7 +6,7 @@ import {
 } from "$lib/landing/data/testimonials";
 import * as routes from "$lib/routes";
 import * as content from "./content";
-import { RECOMMENDATION_KINDS } from "./recommendations";
+import { NEXT_STEP_KINDS as RECOMMENDATION_KINDS } from "$lib/landing/data/nextSteps";
 
 const {
 	billingRun,

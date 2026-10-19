@@ -103,7 +103,7 @@ describe("wohnungsunternehmen content", () => {
 	});
 
 	it("hides the links whose pages don't exist yet", () => {
-		expect(large.secondary).not.toHaveProperty("href");
+		expect(large.secondary?.href).toBe(routes.ROUTE_PORTFOLIO_CHECKER);
 		// Only the Muster-Kündigung has a page so far.
 		expect(pain.links.map((link) => link.href)).toEqual([
 			routes.ROUTE_MUSTER_KUENDIGUNG,

@@ -30,6 +30,7 @@ import {
 	ROUTE_WEG_VERWALTUNG,
 	ROUTE_WOHNUNGSUNTERNEHMEN,
 	ROUTE_MUSTER_KUENDIGUNG,
+	ROUTE_PORTFOLIO_CHECKER,
 } from "$lib/routes";
 
 const NB = " ";
@@ -116,8 +117,11 @@ export const large = {
 	},
 	text: "Je größer der Bestand, desto mehr zählt ein Wechsel mit Plan. Wir analysieren Ihre Verträge, planen den Rollout Objekt für Objekt und machen Ihnen ein Angebot, das zu Ihrem Bestand passt.",
 	cta: { text: "Angebot anfragen", href: DEMO_HREF },
-	// The Portfolio-Checker has no page yet (plan open question 2).
-	secondary: { text: "Portfolio kostenlos prüfen" },
+	// UFviBtC2mkneFNeWnfHAWp (the Portfolio-Checker)
+	secondary: {
+		text: "Portfolio kostenlos prüfen",
+		href: ROUTE_PORTFOLIO_CHECKER,
+	},
 } satisfies LargeStock;
 
 export const pain = {

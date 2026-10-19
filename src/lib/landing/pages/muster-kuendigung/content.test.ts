@@ -81,8 +81,7 @@ describe("/muster-kuendigung content", () => {
 					href === `#${GENERATOR_ID}`,
 				href,
 			).toBe(true);
-		// The Portfolio-Checker has no page yet (plan README, open question 2).
-		expect(takeover.check.href).toBeUndefined();
+		expect(takeover.check.href).toBe(routes.ROUTE_PORTFOLIO_CHECKER);
 	});
 
 	it("has no empty or doubled spaces", () => {

@@ -26,6 +26,7 @@ import {
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_MUSTER_KUENDIGUNG,
+	ROUTE_PORTFOLIO_CHECKER,
 } from "$lib/routes";
 import type { IconName } from "./icons";
 
@@ -100,7 +101,7 @@ export const topics: Topic[] = [
 				question: "Woher weiß ich, wann meine Verträge enden?",
 				answer:
 					"Der kostenlose Portfolio-Checker prüft die Vertragsenden in Ihrem ganzen Bestand und zeigt, wann Sie handeln sollten.",
-				more: { text: "Portfolio-Checker" },
+				more: { text: "Portfolio-Checker", href: ROUTE_PORTFOLIO_CHECKER },
 			},
 			{
 				id: "ab-wie-vielen-einheiten",

@@ -129,8 +129,9 @@ test("the CTAs lead to the generator, the closing form and the switch page", asy
 		page.locator("section.final#start input[name=email]"),
 	).toHaveCount(1);
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
-	// The Portfolio-Checker has no page yet.
-	await expect(page.getByText("Vertragsenden prüfen")).toHaveCount(0);
+	await expect(
+		page.locator("main a", { hasText: "Vertragsenden prüfen" }),
+	).toHaveAttribute("href", "/portfolio-checker");
 	const demo = page.locator("section[aria-labelledby=mk-hu-h] a", {
 		hasText: /^Demo buchen/,
 	});

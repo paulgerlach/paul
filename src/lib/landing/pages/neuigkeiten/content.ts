@@ -17,6 +17,7 @@ import {
 	ROUTE_MIETERPORTAL,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
+	ROUTE_PORTFOLIO_CHECKER,
 } from "$lib/routes";
 
 /** The filter's topics (the design's `data-t`). */
@@ -119,7 +120,8 @@ const stories: Story[] = [
 		topic: "w",
 		title: "Portfolio-Checker: Vertragsenden im ganzen Bestand prüfen",
 		photo: "portfolioChecker",
-		// UFviBtC2mkneFNeWnfHAWp ("Bestand prüfen"): no page yet.
+		// UFviBtC2mkneFNeWnfHAWp
+		more: { text: "Bestand prüfen", href: ROUTE_PORTFOLIO_CHECKER },
 	},
 	{
 		topic: "u",

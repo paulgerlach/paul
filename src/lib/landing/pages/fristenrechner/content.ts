@@ -5,7 +5,11 @@
  */
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_MESSDIENSTWECHSEL, ROUTE_MUSTER_KUENDIGUNG } from "$lib/routes";
+import {
+	ROUTE_MESSDIENSTWECHSEL,
+	ROUTE_MUSTER_KUENDIGUNG,
+	ROUTE_PORTFOLIO_CHECKER,
+} from "$lib/routes";
 
 const NB = "\u00a0";
 
@@ -178,8 +182,8 @@ export const portfolio: {
 	},
 	text: "Statt jede Liegenschaft einzeln: Der kostenlose Portfolio-Checker prüft die Vertragsenden in Ihrem ganzen Bestand und zeigt, wo Sie kündigen, übernehmen oder abrechnen sollten.",
 	ctas: [
-		// UFviBtC2mkneFNeWnfHAWp: no page yet (plan README, open question 1).
-		{ text: "Zum Portfolio-Checker" },
+		// UFviBtC2mkneFNeWnfHAWp
+		{ text: "Zum Portfolio-Checker", href: ROUTE_PORTFOLIO_CHECKER },
 		// 4WYU5hjVsWSLrxuo7wsdm6
 		{ text: "Muster-Kündigung", href: ROUTE_MUSTER_KUENDIGUNG },
 	],

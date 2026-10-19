@@ -8,7 +8,7 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
+import { ROUTE_MESSDIENSTWECHSEL, ROUTE_PORTFOLIO_CHECKER } from "$lib/routes";
 
 /** The generator's section, the target of "Kündigung erstellen ↓". */
 export const GENERATOR_ID = "vorlage";
@@ -278,9 +278,11 @@ export const takeover = {
 	text: "Eine Unterschrift auf der Vollmacht genügt. Heidi kündigt beim bisherigen Messdienst, plant die Montage und informiert die Mieter. Bestehende Zähler werten wir sofort aus, auch wenn Ihr Vertrag noch läuft.",
 	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): the closing form here.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
-	// UFviBtC2mkneFNeWnfHAWp (the Portfolio-Checker): no page yet, so hidden
-	// (plan README, open question 2).
-	check: { text: "Vertragsenden prüfen" } as { text: string; href?: string },
+	// UFviBtC2mkneFNeWnfHAWp (the Portfolio-Checker)
+	check: { text: "Vertragsenden prüfen", href: ROUTE_PORTFOLIO_CHECKER } as {
+		text: string;
+		href?: string;
+	},
 	steps: [
 		{
 			title: "Vollmacht unterschreiben",

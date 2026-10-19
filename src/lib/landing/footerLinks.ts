@@ -28,6 +28,7 @@ import {
 	ROUTE_VORGEHEN,
 	ROUTE_WEG_VERWALTUNG,
 	ROUTE_WOHNUNGSUNTERNEHMEN,
+	ROUTE_PORTFOLIO_CHECKER,
 } from "$lib/routes";
 import { DEMO_HREF } from "./cta";
 
@@ -109,7 +110,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Presse", href: ROUTE_PRESSE },
 			{ text: "Muster-Kündigung", href: ROUTE_MUSTER_KUENDIGUNG },
 			{ text: "Energieausweis", href: ROUTE_ENERGIEAUSWEIS },
-			{ text: "Portfolio-Checker" },
+			{ text: "Portfolio-Checker", href: ROUTE_PORTFOLIO_CHECKER },
 			{ text: "Heizkostenabrechnungs-Checker" },
 			{ text: "Messdienstanbieter-Vergleich" },
 		],

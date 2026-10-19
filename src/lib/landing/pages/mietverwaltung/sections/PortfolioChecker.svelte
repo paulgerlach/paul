@@ -77,7 +77,7 @@
 			<span class="s">{row.status}</span>
 			<span class="e">
 				<i class="sp"></i>
-				<em class={["b", row.tone]}>{row.action}</em>
+				<em class="b {row.tone}-step">{row.action}</em>
 			</span>
 		</div>
 	{/each}
@@ -251,15 +251,15 @@
 			opacity 0.35s,
 			transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
 	}
-	.take {
+	.take-step {
 		background: var(--ink);
 		color: #fff;
 	}
-	.cancel {
+	.cancel-step {
 		background: #fbefdf;
 		color: #8a5410;
 	}
-	.bill {
+	.bill-step {
 		background: #e6f5e7;
 		color: #2f7a3c;
 	}

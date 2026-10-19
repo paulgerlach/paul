@@ -4,24 +4,24 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/mietverwaltung`: the page with the landing header and footer; the footer's "Mietverwaltung" lands here from every landing page
-- [ ] `/mieterportal`, `/verbrauchsinformation` and `/hausverwaltung` unchanged after the template commit (02 §2.1): production-build screenshots at 1440 and 375 px with reduced motion, their e2e specs
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form, no buttons on the audience cards, the hero list finished on load)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] Hero list: finished on load; first pass after 9 s in view
-- [ ] Tiles: the grid ticks Objekt 1 → 12 with the note, the doc's rows come in, the bill switches "Eigentümer A" → "Eigentümer B" and "2" → "1", the phone's bars grow; each only in view
-- [ ] Portfolio-Checker: finished on load; in view it resets and checks the four buildings one by one, the count and bar follow, the status changes with the last; stops off-screen
+- [x] `bun run dev` → `http://localhost:5173/mietverwaltung`: the page with the landing header and footer; the footer's "Mietverwaltung" lands here from every landing page
+- [x] `/mieterportal`, `/verbrauchsinformation` and `/hausverwaltung` unchanged after the template commit (02 §2.1): production-build screenshots at 1440 and 375 px with reduced motion, their e2e specs (2026-10-19: pixel-identical; the later FAQ fix `5ef33134` changes only the questions' spacing, README Implementation notes)
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form, no buttons on the audience cards, the hero list finished on load) Section and row heights compared at all five widths (2026-10-19, production build): equal except the closing card and the audience cards ≤ 980 px; the hero list, the four tiles and the checker side by side at 1440 and 375 px; not yet compared by eye at 1100, 980 and 700 px
+- [x] No horizontal overflow from 320 to 1640 px (1440, 1100, 980, 700, 375 measured; 375 and 320 in e2e; 1640 not separately)
+- [x] Hero list: finished on load; first pass after 9 s in view (e2e with the clock)
+- [x] Tiles: the grid ticks Objekt 1 → 12 with the note, the doc's rows come in, the bill switches "Eigentümer A" → "Eigentümer B" and "2" → "1", the phone's bars grow; each only in view
+- [x] Portfolio-Checker: finished on load; in view it resets and checks the four buildings one by one, the count and bar follow, the status changes with the last; stops off-screen
 - [ ] Statement, rotator, count-up and the picture's zoom as on the built pages
 - [ ] Every "Demo buchen" scrolls to the closing card and focuses its e-mail field; "Mehr erfahren" → rows, "Häufige Fragen" → FAQ; "Mieterportal" and "Mehr zur uVI" work
-- [ ] The deadline figure shows its expired text with `now` after 31.12.2026 (unit test)
+- [x] The deadline figure shows its expired text with `now` after 31.12.2026 (unit test)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page; focus ring visible on dark
 - [ ] Screen reader: one H1 "Messdienst für Mietverwaltungen mit Heidi"; the mocks silent except their lists; no announcements from the loops
-- [ ] Reduced motion: every block in its end state
-- [ ] JS disabled: every section readable; the FAQ opens; the signup form posts
-- [ ] A signup reaches `leads` with `source = "mietverwaltung"` and the sink with `page: "/mietverwaltung"`
+- [x] Reduced motion: every block in its end state
+- [x] JS disabled: every section readable; the FAQ opens; the signup form posts
+- [x] A signup reaches `leads` with `source = "mietverwaltung"` and the sink with `page: "/mietverwaltung"` (e2e against a throwaway Postgres on :54322)
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors (dev at 1440, 1100, 980, 700, 375 and 320 px, also on the other three uv pages; production preview at the five design widths)
 
 ## 4.2 Tests
 
@@ -35,6 +35,8 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 2. `10-qa-and-cutover.md`: `/mietverwaltung` excluded from the Next-baseline visual loop, listed with the new pages in the SEO diff and in the post-deploy signup check; `/funktionen`'s gate is §4.11 now (done in the planning commit).
 3. `CLAUDE.md`: a `/mietverwaltung` paragraph (planned now, rewritten once built), Layout entries; `/hausverwaltung`'s plan in git history and its slug confirmed; the gate numbers of the other pages moved up by one (done in the planning commit).
 4. README "Implementation notes", with notes for the WEG-Verwaltung sibling.
+
+All four done (2026-10-19).
 
 ## 4.4 Go-live gate: `/mietverwaltung`
 

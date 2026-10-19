@@ -1,8 +1,9 @@
 <!--
-  A row's tile: "without" against "with Heidi". Every 6.4 s in view it starts
-  on "without" (its `cut` rows, the sum's first value), then the thumb slides
-  over, those rows fold away, the `ok` rows appear and the sum turns to its
-  second value: swapped as text, or counted in € (03 §3.3).
+  A row's tile: "without" against "with Heidi" (or two sides of one kind,
+  such as two owners). Every 6.4 s in view it starts on "without" (its `cut`
+  and `a` rows, the sum's first value), then the thumb slides over, those rows
+  fold away, the `ok` and `b` rows appear and the sum turns to its second
+  value: swapped as text, or counted in €.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
@@ -64,7 +65,12 @@
 		<span class="a">{without}</span><span class="b">{withHeidi}</span>
 	</div>
 	{#each rows as row (row.label)}
-		<div class={["bl", row.kind]}>
+		<div
+			class={[
+				"bl",
+				row.kind === "a" || row.kind === "b" ? `x${row.kind}` : row.kind,
+			]}
+		>
 			<span>{row.label}</span>{#if row.value}<b>{row.value}</b>{:else}<b
 					class="tk"><Tick /></b
 				>{/if}
@@ -168,8 +174,16 @@
 		width: 11px;
 		height: 11px;
 	}
+	/* One side's rows (kinds a / b): green text values. */
+	.xa b,
+	.xb b {
+		color: #2f7a3c;
+		font-size: 13px;
+	}
 	.bill:not(.good) .ok,
-	.good .cut {
+	.good .cut,
+	.bill:not(.good) .xb,
+	.good .xa {
 		opacity: 0;
 		max-height: 0;
 		padding-block: 0;

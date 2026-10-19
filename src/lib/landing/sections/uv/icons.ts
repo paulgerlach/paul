@@ -6,6 +6,8 @@ export const ICON_NAMES = [
 	"bell",
 	"trend",
 	"building",
+	"user",
+	"key",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

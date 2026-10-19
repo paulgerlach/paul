@@ -1,9 +1,10 @@
 /**
  * Content shapes of the dark `uv` template (/mieterportal, /verbrauchsinformation,
- * /hausverwaltung).
+ * /hausverwaltung, /mietverwaltung).
  * Each page fills them in its `content.ts`; the components hold markup and
  * behaviour only.
  */
+import type { Snippet } from "svelte";
 import type { Picture } from "vite-imagetools";
 import type { IconName } from "./icons";
 
@@ -87,10 +88,12 @@ export type PhoneTile = {
 
 /**
  * `base` shows on both sides, `cut` only "without", `ok` only "with" (an `ok`
- * row without `value` shows a tick).
+ * row without `value` shows a tick). `a` / `b` also show only on one side
+ * ("without" / "with"), with a green value: two sides of the same kind, such
+ * as two owners' objects (the design's .xa / .xb).
  */
 export type BillRow = {
-	kind: "base" | "cut" | "ok";
+	kind: "base" | "cut" | "ok" | "a" | "b";
 	label: string;
 	value?: string;
 };
@@ -120,6 +123,9 @@ export type AudienceCard = {
 	text: string;
 	/** Without `href` the button isn't shown. */
 	cta: { text: string; href?: string };
-	image: Picture;
+	/** The card's photo; without it, `media` takes its place. */
+	image?: Picture;
 	objectPosition?: string;
+	/** A mock in place of the photo (no frame, centred: the design's .pcm-fig). */
+	media?: Snippet;
 };

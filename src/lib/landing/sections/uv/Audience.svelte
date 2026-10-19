@@ -1,6 +1,7 @@
 <!--
   "Sie sind Verwalter?" / "Sie sind Mieter?" (.uv-who): dark cards with a
-  square photo. A card's button shows only when its target exists.
+  square photo, or a mock in its place (`media`). A card's button shows only
+  when its target exists.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
@@ -35,16 +36,20 @@
 						>
 					{/if}
 				</div>
-				<figure>
-					<Image
-						src={card.image}
-						alt=""
-						sizes="(max-width: 980px) 100vw, 440px"
-						style={card.objectPosition
-							? `object-position: ${card.objectPosition}`
-							: undefined}
-					/>
-				</figure>
+				{#if card.image}
+					<figure class="photo">
+						<Image
+							src={card.image}
+							alt=""
+							sizes="(max-width: 980px) 100vw, 440px"
+							style={card.objectPosition
+								? `object-position: ${card.objectPosition}`
+								: undefined}
+						/>
+					</figure>
+				{:else}
+					<figure class="media">{@render card.media?.()}</figure>
+				{/if}
 			</article>
 		{/each}
 	</div>
@@ -80,14 +85,24 @@
 	}
 	figure {
 		margin: 0;
+	}
+	.photo {
 		border-radius: 20px;
 		overflow: hidden;
 		aspect-ratio: 1/1;
 	}
-	figure :global(img) {
+	.media {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.photo :global(img) {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+	}
+	/* The design's .uv-card img: also a mock's images zoom on hover. */
+	figure :global(img) {
 		display: block;
 		transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
@@ -98,7 +113,7 @@
 		.card {
 			grid-template-columns: 1fr;
 		}
-		figure {
+		.photo {
 			aspect-ratio: 16/10;
 		}
 	}

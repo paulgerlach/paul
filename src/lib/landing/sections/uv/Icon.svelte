@@ -26,5 +26,13 @@
 		<path d="M3 14l4.5-4.5 3 3L17 6M12.5 6H17v4.5" />
 	{:else if name === "building"}
 		<path d="M4 17V4h8v13M12 8h4v9M2 17h16M7 7h2M7 10h2M7 13h2" />
+	{:else if name === "user"}
+		<circle cx="10" cy="7" r="3.2" /><path
+			d="M4 17c.8-3.2 3.1-4.8 6-4.8s5.2 1.6 6 4.8"
+		/>
+	{:else if name === "key"}
+		<circle cx="7" cy="13" r="3.5" /><path
+			d="M9.5 10.5l6-6M13 7l2 2M15.5 4.5l1.5 1.5"
+		/>
 	{/if}
 </StrokeIcon>

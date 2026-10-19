@@ -4,62 +4,38 @@
 
 In one commit:
 
-- `ROUTE_ASSET_MANAGER = "/asset-manager"` in `$lib/routes.ts`, after `ROUTE_WOHNUNGSUNTERNEHMEN`.
-- The landing footer's "Asset Manager & Fonds" (`$lib/landing/footerLinks.ts`, group "Kunden") gets `href: ROUTE_ASSET_MANAGER`. "Private Vermieter" stays plain text.
-- `/wohnungsunternehmen`'s tab "Asset Manager & Fonds" (`tabs` in its `content.ts`) gets `href: ROUTE_ASSET_MANAGER`; its `content.test.ts` and e2e tab test follow.
-- `src/routes/(landing-page)/asset-manager/+page.server.ts`, a copy of `wohnungsunternehmen/+page.server.ts`:
+- `ROUTE_PRIVATE_VERMIETER = "/private-vermieter"` in `$lib/routes.ts`, after `ROUTE_ASSET_MANAGER`.
+- The landing footer's "Private Vermieter" (`$lib/landing/footerLinks.ts`, group "Kunden") gets `href: ROUTE_PRIVATE_VERMIETER`. Every "Kunden" entry then has a page.
+- `src/routes/(landing-page)/private-vermieter/+page.server.ts`, as `/asset-manager`'s:
 
 ```ts
-export const load: PageServerLoad = async () => ({
-	seo: {
-		// Drafts for the content owner (plan §4.4).
-		title: "Verbrauchsdaten für Asset Manager und Fonds: das ganze Portfolio auf einen Blick | Heidi Systems",
-		description:
-			"Heidi liefert Asset Managern und Fonds eine einheitliche Datenbasis über alle Objekte und Verwaltungen: fernablesbare Zähler, monatliche Verbräuche und Abrechnungen nach HKVO in einem Dashboard.",
-		ogTitle: "Verbräuche im ganzen Portfolio. Auf einen Blick.",
-		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
-		keepCanonical: true,
-	},
-	landing: DEFAULT_CHROME,
-	faq: faq.items,
-	finalForm: await emptySwitchForm("final"),
-});
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, { source: "asset-manager", page: ROUTE_ASSET_MANAGER }),
-};
+seo: {
+	// Drafts for the content owner (plan §4.4).
+	title: "Messdienst für private Vermieter: Zähler, Ablesung und Heizkostenabrechnung ab 2 Wohnungen | Heidi Systems",
+	description:
+		"Heidi übernimmt für private Vermieter Funkzähler, Ablesung und die Heizkostenabrechnung nach HKVO, schon ab zwei Wohneinheiten, mit festem Ansprechpartner und ohne Ablesetermine.",
+	ogTitle: "Ihre Wohnungen. Unser Messdienst. Ihre Ruhe.",
+	noindex: true,
+	keepCanonical: true,
+},
 ```
 
-  No `cache-control` (the layout sets it). `leads.source` is free text: no migration.
-- **Other links to the page:** `/wohnungsunternehmen`'s tab (above). Searched every saved design for `AEn4zzY1ZEwShZW7cUf5fF`: otherwise only the designs' nav and footer.
-- `+page.svelte`: `<main id="content" class="am" {@attach reveal()}>` with `SgMain` around every section, `FloatingCta` after `</main>`.
+  and `handleSwitchSignup(event, { source: "private-vermieter", page: ROUTE_PRIVATE_VERMIETER })`. No `cache-control`.
+- **Other links to the page:** none (01 README, Links).
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/asset-manager/content.ts`, in the `sg` shapes, word for word from the design, with a non-breaking space between a figure and its unit (as on the other pages). The texts that differ from `/wohnungsunternehmen` (02 §2.1):
+`$lib/landing/pages/private-vermieter/content.ts`, word for word from the design, a non-breaking space between a figure and its unit:
 
-- `hero`: pill "Für Asset Manager & Fonds" (icon `bars`), H1 "Verbräuche im ganzen Portfolio." + accent "Auf einen Blick.", lead "Für Asset Manager und Fonds liefert Heidi eine einheitliche Datenbasis über alle Objekte und Verwaltungen hinweg: fernablesbare Zähler, monatliche Verbräuche und Abrechnungen nach HKVO."
-- `calc.start`: `12000`.
-- `tabs`: Wohnungsunternehmen → `ROUTE_WOHNUNGSUNTERNEHMEN`, Asset Manager & Fonds current → `ROUTE_ASSET_MANAGER`.
-- `benefits`: pill "Für Asset Manager & Fonds" (`sparkle`); "Ein Dashboard" (`bars`, dark) – "Verbräuche aller Liegenschaften an einem Ort, statt verteilt auf Portale und PDFs.", "Monatliche Daten" (`trend`) – "Verbräuche per Funk statt einmal im Jahr. Auffälligkeiten erkennen Sie früh.", "Pflichten im Griff" (`alert`) – "Fernablesbarkeit ab 2027, monatliche Verbrauchsinfo und CO₂-Kostenaufteilung, für alle Objekte gleich.", "Daten, wo Sie sie brauchen" (`erp`) – "Anbindung an bestehende Systeme statt Exporte per E-Mail."
-- `quotes`: keys `gerhard`, `werne`.
-- `faq` 1–2: "Welche Daten sehen wir?" – "Die Verbräuche aller angebundenen Liegenschaften, monatlich per Funk, und die fertigen Heizkostenabrechnungen. Auf Wunsch direkt in Ihrem System."; "Wie schnell sind alle Objekte fernablesbar?" – "Das hängt von Bestand und Vertragslage ab. Mit dem Portfolio-Check planen wir einen Rollout, der zu Ihren Fristen passt."
+- `hero`: eyebrow "Für private Vermieter", H1 lines "Ihre Wohnungen." / "Unser Messdienst." / accent "Ihre Ruhe.", lead, "Angebot anfragen" → `DEMO_HREF`, "So funktioniert’s" → `#so`.
+- `scene`: label "Funkzähler in Ihrer Wohnung", the two layers' labels, three captions `{ title, text }`, three points `{ label }` ("Wasserzähler: mehr erfahren" …), three tags, the hint "Punkte antippen für Details", the info card's three entries `{ kind, title, text, points[] }`.
+- `stats`: "ab 2" Wohneinheiten, "1" fester Ansprechpartner für Ihre Wohnungen, "0" Ablesetermine in der Wohnung.
+- `flow`: eyebrow, H2, five steps `{ label, text }` (the design's `TX`), and the five panels' example data (Montage at "Musterstraße 5 · 6 Wohnungen" …, the readings, the bars, the Abrechnung, the messages).
+- `duo`: eyebrow, H2, two paragraphs. `benefits`: eyebrow, H2 (two lines), six cards `{ icon, title, text }`. `compare`: eyebrow, H2, the column heads, eight rows `{ label, values: [self, classic, heidi] }` with `yes` / `no` / `depends` and their labels ("Ja", "Nein", "Je nach Anbieter"), the note. `quotes`: eyebrow, H2, keys `werne`, `vitolus`, `gerhard`, the companies. `faq`: eyebrow, H2, six items (answer 6 with its `more` link). `closing`: H2 (two lines), text, submit label, "Häufige Fragen" → `#faq`.
 
-Everything else (calculator texts, logos, 1000+, problems, feature rows, steps, FAQ 3–4, closing) is the same text as `/wohnungsunternehmen`'s.
-
-`content.test.ts`: as `/wohnungsunternehmen`'s (the H1, `href`s, trimmed texts, non-breaking spaces, five tabs with one current, eight problems, four benefits and steps, the tiles' example data, the quotes word for word, four questions), plus: every shared section equals `/wohnungsunternehmen`'s (so a fix to one is noticed on the other).
+`content.test.ts`: the H1; every `href` a route or an anchor on the page; no empty or untrimmed text; non-breaking spaces; three captions, points, tags and info entries; five steps and panels; six benefits; eight comparison rows with Heidi "yes" in each; the quotes word for word from `testimonials.ts`, each company the end of its role; six questions; the "92 %", "14 Tage" and "1 bis 2 Stunden" figures as on the other pages.
 
 ## 1.3 Images
 
-None new.
-
-## 1.4 Hero and the `#start` anchor
-
-As on `/wohnungsunternehmen`: the closing card is `#start`; the hero section has no id.
-
-## 1.5 Link mapping
-
-As `/wohnungsunternehmen`'s (its plan at `4f1f649e`, 01 §1.5), except: `#start` on the current tab → `ROUTE_ASSET_MANAGER`; `2XwVWrEs9cvcDpBtQxzGnt` (tab "Wohnungsunternehmen") → `ROUTE_WOHNUNGSUNTERNEHMEN`.
+Two new files, the design's own bytes: `owner.jpg` (720×710) and `talk.jpg` (800×643) in `src/lib/assets/landing/private-vermieter/`. The rest from the repo (README table).

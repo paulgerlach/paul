@@ -1,24 +1,29 @@
 # Phase 2: The sections
 
-## 2.1 What differs from the Wohnungsunternehmen design
+## 2.1 The page
 
-Diffed against it (every `<style>` / `<script>` block and all 17 media identical by MD5; markup identical apart from):
+Page-only components in `$lib/landing/pages/private-vermieter/`. `PvMain` holds the dark page (the design's `.pv`): background ink, the tokens `--card`, `--card2`, `--mute`, `--line`, `--top`, the shared `.pv-h2`, `.pv-btn` (w, l, d), `.pv-ctas`, the reveal transition and `#hs-css`'s heading sizes.
 
-| Where | Wohnungsunternehmen | Asset Manager & Fonds |
-|---|---|---|
-| `main[data-seg]` | `WU` | `AM` |
-| Hero pill | house icon, "Für Wohnungsunternehmen" | bars icon, "Für Asset Manager & Fonds" |
-| H1 | "Große Bestände. *Strukturiert umgestellt.*" | "Verbräuche im ganzen Portfolio. *Auf einen Blick.*" |
-| Lead | "Für Wohnungsunternehmen planen wir …" | "Für Asset Manager und Fonds liefert Heidi eine einheitliche Datenbasis …" |
-| Slider start (`data-units`) | 4800 | 12000 |
-| Current tab | Wohnungsunternehmen | Asset Manager & Fonds; Wohnungsunternehmen links to its design |
-| Benefits pill | "Für Wohnungsunternehmen" | "Für Asset Manager & Fonds" |
-| Benefits | Portfolio-Analyse, Rollout im Cluster, Montage mit Plan, Angebunden an Ihr ERP | Ein Dashboard (bars), Monatliche Daten (trend), Pflichten im Griff (alert), Daten, wo Sie sie brauchen (erp) |
-| Quotes | `vitolus`, `gerhard` | `gerhard`, `werne` |
-| FAQ 1–2 | "Wie läuft der Wechsel bei mehreren tausend Einheiten?", "Gibt es Konditionen für große Bestände?" | "Welche Daten sehen wir?", "Wie schnell sind alle Objekte fernablesbar?" |
+| # | Section | Design | Component | Notes |
+|---|---|---|---|---|
+| 1 | Hero | `.pv-hero` | `Hero` | `Eyebrow`, H1 with `<br>`s and `<em>`, the lead and two buttons on the right (`.pv-hr`) |
+| 2 | Scroll scene | `.pv-scene` | `Scene` + `InfoCard` | 340 vh (300 vh ≤ 620 px), sticky frame; layers sized by CSS (container units) so the server's frame is right |
+| 3 | Figures | `.pv-stats` | `Stats` | Three cards with photo crops (`.th` → `.crop`) |
+| 4 | Flow | `.pv-flow#so` | `Flow` + `FlowPanel` | 420 vh above 900 px, sticky; five steps (buttons), five panels |
+| 5 | Duo | `.pv-duo` | `Duo` | Photo `owner.jpg`, text card with a crop of the flat |
+| 6 | Advantages | `.pv-all` | `Benefits` | Six cards with icons |
+| 7 | Comparison | `.pv-tb` | `Compare` | `role="table"` as the design, the Heidi column highlighted |
+| 8 | Quotes | `.pv-q` | `Quotes` | The marquee: three quotes and three photo tiles, then the same again `aria-hidden` |
+| 9 | FAQ | `.pv-faq#faq` | `Faq` | Six `<details>`, the JSON-LD |
+| 10 | Closing | `.pv-end` | `Closing` | `id="start"`, `final`; the `SignupForm` styled for the dark card; photo `talk.jpg` |
+| 11 | Trust | `.trust` | shared `TrustSeals` | After `PvMain`, light |
+| — | Floating CTA | `.ctab` | shared `FloatingCta` | |
 
-## 2.2 The page
+## 2.2 End states (server, no JS, reduced motion)
 
-The 13 wrappers of `/wohnungsunternehmen`'s `sections/`, each importing this page's `content.ts`; `+page.svelte` in the same order (Hero, Tabs, LogoStrip, LargeStock, Pain, Benefits, Features, Steps, Testimonials, Faq, Closing, Trust inside `SgMain`, FloatingCta after `</main>`). The closing card's heading id `am-closing-h`.
+- Scene: see 03 §3.2 (the design's reduced-motion state; with JS and motion the start state).
+- Flow: step 1 on, panel 1 shown with its rows and bar.
+- Comparison: every mark shown.
+- Quotes: the row standing (no marquee with reduced motion).
 
-Every block in its end state as on `/wohnungsunternehmen` (its plan, 02 §2.2), with the calculator at 12.000. Overflow checks at 320 px: the benefits' titles ("Daten, wo Sie sie brauchen"), the H1 ("Verbräuche im ganzen Portfolio." at 36 px), "12.000".
+Overflow checks at 320 px: the H1, the info card, the tags, the comparison's four columns (13.5 px below 900 px), the panels, the closing form.

@@ -4,20 +4,20 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/neuigkeiten`: the page with the landing header and footer; the footer's "Neuigkeiten" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the stories without a page shown without their "more" line)
-- [ ] No horizontal overflow from 320 to 1640 px (the filter scrolls inside itself at 720 px and below)
-- [ ] The filter: each topic shows its stories (Produkt 6, Werkzeuge 1, Unternehmen 2, Alle 9), the arrow keys move the choice, the count is announced
+- [x] `bun run dev` → `http://localhost:5173/neuigkeiten`: the page with the landing header and footer; the footer's "Neuigkeiten" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the stories without a page shown without their "more" line)
+- [x] No horizontal overflow from 320 to 1640 px (the filter scrolls inside itself at 720 px and below)
+- [x] The filter: each topic shows its stories (Produkt 6, Werkzeuge 1, Unternehmen 2, Alle 9), the arrow keys move the choice, the count is announced
 - [ ] Hover: the featured card lifts, the photos zoom, the arrows move, the rows slide; nothing of that with reduced motion
 - [ ] Every story and row link lands on its page; "Zum Blog mit allen Artikeln" → `/blog`; the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page (the filter as one tab stop, the cards, the rows); focus ring visible
 - [ ] Screen reader: one H1 "Neuigkeiten von Heidi."; the filter as a radio group "Thema filtern"; the cards as links named by their titles; the rows as links
-- [ ] Reduced motion: nothing moves
-- [ ] JS disabled: all nine stories, every section readable, the signup form posts
-- [ ] A signup reaches `leads` with `source = "neuigkeiten"` and the sink with `page: "/neuigkeiten"`
+- [x] Reduced motion: nothing moves
+- [x] JS disabled: all nine stories, every section readable, the signup form posts
+- [x] A signup reaches `leads` with `source = "neuigkeiten"` and the sink with `page: "/neuigkeiten"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

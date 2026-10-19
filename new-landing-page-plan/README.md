@@ -83,6 +83,15 @@ The design's links, by design id, and where they lead here. A story or row whose
 
 Links to this page: searched the repo and its history for the design's id `NYTT6YZc4aDeDZiWTfd6yG`: only the designs' footer ("Neuigkeiten"), so the landing footer's entry is the only link.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`7044005a`), the route, content, screenshot and footer link (`47e13e2e`), the sections with the filter (`87b0e7ae`), and `e2e/neuigkeiten.e2e.ts` (13 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design): the hero, the "Gesetz & Fristen" section and the trust block have the design's height at every width and match it by eye; the differences are the planned ones: the stories without a page have no "more" line (the news grid 38 px shorter at 1440 and 1100 px, where the third row has no link, more at 700 and 375 px where every card stands alone; the hero 45 px shorter at 980 px and below, where the featured card stacks), and the closing card holds the signup form (its height +94 / −14 / +42 px at 980 / 700 / 375 px). No overflow at 320 and 375 px; no console errors or hydration warnings. Nothing shared changed. Full suites: check, lint, 539 unit tests, 331 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the filter is a few lines in `News`, the rest is CSS.
+- **Cards without a page are `<article>`s** (rows `<div>`s), so the grid keeps nine items and the screen reader doesn't hear dead links.
+- **Hover effects are off with reduced motion** (the design moves the cards and zooms the photos either way).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

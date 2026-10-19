@@ -4,28 +4,28 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/heizkostenabrechnung-pruefen`: the page with the landing header and footer; the footer's "Heizkostenabrechnungs-Checker" lands here from every landing page, and so do the links on `/hkvo-leitfaden`, `/selbstabrechnung` and `/hilfe`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Jetzt prüfen ↑"); the card's panes (the flow's four steps, the values, the result locked and unlocked), the letter section and the paywall dialog compared too
-- [ ] No horizontal overflow from 320 to 1640 px, also with the result, the letter and the dialog open
-- [ ] The card: picking or dropping a PDF or photo shows its thumbnail and starts the flow; another type shows the message; × removes a file; the flow's date, "Weiß ich nicht", the two questions moving on by themselves, the summary with "Ändern", "← Zurück"; "Abrechnung prüfen" opens the values pane with the note; "Ergebnis anzeigen" shows the sum counting, the teaser and confetti; "Beispiel ansehen" shows the example's 310 € with the tag; "Werte ändern" keeps the values; "Neue Abrechnung prüfen" resets everything
-- [ ] The paywall: "Gründe und Details ansehen" opens the dialog with the document and the blurred points; own values: the disabled "Zahlung wird gerade eingerichtet"; the example: "Beispiel kostenlos freischalten" unlocks (confetti), the points and "Musterschreiben erstellen" show; ×, the backdrop and Escape close it, the focus returns
-- [ ] The letter: made from the failed points, scrolled to, editable; "Text kopieren" copies it
-- [ ] No request leaves the page on picking, dropping or checking files or values (DevTools network)
-- [ ] The scan loop plays when the demo is in view and stops out of view; the study switch, the dots and the counts; the error filter; the timeline's bar
-- [ ] "Eigene Abrechnung prüfen →" and "Zu den Zahlen ↓" land on their sections; the band's and the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "Heizkostenabrechnung mit Heidi →" leads to `/funktionen`
+- [x] `bun run dev` → `http://localhost:5173/heizkostenabrechnung-pruefen`: the page with the landing header and footer; the footer's "Heizkostenabrechnungs-Checker" lands here from every landing page, and so do the links on `/hkvo-leitfaden`, `/selbstabrechnung`, `/hilfe` (two answers), `/mieterportal` and `/verbrauchsinformation`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Jetzt prüfen ↑"); the card's panes (the flow's four steps, the values, the result locked and unlocked), the letter section and the paywall dialog compared too
+- [x] No horizontal overflow from 320 to 1640 px, also with the result, the letter and the dialog open
+- [x] The card: picking or dropping a PDF or photo shows its thumbnail and starts the flow; another type shows the message; × removes a file; the flow's date, "Weiß ich nicht", the two questions moving on by themselves, the summary with "Ändern", "← Zurück"; "Abrechnung prüfen" opens the values pane with the note; "Ergebnis anzeigen" shows the sum counting, the teaser and confetti; "Beispiel ansehen" shows the example's 310 € with the tag; "Werte ändern" keeps the values; "Neue Abrechnung prüfen" resets everything
+- [x] The paywall: "Gründe und Details ansehen" opens the dialog with the document and the blurred points; own values: the disabled "Zahlung wird gerade eingerichtet"; the example: "Beispiel kostenlos freischalten" unlocks (confetti), the points and "Musterschreiben erstellen" show; ×, the backdrop and Escape close it, the focus returns
+- [x] The letter: made from the failed points, scrolled to, editable; "Text kopieren" copies it
+- [x] No request leaves the page on picking, dropping or checking files or values (DevTools network)
+- [x] The scan loop plays when the demo is in view and stops out of view; the study switch, the dots and the counts; the error filter; the timeline's bar
+- [x] "Eigene Abrechnung prüfen →" and "Zu den Zahlen ↓" land on their sections; the band's and the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "Heizkostenabrechnung mit Heidi →" leads to `/funktionen`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the file picker and camera, the date fields, the dialog, the clipboard)
 - [ ] Keyboard-only through the page (the tabs, the file picker, the flow, the fields and yes/no buttons, the result's buttons, the dialog, the textarea and its copy button, the switch and the filter with the arrow keys, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Heizkosten­abrechnung jetzt überprüfen."; the tabs, the flow's step, the result's figure and points, the dialog by its title, the copy status, the switch and the filter as radio groups, the scan demo by its label, the dot grid skipped
-- [ ] Reduced motion: nothing slides, scans, counts, staggers or bursts; every block in its end state
-- [ ] JS disabled: every section readable, the card hidden, the signup form posts
-- [ ] A signup reaches `leads` with `source = "heizkostenabrechnung-pruefen"` and the sink with `page: "/heizkostenabrechnung-pruefen"`
+- [x] Reduced motion: nothing slides, scans, counts, staggers or bursts; every block in its end state
+- [x] JS disabled: every section readable, the card hidden, the signup form posts
+- [x] A signup reaches `leads` with `source = "heizkostenabrechnung-pruefen"` and the sink with `page: "/heizkostenabrechnung-pruefen"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
-- **Vitest:** `content.test.ts` (01 §1.2), `rules.test.ts` (01 §1.3), the three linking pages' content tests (their links now set).
-- **Playwright `e2e/heizkostenabrechnung-pruefen.e2e.ts`**, modelled on `e2e/energieausweis.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the three other pages' links; every internal link resolves; the CTAs (`#checker`, `#zahlen`, `#start` with the focused e-mail field, `/funktionen`); the example (310 €, the teaser, the dialog, the free unlock, the points, the letter and its text); own values in the values pane (a share under 50 % → 15 %; heating costs → the amount), the tabs; files through `setInputFiles` (a PDF and a PNG with their thumbnails, a `.txt` with the message, ×, the flow to "Abrechnung prüfen" and the values pane with the note and the copied date); no request on choosing files and checking; the dialog's disabled payment for own values; the scan's end state; the switch (80) and the filter (three cards for "Kürzungsrecht"); without JS the card hidden and the closing form; reduced motion: nothing hidden; no console errors; the signup. `e2e/hkvo-leitfaden`, `e2e/selbstabrechnung` and `e2e/hilfe` updated where they assert the missing link.
+- **Vitest:** `content.test.ts` (01 §1.2), `rules.test.ts` (01 §1.3), `/hkvo-leitfaden`'s content test (its link now set).
+- **Playwright `e2e/heizkostenabrechnung-pruefen.e2e.ts`**, modelled on `e2e/energieausweis.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the three other pages' links; every internal link resolves; the CTAs (`#checker`, `#zahlen`, `#start` with the focused e-mail field, `/funktionen`); the example (310 €, the teaser, the dialog, the free unlock, the points, the letter and its text); own values in the values pane (a share under 50 % → 15 %; heating costs → the amount), the tabs; files through `setInputFiles` (a PDF and a PNG with their thumbnails, a `.txt` with the message, ×, the flow to "Abrechnung prüfen" and the values pane with the note and the copied date); no request on choosing files and checking; the dialog's disabled payment for own values; the scan's end state; the switch (80) and the filter (three cards for "Kürzungsrecht"); without JS the card hidden and the closing form; reduced motion: nothing hidden; no console errors; the signup. `e2e/hkvo-leitfaden`, `e2e/mieterportal` and `e2e/verbrauchsinformation` updated where they asserted the missing link; the new spec checks every linking page.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
 
@@ -49,7 +49,7 @@ The page goes live with the cutover. Every item must be done before the cutover,
 - [ ] Without JS (open question 4): the hidden card accepted
 - [ ] Security block statements: covered by the region pages' item in §4.31 (same `TrustSeals`)
 - [ ] Page copy, SEO title and description signed off by the content owner
-- [ ] Slug decided: `/heizkostenabrechnung-pruefen` (not confirmed; the footer's label `/heizkostenabrechnungs-checker` is the alternative)
+- [ ] Slug decided: `/heizkostenabrechnung-pruefen` (not confirmed; the footer's label `/heizkostenabrechnungs-checker` is the alternative). The blog has a post at `/blog/heizkostenabrechnung-pruefen` on the same search phrase: decide which ranks for it (link the two, or pick the other slug)
 - [ ] Make.com `switchinquiry` route live and able to tell `/heizkostenabrechnung-pruefen` leads apart (`page: "/heizkostenabrechnung-pruefen"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 

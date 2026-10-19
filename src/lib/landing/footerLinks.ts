@@ -11,6 +11,7 @@ import {
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_MIETVERWALTUNG,
+	ROUTE_NEUIGKEITEN,
 	ROUTE_PRIVATE_VERMIETER,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SELBSTABRECHNUNG,
@@ -95,7 +96,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		title: "Ressourcen",
 		links: [
 			{ text: "Blog", href: ROUTE_BLOG },
-			{ text: "Neuigkeiten" },
+			{ text: "Neuigkeiten", href: ROUTE_NEUIGKEITEN },
 			{ text: "Fristenrechner" },
 			{ text: "HKVO-Leitfaden" },
 			{ text: "Einsparrechner" },

@@ -138,8 +138,10 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the portal", a
 	await expect(
 		page.locator("#faq a.more", { hasText: "Jetzt noch umrüsten" }),
 	).toHaveAttribute("href", "/upgrade-now");
-	// No pages yet for the audience cards' targets (plan README, open question 3).
-	await expect(page.getByText("Erfahren Sie mehr")).toHaveCount(0);
+	// The Verwalter card leads to /hausverwaltung; no Mieter-Check page yet.
+	await expect(
+		page.getByRole("link", { name: "Erfahren Sie mehr" }),
+	).toHaveAttribute("href", "/hausverwaltung");
 	await expect(page.getByText("Zum Mieter-Check")).toHaveCount(0);
 });
 

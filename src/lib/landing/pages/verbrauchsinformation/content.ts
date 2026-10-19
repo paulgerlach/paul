@@ -21,7 +21,11 @@ import type {
 	Row,
 } from "$lib/landing/sections/uv/types";
 import { deadlineFigure } from "$lib/landing/sections/uv/deadlineFigure";
-import { ROUTE_MIETERPORTAL, ROUTE_UPGRADE_NOW } from "$lib/routes";
+import {
+	ROUTE_HAUSVERWALTUNG,
+	ROUTE_MIETERPORTAL,
+	ROUTE_UPGRADE_NOW,
+} from "$lib/routes";
 
 const NB = " ";
 
@@ -226,8 +230,7 @@ export const audience = {
 		{
 			title: "Sie sind Verwalter?",
 			text: "Heidi stellt die uVI für Ihren ganzen Bestand bereit, rechnet nach HKVO ab und hält Ihnen die Mieterfragen vom Tisch.",
-			// The design's target, the Hausverwaltung page, doesn't exist yet (plan README, open question 3).
-			cta: { text: "Erfahren Sie mehr" },
+			cta: { text: "Erfahren Sie mehr", href: ROUTE_HAUSVERWALTUNG },
 			image: "verwalter",
 		},
 		{

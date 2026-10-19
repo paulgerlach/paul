@@ -4,6 +4,7 @@ import {
 	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HILFE,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
@@ -77,7 +78,7 @@ export const footerGroups: LandingFooterGroup[] = [
 	{
 		title: "Kunden",
 		links: [
-			{ text: "Hausverwaltung" },
+			{ text: "Hausverwaltung", href: ROUTE_HAUSVERWALTUNG },
 			{ text: "Mietverwaltung" },
 			{ text: "WEG-Verwaltung" },
 			{ text: "Wohnungsunternehmen" },

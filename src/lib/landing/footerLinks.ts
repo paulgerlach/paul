@@ -9,6 +9,7 @@ import {
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
+	ROUTE_MIETVERWALTUNG,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SICHERHEIT,
@@ -79,7 +80,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		title: "Kunden",
 		links: [
 			{ text: "Hausverwaltung", href: ROUTE_HAUSVERWALTUNG },
-			{ text: "Mietverwaltung" },
+			{ text: "Mietverwaltung", href: ROUTE_MIETVERWALTUNG },
 			{ text: "WEG-Verwaltung" },
 			{ text: "Wohnungsunternehmen" },
 			{ text: "Private Vermieter" },

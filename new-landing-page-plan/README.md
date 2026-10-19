@@ -64,6 +64,27 @@ src/lib/landing/pages/hausverwaltung/
 
 `*` marks a thin wrapper around a shared section, following the rule of the other landing pages: `+page.svelte` imports only from its own `sections/` folder. The page has no page-only component: everything it needs is in the template, which is what the two sibling pages will fill next.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`1e372598`), the template's new variants (`d3471da0`), the route, content and links (`faf65552`), two template fixes found while comparing (`6cfc76c8`), the sections (`da7d9c90`), and `e2e/hausverwaltung.e2e.ts` (11 tests, stable over three repeats). The whole e2e suite passes (257 of 257 once the sitemap assertion was fixed, see below; signup tests included, against a throwaway Postgres container on :54322 with the `leads` table from `drizzle-kit push`). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px: every section has the design's height except the expected ones (the closing card's form; the audience cards without buttons, 47 px each at ≤ 980 px). No overflow, hydration warnings or console errors at 375–1440 px (dev). Lighthouse not run yet. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **The template commit came before the route commit.** The content uses the new shapes (`ListEntry`, check rows, `details`), so the shared types and tiles had to exist first; the route still came with the footer link in one commit.
+- **Two template fixes, visible on the built pages** (`6cfc76c8`): at ≤ 980 px `uv/Hero`'s base-size line height (0.8) also overrode the `lg` word's 0.86, unlike the design (`.uv-word.lg` wins there); `/mieterportal`'s hero is 2–7 px taller now, as its design. The phone's notification title is `font-weight: 600` (the designs load Geist only up to 600, so their `<b>` renders at 600; ours at 700 wrapped "Montage Ihrer Funkzähler"), and its figure lost the `tabular-nums` no design sets ("Do, 9 bis 11 Uhr" wrapped). Before these fixes the template commit was checked as planned: `/mieterportal` and `/verbrauchsinformation` pixel-identical at 1440 and 375 px (production builds, reduced motion), SSR HTML equal apart from whitespace, timestamps and build hashes, their e2e specs passing.
+- **`/verbrauchsinformation`'s "Erfahren Sie mehr" shows now** (→ this page), so its audience section is 47 px taller at ≤ 980 px; its e2e spec asserts the link.
+- **Check-row class.** The design's `.uv-dr.ck` is `.dr.chk` in `Doc`: `.ck` is already the result line's tick circle there.
+- **Dev-mode screenshots aren't stable for comparisons.** After a dev-server restart, `/mieterportal` at 375 px differed in unrelated places (the signup button, the trust pill's colour): CSS order in dev. Compare production builds (`bun run build && bun run preview`, or a worktree of the previous commit).
+- **The sitemap test** matches the host plus the path: blog posts such as `funkzaehler-hausverwaltung` also end in "hausverwaltung</loc>".
+
+### For the sibling pages (Mietverwaltung `NJDrQZKYRpBXGMNJJGXUqd`, WEG-Verwaltung `WorTAiGvpRbkiEg1Lee25D`)
+
+Both designs are byte-identical to this one in every `<style>`/`<script>` block; only the content differs. Copy `pages/hausverwaltung/` (content, test, the thin wrappers, the route) and fill it. What's already in the template: `ListMock` (their hero lists: "4 Eigentümer" with "In Arbeit" → "Bereit für BKA", etc.; add an icon to `uv/icons.ts` if theirs differs), the units/objects grid (`Calendar` with any cell labels), `Doc` check rows *and* value rows (`{ label, value }` without `share` = the design's `.ck.v`, e.g. "Auszug 30.09."), `Phone` with bars or `details`, `Bill` text values, `deadlineFigure(now)`, `Numbers`, `Audience` (buttons hidden without `href`), `Quotes`, `Picture`, `uv/Faq`. Not yet in the template, add them there (opt-in, then recheck `/mieterportal`, `/verbrauchsinformation` and this page):
+
+- **`Bill` with one row set per side** (`.uv-bl.xa` shows only on side a, `.xb` only on side b, green text values; Mietverwaltung's "Eigentümer A / Eigentümer B" tile, sum "2" → "1"). Today a row is `base` (both sides), `cut` (side a) or `ok` (side b, a tick or a value in ink): add kinds `a` / `b` with the design's colours.
+- **The grid's `.tag` / `.pl` cells** (lime "tag" cells, placeholder cells without a tick), if a sibling draws them: check the markup's `class` on the `<span>`s.
+- **Mietverwaltung's Portfolio-Checker** (`.pcm`, its own CSS and script, four buildings with thumbnails) sits in the first audience card instead of the photo: `uv/Audience` needs a `media` snippet per card (or the page wraps that card itself).
+- Their FAQ answers mention "Fristenrechner" / "Portfolio-Checker" too: plain text until those pages exist, as here. The deadline figure, the quotes and the photos (check by MD5 against `src/lib/assets/`, most are the same files) are shared.
+- The rows' count and tile order differ (Mietverwaltung: grid, doc with value rows, owner bill, phone with bars): the `Rows` snippet maps any kind, and `Row.tile` is free text.
+
 ## Key decisions
 
 | Topic | Decision |

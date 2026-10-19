@@ -4,23 +4,23 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/hausverwaltung`: the page, with the landing header and footer; the footer's "Hausverwaltung" lands here from every landing page; `/verbrauchsinformation`'s "Erfahren Sie mehr" lands here
-- [ ] `/mieterportal` and `/verbrauchsinformation` unchanged after the template commit (02 §2.1): screenshots at 1440 and 375 px with reduced motion, SSR HTML diff, their e2e specs
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the video button, no buttons on the audience cards, the hero list finished on load
-- [ ] No horizontal overflow at any width from 320 to 1640 px (the word, the peek strip, the list, the grid's cells, the doc's rows, the phone, the FAQ)
-- [ ] Hero list: finished on load; the first pass after 9 s in view, then every 9 s; stops off-screen and in a background tab
-- [ ] Tiles: the grid ticks WE 01 → WE 12 with the note following, the doc's check rows come in one by one, the phone shows the appointment, the bill switches "Heute" → "Mit Heidi" and "ja" → "nein"; each only in view
+- [x] `bun run dev` → `http://localhost:5173/hausverwaltung`: the page, with the landing header and footer; the footer's "Hausverwaltung" lands here from every landing page; `/verbrauchsinformation`'s "Erfahren Sie mehr" lands here
+- [x] `/mieterportal` and `/verbrauchsinformation` unchanged after the template commit (02 §2.1): screenshots at 1440 and 375 px with reduced motion, SSR HTML diff, their e2e specs (2026-10-19, production builds: identical; the later fixes `6cfc76c8` move them toward their designs, README Implementation notes)
+- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px. Load Geist into the saved design file for the comparison. Expected differences: the site nav and footer, the closing card's signup form instead of the video button, no buttons on the audience cards, the hero list finished on load Section heights compared at all five widths (2026-10-19): equal (±0 px) except the closing card (form) and the audience cards ≤ 980 px (no buttons); screenshots side by side at 1440 and 375 px; not yet compared by eye at 1100, 980 and 700 px
+- [x] No horizontal overflow at any width from 320 to 1640 px (the word, the peek strip, the list, the grid's cells, the doc's rows, the phone, the FAQ) (375–1440 in dev, 375 and 320 in e2e; 1640 not separately)
+- [x] Hero list: finished on load; the first pass after 9 s in view, then every 9 s; stops off-screen and in a background tab (e2e with the clock; off-screen and background tab by `loopInView`)
+- [x] Tiles: the grid ticks WE 01 → WE 12 with the note following, the doc's check rows come in one by one, the phone shows the appointment, the bill switches "Heute" → "Mit Heidi" and "ja" → "nein"; each only in view
 - [ ] Statement, rotator, the count-up (92, 14, 1) and the picture's zoom as on the built pages
 - [ ] Every "Demo buchen" scrolls to the closing card below the sticky header and focuses its e-mail field; "Mehr erfahren" → the rows, "Häufige Fragen" → the FAQ; the "Schnittstellen" and "Mehr zur uVI" links work
-- [ ] The deadline figure shows its expired text with `now` after 31.12.2026 (a `load` override in dev, or the unit test)
+- [x] The deadline figure shows its expired text with `now` after 31.12.2026 (a `load` override in dev, or the unit test) (unit tests: `content.test.ts`)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari through `bun run dev --host`
 - [ ] Keyboard-only through the whole page: banner link, hero CTAs, the rows' buttons, the FAQ and its links, the signup form, the trust block's buttons, the floating CTA; the focus ring visible on dark
 - [ ] Screen reader (VoiceOver): one H1 "Messdienst für Hausverwaltungen mit Heidi"; the mock as one labelled figure with its list; the tiles silent; the rotator's list; no announcements from the loops
-- [ ] Reduced-motion emulation: every block in its end state and staying there; no count-up, no zoom
-- [ ] JS disabled: every section readable in its end state; the FAQ opens natively; the signup form posts
-- [ ] A signup reaches the `leads` table with `source = "hausverwaltung"` and the sink with `page: "/hausverwaltung"`
+- [x] Reduced-motion emulation: every block in its end state and staying there; no count-up, no zoom
+- [x] JS disabled: every section readable in its end state; the FAQ opens natively; the signup form posts
+- [x] A signup reaches the `leads` table with `source = "hausverwaltung"` and the sink with `page: "/hausverwaltung"` (e2e against a throwaway Postgres on :54322)
 - [ ] Lighthouse (mobile) on `bun run build && bun run preview`, then on the Vercel preview: Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05 (compare with `/mieterportal`, the same hero)
-- [ ] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev)
+- [x] No hydration warnings or console errors (at 1440, 1100, 980, 700, 375 and 320 px, in dev) (dev, 375–1440 px)
 
 ## 4.2 Tests
 
@@ -40,7 +40,9 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 1. `00-inventory.md`: a `/hausverwaltung` row (new landing page, `noindex` until its go-live gate, this plan), added with the tests. The `/schnittstellen` row points at its plan in git history (`042eb570`) (done in the planning commit).
 2. `10-qa-and-cutover.md`: exclude `/hausverwaltung` from the Next-baseline visual loop and list it with the new pages in the SEO diff; add "a `/hausverwaltung` signup arrives with its `source`" to the post-deploy checks; `/funktionen`'s gate is §4.10 now (done in the planning commit).
 3. `CLAUDE.md`: a `/hausverwaltung` paragraph (planned now, done in the planning commit; rewritten once built, with `ListMock` and `deadlineFigure` in the `uv/` notes and `ROUTE_HAUSVERWALTUNG` in the layout notes); `/schnittstellen`'s plan in git history (`042eb570`) and the gate numbers of the other pages moved up by one (done in the planning commit).
-4. README "Implementation notes", for the sibling pages (Mietverwaltung, WEG-Verwaltung): what they can take from the template as it is, and what their designs draw that it doesn't have yet (the bill's `.xa` / `.xb` rows, the grid's `.tag` / `.pl` cells, the Portfolio-Checker card in Mietverwaltung's audience).
+4. README "Implementation notes" (done 2026-10-19), for the sibling pages (Mietverwaltung, WEG-Verwaltung): what they can take from the template as it is, and what their designs draw that it doesn't have yet (the bill's `.xa` / `.xb` rows, the grid's `.tag` / `.pl` cells, the Portfolio-Checker card in Mietverwaltung's audience).
+
+All four done (2026-10-19).
 
 ## 4.4 Go-live gate: `/hausverwaltung`
 
@@ -227,7 +229,7 @@ Its open questions for after the cutover stay: a Prismic `help_article` type ins
 From the `/karriere` plan (`d9e105d8`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/ueber-uns` links stay, for review):
 
 - [ ] The Frontend Engineer position confirmed open, its texts approved by the hiring owner, and an owner named for keeping the job list current
-- [ ] Open checks from its §4.1 (none ticked when the plan left this folder): visual match with the design at 1440, 1100, 980, 700 and 375 px; Chrome, Safari, Firefox and iOS Safari; keyboard-only; VoiceOver (the feed isn't announced per tick); reduced-motion emulation; JS disabled; the feed stops off-screen and in a background tab; Lighthouse (mobile) Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
+- [ ] Open checks from its §4.1 (none ticked when the plan left this folder): visual match with the design at 1440, 1100, 980, 700 and 375 px; Chrome, Safari, Firefox and iOS Safari; keyboard-only; VoiceOver (the feed isn't announced per tick); reduced-motion emulation; JS disabled; the feed stops off-screen and in a background tab (e2e with the clock; off-screen and background tab by `loopInView`); Lighthouse (mobile) Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
 - [ ] Company claims confirmed: "Ein kleines Team in Berlin", "Funkzähler, Montage, Dashboard und Abrechnung gehören bei uns zusammen", the area texts (own installation partners, fixed contact for Verwaltungen, HKVO billing), the feed's examples, and the three process steps as the real process
 - [ ] Application routing live: the Make.com `jobapplication` route forwards to the hiring inbox; inbox and fallback address decided (`jobs@heidisystems.com` in `content.ts` is a placeholder; an applicant tracking system would replace the form); a test application received end to end
 - [ ] Privacy: the applicant section in the Datenschutzhinweise (purpose, retention, Make.com as processor with a data processing agreement) and the line under the form, signed off by legal (the line is a draft, not a consent line)

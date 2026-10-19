@@ -75,6 +75,13 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Sb54rDQd5WS2r82skPe7UQ` (FAQ 5's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`1c0a5d16`), the route, content, the form's schema and action, the icon `meter`, the new photo and the two links (`920338b1`), the sections with the form and the video button (`af94a260`), and `e2e/nachfolge.e2e.ts` (19 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (reduced motion, after scrolling through both pages, against the production build): every section has the design's height to the pixel at every width but the audience cards (47 px shorter at 980 px and below, 43.5 px at 375 and 320: the second card without "Zu den Partnerschaften"); screenshots of the hero, the rows, the form and the closing card at 1440 and 375 px match the design's. No overflow at 320 and 375 px, also with the form's marks; no console errors or hydration warnings. Full suites: check, lint, 812 unit tests, 525 e2e tests passed (524 in the full run; `/einsparrechner`'s calculator test read a KPI one frame early under the full suite's load and passed alone, unrelated to this page). Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **The dev server's CSS order** made the closing card's H2 wrap at 980 px after scrolling through the page (the landing heading reset's letter-spacing landing after `CtaCard`'s); the production build keeps the order and matches the design, so the comparison ran against `bun run build` + `preview`.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

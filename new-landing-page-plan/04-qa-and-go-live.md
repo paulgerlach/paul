@@ -4,25 +4,25 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/nachfolge`: the page with the landing header and footer; the footer's "Nachfolge" lands here from every landing page, and so does `/neuigkeiten`'s story "Nachfolge: …" ("Mehr erfahren")
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the second audience card without its button)
-- [ ] No horizontal overflow from 320 to 1640 px, also with the form's marks and its lines shown
-- [ ] The template's loops as on `/softwarepartner` (the hero's list, the statement, the phone, the doc, the grid of properties, the bill, the rotator); no figure counts
-- [ ] The closing card's video button: the video plays while the button is on screen, pauses off screen, never under reduced motion; it grows on hover
-- [ ] "Kontakt aufnehmen", every "Gespräch anfragen", the closing card's "Demo buchen", the trust block's "Demo buchen" and the floating CTA land on the form (`#kontakt`); "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "Mehr zu Sicherheit" leads to `/sicherheit`; the nav CTA to `/messdienstwechsel`
+- [x] `bun run dev` → `http://localhost:5173/nachfolge`: the page with the landing header and footer; the footer's "Nachfolge" lands here from every landing page, and so does `/neuigkeiten`'s story "Nachfolge: …" ("Mehr erfahren")
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the second audience card without its button)
+- [x] No horizontal overflow from 320 to 1640 px, also with the form's marks and its lines shown
+- [x] The template's loops as on `/softwarepartner` (the hero's list, the statement, the phone, the doc, the grid of properties, the bill, the rotator); no figure counts
+- [x] The closing card's video button: the video plays while the button is on screen, pauses off screen, never under reduced motion; it grows on hover
+- [x] "Kontakt aufnehmen", every "Gespräch anfragen", the closing card's "Demo buchen", the trust block's "Demo buchen" and the floating CTA land on the form (`#kontakt`); "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "Mehr zu Sicherheit" leads to `/sicherheit`; the nav CTA to `/messdienstwechsel`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the fields' keyboards, the two selects)
 - [ ] Keyboard-only through the page (the CTAs, every form field, the consent, the FAQ, the video button); focus ring visible
 - [ ] Screen reader: one H1 "Nachfolge für Messdienstanbieter mit Heidi"; the app window as its list; the tiles skipped; the form's fields by their labels, the error and success lines announced
-- [ ] Reduced motion: nothing loops, slides or plays; every block in its end state
-- [ ] JS disabled: every section readable, the form posts and shows its marks or its success line at `#kontakt`
-- [ ] An inquiry reaches the sink as `successioninquiry` with every field and `page: "/nachfolge"`, nothing stored; a failed send shows the phone number and keeps the values
+- [x] Reduced motion: nothing loops, slides or plays; every block in its end state
+- [x] JS disabled: every section readable, the form posts and shows its marks or its success line at `#kontakt`
+- [x] An inquiry reaches the sink as `successioninquiry` with every field and `page: "/nachfolge"`, nothing stored; a failed send shows the phone number and keeps the values
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2), `$lib/forms/successionInquiry.test.ts` and `$lib/server/successionInquiry.test.ts` (01 §1.3).
-- **Playwright `e2e/nachfolge.e2e.ts`**, modelled on `e2e/softwarepartner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, FAQPage JSON-LD with five questions, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px (also with the form's marks); the footer link and `/neuigkeiten`'s story; every internal link resolves; the CTAs (`#kontakt`, `#inhalt`, `#faq`, `/sicherheit`, the nav CTA to `/messdienstwechsel`); the second audience card without a button; the server's end states (the list's statuses, the phone, the doc, the grid with "Liegensch. 7 in Planung", the bill "in guten Händen", the figures, the empty form); reduced motion: nothing hidden or moving, the video not playing; the video button playing in view; the hero list's replay and the grid looping in view; the form: the marks and the line after an empty submit, a valid inquiry with the sink's payload and the success line, the send failure with the phone number (`@sink-fails.example`), the honeypot answered with success and nothing sent, the no-JS post; no console errors.
+- **Playwright `e2e/nachfolge.e2e.ts`** (19 tests), modelled on `e2e/softwarepartner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, FAQPage JSON-LD with five questions, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px (also with the form's marks); the footer link and `/neuigkeiten`'s story; every internal link resolves; the CTAs (`#kontakt`, `#inhalt`, `#faq`, `/sicherheit`, the nav CTA to `/messdienstwechsel`); the second audience card without a button; the server's end states (the list's statuses, the phone, the doc, the grid with "Liegensch. 7 in Planung", the bill "in guten Händen", the figures, the empty form); reduced motion: nothing hidden or moving, the video not playing; the video button playing in view; the hero list's replay and the grid looping in view; the form: the marks and the line after an empty submit, a valid inquiry with the sink's payload and the success line, the send failure with the phone number (`@sink-fails.example`), the honeypot answered with success and nothing sent, the no-JS post; no console errors.
 - **`e2e/neuigkeiten.e2e.ts`** and `neuigkeiten/content.test.ts`: the story "Nachfolge: …" now links `/nachfolge` ("Mehr erfahren").
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`

@@ -129,25 +129,25 @@ describe("calibration and billing", () => {
 describe("badges", () => {
 	it("says how many days are left", () => {
 		expect(daysBadge(346, 60)).toEqual({
-			text: "noch 346 Tage",
+			text: "noch 346\u00a0Tage",
 			tone: "ok",
 		});
-		expect(daysBadge(1234, 60).text).toBe("noch 1.234 Tage");
+		expect(daysBadge(1234, 60).text).toBe("noch 1.234\u00a0Tage");
 		expect(daysBadge(59, 60).tone).toBe("warn");
 		expect(daysBadge(60, 60).tone).toBe("ok");
-		expect(daysBadge(1, 60).text).toBe("noch 1 Tag");
+		expect(daysBadge(1, 60).text).toBe("noch 1\u00a0Tag");
 		expect(daysBadge(0, 60)).toEqual({ text: "heute", tone: "warn" });
 		expect(daysBadge(-1, 60)).toEqual({
-			text: "seit 1 Tag vorbei",
+			text: "seit 1\u00a0Tag vorbei",
 			tone: "late",
 		});
-		expect(daysBadge(-3, 60).text).toBe("seit 3 Tagen vorbei");
+		expect(daysBadge(-3, 60).text).toBe("seit 3\u00a0Tagen vorbei");
 	});
 
 	it("marks milestones as in force", () => {
 		expect(milestoneBadge(day(2023, 0, 1), TODAY)).toBe("gilt");
-		expect(milestoneBadge(day(2026, 11, 31), TODAY)).toBe("in 73 Tagen");
-		expect(milestoneBadge(day(2026, 9, 20), TODAY)).toBe("in 1 Tag");
+		expect(milestoneBadge(day(2026, 11, 31), TODAY)).toBe("in 73\u00a0Tagen");
+		expect(milestoneBadge(day(2026, 9, 20), TODAY)).toBe("in 1\u00a0Tag");
 		expect(milestoneBadge(TODAY, TODAY)).toBe("heute");
 	});
 

@@ -7,7 +7,7 @@ import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
 import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
 
-const NB = " ";
+const NB = "\u00a0";
 
 export const RECHNER_ID = "rechner";
 export const STICHTAGE_ID = "stichtage";

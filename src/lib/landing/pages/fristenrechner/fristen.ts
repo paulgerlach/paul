@@ -142,9 +142,10 @@ export function billing(periodEnd: Day, received: Day | null) {
 
 export type BadgeTone = "ok" | "warn" | "late";
 
+const NB = "\u00a0";
 const de = (n: number) => n.toLocaleString("de-DE");
 const days = (n: number, one: string, many: string) =>
-	`${de(n)} ${n === 1 ? one : many}`;
+	`${de(n)}${NB}${n === 1 ? one : many}`;
 
 /**
  * The badge next to a result: "noch 346 Tage", "heute", "seit 3 Tagen vorbei";

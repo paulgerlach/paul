@@ -24,5 +24,7 @@
 		/>
 	{:else if name === "trend"}
 		<path d="M3 14l4.5-4.5 3 3L17 6M12.5 6H17v4.5" />
+	{:else if name === "building"}
+		<path d="M4 17V4h8v13M12 8h4v9M2 17h16M7 7h2M7 10h2M7 13h2" />
 	{/if}
 </StrokeIcon>

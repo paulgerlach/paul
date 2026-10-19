@@ -20,6 +20,7 @@ import type {
 	PhoneTile,
 	Row,
 } from "$lib/landing/sections/uv/types";
+import { deadlineFigure } from "$lib/landing/sections/uv/deadlineFigure";
 import { ROUTE_MIETERPORTAL, ROUTE_UPGRADE_NOW } from "$lib/routes";
 
 const NB = " ";
@@ -132,7 +133,7 @@ export const calendar: CalendarTile = {
 	noteDoing: "{x} wird erstellt",
 };
 
-export const doc: DocTile = {
+export const doc = {
 	title: `Verbrauchsinformation ${mock.month}`,
 	sub: "Heizung · in kWh",
 	rows: [
@@ -142,9 +143,9 @@ export const doc: DocTile = {
 		{ label: "Durchschnittsnutzer", value: "142", share: 89 },
 	],
 	result: "Alle Pflichtangaben enthalten",
-};
+} satisfies DocTile;
 
-export const phone: PhoneTile = {
+export const phone = {
 	time: "9:41",
 	app: "Heidi",
 	title: `Ihre Verbrauchsinfo ${mock.month}`,
@@ -155,7 +156,7 @@ export const phone: PhoneTile = {
 	// The mock's last ten months, on its scale.
 	bars: mock.bars.slice(2),
 	max: mock.barMax,
-};
+} satisfies PhoneTile;
 
 export const bill: BillTile = {
 	without: "Ohne uVI",
@@ -182,21 +183,6 @@ export const rotator = {
 		"Vergleich zum Durchschnitt",
 	],
 	intervalMs: 2300,
-};
-
-/** The retrofit deadline's figure, and what it says once the deadline has passed. */
-const deadlineFigure = {
-	current: {
-		value: "31.12.2026",
-		text: "Bis dahin müssen alle Zähler fernablesbar sein",
-		compact: true,
-	} satisfies Figure as Figure,
-	// Placeholder until the content owner writes it (plan §4.4).
-	expired: {
-		value: "1.1.2027",
-		text: "Seitdem müssen alle Zähler fernablesbar sein",
-		compact: true,
-	} satisfies Figure as Figure,
 };
 
 export const numbers = {
@@ -228,9 +214,7 @@ export const numbers = {
 
 /** The bento's figures after the photo, with the deadline's figure for `now`. */
 export function figures(now: number): Figure[] {
-	const deadline = isExpired(now)
-		? deadlineFigure.expired
-		: deadlineFigure.current;
+	const deadline = deadlineFigure(now);
 	return numbers.rest.map((f) => f ?? deadline);
 }
 

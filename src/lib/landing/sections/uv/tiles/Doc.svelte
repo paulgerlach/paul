@@ -1,6 +1,8 @@
 <!--
-  A row's tile: a Verbrauchsinformation with its four comparisons and the
-  check. Every 7 s in view the rows come in one by one, then the check.
+  A row's tile: a document with its rows and the check at the bottom. A row
+  is a comparison with a bar (the Verbrauchsinformation) or a check row with a
+  tick, or a short value in its place (the segment pages' Abrechnung). Every
+  7 s in view the rows come in one by one, then the check.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
@@ -30,9 +32,17 @@
 		<small>{sub}</small>
 	</div>
 	{#each rows as row, i (row.label)}
-		<div class={["dr", i < shown && "on"]} style:--w="{row.share}%">
-			<span>{row.label}</span><i></i><b>{row.value}</b>
-		</div>
+		{#if "share" in row}
+			<div class={["dr", i < shown && "on"]} style:--w="{row.share}%">
+				<span>{row.label}</span><i></i><b>{row.value}</b>
+			</div>
+		{:else}
+			<div class={["dr", "chk", row.value && "v", i < shown && "on"]}>
+				<span>{row.label}</span>{#if row.value}<b>{row.value}</b>{:else}<b
+						><Tick /></b
+					>{/if}
+			</div>
+		{/if}
 	{/each}
 	<div class="dok"><span class="ck"><Tick /></span>{result}</div>
 </div>
@@ -104,6 +114,32 @@
 	}
 	.dr.on i::after {
 		width: var(--w);
+	}
+	/* Check rows (the design's .uv-dr.ck, .ck.v) */
+	.dr.chk {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+	.dr.chk span {
+		color: var(--ink);
+	}
+	.chk b {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: #e6f5e7;
+		color: var(--ink);
+		display: grid;
+		place-items: center;
+	}
+	.chk b :global(svg) {
+		width: 11px;
+		height: 11px;
+	}
+	.chk.v b {
+		width: auto;
+		height: auto;
+		background: none;
+		border-radius: 0;
 	}
 	.dok {
 		display: flex;

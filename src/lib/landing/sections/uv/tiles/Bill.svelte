@@ -147,7 +147,11 @@
 		color: #b4472e;
 		font-size: 13px;
 	}
-	/* Amounts keep the row's size (the /mieterportal text values are 13 px). */
+	/* Text values are 13 px on every row (the design's b.t, e.g. a base row's
+	   "24"); amounts keep the row's size. */
+	.bill:not(.money) .base b {
+		font-size: 13px;
+	}
 	.money .cut b {
 		font-size: inherit;
 	}

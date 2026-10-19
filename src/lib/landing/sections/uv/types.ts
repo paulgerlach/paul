@@ -1,5 +1,6 @@
 /**
- * Content shapes of the dark `uv` template (/mieterportal, /verbrauchsinformation).
+ * Content shapes of the dark `uv` template (/mieterportal, /verbrauchsinformation,
+ * /hausverwaltung).
  * Each page fills them in its `content.ts`; the components hold markup and
  * behaviour only.
  */
@@ -28,12 +29,22 @@ export type Row<Kind extends string = string> = {
 
 export type AppNavItem = { icon: IconName; text: string };
 
+/** An entry of the hero's app list (`ListMock`). */
+export type ListEntry = {
+	icon: IconName;
+	title: string;
+	sub: string;
+	/** Status while the entry is being prepared, then the final one. */
+	before: string;
+	after: string;
+};
+
 export type CalendarTile = {
-	/** Short labels of the twelve months. */
+	/** Labels of the twelve cells: months, or units ("WE 01"). */
 	months: string[];
-	/** Month names for the note (default: `months`). */
+	/** Cell names for the note (default: `months`). */
 	long?: string[];
-	/** The month being prepared; the ones before are done. */
+	/** The cell being prepared; the ones before are done. */
 	current: number;
 	done: string;
 	doing: string;
@@ -43,11 +54,18 @@ export type CalendarTile = {
 	noteDoing: string;
 };
 
+/**
+ * A bar row (`share` is the bar's width in %, as designed, not computed), or
+ * a check row: a tick, or a short value in its place (the design's .ck / .ck.v).
+ */
+export type DocRow =
+	| { label: string; value: string; share: number }
+	| { label: string; value?: string };
+
 export type DocTile = {
 	title: string;
 	sub: string;
-	/** `share` is the bar's width in %, as designed (not computed). */
-	rows: { label: string; value: string; share: number }[];
+	rows: DocRow[];
 	result: string;
 };
 
@@ -59,8 +77,10 @@ export type PhoneTile = {
 	label: string;
 	value: string;
 	comparisons: string[];
-	/** Monthly values up to the current month; the last is accent. */
-	bars: number[];
+	/** Rows under the chips (an appointment's details). */
+	details?: { label: string; value: string }[];
+	/** Monthly values up to the current month; the last is accent. None: no bars. */
+	bars?: number[];
 	/** The bars' full height (default: the largest bar × 1.05). */
 	max?: number;
 };

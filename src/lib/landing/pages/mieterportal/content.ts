@@ -10,13 +10,14 @@ import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import { ROUTE_SICHERHEIT, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
-import type { IconName } from "$lib/landing/sections/uv/icons";
 import type {
+	AppNavItem,
 	BillTile,
 	CalendarTile,
 	DocTile,
 	Figure,
 	Link,
+	ListEntry,
 	PhoneTile,
 	Row,
 } from "$lib/landing/sections/uv/types";
@@ -39,15 +40,6 @@ export const hero = {
 	secondary: { text: "Mehr erfahren", href: "#inhalt" } satisfies Link,
 };
 
-export type PortalEntry = {
-	icon: IconName;
-	title: string;
-	sub: string;
-	/** Status while the entry is being prepared, then the final one. */
-	before: string;
-	after: string;
-};
-
 export const portal = {
 	label: "Beispiel: Heidi Mieterportal",
 	brand: "Heidi",
@@ -55,14 +47,11 @@ export const portal = {
 		{ icon: "chart", text: "Verbrauch" },
 		{ icon: "doc", text: "Dokumente" },
 		{ icon: "users", text: "Mitteilungen" },
-	] satisfies { icon: IconName; text: string }[] as {
-		icon: IconName;
-		text: string;
-	}[],
+	] satisfies AppNavItem[] as AppNavItem[],
 	navFoot: "Mieterportal",
 	head: "Mieterportal",
 	tag: "Beispieldaten",
-	greeting: "Willkommen zurück.",
+	title: "Willkommen zurück.",
 	sub: "Wohnung 2. OG links · Beispiel",
 	entries: [
 		{
@@ -93,7 +82,7 @@ export const portal = {
 			before: "Neu",
 			after: "Bereitgestellt",
 		},
-	] satisfies PortalEntry[] as PortalEntry[],
+	] satisfies ListEntry[] as ListEntry[],
 };
 
 export const statement = {
@@ -175,7 +164,7 @@ export const calendar: CalendarTile = {
 	noteDoing: "{x} wird erstellt",
 };
 
-export const phone: PhoneTile = {
+export const phone = {
 	time: "9:41",
 	app: "Heidi",
 	title: "Ihre Verbrauchsinfo September",
@@ -185,9 +174,9 @@ export const phone: PhoneTile = {
 	comparisons: [`11${NB}% unter Vorjahresmonat`],
 	/** Monthly heating values up to the current month; the last is accent. */
 	bars: [171, 184, 162, 131, 74, 22, 15, 14, 96, 131],
-};
+} satisfies PhoneTile;
 
-export const doc: DocTile = {
+export const doc = {
 	title: "Verbrauchsinformation September",
 	sub: "Heizung · in kWh · Beispiel",
 	rows: [
@@ -197,7 +186,7 @@ export const doc: DocTile = {
 		{ label: "Durchschnittsnutzer", value: "142", share: 89 },
 	],
 	result: "Alle Pflichtangaben enthalten",
-};
+} satisfies DocTile;
 
 export const bill: BillTile = {
 	without: "Ohne Portal",

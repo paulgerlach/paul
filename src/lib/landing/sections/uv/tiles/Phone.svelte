@@ -1,7 +1,8 @@
 <!--
-  A row's tile: a phone with the new-information notification and the
-  month's figure with its comparisons and bars. Every 7 s in view the
-  notification drops in again, then the figure and the bars grow.
+  A row's tile: a phone with a notification and a figure with its chips, then
+  monthly bars (the Verbrauchsinformation) or detail rows (an appointment).
+  Every 7 s in view the notification drops in again, then the figure appears
+  and the bars grow.
 -->
 <script lang="ts">
 	import { loopInView } from "$lib/landing/attachments/loopInView";
@@ -16,7 +17,8 @@
 		label,
 		value,
 		comparisons,
-		bars,
+		details = [],
+		bars = [],
 		max = Math.max(...bars, 1) * 1.05,
 	}: PhoneTile = $props();
 
@@ -58,9 +60,18 @@
 		<div class="cmp">
 			{#each comparisons as c (c)}<span>{c}</span>{/each}
 		</div>
-		<div class="mini">
-			{#each heights ?? full as h, i (i)}<i style:height="{h}%"></i>{/each}
-		</div>
+		{#if details.length}
+			<div class="ev">
+				{#each details as d (d.label)}
+					<div><span>{d.label}</span><b>{d.value}</b></div>
+				{/each}
+			</div>
+		{/if}
+		{#if bars.length}
+			<div class="mini">
+				{#each heights ?? full as h, i (i)}<i style:height="{h}%"></i>{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -158,6 +169,26 @@
 		padding: 3px 7px;
 		background: #e6f5e7;
 		color: #245f33;
+	}
+	/* The design's .uv-ev */
+	.ev {
+		display: grid;
+		gap: 6px;
+		margin-top: 12px;
+	}
+	.ev div {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+		font-size: 12px;
+		border-top: 1px solid var(--hair);
+		padding-top: 8px;
+	}
+	.ev span {
+		color: var(--muted);
+	}
+	.ev b {
+		font-weight: 600;
 	}
 	.mini {
 		display: flex;

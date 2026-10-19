@@ -4,29 +4,43 @@ Same rules as the other landing pages: runes and the existing attachments, no ne
 
 ## 3.1 Shared
 
-- `reveal()` on `<main>`; the anchors `#checker` (the nav CTA) and `#start` ("Mit eigenem Bestand auswerten →", "Auswertung anfragen →", the trust block's "Demo buchen" and the floating CTA lead to the closing form and focus its e-mail field).
+- `reveal()` on `<main>`; the anchors `#checker` ("Eigene Abrechnung prüfen →"), `#zahlen` ("Zu den Zahlen ↓") and `#start` (the band's and the trust block's "Demo buchen" and the floating CTA lead to the closing form and focus its e-mail field). Sections get `scroll-margin-top: 72px` (the design's offset).
 
-## 3.2 `#pc-js`: the tool
+## 3.2 `#mc-js`: the card
 
-- **Adding files** (`add()`): the input's `change` and the drop zone's `drop` add the chosen files (name, size, kind, `isAccepted`) as own files; files from the example are replaced first. The input is cleared after each pick, so the same file can be picked again. `dragenter` / `dragover` set the drop zone's `.ov` (and `preventDefault`), `dragleave` / `drop` clear it. The × removes an own file (not while running). Only names and sizes are read.
-- **The example** (`#pc-ex`): not while running; replaces the list with the five example files and starts the run at once.
-- **The run** (`go()`): `busy` on, the run button disabled, the shown result removed. For each file in turn: the row's scan line and the second dot spinning, 550 ms; an example file then gets its type tag and "<n> Seiten, lesbar" (or the warning chip and the warning dot for the scan), the third dot spins 450 ms, the fourth 380 ms, both done; an own file gets its format tag (or "Datei zu groß" / "Format nicht unterstützt" with the warning dot) and the last two dots locked. With reduced motion every wait is 0 ms. Then `busy` off and the result shows (`show()`). The waits are timers of `PortfolioCheck`, cleared on teardown; the run stops there.
-- **The result** (`show()`): the evaluation for the clock's Berlin day (`exampleEvaluation(today)`, `kpis`), or the own-files panel; the section scrolls into view 250 ms later (0 with reduced motion; 90 px above its top, smooth unless reduced motion) and its heading takes the focus (`preventScroll`). With the example and motion: every 120 ms, at most 67 times, check whether the dark KPI is fully on screen (below 60 px); then after 250 ms `confettiFrom` it. The timers and the confetti stop on teardown.
-- **"Beispielauswertung ansehen"** (`#pc-ex2`): starts the example and scrolls back to the tool (100 px above it).
-- **The overview's chips:** a click toggles the row's popover (`aria-expanded`); hover and focus-within show it too (CSS).
-- **"Als CSV herunterladen"** (`#pc-csv`): `toCsv` of the shown evaluation as a `text/csv;charset=utf-8` Blob, saved through a temporary `<a download>` (revoked after 1.5 s); "Gespeichert: Heidi-Portfolio-Beispiel.csv", or "Der Download ist hier gerade nicht möglich." on an error.
+State lives in `BillCheck` (`check.svelte.ts`, the page's context): the pane (`up`, `man`, `res`), the files, the flow's step, the answers (`co2`, `remote`, `uvi`: "?" at first; the sign), the values pane's fields (bound strings), `demo`, the example's `found`, the shown result, the lock, the letter.
 
-## 3.3 `#pc-how-js`: the steps' loop
+- **Tabs:** "Hochladen" and "Werte eingeben" switch the pane (`role="tab"`, `aria-selected`; on the result pane neither is selected).
+- **Files** (`add()`): the input's `change` and the drop zone's `drop` add JPG, PNG, WebP and PDF files; any other file shows "Bitte ein PDF oder ein Foto (JPG, PNG) hochladen." (the accepted ones are still added). `dragenter` / `dragover` set `.over` (`preventDefault`), `dragleave` / `drop` clear it. The input is cleared after each pick. An image gets a local preview (`URL.createObjectURL`, revoked when it's removed, on reset and on teardown); a PDF shows "PDF". "×" removes a file. Nothing is read or sent.
+- **The flow** (shown with the first file, from step 1): "Schritt <step + 2> von 5" and the bar at (step + 2) / 5. Step 1: the date enables "Weiter →" and is copied to the values pane's "Erhalten am"; "Weiß ich nicht" clears it and goes on. Steps 2 and 3: an answer sets it (in both panes) and moves on after 280 ms (if still on that step). Step 4: the summary (the file names, the date or "nicht angegeben", the two answers; "Ändern" goes back to steps 1–3) and "Abrechnung prüfen →" takes the focus. "← Zurück" from step 2. The step's first field takes the focus (`preventScroll`) from step 2 on. Removing the last file hides the flow; the next file starts it at step 1 again.
+- **"Abrechnung prüfen →":** the values pane with the note "Die automatische Erkennung ist in dieser Ansicht nicht verfügbar. …" (README: there's no reading here).
+- **"Ergebnis anzeigen →"** (`compute`): `evaluate(values, today)` for the clock's Berlin day; the result pane; the figure counts from 0 (900 ms, `tweenNumber`; the share in % when there are no heating costs); with a sum or a share, confetti from the figure 500 ms later (`confettiFrom`, stopped on teardown); the letter section hidden; the lock as below.
+- **"Beispiel ansehen":** `demo` on, the example's values for the day (the "Beispiel" tag), straight to the result.
+- **"Werte ändern":** the values pane, the fields kept. **"Neue Abrechnung prüfen":** every file, field and answer reset (the sign "Nachzahlung"), the letter section hidden, the upload pane.
 
-With motion only, through `loopInView` (every 10.5 s, threshold .35): the pass hides every chip and zeroes the figures ("--.--." and "0"), then lights card 1 (200 ms) and shows its three chips 550 ms apart from 500 ms (the warning chip shakes), card 2 at 2.6 s ("Vertrag 2021" at 2.9 s, "+ Nachtrag 2023" sliding in at 3.5 s, both pulsing at 4.2 s, "Laufzeit bis 2027" at 4.7 s), card 3 at 5.6 s ("Kündigung bis" at 5.9 s, its value typed in place of "--.--." every 110 ms; "Geräte" at 6.6 s, its value counting to 72 in 900 ms, ease-out cubic, `requestAnimationFrame`), no card lit at 8.2 s. The cleanup (leaving the view, the next pass, teardown) cancels the timers and the frame and restores the end state: every chip shown, the final figures. The `anim` class (chips hidden until shown) is set on mount with motion only, so the server and reduced motion show every chip.
+## 3.3 `#pw-js`: the paywall
 
-## 3.4 The list (the inline script, shared `NextSteps`)
+- The result is locked unless unlocked: the points and "Musterschreiben erstellen" hidden, the teaser shown with its count. A result for own values after an unlocked example locks again.
+- **"Gründe und Details ansehen →"** opens the dialog (`showModal()`): the document's rows from the values (the uploaded image when there is one), the points, "<n> Punkte"; locked: the grid blurred under the glass card. The example shows "Beispiel kostenlos freischalten" (it takes the focus), own values the disabled "Zahlung wird gerade eingerichtet" (with `PAY_HREF` set: the link "Jetzt für 39,99 € freischalten →" in a new window and the wait note on click). "×", the backdrop and Escape close it; the focus returns to the opener.
+- **"Beispiel kostenlos freischalten":** unlocks (the glass fades, the grid sharpens, confetti from the points), and the result pane shows the points and the letter button.
 
-- **The check run** (`run()` on first view, threshold .2): `enterView` on the card: below the fold on load and with motion, `prepare` empties it (no row in, no row checked, the counts 0, "Bestand wird geprüft …"), `play` brings row i in at i × 140 ms (scan look) and checks it at 700 + i × 420 ms (the chip pops in, the counts rise); with the last "7 Liegenschaften geprüft" with the green tick.
-- **Filters and search** (`apply()`): the filter buttons (`aria-pressed`) and the search field (`input`, trimmed, lower case, part of the name) hide the other rows; the `sr-only` line says how many show.
-- **The popovers:** a click toggles a row's popover; hover and focus-within show it (CSS), its three steps sliding in one after the other.
+## 3.4 The letter
 
-## 3.5 CSS only
+- **"Musterschreiben erstellen →":** `letterText(result)` into the textarea, the section shown and scrolled to (72 px above its top, smooth unless reduced motion). The text stays editable.
+- **"Text kopieren":** selects the text, tries `document.execCommand("copy")` and `navigator.clipboard.writeText`; the label reads "Kopiert" (or "Text markiert, bitte mit Strg+C kopieren") for 2.4 s.
 
-- The pills' icon on hover (`#pillfx`: 1.12 and `--ok`), the drop zone's hover (border, ground, the tile 3 px up), the example button's hover, the documents' tile turn, the ghost buttons' border, the `bk-next` arrow (4 px) and press, the list rows' thumbnail zoom, the chips' lift, the FAQ's chevron.
+## 3.5 `#ms-js`: the scan loop
+
+With motion only, through `loopInView` (threshold .3, every 10.4 s). A pass resets the block (no row marked, no finding, "0", the empty bar, "Abrechnung wird gelesen …", the footer hidden), measures the sheet's height and each marked row's middle, then runs one `requestAnimationFrame` loop for 5.2 s: the beam's position eases in and out over the sheet, the bar follows the time, each row is marked as the beam passes its middle (its finding slides in, the count rises); at the end the beam goes, the status reads "4 Auffälligkeiten in dieser Abrechnung" and the footer fades in. The cleanup (leaving the view, the next pass, teardown) cancels the frame and restores the finished state.
+
+## 3.6 The figures and the errors
+
+- **Studies:** the switch sets the study; the figure tweens from the shown value to the study's (900 ms), dot i takes the new state at i × 8 ms (one `requestAnimationFrame` loop), text and source switch at once. With reduced motion everything at once. On first view below the fold (`enterView`, threshold .15): from 0 and no dots to "Verbraucherzentralen".
+- **Stats:** `countUp` on "60" and "565" (1.2 s, ease-out cubic).
+- **Error filter:** the cards of the kind (`{#key}` on the filter, so each change plays the entrance 40 ms apart).
+- **Timeline:** `enterView` empties the bar below the fold and fills it on first view (1.6 s transition).
+
+## 3.7 CSS only
+
+- The pills' icon on hover (`#pillfx`: 1.12 and `--ok`), the drop zone's hover, the tabs, the yes/no buttons, the `bk-next` arrow (4 px) and press, the ghost buttons' border, the pay and example buttons, the FAQ's plus.
 - With reduced motion: nothing moves (the landing reset).

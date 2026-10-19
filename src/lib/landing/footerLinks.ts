@@ -17,6 +17,7 @@ import {
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_VORGEHEN,
+	ROUTE_WEG_VERWALTUNG,
 } from "$lib/routes";
 import { DEMO_HREF } from "./cta";
 
@@ -81,7 +82,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Hausverwaltung", href: ROUTE_HAUSVERWALTUNG },
 			{ text: "Mietverwaltung", href: ROUTE_MIETVERWALTUNG },
-			{ text: "WEG-Verwaltung" },
+			{ text: "WEG-Verwaltung", href: ROUTE_WEG_VERWALTUNG },
 			{ text: "Wohnungsunternehmen" },
 			{ text: "Private Vermieter" },
 			{ text: "Asset Manager & Fonds" },

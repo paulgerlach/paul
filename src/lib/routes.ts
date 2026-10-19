@@ -22,5 +22,6 @@ export const ROUTE_VERBRAUCHSINFORMATION = "/verbrauchsinformation";
 export const ROUTE_SCHNITTSTELLEN = "/schnittstellen";
 export const ROUTE_HAUSVERWALTUNG = "/hausverwaltung";
 export const ROUTE_MIETVERWALTUNG = "/mietverwaltung";
+export const ROUTE_WEG_VERWALTUNG = "/weg-verwaltung";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

@@ -131,8 +131,9 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the linked pag
 	await expect(
 		page.locator("#faq .ans a", { hasText: /^Fristenrechner$/ }),
 	).toHaveAttribute("href", "/fristenrechner");
-	// No Muster-Kündigung yet (its plan, open question 2).
-	await expect(page.getByText("Zur Muster-Kündigung")).toHaveCount(0);
+	await expect(
+		page.locator("a", { hasText: "Zur Muster-Kündigung" }),
+	).toHaveAttribute("href", "/muster-kuendigung");
 	// Answer 1 names the Fristenrechner as plain text, as its design does.
 	await expect(page.locator("#faq .ans a:not(.more)")).toHaveCount(1);
 });

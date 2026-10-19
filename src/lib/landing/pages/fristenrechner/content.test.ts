@@ -66,8 +66,11 @@ describe("/fristenrechner content", () => {
 		expect(hero.calc.href).toBe(`#${RECHNER_ID}`);
 		expect(hero.dates.href).toBe(`#${STICHTAGE_ID}`);
 		expect(routeValues).toContain(calculator.contract.hintLink.href);
-		// The Portfolio-Checker and the Muster-Kündigung have no page yet.
-		expect(portfolio.ctas.map((c) => c.href)).toEqual([undefined, undefined]);
+		// The Portfolio-Checker has no page yet.
+		expect(portfolio.ctas.map((c) => c.href)).toEqual([
+			undefined,
+			routes.ROUTE_MUSTER_KUENDIGUNG,
+		]);
 	});
 
 	it("has no empty or untrimmed text", () => {

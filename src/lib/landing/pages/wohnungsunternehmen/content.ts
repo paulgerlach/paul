@@ -29,6 +29,7 @@ import {
 	ROUTE_VORGEHEN,
 	ROUTE_WEG_VERWALTUNG,
 	ROUTE_WOHNUNGSUNTERNEHMEN,
+	ROUTE_MUSTER_KUENDIGUNG,
 } from "$lib/routes";
 
 const NB = " ";
@@ -176,9 +177,14 @@ export const pain = {
 			text: "Heidi installiert fernablesbare Funkzähler, rechtzeitig vor der Pflicht ab 1.1.2027.",
 		},
 	],
-	// None of these pages exists yet (plan open question 2), so the row is hidden.
+	// Only links with a page show (plan open question 2): the Muster-Kündigung
+	// (4WYU5hjVsWSLrxuo7wsdm6) so far.
 	links: [
-		{ icon: "doc", text: "Muster-Kündigung herunterladen" },
+		{
+			icon: "doc",
+			text: "Muster-Kündigung herunterladen",
+			href: ROUTE_MUSTER_KUENDIGUNG,
+		},
 		{ icon: "swap", text: "Messdienstanbieter vergleichen" },
 		{ icon: "check", text: "Bisherige Abrechnung prüfen" },
 	],

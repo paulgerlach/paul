@@ -128,13 +128,14 @@ test("the CTAs lead to the calculator, the dates and the closing form", async ({
 		page.locator("section[aria-labelledby=fr-h1]"),
 	).not.toHaveAttribute("id", "start");
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
-	// The Portfolio-Checker and the Muster-Kündigung have no page yet.
+	// The Portfolio-Checker has no page yet; the Muster-Kündigung keeps its
+	// design's light button.
 	await expect(
 		page.locator("main").getByText("Zum Portfolio-Checker"),
 	).toHaveCount(0);
-	await expect(page.locator("main").getByText("Muster-Kündigung")).toHaveCount(
-		0,
-	);
+	const template = page.locator("main a", { hasText: "Muster-Kündigung" });
+	await expect(template).toHaveAttribute("href", "/muster-kuendigung");
+	await expect(template).toHaveClass(/\bghost\b/);
 });
 
 test("the contract pane computes the last day to cancel", async ({ page }) => {

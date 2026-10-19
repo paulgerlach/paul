@@ -5,7 +5,7 @@
  */
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
+import { ROUTE_MESSDIENSTWECHSEL, ROUTE_MUSTER_KUENDIGUNG } from "$lib/routes";
 
 const NB = "\u00a0";
 
@@ -180,8 +180,8 @@ export const portfolio: {
 	ctas: [
 		// UFviBtC2mkneFNeWnfHAWp: no page yet (plan README, open question 1).
 		{ text: "Zum Portfolio-Checker" },
-		// 4WYU5hjVsWSLrxuo7wsdm6: no page yet (plan README, open question 1).
-		{ text: "Muster-Kündigung" },
+		// 4WYU5hjVsWSLrxuo7wsdm6
+		{ text: "Muster-Kündigung", href: ROUTE_MUSTER_KUENDIGUNG },
 	],
 	rows: [
 		{

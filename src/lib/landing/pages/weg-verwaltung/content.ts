@@ -23,7 +23,11 @@ import type {
 	PhoneTile,
 	Row,
 } from "$lib/landing/sections/uv/types";
-import { ROUTE_FRISTENRECHNER, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
+import {
+	ROUTE_FRISTENRECHNER,
+	ROUTE_MUSTER_KUENDIGUNG,
+	ROUTE_VERBRAUCHSINFORMATION,
+} from "$lib/routes";
 
 const NB = " ";
 
@@ -260,8 +264,8 @@ export const audience = {
 		{
 			title: "Muster-Kündigung für den Messdienst",
 			text: "Die Vorlage für den bisherigen Anbieter. Oder Heidi kündigt für Sie per Vollmacht.",
-			// No Muster-Kündigung yet (plan README, open question 2).
-			cta: { text: "Zur Muster-Kündigung" },
+			// 4WYU5hjVsWSLrxuo7wsdm6
+			cta: { text: "Zur Muster-Kündigung", href: ROUTE_MUSTER_KUENDIGUNG },
 			image: "template",
 		},
 	] satisfies {

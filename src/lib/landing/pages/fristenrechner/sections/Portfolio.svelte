@@ -1,15 +1,18 @@
 <!--
   "Für den ganzen Bestand" (.pg-sec.alt, .fr-pf): the shared head, the text
   and the example list (.fr-list, hidden from screen readers like the design,
-  with its rows as a visually hidden list). The two CTAs show once their
-  pages exist (plan README, open question 1).
+  with its rows as a visually hidden list). A CTA shows once its page
+  exists (plan README, open question 1), in its design's look (the first
+  dark, the second light) even when the first is hidden.
 -->
 <script lang="ts">
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { portfolio } from "../content";
 
-	const ctas = portfolio.ctas.filter(
-		(cta): cta is { text: string; href: string } => !!cta.href,
+	const ctas = portfolio.ctas.flatMap((cta, i) =>
+		cta.href
+			? [{ text: cta.text, href: cta.href, look: i ? "ghost" : "bk" }]
+			: [],
 	);
 </script>
 
@@ -29,8 +32,8 @@
 			<p class="rv">{portfolio.text}</p>
 			{#if ctas.length}
 				<div class="ctas rv">
-					{#each ctas as cta, i (cta.text)}
-						<a class={i === 0 ? "bk" : "ghost"} href={cta.href}
+					{#each ctas as cta (cta.text)}
+						<a class={cta.look} href={cta.href}
 							>{cta.text} <span class="ar" aria-hidden="true">→</span></a
 						>
 					{/each}

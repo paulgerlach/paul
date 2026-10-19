@@ -25,6 +25,7 @@ import {
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
+	ROUTE_MUSTER_KUENDIGUNG,
 } from "$lib/routes";
 import type { IconName } from "./icons";
 
@@ -92,7 +93,7 @@ export const topics: Topic[] = [
 				question: "Wer kündigt beim bisherigen Messdienst?",
 				answer:
 					"Auf Wunsch Heidi. Mit einer Vollmacht kündigen wir fristgerecht in Ihrem Namen. Alternativ erstellen Sie die Kündigung selbst mit unserer Vorlage.",
-				more: { text: "Muster-Kündigung" },
+				more: { text: "Muster-Kündigung", href: ROUTE_MUSTER_KUENDIGUNG },
 			},
 			{
 				id: "vertragsende",

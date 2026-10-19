@@ -105,7 +105,12 @@ describe("asset-manager content", () => {
 
 	it("hides the links whose pages don't exist yet", () => {
 		expect(large.secondary).not.toHaveProperty("href");
-		for (const link of pain.links) expect(link).not.toHaveProperty("href");
+		// Only the Muster-Kündigung has a page so far.
+		expect(pain.links.map((link) => link.href)).toEqual([
+			routes.ROUTE_MUSTER_KUENDIGUNG,
+			undefined,
+			undefined,
+		]);
 	});
 
 	it("has four benefits, the first dark, and four steps", () => {

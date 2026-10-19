@@ -5,8 +5,16 @@
 	import { todayOf } from "$lib/landing/pages/fristenrechner/fristen";
 	import { setBillCheck } from "$lib/landing/pages/heizkostenabrechnung-pruefen/check.svelte";
 	import Closing from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Closing.svelte";
+	import Deadlines from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Deadlines.svelte";
+	import Errors from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Errors.svelte";
 	import Faq from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Faq.svelte";
 	import FloatingCta from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/FloatingCta.svelte";
+	import Hero from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Hero.svelte";
+	import Letter from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Letter.svelte";
+	import Managers from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Managers.svelte";
+	import Numbers from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Numbers.svelte";
+	import Paywall from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Paywall.svelte";
+	import Scan from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Scan.svelte";
 	import Trust from "$lib/landing/pages/heizkostenabrechnung-pruefen/sections/Trust.svelte";
 
 	let { data } = $props();
@@ -20,8 +28,16 @@
 </script>
 
 <main id="content" class="mc" {@attach reveal()}>
+	<Hero />
+	<Letter />
+	<Scan />
+	<Numbers />
+	<Errors />
+	<Deadlines />
+	<Managers />
 	<Faq />
 	<Closing form={data.finalForm} />
+	<Paywall />
 	<Trust />
 </main>
 <FloatingCta />

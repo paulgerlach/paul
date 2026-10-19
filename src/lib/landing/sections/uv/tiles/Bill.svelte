@@ -4,14 +4,24 @@
   and `a` rows, the sum's first value), then the thumb slides over, those rows
   fold away, the `ok` and `b` rows appear and the sum turns to its second
   value: swapped as text, or counted in €. An `ok` row shows a tick, or its
-  text value in green.
+  text value in green. `media` sits below the switch and gets the side.
 -->
 <script lang="ts">
+	import type { Snippet } from "svelte";
 	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Tick from "../Tick.svelte";
 	import type { BillTile } from "../types";
 
-	let { without, with: withHeidi, rows, sum }: BillTile = $props();
+	let {
+		without,
+		with: withHeidi,
+		rows,
+		sum,
+		media,
+	}: BillTile & {
+		/** Below the switch, given the side (`true`: "with"), e.g. a photo shown on that side. */
+		media?: Snippet<[boolean]>;
+	} = $props();
 
 	const euro = new Intl.NumberFormat("de-DE", {
 		minimumFractionDigits: 2,
@@ -65,6 +75,7 @@
 	<div class="seg">
 		<span class="a">{without}</span><span class="b">{withHeidi}</span>
 	</div>
+	{@render media?.(good)}
 	{#each rows as row (row.label)}
 		<div
 			class={[

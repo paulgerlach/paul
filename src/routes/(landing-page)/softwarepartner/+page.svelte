@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
+	import Apply from "$lib/landing/pages/softwarepartner/sections/Apply.svelte";
 	import Audience from "$lib/landing/pages/softwarepartner/sections/Audience.svelte";
 	import Closing from "$lib/landing/pages/softwarepartner/sections/Closing.svelte";
 	import Faq from "$lib/landing/pages/softwarepartner/sections/Faq.svelte";
@@ -9,6 +10,7 @@
 	import Picture from "$lib/landing/pages/softwarepartner/sections/Picture.svelte";
 	import Quotes from "$lib/landing/pages/softwarepartner/sections/Quotes.svelte";
 	import Rotator from "$lib/landing/pages/softwarepartner/sections/Rotator.svelte";
+	import Rows from "$lib/landing/pages/softwarepartner/sections/Rows.svelte";
 	import Statement from "$lib/landing/pages/softwarepartner/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/softwarepartner/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
@@ -20,11 +22,13 @@
 	<UvMain>
 		<Hero />
 		<Statement />
+		<Rows />
 		<Rotator />
 		<Numbers />
 		<Audience />
 		<Quotes />
 		<Picture />
+		<Apply form={data.partnerForm} />
 		<Faq items={data.faq} />
 		<Closing />
 	</UvMain>

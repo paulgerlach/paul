@@ -1,5 +1,6 @@
 import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
+	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
@@ -32,7 +33,6 @@ export const companyLinks: LandingFooterLink[] = [
 	{ text: "Kunden", href: "/#kunden" },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
-	{ text: "Neuigkeiten" },
 	{ text: "API-Dokumentation" },
 ];
 
@@ -59,8 +59,9 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Dashboard", href: ROUTE_DASHBOARD },
 			{ text: "Demo buchen", href: DEMO_HREF },
-			{ text: "Auswertungen" },
+			{ text: "Auswertung" },
 			{ text: "Schnittstellen", href: ROUTE_SCHNITTSTELLEN },
+			{ text: "Installationstool" },
 		],
 	},
 	{
@@ -69,6 +70,8 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Installationspartner" },
 			{ text: "Softwarepartner" },
 			{ text: "Verbände" },
+			{ text: "Nachfolge" },
+			{ text: "Partnerschaften" },
 		],
 	},
 	{
@@ -85,15 +88,17 @@ export const footerGroups: LandingFooterGroup[] = [
 	{
 		title: "Ressourcen",
 		links: [
+			{ text: "Blog", href: ROUTE_BLOG },
+			{ text: "Neuigkeiten" },
 			{ text: "Fristenrechner" },
 			{ text: "HKVO-Leitfaden" },
 			{ text: "Einsparrechner" },
+			{ text: "Presse" },
 			{ text: "Muster-Kündigung" },
 			{ text: "Energieausweis" },
 			{ text: "Portfolio-Checker" },
 			{ text: "Heizkostenabrechnungs-Checker" },
 			{ text: "Messdienstanbieter-Vergleich" },
-			{ text: "Mieter-Check" },
 		],
 	},
 ];

@@ -3,6 +3,7 @@
 	import type { SuperValidated } from "sveltekit-superforms";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
+	import demoPoster from "$lib/assets/landing/region/demo-poster.jpg?url";
 	import DemoCard from "$lib/landing/components/DemoCard.svelte";
 	import EasyChecks from "$lib/landing/components/EasyChecks.svelte";
 	import Pin from "$lib/landing/components/icons/Pin.svelte";
@@ -16,6 +17,12 @@
 		form,
 	}: { content: RegionContent; form: SuperValidated<SwitchInquiry> } = $props();
 	const hero = $derived(content.hero);
+	// The region designs' own demo video, the same on every page.
+	const demoVideo = {
+		webm: "/landing/region-demo.webm",
+		mp4: "/landing/region-demo.mp4",
+		poster: demoPoster,
+	};
 </script>
 
 <header class="city-hero">
@@ -32,7 +39,7 @@
 				submitLabel="Bestand kostenlos prüfen"
 			/>
 			<EasyChecks items={hero.checks} />
-			<DemoCard />
+			<DemoCard video={demoVideo} />
 		</div>
 		<div class="hero-photo">
 			<Image

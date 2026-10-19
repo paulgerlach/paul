@@ -1,15 +1,25 @@
 <!--
   "Demo mit unserem Team buchen" card of the landing heroes. The demo video
-  plays while the card is hovered, focused or touched.
+  plays while the card is hovered, focused or touched. The city and Germany
+  designs have their own video (`video`); the default is /messdienstwechsel's.
 -->
 <script lang="ts">
-	import poster from "$lib/assets/landing/demo-poster.jpg?url";
+	import defaultPoster from "$lib/assets/landing/demo-poster.jpg?url";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 
 	let {
 		href = DEMO_HREF,
 		label = "Demo mit unserem Team buchen",
-	}: { href?: string; label?: string } = $props();
+		video: source = {
+			webm: "/landing/demo.webm",
+			mp4: "/landing/demo.mp4",
+			poster: defaultPoster,
+		},
+	}: {
+		href?: string;
+		label?: string;
+		video?: { webm: string; mp4: string; poster: string };
+	} = $props();
 
 	let video = $state<HTMLVideoElement>();
 	// Autoplay may be refused (e.g. power saving); the poster stays then.
@@ -30,15 +40,15 @@
 	<span class="dc-ph">
 		<video
 			bind:this={video}
-			{poster}
+			poster={source.poster}
 			muted
 			loop
 			playsinline
 			preload="metadata"
 			aria-hidden="true"
 		>
-			<source src="/landing/demo.webm" type="video/webm" />
-			<source src="/landing/demo.mp4" type="video/mp4" />
+			<source src={source.webm} type="video/webm" />
+			<source src={source.mp4} type="video/mp4" />
 		</video>
 	</span>
 	<span>{label}</span>

@@ -21,6 +21,10 @@
 		line-height: 1.05;
 		text-align: left;
 	}
+	/* The design's .uv-fl summary (the shared FAQ sets no letter-spacing). */
+	.uv-faq :global(.faq summary) {
+		letter-spacing: -0.015em;
+	}
 	.uv-faq :global(.faq-list) {
 		max-width: 1100px;
 		margin-top: 56px;

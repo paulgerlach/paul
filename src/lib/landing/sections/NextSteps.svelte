@@ -4,8 +4,8 @@
   counts, the search, seven rows with a recommendation chip and its
   toggletip, the footer. The server renders it checked; below the fold and
   with motion it runs the design's check once on first view. `top` is the
-  card's top margin, `indent` the rows' indent below 860 px (the designs
-  differ in both).
+  card's top margin, `indent` the rows' indent below 860 px, `tick` the
+  done line's tick (the designs differ in these).
 -->
 <script lang="ts">
 	import p1 from "$lib/assets/landing/dashboard/property-1.jpg";
@@ -16,6 +16,7 @@
 	import p6 from "$lib/assets/landing/dashboard/property-6.jpg";
 	import p7 from "$lib/assets/landing/dashboard/property-7.jpg";
 	import { enterView } from "$lib/landing/attachments/enterView";
+	import Check from "$lib/landing/components/icons/Check.svelte";
 	import {
 		countByKind,
 		filterNextSteps,
@@ -23,7 +24,16 @@
 		type NextStepFilter,
 	} from "$lib/landing/data/nextSteps";
 
-	let { top = 56, indent = 56 }: { top?: number; indent?: number } = $props();
+	let {
+		top = 56,
+		indent = 56,
+		tick = "accent",
+	}: {
+		top?: number;
+		indent?: number;
+		/** The done line's tick: /dashboard's accent one or /portfolio-checker's green one with a white tick. */
+		tick?: "accent" | "green";
+	} = $props();
 
 	const PHOTOS = [p1, p2, p3, p4, p5, p6, p7];
 	const FILTERS: NextStepFilter[] = ["all", "take", "cancel", "bill"];
@@ -181,9 +191,11 @@
 		<span class="demo-badge">{rec.badge}</span>
 		<span class="done">
 			{#if checked >= rec.rows.length}
-				<span class="okb">{@render icon("check")}</span>{rec.done(
-					rec.rows.length,
-				)}
+				<span class={["okb", tick === "green" && "green"]}
+					>{#if tick === "green"}<Check color="#fff" />{:else}{@render icon(
+							"check",
+						)}{/if}</span
+				>{rec.done(rec.rows.length)}
 			{:else}{rec.running}{/if}
 		</span>
 	</div>
@@ -265,6 +277,8 @@
 	.s input {
 		border: 0;
 		outline: 0;
+		/* The browser's default input padding the designs keep (preflight zeroes it). */
+		padding: 1px 2px;
 		font-size: 14px;
 		flex: 1;
 		min-width: 0;
@@ -630,6 +644,9 @@
 	.done :global(.okb) {
 		width: 18px;
 		height: 18px;
+	}
+	.done :global(.okb.green) {
+		background: #3e9a57;
 	}
 	@media (max-width: 860px) {
 		.pl {

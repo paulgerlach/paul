@@ -122,7 +122,8 @@ export class PortfolioCheck {
 						]
 					: [
 							{
-								text: f.size >= MAX_BYTES ? tool.own.tooBig : tool.own.unsupported,
+								text:
+									f.size >= MAX_BYTES ? tool.own.tooBig : tool.own.unsupported,
 								tone: "warn",
 							},
 						];

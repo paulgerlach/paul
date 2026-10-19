@@ -4,22 +4,22 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/wohnungsunternehmen`: the page with the landing header and footer; the footer's "Wohnungsunternehmen" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form instead of the video button, no "Portfolio kostenlos prüfen" and no `.sg-links` row, the Asset-Manager tab as plain text)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The slider: 4.800 on load with the "Ab 1.000" card; dragging below 1.000 shows "Ihr Angebot"; "20.000+" at the end; confetti once when the visitor crosses 1.000; keyboard (arrows, Home/End) moves it and announces "… Einheiten"
-- [ ] The problem picker: chips toggle, answers newest first, the count and "Wechsel besprechen", confetti from the third
-- [ ] Tiles: the Abrechnung counts to 24 / 24; the monthly values, the outlier, the cursor, the flag and the toast loop; the hub lights each tile in turn; the rollout finishes its two properties and starts over; the steps light up one by one and the dot sweeps; each only in view
+- [x] `bun run dev` → `http://localhost:5173/wohnungsunternehmen`: the page with the landing header and footer; the footer's "Wohnungsunternehmen" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form instead of the video button, no "Portfolio kostenlos prüfen" and no `.sg-links` row, the Asset-Manager tab as plain text)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The slider: 4.800 on load with the "Ab 1.000" card; dragging below 1.000 shows "Ihr Angebot"; "20.000+" at the end; confetti once when the visitor crosses 1.000; keyboard (arrows, Home/End) moves it and announces "… Einheiten"
+- [x] The problem picker: chips toggle, answers newest first, the count and "Wechsel besprechen", confetti from the third
+- [x] Tiles: the Abrechnung counts to 24 / 24; the monthly values, the outlier, the cursor, the flag and the toast loop; the hub lights each tile in turn; the rollout finishes its two properties and starts over; the steps light up one by one and the dot sweeps; each only in view
 - [ ] "1.000+" counts up; the meter's figure re-counts on hover
 - [ ] Every "Demo buchen", "Angebot anfragen" and "Wechsel besprechen" scrolls to the closing card and focuses its e-mail field; "Unzufrieden mit Ihrem Messdienst?" → the problems
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the slider's thumb and fill)
 - [ ] Keyboard-only through the page; focus ring visible on light and on the dark cards
 - [ ] Screen reader: one H1 "Große Bestände. Strukturiert umgestellt."; the slider with its label and value; the chips as toggle buttons; the answers announced politely; the tiles silent; no announcements from the loops
-- [ ] Reduced motion: every block in its end state, no confetti
-- [ ] JS disabled: every section readable; the FAQ opens; the signup form posts
-- [ ] A signup reaches `leads` with `source = "wohnungsunternehmen"` and the sink with `page: "/wohnungsunternehmen"`
+- [x] Reduced motion: every block in its end state, no confetti
+- [x] JS disabled: every section readable; the FAQ opens; the signup form posts
+- [x] A signup reaches `leads` with `source = "wohnungsunternehmen"` and the sink with `page: "/wohnungsunternehmen"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

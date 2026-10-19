@@ -38,7 +38,8 @@ src/routes/(landing-page)/wohnungsunternehmen/
 
 src/lib/landing/sections/sg/              # NEW: the shared template of /wohnungsunternehmen and (next) /asset-manager
 ├── types.ts               # content shapes: SgHero, UnitCalc, SegmentTab, LargeStock, PainPicker, Benefits, the five feature rows, Steps
-├── icons.ts  Icon.svelte  Tick.svelte    # the design's 20×20 line icons by name, its 12×10 tick
+├── icons.ts  Icon.svelte  Shapes.svelte  Tick.svelte  Bars.svelte   # the design's 20×20 line icons by name, its 12×10 tick, the Heidi bars
+├── Head.svelte            # a section's pill and H2 through the shared SectionHead
 ├── units.ts  units.test.ts               # pure: the slider's log scale (value ↔ units), rounding, "20.000+"
 ├── confetti.ts            # the design's `PG.confetti`: a fixed full-viewport canvas, the shared `burst`
 ├── SgMain.svelte          # page tokens, .pg-sec / .alt, reveal styles, #hs-css heading sizes, the two-quote row
@@ -59,6 +60,29 @@ src/lib/landing/pages/wohnungsunternehmen/
 ```
 
 `*` marks a thin wrapper around a shared section: `+page.svelte` imports only from its own `sections/` folder.
+
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`dc1f7c28`), the route, content and footer link (`1daa7d16`), the `sg` template and the sections (`abf66f82`), the interactions (`983f18e0`), and `e2e/wohnungsunternehmen.e2e.ts` (13 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design capped at 600 as the design loads it): every section has the design's height except the expected ones (the problem section without the `.sg-links` row, 70 px at 1440 px and 181 px at 375 px; the 1000+ card without "Portfolio kostenlos prüfen", 62 px at 375 px; the closing card's form; the logo strip's shared 2 px). The hero is pixel-identical at 1440 px; the tiles side by side at 1440 and 375 px match. No overflow at 320–1440 px; no console errors or warnings. Nothing shared changed. Full suites: check, lint, 497 unit tests; e2e 292 passed, 1 failed under load (`mietverwaltung.e2e.ts` "the hero list replays after its first interval", a clock-timing test; nothing in `uv/` changed, and it passed 3 of 3 runs on its own). Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **The phases' split:** `units.ts` and the problem picker came with the sections (the slider's server value and the chips need them); phase 3 added the confetti, the counters and the loops.
+- **The design's reduced-motion state of the monthly tile is broken:** its `.fr-row *{opacity:1!important;transform:none!important}` shows the cursor at the list's corner, the toast and both labels ("Wie im Vormonat" / "Über Vormonat") on top of each other. We render the intended end state (`s1 s2 s4`, no cursor, no toast), as 02 §2.2 planned.
+- **The Abrechnung tile at 375 px:** the design's title never shrinks, so "24 / 24" ran out of the card (a dormant rule: `white-space: normal` below 480 px can't break "Heizkostenabrechnung"). The text may shrink and the title hyphenates below 480 px; above that nothing changes.
+- **The confetti canvas** is fixed over the viewport like the design's, but the pieces don't follow a scroll during the burst (the shared `burst` has no scroll offset).
+- **FeatureRow's shared tile rules** (`.card`, `.ic`, `.demo`) sit in `:where(.vis)`: Svelte wraps a selector's later classes in `:where()`, so a tile's own `.b .ic` tied with them and lost on order.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
+### For the Asset-Manager sibling
+
+- The `sg` template takes everything from content (`sg/types.ts`): copy `pages/wohnungsunternehmen/` and the route, then change only what 02 §2.3 lists (hero pill and icon `bars`, H1, lead, `calc.start` 12000, the current tab, benefits pill and the four benefits with `trend` / `alert` icons, quotes `gerhard`, `werne`, FAQ 1–2). The icon `trend` is already in `sg/icons.ts`.
+- The tabs: an item with `current: true` gets `aria-current`; an item without `href` is plain text. Link "Asset Manager & Fonds" on `/wohnungsunternehmen` to the new route in the same commit, and "Wohnungsunternehmen" on the new page to `ROUTE_WOHNUNGSUNTERNEHMEN`.
+- `content.test.ts` checks the non-breaking spaces between figures and units and that only split headings end in a space; copy it.
+- The e2e spec's clock steps assume the tiles' timings (`#fr2`–`#fr5`); they hold for the sibling, whose blocks are byte-identical.
+
+### For the Private-Vermieter page
+
+- Its design has its own `pv` blocks and no sibling: build it in its page folder, reusing the shared light sections (`LogoStrip`, `Testimonials`, `Faq`, `CtaCard`, `TrustSeals`, `FloatingCta`). `sg/SgMain` shows what the light wrapper needs (tokens, `.pg-sec`, the H2 margin, `#hs-css`, the two-quote row); copy that into the page rather than importing from `sg/`.
+- Link its tab on `/wohnungsunternehmen` and `/asset-manager` (`tabs.items`, no `href` yet).
 
 ## Key decisions
 

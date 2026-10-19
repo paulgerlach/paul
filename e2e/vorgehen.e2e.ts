@@ -85,6 +85,15 @@ test("the data answer and the trust block link to /sicherheit", async ({
 	).toHaveAttribute("href", "/sicherheit");
 });
 
+test("the remote-reading block links to the HKVO-Leitfaden", async ({
+	page,
+}) => {
+	await page.goto(PATH);
+	await expect(
+		page.getByRole("link", { name: "Zum HKVO-Leitfaden" }),
+	).toHaveAttribute("href", "/hkvo-leitfaden");
+});
+
 test("every CTA leads to the contact card's form, the hero has no #start", async ({
 	page,
 }) => {

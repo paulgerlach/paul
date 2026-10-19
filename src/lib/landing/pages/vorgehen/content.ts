@@ -12,6 +12,7 @@ import type { FaqItem } from "$lib/landing/faqJsonLd";
 import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_HKVO_LEITFADEN,
 	ROUTE_MIETERPORTAL,
 	ROUTE_SICHERHEIT,
 } from "$lib/routes";
@@ -58,10 +59,10 @@ export const stats = [
 ];
 
 /**
- * Target of "Zum HKVO-Leitfaden →". There's no guide page yet, so the link
- * isn't rendered (README, links without a page).
+ * Target of "Zum HKVO-Leitfaden →" (the design's SJbSeTYRqntQxpZQ8RVNf7):
+ * /hkvo-leitfaden. Without a target the link isn't rendered.
  */
-export const HKVO_GUIDE_HREF: string | undefined = undefined;
+export const HKVO_GUIDE_HREF: string | undefined = ROUTE_HKVO_LEITFADEN;
 
 export const remoteDuty = {
 	eyebrow: "Fernablesepflicht",

@@ -95,6 +95,7 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 		"/geraete",
 		"/mieterportal",
 		"/portfolio-checker",
+		"/nachfolge",
 	]);
 	await expect(news(page).locator(".card")).toHaveCount(9);
 	await expect(

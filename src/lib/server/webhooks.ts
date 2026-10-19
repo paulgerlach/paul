@@ -3,7 +3,8 @@
  * Sends events to Denis's Make.com workflows
  *
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
- * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry
+ * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
+ * successioninquiry
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -29,7 +30,12 @@ type EventType =
 	// Partner form on /softwarepartner. Payload: company, name, phone,
 	// product, customers, kinds (array), message, page. Make.com forwards it
 	// to whoever answers software partners; nothing is stored here.
-	| "softwarepartnerinquiry";
+	| "softwarepartnerinquiry"
+	// Contact form on /nachfolge (owners of metering businesses looking for a
+	// successor). Payload: company, name, phone, properties, timeframe,
+	// message, page. Make.com forwards it, confidentially, to whoever answers
+	// succession inquiries; nothing is stored here.
+	| "successioninquiry";
 
 interface WebhookPayload {
 	event_type: EventType;

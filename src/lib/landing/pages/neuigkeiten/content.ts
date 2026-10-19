@@ -15,6 +15,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_MIETERPORTAL,
+	ROUTE_NACHFOLGE,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_PORTFOLIO_CHECKER,
@@ -128,7 +129,8 @@ const stories: Story[] = [
 		title:
 			"Nachfolge: Messdienstanbieter finden mit Heidi einen seriösen Nachfolger",
 		photo: "beratung",
-		// L4T9Q3Z4f84fJhLMXjnkms ("Mehr erfahren"): no page yet.
+		// L4T9Q3Z4f84fJhLMXjnkms
+		more: { text: "Mehr erfahren", href: ROUTE_NACHFOLGE },
 	},
 	{
 		topic: "u",

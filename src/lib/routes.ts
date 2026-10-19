@@ -41,5 +41,6 @@ export const ROUTE_MESSDIENSTANBIETER_VERGLEICH =
 export const ROUTE_INSTALLATIONSPARTNER = "/installationspartner";
 export const ROUTE_SOFTWAREPARTNER = "/softwarepartner";
 export const ROUTE_VERBAENDE = "/verbaende";
+export const ROUTE_NACHFOLGE = "/nachfolge";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

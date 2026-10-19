@@ -53,6 +53,20 @@ src/lib/landing/pages/private-vermieter/
 
 `*` marks a thin wrapper around a shared section.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`7ce2d6b2`), the route, content, photos and footer link (`f43b5f9f`), the sections with their interactions (`73cccaf9`), and `e2e/private-vermieter.e2e.ts` (12 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design capped at 600): every section has the design's height except the closing card (the form; 5 px at 1440, 80–90 px at 700 and 375 px where the form stacks); hero, figures, duo, advantages, comparison and FAQ are pixel-identical or within 1 %. With motion, the scroll scene at 0, 30, 50, 70 and 100 % of its scroll and the flow at 10, 50 and 90 % match the design's frames (≤ 2.5 %, the header). No overflow at 320 and 375 px; no console errors or warnings. Nothing shared changed. Full suites: check, lint, 530 unit tests, 318 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the scene, the flow and the marquee are their interactions; splitting them would have meant writing each twice.
+- **No-JS state of the scene through `@media (scripting: none)`**, together with reduced motion: the section short, the meter photo (scaled in CSS, without the script's cover offset), the last caption, the signals and tags. With JS and motion the server's start state is what the script computes at the top, so nothing jumps on hydration. The flow is short without JS too.
+- **The design's reduced-motion state keeps the signals' wave rings running** (no rule for them); ours stops them.
+- **The meter photo's points are a labelled group, not inside `role="img"`** (an image's children are hidden from screen readers, so the design's points couldn't be reached). The points and tags are out of the tab order until they show.
+- **The quote cards' margins:** the design relies on the browser's `figure` margins (16 px / 40 px); Tailwind's preflight zeroes them, so the cards set them back.
+- **Renamed classes:** the design's `.pv-sig` (also a state class) → `.point`, `.th` → `.crop`, the panels' confirmation `.pv-ok` → `.conf` (it clashed with the status dots' `.ok`).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
+**The "Kunden" pages are complete:** every entry of the landing footer's "Kunden" group has a page (`/hausverwaltung`, `/mietverwaltung`, `/weg-verwaltung`, `/wohnungsunternehmen`, `/private-vermieter`, `/asset-manager`), the e2e spec checks it. The `sg` designs' customer tabs list five segments without "Private Vermieter", so they have no link to it.
+
 ## Key decisions
 
 | Topic | Decision |

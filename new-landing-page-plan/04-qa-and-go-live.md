@@ -4,21 +4,21 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/private-vermieter`: the page with the landing header and footer; the footer's "Private Vermieter" lands here from every landing page; every "Kunden" entry of the footer has a page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion, and the scroll scene and the flow at a few scroll positions with motion; expected differences: the site nav and footer, the closing card's signup form instead of its "Gespräch vereinbaren" button)
-- [ ] No horizontal overflow from 320 to 1640 px (the marquee and the scene clip inside their sections)
-- [ ] The scroll scene: the frame widens, the room zooms towards the kitchen, blurs into the meter photo, the captions change, the signals and the three tags appear; the progress bar follows; points and tags open the info card (hover on desktop, tap), "×", Escape and a click outside close it; scrolling back out of the signals closes it
-- [ ] The flow: above 900 px the step follows the scroll (each step's line fills), a click on a step scrolls to it; at 900 px and below it advances every 4.2 s once in view, a click shows that step; the text below the steps changes with it
+- [x] `bun run dev` → `http://localhost:5173/private-vermieter`: the page with the landing header and footer; the footer's "Private Vermieter" lands here from every landing page; every "Kunden" entry of the footer has a page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion, and the scroll scene and the flow at a few scroll positions with motion; expected differences: the site nav and footer, the closing card's signup form instead of its "Gespräch vereinbaren" button)
+- [x] No horizontal overflow from 320 to 1640 px (the marquee and the scene clip inside their sections)
+- [x] The scroll scene: the frame widens, the room zooms towards the kitchen, blurs into the meter photo, the captions change, the signals and the three tags appear; the progress bar follows; points and tags open the info card (hover on desktop, tap), "×", Escape and a click outside close it; scrolling back out of the signals closes it
+- [x] The flow: above 900 px the step follows the scroll (each step's line fills), a click on a step scrolls to it; at 900 px and below it advances every 4.2 s once in view, a click shows that step; the text below the steps changes with it
 - [ ] The comparison's marks pop in when the table comes into view; the quotes run as a marquee and pause on hover
 - [ ] Every "Angebot anfragen" scrolls to the closing card and focuses its e-mail field; "So funktioniert's" → the flow, "Häufige Fragen" → the FAQ, "Mehr zur uVI" → `/verbrauchsinformation`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the sticky scenes, `100vh` with the browser bars)
 - [ ] Keyboard-only through the page (the signal points and tags, the steps, the FAQ); focus ring visible on dark
 - [ ] Screen reader: one H1 "Ihre Wohnungen. Unser Messdienst. Ihre Ruhe."; the scene's captions announced politely, the info card as a dialog with its close button; the steps as buttons; the comparison as a table with "Ja" / "Nein" / "Je nach Anbieter"; the marquee's duplicates hidden
-- [ ] Reduced motion: the scene short and in its end state (the meter photo, the last caption, the signals and tags), no zoom, no marquee, no auto-advance
-- [ ] JS disabled: the scene short in its end state; the flow shows step 1; every section readable; the FAQ opens; the signup form posts
-- [ ] A signup reaches `leads` with `source = "private-vermieter"` and the sink with `page: "/private-vermieter"`
+- [x] Reduced motion: the scene short and in its end state (the meter photo, the last caption, the signals and tags), no zoom, no marquee, no auto-advance
+- [x] JS disabled: the scene short in its end state; the flow shows step 1; every section readable; the FAQ opens; the signup form posts
+- [x] A signup reaches `leads` with `source = "private-vermieter"` and the sink with `page: "/private-vermieter"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

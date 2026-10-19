@@ -34,7 +34,8 @@
 		word: string;
 		lead: string;
 		primary: Link;
-		secondary: Link;
+		/** Without `href` (no page yet) it isn't shown. */
+		secondary: { text: string; href?: string };
 		size?: "md" | "lg";
 		/** Left and right of the mock. */
 		photos: [Photo, Photo];
@@ -76,7 +77,9 @@
 						onclick={primary.href === START_HREF ? focusSignup : undefined}
 						>{primary.text}</a
 					>
-					<a class="uv-btn d" href={secondary.href}>{secondary.text}</a>
+					{#if secondary.href}
+						<a class="uv-btn d" href={secondary.href}>{secondary.text}</a>
+					{/if}
 				</div>
 			</div>
 		</div>

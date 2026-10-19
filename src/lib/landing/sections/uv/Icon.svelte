@@ -40,5 +40,13 @@
 		<path
 			d="M12.5 3.5a4 4 0 0 0-4.9 5.2L3 13.3 5.7 16l4.6-4.6a4 4 0 0 0 5.2-4.9l-2.4 2.4-2.2-.6-.6-2.2z"
 		/>
+	{:else if name === "server"}
+		<rect x="3" y="3.5" width="14" height="5" rx="1.5" /><rect
+			x="3"
+			y="11.5"
+			width="14"
+			height="5"
+			rx="1.5"
+		/><path d="M6 6h.01M6 14h.01" />
 	{/if}
 </StrokeIcon>

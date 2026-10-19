@@ -85,14 +85,18 @@ export type DocTile = {
 	result: string;
 };
 
+/**
+ * A phone with a notification and a figure with its chips (`label`, `value`,
+ * `comparisons`), or the tile's own `screen` snippet in place of the figure.
+ */
 export type PhoneTile = {
 	time: string;
 	app: string;
 	title: string;
 	sub: string;
-	label: string;
-	value: string;
-	comparisons: string[];
+	label?: string;
+	value?: string;
+	comparisons?: string[];
 	/** Rows under the chips (an appointment's details). */
 	details?: { label: string; value: string }[];
 	/** Monthly values up to the current month; the last is accent. None: no bars. */

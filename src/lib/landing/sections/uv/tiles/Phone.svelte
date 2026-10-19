@@ -1,10 +1,12 @@
 <!--
   A row's tile: a phone with a notification and a figure with its chips, then
-  monthly bars (the Verbrauchsinformation) or detail rows (an appointment).
-  Every 7 s in view the notification drops in again, then the figure appears
-  and the bars grow.
+  monthly bars (the Verbrauchsinformation) or detail rows (an appointment);
+  or the page's own `screen` in place of the figure (/softwarepartner's list
+  of transfers). Every 7 s in view the notification drops in again, then the
+  figure or screen appears and the bars grow.
 -->
 <script lang="ts">
+	import type { Snippet } from "svelte";
 	import { loopInView } from "$lib/landing/attachments/loopInView";
 	import Icon from "../Icon.svelte";
 	import type { PhoneTile } from "../types";
@@ -16,11 +18,15 @@
 		sub,
 		label,
 		value,
-		comparisons,
+		comparisons = [],
 		details = [],
 		bars = [],
 		max = Math.max(...bars, 1) * 1.05,
-	}: PhoneTile = $props();
+		screen,
+	}: PhoneTile & {
+		/** Rendered in the card in place of the figure, chips, details and bars. */
+		screen?: Snippet;
+	} = $props();
 
 	const full = $derived(bars.map((v) => Math.round((v / max) * 100)));
 
@@ -55,19 +61,23 @@
 		<span><b>{title}</b><small>{sub}</small></span>
 	</div>
 	<div class="pv">
-		<small>{label}</small>
-		<b>{value}</b>
-		<div class="cmp">
-			{#each comparisons as c (c)}<span>{c}</span>{/each}
-		</div>
-		{#if details.length}
+		{#if screen}
+			{@render screen()}
+		{:else}
+			<small>{label}</small>
+			<b>{value}</b>
+			<div class="cmp">
+				{#each comparisons as c (c)}<span>{c}</span>{/each}
+			</div>
+		{/if}
+		{#if !screen && details.length}
 			<div class="ev">
 				{#each details as d (d.label)}
 					<div><span>{d.label}</span><b>{d.value}</b></div>
 				{/each}
 			</div>
 		{/if}
-		{#if bars.length}
+		{#if !screen && bars.length}
 			<div class="mini">
 				{#each heights ?? full as h, i (i)}<i style:height="{h}%"></i>{/each}
 			</div>

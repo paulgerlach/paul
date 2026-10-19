@@ -1,17 +1,27 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
 	import Closing from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Closing.svelte";
+	import Costs from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Costs.svelte";
+	import Criteria from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Criteria.svelte";
 	import Faq from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Faq.svelte";
 	import FloatingCta from "$lib/landing/pages/messdienstanbieter-vergleich/sections/FloatingCta.svelte";
+	import Hero from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Hero.svelte";
 	import LogoStrip from "$lib/landing/pages/messdienstanbieter-vergleich/sections/LogoStrip.svelte";
+	import Switch from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Switch.svelte";
 	import Testimonials from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Testimonials.svelte";
+	import Tips from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Tips.svelte";
 	import Trust from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Trust.svelte";
 
 	let { data } = $props();
 </script>
 
 <main id="content" class="mv" {@attach reveal()}>
+	<Hero />
 	<LogoStrip />
+	<Criteria />
+	<Costs />
+	<Tips />
+	<Switch />
 	<Testimonials />
 	<Faq />
 	<Closing form={data.finalForm} />
@@ -94,7 +104,7 @@
 	/* The landing reset's `:is(button, input) { font: inherit; color:
 	   inherit }` (0,1,1) outweighs the rule above on <button>s; the doubled
 	   class (0,2,0) beats it and still loses to a component's own rules
-	   (`.ra .bk-next`). */
+	   (`.score .cta`). */
 	:where(.mv) :global(.bk-next.bk-next) {
 		font-size: 15.5px;
 		font-weight: 600;

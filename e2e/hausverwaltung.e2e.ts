@@ -138,8 +138,9 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the linked pag
 	await expect(
 		page.locator("#faq .ans a", { hasText: /^Fristenrechner$/ }),
 	).toHaveAttribute("href", "/fristenrechner");
-	// No Einsparrechner yet (its plan, open question 3).
-	await expect(page.getByText("Zum Einsparrechner")).toHaveCount(0);
+	await expect(
+		page.locator("a", { hasText: "Zum Einsparrechner" }),
+	).toHaveAttribute("href", "/einsparrechner");
 });
 
 test.describe("without JavaScript", () => {

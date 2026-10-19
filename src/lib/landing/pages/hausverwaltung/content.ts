@@ -23,6 +23,7 @@ import type {
 	Row,
 } from "$lib/landing/sections/uv/types";
 import {
+	ROUTE_EINSPARRECHNER,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_VERBRAUCHSINFORMATION,
@@ -246,8 +247,8 @@ export const audience = {
 		{
 			title: "Was bringt der Wechsel?",
 			text: "Rechnen Sie mit Ihren eigenen Zahlen: wie viel Arbeitszeit Heidi Ihrem Team abnimmt und welches Kürzungsrisiko Sie vermeiden.",
-			// No Einsparrechner yet (plan README, open question 3).
-			cta: { text: "Zum Einsparrechner" },
+			// S3p5jbNkohWnWeZpfR75j9
+			cta: { text: "Zum Einsparrechner", href: ROUTE_EINSPARRECHNER },
 			image: "savings",
 		},
 	] satisfies {

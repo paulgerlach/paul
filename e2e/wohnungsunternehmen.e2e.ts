@@ -129,6 +129,9 @@ test("every CTA leads to the closing card's form; pending links are hidden", asy
 	await expect(
 		page.locator("main a", { hasText: "Muster-Kündigung herunterladen" }),
 	).toHaveAttribute("href", "/muster-kuendigung");
+	await expect(
+		page.locator("main a", { hasText: "Messdienstanbieter vergleichen" }),
+	).toHaveAttribute("href", "/messdienstanbieter-vergleich");
 });
 
 test.describe("without JS", () => {

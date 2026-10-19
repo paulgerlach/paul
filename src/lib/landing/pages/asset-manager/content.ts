@@ -33,6 +33,7 @@ import {
 	ROUTE_WOHNUNGSUNTERNEHMEN,
 	ROUTE_MUSTER_KUENDIGUNG,
 	ROUTE_PORTFOLIO_CHECKER,
+	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 } from "$lib/routes";
 
 const NB = " ";
@@ -188,14 +189,19 @@ export const pain = {
 		},
 	],
 	// Only links with a page show (plan open question 2): the Muster-Kündigung
-	// (4WYU5hjVsWSLrxuo7wsdm6) so far.
+	// (4WYU5hjVsWSLrxuo7wsdm6) and the Messdienstanbieter-Vergleich
+	// (Tms67Y5GnupQ4MPsxm8ux6) so far.
 	links: [
 		{
 			icon: "doc",
 			text: "Muster-Kündigung herunterladen",
 			href: ROUTE_MUSTER_KUENDIGUNG,
 		},
-		{ icon: "swap", text: "Messdienstanbieter vergleichen" },
+		{
+			icon: "swap",
+			text: "Messdienstanbieter vergleichen",
+			href: ROUTE_MESSDIENSTANBIETER_VERGLEICH,
+		},
 		{ icon: "check", text: "Bisherige Abrechnung prüfen" },
 	],
 } satisfies PainPicker;

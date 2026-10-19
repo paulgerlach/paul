@@ -105,10 +105,10 @@ describe("asset-manager content", () => {
 
 	it("hides the links whose pages don't exist yet", () => {
 		expect(large.secondary?.href).toBe(routes.ROUTE_PORTFOLIO_CHECKER);
-		// Only the Muster-Kündigung has a page so far.
+		// The Muster-Kündigung and the Messdienstanbieter-Vergleich have pages.
 		expect(pain.links.map((link) => link.href)).toEqual([
 			routes.ROUTE_MUSTER_KUENDIGUNG,
-			undefined,
+			routes.ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 			undefined,
 		]);
 	});

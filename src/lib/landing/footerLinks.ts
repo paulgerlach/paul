@@ -10,6 +10,7 @@ import {
 	ROUTE_GERAETE,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
+	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_HILFE,
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_KARRIERE,
@@ -116,7 +117,10 @@ export const footerGroups: LandingFooterGroup[] = [
 				text: "Heizkostenabrechnungs-Checker",
 				href: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 			},
-			{ text: "Messdienstanbieter-Vergleich" },
+			{
+				text: "Messdienstanbieter-Vergleich",
+				href: ROUTE_MESSDIENSTANBIETER_VERGLEICH,
+			},
 		],
 	},
 ];

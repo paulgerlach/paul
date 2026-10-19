@@ -125,11 +125,16 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the linked pag
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
 	).toHaveAttribute("href", "/verbrauchsinformation");
-	// No Fristenrechner or Muster-Kündigung yet (plan README, open question 2).
-	await expect(page.getByText("Zum Fristenrechner")).toHaveCount(0);
+	await expect(
+		page.locator("a", { hasText: "Zum Fristenrechner" }),
+	).toHaveAttribute("href", "/fristenrechner");
+	await expect(
+		page.locator("#faq .ans a", { hasText: /^Fristenrechner$/ }),
+	).toHaveAttribute("href", "/fristenrechner");
+	// No Muster-Kündigung yet (its plan, open question 2).
 	await expect(page.getByText("Zur Muster-Kündigung")).toHaveCount(0);
-	// Answers 1 and 5 name the Fristenrechner as plain text.
-	await expect(page.locator("#faq .ans a:not(.more)")).toHaveCount(0);
+	// Answer 1 names the Fristenrechner as plain text, as its design does.
+	await expect(page.locator("#faq .ans a:not(.more)")).toHaveCount(1);
 });
 
 test.describe("without JavaScript", () => {

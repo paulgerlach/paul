@@ -101,10 +101,12 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	).toHaveAttribute("href", "/blog");
 	expect(
 		await hrefs(page.locator("section[aria-labelledby=nw-rg-h] a.row")),
-	).toEqual(["/upgrade-now", "/verbrauchsinformation", "/funktionen"]);
-	await expect(page.locator(".row", { hasText: "Fristenrechner" })).toHaveCount(
-		1,
-	);
+	).toEqual([
+		"/upgrade-now",
+		"/verbrauchsinformation",
+		"/funktionen",
+		"/fristenrechner",
+	]);
 });
 
 test("every CTA leads to the closing card's form", async ({ page }) => {

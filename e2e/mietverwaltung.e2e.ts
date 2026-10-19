@@ -128,8 +128,13 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the linked pag
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
 	).toHaveAttribute("href", "/verbrauchsinformation");
-	// No Fristenrechner or Einsparrechner yet (plan README, open question 2).
-	await expect(page.getByText("Zum Fristenrechner")).toHaveCount(0);
+	await expect(
+		page.locator("a", { hasText: "Zum Fristenrechner" }),
+	).toHaveAttribute("href", "/fristenrechner");
+	await expect(
+		page.locator("#faq .ans a", { hasText: /^Fristenrechner$/ }),
+	).toHaveAttribute("href", "/fristenrechner");
+	// No Einsparrechner yet (its plan, open question 2).
 	await expect(page.getByText("Zum Einsparrechner")).toHaveCount(0);
 });
 

@@ -22,7 +22,11 @@ import type {
 	PhoneTile,
 	Row,
 } from "$lib/landing/sections/uv/types";
-import { ROUTE_MIETERPORTAL, ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
+import {
+	ROUTE_FRISTENRECHNER,
+	ROUTE_MIETERPORTAL,
+	ROUTE_VERBRAUCHSINFORMATION,
+} from "$lib/routes";
 
 const NB = "\u00a0";
 
@@ -231,8 +235,8 @@ export const audience = {
 		{
 			title: "Ihr Vertrag läuft noch?",
 			text: "Heidi übernimmt Ihre bestehenden Zähler sofort. Mit dem Fristenrechner sehen Sie, bis wann Sie beim bisherigen Messdienst kündigen müssen.",
-			// No Fristenrechner yet (plan README, open question 2).
-			cta: { text: "Zum Fristenrechner" },
+			// LWEbZPCoSDLT1D59BaULyE
+			cta: { text: "Zum Fristenrechner", href: ROUTE_FRISTENRECHNER },
 		},
 		{
 			title: "Was bringt der Wechsel?",
@@ -341,9 +345,8 @@ export const faq = {
 		},
 		{
 			question: "Müssen wir auf das Vertragsende warten?",
-			// "Fristenrechner" is a link in the design; no page yet (plan README, open question 2).
-			answer:
-				"Nein. Heidi übernimmt bestehende Zähler und wertet sie sofort aus, egal wie lange Ihr aktueller Vertrag noch läuft. Bis wann Sie kündigen müssen, zeigt der Fristenrechner.",
+			// "Fristenrechner": LWEbZPCoSDLT1D59BaULyE
+			answer: `Nein. Heidi übernimmt bestehende Zähler und wertet sie sofort aus, egal wie lange Ihr aktueller Vertrag noch läuft. Bis wann Sie kündigen müssen, zeigt der <a href="${ROUTE_FRISTENRECHNER}">Fristenrechner</a>.`,
 		},
 		{
 			question: "Ist die monatliche Verbrauchsinformation inklusive?",

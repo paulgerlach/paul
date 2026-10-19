@@ -11,6 +11,7 @@ import type { SplitHeading } from "$lib/landing/types";
 import {
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
+	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_MIETERPORTAL,
@@ -182,7 +183,8 @@ export const deadlines: {
 			icon: "clock",
 			title: "Fristenrechner",
 			text: "Kündigungs- und Eichfristen berechnen",
-			// LWEbZPCoSDLT1D59BaULyE: no page yet.
+			// LWEbZPCoSDLT1D59BaULyE
+			href: ROUTE_FRISTENRECHNER,
 		},
 	],
 };

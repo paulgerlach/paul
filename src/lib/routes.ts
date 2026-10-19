@@ -27,5 +27,6 @@ export const ROUTE_WOHNUNGSUNTERNEHMEN = "/wohnungsunternehmen";
 export const ROUTE_ASSET_MANAGER = "/asset-manager";
 export const ROUTE_PRIVATE_VERMIETER = "/private-vermieter";
 export const ROUTE_NEUIGKEITEN = "/neuigkeiten";
+export const ROUTE_FRISTENRECHNER = "/fristenrechner";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

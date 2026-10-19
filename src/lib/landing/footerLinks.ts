@@ -3,6 +3,7 @@ import {
 	ROUTE_ASSET_MANAGER,
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
+	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_HAUSVERWALTUNG,
@@ -97,7 +98,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Blog", href: ROUTE_BLOG },
 			{ text: "Neuigkeiten", href: ROUTE_NEUIGKEITEN },
-			{ text: "Fristenrechner" },
+			{ text: "Fristenrechner", href: ROUTE_FRISTENRECHNER },
 			{ text: "HKVO-Leitfaden" },
 			{ text: "Einsparrechner" },
 			{ text: "Presse" },

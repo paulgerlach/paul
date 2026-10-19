@@ -62,7 +62,7 @@ describe("weg-verwaltung content", () => {
 			"Heizkostenabrechnung für WEG-Verwaltungen mit Heidi",
 		);
 		// With a non-breaking hyphen, so the huge word stays on one line.
-		expect(hero.word).toBe("WEG‑Verwaltung");
+		expect(hero.word).toBe("WEG\u2011Verwaltung");
 	});
 
 	it("links only to routes and anchors on the page", () => {

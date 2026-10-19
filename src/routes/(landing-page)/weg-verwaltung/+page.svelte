@@ -1,8 +1,16 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
+	import Audience from "$lib/landing/pages/weg-verwaltung/sections/Audience.svelte";
 	import CtaCard from "$lib/landing/pages/weg-verwaltung/sections/CtaCard.svelte";
 	import Faq from "$lib/landing/pages/weg-verwaltung/sections/Faq.svelte";
 	import FloatingCta from "$lib/landing/pages/weg-verwaltung/sections/FloatingCta.svelte";
+	import Hero from "$lib/landing/pages/weg-verwaltung/sections/Hero.svelte";
+	import Numbers from "$lib/landing/pages/weg-verwaltung/sections/Numbers.svelte";
+	import Picture from "$lib/landing/pages/weg-verwaltung/sections/Picture.svelte";
+	import Quotes from "$lib/landing/pages/weg-verwaltung/sections/Quotes.svelte";
+	import Rotator from "$lib/landing/pages/weg-verwaltung/sections/Rotator.svelte";
+	import Rows from "$lib/landing/pages/weg-verwaltung/sections/Rows.svelte";
+	import Statement from "$lib/landing/pages/weg-verwaltung/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/weg-verwaltung/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
 
@@ -11,6 +19,14 @@
 
 <main id="content" class="wv" {@attach reveal()}>
 	<UvMain>
+		<Hero />
+		<Statement />
+		<Rows />
+		<Rotator />
+		<Numbers figures={data.figures} />
+		<Audience />
+		<Quotes />
+		<Picture />
 		<Faq items={data.faq} />
 		<CtaCard form={data.finalForm} />
 	</UvMain>

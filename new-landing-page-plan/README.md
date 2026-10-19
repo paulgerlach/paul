@@ -73,6 +73,16 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Sb54rDQd5WS2r82skPe7UQ` (FAQ 5's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`80672cd1`), the route, content, the icon `check`, the two new photos and the footer link (`94378f99`), the sections with the logo cards (`fe3ff3e3`), and `e2e/verbaende.e2e.ts` (13 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width but the closing card (the signup form in place of the video button: +94 px at 980, −22 px at 700, +42 px at 375, +31 px at 320, 0 at 1440 and 1100) and the trust block (3–5 px short at 1440, 1100 and 700, the timing effect of the measurement noted on `/installationspartner`); screenshots of the hero and the rows at 1440 and 375 px match the design's. No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 782 unit tests, 506 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **Phases 2 and 3 are one commit:** the page's only interaction of its own is the logo cards' entrance.
+- **The hero word has a `wordSize`** (Key decisions): the plan assumed the template's `lg` size, but `#vb-css` comes after `#uv-css`, so the design keeps `clamp(40px, 11.4vw, 172px)` below 620 px too (the hero was 2.4 px short at 320 px without it).
+- **The DEUMESS logo is wider than its card below about 420 px**, as in the design (the card is `min(78%, 360px)`, the logo up to 220 px); it stays inside the tile, so the page doesn't overflow.
+- **The `uv` pages' hero-list replay tests were flaky under the full suite** (`/hausverwaltung`, `/mietverwaltung`, `/weg-verwaltung`, `/mieterportal`, and the new one): Playwright's installed clock also runs in real time, so a slow `goto` let `runFor(9100)` jump over the whole amber phase. They now step 6 s, then 400 ms at a time until the replay shows; test-only change.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |
@@ -82,7 +92,7 @@ The design's links, by design id, and where they lead here. An element whose tar
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover; then indexed and in the sitemap (decision of 2026-10-17), so its gate (§4.4) blocks the cutover PR (#440) |
 | Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same); the nav CTA "Bestand prüfen" leads to the page's own form (`#start`) |
 | Template | The `uv` template (`UvMain`, `Hero` `lg`, `ListMock`, `Statement`, `Rows` with `Doc`, `Rotator`, `Numbers`, `Audience`, `Quotes`, `Picture`, `Faq`), filled from `content.ts` like `/weg-verwaltung`. The template's addition (the icon `check`) changes nothing on the other `uv` pages |
-| The hero word | "Verbände" in the template's `lg` size (`#vb-css` repeats the template's `clamp(40px, 11.4vw, 172px)`), no `wordSize` |
+| The hero word | "Verbände" in `clamp(40px, 11.4vw, 172px)` at every width, through `Hero`'s `wordSize`: `#vb-css` repeats the template's `lg` size after the template's rules, so it also beats the template's smaller size below 620 px |
 | The hero's app window | `ListMock` with the design's four entries (VDIV, DEUMESS, bved, Datenschutz). Their statuses are the same before and after ("Partner", "Vernetzt", "Vernetzt", "Konform"): the design's loop only turns the pills from amber to green, and so does `ListMock` |
 | Rows 1–3's tile | Page-only `LogoTile` (the design's `.vb-lg`): the logo (`partners/*.webp`, the same files `TrustCards` shows) on a white card with the line under it, on the stone tile. Server-rendered shown; it rises in once when its row comes into view (`enterView`) |
 | Row 4's tile | `uv/tiles/Doc` with three check rows and the result "DSGVO-konform" |

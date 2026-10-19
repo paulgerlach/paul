@@ -4,25 +4,25 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/verbaende`: the page with the landing header and footer; the footer's "Verbände" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card with the signup form in place of the video button)
-- [ ] No horizontal overflow from 320 to 1640 px, also with the signup form's error and success line shown
-- [ ] Rows 1–3: the logo card rises in once when its row comes into view
-- [ ] The template's loops as on `/weg-verwaltung` (the hero's list, the statement, the doc, the rotator, "3" counting)
-- [ ] Every "Demo buchen", the floating CTA and the nav CTA land on the closing card's form and focus its field; "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "Zur Presseseite" leads to `/presse`, "Mehr zu Sicherheit" to `/sicherheit`
+- [x] `bun run dev` → `http://localhost:5173/verbaende`: the page with the landing header and footer; the footer's "Verbände" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card with the signup form in place of the video button)
+- [x] No horizontal overflow from 320 to 1640 px, also with the signup form's error and success line shown
+- [x] Rows 1–3: the logo card rises in once when its row comes into view
+- [x] The template's loops as on `/weg-verwaltung` (the hero's list, the statement, the doc, the rotator, "3" counting)
+- [x] Every "Demo buchen", the floating CTA and the nav CTA land on the closing card's form and focus its field; "Mehr erfahren" on the rows, "Häufige Fragen" on the FAQ; "Zur Presseseite" leads to `/presse`, "Mehr zu Sicherheit" to `/sicherheit`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page (the CTAs, the form, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Heidi Systems in den Verbänden der Branche"; the app window as its list; the tiles skipped; the signup form's label, error and success line announced
-- [ ] Reduced motion: nothing loops, rises or counts; every block in its end state
-- [ ] JS disabled: every section readable, the form posts and shows its result
-- [ ] A signup stores a lead with `source = verbaende` and reaches the sink as `switchinquiry` with `page: "/verbaende"`
+- [x] Reduced motion: nothing loops, rises or counts; every block in its end state
+- [x] JS disabled: every section readable, the form posts and shows its result
+- [x] A signup stores a lead with `source = verbaende` and reaches the sink as `switchinquiry` with `page: "/verbaende"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2).
-- **Playwright `e2e/verbaende.e2e.ts`**, modelled on `e2e/weg-verwaltung.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, FAQPage JSON-LD with five questions, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#start` with the form in the closing card, `#inhalt`, `#faq`, `/presse`, `/sicherheit`); the server's end states (the list's statuses, the three logo cards, the doc, the form); reduced motion: nothing hidden or moving; the hero list's replay, the logo card's entrance below the fold, the doc and the rotator looping in view; the signup with the lead's webhook and `page`; no console errors.
+- **Playwright `e2e/verbaende.e2e.ts`** (13 tests), modelled on `e2e/weg-verwaltung.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, FAQPage JSON-LD with five questions, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link; every internal link resolves; the CTAs (`#start` with the form in the closing card, `#inhalt`, `#faq`, `/presse`, `/sicherheit`); the server's end states (the list's statuses, the three logo cards, the doc, the form); reduced motion: nothing hidden or moving; the hero list's replay, the logo card's entrance below the fold, the doc and the rotator looping in view; the signup with the lead's webhook and `page`; no console errors.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
 

@@ -194,8 +194,15 @@ test("the hero list replays after its first interval", async ({ page }) => {
 	await page.clock.install();
 	await gotoHydrated(page);
 	await expect(pills(page).first()).toHaveText("Vor ETV fertig");
-	await page.clock.runFor(9100);
-	await expect(pills(page).first()).toHaveText("Abrechnung offen");
+	// The installed clock also runs in real time, so step towards the first
+	// replay (9 s).
+	await page.clock.runFor(6000);
+	await expect
+		.poll(async () => {
+			await page.clock.runFor(400);
+			return pills(page).first().textContent();
+		})
+		.toBe("Abrechnung offen");
 	await page.clock.runFor(1500);
 	await expect(pills(page).first()).toHaveText("Vor ETV fertig");
 });

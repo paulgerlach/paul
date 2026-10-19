@@ -30,5 +30,6 @@ export const ROUTE_NEUIGKEITEN = "/neuigkeiten";
 export const ROUTE_FRISTENRECHNER = "/fristenrechner";
 export const ROUTE_HKVO_LEITFADEN = "/hkvo-leitfaden";
 export const ROUTE_EINSPARRECHNER = "/einsparrechner";
+export const ROUTE_PRESSE = "/presse";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

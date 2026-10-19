@@ -79,6 +79,14 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Sb54rDQd5WS2r82skPe7UQ` (FAQ 5's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`68700da9`), the route, content, both forms' schemas and actions, the icon `plug`, `Audience`'s `panel`, the new photo and the three links (`679910d8`), the sections with both forms (`2675d446`), and `e2e/partnerschaften.e2e.ts` (23 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (reduced motion, after scrolling through both pages): every section has the design's height to the pixel at every width; screenshots of the audience cards and the grid of partners at 1440 and 375 px match the design's. No overflow at 320 and 375 px, also with both forms' marks; no console errors or hydration warnings. Full suites: check, lint, 860 unit tests, 548 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **The card form's message line:** the design's `.uv-card p` (0,1,1) beats `.spf-msg` (0,1,0), so the line gets the card text's 22/30 px margins, 19 px size and light grey colour, which is unreadable on the white form. The page keeps the margins (so the card has the design's height) and `.spf-msg`'s 12.5 px red text.
+- **The card form's focus:** the design focuses the first invalid field; superforms' own error focus didn't fire with `scrollToError: "off"`, so `ConnectionForm` focuses the first `aria-invalid` field in `onUpdated`.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

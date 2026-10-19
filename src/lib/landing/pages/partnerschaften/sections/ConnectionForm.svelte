@@ -21,6 +21,7 @@
 
 	let { form: initial }: { form: SuperValidated<ConnectionInquiry> } = $props();
 
+	let host: HTMLFormElement | undefined = $state();
 	let done: HTMLElement | undefined = $state();
 	let tickMark: HTMLElement | undefined = $state();
 	let stopConfetti = () => {};
@@ -31,10 +32,15 @@
 		{
 			validators: zod4Client(connectionInquirySchema),
 			validationMethod: "submit-only",
-			// The design's first invalid field gets the focus.
+			// The design focuses the first invalid field itself (below).
 			scrollToError: "off",
-			autoFocusOnError: true,
+			autoFocusOnError: false,
 			async onUpdated({ form: result }) {
+				if (!result.valid) {
+					await tick();
+					host?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+					return;
+				}
 				if (result.message?.type !== "success") return;
 				await tick();
 				done?.focus();
@@ -89,6 +95,7 @@
 			method="POST"
 			action="?/connection#{CONNECTION_ID}"
 			class="f"
+			bind:this={host}
 			novalidate
 			aria-label={texts.label}
 			use:enhance

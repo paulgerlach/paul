@@ -65,6 +65,16 @@ The design's links, by design id, and where they lead here. An element whose tar
 
 Links to this page: the repo and its history name the design's id `LWEbZPCoSDLT1D59BaULyE` for the footer's "Fristenrechner", `/neuigkeiten`'s row "Fristenrechner", and "Zum Fristenrechner" plus answer 5's "Fristenrechner" on `/hausverwaltung`, `/mietverwaltung` and `/weg-verwaltung` (their plans `1e372598`, `9fc4130e`, `eec72b60`). All of them get the link with the route (01 §1.1). `/weg-verwaltung`'s answer 1 names the Fristenrechner as plain text in its design, so it stays text.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`cbf93904`), the route, content, date math and the links from the footer and the other pages (`d7c225de`), the sections with the calculator (`f7335f64`), and `e2e/fristenrechner.e2e.ts` (14 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design, both on 19.10.2026): the hero with the calculator, the milestones, the FAQ and the trust block have the design's height at every width and match it by eye (the same dates, badges and timeline); the differences are the planned ones: the portfolio block without its two CTAs (83 px shorter at 1440 and 1100 px, 146 px at 980 and 700 px, where the design's buttons wrap or stack), and the closing card holds the signup form (its height +50 / −14 / +42 px at 980 / 700 / 375 px, as on `/neuigkeiten`). No overflow at 320 and 375 px on any tab; no console errors or hydration warnings. Full suites: check, lint, 561 unit tests, 345 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the tabs and the live results are part of the panes.
+- **Inactive panes get a class, not `hidden`:** Tailwind's preflight hides `[hidden]` with `!important`, which the no-JS rule (`@media (scripting: none)`) couldn't undo. The panes are `display: none` through `.off`.
+- **The timeline is `aria-hidden`** (its dates are in the text above it); each result box is a polite live region, so a changed date is announced.
+- **A flaky e2e test fixed:** `/messdienstanbieter`'s honeypot test filled the closing form while superforms was still moving focus to the hero's invalid field, so under the full suite's load the text went to the hero; it now waits for that focus. `/mietverwaltung`'s "hero list replays" failed once under load and passed in the other runs (unchanged).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

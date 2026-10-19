@@ -226,6 +226,9 @@ test.describe("signup", () => {
 		await expect(hero.getByRole("alert")).toHaveText(
 			"Bitte eine gültige E-Mail-Adresse eingeben",
 		);
+		// Superforms focuses the invalid field after showing the error; wait for
+		// it, or under load it steals the focus from the next fill.
+		await expect(hero.locator('input[name="email"]')).toBeFocused();
 
 		const email = testEmail("honeypot");
 		const final = page.locator(".signup-box.final");

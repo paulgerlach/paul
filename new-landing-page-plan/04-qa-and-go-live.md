@@ -4,20 +4,20 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/fristenrechner`: the page with the landing header and footer; the footer's "Fristenrechner" lands here from every landing page, so do `/neuigkeiten`'s row and "Zum Fristenrechner" / answer 5 on `/hausverwaltung`, `/mietverwaltung` and `/weg-verwaltung`
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the portfolio block without its two CTAs)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The calculator: each tab shows its pane (click, arrow keys, Home, End); each field changes the result at once; the design's examples on the same day give the same dates and badges; the badge turns amber below 60 / 180 days and red once passed; the timeline's fill and label follow the cancel day; an invalid date keeps the last result
-- [ ] The milestones' badges: "gilt" for the past three, "in N Tagen" for 31.12.2026
+- [x] `bun run dev` → `http://localhost:5173/fristenrechner`: the page with the landing header and footer; the footer's "Fristenrechner" lands here from every landing page, so do `/neuigkeiten`'s row and "Zum Fristenrechner" / answer 5 on `/hausverwaltung`, `/mietverwaltung` and `/weg-verwaltung`
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button, the portfolio block without its two CTAs)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The calculator: each tab shows its pane (click, arrow keys, Home, End); each field changes the result at once; the design's examples on the same day give the same dates and badges; the badge turns amber below 60 / 180 days and red once passed; the timeline's fill and label follow the cancel day; an invalid date keeps the last result
+- [x] The milestones' badges: "gilt" for the past three, "in N Tagen" for 31.12.2026
 - [ ] "Frist berechnen" and "Wichtige Stichtage" land below the sticky header; "So funktioniert der Wechsel" → `/messdienstwechsel`; the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the native date pickers)
 - [ ] Keyboard-only through the page (the tabs as one tab stop, the fields, the FAQ); focus ring visible
 - [ ] Screen reader: one H1 "Jede Frist im Messdienst. Auf den Tag genau."; the tabs and panels; the labelled fields; the example list read as a list
-- [ ] Reduced motion: nothing moves
-- [ ] JS disabled: the three panes with their example results, every section readable, the signup form posts
-- [ ] A signup reaches `leads` with `source = "fristenrechner"` and the sink with `page: "/fristenrechner"`
+- [x] Reduced motion: nothing moves
+- [x] JS disabled: the three panes with their example results, every section readable, the signup form posts
+- [x] A signup reaches `leads` with `source = "fristenrechner"` and the sink with `page: "/fristenrechner"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

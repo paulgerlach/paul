@@ -65,6 +65,15 @@ The design's links, by design id, and where they lead here. An element whose tar
 
 The design's hero carries `#start` (its footer's "Energieausweis" points there); here `#start` is the closing card with the signup form, as on every landing page, so the hero has no anchor.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`58c81adb`), the route, content and the pure `scale.ts` / `check.ts` with the footer link (`dfb66c3f`), the sections with their interactions (`92a0bf14`), and `e2e/energieausweis.e2e.ts` (15 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion): the hero, the check, the offers, the comparison, the dark card and the FAQ have the design's height to the pixel at every width and match it by eye (the check's result view too, compared at 1100 and 375 px); the one difference is the planned one: the closing card holds the signup form (0 / 0 / 0 / +7 / +71 / +47 px at 1440 / 1100 / 980 / 700 / 375 / 320 px). The dark card's bars show grown in our screenshots; the design's stay at 0 there because its reveal never fires under reduced motion. No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 647 unit tests, 413 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
+
+- **Phases 2 and 3 are one commit:** the scale's motion, the check and the filter are part of their sections.
+- **No `aria-live` on the wizard:** after an answer the focus moves to the new question's or the result's heading, which reads it; a live region on top would read it twice.
+- **The offers' dark button spans the card** like the others (02 corrected): the design's `.bk-next.inv` sets `width: auto`, but as a flex item of the card's column it still stretches.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

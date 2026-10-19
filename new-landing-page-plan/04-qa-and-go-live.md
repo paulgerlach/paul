@@ -4,22 +4,22 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/energieausweis`: the page with the landing header and footer; the footer's "Energieausweis" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Jetzt passenden Ausweis finden ↑")
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The hero's scale: on load the marker slides from the left to 118 and the figure counts up; "Bedarfsausweis" moves it to 142 and counts from 118, "Verbrauchsausweis" back; the current class stands out, the others dim
-- [ ] The check: every path of the four questions ends in the design's result (Neubau → "Bedarfsausweis"; 5 or more flats, or the Bauantrag after 1.11.1977, or WSchV 1977 met → "Sie haben die Wahl" with confetti; "Nein" → "Bedarfsausweis"; "Weiß nicht" → "Voraussichtlich Bedarfsausweis"); "Zurück" goes one question back, "Neu starten" to the first; the step line and the bar follow
-- [ ] "Passende Angebote ansehen ↓" scrolls to the offers and sets the filter ("Alle" after "Sie haben die Wahl", "Bedarfsausweis" otherwise); the filter dims the other offers and rings the matching ones
-- [ ] The dark card's bars grow and the 36-month box fades in when it scrolls into view
-- [ ] "Welchen Ausweis brauche ich? ↓" and "Preise ansehen →" land below the sticky header; "Jetzt anfragen →", the nav CTA, the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "Zum Dashboard →" opens `/dashboard`
+- [x] `bun run dev` → `http://localhost:5173/energieausweis`: the page with the landing header and footer; the footer's "Energieausweis" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its link "Jetzt passenden Ausweis finden ↑")
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The hero's scale: on load the marker slides from the left to 118 and the figure counts up; "Bedarfsausweis" moves it to 142 and counts from 118, "Verbrauchsausweis" back; the current class stands out, the others dim
+- [x] The check: every path of the four questions ends in the design's result (Neubau → "Bedarfsausweis"; 5 or more flats, or the Bauantrag after 1.11.1977, or WSchV 1977 met → "Sie haben die Wahl" with confetti; "Nein" → "Bedarfsausweis"; "Weiß nicht" → "Voraussichtlich Bedarfsausweis"); "Zurück" goes one question back, "Neu starten" to the first; the step line and the bar follow
+- [x] "Passende Angebote ansehen ↓" scrolls to the offers and sets the filter ("Alle" after "Sie haben die Wahl", "Bedarfsausweis" otherwise); the filter dims the other offers and rings the matching ones
+- [x] The dark card's bars grow and the 36-month box fades in when it scrolls into view
+- [x] "Welchen Ausweis brauche ich? ↓" and "Preise ansehen →" land below the sticky header; "Jetzt anfragen →", the nav CTA, the trust block's "Demo buchen" and the floating CTA scroll to the closing card and focus its e-mail field; "Zum Dashboard →" opens `/dashboard`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page (the two scale buttons, the answers, "Zurück", the result's buttons, the filter with the arrow keys, the offers, the FAQ); focus ring visible; after an answer the focus is on the next question
 - [ ] Screen reader: one H1 "Der Energieausweis für Ihre Liegenschaft. Einfach online beantragen."; the scale buttons as pressed buttons, the check's question and result announced, the filter as a radio group, the comparison as a table, the bars skipped (`aria-hidden`)
-- [ ] Reduced motion: nothing slides, counts, grows or bursts; every block in its end state
-- [ ] JS disabled: every section readable, the scale at 118 with the Verbrauchsausweis chosen, the check card hidden (its rule is in the comparison's "Pflicht für" row), all four offers, the signup form posts
-- [ ] A signup reaches `leads` with `source = "energieausweis"` and the sink with `page: "/energieausweis"`
+- [x] Reduced motion: nothing slides, counts, grows or bursts; every block in its end state
+- [x] JS disabled: every section readable, the scale at 118 with the Verbrauchsausweis chosen, the check card hidden (its rule is in the comparison's "Pflicht für" row), all four offers, the signup form posts
+- [x] A signup reaches `leads` with `source = "energieausweis"` and the sink with `page: "/energieausweis"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

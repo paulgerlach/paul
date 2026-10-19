@@ -9,6 +9,7 @@
 	import Picture from "$lib/landing/pages/verbaende/sections/Picture.svelte";
 	import Quotes from "$lib/landing/pages/verbaende/sections/Quotes.svelte";
 	import Rotator from "$lib/landing/pages/verbaende/sections/Rotator.svelte";
+	import Rows from "$lib/landing/pages/verbaende/sections/Rows.svelte";
 	import Statement from "$lib/landing/pages/verbaende/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/verbaende/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
@@ -20,6 +21,7 @@
 	<UvMain>
 		<Hero />
 		<Statement />
+		<Rows />
 		<Rotator />
 		<Numbers />
 		<Audience />

@@ -26,6 +26,11 @@ const demoLink: Link = { text: "Demo buchen", href: DEMO_HREF };
 export const hero = {
 	srTitle: "Heidi Systems in den Verbänden der Branche",
 	word: "Verbände",
+	/**
+	 * The design's #vb-css repeats the template's `lg` size after the template's
+	 * rules, so it also holds below 620 px, where the template shrinks the word.
+	 */
+	wordSize: "clamp(40px, 11.4vw, 172px)",
 	lead: "Heidi ist Kooperationspartner des VDIV und in den Verbänden DEUMESS und bved vernetzt.",
 	primary: demoLink,
 	secondary: { text: "Mehr erfahren", href: "#inhalt" } satisfies Link,

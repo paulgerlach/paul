@@ -25,5 +25,6 @@ export const ROUTE_MIETVERWALTUNG = "/mietverwaltung";
 export const ROUTE_WEG_VERWALTUNG = "/weg-verwaltung";
 export const ROUTE_WOHNUNGSUNTERNEHMEN = "/wohnungsunternehmen";
 export const ROUTE_ASSET_MANAGER = "/asset-manager";
+export const ROUTE_PRIVATE_VERMIETER = "/private-vermieter";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

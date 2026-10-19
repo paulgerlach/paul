@@ -4,20 +4,20 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/asset-manager`: the page with the landing header and footer; the footer's "Asset Manager & Fonds" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form instead of the video button, no "Portfolio kostenlos prüfen" and no `.sg-links` row)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The slider: 12.000 on load with the "Ab 1.000" card; dragging below 1.000 shows "Ihr Angebot"; confetti once when the visitor crosses 1.000
-- [ ] The problem picker, the tiles, the counters and the steps as on `/wohnungsunternehmen` (same template)
-- [ ] The tabs: "Asset Manager & Fonds" current; "Wohnungsunternehmen" → `/wohnungsunternehmen`, and there "Asset Manager & Fonds" → here
+- [x] `bun run dev` → `http://localhost:5173/asset-manager`: the page with the landing header and footer; the footer's "Asset Manager & Fonds" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights; expected differences: the site nav and footer, the closing card's form instead of the video button, no "Portfolio kostenlos prüfen" and no `.sg-links` row)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The slider: 12.000 on load with the "Ab 1.000" card; dragging below 1.000 shows "Ihr Angebot"; confetti once when the visitor crosses 1.000
+- [x] The problem picker, the tiles, the counters and the steps as on `/wohnungsunternehmen` (same template)
+- [x] The tabs: "Asset Manager & Fonds" current; "Wohnungsunternehmen" → `/wohnungsunternehmen`, and there "Asset Manager & Fonds" → here
 - [ ] Every "Demo buchen", "Angebot anfragen" and "Wechsel besprechen" scrolls to the closing card and focuses its e-mail field
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page; screen reader: one H1 "Verbräuche im ganzen Portfolio. Auf einen Blick."
-- [ ] Reduced motion: every block in its end state, no confetti
-- [ ] JS disabled: every section readable; the FAQ opens; the signup form posts
-- [ ] A signup reaches `leads` with `source = "asset-manager"` and the sink with `page: "/asset-manager"`
+- [x] Reduced motion: every block in its end state, no confetti
+- [x] JS disabled: every section readable; the FAQ opens; the signup form posts
+- [x] A signup reaches `leads` with `source = "asset-manager"` and the sink with `page: "/asset-manager"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

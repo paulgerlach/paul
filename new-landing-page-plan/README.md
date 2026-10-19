@@ -44,6 +44,19 @@ src/lib/landing/pages/asset-manager/
 
 `*` marks a thin wrapper around a shared section: `+page.svelte` imports only from its own `sections/` folder.
 
+## Implementation notes (2026-10-19)
+
+Phases 1–4 are built: the plan (`142ef185`), the route, content, footer link and `/wohnungsunternehmen`'s tab (`77568eb1`), the sections (`fc9eb040`), and `e2e/asset-manager.e2e.ts` (13 tests). Phase 3 needed nothing: the template's interactions run unchanged. Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design capped at 600): every section has the design's height except the same expected ones as on `/wohnungsunternehmen` (no `.sg-links` row, no "Portfolio kostenlos prüfen", the closing card's form, the logo strip's 2 px); the hero is pixel-identical at 1440 px and the benefits match. No overflow at 320 and 375 px; no console errors or warnings. Full suites: check, lint, 511 unit tests, 306 e2e tests passed. Nothing shared changed (`sg/` untouched). Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Notes:
+
+- **Shared texts are copies:** each page owns its `content.ts`; `content.test.ts` checks that the sections both designs share (logos, 1000+, problems, feature rows, steps, closing, the calculator except its start, FAQ 3–4, the tabs except the current one) equal `/wohnungsunternehmen`'s. A copy fix on one page fails the test until the other follows (or the designs part ways and the test is narrowed).
+- **The phases' split:** the wrappers are phase 2's only work, so phases 2 and 3 are one commit.
+
+### For the Private-Vermieter page
+
+- Its design (`pv-css` / `pv-js`) has no sibling: build it in its page folder on the shared light sections (`LogoStrip`, `Testimonials`, `Faq`, `CtaCard`, `TrustSeals`, `FloatingCta`), without importing from `sg/`; `sg/SgMain` shows what a light page's wrapper needs.
+- Its design has no `.sg-tab` row, but the two `sg` pages' tabs have no "Private Vermieter" entry either (the designs list five segments): nothing to link there. The footer's "Private Vermieter" is the only link to add (and check the saved designs for `3m76Zzio3BvdqKWEbArw6h`).
+- `/wohnungsunternehmen`'s notes (its plan at `4f1f649e`) on `:where()` specificity, the confetti and the e2e clock steps apply.
+
 ## Key decisions
 
 | Topic | Decision |

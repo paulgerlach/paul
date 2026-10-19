@@ -158,6 +158,17 @@
 	.done.milestone {
 		background: var(--lime);
 	}
+	/* The current milestone's label, unreadable in the design, can be longer
+	   than a cell ("Vertragsende" at 375 px): it hyphenates instead of
+	   running out of it. */
+	.now.milestone small {
+		min-width: 0;
+	}
+	.now.milestone em {
+		min-width: 0;
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
 	.done.milestone small i {
 		background: var(--ink);
 		border-color: var(--ink);

@@ -4,21 +4,21 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/presse`: the page with the landing header and footer; the footer's "Presse" lands here from every landing page
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button)
-- [ ] No horizontal overflow from 320 to 1640 px
-- [ ] The downloads: each row saves its file with the design's name and content, turns its icon green and writes "Gespeichert: <file>"; without JS they still download
-- [ ] "Text kopieren": the boilerplate in the clipboard, "Kopiert" for 2.2 s, then back
-- [ ] The mark grows when the card scrolls into view and then glows while in view; "92 %" and "14 Tage" count up once their tiles show
-- [ ] "Gespräch vereinbaren →", the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field; the address and "E-Mail senden →" open a mail to `presse@heidisystems.com`
+- [x] `bun run dev` → `http://localhost:5173/presse`: the page with the landing header and footer; the footer's "Presse" lands here from every landing page
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card's signup form instead of its video button)
+- [x] No horizontal overflow from 320 to 1640 px
+- [x] The downloads: each row saves its file with the design's name and content, turns its icon green and writes "Gespeichert: <file>"; without JS they still download
+- [x] "Text kopieren": the boilerplate in the clipboard, "Kopiert" for 2.2 s, then back
+- [x] The mark grows when the card scrolls into view and then glows while in view; "92 %" and "14 Tage" count up once their tiles show
+- [x] "Gespräch vereinbaren →", the nav CTA and the floating CTA scroll to the closing card and focus its e-mail field; the address and "E-Mail senden →" open a mail to `presse@heidisystems.com`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the downloads, the clipboard)
 - [ ] Keyboard-only through the page (the address, the four downloads, the copy button); focus ring visible
-- [ ] Screen reader: one H1 "Hallo, Presse."; the downloads as links named by their title and note; the copy announced; the mark as an image "Röhrenheizkörper"
-- [ ] Reduced motion: nothing moves or counts, the mark grown without glow
-- [ ] JS disabled: every section readable, the downloads work, the copy button hidden, the signup form posts
-- [ ] A signup reaches `leads` with `source = "presse"` and the sink with `page: "/presse"`
+- [ ] Screen reader: one H1 "Hallo, Presse."; the downloads as links named by their title and note; the copy announced; the mark skipped (`aria-hidden`, as the design)
+- [x] Reduced motion: nothing moves or counts, the mark grown without glow
+- [x] JS disabled: every section readable, the downloads work, the copy button hidden, the signup form posts
+- [x] A signup reaches `leads` with `source = "presse"` and the sink with `page: "/presse"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 

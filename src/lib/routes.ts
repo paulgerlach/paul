@@ -42,5 +42,6 @@ export const ROUTE_INSTALLATIONSPARTNER = "/installationspartner";
 export const ROUTE_SOFTWAREPARTNER = "/softwarepartner";
 export const ROUTE_VERBAENDE = "/verbaende";
 export const ROUTE_NACHFOLGE = "/nachfolge";
+export const ROUTE_PARTNERSCHAFTEN = "/partnerschaften";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

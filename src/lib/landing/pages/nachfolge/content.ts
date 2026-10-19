@@ -27,7 +27,7 @@ import type {
 	PhoneTile,
 	Row,
 } from "$lib/landing/sections/uv/types";
-import { ROUTE_SICHERHEIT } from "$lib/routes";
+import { ROUTE_PARTNERSCHAFTEN, ROUTE_SICHERHEIT } from "$lib/routes";
 
 /** The contact form's section (the design's id). */
 export const APPLY_ID = "kontakt";
@@ -267,8 +267,8 @@ export const audience = {
 		{
 			title: "Mehr Partnerschaften?",
 			text: "Softwareanbieter, Installationsbetriebe und Verbände arbeiten bereits mit Heidi zusammen.",
-			// 9dRgZ8Vw3ictqCvi3C7MAF: no page yet, so the button isn't shown.
-			cta: { text: "Zu den Partnerschaften" },
+			// 9dRgZ8Vw3ictqCvi3C7MAF
+			cta: { text: "Zu den Partnerschaften", href: ROUTE_PARTNERSCHAFTEN },
 			image: "consultation",
 		},
 	] satisfies {

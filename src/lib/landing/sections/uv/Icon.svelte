@@ -52,5 +52,7 @@
 		<path d="M5 10.5l3.2 3L15 7" />
 	{:else if name === "meter"}
 		<circle cx="10" cy="10" r="7" /><path d="M10 10l3-3M6.5 13.5h7" />
+	{:else if name === "plug"}
+		<path d="M7 2.5v4M13 2.5v4M5 6.5h10v3a5 5 0 0 1-10 0zM10 14.5v3" />
 	{/if}
 </StrokeIcon>

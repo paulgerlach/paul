@@ -16,6 +16,7 @@ import {
 	ROUTE_GERAETE,
 	ROUTE_MIETERPORTAL,
 	ROUTE_NACHFOLGE,
+	ROUTE_PARTNERSCHAFTEN,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
 	ROUTE_PORTFOLIO_CHECKER,
@@ -136,7 +137,8 @@ const stories: Story[] = [
 		topic: "u",
 		title: "Partnerschaften: Mit Heidi zusammenarbeiten",
 		photo: "manager",
-		// 9dRgZ8Vw3ictqCvi3C7MAF ("Mehr erfahren"): no page yet.
+		// 9dRgZ8Vw3ictqCvi3C7MAF
+		more: { text: "Mehr erfahren", href: ROUTE_PARTNERSCHAFTEN },
 	},
 ];
 

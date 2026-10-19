@@ -142,9 +142,11 @@ export type AudienceCard = {
 	text: string;
 	/** Without `href` the button isn't shown. */
 	cta: { text: string; href?: string };
-	/** The card's photo; without it, `media` takes its place. */
+	/** The card's photo; without it, `media` or `panel` takes its place. */
 	image?: Picture;
 	objectPosition?: string;
 	/** A mock in place of the photo (no frame, centred: the design's .pcm-fig). */
 	media?: Snippet;
+	/** A block in place of the photo that isn't a figure (/partnerschaften: a form). */
+	panel?: Snippet;
 };

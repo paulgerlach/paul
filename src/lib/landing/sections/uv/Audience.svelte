@@ -1,7 +1,7 @@
 <!--
   "Sie sind Verwalter?" / "Sie sind Mieter?" (.uv-who): dark cards with a
-  square photo, or a mock in its place (`media`). A card's button shows only
-  when its target exists.
+  square photo, or a mock in its place (`media`), or a block that isn't a
+  figure (`panel`: a form). A card's button shows only when its target exists.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
@@ -47,6 +47,8 @@
 								: undefined}
 						/>
 					</figure>
+				{:else if card.panel}
+					<div>{@render card.panel()}</div>
 				{:else}
 					<figure class="media">{@render card.media?.()}</figure>
 				{/if}

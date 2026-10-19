@@ -44,6 +44,7 @@ describe("/neuigkeiten content", () => {
 			"Mehr erfahren",
 			"Bestand prüfen",
 			"Mehr erfahren",
+			"Mehr erfahren",
 		]);
 		expect(news.blog.text).toBe("Zum Blog mit allen Artikeln");
 	});

@@ -169,11 +169,11 @@ describe("nachfolge content", () => {
 		);
 	});
 
-	it("leads the first audience card to the form and hides the second card's button", () => {
+	it("leads the first audience card to the form, the second to /partnerschaften", () => {
 		expect(audience.cards).toHaveLength(2);
 		expect(audience.cards.map((c) => c.cta)).toEqual([
 			{ text: "Gespräch anfragen", href: "#kontakt" },
-			{ text: "Zu den Partnerschaften" },
+			{ text: "Zu den Partnerschaften", href: routes.ROUTE_PARTNERSCHAFTEN },
 		]);
 	});
 

@@ -153,11 +153,10 @@ test("CTAs lead to the contact form, the rows, the FAQ and /sicherheit", async (
 	for (const href of await hrefs(faqLinks)) expect(href).toBe("#faq");
 	await expect(page.locator("#faq")).toHaveCount(1);
 
-	// "Zu den Partnerschaften" waits for its page; its card stays.
 	await expect(page.getByText("Mehr Partnerschaften?")).toBeVisible();
 	await expect(
 		page.locator("main a", { hasText: /Zu den Partnerschaften/i }),
-	).toHaveCount(0);
+	).toHaveAttribute("href", "/partnerschaften");
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");

@@ -4,18 +4,18 @@
 
 In one commit:
 
-- `ROUTE_HKVO_LEITFADEN = "/hkvo-leitfaden"` in `$lib/routes.ts`, after `ROUTE_FRISTENRECHNER`.
-- The landing footer's "HKVO-Leitfaden" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_HKVO_LEITFADEN`.
-- **Other links to the page** (README, Links): `/vorgehen`'s `HKVO_GUIDE_HREF` becomes `ROUTE_HKVO_LEITFADEN`, so `RemoteDuty` renders "Zum HKVO-Leitfaden →" (its type stays `string | undefined`, the `{#if}` stays). `e2e/vorgehen.e2e.ts` checks the link.
-- `src/routes/(landing-page)/hkvo-leitfaden/+page.server.ts`, as `/fristenrechner`'s without `now`:
+- `ROUTE_EINSPARRECHNER = "/einsparrechner"` in `$lib/routes.ts`, after `ROUTE_HKVO_LEITFADEN`.
+- The landing footer's "Einsparrechner" (`$lib/landing/footerLinks.ts`, group "Ressourcen") gets `href: ROUTE_EINSPARRECHNER`.
+- **Other links to the page** (README, Links): the second audience card's "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung` gets `href: ROUTE_EINSPARRECHNER` (design id comment `S3p5jbNkohWnWeZpfR75j9`, as the Fristenrechner card has its id), so `uv/Audience` renders the button. `e2e/hausverwaltung.e2e.ts` and `e2e/mietverwaltung.e2e.ts` check the link instead of its absence.
+- `src/routes/(landing-page)/einsparrechner/+page.server.ts`, as `/hkvo-leitfaden`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "HKVO-Leitfaden: Die Heizkostenverordnung einfach erklärt | Heidi Systems",
+	title: "Einsparrechner: Was der Messdienstwechsel Ihrem Bestand bringt | Heidi Systems",
 	description:
-		"Pflichten nach der Heizkostenverordnung im Überblick: Verbrauchserfassung, Fernablesbarkeit, monatliche Verbrauchsinformation, Kostenverteilung, CO₂-Kosten und Kürzungsrechte der Mieter. Mit Paragrafen und Schnell-Check.",
-	ogTitle: "Die Heizkostenverordnung. Einfach erklärt.",
+		"Rechnen Sie mit Ihren eigenen Zahlen: wie viel Arbeitszeit Heidi Ihrem Team bei Ablesung, Mieterfragen und Heizkostenabrechnung abnimmt und welches Kürzungsrisiko nach § 12 HeizkostenV Sie vermeiden.",
+	ogTitle: "Was der Wechsel Ihrem Bestand bringt.",
 	noindex: true,
 	keepCanonical: true,
 },
@@ -23,36 +23,36 @@ landing: DEFAULT_CHROME,
 finalForm: await emptySwitchForm("final"),
 ```
 
-  and `handleSwitchSignup(event, { source: "hkvo-leitfaden", page: ROUTE_HKVO_LEITFADEN })`. No `cache-control`.
+  and `handleSwitchSignup(event, { source: "einsparrechner", page: ROUTE_EINSPARRECHNER })`. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/hkvo-leitfaden/content.ts`, word for word from the design:
+`$lib/landing/pages/einsparrechner/content.ts`, word for word from the design:
 
-- `hero`: pill "HKVO-Leitfaden" (document icon), H1 "Die Heizkosten­verordnung." (soft hyphen) + accent "Einfach erklärt.", lead, CTAs "Leitfaden lesen" → `#leitfaden`, "Kürzungsrechte" → `#kuerzung` (both with ↓), ticks "9 Themen", "Mit Paragrafen", "Schnell-Check".
-- `check`: title "Schnell-Check", sub "Wie gut ist Ihr Bestand aufgestellt?", the card's label "Schnell-Check Heizkostenverordnung", "Ja" / "Nein", five questions `{ key, question, law, risk }` (`erf` § 4 "Kürzungsrecht bis 15 %", `fern` § 5 "Ab 2027: Kürzungsrecht 3 %", `uvi` § 6a "Kürzungsrecht 3 %", `vert` § 7 "Abrechnung angreifbar", `frist` § 556 BGB "Nachzahlung entfällt"), the texts `hint` "Beantworten Sie die Fragen mit Ja oder Nein.", `ok` "Alles erfüllt. Ihr Bestand ist HKVO-konform aufgestellt.", `risks` "Mögliche Risiken", `open(n)` "Noch N Fragen offen." / "Noch 1 Frage offen.", the link "Mit Heidi alle Punkte erfüllen" → `DEMO_HREF` (design id `44SBXKXJaSp6bvGMnbpZj6`).
-- `guide`: the label "Leitfaden", the TOC's "Inhalt", nine articles `{ id, num, short, law, title, body: Block[] }` with `short` the TOC text (the article's H2; "Was bei Verstößen droht" etc.) and blocks `{ p }` (may hold `<a>`), `{ list: string[] }`, `{ note }`; article 09's last paragraph is the link "Zur Übersicht der Kürzungsrechte ↓" → `#kuerzung`.
-- `penalties`: pill "§ 12 HeizkostenV" (warning icon), H2 "Wann Mieter kürzen dürfen.", three cards `{ value, title, text }`, the line `cta` "Prüfen Sie, ob Ihre Mieter kürzen könnten:" with "Heizkostenabrechnung prüfen" without `href` (design id `FQ6egKN8KrFwGUMZDUaavJ`).
-- `faq`: title "Häufige Fragen", five items (`FaqItem`); answer 2's "Jetzt noch umrüsten →" as `more` → `ROUTE_UPGRADE_NOW`; answer 3's "Heidi Mieterportal" as `<a href>` → `ROUTE_MIETERPORTAL`.
-- `closing`: H2 "HKVO-konform. Ohne Mehraufwand.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/schnittstellen`'s and `/fristenrechner`'s), submit label "Demo buchen".
+- `hero`: pill "Einsparrechner" (the euro icon), H1 "Was der Wechsel" + accent "Ihrem Bestand bringt.", lead "Rechnen Sie mit Ihren eigenen Zahlen: wie viel Arbeitszeit Heidi Ihrem Team abnimmt und welches Kürzungsrisiko nach Heizkostenverordnung Sie vermeiden."
+- `CALC_ID = "rechner"`.
+- `calculator.groups`: three groups `{ num, title, sub? }` ("Ihr Bestand"; "Ihr Aufwand pro Liegenschaft und Jahr" with "Was Ihr Team heute selbst erledigt und Heidi übernimmt."; "Status nach Heizkostenverordnung").
+- `calculator.fields`: seven sliders `{ id, group, label, unit, min, max, step, default }`, the design's: `we` "Wohneinheiten" 2–3.000 (1) 240 "WE"; `lg` "Liegenschaften" 1–300 (1) 12 (no unit); `hk` "Heiz- und Warmwasserkosten pro Einheit" 300–3.000 (10) 1.000 "€ / Jahr"; `ss` "Stundensatz Ihres Teams" 20–120 (1) 45 "€ / h"; `a1` "Ablesetermine koordinieren und Mieter informieren" 0–20 (0,5) 4 "h"; `a2` "Rückfragen von Mietern zu Verbrauch und Abrechnung" 0–20 (0,5) 3 "h"; `a3` "Heizkostenabrechnung prüfen, nacharbeiten, übertragen" 0–30 (0,5) 6 "h".
+- `calculator.toggles`: `fern` "Zähler noch nicht fernablesbar" / "Ab 2027: Kürzungsrecht 3 %"; `uvi` "Keine monatliche Verbrauchsinfo" / "Kürzungsrecht 3 %".
+- `calculator.result`: "Ihr Vorteil pro Jahr", the bars "Arbeitszeit, die Heidi übernimmt" and "Vermiedenes Kürzungsrisiko", "Stunden pro Jahr", "Kein Risiko ausgewählt", the risk line's parts ("× 3 % Kürzungsrecht auf", "€ Heizkosten"), the figures "Arbeitstage pro Jahr" and "pro Einheit und Jahr", the button "Angebot für Ihren Bestand" → `DEMO_HREF` (design id `44SBXKXJaSp6bvGMnbpZj6`), the note "Ergebnis auf Basis Ihrer Angaben, ohne Heidi-Kosten. Ihr individuelles Angebot erhalten Sie in der Demo.", and the `sr-only` status template (README, Live region).
+- `method`: pill "Transparent gerechnet" (calculator icon), H2 "So entsteht das Ergebnis.", three cards `{ icon, title, text, formula }`: "Arbeitszeit" (`Stunden × Liegenschaften × Stundensatz`), "Kürzungsrisiko" (`Heizkosten × Einheiten × 3 %`), "Was Heidi übernimmt" (`Ihr Team: nur noch prüfen`).
+- `faq`: title "Häufige Fragen", four items (`FaqItem`); answer 4's "Kündigungsfrist berechnen →" as `more` → `ROUTE_FRISTENRECHNER` (design id `LWEbZPCoSDLT1D59BaULyE`).
+- `closing`: H2 "Ihre Zahlen. Ihr Angebot.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands." (the same as `/fristenrechner`'s and `/hkvo-leitfaden`'s), submit label "Demo buchen".
 
-`content.test.ts`: the H1; every `href` a route or an anchor on the page (the TOC's anchors are the article ids, in order); no empty or untrimmed text; five questions with unique keys, nine articles numbered 01–09 with unique ids and the hero tick "9 Themen" matching their count, three penalties, five FAQ items; every TOC text equals its article's H2; the closing text equal to `/fristenrechner`'s; the hidden CTA without `href`.
+`content.test.ts`: the H1; seven fields with unique ids in three groups, each default inside its range and on its step; two toggles; three cards; four FAQ items; every `href` a route or `#start`; no empty or untrimmed text; the closing text equal to `/fristenrechner`'s; the method cards' formulas name the inputs they use (README, Math).
 
 ## 1.3 Pure logic
 
-**`check.ts`** (the design's `upd()`): `type Answer = boolean | undefined`; `score(answers)` → the number of "Ja"; `outcome(questions, answers)` →
+**`savings.ts`** (the design's `calc()`): `type Inputs = Record<FieldId, number>`, `savings(inputs, risks)` (risks = the number of toggles on) →
 
-- `{ kind: "hint" }` while nothing is answered,
-- `{ kind: "ok" }` when all are "Ja",
-- `{ kind: "risks", risks: { risk, law }[] }` as soon as one is "Nein" (in question order, also while others are open),
-- `{ kind: "open", left }` when only "Ja" answers so far;
+```ts
+{ hours, time, risk, total, days, perUnit, bars: { time, risk } }   // bars in percent, 0–100
+```
 
-`ringDash(score, total)` → the ring's `stroke-dasharray` ("40 100"); `openText(left)` with the singular.
+with `perUnit = 0` for no units (the design's guard; the slider's minimum is 2), `riskBase = we × hk`, the constant `CUT_RATE = 0.03` (shared with `/upgrade-now`'s `calculator.ts`). Formatting helpers: `formatValue(n)` (one decimal only for a fraction, German), `hoursText(hours)`, `riskText(count, base)` ("2 × 3 % Kürzungsrecht auf 240.000 € Heizkosten", or "Kein Risiko ausgewählt").
 
-**`toc.ts`** (the design's `spy()`): `activeIndex(tops, line)` → the last index whose top is above `line` (0 when none); `readProgress(bodyTop, bodyHeight, line)` → `(line − bodyTop) / bodyHeight` clamped to 0–1; the line is 30 % of the viewport height.
-
-`check.test.ts` and `toc.test.ts`: every branch and boundary (nothing answered, one "Nein" first, all "Ja", four "Ja" and one open, the singular; `activeIndex` with no top above the line, every top above it, a top exactly on it; `readProgress` before, inside and after the body, a zero height).
+`savings.test.ts`: the defaults (156 h, 7.020 €, 0 €, 7.020 €, 19,5 days shown as 20, 29,25 € shown as 29), one and two toggles (7.200 / 14.400 € risk), zero hours (time bar 0 %, risk bar 100 %), all zero (both bars 0 %, the 1 € floor), half hours ("4,5"), the texts.
 
 ## 1.4 Images
 

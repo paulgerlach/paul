@@ -4,20 +4,20 @@ Same rules as the other landing pages: runes and the existing attachments, no ne
 
 ## 3.1 Shared
 
-- `reveal()` on `<main>`; the anchor `#start` as on the other pages (the nav CTA and the floating CTA lead to the closing form and focus its e-mail field). The hero's two CTAs and article 09's link jump to `#leitfaden` / `#kuerzung` (smooth through app.css, below the sticky header through `scroll-margin-top`).
+- `reveal()` on `<main>`; the anchor `#start` as on the other pages (the nav CTA, the floating CTA and the result card's button lead to the closing form and focus its e-mail field).
 
-## 3.2 The Schnell-Check (`upd()` in `#lf-js`)
+## 3.2 The calculator (`#es-js`)
 
-The design sets `data-a` on the row from the clicked button and rebuilds the result's HTML. Here: `let answers = $state<Record<Key, boolean | undefined>>({})`; each button sets its row's answer (`aria-pressed` follows). Derived from `answers` through `check.ts`: the score, the ring's `stroke-dasharray` (0.6 s transition), the "N/5" text, the result (`{#if}` over the outcome's kind, inside a `role="status"` region). The risk box's link goes to `#start` with `focusSignup`.
+The design reads every slider on each `input`, writes the outputs and the slider's `--p`, recomputes, tweens the five figures (1.4 s the first time the calculator shows, 0.45 s after that, from the last values), sets the bar widths and the two lines. Here:
 
-- **Confetti:** after a click that leaves every answer "Ja", `confettiFrom(scoreElement)` (the design bursts from `#lf-sc`); the returned stop runs before the next burst and on teardown. Nothing with reduced motion.
-- A second click on the chosen answer keeps it (as the design); there's no "unanswer".
+- **Inputs:** `values = $state(defaults)`, each slider `bind:value` (a number), its `<output>` and `aria-valuetext` the formatted value with unit, its fill `style:--p` from the value's position in its range. `on = $state({ fern: false, uvi: false })`; each toggle flips its key, `aria-pressed` follows.
+- **Result:** `$derived(savings(values, count(on)))` (`savings.ts`). The bar widths and the two lines read the result directly (the bars' 0.6 s width transition is CSS).
+- **Counting figures:** the total, the two euro figures, the working days and the per-unit figure on screen are `$state` that follow the result through `tweenNumber` (`$lib/landing/motion.ts`, ease-out cubic): an `$effect` on the result starts the tweens from the shown values (450 ms) and cancels them on the next change and on teardown. The server and the first browser render show the end values.
+- **First view (`PG.onShow`):** `inView({ threshold: 0.15, once: true })` on the calculator: on enter, the shown figures count from 0 to the result over 1.4 s and the bars grow from 0 (their width is held at 0 for one frame, then the CSS transition runs). Nothing with reduced motion (`tweenNumber` sets the end value).
+- **Confetti:** the first time both toggles are on (the design's `best`, once per visit), `confettiFrom(totalElement)`; the returned stop runs on teardown. Nothing with reduced motion.
+- **Status line:** an `sr-only` `role="status"` paragraph with the result's text (README, Live region), derived from the result, not from the counting figures.
 
-## 3.3 The table of contents (`spy()` in `#lf-js`)
+## 3.3 CSS only
 
-One passive `scroll` listener and a `resize` listener on `window` (an attachment on the guide section, removed on teardown), throttled to one `requestAnimationFrame`; on each frame it reads the nine articles' and the body's `getBoundingClientRect()` and sets `active` (`activeIndex`, line = 30 % of `innerHeight`) and `progress` (`readProgress`) as `$state`. It runs once on mount, so a reload in the middle of the page marks the right article. The links are plain anchors (the articles' `scroll-margin-top: 90px`); `aria-current="true"` on the active one. The bar's width moves over 0.2 s (none with reduced motion).
-
-## 3.4 CSS only
-
-- The pill's icon scales to 1.12 and turns `--ok` on hover (`#pillfx`); `.pg-ghost`'s border darkens; the TOC links turn grey; the check's buttons darken their border; `.bk-next` as the shared button; the FAQ toggles turn.
+- The pills' icons scale to 1.12 and turn `--ok` on hover (`#pillfx`); the toggles darken their border on hover; `.bk-next.inv` turns white and its arrow moves 4 px; the FAQ toggles turn.
 - With reduced motion: nothing moves (the landing reset).

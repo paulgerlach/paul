@@ -4,20 +4,16 @@ Same rules as the other landing pages: runes and the existing attachments, no ne
 
 ## 3.1 Shared
 
-- `reveal()` on `<main>`; the anchor `#start` as on the other pages (the nav CTA, the floating CTA and the result card's button lead to the closing form and focus its e-mail field).
+- `reveal()` on `<main>`; the anchor `#start` as on the other pages (the nav CTA, the floating CTA and "Gespräch vereinbaren →" lead to the closing form and focus its e-mail field).
 
-## 3.2 The calculator (`#es-js`)
+## 3.2 `#pr-js`
 
-The design reads every slider on each `input`, writes the outputs and the slider's `--p`, recomputes, tweens the five figures (1.4 s the first time the calculator shows, 0.45 s after that, from the last values), sets the bar widths and the two lines. Here:
-
-- **Inputs:** `values = $state(defaults)`, each slider `bind:value` (a number), its `<output>` and `aria-valuetext` the formatted value with unit, its fill `style:--p` from the value's position in its range. `on = $state({ fern: false, uvi: false })`; each toggle flips its key, `aria-pressed` follows.
-- **Result:** `$derived(savings(values, count(on)))` (`savings.ts`). The bar widths and the two lines read the result directly (the bars' 0.6 s width transition is CSS).
-- **Counting figures:** the total, the two euro figures, the working days and the per-unit figure on screen are `$state` that follow the result through `tweenNumber` (`$lib/landing/motion.ts`, ease-out cubic): an `$effect` on the result starts the tweens from the shown values (450 ms) and cancels them on the next change and on teardown. The server and the first browser render show the end values.
-- **First view (`PG.onShow`):** `inView({ threshold: 0.15, once: true })` on the calculator: on enter, the shown figures count from 0 to the result over 1.4 s and the bars grow from 0 (their width is held at 0 for one frame, then the CSS transition runs). Nothing with reduced motion (`tweenNumber` sets the end value).
-- **Confetti:** the first time both toggles are on (the design's `best`, once per visit), `confettiFrom(totalElement)`; the returned stop runs on teardown. Nothing with reduced motion.
-- **Status line:** an `sr-only` `role="status"` paragraph with the result's text (README, Live region), derived from the result, not from the counting figures.
+- **Downloads:** each row is `<a href="/landing/presse/<file>" download="<file>">`; its `onclick` (no `preventDefault`: the browser downloads) sets `saved = file` and adds `.ok` to the row (a `$state` set), and the message line (`aria-live="polite"`) reads "Gespeichert: <file>". The design clears the line before each click; here the next click replaces it.
+- **Copy button:** `onclick`: `navigator.clipboard.writeText(boilerplate.text)`; when the API is missing or rejects, select the paragraph's contents (`Range`, `getSelection()`) and `document.execCommand("copy")` (the design's fallback; the selection stays). On success `copied = true` for 2.2 s (a timer cleared on the next click and on teardown): the button turns green, its label "Kopiert", an `sr-only` `role="status"` reads "Text kopiert". Without JS the button is hidden.
+- **The mark (`PG.onShow(#pr-name)` → `.go`, after 1.3 s `.warm`):** one attachment on the card. Reduced motion: nothing (grown, no glow). Below the fold at mount: `grown = false` (the bars at `scaleY(.15)`, 20 % opacity), and an `IntersectionObserver` (threshold .15, once) sets `grown = true` (the CSS transition: .9 s, the second and third bar .15 / .3 s later) and after 1.3 s `settled = true`. On screen at mount: `settled = true` at once. The glow class is `settled && visible`, `visible` from `inView` (threshold 0), so the 3.2 s `drop-shadow` loop runs only while the card is in view. The timer and observers end on teardown.
+- **Facts (`PG.countUp(n, value, 1100)` on show):** `countUp({ to, duration: 1100, viewDelay: 0, threshold: 0.15 })` on the "92" and "14" spans (German formatting is plain for these integers). The server renders the values.
 
 ## 3.3 CSS only
 
-- The pills' icons scale to 1.12 and turn `--ok` on hover (`#pillfx`); the toggles darken their border on hover; `.bk-next.inv` turns white and its arrow moves 4 px; the FAQ toggles turn.
-- With reduced motion: nothing moves (the landing reset).
+- The download rows' border and icon on hover, the press scale; the copy button's border on hover; the `ArrowLink` hover (the arrow moves 4 px); the press photo's 1.03 zoom on the card's hover (1.2 s).
+- With reduced motion: nothing moves (the landing reset; the design's own `@media (prefers-reduced-motion)` block for the mark).

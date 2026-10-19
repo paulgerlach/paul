@@ -1,47 +1,56 @@
-# Page `/einsparrechner` ("Einsparrechner"): plan
+# Page `/presse` ("Presse"): plan
 
-A light tool page, the fourth page from the landing footer's "Ressourcen" group (after the blog, `/neuigkeiten`, `/fristenrechner` and `/hkvo-leitfaden`). A centred head (pill "Einsparrechner", the H1 "Was der Wechsel Ihrem Bestand bringt." and a lead) over the calculator: on the left a white card with three numbered groups (1 "Ihr Bestand": four sliders for units, properties, heating costs per unit and the team's hourly rate; 2 "Ihr Aufwand pro Liegenschaft und Jahr": three sliders for hours; 3 "Status nach Heizkostenverordnung": two toggles for the missing remote readability and the missing monthly consumption information), on the right the dark sticky result card ("Ihr Vorteil pro Jahr" in large green figures, two bars for the working time Heidi takes over and the avoided cut, two figures "Arbeitstage pro Jahr" and "pro Einheit und Jahr", the button "Angebot für Ihren Bestand →" and a note). Below: "So entsteht das Ergebnis." with three cards that show the formulas; the FAQ (four questions) on the grey band; the dark closing card "Ihre Zahlen. Ihr Angebot."; the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
+A light press page, the fifth page from the landing footer's "Ressourcen" group (after the blog, `/neuigkeiten`, `/fristenrechner`, `/hkvo-leitfaden` and `/einsparrechner`). A typographic hero (the giant H1 "Hallo, Presse." with the accent on "Presse." and a lead set to the right), then two grey cards side by side ("Sag Hallo": "Sprechen Sie mit uns." with the press e-mail address and "Gespräch vereinbaren →"; "Media Kit": "Material für Ihre Berichterstattung." with four downloads: the logo dark and light, the Bildmarke, the company profile as TXT), "Name und Logo." as a dark card ("Heizungen digitalisieren." with the three-bar mark that grows and then glows), "Heidi auf einen Blick." as six fact tiles (two of them count up: 92 %, 14 Tage), "Über Heidi Systems." (the boilerplate with a "Text kopieren" button), the dark press contact card with a photo ("Für Interviews, Material und Anfragen.", "E-Mail senden →"), the dark closing card "Heidi live erleben?", the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
 
-It's the target of the landing footer's "Einsparrechner" (group "Ressourcen", today plain text without a page) and of the second audience card's "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung` (hidden today, "No Einsparrechner yet"). All of them point at this design (`S3p5jbNkohWnWeZpfR75j9`) in their designs.
+It's the target of the landing footer's "Presse" (group "Ressourcen", today plain text without a page). In the design the footer's "Presse" is the page's own `#start`; no other design of a built page links the press design (`2HKfqpmyVhcXiJWmoomtHP`: no hit in the repo or its history), so the footer is the only link (01 §1.1).
 
-**A page-only build.** The design's page block is `#es-css` (prefix `es-`) on top of the shared `#pg-common-css` building blocks (`.pg-hero`, `.pg-head.c`, `.pg-h1`, `.pg-lead`, `.pg-sec`, `.xfq`) and `#demo-css` (`.dm-pill`, `.dm-h2`, `.bk-next.inv`, the range input); its only script is `#es-js` (the calculator, with `PG.tween`, `PG.onShow` and `PG.confetti` from `#pg-common`). No built page has the `es-` blocks: the closest, `/schnittstellen`'s Doppelpflege-Rechner, has another layout (one card of four sliders, a day grid), so the hero with the calculator and the formula cards live in the page folder (`$lib/landing/pages/einsparrechner/`). Shared: the `Faq` (default variant, the `.xfq` look, as `/hkvo-leitfaden` wraps it, here on the grey band), `CtaCard` (the closing card, `#dcta-css`), `SignupForm`, `TrustSeals`, `FloatingCta`, `#hs-css`'s heading sizes, `confettiFrom` (`sg/confetti.ts`, the design's `PG.confetti`), `tweenNumber` (`$lib/landing/motion.ts`, the design's `PG.tween`), `inView` (the design's `PG.onShow`), `formatNumber` / `formatDecimal` (`upgrade-now/calculator.ts`, the design's `PG.de`). The slider styling is `/schnittstellen`'s with the design's green fill (`--accent-deep`). It has no quotes, no logo strip and no date logic.
+**A page-only build.** The design's page block is `#pr-css` (prefix `pr-`) on top of `#demo-css` (`.dm`, `.dm-in`, `.bk-next`, the `.rv` reveal) and `#hs-css`; it uses none of `#pg-common-css`'s building blocks (`.pg-hero`, `.pg-sec` …), only `#pg-common`'s script helpers (`PG.onShow`, `PG.countUp`). Its only script is `#pr-js` (the downloads, the copy button, the mark's growth and glow, the counting facts). No built page has the `pr-` blocks or anything like them (a giant one-word hero, a download list, a copy-to-clipboard boilerplate), so every section lives in the page folder (`$lib/landing/pages/presse/`). Shared: `CtaCard` (the closing card, `#dcta-css`), `SignupForm`, `TrustSeals`, `FloatingCta`, `ArrowLink` (the design's `.bk-next` buttons), `countUp` (the design's `PG.countUp`), `inView` (the design's `PG.onShow`), `reveal`, the `Image` component, `#hs-css`'s heading sizes. It has no FAQ, no quotes, no logo strip, no form of its own and no date logic.
 
-- **Design reference:** https://claude.ai/artifact/S3p5jbNkohWnWeZpfR75j9 ("Einsparrechner · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media (matched by MD5 against every file in the repo):
+- **Design reference:** https://claude.ai/artifact/2HKfqpmyVhcXiJWmoomtHP ("Presse · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media (matched by MD5 against every file in the repo):
 
   | Design use | Design file | In the repo |
   |---|---|---|
+  | Press contact card's photo (`.pr-pc figure`) | webp 1400×764 (206 KB) | `vorgehen/building-wide.webp` (identical) |
   | Closing card's video button (poster, webm, mp4) | jpg 240×200, webm, mp4 (5–31 KB) | `region/demo-poster.jpg`, `static/landing/region-demo.webm` / `.mp4` (identical; not used, see Key decisions) |
   | Floating CTA avatars | 160×160 webp ×2 | `region/avatar-1.webp`, `avatar-2.webp` (identical) |
+  | The four downloads (`#pr-js`'s `F`: inline SVG and text, saved through a Blob) | `Heidi-Logo-dunkel.svg`, `Heidi-Logo-hell.svg`, `Heidi-Bildmarke.svg`, `Heidi-Systems-Unternehmensprofil.txt` | **New** static files in `static/landing/presse/` with the design's names and content, byte for byte (the SVGs' paths are those of `HeidiLogo.svelte` / `HeidiMark.svelte`) |
 
-  No photo and no new file: everything else is CSS and inline SVG. To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
-- **Previous plans:** the `/hkvo-leitfaden` plan used to live in this folder (last version at `a480e2cc`). Before it came the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`, the `sg` template and `confettiFrom`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`, the "Zum Einsparrechner" button), the `/hausverwaltung` plan (`0b7f19b2`, the "Zum Einsparrechner" button), the `/schnittstellen` plan (`042eb570`, the Doppelpflege-Rechner's sliders), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`, the risk calculator and its formatters), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.27](04-qa-and-go-live.md).
+  No new photo. To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/einsparrechner` plan used to live in this folder (last version at `f0d83e12`). Before it came the `/hkvo-leitfaden` plan (`a480e2cc`), the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`), the `/hausverwaltung` plan (`0b7f19b2`), the `/schnittstellen` plan (`042eb570`), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`, the company address checked against `ADDRESS`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`, the building photo), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.28](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the links to the page, content, the pure savings math, SEO, signup wiring | S |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer link, content, the download files, SEO, signup wiring | S |
 | 2 | [02-sections.md](02-sections.md) | The page's sections, every block in its end state | M |
-| 3 | [03-interactions.md](03-interactions.md) | The calculator (sliders, toggles, counting figures, bars, confetti), reveal, hover effects | S |
+| 3 | [03-interactions.md](03-interactions.md) | Downloads, copy button, the mark's growth and glow, counting facts, reveal, hover effects | S |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-`ROUTE_EINSPARRECHNER` and every link to it come with the route, so no link ever points at a missing page. Shared code changes only where other pages link here (the content modules of `/hausverwaltung` and `/mietverwaltung`, and the footer).
+`ROUTE_PRESSE` and the footer link come with the route, so no link ever points at a missing page. Shared code changes only in the footer's link list.
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/einsparrechner/
+src/routes/(landing-page)/presse/
 ├── +page.server.ts        # load: seo (noindex), landing chrome, the signup form; the signup action
-└── +page.svelte           # <main class="es"> with the page tokens, .pg-sec, #hs-css and the reveal styles; FloatingCta after </main>
+└── +page.svelte           # <main class="pr"> with the page tokens, the reveal styles and #hs-css; FloatingCta after </main>
 
-src/lib/landing/pages/einsparrechner/
-├── content.ts  content.test.ts          # every text, the seven sliders, the two toggles, the three formula cards, the FAQ, word for word
-├── savings.ts  savings.test.ts          # pure: hours, the time and risk figures, total, working days, per unit, bar widths, the result's texts
+static/landing/presse/     # the four downloads, as the design's `F` holds them
+├── Heidi-Logo-dunkel.svg  Heidi-Logo-hell.svg  Heidi-Bildmarke.svg
+└── Heidi-Systems-Unternehmensprofil.txt
+
+src/lib/landing/pages/presse/
+├── content.ts  content.test.ts          # every text, the press address, the downloads, the six facts, the boilerplate, word for word
 └── sections/
-    ├── Hero.svelte                      # pill, H1, lead + Calculator
-    ├── Calculator.svelte                # #rechner: the input card (three groups) + the result card
-    ├── Method.svelte                    # "So entsteht das Ergebnis." + three cards
-    ├── Faq.svelte*  Closing.svelte*
+    ├── Hero.svelte                      # .pr-hero: the giant H1 and the lead
+    ├── Contact.svelte                   # .pr-two: "Sag Hallo" + Media Kit (MediaKit inside)
+    ├── MediaKit.svelte                  # #pr-kit: the four download links and the message line
+    ├── Name.svelte                      # "Name und Logo." + the dark card with the mark
+    ├── Facts.svelte                     # "Heidi auf einen Blick." + six tiles
+    ├── Boilerplate.svelte               # "Über Heidi Systems." + "Text kopieren"
+    ├── PressContact.svelte              # .pr-pc: the dark contact card with the photo
+    ├── Closing.svelte*
     └── Trust.svelte*  FloatingCta.svelte*
 ```
 
@@ -49,61 +58,49 @@ src/lib/landing/pages/einsparrechner/
 
 ## Links
 
-The design's links, by design id, and where they lead here. An element whose target has no page yet isn't rendered (a CTA) or is plain text, as on the other pages; each carries its design id in a comment in `content.ts`, so the job that builds that page finds it.
+The design's links, by design id, and where they lead here. An element whose target has no page yet isn't rendered (a CTA) or is plain text, as on the other pages.
 
 | Design id (use) | Here |
 |---|---|
-| `44SBXKXJaSp6bvGMnbpZj6` (the result card's "Angebot für Ihren Bestand →", the closing card's "Demo buchen", the floating CTA) | `DEMO_HREF` (`#start`, the closing form); the result card's button focuses the e-mail field (`focusSignup`) |
-| `LWEbZPCoSDLT1D59BaULyE` (FAQ 4's "Kündigungsfrist berechnen →") | `ROUTE_FRISTENRECHNER`, as the answer's `more` link |
+| `44SBXKXJaSp6bvGMnbpZj6` ("Gespräch vereinbaren →", the closing card's "Demo buchen", the floating CTA) | `DEMO_HREF` (`#start`, the closing form); the links focus the e-mail field (`focusSignup`, through `ArrowLink`) |
+| `mailto:presse@heidisystems.com` (the address, "E-Mail senden →") | the same `mailto:` (`PRESS_EMAIL` in `content.ts`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` (`DEFAULT_CHROME`) |
+| `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (`TrustSeals`) |
 
-The design has no in-page anchor links (its hero carries `#start` and the calculator `#rechner`; `#rechner` stays as the calculator's id).
+The design's hero carries `#start` (its footer's "Presse" points there); here `#start` is the closing card with the signup form, as on every landing page, so the hero has no anchor.
 
-Links to this page: the repo's history names the design's id `S3p5jbNkohWnWeZpfR75j9` for the footer's "Einsparrechner" and the second audience card's "Zum Einsparrechner" on `/hausverwaltung` and `/mietverwaltung` (their plans `1e372598`, `9fc4130e`). All of them get the link with the route (01 §1.1). No other content module names the Einsparrechner.
-
-## Implementation notes (2026-10-19)
-
-Phases 1–4 are built: the plan (`f52214de`), the route, content, the pure savings math and the links from the footer, `/hausverwaltung` and `/mietverwaltung` (`c9da8552`), the sections with the calculator (`d48bfc3a`), and `e2e/einsparrechner.e2e.ts` (12 tests). Compared with the design section by section at 1440, 1100, 980, 700 and 375 px (production build, reduced motion, Geist loaded into the saved design): the hero with the calculator (both cards), the formula cards and the FAQ have the design's height to the pixel at every width and match it by eye; the only difference is the planned one: the closing card holds the signup form (its height 0 / 0 / +94 / −14 / +42 px at 1440 / 1100 / 980 / 700 / 375 px). The count-up runs after hydration (sampled: 7.020 € → 1.895 € → … → 7.020 € within 1.4 s). No overflow at 320 and 375 px (also with every slider at its maximum and both toggles on, "3.060.000 €"); no console errors or hydration warnings. Full suites: check, lint, 594 unit tests, 371 e2e tests passed. One earlier full e2e run had one unrelated failure under load (`karriere.e2e.ts`'s "areas › moves with the arrow keys"), green alone and in the next full run; unchanged. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan:
-
-- **Phases 2 and 3 are one commit:** the calculator's counting, bars and confetti are part of its section.
-- **The result card's button is inline, not full width:** the design's `.bk-next.inv` (two classes) beats `.es-go`'s `width:100%` and `margin-top:22px`, so the design draws "Angebot für Ihren Bestand →" at its own width, right under the figure tiles. Built as drawn.
-- **The range inputs stay inline-block** (the browser default, as the design): in the line box they make each slider row 43 px high, the design's spacing.
-- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+Links to this page: the footer's "Presse" (`$lib/landing/footerLinks.ts`). The design id `2HKfqpmyVhcXiJWmoomtHP` appears in no content module, comment or plan in the repo's history, so no other page links here.
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/einsparrechner`, `ROUTE_EINSPARRECHNER` in `$lib/routes.ts`: the footer's label, lower case. Not confirmed (gate §4.4) |
+| URL | `/presse`, `ROUTE_PRESSE` in `$lib/routes.ts`: the footer's label, lower case. Not confirmed (gate §4.4) |
 | Route group | `(landing-page)`, outside `[[preview=preview]]` |
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover; then indexed and in the sitemap (decision of 2026-10-17), so its gate (§4.4) blocks the cutover PR (#440) |
 | Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same) |
-| Content | Every text in `content.ts`, word for word. Non-breaking spaces only between a computed figure and its unit (as `/schnittstellen`) |
-| Math | The design's `calc()` in the pure `savings.ts`: hours = (a1 + a2 + a3) × Liegenschaften; time € = hours × Stundensatz; risk € = Einheiten × Heizkosten × 3 % × the number of toggles on; total = time € + risk €; working days = hours / 8; per unit = total / Einheiten; the bars' widths relative to the larger figure (at least 1 €). The design's defaults (240 WE, 12 Liegenschaften, 1.000 €, 45 €/h; 4 / 3 / 6 h; no toggle) give 156 hours, 7.020 €, 0 €, 20 working days (19,5 rounded, as the design's `de()`), 29 € per unit |
-| Figures | Whole euros and days with German grouping (`formatNumber`); slider values and the hours with one decimal only when they have one (the design's `de(n, n % 1 ? 1 : 0)`: "4,5 h", "156 Stunden pro Jahr") |
-| Server state | The result for the defaults, every figure and both bars at their end values, so the page reads correctly without JS (the sliders and toggles need JS, as on `/schnittstellen`, `/selbstabrechnung` and `/upgrade-now`). The design starts every figure at 0 and counts up when the calculator first shows; here the server renders the end values and the browser counts from 0 once the calculator comes into view (see 03) |
-| Toggles | Two buttons with `aria-pressed`, the design's check boxes; each click flips its toggle (the design's) |
-| Live region | The design marks the whole result card `aria-live="polite"`, which would announce every counting frame. Here the counting figures sit in the card as plain text and an `sr-only` status line announces the result once per change ("Ihr Vorteil pro Jahr: 7.020 €, davon 7.020 € Arbeitszeit und 0 € vermiedenes Kürzungsrisiko") |
-| Confetti | The design's `PG.confetti` from the total the first time both toggles are on (once per visit, `best`): the shared `confettiFrom` (`sg/confetti.ts`), nothing with reduced motion; a running burst stops on teardown |
-| Signup and CTAs | The closing card gets the `SignupForm` and `id="start"` in place of the design's video button "Demo buchen" (as on `/fristenrechner` and `/hkvo-leitfaden`); the submit label is "Demo buchen". The design's hero carries `#start` but has no form, so the hero has no anchor. The result card's "Angebot für Ihren Bestand →" leads to `#start` and focuses the e-mail field. Leads: `source: "einsparrechner"`, `switchinquiry` with `page: "/einsparrechner"`. Open question 1 |
-| Calculator inputs in the lead | The signup sends only the e-mail, as everywhere; the calculator's values aren't sent. Open question 2 |
-| FAQ | The shared `Faq` (default variant, first answer open, FAQPage JSON-LD) on the grey band (`.pg-sec.alt`) with the design's centred heading; FAQ 4's link as `more` in `--ok`, 600 (`.xfq .ans a`) |
-| Closing | The design gives its `.dm-end` 110 px top padding after the grey FAQ band; the wrapper sets it |
-| Styling | Component-scoped CSS from the design; breakpoints the design's (900 and 560 `es-`; 640 `.pg-sec`/`.pg-hero`; `#hs-css` 1040/620). No class that is also a Tailwind utility |
+| Content | Every text in `content.ts`, word for word. The company and street in the facts and the press card checked against the footer's `ADDRESS` (as `/sicherheit`) |
+| Downloads | The design builds each file from inline data and saves it through a Blob (or the artifact runtime's `downloads`). Here they're real files (`static/landing/presse/`, the design's names and bytes) behind plain `<a href download="…">` links with the design's button look, so they work without JS and can be linked from elsewhere. With JS a click also marks the row (`.ok`: the green icon) and writes "Gespeichert: <name>" in the polite message line, as the design. The design's error lines ("Ein Download wartet noch auf Ihre Bestätigung.", "Der Download ist hier gerade nicht möglich.") belong to the artifact runtime and have no case here. `content.test.ts` checks that the profile's text matches the page's boilerplate and that every file exists |
+| Copy button | `navigator.clipboard.writeText` of the boilerplate; when that's missing or refused, the design's fallback (select the paragraph, `execCommand("copy")`). Success: the button turns green with "Kopiert" for 2.2 s, an `sr-only` status says "Text kopiert". Without JS the button is hidden (`@media (scripting: none)`): the paragraph stays selectable |
+| Name and logo | The mark is the design's three-bar SVG (its own viewBox `45.7 5.6 8.7 12.8`, `overflow: visible`, `role="img"`, label "Röhrenheizkörper"); server-rendered grown. In the browser, if the card is still below the fold, the bars start low and grow when it comes into view (`.go`, staggered 0.15 s), then glow (`.warm`, a 3.2 s loop) from 1.3 s on, only while the card is in view. Already on screen: grown at once, the glow starts. Reduced motion: grown, no glow |
+| Facts | Six tiles from `content.ts`; "92 %" and "14 Tage" count from 0 when their tile shows (`countUp`, 1.1 s, no delay); the server renders the end values |
+| Signup and CTAs | The closing card gets the `SignupForm` and `id="start"` in place of the design's video button "Demo buchen" (as on `/einsparrechner`); the submit label is "Demo buchen". "Gespräch vereinbaren →" leads to `#start` and focuses the e-mail field. Leads: `source: "presse"`, `switchinquiry` with `page: "/presse"`. Open question 1 |
+| Press contact button | The design paints "E-Mail senden →" `--accent` on the ink card, but its `.bk-next:hover` (more specific) turns the hover `#2A443D` with ink text: dark on dark. Not ported: the shared `ArrowLink`'s light variant (hover white), as `.bk-next.inv` everywhere else |
+| Styling | Component-scoped CSS from the design; breakpoints the design's (900 and 560 `pr-`; `#hs-css` 1040/620, which also shrinks the giant H1 to 48–68 px between 621 and 1040 px, as the design does). No class that is also a Tailwind utility |
 
 ## Open questions (the default is built unless answered)
 
 1. **Closing card.** The design's video button "Demo buchen" leads to a booking page that doesn't exist. *Default: the signup form with "Demo buchen" as its button.*
-2. **The calculator's values in the lead.** "Angebot für Ihren Bestand" suggests the offer uses the visitor's numbers. *Default: only the e-mail is sent* (the shared signup); sending the values would change the `switchinquiry` payload and the Make.com route.
-3. **After the deadline.** The toggle "Zähler noch nicht fernablesbar" says "Ab 2027: Kürzungsrecht 3 %". *Default: as the design;* the text is part of the gate.
+2. **A press mailbox.** `presse@heidisystems.com` must exist and reach someone. *Default: as the design;* the address is part of the gate.
+3. **Downloads.** Logo files as SVG only, no PNG or press photos. *Default: the design's four files.*
 
 ## Risks
 
-- **Every gate is on the cutover's critical path** (04 §4.4–4.27).
-- **Money figures from a tool.** The result reads as a yearly "Vorteil" in euros: the hours the visitor enters valued at their rate, plus 3 % of all heating costs per toggle (6 % with both). The design's notes say "ohne Heidi-Kosten", "Beispielwerte" and FAQ 1 says so; whether the two cuts add up, whether 3 % of every unit's costs is the right base (§ 12 Abs. 1 HeizkostenV: the tenant's share), and whether the avoided cut counts as the Verwaltung's benefit (it's the owner's) need a legal and product look. Mitigation: the note and FAQ 1 stay; sign-off in §4.4; align with `/upgrade-now`'s risk calculator (§4.25) and `/hkvo-leitfaden` (§4.5).
-- **Counting on load.** The calculator is above the fold, so the count-up runs right after hydration: the server's end values show for a moment, then the figures count from 0 (as `countUp` does elsewhere). With reduced motion nothing counts.
+- **Every gate is on the cutover's critical path** (04 §4.4–4.28).
+- **Company facts for journalists.** A press page is quoted: "92 % der Montagen gelingen beim ersten Termin", "Kooperationspartner des VDIV, vernetzt in den Verbänden DEUMESS und bved", "gespeichert auf Servern in Deutschland", "für Hausverwaltungen in ganz Deutschland". The 92 % is also on the segment pages (§4.9–4.14) and the trust claims on every page (§4.27). Mitigation: sign-off in §4.4 together with the downloadable profile, which repeats them.
+- **Files that drift.** The profile TXT repeats the boilerplate and the facts; the logo SVGs repeat the header's logo. Mitigation: `content.test.ts` compares the profile's paragraph with the page's boilerplate and its facts with the tiles' claims.
 
 ## Out of scope
 
-- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#pillfx` beyond the pills' own hover, `#end-css`, `#fx-js` (the design footer's newsletter; ours is the shared footer), `#demo-css` beyond `.dm-pill`, `.dm-h2`, `.bk-next` and the range input, `PG.countUp` / `seg` / `paintRange` (unused by this page), the design's own smooth anchor scrolling (app.css scrolls smoothly; `#start` has the shared offset).
-- A shareable link with the visitor's numbers, a PDF of the result.
+- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#pillfx`, `#end-css`, `#fx-js` (the design footer's newsletter; ours is the shared footer), `#demo-css` beyond `.dm`, `.dm-in`, `.bk-next` and `.rv`, `PG.tween` / `seg` / `paintRange` / `confetti` (unused by this page), the design's own smooth anchor scrolling (app.css scrolls smoothly; `#start` has the shared offset), the artifact runtime's `downloads` capability.
+- A press archive, press releases, a photo gallery.

@@ -4,25 +4,25 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/api-dokumentation`: the page with the landing header and footer; the footer's "API-Dokumentation" lands here from every landing page, and so do `/softwarepartner`'s hero button, `/partnerschaften`'s "Heidi API" and FAQ 3, and `/neuigkeiten`'s story ("Zur API-Dokumentation")
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
-- [ ] No horizontal overflow from 320 to 1640 px (the chip row, the code blocks and the tables scroll inside themselves)
-- [ ] The terminal's lines appear one by one on load; the two data lines move only while in view
-- [ ] The table of contents marks the article in view while scrolling (and after a reload mid-page); a click lands on the article with its H2 below the header
-- [ ] "Kopieren" on each of the four code blocks copies the plain code (the JSON without markup) and reads "Kopiert" for 1.6 s
-- [ ] "Schnellstart" lands on `#schnellstart`; "Softwarepartner werden" (both) on `/softwarepartner`; "Erstgespräch vereinbaren", the trust block's "Demo buchen", the floating CTA and the nav CTA on `/messdienstwechsel` (the first three on its form); "Mehr zu Sicherheit" on `/sicherheit`; "bved-Spezifikationen" opens bved.info in a new tab
+- [x] `bun run dev` → `http://localhost:5173/api-dokumentation`: the page with the landing header and footer; the footer's "API-Dokumentation" lands here from every landing page, and so do `/softwarepartner`'s hero button, `/partnerschaften`'s "Heidi API" and FAQ 3, and `/neuigkeiten`'s story ("Zur API-Dokumentation")
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
+- [x] No horizontal overflow from 320 to 1640 px (the chip row, the code blocks and the tables scroll inside themselves)
+- [x] The terminal's lines appear one by one on load; the two data lines move only while in view
+- [x] The table of contents marks the article in view while scrolling (and after a reload mid-page); a click lands on the article with its H2 below the header
+- [x] "Kopieren" on each of the three code blocks copies the plain code (the JSON without markup) and reads "Kopiert" for 1.6 s
+- [x] "Schnellstart" lands on `#schnellstart`; "Softwarepartner werden" (both) on `/softwarepartner`; "Erstgespräch vereinbaren", the trust block's "Demo buchen", the floating CTA and the nav CTA on `/messdienstwechsel` (the first three on its form); "Mehr zu Sicherheit" on `/sicherheit`; "bved-Spezifikationen" opens bved.info in a new tab
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari (the sticky table of contents, the chip row, the clipboard)
 - [ ] Keyboard-only through the page (the CTAs, the table of contents, the service cards, the copy buttons, the scrolling code blocks and tables, the closing card); focus ring visible
 - [ ] Screen reader: one H1 "Verbrauchsdaten direkt in Ihre Software. Nach bved-Standard."; the terminal skipped; the table of contents by its name with the current entry; the articles' H2s; the tables with their heads; "Code kopiert" announced
-- [ ] Reduced motion: nothing appears, moves or scrolls smoothly; every block in its end state
-- [ ] JS disabled: every section readable, the code coloured, "Kopieren" hidden, the table of contents' links work
+- [x] Reduced motion: nothing appears, moves or scrolls smoothly; every block in its end state
+- [x] JS disabled: every section readable, the code coloured, "Kopieren" hidden, the table of contents' links work
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2), `highlight.test.ts` (01 §1.3).
-- **Playwright `e2e/api-dokumentation.e2e.ts`**, modelled on `e2e/fristenrechner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the four links from `/softwarepartner`, `/partnerschaften` and `/neuigkeiten`; every internal link resolves; the CTAs' targets and the nav CTA; no `#start` and no form on the page; the table of contents (eleven links in article order, every id exists, the first current on load, another after scrolling to `#status`); the JSON coloured on the server (`.k` / `.s` spans); "Kopieren" (copies the plain text through a granted clipboard permission, "Kopiert", the polite line); without JS ("Kopieren" hidden); reduced motion (the terminal's lines and the data lines without animation); no console errors.
+- **Playwright `e2e/api-dokumentation.e2e.ts`** (14 tests), modelled on `e2e/fristenrechner.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the four links from `/softwarepartner`, `/partnerschaften` and `/neuigkeiten`; every internal link resolves; the CTAs' targets and the nav CTA; no `#start` and no form on the page; the table of contents (eleven links in article order, every id exists, the first current on load, another after scrolling to `#status`); the JSON coloured on the server (`.k` / `.s` spans); "Kopieren" (copies the plain text through a granted clipboard permission, "Kopiert", the polite line); without JS ("Kopieren" hidden); reduced motion (the terminal's lines and the data lines without animation); no console errors.
 - **`e2e/softwarepartner.e2e.ts`**, **`e2e/partnerschaften.e2e.ts`**, **`e2e/neuigkeiten.e2e.ts`** and their `content.test.ts`: the links now lead to `/api-dokumentation`.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`

@@ -66,6 +66,16 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 | The nav CTA (the design's "Demo buchen" / "Angebot einholen") | `/messdienstwechsel` through `ctaHref`, as on `/softwarepartner` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`c096ff22`), the route, content, `highlight.ts` and the five links (`1003a602`), the sections in their end state (`c211ee27`), the interactions (`d7a03aee`), and `e2e/api-dokumentation.e2e.ts` (14 tests). Compared with the design at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion): the hero, the terminal, the table of contents, the note and all eleven articles have the design's height to the pixel; the trust block is 3–5 px shorter, as on the other pages with `TrustSeals`. No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 889 unit tests, 577 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **The terminal below the fold.** Its lines are CSS animations that play on load; on phones, where the hero's terminal is below the fold, `enterView` pauses them on mount and resumes them when it comes into view (the design starts them on show).
+- **"Zugang anfragen"'s paragraph** has no margin and the body size, as the design's (it isn't a direct child of the article, so `.ad-sec > p` doesn't reach it).
+- **The articles' class is `art`**, not the design's `.ad-sec` → `sec`: `.lp .sec` adds 96 px padding.
+- **Accessibility additions:** the code frames and tables are focusable and named ("Codebeispiel: …", "Tabelle: …"), the current table of contents entry has `aria-current="location"`, the bved link says "(öffnet in neuem Tab)" to screen readers, "Kopieren" has a polite status line. A table of contents click keeps the hash in the URL (the design prevents it).
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards (only `/neuigkeiten`'s signup test needs it).
+
 ## Key decisions
 
 | Topic | Decision |

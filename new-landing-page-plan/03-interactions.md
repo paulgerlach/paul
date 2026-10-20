@@ -1,32 +1,27 @@
 # Phase 3: Interactions
 
-Same rules as the other landing pages: runes and the existing attachments, no new dependencies, timers only in the browser and cleared on teardown, `prefersReducedMotion()` means the end state. The design's only page-only script is `#aw2-js`; the reveal, the closing chart, the logo strip, the trust block and the floating CTA are `/dashboard`'s.
+Same rules as the other landing pages: runes and the existing attachments, no new dependencies, timers and listeners only in the browser and cleared on teardown, `prefersReducedMotion()` means the end state. The design's page-only script is `#ad-js`; its `#pg-common` adds the reveal (ours: `reveal`) and smooth anchor scrolling (ours: `app.css`).
 
-## 3.1 Entrances
+## 3.1 The terminal
 
-Every entrance goes through `enterView` (only below the fold, only with motion; `prepare` sets the start state, `play` the end):
+- CSS only: each line `animation: ad-line .5s ease both` (from `opacity: 0; translateY(4px)`), with the design's delays plus its 250 ms start (line 1 .25 s, 2 .6 s, 3 1.35 s, 4 1.6 s, 5 1.75 s, 6 1.9 s, 7 2.05 s, 8 2.2 s, 9 2.35 s). `@media (prefers-reduced-motion: reduce)`: no animation. Plays on load (the hero is the first screen); the server's HTML is the end state.
 
-- **Mock-up** (threshold .25): bars from 0 to their widths (`1s` ease with the design's per-row delay `.2s + i × .08s`), the values and the three KPIs count from 0 through `tweenNumber` (1000 ms rows, 1100 ms KPIs, `de()` with the KPI's decimals), the average line fades in after 1.1 s, the notes slide in from the right one after the other (`1.3s + i × .35s`).
-- **Steps** (each card at .4): the two tickers rise in (`.35s + i × .35s`, the second .25 s later).
-- **Comparison** (.3): the bars grow from 0 to the heating values; the rows already sorted.
-- **Heatmap** (.2): the cells scale in row by row (`j × .04s + r × .05s`).
-- **Notes** (.3): the notes rise in (`.2s + i × .15s`).
-- **Report** (.35): the back pages fan out (.7 s, .3 s delay), the bars grow (`.4s + i × .06s`), "Bericht erstellt" rises in after 1.5 s.
+## 3.2 The moving lines
 
-## 3.2 The comparison's switch
+- `FlowLine`: the design's `adflow` (2.6 s, `cubic-bezier(.5, 0, .5, 1)`, endless; `adflowv` for the vertical line below 640 px), `animation-play-state: paused` until `inView` (threshold 0) adds `.run`, paused again when it leaves. Nothing with reduced motion (the attachment returns early, and the CSS has `animation: none` under the media query).
 
-- `$state` metric (`heiz`), everything else `$derived` through `metrics.ts`: the unit line, each row's width, value (`de()` with the metric's decimals), badge, high mark and rank, the average line's position and text "Ø 111" / "Ø 13,7" / "Ø 31,4".
-- A click sets the metric and its button `aria-pressed`; the rows slide to their new ranks (`transform .5s`), the bars and the average line move (`.7s`). An `sr-only` polite line names the new order's first row ("Höchster Wert: Bergmannstraße 4, 142 kWh/m²").
+## 3.3 The table of contents
 
-## 3.3 The heatmap's tooltip
+- `Sidebar` holds `$state` current (0). One passive `scroll` listener on the window (`<svelte:window>`), throttled to one animation frame, reads the articles' tops (`getBoundingClientRect().top`, ids from `content.ts`) and sets current through `activeIndex(tops, 160)` (the design's `y + 40` with `y = 120`); also once on mount (a reload mid-page).
+- The current link gets `.on` and `aria-current="location"`. Below 1040 px the chip row doesn't follow (as designed).
+- A click is a plain anchor jump (smooth through `app.css`, instant with reduced motion through `tokens.css`); the article's `scroll-margin-top: 90px` keeps its H2 below the header. The URL gets the hash (the design prevents it; keeping it lets a reader share a section).
 
-- Pointer only, as the design: `pointerenter` and `click` on a cell show the tooltip above the cell (its box against the card's, plus the card's `scrollLeft`; measured in the handler), `pointerleave` hides it. The hovered cell gets the ring (`.on`). The tooltip is `aria-hidden`; the values are in the `sr-only` table.
+## 3.4 "Kopieren"
 
-## 3.4 The notes' filter
-
-- `$state` filter (`all`), the visible notes `$derived` through `filterHints`; filtered-out notes get `hidden`. The chip's button `aria-pressed`; the polite `sr-only` line "{n} Hinweise".
+- `CodeBlock` copies its code's text (the `code` element's `textContent`, so the highlighted JSON copies as plain text): `navigator.clipboard.writeText`, else (or on rejection) the design's fixed, transparent textarea with `execCommand("copy")`, as `/presse`'s `Boilerplate`. Then "Kopiert" with `.ok` for 1.6 s (the timer cleared on teardown and on a second click), and the page's polite `sr-only` line says "Code kopiert".
+- Hidden without JS (`@media (scripting: none)`).
 
 ## 3.5 CSS only
 
-- The `.db-btn` hovers, the pill icons, the heatmap cell's ring on hover, the switch's and chips' pressed look.
-- With reduced motion: nothing moves (the landing reset; `#aw2-css`'s `transition: none` for the six blocks).
+- The `.bk-next` / `.pg-ghost` / `.ad-ghost` hovers, the service cards' lift, the table of contents' hover, the pill icon (`#pillfx`).
+- With reduced motion nothing moves (the landing reset; `#ad-css`'s media query).

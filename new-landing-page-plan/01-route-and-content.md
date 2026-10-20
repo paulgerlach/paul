@@ -1,69 +1,70 @@
-# Phase 1: Route, links, content and the shared frame
+# Phase 1: Route, links, content and the pure logic
 
 ## 1.1 Route and links
 
 In one commit:
 
-- `ROUTE_AUSWERTUNG = "/auswertung"` in `$lib/routes.ts`, after `ROUTE_DASHBOARD`.
-- The landing footer's "Auswertung" (`$lib/landing/footerLinks.ts`, group "Plattform") gets `href: ROUTE_AUSWERTUNG`.
-- `/neuigkeiten`'s featured story "Heidi Auswertung: Verbrauch, Kosten und Auffälligkeiten auf einen Blick" gets `more: { text: "Zur Auswertung", href: ROUTE_AUSWERTUNG }` (the design's link text, in place of the comment "no page yet"); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists": "The featured Auswertung has no page yet") change with it.
-- `src/routes/(landing-page)/auswertung/+page.server.ts`, as `/dashboard`'s:
+- `ROUTE_API_DOKUMENTATION = "/api-dokumentation"` in `$lib/routes.ts`, after `ROUTE_SOFTWAREPARTNER`.
+- The landing footer's "API-Dokumentation" (`$lib/landing/footerLinks.ts`, `companyLinks`) gets `href: ROUTE_API_DOKUMENTATION`.
+- `/softwarepartner`'s hero: `secondary: { text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION }` (the `uv` hero renders the second button once it has an `href`); its `content.test.ts` and `e2e/softwarepartner.e2e.ts` ("API-Dokumentation waits for its page") change with it.
+- `/partnerschaften`: row 1's second paragraph `["Nach bved-Standard oder über die ", { text: "Heidi API", href: ROUTE_API_DOKUMENTATION }, "."]` (the `uv` rows' `Inline[]`), FAQ 3's answer `In der <a href="${ROUTE_API_DOKUMENTATION}">API-Dokumentation</a>. …`; its `content.test.ts` and `e2e/partnerschaften.e2e.ts` ("Heidi API and API-Dokumentation wait for their page") change with them.
+- `/neuigkeiten`'s story "Heidi API: Die Dokumentation für Softwarepartner" gets `more: { text: "Zur API-Dokumentation", href: ROUTE_API_DOKUMENTATION }` (the design's link text, in place of the comment "no page yet"); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists") change with it.
+- `src/routes/(landing-page)/api-dokumentation/+page.server.ts`:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Heidi Auswertung: Verbräuche Ihres Bestands klar ausgewertet | Heidi Systems",
+	title: "API-Dokumentation: Verbrauchsdaten nach bved-Standard | Heidi Systems",
 	description:
-		"Heidi wertet die Funkdaten aller Zähler für jede Liegenschaft aus: geprüfte Werte, Vergleich im Portfolio, Jahresverlauf zum Vorjahr, Hinweise mit nächsten Schritten und Berichte für Eigentümer.",
-	ogTitle: "Ihre Verbräuche. Klar ausgewertet.",
+		"Die Heidi-Schnittstelle nach bved-Standard: Verbrauchsdaten für die unterjährige Verbrauchsinformation, Nutzerwechsel und Dokumente per Webservice in Ihrer ERP- oder Verwaltungssoftware. Mit Schnellstart, Authentifizierung, Endpunkten und Statuscodes.",
+	ogTitle: "Verbrauchsdaten direkt in Ihre Software. Nach bved-Standard.",
 	noindex: true,
 	keepCanonical: true,
 },
-landing: DEFAULT_CHROME,
-finalForm: await emptySwitchForm("final"),
+// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 1).
+landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
 ```
 
-  and the default action `handleSwitchSignup(event, { source: "auswertung", page: ROUTE_AUSWERTUNG })`. No `cache-control`.
+  No action, no form. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
-## 1.2 `/dashboard`'s frame, hero frame and closing
+## 1.2 Content module
 
-Pure moves, so `/dashboard` renders the same HTML and CSS (the class names change only in Svelte's scoping hashes):
+`$lib/landing/pages/api-dokumentation/content.ts`, word for word from the design. Texts with inline code or bold runs are `Rich` (`(string | { code: string } | { b: string })[]`), rendered by `Rich.svelte`.
 
-- `$lib/landing/pages/dashboard/DbMain.svelte`: `<main id="content" class="db" {@attach reveal(".rv", { threshold: 0.18 })}>{@render children()}</main>` with the whole `<style>` block of `routes/(landing-page)/dashboard/+page.svelte` (tokens, `.sec`, the reveal, `.db-h2`, `.db-lead`, `.db-c`, `.db-btn`, `.okb`, `.badge`, `#hs-css`). The route's `+page.svelte` renders its sections inside `DbMain`.
-- `$lib/landing/pages/dashboard/components/HeroFrame.svelte`: the hero's `<section class="sec hero" aria-labelledby="db-h1">`, `.wrap.in`, `Pill` (live), the H1 (`data-hs`, two parts), the `.sub` paragraph (a `line` snippet), the `.ctas` with the two `.db-btn` (`primary`, `secondary`, both with `focusSignup`) and `children` (the visual); the styles of those elements move with it (`.hero`, `.in`, `h1`, `h1 span`, `.sub`, `.l1`/`.l2` above 1000 px, `.ctas`, the 640 px padding). `dashboard/sections/Hero.svelte` keeps its chips, hint and preview and passes them in.
-- `dashboard/sections/Closing.svelte`: a `content` prop (`ClosingContent`: `h2`, `h2Accent`, `text`, `submitLabel`, `chart`), default `closing` from `dashboard/content.ts`.
+- `MANAGER_SIGNUP_HREF` = `/messdienstwechsel#start` (open question 1), `PARTNER_HREF` = `ROUTE_SOFTWAREPARTNER`.
+- `hero`: pill "API-Dokumentation" (`rack`), `h1` "Verbrauchsdaten direkt in Ihre Software." with the accent "Nach bved-Standard.", the lead "Heidi stellt Verbrauchsdaten, Nutzerwechsel und Dokumente über Webservices nach den Spezifikationen des bved bereit. Ihre ERP- oder Verwaltungssoftware ruft die Daten ab, ohne Dateiversand und ohne doppelte Pflege.", `primary` "Schnellstart" → `#schnellstart`, `secondary` "Softwarepartner werden" → `PARTNER_HREF`, `ticks` "bved-konform", "JSON über HTTPS", "Hosting in Deutschland".
+- `terminal`: title "consumption-data · v1"; nine lines as tokens (`m` method, `v` value, `c` comment, `st` status, `k` key, `s` string, plain): `GET /billingunits/123456789/consumptions/periods`, `Authorization: Basic ••••••••`, `200 OK · application/json`, then the five JSON lines with the design's indentation.
+- `docs`: the section's name "Dokumentation", the table of contents' name "Inhalt der Dokumentation" and its three groups ("Einführung": Überblick, Schnellstart, Authentifizierung, Basis-URL und Versionen; "Webservices": Verbrauchsdaten (uVI), Nutzerwechsel, Dokumente, Datenaustausch V 3.10; "Referenz": Statuscodes, Versionen, Zugang anfragen), each entry `{ id, text }`; `note`: "Entwurf." and "Diese Dokumentation beschreibt die geplante Heidi-Schnittstelle auf Basis der veröffentlichten bved-Spezifikationen. Basis-URL und Beispielwerte sind Platzhalter. Verbindlich sind die Zugangsdaten und Details, die Sie von Ihrem persönlichen Ansprechpartner erhalten."
+- `overview`: H2 "Überblick", the text; two roles ("Heidi Systems" / "Messdienstleister (MSC). Stellt den Server bereit und liefert die Daten.", `rack`; "Ihre Software" / "Verwaltung oder ERP (PM). Ruft die Daten als Client ab oder übermittelt Wechsel.", `building`); four services (`consumption-data` "Monatliche Verbrauchsdaten je Nutzeinheit für die unterjährige Verbrauchsinformation." `v1.2.1` → `#verbrauch`, `bars`; `on-site-roles` "Tagesaktuelle Übermittlung von Nutzer- und Bewohnerwechseln an Heidi." `v2.0` → `#wechsel`, `swap`; `documents` "Abrechnungen und weitere Dokumente automatisiert hoch- und herunterladen." `v1.3` → `#dokumente`, `doc`; `Datenaustausch` "Dateibasierter Austausch für die Heizkostenabrechnung." `V 3.10` → `#datei`, `list`).
+- `quickStart`: H2 "Schnellstart", three steps ("Zugang anfragen" …, "Zugangsdaten erhalten" …, "Ersten Abruf senden" …), the code block "cURL" with the design's three lines (the trailing backslashes kept).
+- `auth`: H2 "Authentifizierung", the text (`Rich`: `Authorization`, `accept: application/json`), the table head "Verfahren" / "Header" / "Hinweis" and its two rows.
+- `baseUrl`: H2 "Basis-URL und Versionen", the text, the code block "Basis-URL" with the badge "Platzhalter" and `https://api.heidisystems.example/bved/consumptions/v1`, the three list items (`Rich`, with the design's `z. B.` and its no-break space).
+- `consumption`: H2 "Verbrauchsdaten (uVI)", version "consumption-data 1.2.1", the text; two endpoints (`ep-periods`, `ep-period`): method "GET", path, text, the parameter table ("Parameter" / "Ort" / "Beschreibung"; "Pflicht"), for the first the answer "Antwort" `200` with the design's JSON and the field table ("Feld" / "Typ" / "Beschreibung", four rows), for the second the four list items and the small line "Das vollständige Feldschema ergänzen wir in der finalen Fassung dieser Dokumentation."
+- `userChange`: H2 "Nutzerwechsel", version "on-site-roles 2.0", the text, the direction "Ihre Software" → "Heidi", the small line.
+- `documents`: H2 "Dokumente", version "documents 1.3", the text, three list items, the small line.
+- `fileExchange`: H2 "Datenaustausch V 3.10", version "Dateiformat", the text, the small line.
+- `status`: H2 "Statuscodes", the text, the head "Code" / "Bedeutung", seven rows with their tone (`ok` 200, plain 400, 401, 404, "405 / 501", `er` 500, 503).
+- `versions`: H2 "Versionen", the head "Webservice" / "Version" / "Änderungen", five rows; the source line "Grundlage:" with "bved-Spezifikationen" → `https://bved.info/datenaustauschalt/spezifikationen/`.
+- `access`: H2 "Zugang anfragen", the text, "Erstgespräch vereinbaren" → `MANAGER_SIGNUP_HREF`, "Softwarepartner werden" → `PARTNER_HREF`.
+- `copy`: "Kopieren", "Kopiert", the polite line "Code kopiert", the code frames' name "Codebeispiel: {label}" and the tables' "Tabelle: {H2}".
 
-## 1.3 Content module
+`content.test.ts`: the H1's two texts; the table of contents lists every article once, in the article order, with the ids of the eleven articles; every `href` is a route, an article's id or the bved URL; the services link their articles; the JSON samples parse (`JSON.parse`) and the cURL sample calls the base URL; seven status codes, five versions, and every service version in the overview matches its article's badge and the versions table's last row for it; no empty, doubled-space or untrimmed text.
 
-`$lib/landing/pages/auswertung/content.ts`, word for word from the design:
+## 1.3 Pure logic
 
-- `hero`: pill "Heidi Auswertung", `h1` ["Ihre Verbräuche.", "Klar ausgewertet."], `line` "Heidi wertet die Funkdaten aller Zähler für jede Liegenschaft aus.", `primary` "Demo buchen" → `DEMO_HREF`, `secondary` "Angebot einholen" → `START_HREF` (open question 1).
-- `properties`: the seven example properties with their units: "Lindenallee 12" 36, "Gartenweg 3" 12, "Bergmannstraße 4" 24, "Am Stadtpark 7" 32, "Mühlenstraße 18" 18, "Schillerhöfe" 48, "Hofstraße 21" 18 (188 in all).
-- `metrics` (the design's `MET`): `heiz` "Heizung" "kWh/m²" `[118, 96, 142, 104, 88, 131, 99]` 0 decimals; `ww` "Warmwasser" "m³/WE" `[14.2, 11.8, 17.6, 12.9, 10.4, 16.1, 13.0]` 1; `kw` "Kaltwasser" "m³/WE" `[31.5, 28.0, 38.2, 30.1, 26.4, 35.7, 29.8]` 1. `period` "Jan – Okt".
-- `mock`: label "Beispiel: Auswertung eines Portfolios mit Vergleich und Hinweisen", title "Auswertung", sub "Portfolio · 7 Liegenschaften · 188 Einheiten", chip "Jan – Okt", tag "Beispieldaten", export "Report exportieren"; the KPIs ("Heizung im Schnitt" 111 "kWh/m²" "−7 % zum Vorjahr" green, "Warmwasser im Schnitt" 13,7 "m³/WE" "−4 % zum Vorjahr" green, "Hinweise offen" 3 "1 dringend" orange); the chart head "Heizung je m² im Vergleich" and "Ø Portfolio 111"; three notes (`o` "!" "Bergmannstraße 4" "28 % über dem Portfolio-Schnitt", "↓" "Mühlenstraße 18" "Niedrigster Verbrauch je m²", "↗" "Schillerhöfe" "Warmwasser seit Februar über Vorjahr").
-- `steps`: pill "So entsteht die Auswertung" (`sparkle`), h2 "Von der Funkablesung zur Kennzahl. Automatisch.", lead; three cards "01" `signal` "Funkwerte" (text, tickers "HKV 0412 · 2.180", "WWZ 0081 · 18,4 m³"), "02" `check` "Plausibel geprüft" ("12.480 Werte plausibel", warn "3 Werte markiert"), "03" `chart` "Kennzahlen und Berichte" ("111 kWh/m² Heizung", "Report Q3 bereit").
-- `compare`: pill "Vergleich" (`building`), h2 "Welche Liegenschaft fällt aus der Reihe?", the text, the list ("Heizung je m², Wasser je Wohneinheit", "Vergleich mit dem Schnitt Ihres Portfolios", "Sortiert nach Abweichung"), the switch's name "Kennzahl", legend "über Ø" / "unter Ø", "Beispieldaten".
-- `heatmap`: pill "Jahresverlauf" (`clock`), h2 "Das ganze Jahr auf einen Blick", lead, `months` "Jan" … "Dez", `rows` (per property the twelve deviations in %, the design's `data-v`), legend "weniger als Vorjahr" / "mehr als Vorjahr", "Beispieldaten", `tip` "{v} zum Vorjahr", the `sr-only` table's caption "Heizverbrauch je Monat im Vergleich zum Vorjahr (Beispieldaten)".
-- `hints`: pill "Hinweise" (`bell`), h2 "Nicht nur Zahlen. Konkrete nächste Schritte.", the text, the list ("Leckageverdacht aus dem Nachtverbrauch", "Abweichungen zum Vorjahr", "Zähler ohne Funksignal"); the card's title "Hinweise", the filter's name "Filter" and chips (`all` "Alle" with the count, `w` "Wasser", `h` "Heizung", `t` "Technik"); five notes (kind, tone, place line, title, text, action), word for word: "Wasser · Gartenweg 3 · WE 04" "Leckageverdacht" "An 3 Tagen lief nachts durchgehend Wasser." "Spülkasten prüfen lassen" (`w`, `o`); "Heizung · Bergmannstraße 4 · November" "Verbrauch deutlich höher" "24 % mehr als im Vorjahresmonat." "Heizungseinstellung prüfen" (`h`, `o`); "Technik · Schillerhöfe · WE 17" "Zähler ohne Signal" "Seit 6 Tagen keine Funkwerte." "Heidi plant einen Termin" (`t`, `b`); "Wasser · Schillerhöfe" "Warmwasser über Vorjahr" "Seit Februar über dem Vorjahreswert." "Verlauf beobachten" (`w`, `y`); "Heizung · Mühlenstraße 18" "Verbrauch gesunken" "13 % weniger als im Vorjahr." "Kein Handlungsbedarf" (`h`, `g`); the count line "{n} Hinweise".
-- `report`: pill "Berichte" (`file`), h2 "Ein Bericht für Eigentümer. In wenigen Klicks.", the text, the formats (`file` "PDF", `chart` "Excel", `link` "ERP und CRM"); the document ("Verbrauchsbericht Q3", "Lindenallee 12 · 36 Einheiten", "Heizung" "104" "kWh/m²", "Warmwasser" "12,9" "m³/WE", "zum Vorjahr" "−7 %", the nine bar heights `[82, 74, 60, 44, 28, 18, 15, 17, 30]`, "Keine offenen Hinweise", "Alle 112 Zähler übertragen", "Beispieldaten"), the badge "Bericht erstellt".
-- `closing` (`ClosingContent`): h2 "Sehen Sie, was in Ihren" / accent "Verbräuchen steckt.", text "Wir zeigen Ihnen in einer Demo, wie Ihr Bestand in der Heidi Auswertung aussieht.", `submitLabel` "Bestand kostenlos prüfen", `chart` `/dashboard`'s.
+`$lib/landing/pages/api-dokumentation/highlight.ts`:
 
-`content.test.ts`: the H1's two texts; seven properties with 188 units in all, every metric with seven values; the mock-up's "Ø Portfolio 111" and its note "28 %" agree with `metrics.ts` on the heating values; three steps with two tickers each; seven heatmap rows of twelve values, months twelve; five notes, every kind in the filter, the count "Alle 5"; nine report bars; every icon in `dashboard/icons.ts`; every `href` a route or `#start`; no empty, doubled-space or untrimmed text.
+- `jsonTokens(code)`: `[]`-free tokens `{ text, kind?: "k" | "s" }` that join back to `code`. Only for code whose trimmed text starts with `{` (the design's check); otherwise one plain token. The design's two rules: a quoted string followed by optional whitespace and `:` is a key (`k`); a quoted string after `:` and optional whitespace is a value (`s`).
 
-## 1.4 Pure logic
+`highlight.test.ts`: the tokens join back to the input; the answer's keys and values (`"mscnumber"` `k`, `"123456789"` `s`, `"period"` `k`, `"2021-06"` `s`); the cURL sample stays one plain token; a key whose value is an object or array; escaped quotes don't occur in the samples (asserted in `content.test.ts`).
 
-`$lib/landing/pages/auswertung/metrics.ts`:
+The scroll spy reuses `activeIndex(tops, line)` from `$lib/landing/pages/hkvo-leitfaden/toc.ts` (its tests cover it).
 
-- `average(values)`, `barScale(values, headroom)` (the design's maximum × 1.1 in the mock-up, × 1.08 in the comparison), `share(value, max)` in %.
-- `ranking(values)`: each row's rank by value, highest first (stable).
-- `deviation(value, avg)`: `Math.round((value / avg − 1) × 100)` and its text (`+28 %`, `−21 %`, `±0 %`, with `NB` before `%` as the other pages' and the design's U+2212 minus).
-- `isHigh(value, avg, factor)`: the mock-up's `> avg × 1.1`, the comparison's `> 0`.
-- `heatColor(v)`: `#3E9A57` (≤ −10), `#8AD68F` (≤ −4), `#E7ECE9` (< 4), `#F2C79B` (< 12), `#D9622B`; `heatTip(v)`: "−4 % zum Vorjahr", "+7 % …", "±0 % …".
-- `filterHints(hints, filter)`.
+## 1.4 The code font
 
-`metrics.test.ts`: the average 111,1 and Bergmannstraße's +28 %, the order of each metric, the signs and `±0`, the colour steps at their borders (−10, −4, 4, 12), the filter.
+Geist Mono for the code, the terminal, the service names and the version badges, as `/vorgehen` registers it: `@fontsource-variable/geist-mono`'s latin file through `?url` in an `@font-face` in `<svelte:head>`. Unlike `/vorgehen` it's used above the fold (the terminal), so the route also preloads it (`<link rel="preload" as="font" type="font/woff2" crossorigin>`).
 
 ## 1.5 Images
 
-None new. The logos and the Werne logo come from `$lib/landing/data/logos` through `/dashboard`'s `LogoStrip` and `Quote`.
+None. The floating CTA's portraits come with the shared `FloatingCta`.

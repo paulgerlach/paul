@@ -33,6 +33,6 @@ The design's `#it-css` as component-scoped CSS, on a phone frame of its own (the
 
 ## 2.3 End states (server, no JS, reduced motion)
 
-- The hero's list finished ("Digitalisiert" ×3, "Fertig"); the statement lit; row 1's notification and figure in; row 2's camera done; row 3's flats ticked up to "3. OG li" "in Arbeit"; row 4 "Mit Heidi" with "einer"; the rotator's first phrase; the figures at their values; every `.rv` block shown without JS.
+- The hero's list finished ("Digitalisiert" ×3, "Fertig"); the statement lit; row 1's notification and figure in; row 2's camera done; row 3's flats ticked up to "4. OG li" "in Arbeit"; row 4 "Mit Heidi" with "einer"; the rotator's first phrase; the figures at their values; every `.rv` block shown without JS.
 
 Overflow checks at 320 px: the hero word (`nowrap`, the template's `lg` size), the camera phone (its width is relative), the twelve-cell grid, the closing card's form.

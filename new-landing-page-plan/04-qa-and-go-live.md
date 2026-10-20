@@ -4,24 +4,24 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/installationstool`: the page with the landing header and footer; the footer's "Installationstool" lands here from every landing page, and so do `/installationspartner`'s FAQ 3 ("Mehr zum Installationstool"), `/neuigkeiten`'s story ("Mehr erfahren") and `/vorgehen`'s feature card
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card with the form in place of the video button, row 2's tile with `.it-ph` kept)
-- [ ] No horizontal overflow from 320 to 1640 px (the hero word, the camera phone, the twelve-cell grid)
-- [ ] The camera takes its two photos while in view and stops in its end state when it leaves; the template's loops run as on `/verbaende`
-- [ ] Every "Demo buchen" (hero, rows, first card, trust block, floating CTA, nav CTA) lands on the closing card's form with the e-mail field focused; "Mehr erfahren" on `#inhalt`; "Häufige Fragen" on `#faq`; "Partner werden" and "Installationspartner werden" on `/installationspartner`; "Mehr zu Sicherheit" (FAQ, trust block) on `/sicherheit`
-- [ ] The signup form stores a lead with `source: "installationstool"` and sends `switchinquiry` (local sink)
+- [x] `bun run dev` → `http://localhost:5173/installationstool`: the page with the landing header and footer; the footer's "Installationstool" lands here from every landing page, and so do `/installationspartner`'s FAQ 3 ("Mehr zum Installationstool"), `/neuigkeiten`'s story ("Mehr erfahren") and `/vorgehen`'s feature card
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card with the form in place of the video button, row 2's tile with `.it-ph` kept)
+- [x] No horizontal overflow from 320 to 1640 px (the hero word, the camera phone, the twelve-cell grid)
+- [x] The camera takes its two photos while in view and stops in its end state when it leaves; the template's loops run as on `/verbaende`
+- [x] Every "Demo buchen" (hero, rows, first card, trust block, floating CTA, nav CTA) lands on the closing card's form with the e-mail field focused; "Mehr erfahren" on `#inhalt`; "Häufige Fragen" on `#faq`; "Partner werden" and "Installationspartner werden" on `/installationspartner`; "Mehr zu Sicherheit" (FAQ, trust block) on `/sicherheit`
+- [x] The signup form stores a lead with `source: "installationstool"` and sends `switchinquiry` (local sink)
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page (the CTAs, the FAQ, the signup form); focus ring visible
 - [ ] Screen reader: one H1 "Das Heidi Installationstool für Installateure"; the tiles skipped; the hero list read through its plain list; the FAQ's questions; the form's errors announced
-- [ ] Reduced motion: nothing loops, counts or lights up; every block in its end state
-- [ ] JS disabled: every section readable in its end state, the signup form posts
+- [x] Reduced motion: nothing loops, counts or lights up; every block in its end state
+- [x] JS disabled: every section readable in its end state, the signup form posts
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.2), `camera.test.ts` (01 §1.3).
-- **Playwright `e2e/installationstool.e2e.ts`**, modelled on `e2e/verbaende.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the three links from `/installationspartner`, `/neuigkeiten` and `/vorgehen`; every internal link resolves; the CTAs' targets (`#start`, `/installationspartner`, `/sicherheit`) and the nav CTA; the FAQPage JSON-LD; the hero list's replay; the camera's pass (installed clock: empty, then focus, photo 2, done) and its end state on leaving; the signup (lead with the source, the webhook at the sink); without JS (every block in its end state, the form posts); reduced motion (the camera and the template's tiles in their end states, nothing changes over 10 s); no console errors.
+- **Playwright `e2e/installationstool.e2e.ts`** (13 tests), modelled on `e2e/verbaende.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the three links from `/installationspartner`, `/neuigkeiten` and `/vorgehen`; every internal link resolves; the CTAs' targets (`#start`, `/installationspartner`, `/sicherheit`) and the nav CTA; the FAQPage JSON-LD; the hero list's replay; the camera's pass (installed clock: empty, then focus, photo 2, done) and its end state on leaving; the signup (lead with the source, the webhook at the sink); without JS (every block in its end state, the form posts); reduced motion (the camera and the template's tiles in their end states, nothing changes over 10 s); no console errors.
 - **`e2e/installationspartner.e2e.ts`**, **`e2e/neuigkeiten.e2e.ts`**, **`e2e/vorgehen.e2e.ts`** and their `content.test.ts`: the links now lead to `/installationstool`.
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
@@ -38,11 +38,12 @@ The page goes live with the cutover. Every item must be done before the cutover,
 - [ ] **The product as described** (open question 2, Risks), signed off by product: "Ein Link, ein digitaler Zwilling, zwei Fotos pro Zähler.", "Der Installateur bekommt für den Auftrag einen Link von Heidi. Darüber sieht er das Gebäude als digitalen Zwilling.", "Jede Wohnung und jeder Zähler sind dort schon angelegt.", the two photos ("den alten Zähler mit seinem Endstand und danach den neuen Zähler"), "Ohne Klemmbrett und ohne Abtippen im Büro.", "Am Ende entsteht daraus das Übergabeprotokoll.", the FAQ's six answers ("Heidis eigene Installationsflotte und regionale Installationsbetriebe, die Heidi schult und zertifiziert."); align with `/installationspartner` (§4.11), `/vorgehen`'s card (§4.34), `/neuigkeiten`'s story "Installationstool: Ein Termin in der Wohnung, alles digital dokumentiert" (§4.21) and `/funktionen` (§4.33)
 - [ ] **"Einmal in die Wohnung. Dann nie wieder."** (Risks), signed off by legal and product: the H2 of row 4 and the closing card, the lead, the statement, "Für die Ablesung muss niemand mehr in die Wohnung. Das freut Ihre Mieter und spart Ihnen Termine.", FAQ 4 "Für die Ablesung nicht. Heidi liest die Funkzähler aus der Ferne ab.", the figure "1 Termin in der Wohnung" and "Termine in der Wohnung: mehrere → einer"
 - [ ] Company claims confirmed: "92 % der Installationen gelingen beim ersten Termin" (also §4.11, §4.23–4.24, §4.33, §4.34), "Sie haben einen persönlichen Ansprechpartner für Ihren ganzen Bestand.", "Heidi plant die Montage, informiert Ihre Mieter und dokumentiert jeden Zähler mit dem Installationstool.", "Wir schulen Ihr Team und stellen Ihnen das Installationstool."; the data answer "Auf Servern in Deutschland, verarbeitet nach DSGVO und BDSG." (align with `/sicherheit`, §4.30)
-- [ ] Example data accepted: "Lindenallee 12", the flats and their meters, "12 Wohnungen", the twelve flats with "3. OG li" in work, "2. OG links digitalisiert", the reading "00047"; every mock is marked "Beispiel" / "Beispieldaten" except the camera
+- [ ] Example data accepted: "Lindenallee 12", the flats and their meters, "12 Wohnungen", the twelve flats with "4. OG li" in work, "2. OG links digitalisiert", the reading "00047"; every mock is marked "Beispiel" / "Beispieldaten" except the camera
 - [ ] The new photo (`installationstool/facade.webp`): licence confirmed, or a real photo of a Heidi building
 - [ ] The quotes (Gerhard, Werne, Vitolus): shared with the other `uv` pages, covered by their gates
 - [ ] Security block statements: covered by the region pages' item in §4.40 (same `TrustSeals`)
 - [ ] The CTA targets decided (open question 1): every "Demo buchen" → the signup form (`#start`); "Partner werden" → `/installationspartner`
+- [ ] The `uv` buttons' case decided (README "Implementation notes"): today's designs draw `.uv-btn` without the uppercase and letter-spacing the shared `UvMain` gives every `uv` page; either the template follows the designs (all ten pages at once) or the designs follow the pages
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided: `/installationstool` (open question 3, not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry

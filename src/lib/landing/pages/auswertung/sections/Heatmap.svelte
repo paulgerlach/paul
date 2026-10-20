@@ -1,19 +1,60 @@
 <!--
   "Das ganze Jahr auf einen Blick" (`.aw-sec` + `.ah`): each property's
   heating per month against the previous year, coloured in five steps. The
-  grid is decorative; its values are in the `sr-only` table below it.
+  grid is decorative; its values are in the `sr-only` table below it. The
+  cells scale in once when the card scrolls into view; hovering or clicking
+  one shows its value in the tooltip (pointer only, as the design).
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Head from "../components/Head.svelte";
 	import { heatmap, MONTHS, properties } from "../content";
 	import { heatColor, HEAT_SCALE, heatTip } from "../metrics";
+
+	let card: HTMLDivElement;
+	let shown = $state(true);
+	let tip = $state<{ r: number; j: number; x: number; y: number } | null>(null);
+
+	const entrance = enterView({
+		threshold: 0.2,
+		prepare: () => (shown = false),
+		play: () => {
+			shown = true;
+		},
+	});
+
+	/**
+	 * The cell under the pointer, placed from its box against the card's (which
+	 * scrolls sideways); none over a gap or a name.
+	 */
+	function show(event: Event) {
+		const cell = (event.target as Element).closest<HTMLElement>("i[data-j]");
+		if (!cell) {
+			tip = null;
+			return;
+		}
+		const box = cell.getBoundingClientRect();
+		const frame = card.getBoundingClientRect();
+		tip = {
+			r: Number(cell.dataset.r),
+			j: Number(cell.dataset.j),
+			x: box.left - frame.left + card.scrollLeft + box.width / 2,
+			y: box.top - frame.top,
+		};
+	}
 </script>
 
 <section class="sec aw-sec" aria-labelledby="ah-h">
 	<Head id="ah-h" pill={heatmap.pill} h2={heatmap.h2} lead={heatmap.lead} />
 	<div class="wrap">
-		<div class="ah rv in">
-			<div class="ah-g" aria-hidden="true">
+		<div class={["ah rv", shown && "in"]} bind:this={card} {@attach entrance}>
+			<div
+				class="ah-g"
+				aria-hidden="true"
+				onpointerover={show}
+				onclick={show}
+				onpointerleave={() => (tip = null)}
+			>
 				<div class="ah-r ah-hd">
 					<span class="ah-n"></span>
 					{#each MONTHS as m (m)}<span>{m}</span>{/each}
@@ -22,7 +63,13 @@
 					<div class="ah-r" style:--r={r}>
 						<span class="ah-n">{properties[r].name}</span>
 						{#each row as v, j (j)}
-							<i style:--j={j} style:background={heatColor(v)}></i>
+							<i
+								class={[tip?.r === r && tip.j === j && "on"]}
+								data-r={r}
+								data-j={j}
+								style:--j={j}
+								style:background={heatColor(v)}
+							></i>
 						{/each}
 					</div>
 				{/each}
@@ -34,6 +81,18 @@
 				>
 				<span>{heatmap.more}</span>
 				<span class="ah-demo">{heatmap.demo}</span>
+			</div>
+			<div
+				class={["ah-tip", tip && "on"]}
+				aria-hidden="true"
+				style:left="{tip?.x ?? 0}px"
+				style:top="{tip?.y ?? 0}px"
+			>
+				{#if tip}
+					<b>{properties[tip.r].name} · {MONTHS[tip.j]}</b>{heatTip(
+						heatmap.rows[tip.r][tip.j],
+					)}
+				{/if}
 			</div>
 			<table class="sr-only">
 				<caption>{heatmap.caption}</caption>
@@ -111,9 +170,31 @@
 		opacity: 1;
 		transition-delay: calc(var(--j) * 0.04s + var(--r) * 0.05s);
 	}
-	.ah-r i:hover {
+	.ah-r i:hover,
+	.ah-r i.on {
 		box-shadow: 0 0 0 2px var(--g1);
 		transition-delay: 0s !important;
+	}
+	.ah-tip {
+		position: absolute;
+		pointer-events: none;
+		background: var(--g1);
+		color: #fff;
+		font-size: 12px;
+		line-height: 1.4;
+		border-radius: 9px;
+		padding: 8px 11px;
+		transform: translate(-50%, -110%);
+		opacity: 0;
+		transition: opacity 0.15s;
+		white-space: nowrap;
+		z-index: 3;
+	}
+	.ah-tip.on {
+		opacity: 1;
+	}
+	.ah-tip b {
+		display: block;
 	}
 	.ah-f {
 		display: flex;

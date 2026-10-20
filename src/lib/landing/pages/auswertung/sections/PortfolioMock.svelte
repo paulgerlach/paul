@@ -1,9 +1,12 @@
 <!--
   The hero's mock-up (`.ax`): the window "Auswertung" with three KPIs, the
   heating values of the seven properties against the portfolio's average and
-  three notes. Server-rendered finished.
+  three notes. Server-rendered finished; below the fold it plays once when
+  it scrolls into view: the bars grow, the figures count, the notes slide in.
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
+	import { tweenNumber } from "$lib/landing/motion";
 	import { de } from "$lib/landing/pages/dashboard/chart";
 	import Icon from "$lib/landing/pages/dashboard/components/Icon.svelte";
 	import Mark from "../components/Mark.svelte";
@@ -13,9 +16,41 @@
 	const values = metrics.heiz.values;
 	const max = scaleMax(values, 1.1);
 	const avg = average(values);
+
+	let played = $state(true);
+	let kpiShown = $state(mock.kpis.map((k) => k.value));
+	let valueShown = $state(values.slice());
+
+	const entrance = enterView({
+		threshold: 0.25,
+		prepare: () => {
+			played = false;
+			// Writes only: a read here would make the attachment re-run (and
+			// cancel the tweens) on their first frame.
+			kpiShown = mock.kpis.map(() => 0);
+			valueShown = values.map(() => 0);
+		},
+		play: () => {
+			played = true;
+			const stops = [
+				...values.map((v, i) =>
+					tweenNumber(0, v, 1000, (n) => (valueShown[i] = n)),
+				),
+				...mock.kpis.map((k, i) =>
+					tweenNumber(0, k.value, 1100, (n) => (kpiShown[i] = n)),
+				),
+			];
+			return () => stops.forEach((stop) => stop());
+		},
+	});
 </script>
 
-<div class="ax rv in" role="group" aria-label={mock.label}>
+<div
+	class={["ax rv", played && "in"]}
+	role="group"
+	aria-label={mock.label}
+	{@attach entrance}
+>
 	<div class="ax-top">
 		<span class="ax-logo"><Mark /></span>
 		<span class="ax-t"><b>{mock.title}</b><small>{mock.sub}</small></span>
@@ -25,11 +60,11 @@
 	</div>
 	<div class="ax-body">
 		<div class="ax-k">
-			{#each mock.kpis as kpi (kpi.label)}
+			{#each mock.kpis as kpi, i (kpi.label)}
 				<div>
 					<small>{kpi.label}</small>
 					<b
-						><span>{de(kpi.value, kpi.digits)}</span>
+						><span>{de(kpiShown[i], kpi.digits)}</span>
 						{#if kpi.unit}<em>{kpi.unit}</em>{/if}</b
 					>
 					<span class={["ax-d", kpi.tone]}>{kpi.delta}</span>
@@ -45,9 +80,9 @@
 					<div class={["ax-r", values[i] > avg * 1.1 && "hi"]} style:--i={i}>
 						<span class="ax-n">{p.name}</span>
 						<span class="ax-b"
-							><i style:width="{share(values[i], max)}%"></i></span
+							><i style:width="{played ? share(values[i], max) : 0}%"></i></span
 						>
-						<b class="ax-v">{de(values[i])}</b>
+						<b class="ax-v">{de(valueShown[i])}</b>
 					</div>
 				{/each}
 				<i class="ax-avg" aria-hidden="true"><span>Ø</span></i>

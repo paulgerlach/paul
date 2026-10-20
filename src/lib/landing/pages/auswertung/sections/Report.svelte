@@ -1,8 +1,10 @@
 <!--
   "Ein Bericht für Eigentümer. In wenigen Klicks." (`.aw-2` + `.arp`): the
-  text with the three formats beside the report fanning out of its stack.
+  text with the three formats beside the report fanning out of its stack,
+  once when it scrolls into view.
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Icon from "$lib/landing/pages/dashboard/components/Icon.svelte";
 	import Mark from "../components/Mark.svelte";
 	import Split from "../components/Split.svelte";
@@ -10,6 +12,14 @@
 	import { report } from "../content";
 
 	const { doc } = report;
+	let played = $state(true);
+	const entrance = enterView({
+		threshold: 0.35,
+		prepare: () => (played = false),
+		play: () => {
+			played = true;
+		},
+	});
 </script>
 
 <Split id="ar-h" pill={report.pill} h2={report.h2} text={report.text}>
@@ -21,7 +31,7 @@
 		</div>
 	{/snippet}
 	{#snippet visual()}
-		<div class="arp rv in">
+		<div class={["arp rv", played && "in"]} {@attach entrance}>
 			<div class="arp-pg b" aria-hidden="true"></div>
 			<div class="arp-pg a" aria-hidden="true"></div>
 			<article class="arp-doc">

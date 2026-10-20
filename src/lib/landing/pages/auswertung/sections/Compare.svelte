@@ -1,9 +1,11 @@
 <!--
   "Welche Liegenschaft fällt aus der Reihe?" (`.aw-2` + `.ac`): the text with
   its list beside the card comparing the seven properties for one metric,
-  sorted by value, against the portfolio's average.
+  sorted by value, against the portfolio's average. The switch re-sorts the
+  rows; the bars grow once when the card scrolls into view.
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import { de } from "$lib/landing/pages/dashboard/chart";
 	import Split from "../components/Split.svelte";
 	import {
@@ -23,7 +25,9 @@
 		signedPercent,
 	} from "../metrics";
 
-	const key: MetricKey = "heiz";
+	let key = $state<MetricKey>("heiz");
+	/** The bars are drawn (at 0 until the entrance plays). */
+	let drawn = $state(true);
 	const metric = $derived(metrics[key]);
 	const max = $derived(scaleMax(metric.values, 1.08));
 	const avg = $derived(average(metric.values));
@@ -41,6 +45,22 @@
 			};
 		}),
 	);
+	const top = $derived(rows[rank.indexOf(0)]);
+	/** The polite line, only after a switch. */
+	let announce = $state("");
+
+	function pick(k: MetricKey) {
+		key = k;
+		announce = compare.top(top.name, `${top.value} ${metric.unit}`);
+	}
+
+	const entrance = enterView({
+		threshold: 0.3,
+		prepare: () => (drawn = false),
+		play: () => {
+			drawn = true;
+		},
+	});
 </script>
 
 <Split
@@ -51,14 +71,15 @@
 	list={compare.list}
 >
 	{#snippet visual()}
-		<div class="ac rv">
+		<div class="ac rv" {@attach entrance}>
 			<div class="ac-h">
 				<div class="ac-tabs" role="group" aria-label={compare.switchLabel}>
 					{#each METRIC_KEYS as k (k)}
 						<button
 							type="button"
 							class={[k === key && "on"]}
-							aria-pressed={k === key}>{metrics[k].label}</button
+							aria-pressed={k === key}
+							onclick={() => pick(k)}>{metrics[k].label}</button
 						>
 					{/each}
 				</div>
@@ -70,7 +91,9 @@
 						<span class="ac-n"
 							><b>{row.name}</b><small>{compare.units(row.units)}</small></span
 						>
-						<span class="ac-b"><i style:width="{row.width}%"></i></span>
+						<span class="ac-b"
+							><i style:width="{drawn ? row.width : 0}%"></i></span
+						>
 						<b class="ac-v">{row.value}</b>
 						<em class="ac-t">{row.dev}</em>
 					</div>
@@ -84,6 +107,7 @@
 				<span class="ac-lg"><i></i>{compare.below}</span>
 				<span class="ac-demo">{compare.demo}</span>
 			</div>
+			<p class="sr-only" aria-live="polite">{announce}</p>
 		</div>
 	{/snippet}
 </Split>

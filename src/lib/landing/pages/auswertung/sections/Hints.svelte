@@ -1,14 +1,32 @@
 <!--
   "Nicht nur Zahlen. Konkrete nächste Schritte." (`.aw-2.rev` + `.afd`): the
-  card with five notes and their filter beside the text.
+  card with five notes and their filter beside the text. The notes rise in
+  once when the card scrolls into view.
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Split from "../components/Split.svelte";
 	import { hints, type HintFilter } from "../content";
 	import { filterHints } from "../metrics";
 
-	const filter: HintFilter = "all";
+	let filter = $state<HintFilter>("all");
 	const shown = $derived(filterHints(hints.items, filter));
+	/** The polite line, only after a pick. */
+	let announce = $state("");
+	let played = $state(true);
+
+	function pick(value: HintFilter) {
+		filter = value;
+		announce = hints.count(shown.length);
+	}
+
+	const entrance = enterView({
+		threshold: 0.3,
+		prepare: () => (played = false),
+		play: () => {
+			played = true;
+		},
+	});
 </script>
 
 <Split
@@ -20,7 +38,7 @@
 	reverse
 >
 	{#snippet visual()}
-		<div class="afd rv in">
+		<div class={["afd rv", played && "in"]} {@attach entrance}>
 			<div class="afd-top">
 				<b>{hints.title}</b>
 				<div class="afd-ch" role="group" aria-label={hints.filterLabel}>
@@ -29,8 +47,11 @@
 							type="button"
 							class={[f.value === filter && "on"]}
 							aria-pressed={f.value === filter}
-							>{f.label}{#if f.value === "all"}
-								<b>{hints.items.length}</b>{/if}</button
+							onclick={() => pick(f.value)}
+							>{f.value === "all"
+								? `${f.label} `
+								: f.label}{#if f.value === "all"}<b>{hints.items.length}</b
+								>{/if}</button
 						>
 					{/each}
 				</div>
@@ -52,6 +73,7 @@
 					</li>
 				{/each}
 			</ul>
+			<p class="sr-only" aria-live="polite">{announce}</p>
 		</div>
 	{/snippet}
 </Split>

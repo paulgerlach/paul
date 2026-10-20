@@ -1,11 +1,23 @@
 <!--
   "Von der Funkablesung zur Kennzahl. Automatisch." (`.aw-sec` + `.af`): the
-  centred head and three cards with their tickers.
+  centred head and three cards with their tickers, which rise in once when
+  their card scrolls into view.
 -->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import Icon from "$lib/landing/pages/dashboard/components/Icon.svelte";
 	import Head from "../components/Head.svelte";
 	import { steps } from "../content";
+
+	let shown = $state(steps.cards.map(() => true));
+	const entrance = (i: number) =>
+		enterView({
+			threshold: 0.4,
+			prepare: () => (shown[i] = false),
+			play: () => {
+				shown[i] = true;
+			},
+		});
 </script>
 
 <section class="sec aw-sec" aria-labelledby="af-h">
@@ -13,7 +25,11 @@
 	<div class="wrap">
 		<div class="af">
 			{#each steps.cards as card, i (card.n)}
-				<article class="af-c rv in" style:--i={i}>
+				<article
+					class={["af-c rv", shown[i] && "in"]}
+					style:--i={i}
+					{@attach entrance(i)}
+				>
 					<span class="af-n" aria-hidden="true">{card.n}</span>
 					<span class="af-ic"><Icon name={card.icon} /></span>
 					<h3>{card.title}</h3>

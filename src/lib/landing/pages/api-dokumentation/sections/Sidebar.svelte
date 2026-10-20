@@ -1,11 +1,42 @@
-<!-- The table of contents (.ad-side): sticky beside the articles, a row of chips below 1040 px. -->
+<!--
+  The table of contents (.ad-side): sticky beside the articles, a row of
+  chips below 1040 px. It marks the article being read (the design's spy():
+  the last one whose top is above 160 px), from one passive scroll listener
+  read once per frame; the server marks the first.
+-->
 <script lang="ts">
+	import { onMount } from "svelte";
+	import { activeIndex } from "$lib/landing/pages/hkvo-leitfaden/toc";
 	import { docs } from "../content";
+
+	/** The design's line: its `y` (120 px) plus 40. */
+	const LINE = 160;
 
 	let current = $state(0);
 
 	const links = docs.groups.flatMap((g) => g.links);
 	const index = (id: string) => links.findIndex((l) => l.id === id);
+
+	onMount(() => {
+		const articles = links.map((l) => document.getElementById(l.id));
+		let frame = 0;
+		const spy = () => {
+			frame = 0;
+			current = activeIndex(
+				articles.map((a) => a?.getBoundingClientRect().top ?? Infinity),
+				LINE,
+			);
+		};
+		const onScroll = () => {
+			if (!frame) frame = requestAnimationFrame(spy);
+		};
+		spy();
+		addEventListener("scroll", onScroll, { passive: true });
+		return () => {
+			removeEventListener("scroll", onScroll);
+			cancelAnimationFrame(frame);
+		};
+	});
 </script>
 
 <nav class="side" aria-label={docs.navLabel}>

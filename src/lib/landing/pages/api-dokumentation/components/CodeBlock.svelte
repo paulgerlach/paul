@@ -1,7 +1,10 @@
 <!--
   A code sample (.ad-code): the head with its label and badge and
   "Kopieren", the code (JSON coloured on the server through `jsonTokens`).
-  The frame scrolls sideways, so it's focusable and named.
+  The frame scrolls sideways, so it's focusable and named. "Kopieren"
+  writes the plain code to the clipboard (or, without the Clipboard API,
+  through the design's hidden textarea) and reads "Kopiert" for 1.6 s;
+  without JS it's hidden.
 -->
 <script lang="ts">
 	import { copy, type CodeSample } from "../content";
@@ -10,6 +13,45 @@
 	let { sample }: { sample: CodeSample } = $props();
 
 	const tokens = $derived(jsonTokens(sample.code));
+
+	let copied = $state(false);
+	let timer: ReturnType<typeof setTimeout> | undefined;
+
+	function done() {
+		copied = true;
+		clearTimeout(timer);
+		timer = setTimeout(() => (copied = false), 1600);
+	}
+
+	/** The design's way: a fixed, transparent textarea and `execCommand`. */
+	function fallback() {
+		const area = document.createElement("textarea");
+		area.value = sample.code;
+		area.style.position = "fixed";
+		area.style.opacity = "0";
+		document.body.appendChild(area);
+		area.select();
+		try {
+			document.execCommand("copy");
+		} catch {
+			// Nothing more to do: the design marks it copied either way.
+		}
+		area.remove();
+	}
+
+	function copyCode() {
+		if (navigator.clipboard?.writeText)
+			navigator.clipboard.writeText(sample.code).then(done, () => {
+				fallback();
+				done();
+			});
+		else {
+			fallback();
+			done();
+		}
+	}
+
+	$effect(() => () => clearTimeout(timer));
 </script>
 
 <div class="code">
@@ -19,7 +61,10 @@
 			{#if sample.badge?.kind === "ph"}<em class="ph">{sample.badge.text}</em
 				>{:else if sample.badge}<b class="ok">{sample.badge.text}</b>{/if}</span
 		>
-		<button type="button" class="cp">{copy.button}</button>
+		<button type="button" class={["cp", copied && "ok"]} onclick={copyCode}
+			>{copied ? copy.done : copy.button}</button
+		>
+		<span class="sr-only" role="status">{copied ? copy.status : ""}</span>
 	</div>
 	<!-- A scrolling region needs focus to scroll by keyboard. -->
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -84,6 +129,10 @@
 	}
 	.head .cp:hover {
 		background: rgba(255, 255, 255, 0.12);
+	}
+	.head .cp.ok {
+		color: #8ad68f;
+		border-color: rgba(138, 214, 143, 0.4);
 	}
 	pre {
 		margin: 0;

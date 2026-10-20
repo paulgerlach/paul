@@ -1,9 +1,20 @@
-<!-- The design's moving data line: between the roles (.ad-flow, vertical below 640 px) or in the direction "Ihre Software → Heidi" (.ad-dir i). -->
+<!-- The design's moving data line: between the roles (.ad-flow, vertical below 640 px) or in the direction "Ihre Software → Heidi" (.ad-dir i). It moves only while in view; without JS and with reduced motion it stands. -->
 <script lang="ts">
+	import { inView } from "$lib/landing/attachments/inView";
+
 	let { kind }: { kind: "roles" | "dir" } = $props();
+
+	let run = $state(false);
 </script>
 
-<span class={["flow", kind]} aria-hidden="true"><i></i></span>
+<span
+	class={["flow", kind, run && "run"]}
+	aria-hidden="true"
+	{@attach inView({
+		onEnter: () => (run = true),
+		onLeave: () => (run = false),
+	})}><i></i></span
+>
 
 <style>
 	.flow {
@@ -26,7 +37,10 @@
 		width: 40%;
 		background: #8ad68f;
 		border-radius: 2px;
-		animation: flow 2.6s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+		animation: flow 2.6s cubic-bezier(0.5, 0, 0.5, 1) infinite paused;
+	}
+	.run i {
+		animation-play-state: running;
 	}
 	@keyframes flow {
 		0% {

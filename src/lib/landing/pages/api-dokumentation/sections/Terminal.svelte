@@ -1,15 +1,37 @@
-<!-- The hero's terminal (.ad-term): a call and its answer. Decorative: the same call is in the documentation as text. -->
+<!--
+  The hero's terminal (.ad-term): a call and its answer. Decorative: the same
+  call is in the documentation as text. Its lines appear one by one, as CSS
+  animations with the design's delays (plus its 250 ms start) and a `both`
+  fill, so they play on load without JS and end in the server's state. Below
+  the fold (phones) they wait until the terminal comes into view.
+-->
 <script lang="ts">
+	import { enterView } from "$lib/landing/attachments/enterView";
 	import { terminal } from "../content";
+
+	/** Each line's delay, s. */
+	const DELAYS = [0.25, 0.6, 1.35, 1.6, 1.75, 1.9, 2.05, 2.2, 2.35];
+
+	let wait = $state(false);
 </script>
 
-<div class="term rv" aria-hidden="true">
+<div
+	class={["term", "rv", wait && "wait"]}
+	aria-hidden="true"
+	{@attach enterView({
+		prepare: () => (wait = true),
+		play: () => {
+			wait = false;
+		},
+		threshold: 0.15,
+	})}
+>
 	<div class="top">
 		<i></i><i></i><i></i><span>{terminal.title}</span>
 	</div>
 	<div class="b">
 		{#each terminal.lines as line, i (i)}
-			<span class="tl"
+			<span class="tl" style:animation-delay="{DELAYS[i]}s"
 				>{#each line as part, j (j)}{#if typeof part === "string"}{part}{:else}<span
 							class={part.kind}>{part.text}</span
 						>{/if}{/each}</span
@@ -60,6 +82,16 @@
 	.tl {
 		display: block;
 		white-space: pre;
+		animation: line 0.5s ease both;
+	}
+	.wait .tl {
+		animation-play-state: paused;
+	}
+	@keyframes line {
+		from {
+			opacity: 0;
+			transform: translateY(4px);
+		}
 	}
 	.tl:nth-child(3) {
 		margin: 10px 0 8px;
@@ -92,6 +124,11 @@
 		.b {
 			font-size: 11.5px;
 			padding: 18px;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tl {
+			animation: none;
 		}
 	}
 </style>

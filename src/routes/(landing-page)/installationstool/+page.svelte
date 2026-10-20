@@ -9,6 +9,7 @@
 	import Picture from "$lib/landing/pages/installationstool/sections/Picture.svelte";
 	import Quotes from "$lib/landing/pages/installationstool/sections/Quotes.svelte";
 	import Rotator from "$lib/landing/pages/installationstool/sections/Rotator.svelte";
+	import Rows from "$lib/landing/pages/installationstool/sections/Rows.svelte";
 	import Statement from "$lib/landing/pages/installationstool/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/installationstool/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
@@ -20,6 +21,7 @@
 	<UvMain>
 		<Hero />
 		<Statement />
+		<Rows />
 		<Rotator />
 		<Numbers />
 		<Audience />

@@ -63,6 +63,15 @@ The design's links, by design id, and where they lead here. An element whose tar
 | `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` through `TrustSeals` |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
 
+## Implementation notes (2026-10-20)
+
+Phases 1–4 are built: the plan (`e3b4ff9c`), the route, content, pure logic, `DbMain`, `HeroFrame`, `Closing`'s `content` and the two links (`382a6090`), the sections in their end state (`84be0854`), the interactions (`fdb59130`), and `e2e/auswertung.e2e.ts` (17 tests). Compared with the design section by section at 1440, 1100, 980, 700, 375 and 320 px (production build, reduced motion, after scrolling through both pages): the six new sections and the quote have the design's height to the pixel, except 2–3 px from `/dashboard`'s `Pill` (32 px, the design's 35 px) in the three with a pill; the logo strip, the closing card and the trust block differ exactly as on `/dashboard` against its design. No overflow at 320 and 375 px; no console errors or hydration warnings. `/dashboard` after the moves: every element's computed styles (24 properties) equal a build of `e3b4ff9c` at all six widths. Full suites: check, lint, 877 unit tests, 563 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
+
+- **`DbMain`'s rules start with `main.db`.** In `/dashboard`'s route its frame's CSS came after the sections', so it won every tie of equal specificity (`.fh .db-lead`'s margin, `.sec.strike`'s white, the feature tiles' smaller `.okb`). Shared by two routes, `DbMain`'s CSS lands in a chunk the bundle may order first (dev and build differed), so the frame now wins those ties by one element instead, which keeps `/dashboard` as it was. Two of those outcomes differ from the `/dashboard` design: the features lead's 14 px top margin (the design: 0) and the strike scene's grey background (the design: white); the frame's 20 px ticks are the design's (the sections' 16/18 px rules never applied). Not changed here, as `/dashboard` was meant to stay as it is: a follow-up for `/dashboard`.
+- **The hero has no bottom padding** (`.lp .sec`'s 96 px), as the design's; `/dashboard`'s hero keeps it.
+- **Counters in an entrance:** `enterView`'s `prepare` runs inside the attachment's effect, so a `$state` it reads becomes a dependency and the tween's first frame re-ran the attachment, which cancelled the tweens; `prepare` only writes.
+- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards.
+
 ## Key decisions
 
 | Topic | Decision |

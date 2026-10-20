@@ -15,7 +15,10 @@
 </main>
 
 <style>
-	/* The design's page tokens (#dash-css `.db`) */
+	/* The design's page tokens (#dash-css `.db`). The rules below start with
+	   `main.db`: one notch above a section's own rule of the same classes, so
+	   the frame wins those ties whatever order the bundle puts the CSS in (as
+	   it did when these rules lived in /dashboard's route, after the sections). */
 	.db {
 		--bg: #f6f7f6;
 		--card: #fff;
@@ -28,26 +31,26 @@
 		--g5: #c9a227;
 		background: var(--bg);
 	}
-	.db :global(.sec) {
+	main.db :global(.sec) {
 		background: var(--bg);
 		position: relative;
 	}
-	.db :global(.sec + .sec) {
+	main.db :global(.sec + .sec) {
 		border-top: 1px solid var(--hair);
 	}
-	.db :global(.rv.rv-anim) {
+	main.db :global(.rv.rv-anim) {
 		transition:
 			opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
 			transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
-	.db :global(.rv.rv-wait) {
+	main.db :global(.rv.rv-wait) {
 		opacity: 0;
 		transform: translateY(18px);
 	}
 
 	/* `.db-h2`, `.db-lead` (Kennzahlen, Funktionen, Auswertungen, Kundenstimmen):
 	   two classes, to beat the landing heading reset */
-	.db :global(.sec .db-h2) {
+	main.db :global(.sec .db-h2) {
 		font-size: clamp(30px, 3.6vw, 48px);
 		line-height: 1.08;
 		letter-spacing: -0.03em;
@@ -55,22 +58,22 @@
 		margin-top: 20px;
 		text-wrap: balance;
 	}
-	.db :global(.db-lead) {
+	main.db :global(.db-lead) {
 		color: var(--muted);
 		font-size: clamp(16px, 1.5vw, 19px);
 		margin-top: 14px;
 		text-wrap: balance;
 	}
-	.db :global(.db-c) {
+	main.db :global(.db-c) {
 		text-align: center;
 	}
-	.db :global(.db-c .db-lead) {
+	main.db :global(.db-c .db-lead) {
 		max-width: 620px;
 		margin-inline: auto;
 	}
 
 	/* `.db-btn` (hero, roadmap) */
-	.db :global(.db-btn) {
+	main.db :global(.db-btn) {
 		display: inline-flex;
 		align-items: center;
 		gap: 10px;
@@ -87,36 +90,36 @@
 			box-shadow 0.2s,
 			background 0.2s;
 	}
-	.db :global(.db-btn.w) {
+	main.db :global(.db-btn.w) {
 		background: #fff;
 		border-color: var(--hair);
 		box-shadow: 0 1px 2px rgba(30, 50, 45, 0.08);
 	}
-	.db :global(.db-btn.w:hover) {
+	main.db :global(.db-btn.w:hover) {
 		box-shadow: 0 6px 18px -8px rgba(30, 50, 45, 0.3);
 	}
-	.db :global(.db-btn.k) {
+	main.db :global(.db-btn.k) {
 		background: var(--ink);
 		color: #fff;
 	}
-	.db :global(.db-btn.k:hover) {
+	main.db :global(.db-btn.k:hover) {
 		background: #2a443d;
 	}
-	.db :global(.db-btn .sq) {
+	main.db :global(.db-btn .sq) {
 		width: 9px;
 		height: 9px;
 		border-radius: 2px;
 		background: #c7cfcb;
 	}
-	.db :global(.db-btn .ar) {
+	main.db :global(.db-btn .ar) {
 		transition: transform 0.25s;
 	}
-	.db :global(.db-btn:hover .ar) {
+	main.db :global(.db-btn:hover .ar) {
 		transform: translateX(4px);
 	}
 
 	/* The design's tick badge (`.okb`) */
-	.db :global(.okb) {
+	main.db :global(.okb) {
 		width: 20px;
 		height: 20px;
 		border-radius: 50%;
@@ -126,45 +129,45 @@
 		place-items: center;
 		flex: none;
 	}
-	.db :global(.okb svg) {
+	main.db :global(.okb svg) {
 		width: 12px;
 		height: 12px;
 	}
-	.db :global(.badge) {
+	main.db :global(.badge) {
 		display: inline-block;
 		font-size: 11px;
 		font-weight: 600;
 		border-radius: 6px;
 		padding: 2px 8px;
 	}
-	.db :global(.badge.f) {
+	main.db :global(.badge.f) {
 		background: #e6f5e7;
 		color: #2f7a3c;
 	}
-	.db :global(.badge.b) {
+	main.db :global(.badge.b) {
 		background: #eaf0fa;
 		color: #3c5ba8;
 	}
 
 	/* #hs-css: the H1 and the section H2s with an id */
 	@media (max-width: 1040px) and (min-width: 621px) {
-		.db :global(section h1[data-hs]) {
+		main.db :global(section h1[data-hs]) {
 			font-size: clamp(48px, 7.4vw, 68px);
 			line-height: 1.02;
 		}
-		.db :global(section.sec h2[id]) {
+		main.db :global(section.sec h2[id]) {
 			font-size: clamp(36px, 5.6vw, 52px);
 			line-height: 1.06;
 		}
 	}
 	@media (max-width: 620px) {
-		.db :global(section h1[data-hs]) {
+		main.db :global(section h1[data-hs]) {
 			font-size: clamp(36px, 10vw, 48px);
 			line-height: 1.04;
 			overflow-wrap: break-word;
 			hyphens: auto;
 		}
-		.db :global(section.sec h2[id]) {
+		main.db :global(section.sec h2[id]) {
 			font-size: clamp(30px, 8.4vw, 40px);
 			line-height: 1.08;
 		}

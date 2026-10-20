@@ -4,28 +4,28 @@ Every page is indexed and in the sitemap after the cutover (decision of 2026-10-
 
 ## 4.1 Checks
 
-- [ ] `bun run dev` → `http://localhost:5173/auswertung`: the page with the landing header and footer; the footer's "Auswertung" lands here from every landing page, and so does `/neuigkeiten`'s featured story ("Zur Auswertung")
-- [ ] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
-- [ ] `/dashboard` unchanged after the frame and hero moves: section heights equal before and after at the same widths
-- [ ] No horizontal overflow from 320 to 1640 px (the heatmap scrolls inside its card)
-- [ ] The entrances (the mock-up's bars, counters and notes, the steps' tickers, the comparison's bars, the heatmap's cells, the notes, the report's fan-out) play once when they scroll into view; the closing chart as on `/dashboard`
-- [ ] The comparison's switch: Heizung / Warmwasser / Kaltwasser re-sort the rows, move the bars and the average, change the unit line, the values and the badges
-- [ ] The heatmap's tooltip on hover and click, at the right cell also after scrolling the card sideways
-- [ ] The notes' filter: Wasser 2, Heizung 2, Technik 1, Alle 5
-- [ ] "Demo buchen", "Angebot einholen", the trust block's "Demo buchen" and the floating CTA land on the signup form (`#start`); "Mehr zu Sicherheit" on `/sicherheit`
+- [x] `bun run dev` → `http://localhost:5173/auswertung`: the page with the landing header and footer; the footer's "Auswertung" lands here from every landing page, and so does `/neuigkeiten`'s featured story ("Zur Auswertung")
+- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer)
+- [x] `/dashboard` unchanged after the frame and hero moves: section heights equal before and after at the same widths
+- [x] No horizontal overflow from 320 to 1640 px (the heatmap scrolls inside its card)
+- [x] The entrances (the mock-up's bars, counters and notes, the steps' tickers, the comparison's bars, the heatmap's cells, the notes, the report's fan-out) play once when they scroll into view; the closing chart as on `/dashboard`
+- [x] The comparison's switch: Heizung / Warmwasser / Kaltwasser re-sort the rows, move the bars and the average, change the unit line, the values and the badges
+- [x] The heatmap's tooltip on hover and click, at the right cell also after scrolling the card sideways
+- [x] The notes' filter: Wasser 2, Heizung 2, Technik 1, Alle 5
+- [x] "Demo buchen", "Angebot einholen", the trust block's "Demo buchen" and the floating CTA land on the signup form (`#start`); "Mehr zu Sicherheit" on `/sicherheit`
 - [ ] Chrome, Safari and Firefox on desktop; iOS Safari
 - [ ] Keyboard-only through the page (the CTAs, the switch, the filter, the signup form); focus ring visible
 - [ ] Screen reader: one H1 "Ihre Verbräuche. Klar ausgewertet."; the mock-up by its name; the switch's and the filter's pressed state and the polite lines announced; the heatmap read through its table
-- [ ] Reduced motion: nothing grows, counts, slides or drifts; every block in its end state
+- [x] Reduced motion: nothing grows, counts, slides or drifts; every block in its end state
 - [ ] JS disabled: every section readable in its end state, the signup form posts
-- [ ] A signup creates a lead with `source = auswertung` and its webhook carries `page: "/auswertung"`
+- [x] A signup creates a lead with `source = auswertung` and its webhook carries `page: "/auswertung"`
 - [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [ ] No hydration warnings or console errors
+- [x] No hydration warnings or console errors
 
 ## 4.2 Tests
 
 - **Vitest:** `content.test.ts` (01 §1.3), `metrics.test.ts` (01 §1.4).
-- **Playwright `e2e/auswertung.e2e.ts`**, modelled on `e2e/dashboard.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and `/neuigkeiten`'s featured story; every internal link resolves; the CTAs (`#start`, `/sicherheit`); the server's end states (the KPIs, the bars' widths, "Ø 111", the comparison's order, the heatmap's colours, five notes, the report); the switch (Warmwasser: the order, "m³/WE", "Ø 13,7"); the tooltip; the filter (counts, `hidden`); reduced motion: nothing hidden or moving; the signup with the sink's payload (`source`, `page`); no console errors.
+- **Playwright `e2e/auswertung.e2e.ts`** (17 tests), modelled on `e2e/dashboard.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and `/neuigkeiten`'s featured story; every internal link resolves; the CTAs (`#start`, `/sicherheit`); the server's end states (the KPIs, the bars' widths, "Ø 111", the comparison's order, the heatmap's colours, five notes, the report); the switch (Warmwasser: the order, "m³/WE", "Ø 13,7"); the tooltip; the filter (counts, `hidden`); reduced motion: nothing hidden or moving; the signup with the sink's payload (`source`, `page`); no console errors.
 - **`e2e/dashboard.e2e.ts`** unchanged and green. **`e2e/neuigkeiten.e2e.ts`** and `neuigkeiten/content.test.ts`: the featured story now links `/auswertung` ("Zur Auswertung").
 
 ## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`

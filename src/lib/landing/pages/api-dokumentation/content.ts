@@ -106,6 +106,8 @@ export const terminal = {
 	] satisfies TermPart[][] as TermPart[][],
 };
 
+type TocGroup = { title: string; links: { id: string; text: string }[] };
+
 export const docs = {
 	label: "Dokumentation",
 	navLabel: "Inhalt der Dokumentation",
@@ -136,7 +138,7 @@ export const docs = {
 				{ id: ARTICLE.access, text: "Zugang anfragen" },
 			],
 		},
-	],
+	] satisfies TocGroup[] as TocGroup[],
 	note: {
 		title: "Entwurf.",
 		text: "Diese Dokumentation beschreibt die geplante Heidi-Schnittstelle auf Basis der veröffentlichten bved-Spezifikationen. Basis-URL und Beispielwerte sind Platzhalter. Verbindlich sind die Zugangsdaten und Details, die Sie von Ihrem persönlichen Ansprechpartner erhalten.",

@@ -21,6 +21,11 @@
 		--card: #fff;
 		--hair: #e5e9e7;
 		--soft: #eef1ef;
+		--g1: var(--ink);
+		--g2: var(--ok);
+		--g3: var(--blue);
+		--g4: var(--orange);
+		--g5: #c9a227;
 		background: var(--bg);
 	}
 	.db :global(.sec) {

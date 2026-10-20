@@ -1,6 +1,11 @@
 <script lang="ts">
 	import Closing from "$lib/landing/pages/auswertung/sections/Closing.svelte";
+	import Compare from "$lib/landing/pages/auswertung/sections/Compare.svelte";
+	import Heatmap from "$lib/landing/pages/auswertung/sections/Heatmap.svelte";
 	import Hero from "$lib/landing/pages/auswertung/sections/Hero.svelte";
+	import Hints from "$lib/landing/pages/auswertung/sections/Hints.svelte";
+	import Report from "$lib/landing/pages/auswertung/sections/Report.svelte";
+	import Steps from "$lib/landing/pages/auswertung/sections/Steps.svelte";
 	import FloatingCta from "$lib/landing/pages/dashboard/sections/FloatingCta.svelte";
 	import LogoStrip from "$lib/landing/pages/dashboard/sections/LogoStrip.svelte";
 	import Quote from "$lib/landing/pages/dashboard/sections/Quote.svelte";
@@ -15,6 +20,11 @@
 <DbMain>
 	<Hero />
 	<LogoStrip />
+	<Steps />
+	<Compare />
+	<Heatmap />
+	<Hints />
+	<Report />
 	<Quote />
 	<Closing form={data.finalForm} />
 	<Trust />

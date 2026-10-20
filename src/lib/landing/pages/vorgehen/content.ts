@@ -13,6 +13,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_HKVO_LEITFADEN,
+	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_SICHERHEIT,
 } from "$lib/routes";
@@ -152,6 +153,7 @@ export const features = {
 			icon: "tool",
 			title: "Installationstool",
 			text: "Digitaler Zwilling, zwei Fotos pro Zähler, sauberes Übergabeprotokoll.",
+			href: ROUTE_INSTALLATIONSTOOL,
 		},
 	] satisfies Feature[] as Feature[],
 };

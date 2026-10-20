@@ -16,6 +16,7 @@ import {
 	ROUTE_HILFE,
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INSTALLATIONSPARTNER,
+	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
@@ -84,7 +85,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Demo buchen", href: DEMO_HREF },
 			{ text: "Auswertung", href: ROUTE_AUSWERTUNG },
 			{ text: "Schnittstellen", href: ROUTE_SCHNITTSTELLEN },
-			{ text: "Installationstool" },
+			{ text: "Installationstool", href: ROUTE_INSTALLATIONSTOOL },
 		],
 	},
 	{

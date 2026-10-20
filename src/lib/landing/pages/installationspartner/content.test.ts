@@ -165,7 +165,10 @@ describe("installationspartner content", () => {
 
 	it("has five FAQ items, the Installationstool link waiting for its page", () => {
 		expect(faq.items).toHaveLength(5);
-		expect(faq.items[2].more).toEqual({ text: "Mehr zum Installationstool" });
+		expect(faq.items[2].more).toEqual({
+			text: "Mehr zum Installationstool",
+			href: routes.ROUTE_INSTALLATIONSTOOL,
+		});
 	});
 
 	it("has three steps and the form's texts", () => {

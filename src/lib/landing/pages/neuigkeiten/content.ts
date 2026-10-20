@@ -16,6 +16,7 @@ import {
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_NACHFOLGE,
 	ROUTE_PARTNERSCHAFTEN,
@@ -90,7 +91,8 @@ const stories: Story[] = [
 		title:
 			"Installationstool: Ein Termin in der Wohnung, alles digital dokumentiert",
 		photo: "installer",
-		// JevEa3P3wSURqiTTH4R39n ("Mehr erfahren"): no page yet.
+		// JevEa3P3wSURqiTTH4R39n
+		more: { text: "Mehr erfahren", href: ROUTE_INSTALLATIONSTOOL },
 	},
 	{
 		topic: "p",

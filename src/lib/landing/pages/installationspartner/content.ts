@@ -22,7 +22,11 @@ import type {
 	ListEntry,
 	Row,
 } from "$lib/landing/sections/uv/types";
-import { ROUTE_MESSDIENSTWECHSEL, ROUTE_VORGEHEN } from "$lib/routes";
+import {
+	ROUTE_INSTALLATIONSTOOL,
+	ROUTE_MESSDIENSTWECHSEL,
+	ROUTE_VORGEHEN,
+} from "$lib/routes";
 
 const NB = " ";
 
@@ -451,8 +455,11 @@ export const faq = {
 			question: "Was ist das Installationstool?",
 			answer:
 				"Ihr Team bekommt für jeden Auftrag einen Link. Darüber öffnet sich die Liegenschaft als digitaler Zwilling mit allen Wohneinheiten. Das Team fotografiert alte und neue Zähler direkt im Tool, daraus entsteht das Übergabeprotokoll.",
-			// JevEa3P3wSURqiTTH4R39n: no page yet, so not shown.
-			more: { text: "Mehr zum Installationstool" },
+			// JevEa3P3wSURqiTTH4R39n
+			more: {
+				text: "Mehr zum Installationstool",
+				href: ROUTE_INSTALLATIONSTOOL,
+			},
 		},
 		{
 			question: "Wer informiert die Mieter?",

@@ -155,8 +155,9 @@ test("CTAs lead to the partner form, the rows, the FAQ and the linked pages", as
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
 	).toHaveAttribute("href", "/messdienstwechsel");
-	// "Mehr zum Installationstool" waits for its page.
-	await expect(page.locator("#faq a")).toHaveCount(0);
+	await expect(
+		page.locator("#faq a", { hasText: "Mehr zum Installationstool" }),
+	).toHaveAttribute("href", "/installationstool");
 });
 
 test.describe("without JavaScript", () => {

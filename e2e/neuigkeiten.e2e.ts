@@ -90,6 +90,7 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	await expect(page.locator("a.feat")).toHaveAttribute("href", "/auswertung");
 	expect(await hrefs(news(page).locator("a.card"))).toEqual([
 		"/dashboard",
+		"/installationstool",
 		"/funktionen",
 		"/geraete",
 		"/mieterportal",

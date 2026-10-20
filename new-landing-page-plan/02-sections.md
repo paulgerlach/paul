@@ -2,40 +2,37 @@
 
 ## 2.1 The page
 
-`+page.svelte` renders `<main id="content" class="ad" {@attach reveal()}>` with the page tokens (`--bg: #f6f7f6`, `--hair: #e5e9e7`, `--mono`), the reveal's `.rv` rules and `#hs-css` (the H1 and `section h2[id]`, i.e. the trust block's, between 621 and 1040 px and below) as `/fristenrechner`'s route, around the sections; then `FloatingCta`. Sections in `$lib/landing/pages/api-dokumentation/sections/`.
+`+page.svelte` renders `<main id="content" class="it" {@attach reveal()}>` with the page tokens (`--bg: #f6f7f6`, `--hair: #e5e9e7`), the reveal's `.rv` rules and `#hs-css` (`section:not(.end):not(.rows):not(.who) h2[id]` between 621 and 1040 px and below), as `/verbaende`'s route; `UvMain` around the dark sections; `Trust` after it; then `FloatingCta`. Sections in `$lib/landing/pages/installationstool/sections/`.
 
 | # | Section | Design | Component | Notes |
 |---|---|---|---|---|
-| 1 | Hero | `.pg-hero.ad-hero` | `Hero` | `/fristenrechner`'s hero layout (`.pg-grid`: text left, max 560 px visual right; one column below 1040 px, gap 40 px as `#ad-css`); pill, H1 (`data-hs`), lead, "Schnellstart →" (`.bk-next`, 14 × 20 px padding), "Softwarepartner werden" (`.pg-ghost`), the ticks (`.okb` with the dark tick); the CTAs stacked and centred below 640 px |
-| 1a | Terminal | `.ad-term` | `Terminal` | Dark (`#1E322D`, 20 px radius, the design's shadow); the top bar with three dots and the mono title; `pre` 13.5 px / 1.75 (11.5 px and 18 px padding below 640 px), `white-space: pre`, `overflow: hidden`; the method badge, the value and status in `#8AD68F`, comments 45 % white, keys `#B9E6BC`; the status line's 10 / 8 px margins. `aria-hidden` |
-| 2 | Documentation | `.ad-doc` | `Docs` | Padding 72 / 112 px (48 / 80 px below 640 px); the grid 220 px + the column, gap 64 px; one column below 1040 px |
-| 2a | Contents | `.ad-side` | `Sidebar` | Sticky at 96 px, max height `100vh − 120px`, scrolls; group labels 12.5 px; links 14.5 px, 7 × 12 px, 9 px radius, hover and current `#EEF1EF`. Below 1040 px: static, one row of bordered white chips scrolling sideways, no group labels |
-| 2b | Note | `.ad-note` | in `Docs` | Green box (`#F2F8F2`, border `#D6ECD7`, 14 px radius), the info icon, "Entwurf." bold |
-| 3 | Überblick | `.ad-sec` | `Overview` | The roles (`1fr 64px 1fr`, the moving line between them; one column with a vertical line below 640 px), the four service cards (two columns, one below 640 px; mono name, the version top right, hover lift) |
-| 4 | Schnellstart | `.ad-sec#schnellstart` | `QuickStart` | The numbered steps (30 px dark circles), the cURL block |
-| 5 | Authentifizierung | `.ad-sec#auth` | `Auth` | The text with inline code, the table |
-| 6 | Basis-URL | `.ad-sec#basis` | `BaseUrl` | The code block with the yellow "Platzhalter" badge, the dotted list |
-| 7 | Verbrauchsdaten | `.ad-sec#verbrauch` | `Consumption` + two `Endpoint` | The H2 with the version badge (`.ad-sh`); each endpoint a pale card (`#FBFCFB`, 18 px radius, 16 px padding below 640 px) with the green `GET` and the path (`word-break: break-all`), the text, the tables, the answer block (`200` badge) |
-| 8 | Nutzerwechsel | `.ad-sec#wechsel` | `UserChange` | The direction "Ihre Software → Heidi" with its moving line, the small line |
-| 9 | Dokumente | `.ad-sec#dokumente` | `Documents` | The list, the small line |
-| 10 | Datenaustausch | `.ad-sec#datei` | `FileExchange` | Two paragraphs |
-| 11 | Statuscodes | `.ad-sec#status` | `StatusCodes` | The table with the mono code badges (green 200, red 500 / 503) |
-| 12 | Versionen | `.ad-sec#versionen` | `Versions` | The table, the source line with the external link and its icon |
-| 13 | Zugang anfragen | `.ad-sec.ad-cta#zugang` | `Access` | The dark card (22 px radius, 40 px padding, 28 px below 640 px; text left, the two buttons stacked right, one column below 640 px): the accent `.bk-next.inv` "Erstgespräch vereinbaren →" and the outlined "Softwarepartner werden" |
-| 14 | Trust | `.trust` | `Trust` → `TrustSeals` | `demoHref` `/messdienstwechsel#start` |
-| — | Floating CTA | `.ctab` | `FloatingCta` → the shared one | `href` `/messdienstwechsel#start` |
+| 1 | Hero | `.uv-hero` | `Hero` → `uv/Hero` `lg` + `uv/ListMock` | Photos `vorgehen/building-wide.webp` (25vw) and `installationspartner/fitter.webp` (35vw, `objectPosition` "42% 50%"); id `it-h1` |
+| 2 | Statement | `.uv-stm` | `Statement` → `uv/Statement` | |
+| 3 | Rows | `.uv-rows#inhalt` | `Rows` → `uv/Rows` | `idPrefix` `it-row`; tiles: `uv/tiles/Phone`, `CameraPhone`, `uv/tiles/Calendar`, `uv/tiles/Bill` |
+| 3a | Camera | `.uv-phone.it-ph` + `.it-cam` | `CameraPhone` | See 2.2 |
+| 4 | Rotator | `.uv-blur` | `Rotator` → `uv/Rotator` | |
+| 5 | Figures | `.uv-num` | `Numbers` → `uv/Numbers` `mediaKind="photo"` | `vorgehen/kitchen-meters.webp`; id `it-num-h` |
+| 6 | Audience | `.uv-who` | `Audience` → `uv/Audience` | `idPrefix` `it-who`; `mieterportal/building.webp`, `vorgehen/installer.webp` |
+| 7 | Quotes | `.uv-q` | `Quotes` → `uv/Quotes` | id `it-q-h` |
+| 8 | Picture | `.uv-pic` | `Picture` → `uv/Picture` | the new `installationstool/facade.webp` |
+| 9 | FAQ | `.uv-faq#faq` | `Faq` → `uv/Faq` | |
+| 10 | Closing | `.dm-end.uv-end` | `CtaCard` → the shared `CtaCard` `tone="glass"` | `sectionId="start"`, id `it-closing-h`, `SignupForm` `placement="final"`, `inputId="email-bottom"`, "Demo buchen" |
+| 11 | Trust | `.trust` | `Trust` → `TrustSeals` | defaults (`#start`, `/sicherheit`) |
+| — | Floating CTA | `.ctab` | `FloatingCta` → the shared one | default `#start` |
 
-The articles share `Article` (`.ad-sec`: `padding-top: 56px`, `scroll-margin-top: 90px`, a hairline and 8 px between two articles; H2 `clamp(26px, 2.6vw, 34px)`, −.03em, 500; the paragraphs 16.5 px / 1.65, 68ch, muted; `.ad-sm` 14.5 px), `CodeBlock`, `DocTable` (frame with hairline and 14 px radius, `overflow: auto`, the table `min-width: 520px`, head `#F6F7F6` 13 px, cells 12 × 16 px) and `Rich` (inline code `#EEF1EF`, 6 px radius, `.88em`, `nowrap`). The H2s get the landing heading reset's override through a more specific selector (`.ad-sec h2`, README "Implementation notes" of the other pages), and `!important` only where the design has it (`.ad-sm`, `.ad-src`, the closing card's padding and margin).
+## 2.2 `CameraPhone`
 
-## 2.2 Shared changes
+The design's `#it-css` as component-scoped CSS, on a phone frame of its own (the template's `.uv-phone` box: `width: min(300px, 82%)`, white, 30 px radius, padding `14px 14px 18px`, the two rings and the shadow, centred in the tile with `top: 0`; the status bar "9:41" / "Heidi"); the tile gets the design's `min-height: 480px` through `:has()` on a wrapper class (the tile is `uv/Rows`'s, so the rule is `:global(.tile:has(.cam))` or the template's tile class, whichever `Rows` renders).
 
-None beyond 01 §1.1 (the links' content). `TrustSeals` and `FloatingCta` already take `demoHref` / `href`.
+- The label: two lines stacked in a 20 px box; the first leaves upward, the second comes up (`.4s`).
+- The viewfinder (170 px, `#EEF1EF`, 16 px radius): four 22 px corners (2.5 px ink border, 55 % opacity) that move 18 / 10 px inward and turn green (`#3E8E46`) on focus; the old meter, then the new one, 150 px tall, sliding up through the centre; the white flash (`.45s` fade).
+- The strip: the two 44 px thumbnails (each meter at 36 px, scaling in with the design's overshoot curve) and the 44 px shutter, pressed to `.88` on flash.
+- The done line: the green tick and "2. OG links digitalisiert", rising in when done.
+- `aria-hidden` (as every tile; the row's text says it). The SVG drawings are inline, as designed, in the component (no image files).
+- **Server-rendered in its end state** (`CAMERA_END`: the new meter, both thumbnails, the done line), as the design's reduced-motion state.
 
 ## 2.3 End states (server, no JS, reduced motion)
 
-- The terminal's nine lines shown (the CSS animation ends there; with reduced motion none runs).
-- The moving lines: still, the bar at its start (the CSS animation runs only once `inView` sets `.run`, so without JS and with reduced motion it stands).
-- The JSON samples coloured; the first link of the table of contents current; "Kopieren" hidden without JS.
-- Every `.rv` block shown without JS (the reveal adds its wait class only in the browser).
+- The hero's list finished ("Digitalisiert" ×3, "Fertig"); the statement lit; row 1's notification and figure in; row 2's camera done; row 3's flats ticked up to "3. OG li" "in Arbeit"; row 4 "Mit Heidi" with "einer"; the rotator's first phrase; the figures at their values; every `.rv` block shown without JS.
 
-Overflow checks at 320 px: the terminal (`overflow: hidden`, as designed: the long first line is cut), the chips row (scrolls inside itself), the endpoint paths (break), the code blocks and tables (scroll inside their frames), the closing card.
+Overflow checks at 320 px: the hero word (`nowrap`, the template's `lg` size), the camera phone (its width is relative), the twelve-cell grid, the closing card's form.

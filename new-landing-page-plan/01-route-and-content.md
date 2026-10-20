@@ -1,70 +1,67 @@
-# Phase 1: Route, links, content and the pure logic
+# Phase 1: Route, links, content and the signup action
 
 ## 1.1 Route and links
 
 In one commit:
 
-- `ROUTE_API_DOKUMENTATION = "/api-dokumentation"` in `$lib/routes.ts`, after `ROUTE_SOFTWAREPARTNER`.
-- The landing footer's "API-Dokumentation" (`$lib/landing/footerLinks.ts`, `companyLinks`) gets `href: ROUTE_API_DOKUMENTATION`.
-- `/softwarepartner`'s hero: `secondary: { text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION }` (the `uv` hero renders the second button once it has an `href`); its `content.test.ts` and `e2e/softwarepartner.e2e.ts` ("API-Dokumentation waits for its page") change with it.
-- `/partnerschaften`: row 1's second paragraph `["Nach bved-Standard oder über die ", { text: "Heidi API", href: ROUTE_API_DOKUMENTATION }, "."]` (the `uv` rows' `Inline[]`), FAQ 3's answer `In der <a href="${ROUTE_API_DOKUMENTATION}">API-Dokumentation</a>. …`; its `content.test.ts` and `e2e/partnerschaften.e2e.ts` ("Heidi API and API-Dokumentation wait for their page") change with them.
-- `/neuigkeiten`'s story "Heidi API: Die Dokumentation für Softwarepartner" gets `more: { text: "Zur API-Dokumentation", href: ROUTE_API_DOKUMENTATION }` (the design's link text, in place of the comment "no page yet"); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists") change with it.
-- `src/routes/(landing-page)/api-dokumentation/+page.server.ts`:
+- `ROUTE_INSTALLATIONSTOOL = "/installationstool"` in `$lib/routes.ts`, after `ROUTE_AUSWERTUNG` (the "Plattform" pages).
+- The landing footer's "Installationstool" (`$lib/landing/footerLinks.ts`, group "Plattform") gets `href: ROUTE_INSTALLATIONSTOOL`.
+- `/installationspartner`'s FAQ 3: `more: { text: "Mehr zum Installationstool", href: ROUTE_INSTALLATIONSTOOL }` (the comment "no page yet" goes); its `content.test.ts` and `e2e/installationspartner.e2e.ts` ("Mehr zum Installationstool waits for its page") change with it.
+- `/neuigkeiten`'s story "Installationstool: …" gets `more: { text: "Mehr erfahren", href: ROUTE_INSTALLATIONSTOOL }` (the design's link text, in place of the comment); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists") change with it.
+- `/vorgehen`'s feature card "Installationstool" gets `href: ROUTE_INSTALLATIONSTOOL` (the card renders as a link once it has one); its tests change where they list the cards' targets.
+- `src/routes/(landing-page)/installationstool/+page.server.ts`:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "API-Dokumentation: Verbrauchsdaten nach bved-Standard | Heidi Systems",
+	title: "Heidi Installationstool: Zähler tauschen und digital dokumentieren | Heidi Systems",
 	description:
-		"Die Heidi-Schnittstelle nach bved-Standard: Verbrauchsdaten für die unterjährige Verbrauchsinformation, Nutzerwechsel und Dokumente per Webservice in Ihrer ERP- oder Verwaltungssoftware. Mit Schnellstart, Authentifizierung, Endpunkten und Statuscodes.",
-	ogTitle: "Verbrauchsdaten direkt in Ihre Software. Nach bved-Standard.",
+		"Ein Link, ein digitaler Zwilling, zwei Fotos pro Zähler: Mit dem Heidi Installationstool ist jeder Zählertausch beim ersten Termin dokumentiert. Danach liest Heidi die Funkzähler aus der Ferne ab.",
+	ogTitle: "Das Heidi Installationstool: Einmal in die Wohnung, dann nie wieder.",
 	noindex: true,
 	keepCanonical: true,
 },
-// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 1).
-landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+landing: DEFAULT_CHROME,
+faq: faq.items,
+finalForm: await emptySwitchForm("final"),
 ```
 
-  No action, no form. No `cache-control`.
+  The default action: `handleSwitchSignup(event, { source: "installationstool", page: ROUTE_INSTALLATIONSTOOL })`, as `/verbaende`. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
 ## 1.2 Content module
 
-`$lib/landing/pages/api-dokumentation/content.ts`, word for word from the design. Texts with inline code or bold runs are `Rich` (`(string | { code: string } | { b: string })[]`), rendered by `Rich.svelte`.
+`$lib/landing/pages/installationstool/content.ts`, word for word from the design, in the `uv` template's shapes (`$lib/landing/sections/uv/types.ts`):
 
-- `MANAGER_SIGNUP_HREF` = `/messdienstwechsel#start` (open question 1), `PARTNER_HREF` = `ROUTE_SOFTWAREPARTNER`.
-- `hero`: pill "API-Dokumentation" (`rack`), `h1` "Verbrauchsdaten direkt in Ihre Software." with the accent "Nach bved-Standard.", the lead "Heidi stellt Verbrauchsdaten, Nutzerwechsel und Dokumente über Webservices nach den Spezifikationen des bved bereit. Ihre ERP- oder Verwaltungssoftware ruft die Daten ab, ohne Dateiversand und ohne doppelte Pflege.", `primary` "Schnellstart" → `#schnellstart`, `secondary` "Softwarepartner werden" → `PARTNER_HREF`, `ticks` "bved-konform", "JSON über HTTPS", "Hosting in Deutschland".
-- `terminal`: title "consumption-data · v1"; nine lines as tokens (`m` method, `v` value, `c` comment, `st` status, `k` key, `s` string, plain): `GET /billingunits/123456789/consumptions/periods`, `Authorization: Basic ••••••••`, `200 OK · application/json`, then the five JSON lines with the design's indentation.
-- `docs`: the section's name "Dokumentation", the table of contents' name "Inhalt der Dokumentation" and its three groups ("Einführung": Überblick, Schnellstart, Authentifizierung, Basis-URL und Versionen; "Webservices": Verbrauchsdaten (uVI), Nutzerwechsel, Dokumente, Datenaustausch V 3.10; "Referenz": Statuscodes, Versionen, Zugang anfragen), each entry `{ id, text }`; `note`: "Entwurf." and "Diese Dokumentation beschreibt die geplante Heidi-Schnittstelle auf Basis der veröffentlichten bved-Spezifikationen. Basis-URL und Beispielwerte sind Platzhalter. Verbindlich sind die Zugangsdaten und Details, die Sie von Ihrem persönlichen Ansprechpartner erhalten."
-- `overview`: H2 "Überblick", the text; two roles ("Heidi Systems" / "Messdienstleister (MSC). Stellt den Server bereit und liefert die Daten.", `rack`; "Ihre Software" / "Verwaltung oder ERP (PM). Ruft die Daten als Client ab oder übermittelt Wechsel.", `building`); four services (`consumption-data` "Monatliche Verbrauchsdaten je Nutzeinheit für die unterjährige Verbrauchsinformation." `v1.2.1` → `#verbrauch`, `bars`; `on-site-roles` "Tagesaktuelle Übermittlung von Nutzer- und Bewohnerwechseln an Heidi." `v2.0` → `#wechsel`, `swap`; `documents` "Abrechnungen und weitere Dokumente automatisiert hoch- und herunterladen." `v1.3` → `#dokumente`, `doc`; `Datenaustausch` "Dateibasierter Austausch für die Heizkostenabrechnung." `V 3.10` → `#datei`, `list`).
-- `quickStart`: H2 "Schnellstart", three steps ("Zugang anfragen" …, "Zugangsdaten erhalten" …, "Ersten Abruf senden" …), the code block "cURL" with the design's three lines (the trailing backslashes kept).
-- `auth`: H2 "Authentifizierung", the text (`Rich`: `Authorization`, `accept: application/json`), the table head "Verfahren" / "Header" / "Hinweis" and its two rows.
-- `baseUrl`: H2 "Basis-URL und Versionen", the text, the code block "Basis-URL" with the badge "Platzhalter" and `https://api.heidisystems.example/bved/consumptions/v1`, the three list items (`Rich`, with the design's `z. B.` and its no-break space).
-- `consumption`: H2 "Verbrauchsdaten (uVI)", version "consumption-data 1.2.1", the text; two endpoints (`ep-periods`, `ep-period`): method "GET", path, text, the parameter table ("Parameter" / "Ort" / "Beschreibung"; "Pflicht"), for the first the answer "Antwort" `200` with the design's JSON and the field table ("Feld" / "Typ" / "Beschreibung", four rows), for the second the four list items and the small line "Das vollständige Feldschema ergänzen wir in der finalen Fassung dieser Dokumentation."
-- `userChange`: H2 "Nutzerwechsel", version "on-site-roles 2.0", the text, the direction "Ihre Software" → "Heidi", the small line.
-- `documents`: H2 "Dokumente", version "documents 1.3", the text, three list items, the small line.
-- `fileExchange`: H2 "Datenaustausch V 3.10", version "Dateiformat", the text, the small line.
-- `status`: H2 "Statuscodes", the text, the head "Code" / "Bedeutung", seven rows with their tone (`ok` 200, plain 400, 401, 404, "405 / 501", `er` 500, 503).
-- `versions`: H2 "Versionen", the head "Webservice" / "Version" / "Änderungen", five rows; the source line "Grundlage:" with "bved-Spezifikationen" → `https://bved.info/datenaustauschalt/spezifikationen/`.
-- `access`: H2 "Zugang anfragen", the text, "Erstgespräch vereinbaren" → `MANAGER_SIGNUP_HREF`, "Softwarepartner werden" → `PARTNER_HREF`.
-- `copy`: "Kopieren", "Kopiert", the polite line "Code kopiert", the code frames' name "Codebeispiel: {label}" and the tables' "Tabelle: {H2}".
+- `demoLink` "Demo buchen" → `DEMO_HREF` (open question 1).
+- `hero`: `srTitle` "Das Heidi Installationstool für Installateure", `word` "Installationstool", the lead, `primary` `demoLink`, `secondary` "Mehr erfahren" → `#inhalt`.
+- `list`: label "Beispiel: Heidi Installationstool", brand "Heidi", nav (`tool` "Gebäude", `doc` "Fotos", `users` "Übergabe"), navFoot "Installationstool", head "Heidi Installationstool", tag "Beispieldaten", title "Lindenallee 12", sub "Digitaler Zwilling · Beispiel"; four entries (`home` "EG links" / "2 Heizkostenverteiler · 1 Wasserzähler" "Wird fotografiert" → "Digitalisiert"; `home` "EG rechts" / "3 Heizkostenverteiler · 1 Wasserzähler" "Offen" → "Digitalisiert"; `home` "1. OG links" / "2 Heizkostenverteiler · 2 Wasserzähler" "Offen" → "Digitalisiert"; `doc` "Übergabeprotokoll" / "Lindenallee 12" "Wird erstellt" → "Fertig").
+- `statement`: label "Worum es geht", the text.
+- `KPI`: `notice` 14, `window` "1–2 h" (no-break space), as `/installationspartner`'s (confirmed 2026-10-12).
+- `rows`: label "So arbeitet Heidi", `primary` `demoLink`, `secondary` "Häufige Fragen" → `#faq`; four items (tag, the two-line title, two paragraphs, tile `phone` / `camera` / `calendar` / `bill`, tone `ink` / `ink` / `mint` / `mint`).
+- `phone` (`PhoneTile`): "9:41", "Heidi", "Neuer Auftrag: Lindenallee 12", "Link öffnen und loslegen", label "Digitaler Zwilling", value "12 Wohnungen", comparisons ["Alle Zähler angelegt · Beispiel"].
+- `camera`: time "9:41", app "Heidi", labels "Alter Zähler · Foto 1 von 2" / "Neuer Zähler · Foto 2 von 2", done "2. OG links digitalisiert", the new meter's reading "00047".
+- `calendar` (`CalendarTile`): the twelve flats ("EG li", "EG re", "1. OG li" … "4. OG re", "DG li", "DG re"), current 8, done "digitalisiert", doing "in Arbeit", open "offen", noteDone "{x} digitalisiert", noteDoing "{x} in Arbeit".
+- `bill` (`BillTile`): "Ohne Tool" / "Mit Heidi", the four rows, sum "Termine in der Wohnung" "mehrere" → "einer".
+- `rotator`: label "Was Heidi übernimmt", lead "Mit dem Installationstool:", the four phrases, 2300 ms.
+- `numbers`: H2 "Installation in Zahlen"; first "92" "%" (count 92); rest "2" (count 2), "1" (count 1), "14" "Tage" (count `KPI.notice`), "1–2 h" (compact).
+- `audience`: label "Ihr Wechsel"; "Sie sind Verwalter?" (`demoLink`, image `building`), "Sie sind Installationsbetrieb?" ("Partner werden" → `ROUTE_INSTALLATIONSPARTNER`, image `installer`).
+- `quotes`: the H2's two lines, keys `gerhard`, `werne`, `vitolus`.
+- `picture`: label "Heidi", caption "Einmal installiert." / "Für immer digital.".
+- `faq`: title "Häufige Fragen", six items; 5 with `more` "Installationspartner werden" → `ROUTE_INSTALLATIONSPARTNER`, 6 with `more` "Mehr zu Sicherheit" → `ROUTE_SICHERHEIT`.
+- `closing`: H2 "Einmal in die Wohnung. Dann nie wieder.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", submitLabel "Demo buchen".
 
-`content.test.ts`: the H1's two texts; the table of contents lists every article once, in the article order, with the ids of the eleven articles; every `href` is a route, an article's id or the bved URL; the services link their articles; the JSON samples parse (`JSON.parse`) and the cURL sample calls the base URL; seven status codes, five versions, and every service version in the overview matches its article's badge and the versions table's last row for it; no empty, doubled-space or untrimmed text.
+`content.test.ts`, modelled on `/verbaende`'s: the hero's texts; four rows with the design's tags and tile kinds; every `href` is a route or one of the page's anchors (`#start`, `#inhalt`, `#faq`); every "Demo buchen" leads to `#start`; the twelve flats and current 8; the list's four entries end "Digitalisiert" ×3, "Fertig"; the figures' counts equal their values and 14 / "1–2 h" equal `/installationspartner`'s `KPI`; the quotes' keys exist; six FAQ items, two `more` links; no empty, doubled-space or untrimmed text.
 
 ## 1.3 Pure logic
 
-`$lib/landing/pages/api-dokumentation/highlight.ts`:
+`$lib/landing/pages/installationstool/camera.ts`: the design's camera loop as data.
 
-- `jsonTokens(code)`: `[]`-free tokens `{ text, kind?: "k" | "s" }` that join back to `code`. Only for code whose trimmed text starts with `{` (the design's check); otherwise one plain token. The design's two rules: a quoted string followed by optional whitespace and `:` is a key (`k`); a quoted string after `:` and optional whitespace is a value (`s`).
+- `CAMERA_STEPS`: `{ at, state }[]` with the design's timeline (0 empty; 700 focus; 1500 focus, flash, thumb 1; 2100 thumb 1; 2600 photo 2, thumb 1; 3300 photo 2, focus, thumb 1; 4100 photo 2, focus, flash, thumbs 1–2; 4700 done, thumbs 1–2), `CAMERA_EVERY` 9500 ms.
+- `CameraState`: `{ photo: 1 | 2 | 3; focus: boolean; flash: boolean; thumbs: 0 | 1 | 2 }` (the design's class sets `s2` / `s3`, `fx`, `fl`, `t1` / `t2`), `CAMERA_END` the last step's state.
 
-`highlight.test.ts`: the tokens join back to the input; the answer's keys and values (`"mscnumber"` `k`, `"123456789"` `s`, `"period"` `k`, `"2021-06"` `s`); the cURL sample stays one plain token; a key whose value is an object or array; escaped quotes don't occur in the samples (asserted in `content.test.ts`).
+`camera.test.ts`: the steps are in time order and before `CAMERA_EVERY`; the first state is empty, the last is `CAMERA_END` (photo 3, both thumbs, no focus, no flash); every flash comes with focus; the thumbs never go back within a pass.
 
-The scroll spy reuses `activeIndex(tops, line)` from `$lib/landing/pages/hkvo-leitfaden/toc.ts` (its tests cover it).
+## 1.4 Images
 
-## 1.4 The code font
-
-Geist Mono for the code, the terminal, the service names and the version badges, as `/vorgehen` registers it: `@fontsource-variable/geist-mono`'s latin file through `?url` in an `@font-face` in `<svelte:head>`. Unlike `/vorgehen` it's used above the fold (the terminal), so the route also preloads it (`<link rel="preload" as="font" type="font/woff2" crossorigin>`).
-
-## 1.5 Images
-
-None. The floating CTA's portraits come with the shared `FloatingCta`.
+`src/lib/assets/landing/installationstool/facade.webp`: the design's bytes (1400×933). The other photos are the repo's (README). All rendered with `alt=""` (decorative), as the template does.

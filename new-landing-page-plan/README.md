@@ -1,56 +1,60 @@
-# Page `/api-dokumentation` ("API-Dokumentation"): plan
+# Page `/installationstool` ("Installationstool"): plan
 
-The technical documentation of Heidi's interface for software vendors and property managers, the target of the landing footer's "API-Dokumentation" (the first column, under the logo, plain text today). Light, a documentation page rather than a marketing page: the `pg-` hero with the pill "API-Dokumentation", the H1 "Verbrauchsdaten direkt in Ihre Software." / "Nach bved-Standard.", the lead, "Schnellstart →" / "Softwarepartner werden", three ticks ("bved-konform", "JSON über HTTPS", "Hosting in Deutschland") and **a terminal** whose lines appear one by one (a `GET` on `consumption-data` and its JSON answer); then **the documentation**: a sticky table of contents on the left (Einführung, Webservices, Referenz; the current article marked while scrolling, a row of chips below 1040 px) beside the draft note ("Entwurf. …") and eleven articles: Überblick (the two roles with a moving data line, four service cards), Schnellstart (three steps, a cURL call), Authentifizierung (a table), Basis-URL und Versionen, Verbrauchsdaten (uVI) (two endpoints with parameter and field tables and a JSON answer), Nutzerwechsel, Dokumente, Datenaustausch V 3.10, Statuscodes, Versionen (with the link to the bved specifications) and the dark card "Zugang anfragen" ("Erstgespräch vereinbaren →", "Softwarepartner werden"). Every code block has "Kopieren". After `</main>` the shared seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
+The product page of the Heidi Installationstool, the last entry of the landing footer's "Plattform" group (Dashboard, Demo buchen, Auswertung, Schnittstellen, Installationstool; plain text today). Dark, on the `uv` template of `/mieterportal`, the "Kunden" pages and the partner pages: the huge word "Installationstool" with the lead "Ein Link, ein digitaler Zwilling, zwei Fotos pro Zähler. Einmal in die Wohnung, dann nie wieder." and "Demo buchen" / "Mehr erfahren", the three panels (a building photo, the app window "Lindenallee 12" with three flats and the handover protocol, the fitter photo), the statement lighting up word by word, four feature rows ("Ein Link. Alles dabei." with the phone and its new job, "Foto vom alten. Foto vom neuen." with **a camera on the phone** taking the two photos, "Wohnung für Wohnung digitalisiert." with the twelve flats, "Einmal in die Wohnung. Dann nie wieder." with "Ohne Tool / Mit Heidi"), the rotating "Mit dem Installationstool:", "Installation in Zahlen", the two audience cards ("Sie sind Verwalter?" / "Sie sind Installationsbetrieb?"), three customer quotes, the wide photo "Einmal installiert. Für immer digital.", the FAQ (six questions), the glass closing card "Einmal in die Wohnung. Dann nie wieder." with the video button "Demo buchen", the seal-style trust block and the floating CTA. It uses the landing design system, so it lives in the `(landing-page)` route group with the landing header and footer, the Geist font and `tokens.css`.
 
-It's the target of the landing footer's "API-Dokumentation" and of four links that wait for it, all pointing at this design (`3AZnpE4apaUo694utixF1d`; searched the repo for the id, "API-Dokumentation" and "Heidi API"): `/softwarepartner`'s second hero button "API-Dokumentation" (hidden today), `/partnerschaften`'s row 1 "… oder über die Heidi API." and FAQ 3 "In der API-Dokumentation." (plain text today), and `/neuigkeiten`'s story "Heidi API: Die Dokumentation für Softwarepartner" ("Zur API-Dokumentation", no link today). All five get the route.
+It's the target of the landing footer's "Installationstool" and of three links that wait for it, all pointing at this design (`JevEa3P3wSURqiTTH4R39n`; searched the repo for the id and "Installationstool"): `/installationspartner`'s FAQ 3 "Mehr zum Installationstool" (not shown today), `/neuigkeiten`'s story "Installationstool: Ein Termin in der Wohnung, alles digital dokumentiert" ("Mehr erfahren", no link today) and `/vorgehen`'s feature card "Installationstool" (a card without a link today; its design links this one, checked against a fresh read of `5BrUg7VjVK4QEhd7DiaSfj`). All four get the route. The other mentions are plain product names (`/installationspartner`'s certificate row and texts, `/messdienstanbieter-vergleich`, the city pages) and stay as they are.
 
-**On its own `ad-` blocks over the shared `pg-` building blocks**, as `/fristenrechner` and `/muster-kuendigung`: the design's `#pg-common-css` and `#demo-css` are the other `pg-` designs' frame (`.dm` tokens, `.dm-in`, `.dm-pill`, `.bk-next`, the reveal, `.pg-hero`, `.pg-grid`, `.pg-h1`, `.pg-lead`, `.pg-ctas`, `.pg-ghost`, `.pg-ticks`), and its own blocks are `#ad-css` / `#ad-js` (the terminal `.ad-term`, the documentation `.ad-doc` with `.ad-side`, `.ad-sec`, `.ad-roles`, `.ad-svc`, `.ad-steps`, `.ad-code`, `.ad-tbl`, `.ad-ep`, `.ad-li`, `.ad-dir`, `.ad-cta`). Nothing of it exists in the repo, so its sections live in its page folder, with `/fristenrechner`'s hero layout. No signup form, no form at all: nothing is sent or stored, so no server action and no lead.
+**On the `uv` template, with one page-only tile.** Every style and script block the design shares with `/installationspartner`'s is byte-identical to it (compared by MD5 against a fresh read of that design, 2026-10-20: `#uv-css`, `#uv-js`, `#pg-common-css`, `#pg-common`, `#demo-css`, `#trust-css`, `#trust-js`, `#hs-css`, `#end-css`, `#cta-css`, `#eb-css`, `#nav-css`, `#fx-css`, `#pillfx`, `#mobfx` included); it lacks that design's two phone tiles and partner form (`#ipx-css`, `#ipx-js`, `#ipf-css`, `#ipf-js`), and adds `#dcta-css` / `#dcta-js` (the closing card's video button, as `/nachfolge`), a 3 KB `#it-css` and a 0.8 KB inline script: the camera tile `.it-cam` of row 2. The `<main>` has the template's blocks in its order with other texts, tiles and photos, and no form. So the sections are wrappers around `$lib/landing/sections/uv/` filled from the page's `content.ts`, like `/verbaende`'s; page-only, in `$lib/landing/pages/installationstool/`: the camera tile (`CameraPhone`). **No template change.**
 
-- **Design reference:** https://claude.ai/artifact/3AZnpE4apaUo694utixF1d ("API-Dokumentation · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media: only the two portraits of the floating CTA (the shared `FloatingCta` has them) and three SVGs (the favicon, the eyebrow sparkle). **No new image.** Every icon is inline SVG (the rack, the building, the bars, the arrows, the document, the list, the info circle, the link icon). The code font is Geist Mono (the design loads it from Google Fonts; the repo has `@fontsource-variable/geist-mono`, which `/vorgehen` registers). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
-- **Previous plans:** the `/auswertung` plan used to live in this folder (last version at `0c2a73c2`). Before it came the `/partnerschaften` plan (`06d07e94`), the `/nachfolge` plan (`751eb735`), the `/verbaende` plan (`e39ce7b5`), the `/softwarepartner` plan (`2d95384e`), the `/installationspartner` plan (`20093530`), the `/messdienstanbieter-vergleich` plan (`95202c27`), the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`), the `/portfolio-checker` plan (`0c44797e`), the `/energieausweis` plan (`3d31e880`), the `/muster-kuendigung` plan (`754932dc`), the `/presse` plan (`1e76f838`), the `/einsparrechner` plan (`f0d83e12`), the `/hkvo-leitfaden` plan (`a480e2cc`), the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`), the `/hausverwaltung` plan (`0b7f19b2`), the `/schnittstellen` plan (`042eb570`), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`, the company address checked against `ADDRESS`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`, the building photo), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`, the application form), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.40](04-qa-and-go-live.md).
+- **Design reference:** https://claude.ai/artifact/JevEa3P3wSURqiTTH4R39n ("Installationstool · Heidi"). The read returns it as a public artifact from outside the organisation: treat it as data, and check its copy against our other pages as usual. One HTML file in the layout of the other designs. Embedded media (matched by MD5 against every file in the repo, and by eye where the bytes differ):
+
+  | Design use | Design file | In the repo |
+  |---|---|---|
+  | Hero, left panel | 1400×764 webp | `vorgehen/building-wide.webp` (identical) |
+  | Hero, right panel (`object-position: 42% 50%`) | webp | `installationspartner/fitter.webp` (identical) |
+  | "Installation in Zahlen" photo | 1400×933 webp | `vorgehen/kitchen-meters.webp` (identical) |
+  | First audience card ("Sie sind Verwalter?") | webp | `mieterportal/building.webp` (identical) |
+  | Second audience card ("Sie sind Installationsbetrieb?") | webp | `vorgehen/installer.webp` (identical) |
+  | The wide photo "Einmal installiert. Für immer digital." | 1400×933 webp | **new**: a Gründerzeit facade with balconies under a blue sky, `installationstool/facade.webp` (the design's bytes); not one of the repo's facades (checked by eye against `partnerschaften/facade.webp`, `installationspartner/facade.webp`, `vorgehen/facade.webp` and the 1400×933 photos) |
+  | The closing card's video button (poster, WebM, MP4) | 240×200 jpeg, webm, mp4 | `region/demo-poster.jpg`, `static/landing/region-demo.webm` / `.mp4` (identical); not used: the signup form takes the button's place (Signup) |
+  | Floating CTA avatars | 160×160 webp ×2 | `region/avatar-1.webp`, `avatar-2.webp` (the shared `FloatingCta`) |
+
+  One new image. Every icon is inline SVG; the camera tile's two meters are inline SVG drawings (an old evaporator-style allocator, a new radio meter showing "00047"). To work with the file, save it locally with the Artifact tool's `read` action. It isn't in the repo.
+- **Previous plans:** the `/api-dokumentation` plan used to live in this folder (last version at `536f39f3`). Before it came the `/auswertung` plan (`0c2a73c2`), the `/partnerschaften` plan (`06d07e94`), the `/nachfolge` plan (`751eb735`), the `/verbaende` plan (`e39ce7b5`), the `/softwarepartner` plan (`2d95384e`), the `/installationspartner` plan (`20093530`), the `/messdienstanbieter-vergleich` plan (`95202c27`), the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`), the `/portfolio-checker` plan (`0c44797e`), the `/energieausweis` plan (`3d31e880`), the `/muster-kuendigung` plan (`754932dc`), the `/presse` plan (`1e76f838`), the `/einsparrechner` plan (`f0d83e12`), the `/hkvo-leitfaden` plan (`a480e2cc`), the `/fristenrechner` plan (`b973b162`), the `/neuigkeiten` plan (`50f63909`), the `/private-vermieter` plan (`5ae8b941`), the `/asset-manager` plan (`c4a84443`), the `/wohnungsunternehmen` plan (`4f1f649e`), the `/weg-verwaltung` plan (`a4de1116`), the `/mietverwaltung` plan (`a3410048`), the `/hausverwaltung` plan (`0b7f19b2`), the `/schnittstellen` plan (`042eb570`), the `/verbrauchsinformation` plan (`3745dd0c`), the `/sicherheit` plan (`334b2c2d`, the company address checked against `ADDRESS`), the `/dashboard` plan (`83433739`), the `/mieterportal` plan (`346e9174`), the `/funktionen` plan (`6a74f274`), the `/vorgehen` plan (`93952e28`, the building photo), the `/selbstabrechnung` plan (`9d0bab9c`), the `/hilfe` plan (`3b70270e`), the `/karriere` plan (`d9e105d8`, the application form), the `/ueber-uns` plan (`7a777e92`), the `/upgrade-now` plan (`ddde6575`), the `/messdienstanbieter` plan (`be2c1feb`) and the `/messdienstwechsel` plan (`65470139`). Their open go-live gates are in [04-qa-and-go-live.md §4.5–4.41](04-qa-and-go-live.md).
 
 ## Phases
 
 | # | File | Scope | Size |
 |---|------|-------|------|
-| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer link and the four waiting links, content, the pure JSON highlighting, SEO, the code font | M |
-| 2 | [02-sections.md](02-sections.md) | The page's sections, every block server-rendered in its end state | M |
-| 3 | [03-interactions.md](03-interactions.md) | The terminal's lines, the moving data lines, the table of contents' scroll spy, "Kopieren" | S |
+| 1 | [01-route-and-content.md](01-route-and-content.md) | Route, the footer link and the three waiting links, content, the signup action, the new photo, SEO | S |
+| 2 | [02-sections.md](02-sections.md) | The page's sections: wrappers around `uv/`, the camera tile in its end state, the closing card with the signup form | S |
+| 3 | [03-interactions.md](03-interactions.md) | The camera tile's loop, the shared template's loops, the signup form | S |
 | 4 | [04-qa-and-go-live.md](04-qa-and-go-live.md) | Checks, tests, this page's go-live gate, the carried-over gates of the other landing pages | S |
 
-`ROUTE_API_DOKUMENTATION` and the five links come with the route, so no link ever points at a missing page. No shared code changes beyond the links' content (and their tests).
+`ROUTE_INSTALLATIONSTOOL` and the four links come with the route, so no link ever points at a missing page. No shared code changes beyond the links' content (and their tests).
 
 ## Target structure
 
 ```
-src/routes/(landing-page)/api-dokumentation/
-├── +page.server.ts        # load: seo (noindex), landing chrome (nav CTA to /messdienstwechsel). No action
-└── +page.svelte           # <main class="ad"> with the page tokens, the reveal, #hs-css, the Geist Mono face; Hero, Docs, Trust; FloatingCta
+src/routes/(landing-page)/installationstool/
+├── +page.server.ts        # load: seo (noindex), landing chrome, faq, the signup form; the signup action (source "installationstool")
+└── +page.svelte           # <main class="it"> with the page tokens, the reveal styles and #hs-css; UvMain around the dark sections; Trust after it; FloatingCta
 
-src/lib/landing/pages/api-dokumentation/
-├── content.ts  content.test.ts       # every text of the page, the code samples and the tables, word for word
-├── highlight.ts  highlight.test.ts   # pure: the design's JSON colouring as tokens (keys, string values)
-├── icons.ts                          # the design's inline icons as path data
-├── components/
-│   ├── Icon.svelte                   # StrokeIcon with a name from icons.ts
-│   ├── Rich.svelte                   # a text with inline code and bold runs
-│   ├── Article.svelte                # .ad-sec: id, H2, the optional version badge (.ad-sh), children
-│   ├── CodeBlock.svelte              # .ad-code: head (label, badge), "Kopieren", the code (highlighted when JSON)
-│   ├── DocTable.svelte               # .ad-tbl: the scrolling frame, the head row, rows as children
-│   └── FlowLine.svelte               # the moving data line (.ad-flow / .ad-dir i), horizontal or vertical
+src/lib/assets/landing/installationstool/
+└── facade.webp            # the wide photo (new)
+
+src/lib/landing/pages/installationstool/
+├── content.ts  content.test.ts          # every text of the page and the example data of the mocks, word for word
+├── camera.ts  camera.test.ts            # pure: the camera loop's timeline (the design's steps as states)
 └── sections/
-    ├── Hero.svelte                   # pg-hero: pill, H1, lead, CTAs, ticks, Terminal
-    ├── Terminal.svelte               # .ad-term
-    ├── Docs.svelte                   # .ad-doc: the grid, Sidebar, the note, the eleven articles
-    ├── Sidebar.svelte                # .ad-side with the scroll spy
-    ├── Overview.svelte  QuickStart.svelte  Auth.svelte  BaseUrl.svelte
-    ├── Consumption.svelte  Endpoint.svelte  UserChange.svelte  Documents.svelte  FileExchange.svelte
-    ├── StatusCodes.svelte  Versions.svelte  Access.svelte
-    ├── Trust.svelte*                 # TrustSeals, "Demo buchen" → /messdienstwechsel#start
-    └── FloatingCta.svelte*           # the shared FloatingCta → /messdienstwechsel#start
+    ├── Hero.svelte*  Statement.svelte*  Rows.svelte*  Rotator.svelte*  Numbers.svelte*
+    ├── CameraPhone.svelte               # row 2: the phone with the viewfinder, the two photos and "digitalisiert" (.it-cam)
+    ├── Audience.svelte*  Quotes.svelte*  Picture.svelte*  Faq.svelte*
+    ├── CtaCard.svelte*                  # the glass closing card with the signup form (#start)
+    └── Trust.svelte*  FloatingCta.svelte*
 ```
 
-`*` marks a thin wrapper.
+`*` marks a thin wrapper around a shared section.
 
 ## Links
 
@@ -58,58 +62,49 @@ The design's links, by design id, and where they lead here. An element whose tar
 
 | Design id (use) | Here |
 |---|---|
-| `#schnellstart` (the hero's "Schnellstart →"), the table of contents' eleven anchors, the service cards (`#verbrauch`, `#wechsel`, `#dokumente`, `#datei`) | the articles' ids, as designed |
-| `Fc97HY7KUdBR38T6vPtjeY` (the hero's and the closing card's "Softwarepartner werden") | `ROUTE_SOFTWAREPARTNER` |
-| `44SBXKXJaSp6bvGMnbpZj6` (the closing card's "Erstgespräch vereinbaren", the trust block's "Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `/messdienstwechsel#start`, as `/softwarepartner`'s (`MANAGER_SIGNUP_HREF`): this page has no signup form (open question 1) |
-| `https://bved.info/datenaustauschalt/spezifikationen/` ("bved-Spezifikationen") | as designed, new tab, `rel="noopener noreferrer"` |
-| `Sb54rDQd5WS2r82skPe7UQ` (the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` through `TrustSeals` |
+| `44SBXKXJaSp6bvGMnbpZj6` (the hero's, every row's and the first card's "Demo buchen", the closing card's video button, the trust block's "Demo buchen", the floating CTA "Erstgespräch vereinbaren") | `#start`, the signup form in the closing card (`DEMO_HREF`, `focusSignup`), as on `/verbaende` |
+| `#inhalt` (the hero's "Mehr erfahren") | the rows |
+| `#faq` (every row's "Häufige Fragen") | the FAQ |
+| `#start` (the design's hero) | moved to the closing card, which holds the form |
+| `6hhBpn794w5tbp9t8Rk7CH` (the second card's "Partner werden", FAQ 5's "Installationspartner werden") | `ROUTE_INSTALLATIONSPARTNER` |
+| `Sb54rDQd5WS2r82skPe7UQ` (FAQ 6's "Mehr zu Sicherheit", the trust block's "Mehr zu Sicherheit") | `ROUTE_SICHERHEIT` (the FAQ's `more`, `TrustSeals`) |
 | `Jp8tqY82m7FZqMnWU4z9x9` (the banner) | `ROUTE_UPGRADE_NOW` through `DEFAULT_CHROME` |
-| The nav CTA (the design's "Demo buchen" / "Angebot einholen") | `/messdienstwechsel` through `ctaHref`, as on `/softwarepartner` |
-
-## Implementation notes (2026-10-20)
-
-Phases 1–4 are built: the plan (`c096ff22`), the route, content, `highlight.ts` and the five links (`1003a602`), the sections in their end state (`c211ee27`), the interactions (`d7a03aee`), and `e2e/api-dokumentation.e2e.ts` (14 tests). Compared with the design at 1440, 1100, 980, 700, 375 and 320 px (dev server, reduced motion): the hero, the terminal, the table of contents, the note and all eleven articles have the design's height to the pixel; the trust block is 3–5 px shorter, as on the other pages with `TrustSeals`. No overflow at 320 and 375 px; no console errors or hydration warnings. Full suites: check, lint, 889 unit tests, 577 e2e tests passed. Open: the manual checks of §4.1 not ticked there, and the gate §4.4. Deviations from the plan and the design:
-
-- **The terminal below the fold.** Its lines are CSS animations that play on load; on phones, where the hero's terminal is below the fold, `enterView` pauses them on mount and resumes them when it comes into view (the design starts them on show).
-- **"Zugang anfragen"'s paragraph** has no margin and the body size, as the design's (it isn't a direct child of the article, so `.ad-sec > p` doesn't reach it).
-- **The articles' class is `art`**, not the design's `.ad-sec` → `sec`: `.lp .sec` adds 96 px padding.
-- **Accessibility additions:** the code frames and tables are focusable and named ("Codebeispiel: …", "Tabelle: …"), the current table of contents entry has `aria-current="location"`, the bved link says "(öffnet in neuem Tab)" to screen readers, "Kopieren" has a polite status line. A table of contents click keeps the hash in the URL (the design prevents it).
-- **Local Postgres:** none was running; a throwaway `postgres:18-alpine` on 127.0.0.1:54322 with the roles `anon`, `authenticated` and `service_role` before `drizzle-kit push`, stopped afterwards (only `/neuigkeiten`'s signup test needs it).
 
 ## Key decisions
 
 | Topic | Decision |
 |---|---|
-| URL | `/api-dokumentation`, `ROUTE_API_DOKUMENTATION` in `$lib/routes.ts`: the footer's label, lower-case, as the other pages. Not under `/api/` (the endpoints, `Disallow: /api/` in `robots.txt`; the trailing slash keeps `/api-dokumentation` crawlable). Not confirmed (gate §4.4, open question 3) |
+| URL | `/installationstool`, `ROUTE_INSTALLATIONSTOOL` in `$lib/routes.ts`: the footer's label, lower-case, as the other pages. Not confirmed (gate §4.4, open question 3) |
 | Route group | `(landing-page)`, outside `[[preview=preview]]` |
 | Indexing | `seo.noindex = true` and out of the sitemap until the cutover; then indexed and in the sitemap (decision of 2026-10-17), so its gate (§4.4) blocks the cutover PR (#440) |
-| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same) and `ctaHref: ROUTE_MESSDIENSTWECHSEL`: no signup form here |
-| Frame | `pg-`: `/fristenrechner`'s page tokens (`--bg`, `--hair`), the reveal (`.rv`), `#hs-css` for the H1 and the trust block's H2; plus `--mono` for the code. The design's hero has `id="start"` (the `pg-` designs' leftover): dropped, `#start` means a signup form on our pages |
-| Hero | `/fristenrechner`'s hero layout (pill with the rack icon, H1 with the `em` accent, lead, the dark `.bk-next` "Schnellstart →" and the ghost "Softwarepartner werden", the ticks) with the terminal as its visual; the ticks keep the list's bottom margin as on `/fristenrechner` |
-| Terminal | Static markup from `content.ts` (lines as tokens: method, path, value, comment, status, key, string), `aria-hidden` (the same call is in the documentation as text). The design shows its lines on a class 250 ms after the hero shows; here CSS animations with a `both` fill and the design's delays, so it plays on load without JS and the server's HTML is the end state (`/messdienstanbieter-vergleich`'s preview card) |
-| Documentation | One `<section class="ad-doc" aria-label="Dokumentation">`; the table of contents a `<nav aria-label="Inhalt der Dokumentation">` with its three group labels as `<p>`; each article an `<article id>` with an H2 without id (as designed, so `#hs-css`'s `section h2[id]` leaves them alone). The order and ids from `content.ts` (`ueberblick`, `schnellstart`, `auth`, `basis`, `verbrauch`, `wechsel`, `dokumente`, `datei`, `status`, `versionen`, `zugang`), the table of contents generated from the same list |
-| Code | `<pre><code>` with the design's texts; JSON coloured on the server through the pure `highlight.ts` (the design does it in the browser with `innerHTML`; here tokens rendered as `<span class="k">` / `<span class="s">`, no `{@html}`). The scrolling `pre` and the table frames get `tabindex="0"` and a name (keyboard scrolling) |
-| Tables | Native tables in `DocTable` (the design's `min-width: 520px` inside a scrolling frame); inline code, "Pflicht" and the status badges from `content.ts` |
-| "Kopieren" | Copies the block's code: Clipboard API, the design's hidden-textarea fallback (as `/presse`), "Kopiert" for 1.6 s; a polite `sr-only` line; hidden without JS (`@media (scripting: none)`) |
-| Scroll spy | The design's rule (the last article whose top is above 160 px) through `activeIndex` from `$lib/landing/pages/hkvo-leitfaden/toc.ts`; one passive scroll listener; the current link `aria-current="location"` and `.on`; the server marks the first. The links are plain anchors (`app.css` scrolls smoothly, `scroll-margin-top: 90px` as designed) |
-| Moving lines | The roles' line and the "Ihre Software → Heidi" line: the design's endless CSS animation, running only while in view (`inView`), none with reduced motion |
-| Closing card | The design's dark `.ad-cta` inside the documentation's column, not the shared `CtaCard` (no form, another layout) |
-| Trust, floating CTA | The shared `TrustSeals` (`demoHref`) and `FloatingCta` (`href`) to `/messdienstwechsel#start`, as `/softwarepartner` |
-| Styling | Component-scoped CSS from `#pg-common-css` and `#ad-css`; breakpoints the design's (1040 and 640 px). No class that is also a Tailwind utility |
+| Header | The shared `LandingHeader` with `DEFAULT_CHROME` (the design's banner is the same); the nav CTA "Bestand prüfen" leads to the page's own form (`#start`) |
+| Template | The `uv` template (`UvMain`, `Hero` `lg`, `ListMock`, `Statement`, `Rows` with `Phone`, `Calendar` and `Bill`, `Rotator`, `Numbers`, `Audience`, `Quotes`, `Picture`, `Faq`), filled from `content.ts` like `/verbaende`. No template change |
+| The hero word | "Installationstool" in the template's `lg` size (`clamp(40px, 11.4vw, 172px)`, `clamp(34px, 11.6vw, 80px)` below 620 px): the design has no page rule for it (unlike `/installationspartner`'s and `/verbaende`'s `wordSize`) |
+| The hero's app window | `ListMock` with the design's nav (Gebäude, Fotos, Übergabe; the icons `tool`, `doc`, `users`) and four entries (EG links "Wird fotografiert" → "Digitalisiert", EG rechts and 1. OG links "Offen" → "Digitalisiert", Übergabeprotokoll "Wird erstellt" → "Fertig") |
+| Row 1's tile | `uv/tiles/Phone` (ink): the notification "Neuer Auftrag: Lindenallee 12" / "Link öffnen und loslegen", the figure "Digitaler Zwilling" / "12 Wohnungen" with the one chip "Alle Zähler angelegt · Beispiel", no bars |
+| Row 2's tile | Page-only `CameraPhone` (ink; the design's `.uv-phone.it-ph` with `.it-cam`): the phone's status bar, the label "Alter Zähler · Foto 1 von 2" → "Neuer Zähler · Foto 2 von 2", the viewfinder with four corners that focus, the old and the new meter, the flash, the two thumbnails and the shutter, the line "2. OG links digitalisiert". **The design's own bug isn't ported:** its template script resets every `.uv-phone`'s class to `uv-phone` when the row shows, which drops `.it-ph` (centred phone, 18 px bottom padding, the tile's 480 px minimum) the moment it applies; built as `#it-css` intends (README "Implementation notes" records the heights) |
+| Row 3's tile | `uv/tiles/Calendar` (mint) with the twelve flats "EG li" … "DG re", current 8 ("3. OG li"), "digitalisiert" / "in Arbeit" / "offen", notes "{x} digitalisiert" / "{x} in Arbeit" |
+| Row 4's tile | `uv/tiles/Bill` (mint): "Ohne Tool" / "Mit Heidi", two `cut` rows ("manuell"), two `ok` rows (ticks), the sum "Termine in der Wohnung" "mehrere" → "einer" |
+| Signup | The design has no form; its "Demo buchen" goes to the demo-booking design, which the built pages answer with the signup form. As `/verbaende`: the glass closing card keeps its title and text and gets the shared `SignupForm` (`placement="final"`, "Demo buchen") in place of the video button, with the `start` anchor every "Demo buchen", the floating CTA and the nav CTA lead to. A SvelteKit form action through `handleSwitchSignup` (`source: "installationstool"`, `page: "/installationstool"`): lead stored, Make.com `switchinquiry`. Open question 1 |
+| Closing card | The shared `CtaCard`, `tone="glass"`, `final`, `sectionId="start"`, the title and the text |
+| Quotes | The shared testimonials `gerhard`, `werne`, `vitolus` (word for word the shared texts) under "Saubere Installation." / "Unsere Kunden sagen es selbst." |
+| FAQ | The `uv` FAQ (shared `Faq`, dark, all closed) with its FAQPage JSON-LD; FAQ 5's "Installationspartner werden" → `/installationspartner`, FAQ 6's "Mehr zu Sicherheit" → `/sicherheit` (both the FAQ's `more`) |
+| Figures | `Numbers` with "92 %" (counts) before the photo, then "2", "1", "14 Tage" (count) and "1–2 h" (compact, the design's `.dt`). 14 Tage and 1–2 h are the KPIs confirmed on 2026-10-12 (`/installationspartner`'s `KPI`) |
+| Styling | Component-scoped CSS from the design; breakpoints the design's (the template's 980/620 px, `#hs-css` 1040/620 px). No class that is also a Tailwind utility |
 
 ## Open questions (the default is built unless answered)
 
-1. **"Erstgespräch vereinbaren" in "Zugang anfragen".** The design links the demo booking; the page is for software vendors and has no signup form. *Default: `/messdienstwechsel#start`, as `/softwarepartner`'s trust block and floating CTA.* Alternative: `/softwarepartner#bewerben` (its partner form).
-2. **A draft documentation on a public page.** The design says "Entwurf.", the base URL is a placeholder (`api.heidisystems.example`, marked "Platzhalter"), and three articles say "Endpunkte und Feldschema folgen in der finalen Fassung". *Default: built as designed, `noindex` until engineering confirms the API and either the real values replace the placeholders or the page goes live as a declared draft (gate §4.4).*
-3. **The slug.** *Default: `/api-dokumentation`.* Alternatives: `/entwickler`, `/api-docs`.
+1. **The demo CTAs.** The design sends every "Demo buchen" to the demo-booking design, which has no page. *Default: the signup form in the closing card (`#start`), as every built page with a "Demo buchen" and no form of its own (the other "Plattform" pages have it too).* Alternative: keep the design's video button and send every "Demo buchen" to `/messdienstwechsel#start`, as `/api-dokumentation`.
+2. **The product as described.** The tool's flow (a link per job, the building as a digital twin with every flat and meter already set up, two photos per meter, the handover protocol from the photos) and "Einmal in die Wohnung. Dann nie wieder." *Default: the design's texts; they agree with `/installationspartner`'s.* Product's sign-off belongs in the gate.
+3. **The slug.** *Default: `/installationstool`.* Alternative: `/plattform/installationstool` if the "Plattform" pages get a folder.
 
 ## Risks
 
-- **Every gate is on the cutover's critical path** (04 §4.4–4.40).
-- **A technical promise.** The page names concrete web services, versions, endpoints, authentication and status codes that Heidi doesn't necessarily offer yet ("Diese Dokumentation beschreibt die geplante Heidi-Schnittstelle"). A software vendor might build against it. Mitigation: the draft note stays, gate §4.4 (engineering sign-off of every endpoint, version and status code), `noindex` until then; aligned with `/softwarepartner` (§4.9), `/schnittstellen` (§4.27) and `/partnerschaften` (§4.6).
-- **Third-party facts.** The bved's versions, the history of consumption-data ("ging aus der ARGE HeiWaKo hervor"), "Der E-Satz … wird vom bved nicht weiterentwickelt". Mitigation: checked against the bved's published specifications (gate §4.4).
+- **Every gate is on the cutover's critical path** (04 §4.4–4.41).
+- **A promise to tenants.** "Danach liest Heidi die Funkzähler aus der Ferne ab. Für die Ablesung muss niemand mehr in die Wohnung." and "Einmal in die Wohnung. Dann nie wieder." can be read as never again for anything (a defect, the meter's calibration period). Mitigation: product and legal sign-off in §4.4; align with `/installationspartner` (§4.11) and `/vorgehen` (§4.34).
+- **The tool's audience.** The page sells a tool to managers that installers use. Mitigation: the two audience cards keep both paths; the partner path leads to `/installationspartner`.
 
 ## Out of scope
 
-- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#fx-js` (the design footer's newsletter; ours is the shared footer), the rest of `#pg-common` (`countUp`, `tween`, `confetti`, `seg`, `paintRange`: unused here), its anchor-scrolling (`app.css` does it).
-- A real API, an OpenAPI file, a sandbox, the full field schemas ("folgen in der finalen Fassung").
+- The design's nav, footer, chat button, `#top-js`, `#mobfx`, `#eb-js`, `#pillfx` beyond the eyebrows, `#fx-js` (the design footer's newsletter; ours is the shared footer), `#dcta-css` / `#dcta-js` (the video button the signup form replaces), `#pg-common-css` / `#demo-css` beyond the blocks the template uses.
+- The demo-booking page, the "Demo-Sandbox" and the "Portfolio-Scanner" of the design's nav (marked "bald").

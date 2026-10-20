@@ -1,5 +1,6 @@
 import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
+	ROUTE_API_DOKUMENTATION,
 	ROUTE_ASSET_MANAGER,
 	ROUTE_BLOG,
 	ROUTE_AUSWERTUNG,
@@ -55,7 +56,7 @@ export const companyLinks: LandingFooterLink[] = [
 	{ text: "Kunden", href: "/#kunden" },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
-	{ text: "API-Dokumentation" },
+	{ text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION },
 ];
 
 export const footerGroups: LandingFooterGroup[] = [

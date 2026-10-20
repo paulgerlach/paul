@@ -9,6 +9,7 @@
  */
 import type { SplitHeading } from "$lib/landing/types";
 import {
+	ROUTE_API_DOKUMENTATION,
 	ROUTE_AUSWERTUNG,
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
@@ -117,7 +118,8 @@ const stories: Story[] = [
 		topic: "p",
 		title: "Heidi API: Die Dokumentation für Softwarepartner",
 		photo: "uviTenant",
-		// 3AZnpE4apaUo694utixF1d ("Zur API-Dokumentation"): no page yet.
+		// 3AZnpE4apaUo694utixF1d
+		more: { text: "Zur API-Dokumentation", href: ROUTE_API_DOKUMENTATION },
 	},
 	{
 		topic: "w",

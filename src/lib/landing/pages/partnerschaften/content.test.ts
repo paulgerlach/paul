@@ -82,6 +82,7 @@ describe("partnerschaften content", () => {
 			[...item.answer.matchAll(/href="([^"]*)"/g)].map((m) => m[1]),
 		);
 		expect(inline).toEqual([
+			routes.ROUTE_API_DOKUMENTATION,
 			routes.ROUTE_SOFTWAREPARTNER,
 			routes.ROUTE_NACHFOLGE,
 		]);
@@ -141,10 +142,11 @@ describe("partnerschaften content", () => {
 			text: "Partnerschaft anfragen",
 			href: "#kontakt",
 		});
-		// "Heidi API" has no page yet: plain text.
-		expect(rows.items[0].paragraphs[1]).toBe(
-			"Nach bved-Standard oder über die Heidi API.",
-		);
+		expect(rows.items[0].paragraphs[1]).toEqual([
+			"Nach bved-Standard oder über die ",
+			{ text: "Heidi API", href: routes.ROUTE_API_DOKUMENTATION },
+			".",
+		]);
 		expect(hrefs(rows.items[1])).toEqual([routes.ROUTE_INSTALLATIONSPARTNER]);
 		expect(hrefs(rows.items[2])).toEqual([routes.ROUTE_NACHFOLGE]);
 	});

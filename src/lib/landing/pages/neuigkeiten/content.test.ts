@@ -42,6 +42,7 @@ describe("/neuigkeiten content", () => {
 			"Mehr erfahren",
 			"Mehr erfahren",
 			"Mehr erfahren",
+			"Zur API-Dokumentation",
 			"Bestand prüfen",
 			"Mehr erfahren",
 			"Mehr erfahren",

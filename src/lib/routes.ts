@@ -41,6 +41,7 @@ export const ROUTE_MESSDIENSTANBIETER_VERGLEICH =
 	"/messdienstanbieter-vergleich";
 export const ROUTE_INSTALLATIONSPARTNER = "/installationspartner";
 export const ROUTE_SOFTWAREPARTNER = "/softwarepartner";
+export const ROUTE_API_DOKUMENTATION = "/api-dokumentation";
 export const ROUTE_VERBAENDE = "/verbaende";
 export const ROUTE_NACHFOLGE = "/nachfolge";
 export const ROUTE_PARTNERSCHAFTEN = "/partnerschaften";

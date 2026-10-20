@@ -77,7 +77,7 @@ From the `/partnerschaften` plan (`06d07e94`, §4.4; its open questions are quot
 - [ ] The new photo licensed (its open question 4): the facade (`partnerschaften/facade.webp`); or another photo; the reuse of `installationspartner/facade.webp`, `vorgehen/consultation.webp`, `vorgehen/kitchen-meters.webp` and `vorgehen/installer.webp`
 - [ ] Permission to show the Werne, Höhne (Vitolus) and Gerhard quotes (shared with the gates below)
 - [ ] Security block statements: covered by the region pages' item in §4.39 (same `TrustSeals`)
-- [ ] The CTA targets decided (its open question 1): every "Partnerschaft anfragen", the closing card's "Demo buchen", the trust block's "Demo buchen" and the floating CTA "Erstgespräch vereinbaren" → the form (`#kontakt`); the nav CTA → `/messdienstwechsel`; "Heidi API" (row 1) and "API-Dokumentation" (FAQ 3) linked once the API documentation's page exists
+- [ ] The CTA targets decided (its open question 1): every "Partnerschaft anfragen", the closing card's "Demo buchen", the trust block's "Demo buchen" and the floating CTA "Erstgespräch vereinbaren" → the form (`#kontakt`); the nav CTA → `/messdienstwechsel`; "Heidi API" (row 1) and "API-Dokumentation" (FAQ 3) → `/api-dokumentation`
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided: `/partnerschaften` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
@@ -136,7 +136,7 @@ From the `/softwarepartner` plan (`2d95384e`, §4.4; its open questions are quot
 - [ ] The photos' reuse: `cities/muenchen/hero.jpg` (also the München page's hero), `mietverwaltung/apartment.webp`, `mieterportal/building.webp`, `cities/berlin/references.jpg` (also the Berlin page's references)
 - [ ] Permission to show the Höhne (Vitolus), Werne and Gerhard quotes (shared with the gates below)
 - [ ] Security block statements: covered by the region pages' item in §4.39 (same `TrustSeals`)
-- [ ] The CTA targets decided (its open question 1: the page is for software vendors, the design keeps the managers' "Demo buchen"): the trust block's "Demo buchen" and the floating CTA → `/messdienstwechsel#start`, the nav CTA → `/messdienstwechsel`; "API-Dokumentation" (its open question 3: hidden until then) once the API documentation's page exists
+- [ ] The CTA targets decided (its open question 1: the page is for software vendors, the design keeps the managers' "Demo buchen"): the trust block's "Demo buchen" and the floating CTA → `/messdienstwechsel#start`, the nav CTA → `/messdienstwechsel`; "API-Dokumentation" → `/api-dokumentation`
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided: `/softwarepartner` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry

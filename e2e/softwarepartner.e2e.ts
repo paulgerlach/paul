@@ -128,10 +128,9 @@ test("CTAs lead to the partner form, the FAQ and the linked pages", async ({
 	await expect(partner).toHaveCount(7);
 	for (const href of await hrefs(partner)) expect(href).toBe("#bewerben");
 
-	// "API-Dokumentation" waits for its page.
 	await expect(
 		page.locator("main a", { hasText: /API-Dokumentation/i }),
-	).toHaveCount(0);
+	).toHaveAttribute("href", "/api-dokumentation");
 	const faqLinks = page.locator("#inhalt a", { hasText: /Häufige Fragen/i });
 	await expect(faqLinks).toHaveCount(4);
 	for (const href of await hrefs(faqLinks)) expect(href).toBe("#faq");

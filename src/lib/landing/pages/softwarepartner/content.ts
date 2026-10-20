@@ -26,6 +26,7 @@ import type {
 	Row,
 } from "$lib/landing/sections/uv/types";
 import {
+	ROUTE_API_DOKUMENTATION,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SICHERHEIT,
@@ -51,8 +52,7 @@ export const hero = {
 	wordSize: "clamp(34px, 8.6vw, 130px)",
 	lead: "Heidi liefert Verbrauchs- und Abrechnungsdaten direkt in die Software Ihrer Kunden. Eine Anbindung, keine doppelte Pflege.",
 	primary: partnerLink,
-	// 3AZnpE4apaUo694utixF1d: no page yet, so not shown (plan, open question 3).
-	secondary: { text: "API-Dokumentation" } as { text: string; href?: string },
+	secondary: { text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION },
 };
 
 /** The hero's app window: the interface handing data over. */

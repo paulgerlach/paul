@@ -75,7 +75,10 @@ describe("softwarepartner content", () => {
 	});
 
 	it("keeps the API documentation hidden until its page exists", () => {
-		expect(hero.secondary).toEqual({ text: "API-Dokumentation" });
+		expect(hero.secondary).toEqual({
+			text: "API-Dokumentation",
+			href: routes.ROUTE_API_DOKUMENTATION,
+		});
 	});
 
 	it("has no empty, untrimmed or doubled-space text", () => {

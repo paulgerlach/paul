@@ -26,6 +26,7 @@ import type {
 	Row,
 } from "$lib/landing/sections/uv/types";
 import {
+	ROUTE_API_DOKUMENTATION,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_NACHFOLGE,
 	ROUTE_SICHERHEIT,
@@ -119,8 +120,11 @@ export const rows = {
 			title: ["Eine Anbindung.", "Alle Kunden."],
 			paragraphs: [
 				"ERP- und Verwaltungssoftware binden Heidi einmal an und versorgen ihre Kunden mit Verbrauchsdaten, Abrechnungen und Dokumenten.",
-				// "Heidi API" (3AZnpE4apaUo694utixF1d): plain text until the API documentation has a page.
-				"Nach bved-Standard oder über die Heidi API.",
+				[
+					"Nach bved-Standard oder über die ",
+					{ text: "Heidi API", href: ROUTE_API_DOKUMENTATION },
+					".",
+				],
 			],
 			tile: "doc",
 			tone: "stone",
@@ -381,8 +385,7 @@ export const faq = {
 		},
 		{
 			question: "Wo finde ich die technische Dokumentation?",
-			// "API-Dokumentation" (3AZnpE4apaUo694utixF1d): plain text until it has a page.
-			answer: `In der API-Dokumentation. Mehr zur Zusammenarbeit lesen Sie auf der Seite für <a href="${ROUTE_SOFTWAREPARTNER}">Softwarepartner</a>.`,
+			answer: `In der <a href="${ROUTE_API_DOKUMENTATION}">API-Dokumentation</a>. Mehr zur Zusammenarbeit lesen Sie auf der Seite für <a href="${ROUTE_SOFTWAREPARTNER}">Softwarepartner</a>.`,
 		},
 		{
 			question: "Ich suche eine Nachfolge für meinen Messdienst.",

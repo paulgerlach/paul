@@ -186,8 +186,14 @@ test("CTAs lead to the contact form, the rows, the FAQ and the partner pages", a
 		"href",
 		"/nachfolge",
 	);
-	// "Heidi API" and "API-Dokumentation" wait for their page.
-	await expect(page.locator("main a", { hasText: /API/ })).toHaveCount(0);
+	await expect(link("#inhalt", "Heidi API")).toHaveAttribute(
+		"href",
+		"/api-dokumentation",
+	);
+	await expect(link("#faq", "API-Dokumentation")).toHaveAttribute(
+		"href",
+		"/api-dokumentation",
+	);
 	await expect(link("section.who", "Softwarepartner werden")).toHaveAttribute(
 		"href",
 		"/softwarepartner",

@@ -1,27 +1,32 @@
 # Phase 3: Interactions
 
-Same rules as the other landing pages: runes and the existing attachments, no new dependencies, timers only in the browser and cleared on teardown, `prefersReducedMotion()` means the end state. The design's only page-only script is `#spf-js` (the card form); `#ipf-js` is the contact form, `#uv-js` the template, `#dcta-js` the video button, so every other interaction is the template's, the form's or the video button's.
+Same rules as the other landing pages: runes and the existing attachments, no new dependencies, timers only in the browser and cleared on teardown, `prefersReducedMotion()` means the end state. The design's only page-only script is `#aw2-js`; the reveal, the closing chart, the logo strip, the trust block and the floating CTA are `/dashboard`'s.
 
-## 3.1 Shared
+## 3.1 Entrances
 
-- `reveal()` on `<main>`; the anchors `#kontakt`, `#inhalt`, `#faq` and `#anbindung` (sections get `scroll-margin-top: 72px`, the design's offset). The template's loops as on `/nachfolge`: the hero's list (9 s, first pass after a full interval), the statement's words on scroll, `Doc` (7 s), `Phone` (7 s: the notification drops in, then the figure), `Calendar` (7.6 s: the nine cells tick through to the ninth), `Bill` (6.4 s), the rotator (2.3 s). No figure counts (every one is the design's `.dt`).
-- The video button as on `/nachfolge` (plays while 30 % of it is on screen, never with reduced motion).
+Every entrance goes through `enterView` (only below the fold, only with motion; `prepare` sets the start state, `play` the end):
 
-## 3.2 The contact form (`#kontakt`)
+- **Mock-up** (threshold .25): bars from 0 to their widths (`1s` ease with the design's per-row delay `.2s + i × .08s`), the values and the three KPIs count from 0 through `tweenNumber` (1000 ms rows, 1100 ms KPIs, `de()` with the KPI's decimals), the average line fades in after 1.1 s, the notes slide in from the right one after the other (`1.3s + i × .35s`).
+- **Steps** (each card at .4): the two tickers rise in (`.35s + i × .35s`, the second .25 s later).
+- **Comparison** (.3): the bars grow from 0 to the heating values; the rows already sorted.
+- **Heatmap** (.2): the cells scale in row by row (`j × .04s + r × .05s`).
+- **Notes** (.3): the notes rise in (`.2s + i × .15s`).
+- **Report** (.35): the back pages fan out (.7 s, .3 s delay), the bars grow (`.4s + i × .06s`), "Bericht erstellt" rises in after 1.5 s.
 
-- `superForm` with `zod4Client(partnershipInquirySchema)`, `validationMethod: "submit-only"`, `resetForm: true` (on success). `_t` is re-stamped on mount (the page is CDN-cached). Posts to `?/partnership#kontakt`.
-- After a submit with errors: the invalid fields get `.bad` and `aria-invalid` with `aria-describedby` on the message line, the line says "Bitte füllen Sie die markierten Felder aus." (`role="alert"`); a field's error clears with the next submit, as the design. Telefon only gets a mark when it's given and not a number.
-- While sending: the button disabled, the line "Wird gesendet …". Success: the green line "Danke, <Name>! Wir melden uns bei Ihnen." (`role="status"`), the form empty. A failed send: the error line with the phone number as a `tel:` link, the values kept.
-- Without JS: the native post to `#kontakt`; the response renders the same lines.
+## 3.2 The comparison's switch
 
-## 3.3 The card form (`#anbindung`)
+- `$state` metric (`heiz`), everything else `$derived` through `metrics.ts`: the unit line, each row's width, value (`de()` with the metric's decimals), badge, high mark and rank, the average line's position and text "Ø 111" / "Ø 13,7" / "Ø 31,4".
+- A click sets the metric and its button `aria-pressed`; the rows slide to their new ranks (`transform .5s`), the bars and the average line move (`.7s`). An `sr-only` polite line names the new order's first row ("Höchster Wert: Bergmannstraße 4, 142 kWh/m²").
 
-- `superForm` with `zod4Client(connectionInquirySchema)`, `validationMethod: "submit-only"`, its own id `connection`. `_t` re-stamped on mount. Posts to `?/connection#anbindung`.
-- After a submit with errors (the design's `#spf-js`): the invalid fields' labels get `.err` (red border and background), the consent's label turns red, `aria-invalid` and `aria-describedby` on the fields, the line "Bitte füllen Sie die markierten Felder aus."; the first invalid field gets the focus, as the design.
-- While sending: the button disabled, the line "Wird gesendet …". Success: the form gives way to the thank-you panel (focusable, focused so screen readers hear it), and confetti bursts from its tick once (`confettiFrom`, the design's `PG.confetti`; nothing with reduced motion; stopped on teardown). A failed send: the line with the phone number, the values kept.
-- Without JS: the native post to `#anbindung`; the response renders the panel or the marks.
+## 3.3 The heatmap's tooltip
 
-## 3.4 CSS only
+- Pointer only, as the design: `pointerenter` and `click` on a cell show the tooltip above the cell (its box against the card's, plus the card's `scrollLeft`; measured in the handler), `pointerleave` hides it. The hovered cell gets the ring (`.on`). The tooltip is `aria-hidden`; the values are in the `sr-only` table.
 
-- The buttons' hover and press (`.uv-btn`, both form buttons: the card's ink button to `#2A443D` on hover and `scale(.98)` when pressed), the fields' focus, the FAQ's plus; the video button's growth, badge and arrow on hover; the eyebrows (`#eb-css`).
-- With reduced motion: nothing moves (the landing reset; the video frame's transition and the badge's blink off, as `#dcta-css`).
+## 3.4 The notes' filter
+
+- `$state` filter (`all`), the visible notes `$derived` through `filterHints`; filtered-out notes get `hidden`. The chip's button `aria-pressed`; the polite `sr-only` line "{n} Hinweise".
+
+## 3.5 CSS only
+
+- The `.db-btn` hovers, the pill icons, the heatmap cell's ring on hover, the switch's and chips' pressed look.
+- With reduced motion: nothing moves (the landing reset; `#aw2-css`'s `transition: none` for the six blocks).

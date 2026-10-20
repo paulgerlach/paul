@@ -1,82 +1,69 @@
-# Phase 1: Route, links, content and the forms
+# Phase 1: Route, links, content and the shared frame
 
 ## 1.1 Route and links
 
 In one commit:
 
-- `ROUTE_PARTNERSCHAFTEN = "/partnerschaften"` in `$lib/routes.ts`, after `ROUTE_NACHFOLGE`.
-- The landing footer's "Partnerschaften" (`$lib/landing/footerLinks.ts`, group "Partner") gets `href: ROUTE_PARTNERSCHAFTEN`, so every "Partner" entry has a page.
-- `/neuigkeiten`'s story "Partnerschaften: Mit Heidi zusammenarbeiten" gets `more: { text: "Mehr erfahren", href: ROUTE_PARTNERSCHAFTEN }` (the design's link text); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists") pin it.
-- `/nachfolge`'s second audience card "Mehr Partnerschaften?" gets `cta: { text: "Zu den Partnerschaften", href: ROUTE_PARTNERSCHAFTEN }`, so its button shows; `nachfolge/content.test.ts` and `e2e/nachfolge.e2e.ts` ("the second audience card without a button") change with it.
-- `src/routes/(landing-page)/partnerschaften/+page.server.ts`, as `/nachfolge`'s:
+- `ROUTE_AUSWERTUNG = "/auswertung"` in `$lib/routes.ts`, after `ROUTE_DASHBOARD`.
+- The landing footer's "Auswertung" (`$lib/landing/footerLinks.ts`, group "Plattform") gets `href: ROUTE_AUSWERTUNG`.
+- `/neuigkeiten`'s featured story "Heidi Auswertung: Verbrauch, Kosten und Auffälligkeiten auf einen Blick" gets `more: { text: "Zur Auswertung", href: ROUTE_AUSWERTUNG }` (the design's link text, in place of the comment "no page yet"); its `content.test.ts` ("has the design's link texts") and `e2e/neuigkeiten.e2e.ts` ("stories and rows link only where a page exists": "The featured Auswertung has no page yet") change with it.
+- `src/routes/(landing-page)/auswertung/+page.server.ts`, as `/dashboard`'s:
 
 ```ts
 seo: {
 	// Drafts for the content owner (plan §4.4).
-	title: "Partnerschaften: Mit Heidi zusammenarbeiten | Heidi Systems",
+	title: "Heidi Auswertung: Verbräuche Ihres Bestands klar ausgewertet | Heidi Systems",
 	description:
-		"Sie haben ein Produkt, ein Netzwerk oder eine Idee, die zu Heidi passt? Heidi Systems arbeitet mit Softwareanbietern, Installationsbetrieben, Verbänden und Messdienstanbietern zusammen. Lassen Sie uns sprechen.",
-	ogTitle: "Partnerschaften mit Heidi Systems",
+		"Heidi wertet die Funkdaten aller Zähler für jede Liegenschaft aus: geprüfte Werte, Vergleich im Portfolio, Jahresverlauf zum Vorjahr, Hinweise mit nächsten Schritten und Berichte für Eigentümer.",
+	ogTitle: "Ihre Verbräuche. Klar ausgewertet.",
 	noindex: true,
 	keepCanonical: true,
 },
-// No signup form here: the nav CTA goes to /messdienstwechsel's.
-landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
-faq: faq.items,
-partnershipForm: await emptyPartnershipForm(),
-connectionForm: await emptyConnectionForm(),
+landing: DEFAULT_CHROME,
+finalForm: await emptySwitchForm("final"),
 ```
 
-  and two named actions: `partnership: (event) => handlePartnershipInquiry(event, { page: ROUTE_PARTNERSCHAFTEN })`, `connection: (event) => handleConnectionInquiry(event, { page: ROUTE_PARTNERSCHAFTEN })`. No default action, no `cache-control`.
+  and the default action `handleSwitchSignup(event, { source: "auswertung", page: ROUTE_AUSWERTUNG })`. No `cache-control`.
 - Sitemap: no entry until the cutover (gate §4.4).
 
-## 1.2 Content module
+## 1.2 `/dashboard`'s frame, hero frame and closing
 
-`$lib/landing/pages/partnerschaften/content.ts`, word for word from the design, in the shapes of `uv/types.ts` and `partner/types.ts`:
+Pure moves, so `/dashboard` renders the same HTML and CSS (the class names change only in Svelte's scoping hashes):
 
-- `APPLY_ID = "kontakt"` (the design's id); `KONTAKT_HREF` for every CTA that leads to the form (open question 1). `CONNECTION_ID = "anbindung"`: the first audience card's anchor, where the card form posts without JS.
-- `hero`: `srTitle` "Partnerschaften mit Heidi Systems", `word` "Partnerschaften", `wordSize` "clamp(34px, 8.6vw, 130px)", the lead "Sie haben ein Produkt, ein Netzwerk oder eine Idee, die zu Heidi passt? Lassen Sie uns zusammenarbeiten.", `primary` "Kontakt aufnehmen" → `#kontakt`, `secondary` "Mehr erfahren" → `#inhalt`.
-- `list` (the hero's app window, `ListMock`): label "Beispiel: Heidi Dashboard", brand "Heidi", nav `users` "Partner", `doc` "Dokumente", `users` "Kontakt", foot "Heidi Dashboard", head "Heidi Partner", tag "Beispieldaten", title "Gemeinsam mit Heidi", sub "Partnerschaften · Beispiel"; entries `plug` "Softwareanbieter" / "Schnittstelle nach bved-Standard" ("In Abstimmung" → "Verbunden"), `tool` "Installationsbetriebe" / "Geschult und zertifiziert" ("In Schulung" → "Zertifiziert"), `users` "Verbände und Netzwerke" / "VDIV und DEUMESS" ("Im Austausch" → "Vernetzt"), `building` "Messdienstanbieter" / "Nachfolge und Zusammenarbeit" ("Im Gespräch" → "Vereinbart").
-- `statement`: label "Worum es geht", the text ("Heidi macht den Messdienst einfacher, und das schaffen wir nicht allein. … Wenn Sie eine Idee haben, die zu uns passt, melden Sie sich.").
-- `rows`: label "So arbeitet Heidi", primary "Partnerschaft anfragen" → `#kontakt`, secondary "Häufige Fragen" → `#faq`; four `Row<TileKind>` (`TileKind = "doc" | "phone" | "calendar" | "bill"`): "Software" ("Eine Anbindung." / "Alle Kunden.", stone, `doc`; the second paragraph "Nach bved-Standard oder über die Heidi API." plain), "Installation" ("Regional stark." / "Bundesweit vernetzt.", ink, `phone`; the second paragraph the link "Mehr für Installationsbetriebe" → `ROUTE_INSTALLATIONSPARTNER`), "Netzwerk" ("Verbände und" / "Messdienste.", mint, `calendar`; the second paragraph ends in "Mehr zur Nachfolge" → `ROUTE_NACHFOLGE`), "Gemeinsam" ("Partnerschaft" / "auf Augenhöhe.", mint, `bill`), each with its two paragraphs.
-- `doc` (`DocTile`): "Schnittstelle", "Softwarepartner · Beispiel", the check rows "Verbrauchsdaten", "Nutzerwechsel", "Dokumente" and the value row "Standard" "bved", the result "Verbunden".
-- `phone` (`PhoneTile`): time "9:41", app "Heidi", the notification "Neuer Auftrag in Ihrer Region" / "Link öffnen und loslegen", label "Digitaler Zwilling", value "12 Wohnungen", comparisons ["Alle Zähler angelegt · Beispiel"].
-- `calendar` (`CalendarTile`): the cells "VDIV", "DEUMESS", "bved", "Software", "Installation", "Messdienst", "Verwaltung", "Verband", "Ihre Idee", `current` 8, `done` "dabei", `doing` "im Gespräch", `open` "offen", `noteDone` "{x} dabei", `noteDoing` "{x} im Gespräch".
-- `bill` (`BillTile`): "Allein" / "Mit Heidi"; rows `cut` "Eigene Schnittstellen je Messdienst" "aufwendig", `cut` "Kunden einzeln versorgen" "manuell", `ok` "Eine Anbindung für alle Kunden", `ok` "Persönlicher Ansprechpartner"; sum "Aufwand" "hoch" → "gering".
-- `rotator`: label "Was Heidi übernimmt", lead "Partner bei Heidi:", the four phrases ("Softwareanbieter", "Installationsbetriebe", "Verbände", "Messdienstanbieter"), 2300 ms.
-- `numbers`: "Partnerschaften in Zahlen"; first "VDIV" "Kooperationspartner Bund"; then "DEUMESS" "Im Verband vernetzt", "bved" "Webservices nach bved-Standard", "15.000+" "Geräte bereits installiert", "DE" "Alle Daten auf Servern in Deutschland" (all compact). No deadline figure, so no `figures(now)`.
-- `audience`: label "Ihr Wechsel"; "Sie sind Softwareanbieter?" (text, "Softwarepartner werden" → `ROUTE_SOFTWAREPARTNER`, the card form as its panel), "Sie sind Installationsbetrieb?" (text, "Installationspartner werden" → `ROUTE_INSTALLATIONSPARTNER`, image `installer`).
-- `quotes`: h2 "Gemeinsam besser." / "Unsere Kunden sagen es selbst.", keys `werne`, `vitolus`, `gerhard`.
-- `picture`: label "Heidi", caption "Gemeinsam bauen wir" / "den Messdienst von morgen.".
-- `apply` (`ApplyContent` + the form's texts): pill "Partnerschaft", h2 "Lassen Sie uns über" / "Zusammenarbeit reden.", the text "Erzählen Sie uns kurz, wer Sie sind und welche Partnerschaft Sie sich vorstellen. Wir melden uns persönlich.", three steps ("Formular senden" / "Wir melden uns bei Ihnen.", "Kennenlernen" / "Wir verstehen Ihr Geschäft.", "Loslegen" / "Mit klaren Absprachen."); the form's labels ("Unternehmen", "Ihr Name", "E-Mail", "Telefon", "Art der Partnerschaft" with "Bitte wählen", "Nachricht" + "(optional)", the consent "Ich bin einverstanden, dass Heidi Systems meine Angaben zur Kontaktaufnahme verarbeitet."), the button "Partnerschaft anfragen", "Wird gesendet …", `missing` "Bitte füllen Sie die markierten Felder aus.", `success(name)` "Danke, <name>! Wir melden uns bei Ihnen.", `sendError` "Das hat gerade nicht geklappt. Bitte versuchen Sie es noch einmal oder rufen Sie uns an:" + `PHONE` (the same texts as `/nachfolge`'s). The options' texts live in the schema module (1.3).
-- `connection` (the card form): label "Anfrage Softwarepartner" (the form's accessible name), head "Anbindung anfragen" / "Wir melden uns persönlich bei Ihnen.", labels "Unternehmen", "Ihr Name", "E-Mail", "Ihre Software" with "Bitte wählen", "Nachricht (optional)" with the placeholder "Was möchten Sie anbinden?", the same consent, the button "Anfrage senden", "Wird gesendet …", `missing` (as above), the thank-you "Danke für Ihre Anfrage." / "Ihr persönlicher Ansprechpartner meldet sich bei Ihnen.", `sendError` (as above).
-- `faq`: title "Häufige Fragen", five items: 1 and 2 plain; 3 "In der API-Dokumentation. Mehr zur Zusammenarbeit lesen Sie auf der Seite für <a>Softwarepartner</a>." (→ `ROUTE_SOFTWAREPARTNER`; "API-Dokumentation" plain); 4 "Dann lesen Sie mehr auf unserer Seite zur <a>Nachfolge</a>." (→ `ROUTE_NACHFOLGE`); 5 with `more: { text: "Mehr zu Sicherheit", href: ROUTE_SICHERHEIT }`.
-- `closing`: h2 "Lassen Sie uns zusammenarbeiten.", text "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.", the button "Demo buchen" / "Mit Ihrem Ansprechpartner" → `#kontakt`.
+- `$lib/landing/pages/dashboard/DbMain.svelte`: `<main id="content" class="db" {@attach reveal(".rv", { threshold: 0.18 })}>{@render children()}</main>` with the whole `<style>` block of `routes/(landing-page)/dashboard/+page.svelte` (tokens, `.sec`, the reveal, `.db-h2`, `.db-lead`, `.db-c`, `.db-btn`, `.okb`, `.badge`, `#hs-css`). The route's `+page.svelte` renders its sections inside `DbMain`.
+- `$lib/landing/pages/dashboard/components/HeroFrame.svelte`: the hero's `<section class="sec hero" aria-labelledby="db-h1">`, `.wrap.in`, `Pill` (live), the H1 (`data-hs`, two parts), the `.sub` paragraph (a `line` snippet), the `.ctas` with the two `.db-btn` (`primary`, `secondary`, both with `focusSignup`) and `children` (the visual); the styles of those elements move with it (`.hero`, `.in`, `h1`, `h1 span`, `.sub`, `.l1`/`.l2` above 1000 px, `.ctas`, the 640 px padding). `dashboard/sections/Hero.svelte` keeps its chips, hint and preview and passes them in.
+- `dashboard/sections/Closing.svelte`: a `content` prop (`ClosingContent`: `h2`, `h2Accent`, `text`, `submitLabel`, `chart`), default `closing` from `dashboard/content.ts`.
 
-`content.test.ts`: the H1's two texts; four list entries with known icons; four rows with distinct tags and tiles, every row with two paragraphs; the doc's four rows with one value; the phone's one chip; nine grid cells, `current` the last; the bill's rows; four rotator phrases; six figures, none counting; two audience cards with their targets, the first without an image; the quote keys exist in the shared testimonials; five FAQ items, every `<a>` in an answer a route; three steps; every `href` a route or an anchor on the page (`#kontakt`, `#inhalt`, `#faq`); the form texts equal `/nachfolge`'s where the designs agree; no empty, doubled-space or untrimmed text.
+## 1.3 Content module
 
-## 1.3 The forms: schemas and actions
+`$lib/landing/pages/auswertung/content.ts`, word for word from the design:
 
-`$lib/forms/partnershipInquiry.ts` (shared client/server, German messages in the schema):
+- `hero`: pill "Heidi Auswertung", `h1` ["Ihre Verbräuche.", "Klar ausgewertet."], `line` "Heidi wertet die Funkdaten aller Zähler für jede Liegenschaft aus.", `primary` "Demo buchen" → `DEMO_HREF`, `secondary` "Angebot einholen" → `START_HREF` (open question 1).
+- `properties`: the seven example properties with their units: "Lindenallee 12" 36, "Gartenweg 3" 12, "Bergmannstraße 4" 24, "Am Stadtpark 7" 32, "Mühlenstraße 18" 18, "Schillerhöfe" 48, "Hofstraße 21" 18 (188 in all).
+- `metrics` (the design's `MET`): `heiz` "Heizung" "kWh/m²" `[118, 96, 142, 104, 88, 131, 99]` 0 decimals; `ww` "Warmwasser" "m³/WE" `[14.2, 11.8, 17.6, 12.9, 10.4, 16.1, 13.0]` 1; `kw` "Kaltwasser" "m³/WE" `[31.5, 28.0, 38.2, 30.1, 26.4, 35.7, 29.8]` 1. `period` "Jan – Okt".
+- `mock`: label "Beispiel: Auswertung eines Portfolios mit Vergleich und Hinweisen", title "Auswertung", sub "Portfolio · 7 Liegenschaften · 188 Einheiten", chip "Jan – Okt", tag "Beispieldaten", export "Report exportieren"; the KPIs ("Heizung im Schnitt" 111 "kWh/m²" "−7 % zum Vorjahr" green, "Warmwasser im Schnitt" 13,7 "m³/WE" "−4 % zum Vorjahr" green, "Hinweise offen" 3 "1 dringend" orange); the chart head "Heizung je m² im Vergleich" and "Ø Portfolio 111"; three notes (`o` "!" "Bergmannstraße 4" "28 % über dem Portfolio-Schnitt", "↓" "Mühlenstraße 18" "Niedrigster Verbrauch je m²", "↗" "Schillerhöfe" "Warmwasser seit Februar über Vorjahr").
+- `steps`: pill "So entsteht die Auswertung" (`sparkle`), h2 "Von der Funkablesung zur Kennzahl. Automatisch.", lead; three cards "01" `signal` "Funkwerte" (text, tickers "HKV 0412 · 2.180", "WWZ 0081 · 18,4 m³"), "02" `check` "Plausibel geprüft" ("12.480 Werte plausibel", warn "3 Werte markiert"), "03" `chart` "Kennzahlen und Berichte" ("111 kWh/m² Heizung", "Report Q3 bereit").
+- `compare`: pill "Vergleich" (`building`), h2 "Welche Liegenschaft fällt aus der Reihe?", the text, the list ("Heizung je m², Wasser je Wohneinheit", "Vergleich mit dem Schnitt Ihres Portfolios", "Sortiert nach Abweichung"), the switch's name "Kennzahl", legend "über Ø" / "unter Ø", "Beispieldaten".
+- `heatmap`: pill "Jahresverlauf" (`clock`), h2 "Das ganze Jahr auf einen Blick", lead, `months` "Jan" … "Dez", `rows` (per property the twelve deviations in %, the design's `data-v`), legend "weniger als Vorjahr" / "mehr als Vorjahr", "Beispieldaten", `tip` "{v} zum Vorjahr", the `sr-only` table's caption "Heizverbrauch je Monat im Vergleich zum Vorjahr (Beispieldaten)".
+- `hints`: pill "Hinweise" (`bell`), h2 "Nicht nur Zahlen. Konkrete nächste Schritte.", the text, the list ("Leckageverdacht aus dem Nachtverbrauch", "Abweichungen zum Vorjahr", "Zähler ohne Funksignal"); the card's title "Hinweise", the filter's name "Filter" and chips (`all` "Alle" with the count, `w` "Wasser", `h` "Heizung", `t` "Technik"); five notes (kind, tone, place line, title, text, action), word for word: "Wasser · Gartenweg 3 · WE 04" "Leckageverdacht" "An 3 Tagen lief nachts durchgehend Wasser." "Spülkasten prüfen lassen" (`w`, `o`); "Heizung · Bergmannstraße 4 · November" "Verbrauch deutlich höher" "24 % mehr als im Vorjahresmonat." "Heizungseinstellung prüfen" (`h`, `o`); "Technik · Schillerhöfe · WE 17" "Zähler ohne Signal" "Seit 6 Tagen keine Funkwerte." "Heidi plant einen Termin" (`t`, `b`); "Wasser · Schillerhöfe" "Warmwasser über Vorjahr" "Seit Februar über dem Vorjahreswert." "Verlauf beobachten" (`w`, `y`); "Heizung · Mühlenstraße 18" "Verbrauch gesunken" "13 % weniger als im Vorjahr." "Kein Handlungsbedarf" (`h`, `g`); the count line "{n} Hinweise".
+- `report`: pill "Berichte" (`file`), h2 "Ein Bericht für Eigentümer. In wenigen Klicks.", the text, the formats (`file` "PDF", `chart` "Excel", `link` "ERP und CRM"); the document ("Verbrauchsbericht Q3", "Lindenallee 12 · 36 Einheiten", "Heizung" "104" "kWh/m²", "Warmwasser" "12,9" "m³/WE", "zum Vorjahr" "−7 %", the nine bar heights `[82, 74, 60, 44, 28, 18, 15, 17, 30]`, "Keine offenen Hinweise", "Alle 112 Zähler übertragen", "Beispieldaten"), the badge "Bericht erstellt".
+- `closing` (`ClosingContent`): h2 "Sehen Sie, was in Ihren" / accent "Verbräuchen steckt.", text "Wir zeigen Ihnen in einer Demo, wie Ihr Bestand in der Heidi Auswertung aussieht.", `submitLabel` "Bestand kostenlos prüfen", `chart` `/dashboard`'s.
 
-- `PARTNERSHIP_KINDS = ["Softwareanbieter", "Installationsbetrieb", "Verband oder Netzwerk", "Messdienstanbieter", "Immobilienunternehmen", "Sonstiges"]` (the design's options, word for word).
-- `partnershipInquirySchema`: `company` (2–200), `name` (2–100), `email` (≤ 254, valid), `phone` ("" or 6–40 with digits, spaces and `+ ( ) / -`, at least six digits), `kind` (one of `PARTNERSHIP_KINDS`; required, as the design's select), `message` (≤ 2000, optional), `consent` (boolean, must be true), `website` (honeypot), `_t` (render time).
+`content.test.ts`: the H1's two texts; seven properties with 188 units in all, every metric with seven values; the mock-up's "Ø Portfolio 111" and its note "28 %" agree with `metrics.ts` on the heating values; three steps with two tickers each; seven heatmap rows of twelve values, months twelve; five notes, every kind in the filter, the count "Alle 5"; nine report bars; every icon in `dashboard/icons.ts`; every `href` a route or `#start`; no empty, doubled-space or untrimmed text.
 
-`$lib/forms/connectionInquiry.ts`:
+## 1.4 Pure logic
 
-- `SOFTWARE_TYPES = ["ERP für die Immobilienwirtschaft", "CRM", "Abrechnungssoftware", "Mieter-App oder Portal", "Andere Software"]` (the design's options, word for word).
-- `connectionInquirySchema`: `company`, `name`, `email` (as above), `software` (one of `SOFTWARE_TYPES`, required), `message` (≤ 2000, optional), `consent`, `website`, `_t`.
+`$lib/landing/pages/auswertung/metrics.ts`:
 
-`$lib/server/partnershipInquiry.ts` and `$lib/server/connectionInquiry.ts`, modelled on `$lib/server/successionInquiry.ts`:
+- `average(values)`, `barScale(values, headroom)` (the design's maximum × 1.1 in the mock-up, × 1.08 in the comparison), `share(value, max)` in %.
+- `ranking(values)`: each row's rank by value, highest first (stable).
+- `deviation(value, avg)`: `Math.round((value / avg − 1) × 100)` and its text (`+28 %`, `−21 %`, `±0 %`, with `NB` before `%` as the other pages' and the design's U+2212 minus).
+- `isHigh(value, avg, factor)`: the mock-up's `> avg × 1.1`, the comparison's `> 0`.
+- `heatColor(v)`: `#3E9A57` (≤ −10), `#8AD68F` (≤ −4), `#E7ECE9` (< 4), `#F2C79B` (< 12), `#D9622B`; `heatTip(v)`: "−4 % zum Vorjahr", "+7 % …", "±0 % …".
+- `filterHints(hints, filter)`.
 
-- `emptyPartnershipForm()` / `emptyConnectionForm()` stamp `_t` and set the superforms ids `partnership` / `connection` (two forms on one page).
-- `handlePartnershipInquiry(event, { page })`: honeypot and timing (`spamTrapReason`) → `fail(400)` on invalid fields → gibberish (name, message) → `checkIPRateLimit("partnerschaften:<ip>", KITCHEN_SINK ? 50 : 3, 600)` → `sendWebhookEventOrThrow("partnershipinquiry", email, { company, name, phone, kind, message, page })` (an empty phone or message left out); a trap gets the success message and sends nothing; a failed send returns the error message with status 502 and keeps the values. Log lines carry the kind of partnership only.
-- `handleConnectionInquiry(event, { page })`: the same with `checkIPRateLimit("anbindung:<ip>", …)` and `sendWebhookEventOrThrow("connectioninquiry", email, { company, name, software, message, page })`; log lines carry the kind of software only.
-- `webhooks.ts`: the new `EventType`s `"partnershipinquiry"` and `"connectioninquiry"` with their payloads in the comment.
+`metrics.test.ts`: the average 111,1 and Bergmannstraße's +28 %, the order of each metric, the signs and `±0`, the colour steps at their borders (−10, −4, 4, 12), the filter.
 
-Tests: `partnershipInquiry.test.ts` and `connectionInquiry.test.ts` in `$lib/forms/` (a valid inquiry, trimming, every required field's message, the optional phone and its pattern, the selects' unknown and empty options, consent false) and in `$lib/server/` (the payload without the spam fields, empty optional fields left out, honeypot and timing answered with success, invalid → 400, the 502 on a failed send, the rate limit), with the webhook mocked as `/nachfolge`'s.
+## 1.5 Images
 
-## 1.4 Images
-
-- New: `$lib/assets/landing/partnerschaften/facade.webp`, the design's file as it is (1075×1080 WebP, 155 KB), imported `?enhanced`.
-- Reused: `installationspartner/facade.webp`, `vorgehen/consultation.webp`, `vorgehen/kitchen-meters.webp`, `vorgehen/installer.webp`; the video button's `region/demo-poster.jpg` and `/landing/region-demo.webm` / `.mp4` through `DemoVideoButton`'s defaults (README).
+None new. The logos and the Werne logo come from `$lib/landing/data/logos` through `/dashboard`'s `LogoStrip` and `Quote`.

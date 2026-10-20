@@ -2,37 +2,34 @@
 
 ## 2.1 The page
 
-Wrappers in `$lib/landing/pages/partnerschaften/sections/`, as `/nachfolge`'s. The page's `<main class="ps">` holds the design's page tokens for the white mock-ups (`--bg`, `--hair`), the reveal transition and `#hs-css`'s heading sizes for the section H2s with an id (not the rows', the audience cards' and the closing card's), as `/nachfolge`'s page does. `UvMain` wraps sections 1–11 (dark); the trust block stays light after it.
+`+page.svelte` renders `DbMain` (the frame, 1.2) around the sections, then `FloatingCta`, as `/dashboard`. Sections in `$lib/landing/pages/auswertung/sections/`; `/dashboard`'s are imported from `$lib/landing/pages/dashboard/sections/`.
 
 | # | Section | Design | Component | Notes |
 |---|---|---|---|---|
-| 1 | Hero | `.uv-hero` (`.uv-top.lg`) | `Hero` → `uv/Hero` `lg` + `uv/ListMock` | `wordSize` "clamp(34px, 8.6vw, 130px)"; photos `installationspartner/facade.webp` (25vw) and `vorgehen/consultation.webp` (35vw, `object-position: 60% 30%`); "Kontakt aufnehmen" → `#kontakt`, "Mehr erfahren" → `#inhalt`; the app window with the new `plug` icon |
-| 2 | Statement | `.uv-stm` | `Statement` → `uv/Statement` | |
-| 3 | Rows | `.uv-rows#inhalt` | `Rows` → `uv/Rows` | Four rows: `Doc` (stone), `Phone` (ink), `Calendar` with nine cells (mint), `Bill` (mint); links in rows 2 and 3 |
-| 4 | Rotator | `.uv-blur` | `Rotator` → `uv/Rotator` | Four phrases |
-| 5 | Numbers | `.uv-num` | `Numbers` → `uv/Numbers` | "Partnerschaften in Zahlen", the photo `kitchen-meters.webp` second; five figures around it |
-| 6 | Audience | `.uv-who` | `Audience` → `uv/Audience` | The first card's `panel` is `ConnectionForm`; the second card's photo `vorgehen/installer.webp` |
-| 6a | The card form | `.spf-w` / `.spf` / `.spf-done` (`#spf-css`) | `ConnectionForm` (page-only) | The white card (20 px radius, 22 px padding, the design's shadow); the head (18 px 600 / 13 px grey); Unternehmen / Ihr Name in two columns (one below 560 px), E-Mail, Ihre Software (select), Nachricht (2 rows, the placeholder), the consent (12.5 px, `accent-color` ink), the ink button "Anfrage senden →" (12 px radius, 15 px 600), the message line (12.5 px, red); the fields on `#F6F7F6` with a `#E1E6E3` border, white with an ink border on focus, red on error. The thank-you panel: the 52 px green circle with the tick, "Danke für Ihre Anfrage." (20 px 600), the text (15 px, 30ch, line-height 1.5 from the card) |
-| 7 | Quotes | `.uv-q` | `Quotes` → `uv/Quotes` | |
-| 8 | Picture | `.uv-pic` | `Picture` → `uv/Picture` | `partnerschaften/facade.webp` (new) |
-| 9 | Form | `.ipf#kontakt` | `Apply` → `partner/Apply` + `PartnershipForm` in `partner/FormFrame` | The section and the frame exactly as `/nachfolge`'s. The fields: Unternehmen / Ihr Name, E-Mail / Telefon, Art der Partnerschaft (select, alone in a two-column row: half the width, as the design), Nachricht (optional, three rows), the consent; the button "Partnerschaft anfragen →" |
-| 10 | FAQ | `.uv-faq#faq` | `Faq` → `uv/Faq` | Five questions; links in FAQ 3 and 4, FAQ 5's "Mehr zu Sicherheit" |
-| 11 | Closing | `.dm-end.uv-end` with `#dcta-css` | `Closing` → shared `CtaCard` + `DemoVideoButton` | `tone="glass"`, `final`, the title and the text; the video button as its `action` → `#kontakt` |
-| 12 | Trust | `.trust` | `Trust` → shared `TrustSeals` | `demoHref` `#kontakt` |
-| — | Floating CTA | `.ctab` | `FloatingCta` → shared `FloatingCta` | `href` `#kontakt`, hidden while the closing card is on screen |
+| 1 | Hero | `.db-hero` | `Hero` → `HeroFrame` + `PortfolioMock` | The line alone (`.l1`); "Demo buchen" (`.db-btn.w`, the square), "Angebot einholen →" (`.db-btn.k`) |
+| 1a | Mock-up | `.ax` (`#aw2-css`) | `PortfolioMock` | The white window (20 px radius, the design's shadow, 13 px text): the top bar (the Heidi mark on `--g1`, title and sub, the chip and the tag hidden below 1080 px, "Report exportieren" hidden below 640 px); the body in three columns (200 px KPIs, the chart, 250 px notes), one column below 1080 px with the KPIs in three columns (one below 640 px). The chart: seven rows (120 px name, bar, 40 px value; 100 / 34 px below 640 px), the dashed average line, the two high rows in `--g4`. The notes with their round badges. `role="group"` with the design's `aria-label` |
+| 2 | Logos | `.db-logos` | `/dashboard`'s `LogoStrip` | |
+| 3 | Steps | `.aw-sec` + `.af` | `Steps` (`Head` + three `.af-c`) | The centred head; three cards (one column below 1080 px): the mono number, the icon tile (`--g1`, lime icon), H3 20 px 500, the text, the two mono tickers (the second of card 2 orange) |
+| 4 | Comparison | `.aw-sec` + `.aw-2` + `.ac` | `Compare` (`Split` + the card) | Text left, card right (one column below 1080 px). The card: the switch, the unit line "kWh/m² · Jan – Okt"; seven rows (150 px name with units, bar, 52 px value, 54 px badge; 110 / 44 px and no badge below 640 px), the average line with "Ø 111" below it; the legend and "Beispieldaten" |
+| 5 | Heatmap | `.aw-sec` + `.ah` | `Heatmap` (`Head` + the grid) | The white card scrolls sideways below 720 px content width (`overflow-x: auto`, the grid's `min-width: 720px`, as the design); the month row, seven rows (150 px name, twelve 34 px cells); the legend with the five colours; the tooltip; the `sr-only` table |
+| 6 | Notes | `.aw-sec` + `.aw-2.rev` + `.afd` | `Hints` (`Split` `reverse` + the card) | Card left, text right (text first below 1080 px). The card: "Hinweise", the four chips, five notes (the coloured strip, place, title, text, the action pill; the action below the text below 640 px) |
+| 7 | Report | `.aw-sec` + `.aw-2` + `.arp` | `Report` (`Split` + the stack) | Text left with the three format pills; the stack (440 px high, 400 px below 640 px): two back pages fanned out ±5°, the document, the badge "Bericht erstellt" |
+| 8 | Quote | `.db-quote` | `/dashboard`'s `Quote` | |
+| 9 | Closing | `.db-end` | `Closing` → `/dashboard`'s `Closing` with `content` | The signup form `#start` |
+| 10 | Trust | `.trust` | `/dashboard`'s `Trust` | |
+| — | Floating CTA | `.ctab` | `/dashboard`'s `FloatingCta` | |
 
-## 2.2 Template and shared changes
+The section wrappers: `Split` holds `.aw-sec`'s padding (`clamp(80px, 9vw, 120px) 0`), the grid `minmax(0, .9fr) minmax(0, 1.1fr)` (reversed `1.1fr .9fr`), the gap `clamp(32px, 5vw, 72px)`, the text column (`Pill` with icon, `.db-h2` left-aligned, `.aw-p` 17 px / 1.6 / 46ch, `.aw-ul` with the lime ticks) and a `visual` snippet; `Head` the centred `.db-c` head. Both sections are `.sec`, so `DbMain`'s borders between sections, the H2 sizes and `#hs-css` apply as on `/dashboard`.
 
-- `uv/icons.ts` + `uv/Icon.svelte`: `plug` (the design's plug: `M7 2.5v4M13 2.5v4M5 6.5h10v3a5 5 0 0 1-10 0zM10 14.5v3`).
-- `uv/types.ts` `AudienceCard` + `uv/Audience.svelte`: an optional `panel` snippet, rendered in a plain `<div class="panel">` in place of the photo (the design's `.spf-w` sits directly in the card, no `<figure>`). Cards with `image` or `media` render as today.
+## 2.2 Shared changes
+
+Only those of 01 §1.2 (`DbMain`, `HeroFrame`, `Closing`'s `content`). No change to `$lib/landing/sections/`.
 
 ## 2.3 End states (server, no JS, reduced motion)
 
-- The hero's list finished (every status green: "Verbunden", "Zertifiziert", "Vernetzt", "Vereinbart"), the statement lit, the rotator's first phrase ("Softwareanbieter").
-- Row 1 every check, "bved" and the result "Verbunden"; row 2 the notification and the figure; row 3 "VDIV" … "Verband" "dabei", "Ihre Idee" "im Gespräch", the note "Ihre Idee im Gespräch"; row 4 "Mit Heidi" with the two ticks and "gering".
-- The figures at their values; every `.rv` block shown (the reveal only hides blocks below the fold, in the browser).
-- The video button with its poster, the video paused.
-- Both forms empty, no message. Without JS they post and the response renders the marks, the success line (`#kontakt`) or the thank-you panel (`#anbindung`).
-- With reduced motion: no loop, slide, count, video or confetti (the landing reset turns off transitions and animations; `loopInView` doesn't start; the button never plays; `confettiFrom` does nothing).
+- The mock-up: the KPIs at 111, 13,7 and 3; every bar at its width, the values at 118 … 99, the average line shown, the three notes in place.
+- The steps' tickers shown; the comparison on "Heizung", sorted (Bergmannstraße 4 first, Mühlenstraße 18 last), the bars at their widths, the badges and "Ø 111"; the heatmap's cells coloured and full size; the notes all five, "Alle 5" pressed; the report fanned out with "Bericht erstellt"; every `.rv` block shown.
+- The closing chart drawn (as on `/dashboard`).
+- Without JS the switch and the filter do nothing (their buttons stay, "Heizung" and "Alle" pressed, as the server renders them) and the heatmap has no tooltip; the `sr-only` table carries the values.
 
-Overflow checks at 320 px: the hero word (34 px, `nowrap`, inside the hero's `overflow: hidden`), the panels (only the app window below 620 px), the rows' tiles (the grid's "DEUMESS" and "Installation" in three columns, the bill's long rows), the card form (one column below 560 px), the contact form (one column), the closing card with the full-width button.
+Overflow checks at 320 px: the mock-up (one column, the top bar with only the mark and the title), the comparison's rows (110 px names with ellipsis), the heatmap (scrolls inside its card, the page doesn't), the notes' chips (wrap), the report stack (`min(340px, 86%)`).

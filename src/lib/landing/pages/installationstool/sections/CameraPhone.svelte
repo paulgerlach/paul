@@ -2,16 +2,36 @@
   Row 2's tile (the design's .uv-phone.it-ph with .it-cam): the phone's
   camera takes the old meter, then the new one. The corners focus, the flash
   fires, a thumbnail drops into the strip, and the flat ends "digitalisiert".
-  Server-rendered done (the design's reduced-motion state). The phone is
-  centred and whole, as #it-css intends; the design's template script drops
-  its .it-ph class when the row shows (plan, Key decisions). The tile is
-  hidden from screen readers (Rows).
+  A pass every 9.5 s while at least 40 % of it is in view; stopping leaves
+  it done. Server-rendered done (the design's reduced-motion state). The
+  phone is centred and whole, as #it-css intends; the design's template
+  script drops its .it-ph class when the row shows (plan, Key decisions).
+  The tile is hidden from screen readers (Rows).
 -->
 <script lang="ts">
-	import { CAMERA_END, type CameraState } from "../camera";
+	import { loopInView } from "$lib/landing/attachments/loopInView";
+	import {
+		CAMERA_END,
+		CAMERA_EVERY,
+		CAMERA_START,
+		CAMERA_STEPS,
+		type CameraState,
+	} from "../camera";
 	import { camera } from "../content";
 
 	let cam = $state<CameraState>(CAMERA_END);
+
+	/** One pass of the design's timeline; stopping leaves the end state. */
+	function run() {
+		cam = CAMERA_START;
+		const timers = CAMERA_STEPS.map(({ at, state }) =>
+			setTimeout(() => (cam = state), at),
+		);
+		return () => {
+			timers.forEach(clearTimeout);
+			cam = CAMERA_END;
+		};
+	}
 </script>
 
 {#snippet oldMeter()}
@@ -81,7 +101,10 @@
 	</svg>
 {/snippet}
 
-<div class="phone it-ph">
+<div
+	class="phone it-ph"
+	{@attach loopInView({ run, every: CAMERA_EVERY, threshold: 0.4 })}
+>
 	<div class="pt"><span>{camera.time}</span><span>{camera.app}</span></div>
 	<div
 		class={[

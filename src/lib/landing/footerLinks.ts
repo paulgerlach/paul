@@ -2,6 +2,7 @@ import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
 	ROUTE_ASSET_MANAGER,
 	ROUTE_BLOG,
+	ROUTE_AUSWERTUNG,
 	ROUTE_DASHBOARD,
 	ROUTE_EINSPARRECHNER,
 	ROUTE_ENERGIEAUSWEIS,
@@ -80,7 +81,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Dashboard", href: ROUTE_DASHBOARD },
 			{ text: "Demo buchen", href: DEMO_HREF },
-			{ text: "Auswertung" },
+			{ text: "Auswertung", href: ROUTE_AUSWERTUNG },
 			{ text: "Schnittstellen", href: ROUTE_SCHNITTSTELLEN },
 			{ text: "Installationstool" },
 		],

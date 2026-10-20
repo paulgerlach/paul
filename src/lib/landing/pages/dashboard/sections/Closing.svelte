@@ -3,7 +3,8 @@
   page's signup form (in place of the design's own e-mail form) and the
   animated chart below. It's the page's only form, so it carries the `start`
   anchor. "Lieber direkt eine Demo buchen" is left out while DEMO_HREF is
-  this form (plan README, open question 2).
+  this form (plan README, open question 2). /auswertung passes its own texts
+  as `content`.
 -->
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";
@@ -13,15 +14,21 @@
 	import { tweenNumber } from "$lib/landing/motion";
 	import CtaCard from "$lib/landing/sections/CtaCard.svelte";
 	import { stepCurve } from "../chart";
-	import { closing } from "../content";
+	import { closing, type ClosingContent } from "../content";
 	import { enterView } from "$lib/landing/attachments/enterView";
 
-	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
+	let {
+		form,
+		content = closing,
+	}: { form: SuperValidated<SwitchInquiry>; content?: ClosingContent } =
+		$props();
 
 	const W = 1000;
 	const H = 210;
-	let current = $state(closing.chart.current.slice());
-	let previous = $state(closing.chart.previous.slice());
+	// svelte-ignore state_referenced_locally (the content only seeds the chart)
+	let current = $state(content.chart.current.slice());
+	// svelte-ignore state_referenced_locally
+	let previous = $state(content.chart.previous.slice());
 	/** Share of the width drawn (the grow-in; all on the server). */
 	let drawn = $state(1);
 	const line = $derived(stepCurve(current, W));
@@ -36,7 +43,7 @@
 	function drift() {
 		const fromA = current.slice();
 		const fromB = previous.slice();
-		const { current: a, previous: b } = closing.chart;
+		const { current: a, previous: b } = content.chart;
 		const toA = a.map((v) => v + (Math.random() - 0.5) * 14);
 		toA[toA.length - 1] = a[a.length - 1] - Math.random() * 10;
 		const toB = b.map((v) => v + (Math.random() - 0.5) * 8);
@@ -50,9 +57,9 @@
 <div class="closing">
 	<CtaCard
 		id="db-closing-h"
-		title={closing.h2}
-		accent={closing.h2Accent}
-		text={closing.text}
+		title={content.h2}
+		accent={content.h2Accent}
+		text={content.text}
 		sectionId="start"
 		final
 	>
@@ -61,7 +68,7 @@
 				{form}
 				placement="final"
 				inputId="email-bottom"
-				submitLabel={closing.submitLabel}
+				submitLabel={content.submitLabel}
 			/>
 		{/snippet}
 		{#snippet visual()}

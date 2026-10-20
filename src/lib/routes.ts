@@ -17,6 +17,7 @@ export const ROUTE_SELBSTABRECHNUNG = "/selbstabrechnung";
 export const ROUTE_VORGEHEN = "/vorgehen";
 export const ROUTE_MIETERPORTAL = "/mieterportal";
 export const ROUTE_DASHBOARD = "/dashboard";
+export const ROUTE_AUSWERTUNG = "/auswertung";
 export const ROUTE_SICHERHEIT = "/sicherheit";
 export const ROUTE_VERBRAUCHSINFORMATION = "/verbrauchsinformation";
 export const ROUTE_SCHNITTSTELLEN = "/schnittstellen";

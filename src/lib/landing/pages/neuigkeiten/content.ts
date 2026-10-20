@@ -9,6 +9,7 @@
  */
 import type { SplitHeading } from "$lib/landing/types";
 import {
+	ROUTE_AUSWERTUNG,
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
 	ROUTE_FRISTENRECHNER,
@@ -60,7 +61,7 @@ const featuredStory: Story = {
 		"Heidi Auswertung: Verbrauch, Kosten und Auffälligkeiten auf einen Blick",
 	text: "Kennzahlen je Liegenschaft, Vergleich zum Vorjahr und Hinweise wie der Leckage-Wächter, direkt aus den Funkdaten.",
 	photo: "office",
-	// 1qV4qjvQqWxzL76fobN5Hs ("Zur Auswertung"): no page yet.
+	more: { text: "Zur Auswertung", href: ROUTE_AUSWERTUNG },
 };
 
 export const hero = {

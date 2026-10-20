@@ -86,9 +86,8 @@ test("the footer's Neuigkeiten link and internal links resolve", async ({
 
 test("stories and rows link only where a page exists", async ({ page }) => {
 	await page.goto(PATH);
-	// The featured Auswertung has no page yet: not a link.
 	await expect(page.locator(".feat")).toHaveCount(1);
-	await expect(page.locator("a.feat")).toHaveCount(0);
+	await expect(page.locator("a.feat")).toHaveAttribute("href", "/auswertung");
 	expect(await hrefs(news(page).locator("a.card"))).toEqual([
 		"/dashboard",
 		"/funktionen",

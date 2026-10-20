@@ -5,10 +5,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { countUp } from "$lib/landing/attachments/countUp";
-	import { focusSignup } from "$lib/landing/cta";
 	import { de } from "../chart";
 	import Icon from "../components/Icon.svelte";
-	import Pill from "../components/Pill.svelte";
+	import HeroFrame from "../components/HeroFrame.svelte";
 	import { hero } from "../content";
 	import DashboardDemo from "../demo/DashboardDemo.svelte";
 
@@ -17,113 +16,67 @@
 	onMount(() => (mounted = true));
 </script>
 
-<section class="sec hero" aria-labelledby="db-h1">
-	<div class="wrap in">
-		<Pill text={hero.pill} live class="rv" />
-		<h1 id="db-h1" data-hs class="rv">
-			{hero.h1[0]}
-			<span>{hero.h1[1]}</span>
-		</h1>
-		<p class="sub rv">
-			<span class="l1">{hero.line1}</span>
-			<span class="l2"
-				>{hero.line2}
-				<span class="chip v"
-					><Icon name={usage.icon} />{usage.text}<span
-						class="pop"
-						aria-hidden="true"
-						><span class="bars"
-							>{#each usage.bars as h, i (i)}<i
-									class={[i === usage.bars.length - 1 && "c"]}
-									style:--h="{h}%"
-								></i>{/each}</span
-						><small>{usage.caption}</small></span
-					></span
-				>,
-				<span class="chip k"
-					><Icon name={costs.icon} />{costs.text}<span
-						class="pop"
-						aria-hidden="true"
-						><b
-							class="n"
-							{@attach countUp({
-								to: costs.count,
-								duration: 900,
-								onView: false,
-								hoverTarget: ".chip",
-								hoverDelay: 0,
-								format: (n) => `${de(Math.round(n))} €`,
-							})}>{de(costs.count)} €</b
-						><small>{costs.caption}</small></span
-					></span
-				>
-				und
-				<span class="chip b"
-					><Icon name={alerts.icon} />{alerts.text}<span
-						class="pop"
-						aria-hidden="true"
-						><span class="nt"
-							><i></i><span
-								><b>{alerts.title}</b><small>{alerts.sub}</small></span
-							></span
+<HeroFrame
+	pill={hero.pill}
+	h1={hero.h1}
+	primary={hero.primary}
+	secondary={hero.secondary}
+>
+	{#snippet line()}
+		<span class="l1">{hero.line1}</span>
+		<span class="l2"
+			>{hero.line2}
+			<span class="chip v"
+				><Icon name={usage.icon} />{usage.text}<span
+					class="pop"
+					aria-hidden="true"
+					><span class="bars"
+						>{#each usage.bars as h, i (i)}<i
+								class={[i === usage.bars.length - 1 && "c"]}
+								style:--h="{h}%"
+							></i>{/each}</span
+					><small>{usage.caption}</small></span
+				></span
+			>,
+			<span class="chip k"
+				><Icon name={costs.icon} />{costs.text}<span
+					class="pop"
+					aria-hidden="true"
+					><b
+						class="n"
+						{@attach countUp({
+							to: costs.count,
+							duration: 900,
+							onView: false,
+							hoverTarget: ".chip",
+							hoverDelay: 0,
+							format: (n) => `${de(Math.round(n))} €`,
+						})}>{de(costs.count)} €</b
+					><small>{costs.caption}</small></span
+				></span
+			>
+			und
+			<span class="chip b"
+				><Icon name={alerts.icon} />{alerts.text}<span
+					class="pop"
+					aria-hidden="true"
+					><span class="nt"
+						><i></i><span><b>{alerts.title}</b><small>{alerts.sub}</small></span
 						></span
 					></span
-				>.</span
-			>
+				></span
+			>.</span
+		>
+	{/snippet}
+	<div class="preview rv">
+		<p class={["hint", mounted && "on"]} aria-hidden="true">
+			<span class="pulse"></span>{hero.hint}
 		</p>
-		<div class="ctas rv">
-			<a class="db-btn w" href={hero.primary.href} onclick={focusSignup}
-				><i class="sq" aria-hidden="true"></i>{hero.primary.text}</a
-			>
-			<a class="db-btn k" href={hero.secondary.href} onclick={focusSignup}
-				>{hero.secondary.text} <span class="ar" aria-hidden="true">→</span></a
-			>
-		</div>
-		<div class="preview rv">
-			<p class={["hint", mounted && "on"]} aria-hidden="true">
-				<span class="pulse"></span>{hero.hint}
-			</p>
-			<DashboardDemo label={hero.previewLabel} />
-		</div>
+		<DashboardDemo label={hero.previewLabel} />
 	</div>
-</section>
+</HeroFrame>
 
 <style>
-	.hero {
-		padding-top: 84px;
-		overflow: hidden;
-	}
-	.in {
-		text-align: center;
-	}
-	.hero h1 {
-		font-size: clamp(40px, 6vw, 80px);
-		line-height: 1;
-		letter-spacing: -0.045em;
-		font-weight: 500;
-		margin-top: 26px;
-	}
-	.hero h1 span {
-		display: block;
-		color: #8a9792;
-	}
-	.sub {
-		color: var(--muted);
-		font-size: clamp(16px, 1.6vw, 20px);
-		line-height: 1.6;
-		max-width: 760px;
-		margin: 24px auto 0;
-	}
-	@media (min-width: 1000px) {
-		.sub {
-			max-width: none;
-		}
-		.l1,
-		.l2 {
-			display: block;
-			white-space: nowrap;
-		}
-	}
 	.chip {
 		font-size: 0.92em;
 		display: inline-flex;
@@ -326,13 +279,6 @@
 			display: none;
 		}
 	}
-	.ctas {
-		display: flex;
-		justify-content: center;
-		gap: 12px;
-		margin-top: 36px;
-		flex-wrap: wrap;
-	}
 	.preview {
 		position: relative;
 		margin-top: 64px;
@@ -368,9 +314,6 @@
 		}
 	}
 	@media (max-width: 640px) {
-		.hero {
-			padding-top: 56px;
-		}
 		.hint {
 			margin-top: -10px;
 			font-size: 12.5px;

@@ -501,12 +501,20 @@ export const roadmap = {
 	},
 };
 
-export const closing = {
+export type ClosingContent = {
+	h2: string;
+	h2Accent: string;
+	text: string;
+	submitLabel: string;
+	/** SVG y in a 1000×210 box (lower is better). */
+	chart: { current: number[]; previous: number[] };
+};
+
+export const closing: ClosingContent = {
 	h2: "Sehen Sie Ihren Bestand",
 	h2Accent: "in einem Dashboard.",
 	text: "Wir prüfen Ihren Bestand kostenlos und zeigen Ihnen, wie er in Heidi aussieht.",
 	submitLabel: "Bestand kostenlos prüfen",
-	/** SVG y in a 1000×210 box (lower is better). */
 	chart: {
 		current: [150, 120, 135, 96, 110, 82, 90, 70, 76, 58, 64, 46],
 		previous: [140, 150, 128, 140, 124, 132, 118, 126, 112, 118, 108, 112],

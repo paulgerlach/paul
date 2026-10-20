@@ -46,6 +46,7 @@ describe("/neuigkeiten content", () => {
 			"Mehr erfahren",
 			"Mehr erfahren",
 		]);
+		expect(hero.featured.story.more?.text).toBe("Zur Auswertung");
 		expect(news.blog.text).toBe("Zum Blog mit allen Artikeln");
 	});
 

@@ -15,7 +15,7 @@ export const PAGES = [
 	"/fragebogen",
 ];
 
-// /funktionen is a new design (new-landing-page-plan/), so it has no Next
+// /funktionen is a new design (not a port), so it has no Next
 // visual baseline; the smoke run still checks it.
 export const VISUAL_PAGES = PAGES.filter((path) => path !== "/funktionen");
 

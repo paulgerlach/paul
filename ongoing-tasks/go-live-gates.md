@@ -1,40 +1,16 @@
-# Phase 4: QA, tests and go-live
+# Go-live gates of the new landing pages
 
-Every page is indexed and in the sitemap after the cutover (decision of 2026-10-17). So every go-live gate below, this page's and the carried-over ones, must be done before the cutover PR (#440) merges; the `noindex` the new pages carry today only lasts until then.
+Every page is indexed and in the sitemap after the cutover (decision of 2026-10-17). So every gate below must be done before the cutover PR (#440) merges; the `noindex` the new pages carry today only lasts until then. At the cutover each page loses `noindex` and gets its sitemap entry (cities: `live: true` in `cities/index.ts`).
 
-## 4.1 Checks
+The sections keep the numbers they had in the landing plans (§4.4 … §4.41), because `CLAUDE.md` and the gates refer to each other by them. A gate's "its §4.1", "its open question" or "README" means the page's own plan, which is in git history at the commit named in the gate (and in that page's `CLAUDE.md` paragraph). A new page's gate goes in at the top as §4.3, §4.2 …, or renumber everything in one commit with `CLAUDE.md`.
 
-- [x] `bun run dev` → `http://localhost:5173/installationstool`: the page with the landing header and footer; the footer's "Installationstool" lands here from every landing page, and so do `/installationspartner`'s FAQ 3 ("Mehr zum Installationstool"), `/neuigkeiten`'s story ("Mehr erfahren") and `/vorgehen`'s feature card
-- [x] Visual match with the design at 1440, 1100, 980, 700 and 375 px (section heights with reduced motion; expected differences: the site nav and footer, the closing card with the form in place of the video button, row 2's tile with `.it-ph` kept)
-- [x] No horizontal overflow from 320 to 1640 px (the hero word, the camera phone, the twelve-cell grid)
-- [x] The camera takes its two photos while in view and stops in its end state when it leaves; the template's loops run as on `/verbaende`
-- [x] Every "Demo buchen" (hero, rows, first card, trust block, floating CTA, nav CTA) lands on the closing card's form with the e-mail field focused; "Mehr erfahren" on `#inhalt`; "Häufige Fragen" on `#faq`; "Partner werden" and "Installationspartner werden" on `/installationspartner`; "Mehr zu Sicherheit" (FAQ, trust block) on `/sicherheit`
-- [x] The signup form stores a lead with `source: "installationstool"` and sends `switchinquiry` (local sink)
-- [ ] Chrome, Safari and Firefox on desktop; iOS Safari
-- [ ] Keyboard-only through the page (the CTAs, the FAQ, the signup form); focus ring visible
-- [ ] Screen reader: one H1 "Das Heidi Installationstool für Installateure"; the tiles skipped; the hero list read through its plain list; the FAQ's questions; the form's errors announced
-- [x] Reduced motion: nothing loops, counts or lights up; every block in its end state
-- [x] JS disabled: every section readable in its end state, the signup form posts
-- [ ] Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
-- [x] No hydration warnings or console errors
+The quotes, the customer logos and the security block (`TrustSeals`) are shared, so their items are settled once (§4.40) and the other gates point there.
 
-## 4.2 Tests
+## 4.4 `/installationstool`
 
-- **Vitest:** `content.test.ts` (01 §1.2), `camera.test.ts` (01 §1.3).
-- **Playwright `e2e/installationstool.e2e.ts`** (13 tests), modelled on `e2e/verbaende.e2e.ts`: 200 with the landing cache header, one `<h1>`, no site `#header`, `noindex`, self-canonical, **not** in `sitemap.xml` (exact `<loc>`), no overflow at 375 and 320 px; the footer link and the three links from `/installationspartner`, `/neuigkeiten` and `/vorgehen`; every internal link resolves; the CTAs' targets (`#start`, `/installationspartner`, `/sicherheit`) and the nav CTA; the FAQPage JSON-LD; the hero list's replay; the camera's pass (installed clock: empty, then focus, photo 2, done) and its end state on leaving; the signup (lead with the source, the webhook at the sink); without JS (every block in its end state, the form posts); reduced motion (the camera and the template's tiles in their end states, nothing changes over 10 s); no console errors.
-- **`e2e/installationspartner.e2e.ts`**, **`e2e/neuigkeiten.e2e.ts`**, **`e2e/vorgehen.e2e.ts`** and their `content.test.ts`: the links now lead to `/installationstool`.
+From the `/installationstool` plan (`6138407c`). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap; until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the three links from `/installationspartner`, `/neuigkeiten` and `/vorgehen` stay, for review):
 
-## 4.3 Changes to `svelte-migration-plan/` and `CLAUDE.md`
-
-1. `00-inventory.md`: an `/installationstool` row (added with the tests); the `/api-dokumentation` row points at its plan in git history (`536f39f3`) (done in the planning commit).
-2. `10-qa-and-cutover.md`: `/installationstool` excluded from the Next-baseline visual loop and listed with the new pages in the SEO diff; the post-deploy check needs nothing new (the same signup action as `/messdienstwechsel`); `/funktionen`'s gate is §4.33 now (done in the planning commit).
-3. `CLAUDE.md`: an `/installationstool` paragraph (planned now, rewritten once built); `/api-dokumentation`'s plan in git history; the gate numbers of the other pages moved up by one (done in the planning commit); the route and the page folder in the Layout section; `/installationspartner`'s, `/neuigkeiten`'s and `/vorgehen`'s paragraphs once their links exist.
-4. README "Implementation notes".
-
-## 4.4 Go-live gate: `/installationstool`
-
-The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap; until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the three links from `/installationspartner`, `/neuigkeiten` and `/vorgehen` stay, for review):
-
+- [ ] Open checks from its §4.1 (built and tested; e2e `e2e/installationstool.e2e.ts`, 13 tests): Chrome, Safari, Firefox and iOS Safari; keyboard-only (the CTAs, the FAQ, the signup form; focus ring visible); a screen reader (one H1 "Das Heidi Installationstool für Installateure"; the tiles skipped; the hero list read through its plain list; the FAQ's questions; the form's errors announced); Lighthouse (mobile): Performance ≥ 90, Accessibility ≥ 95, CLS ≤ 0.05
 - [ ] **The product as described** (open question 2, Risks), signed off by product: "Ein Link, ein digitaler Zwilling, zwei Fotos pro Zähler.", "Der Installateur bekommt für den Auftrag einen Link von Heidi. Darüber sieht er das Gebäude als digitalen Zwilling.", "Jede Wohnung und jeder Zähler sind dort schon angelegt.", the two photos ("den alten Zähler mit seinem Endstand und danach den neuen Zähler"), "Ohne Klemmbrett und ohne Abtippen im Büro.", "Am Ende entsteht daraus das Übergabeprotokoll.", the FAQ's six answers ("Heidis eigene Installationsflotte und regionale Installationsbetriebe, die Heidi schult und zertifiziert."); align with `/installationspartner` (§4.11), `/vorgehen`'s card (§4.34), `/neuigkeiten`'s story "Installationstool: Ein Termin in der Wohnung, alles digital dokumentiert" (§4.21) and `/funktionen` (§4.33)
 - [ ] **"Einmal in die Wohnung. Dann nie wieder."** (Risks), signed off by legal and product: the H2 of row 4 and the closing card, the lead, the statement, "Für die Ablesung muss niemand mehr in die Wohnung. Das freut Ihre Mieter und spart Ihnen Termine.", FAQ 4 "Für die Ablesung nicht. Heidi liest die Funkzähler aus der Ferne ab.", the figure "1 Termin in der Wohnung" and "Termine in der Wohnung: mehrere → einer"
 - [ ] Company claims confirmed: "92 % der Installationen gelingen beim ersten Termin" (also §4.11, §4.23–4.24, §4.33, §4.34), "Sie haben einen persönlichen Ansprechpartner für Ihren ganzen Bestand.", "Heidi plant die Montage, informiert Ihre Mieter und dokumentiert jeden Zähler mit dem Installationstool.", "Wir schulen Ihr Team und stellen Ihnen das Installationstool."; the data answer "Auf Servern in Deutschland, verarbeitet nach DSGVO und BDSG." (align with `/sicherheit`, §4.30)
@@ -43,12 +19,12 @@ The page goes live with the cutover. Every item must be done before the cutover,
 - [ ] The quotes (Gerhard, Werne, Vitolus): shared with the other `uv` pages, covered by their gates
 - [ ] Security block statements: covered by the region pages' item in §4.40 (same `TrustSeals`)
 - [ ] The CTA targets decided (open question 1): every "Demo buchen" → the signup form (`#start`); "Partner werden" → `/installationspartner`
-- [ ] The `uv` buttons' case decided (README "Implementation notes"): today's designs draw `.uv-btn` without the uppercase and letter-spacing the shared `UvMain` gives every `uv` page; either the template follows the designs (all ten pages at once) or the designs follow the pages
+- [ ] The `uv` buttons' case decided: today's designs draw `.uv-btn` without the uppercase and letter-spacing the shared `UvMain` gives every `uv` page (from the `/verbrauchsinformation` design, `f2f174eb`), so below about 400 px "Demo buchen" and its neighbour wrap (on `/installationstool` the hero is 53.5 px and the rows 211.8 px taller at 320 px); either the template follows the designs (all `uv` pages at once) or the designs follow the pages
 - [ ] Page copy, SEO title and description signed off by the content owner
 - [ ] Slug decided: `/installationstool` (open question 3, not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.5 Carried over: `/api-dokumentation` go-live gate
+## 4.5 `/api-dokumentation`
 
 From the `/api-dokumentation` plan (`536f39f3`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the four links from `/softwarepartner`, `/partnerschaften` and `/neuigkeiten` stay, for review):
 
@@ -64,7 +40,7 @@ From the `/api-dokumentation` plan (`536f39f3`, §4.4; its open questions are qu
 - [ ] Slug decided: `/api-dokumentation` (its open question 3, not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.6 Carried over: `/auswertung` go-live gate
+## 4.6 `/auswertung`
 
 From the `/auswertung` plan (`0c2a73c2`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and `/neuigkeiten`'s featured story stay, for review):
 
@@ -79,7 +55,7 @@ From the `/auswertung` plan (`0c2a73c2`, §4.4; its open questions are quoted he
 - [ ] Slug decided: `/auswertung` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.7 Carried over: `/partnerschaften` go-live gate
+## 4.7 `/partnerschaften`
 
 From the `/partnerschaften` plan (`06d07e94`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link, `/neuigkeiten`'s story and `/nachfolge`'s card stay, for review):
 
@@ -99,7 +75,7 @@ From the `/partnerschaften` plan (`06d07e94`, §4.4; its open questions are quot
 - [ ] Slug decided: `/partnerschaften` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.8 Carried over: `/nachfolge` go-live gate
+## 4.8 `/nachfolge`
 
 From the `/nachfolge` plan (`751eb735`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link, `/neuigkeiten`'s story and `/partnerschaften`'s links stay, for review):
 
@@ -122,7 +98,7 @@ From the `/nachfolge` plan (`751eb735`, §4.4; its open questions are quoted her
 - [ ] Slug decided: `/nachfolge` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.9 Carried over: `/verbaende` go-live gate
+## 4.9 `/verbaende`
 
 From the `/verbaende` plan (`e39ce7b5`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -139,7 +115,7 @@ From the `/verbaende` plan (`e39ce7b5`, §4.4; its open questions are quoted her
 - [ ] Slug decided: `/verbaende` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.10 Carried over: `/softwarepartner` go-live gate
+## 4.10 `/softwarepartner`
 
 From the `/softwarepartner` plan (`2d95384e`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -158,7 +134,7 @@ From the `/softwarepartner` plan (`2d95384e`, §4.4; its open questions are quot
 - [ ] Slug decided: `/softwarepartner` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.11 Carried over: `/installationspartner` go-live gate
+## 4.11 `/installationspartner`
 
 From the `/installationspartner` plan (`20093530`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -178,7 +154,7 @@ From the `/installationspartner` plan (`20093530`, §4.4; its open questions are
 - [ ] Slug decided: `/installationspartner` (not confirmed)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.12 Carried over: `/messdienstanbieter-vergleich` go-live gate
+## 4.12 `/messdienstanbieter-vergleich`
 
 From the `/messdienstanbieter-vergleich` plan (`95202c27`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the links on the other pages stay, for review):
 
@@ -200,7 +176,7 @@ From the `/messdienstanbieter-vergleich` plan (`95202c27`, §4.4; its open quest
 - [ ] Make.com `switchinquiry` route live and able to tell `/messdienstanbieter-vergleich` leads apart (`page: "/messdienstanbieter-vergleich"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.13 Carried over: `/heizkostenabrechnung-pruefen` go-live gate
+## 4.13 `/heizkostenabrechnung-pruefen`
 
 From the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the links on the other pages stay, for review):
 
@@ -220,7 +196,7 @@ From the `/heizkostenabrechnung-pruefen` plan (`b27b1e25`, §4.4; its open quest
 - [ ] Make.com `switchinquiry` route live and able to tell `/heizkostenabrechnung-pruefen` leads apart (`page: "/heizkostenabrechnung-pruefen"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.14 Carried over: `/portfolio-checker` go-live gate
+## 4.14 `/portfolio-checker`
 
 From the `/portfolio-checker` plan (`0c44797e`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the links on the other pages stay, for review):
 
@@ -239,7 +215,7 @@ From the `/portfolio-checker` plan (`0c44797e`, §4.4; its open questions are qu
 - [ ] Make.com `switchinquiry` route live and able to tell `/portfolio-checker` leads apart (`page: "/portfolio-checker"`); a lead from here asks for a portfolio evaluation: route it to whoever does them
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.15 Carried over: `/energieausweis` go-live gate
+## 4.15 `/energieausweis`
 
 From the `/energieausweis` plan (`3d31e880`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -256,7 +232,7 @@ From the `/energieausweis` plan (`3d31e880`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/energieausweis` leads apart (`page: "/energieausweis"`); a lead from here asks for an Energieausweis, not for a meter switch: route it to whoever handles the certificates
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.16 Carried over: `/muster-kuendigung` go-live gate
+## 4.16 `/muster-kuendigung`
 
 From the `/muster-kuendigung` plan (`754932dc`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and the links on the other pages stay, for review):
 
@@ -273,7 +249,7 @@ From the `/muster-kuendigung` plan (`754932dc`, §4.4; its open questions are qu
 - [ ] Make.com `switchinquiry` route live and able to tell `/muster-kuendigung` leads apart (`page: "/muster-kuendigung"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.17 Carried over: `/presse` go-live gate
+## 4.17 `/presse`
 
 From the `/presse` plan (`1e76f838`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -291,7 +267,7 @@ From the `/presse` plan (`1e76f838`, §4.4; its open questions are quoted here).
 - [ ] Make.com `switchinquiry` route live and able to tell `/presse` leads apart (`page: "/presse"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.18 Carried over: `/einsparrechner` go-live gate
+## 4.18 `/einsparrechner`
 
 From the `/einsparrechner` plan (`f0d83e12`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -309,7 +285,7 @@ From the `/einsparrechner` plan (`f0d83e12`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/einsparrechner` leads apart (`page: "/einsparrechner"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.19 Carried over: `/hkvo-leitfaden` go-live gate
+## 4.19 `/hkvo-leitfaden`
 
 From the `/hkvo-leitfaden` plan (`a480e2cc`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -326,7 +302,7 @@ From the `/hkvo-leitfaden` plan (`a480e2cc`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/hkvo-leitfaden` leads apart (`page: "/hkvo-leitfaden"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.20 Carried over: `/fristenrechner` go-live gate
+## 4.20 `/fristenrechner`
 
 From the `/fristenrechner` plan (`b973b162`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -343,7 +319,7 @@ From the `/fristenrechner` plan (`b973b162`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/fristenrechner` leads apart (`page: "/fristenrechner"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.21 Carried over: `/neuigkeiten` go-live gate
+## 4.21 `/neuigkeiten`
 
 From the `/neuigkeiten` plan (`50f63909`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -361,7 +337,7 @@ From the `/neuigkeiten` plan (`50f63909`, §4.4; its open questions are quoted h
 - [ ] Make.com `switchinquiry` route live and able to tell `/neuigkeiten` leads apart (`page: "/neuigkeiten"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.22 Carried over: `/private-vermieter` go-live gate
+## 4.22 `/private-vermieter`
 
 From the `/private-vermieter` plan (`5ae8b941`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -382,7 +358,7 @@ From the `/private-vermieter` plan (`5ae8b941`, §4.4; its open questions are qu
 - [ ] Make.com `switchinquiry` route live and able to tell `/private-vermieter` leads apart (`page: "/private-vermieter"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.23 Carried over: `/asset-manager` go-live gate
+## 4.23 `/asset-manager`
 
 From the `/asset-manager` plan (`c4a84443`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -401,7 +377,7 @@ From the `/asset-manager` plan (`c4a84443`, §4.4; its open questions are quoted
 - [ ] Make.com `switchinquiry` route live and able to tell `/asset-manager` leads apart (`page: "/asset-manager"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.24 Carried over: `/wohnungsunternehmen` go-live gate
+## 4.24 `/wohnungsunternehmen`
 
 From the `/wohnungsunternehmen` plan (`4f1f649e`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -420,7 +396,7 @@ From the `/wohnungsunternehmen` plan (`4f1f649e`, §4.4; its open questions are 
 - [ ] Make.com `switchinquiry` route live and able to tell `/wohnungsunternehmen` leads apart (`page: "/wohnungsunternehmen"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.25 Carried over: `/weg-verwaltung` go-live gate
+## 4.25 `/weg-verwaltung`
 
 From the `/weg-verwaltung` plan (`a4de1116`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -440,7 +416,7 @@ From the `/weg-verwaltung` plan (`a4de1116`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/weg-verwaltung` leads apart (`page: "/weg-verwaltung"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.26 Carried over: `/mietverwaltung` go-live gate
+## 4.26 `/mietverwaltung`
 
 From the `/mietverwaltung` plan (`a3410048`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -460,7 +436,7 @@ From the `/mietverwaltung` plan (`a3410048`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/mietverwaltung` leads apart (`page: "/mietverwaltung"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.27 Carried over: `/hausverwaltung` go-live gate
+## 4.27 `/hausverwaltung`
 
 From the `/hausverwaltung` plan (`0b7f19b2`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and `/verbrauchsinformation`'s button stay, for review):
 
@@ -480,7 +456,7 @@ From the `/hausverwaltung` plan (`0b7f19b2`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/hausverwaltung` leads apart (`page: "/hausverwaltung"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.28 Carried over: `/schnittstellen` go-live gate
+## 4.28 `/schnittstellen`
 
 From the `/schnittstellen` plan (`042eb570`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link and `/funktionen`'s card stay, for review):
 
@@ -498,7 +474,7 @@ From the `/schnittstellen` plan (`042eb570`, §4.4; its open questions are quote
 - [ ] Make.com `switchinquiry` route live and able to tell `/schnittstellen` leads apart (`page: "/schnittstellen"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.29 Carried over: `/verbrauchsinformation` go-live gate
+## 4.29 `/verbrauchsinformation`
 
 From the `/verbrauchsinformation` plan (`3745dd0c`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and "Mehr zur uVI" links stay, for review):
 
@@ -516,7 +492,7 @@ From the `/verbrauchsinformation` plan (`3745dd0c`, §4.4; its open questions ar
 - [ ] Make.com `switchinquiry` route live and able to tell `/verbrauchsinformation` leads apart (`page: "/verbrauchsinformation"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.30 Carried over: `/sicherheit` go-live gate
+## 4.30 `/sicherheit`
 
 From the `/sicherheit` plan (`334b2c2d`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer, trust block and FAQ links stay, for review):
 
@@ -531,7 +507,7 @@ From the `/sicherheit` plan (`334b2c2d`, §4.4; its open questions are quoted he
 - [ ] Make.com `switchinquiry` route live and able to tell `/sicherheit` leads apart (`page: "/sicherheit"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.31 Carried over: `/dashboard` go-live gate
+## 4.31 `/dashboard`
 
 From the `/dashboard` plan (`83433739`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/hilfe` links stay, for review):
 
@@ -549,7 +525,7 @@ From the `/dashboard` plan (`83433739`, §4.4; its open questions are quoted her
 - [ ] Make.com `switchinquiry` route live and able to tell `/dashboard` leads apart (`page: "/dashboard"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.32 Carried over: `/mieterportal` go-live gate
+## 4.32 `/mieterportal`
 
 From the `/mieterportal` plan (`346e9174`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/vorgehen` links stay, for review):
 
@@ -568,7 +544,7 @@ From the `/mieterportal` plan (`346e9174`, §4.4; its open questions are quoted 
 - [ ] If a booking URL exists by then: the closing card's video button back, with the clip and poster licensed (its default: the signup form in the glass card)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.33 Carried over: `/funktionen` go-live gate
+## 4.33 `/funktionen`
 
 From the `/funktionen` plan (`6a74f274`, §4.4; its open questions are quoted here). The page is indexed and in the sitemap from the start (it replaced the live `/funktionen` of the Next site), so every item must be done before the cutover PR (#440) merges; as an emergency fallback only, reverting its route commit (`b96c1cd3`) ships the old page:
 
@@ -586,7 +562,7 @@ From the `/funktionen` plan (`6a74f274`, §4.4; its open questions are quoted he
 - [ ] After go-live: delete `Funktionen/AnimationsSection.svelte`, `Funktionen/Grid.svelte`, `Hero/FunktionenHero.svelte` and its kitchen-sink entry, and whatever only they used (check `Animation_10`: `FunktionenHighlight` and `InstallFaq` use it too)
 - [ ] If a booking URL exists by then: the closing card's video button back, with the clip and poster licensed (its default: the signup form in the dark card)
 
-## 4.34 Carried over: `/vorgehen` go-live gate
+## 4.34 `/vorgehen`
 
 From the `/vorgehen` plan (`93952e28`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -606,7 +582,7 @@ From the `/vorgehen` plan (`93952e28`, §4.4; its open questions are quoted here
 
 Its open question on Geist Mono (the font as designed, ~30 KB, or the system monospace stack) stays open; the font is built.
 
-## 4.35 Carried over: `/selbstabrechnung` go-live gate
+## 4.35 `/selbstabrechnung`
 
 From the `/selbstabrechnung` plan (`9d0bab9c`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/hilfe` links stay, for review):
 
@@ -625,7 +601,7 @@ From the `/selbstabrechnung` plan (`9d0bab9c`, §4.4; its open questions are quo
 
 Its open questions for after the cutover stay: the closing card goes back to the design's plain dark card once a booking URL exists (`DEMO_HREF`), and the Heizkostenabrechnungs-Checker row and "Mehr zu Sicherheit" come back once those pages exist.
 
-## 4.36 Carried over: `/hilfe` go-live gate
+## 4.36 `/hilfe`
 
 From the `/hilfe` plan (`3b70270e`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review). After go-live, `?q=` URLs stay `noindex`:
 
@@ -641,7 +617,7 @@ From the `/hilfe` plan (`3b70270e`, §4.4; its open questions are quoted here). 
 
 Its open questions for after the cutover stay: a Prismic `help_article` type instead of `content.ts`, the site footer's "FAQ" pointing here instead of `/blog` (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`), and "Gespräch vereinbaren" going to `DEMO_HREF` once a booking URL exists.
 
-## 4.37 Carried over: `/karriere` go-live gate
+## 4.37 `/karriere`
 
 From the `/karriere` plan (`d9e105d8`, §4.4; its open questions are quoted here). The page goes live with the cutover. Every item must be done before the cutover, when it loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer and `/ueber-uns` links stay, for review):
 
@@ -654,7 +630,7 @@ From the `/karriere` plan (`d9e105d8`, §4.4; its open questions are quoted here
 - [ ] Slug decided: `/karriere` by default, `/jobs` is the alternative
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-## 4.38 Carried over: `/ueber-uns` go-live gate
+## 4.38 `/ueber-uns`
 
 From the `/ueber-uns` plan (`7a777e92`, §4.4; its open questions are quoted here). Every item must be done before the cutover, when the page loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap (the footer link stays, for review):
 
@@ -672,7 +648,7 @@ From the `/ueber-uns` plan (`7a777e92`, §4.4; its open questions are quoted her
 
 Its discoverability question stays open for after the cutover: the site footer and header could link to it too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
 
-## 4.39 Carried over: `/upgrade-now` go-live gate
+## 4.39 `/upgrade-now`
 
 Unchanged from the `/upgrade-now` plan (`ddde6575`, §5.4; its open questions are quoted here). Every item must be done before the cutover, when the page loses `noindex` and joins the sitemap (every page is indexed after the cutover); until then it keeps `seo.noindex = true` and stays out of the sitemap:
 
@@ -688,7 +664,7 @@ Unchanged from the `/upgrade-now` plan (`ddde6575`, §5.4; its open questions ar
 
 Its risk stays: if the cutover slips past December, decide then whether the page is still worth launching.
 
-## 4.40 Carried over: city pages and the Germany page
+## 4.40 city pages and the Germany page
 
 The pages go live with the cutover, all of them indexed: every city gets `live: true` in `cities/index.ts` then (in the sitemap and on the Germany map), so every item below must be done for every city before the cutover. Until then, cities other than Berlin keep `live: false` (`noindex`, still rendered for review, linked from the footer "Städte" group). Items marked *(all)* apply to every city once; the rest are per city, tracked in the status table of the city plan (`be2c1feb`, `07-other-cities.md` §7.6: all 25 cities generated and reviewed, only Berlin live, no business column ticked yet; Gera was added on 2026-10-12 as the 26th, generated the same way and not yet reviewed). Phase references below (7.2, 8.3) are to that plan:
 
@@ -705,7 +681,7 @@ The pages go live with the cutover, all of them indexed: every city gets `live: 
 - [ ] *(all)* Static dates (timeline 2026–2030 and its tooltip, "Di, 14.10.", "Abrechnungszeitraum 2026", banner "Ab 1.1.2027") still make sense on the go-live date
 - [ ] *(all)* Make.com `switchinquiry` route live (shared with `/messdienstwechsel`)
 
-## 4.41 Carried over: `/messdienstwechsel` go-live gate
+## 4.41 `/messdienstwechsel`
 
 Unchanged since the `/messdienstwechsel` plan (`65470139`). It is already indexed and in the sitemap; these must be resolved before the cutover PR is merged:
 

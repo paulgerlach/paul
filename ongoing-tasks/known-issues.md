@@ -1,6 +1,8 @@
-# Known Issues in the Current Next.js Code
+# Known issues
 
-These problems were found while surveying the codebase. Each one has an owning phase and **must be fixed there**. Don't port the bug across. A phase isn't done until its issues are ticked here.
+Bugs found in the Next.js code during the port (KI-01 … KI-36), fixed in the Svelte code instead of ported. The code cites the IDs in comments. "Phase" is the migration phase that fixed it (plan in git history at `6138407c`, `svelte-migration-plan/`). Every item must be ticked before the production promote (cutover.md §3). A bug found later gets the next ID, a fix and a tick when fixed.
+
+Open: **KI-34** (needs the business to confirm the phone number) and **KI-36** (needs the content owner's sign-off).
 
 Severity: **High** = user-visible bug or wasted resources in production. **Med** = SEO or correctness gap. **Low** = cleanup.
 

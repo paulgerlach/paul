@@ -9,7 +9,6 @@ bun.lockb
 /static/
 
 # Docs and local agent settings (not app code)
-/svelte-migration-plan/
-/new-landing-page-plan/
+/ongoing-tasks/
 /seo-baseline/
 /.claude/

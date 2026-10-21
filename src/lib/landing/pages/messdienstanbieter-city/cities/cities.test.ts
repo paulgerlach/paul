@@ -1,7 +1,8 @@
 /**
  * Every city page (and the Germany page) must be a standalone landing page
  * with its own title, description, H1, local introduction and internal
- * links (plan: new-landing-page-plan, README core requirement and §6.2).
+ * links (city plan in git history at `be2c1feb`, README core requirement
+ * and §6.2).
  */
 import { describe, expect, it } from "vitest";
 import germany from "$lib/landing/pages/messdienstanbieter/content";

@@ -1,7 +1,7 @@
 /**
  * Converts a saved landing page design ("Heidi <Stadt>" artifact HTML) into
- * the content modules of the region template (plan: new-landing-page-plan,
- * phases 7.4 and 8).
+ * the content modules of the region template (city plan in git history at
+ * `be2c1feb`, phases 7.4 and 8).
  *
  *   bun scripts/extract-city.ts <design.html> <slug>
  *   bun scripts/extract-city.ts <design.html> --germany

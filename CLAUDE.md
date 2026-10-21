@@ -49,6 +49,8 @@ Marketing site for Heidi Systems (heidisystems.com): SvelteKit 2, Svelte 5 (rune
 - **Indexing at cutover (decision 2026-10-17):** every page, including every city, is indexed and in the sitemap after the cutover. So every go-live gate in `ongoing-tasks/go-live-gates.md` blocks the cutover; the `noindex` on the new pages only lasts until then.
 - **After cutover:** delete the phase-1 second Vercel project; consider removing `/api/contact` once nothing external uses it; upgrade Swiper past 11.
 
+**Next up: the site cutover** (decided 2026-10-21): the landing pages become the whole site in `(base)`, old pages except the blog, Fragebogen and legal pages are dropped, `/` redirects to `/messdienstanbieter`. The plan is in `cutover/` (start with its README).
+
 Open work: `ongoing-tasks/` (README has the decisions and how a new landing page is planned, `cutover.md` what blocks the cutover, `go-live-gates.md` every page's gate, `known-issues.md` the KI list). The finished plans (`svelte-migration-plan/`, `new-landing-page-plan/`) are in git history at `6138407c`.
 
 ## Commands

@@ -153,8 +153,8 @@ test("CTAs lead to the partner form, the rows, the FAQ and the linked pages", as
 	).toHaveAttribute("href", MANAGER_SIGNUP);
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", MANAGER_SIGNUP);
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
+	).toHaveAttribute("href", MANAGER_SIGNUP);
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zum Installationstool" }),
 	).toHaveAttribute("href", "/installationstool");

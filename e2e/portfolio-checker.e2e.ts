@@ -136,13 +136,11 @@ test("the footer and the other pages lead here, the internal links on", async ({
 	).toContain(PATH);
 });
 
-test("the nav CTA leads to the tool, the request CTAs to the closing form", async ({
-	page,
-}) => {
+test("the request CTAs lead to the closing form", async ({ page }) => {
 	await gotoHydrated(page);
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
-	).toHaveAttribute("href", "#checker");
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
+	).toHaveAttribute("href", "#start");
 	await expect(tool(page)).toHaveCount(1);
 	await expect(
 		page.locator("section.final#start input[name=email]"),

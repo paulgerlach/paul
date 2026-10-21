@@ -16,7 +16,6 @@ export const load: PageServerLoad = async () => ({
 	landing: {
 		...DEFAULT_CHROME,
 		bannerHref: "#risiko",
-		ctaLabel: "Bestand prüfen",
 	},
 	// The single time source of the page: SSR renders every date-dependent
 	// number from it, the client clock takes over on mount.

@@ -132,17 +132,6 @@ test("the footer lists every city and the hub", async ({ page }) => {
 	expect(links).toEqual([...CITIES.map((c) => `${HUB}/${c.slug}`), HUB]);
 });
 
-test("the nav links to the same pages as the site's", async ({ page }) => {
-	await page.goto("/");
-	const site = new Set(await hrefs(page.locator("#header a[href]")));
-	await page.goto(BERLIN);
-	const landing = await hrefs(page.locator("nav.top a[href]"));
-	// Landing-only: the logo links home, the CTA goes to the signup.
-	expect(
-		landing.filter((h) => !site.has(h) && !["/", "#start"].includes(h)),
-	).toEqual([]);
-});
-
 test("internal links resolve; page content never leads to a city that isn't live", async ({
 	page,
 }) => {

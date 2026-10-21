@@ -2,7 +2,7 @@
   The design's dark closing card (.dm-end with #dcta-css) with the page's
   signup form in place of its video button "Demo buchen" (plan README, open
   question 1). It's the page's only form, so it carries the `start` anchor
-  the nav CTA, the floating CTA and the result card's button lead to.
+  the nav's "Demo buchen", the floating CTA and the result card's button lead to.
   After the grey FAQ band the design gives it 110 px of top padding.
 -->
 <script lang="ts">

@@ -170,8 +170,8 @@ test("CTAs lead to the contact form, the rows, the FAQ and /sicherheit", async (
 	).toHaveAttribute("href", KONTAKT);
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", KONTAKT);
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
+	).toHaveAttribute("href", KONTAKT);
 });
 
 test.describe("without JavaScript", () => {
@@ -297,6 +297,9 @@ test("the tiles loop while in view", async ({ page }) => {
 	await expect(phone(page)).toHaveClass(/\bs2\b/);
 
 	await page.locator(".cal").scrollIntoViewIfNeeded();
+	// The pass starts with the observer's callback, which comes with a
+	// rendering frame, not with the fake clock.
+	await expect(page.locator(".cal li.done")).toHaveCount(0);
 	await page.clock.runFor(400);
 	await expect(page.locator(".cal li.done")).toHaveCount(1);
 	await expect(gridNote(page)).toHaveText("Liegensch. 1 umgerüstet");

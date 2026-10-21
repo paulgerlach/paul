@@ -2,7 +2,7 @@
   The design's dark closing card (.dm-end with #dcta-css) with the page's
   signup form in place of its video button "Demo buchen" (plan README, open
   question 1). It's the page's only form, so it carries the `start` anchor
-  that the nav CTA, every "Demo buchen" and offer link and the floating CTA
+  that the nav's "Demo buchen", every "Demo buchen" and offer link and the floating CTA
   lead to.
 -->
 <script lang="ts">

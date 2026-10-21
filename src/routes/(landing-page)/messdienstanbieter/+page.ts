@@ -9,6 +9,6 @@ export const load: PageLoad = async ({ data }) => {
 		...data,
 		content,
 		seo: content.seo,
-		landing: { bannerText: content.bannerText, ctaLabel: "Bestand prüfen" },
+		landing: { bannerText: content.bannerText },
 	};
 };

@@ -74,29 +74,13 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 	expect(overflow).toBe(0);
 });
 
-test("the nav links to the same pages as the site's", async ({ page }) => {
-	await page.goto("/");
-	const site = new Set(await hrefs(page.locator("#header a[href]")));
-
-	await page.goto(PATH);
-	const landing = new Set(await hrefs(page.locator("nav.top a[href]")));
-
-	// Landing-only: the logo links home, the CTA goes to /messdienstwechsel.
-	const landingOnly = ["/", "/messdienstwechsel"];
-	const siteOnly = ["/fragebogen"];
-	expect(
-		[...landing].filter((h) => !site.has(h) && !landingOnly.includes(h)),
-	).toEqual([]);
-	expect(
-		[...site].filter((h) => !landing.has(h) && !siteOnly.includes(h)),
-	).toEqual([]);
-});
-
-test("the header CTA goes to /messdienstwechsel", async ({ page }) => {
+test("the header's \"Demo buchen\" goes to /messdienstwechsel's signup", async ({
+	page,
+}) => {
 	await page.goto(PATH);
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
+	).toHaveAttribute("href", "/messdienstwechsel#start");
 });
 
 test("the footer's Karriere link and internal links resolve", async ({

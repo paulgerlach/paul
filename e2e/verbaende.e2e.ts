@@ -110,7 +110,7 @@ test("CTAs lead to the closing card's form, the rows, the FAQ and the linked pag
 	expect(await demo.count()).toBeGreaterThanOrEqual(7);
 	for (const href of await hrefs(demo)) expect(href).toBe("#start");
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 	).toHaveAttribute("href", "#start");
 
 	await expect(

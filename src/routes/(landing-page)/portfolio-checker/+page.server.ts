@@ -1,5 +1,4 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { CHECKER_ID } from "$lib/landing/pages/portfolio-checker/content";
 import { ROUTE_PORTFOLIO_CHECKER } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
 import type { Actions, PageServerLoad } from "./$types";
@@ -16,8 +15,7 @@ export const load: PageServerLoad = async () => ({
 		noindex: true,
 		keepCanonical: true,
 	},
-	// The design's nav CTA "Bestand prüfen" lands on the hero's tool.
-	landing: { ...DEFAULT_CHROME, ctaHref: `#${CHECKER_ID}` },
+	landing: DEFAULT_CHROME,
 	// The single time source of the page: the example evaluation's dates are
 	// computed from it (the client clock takes over on mount).
 	now: Date.now(),

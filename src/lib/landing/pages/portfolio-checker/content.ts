@@ -14,7 +14,7 @@ import type { SplitHeading } from "$lib/landing/types";
 import type { FileKind } from "./checker";
 import type { IconName } from "./icons";
 
-/** The hero's tool, the target of the nav CTA "Bestand prüfen". */
+/** The hero's tool. */
 export const CHECKER_ID = "checker";
 /** The evaluation's section (the design's `#pc-res-sec`). */
 export const RESULT_ID = "auswertung";

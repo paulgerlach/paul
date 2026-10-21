@@ -23,8 +23,8 @@ import type { PostSummary } from "$lib/server/blog";
 import type { NavGroupType } from "$lib/types";
 
 /**
- * Nav data shared by the site `Header` and the landing page `LandingHeader`,
- * so both show the same links. Each header has only its own markup.
+ * Nav data of the site `Header`. The landing pages' `LandingHeader` has its
+ * own (`$lib/landing/navLinks.ts`) and only shares `LOGIN_URL`.
  */
 
 export const LOGIN_URL = "https://platform.heidisystems.com/";

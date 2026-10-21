@@ -79,7 +79,7 @@ test("every Demo CTA leads to the signup form, the hero has no #start", async ({
 	))
 		expect(href).toBe("#start");
 	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
+		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 	).toHaveAttribute("href", "#start");
 });
 

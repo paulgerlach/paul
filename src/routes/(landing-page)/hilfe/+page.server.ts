@@ -1,4 +1,5 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
+import { START_HREF } from "$lib/landing/cta";
 import { readQuery } from "$lib/landing/pages/hilfe/search";
 import { ROUTE_HILFE, ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
 import { handleHelpFeedback } from "$lib/server/helpFeedback";
@@ -17,8 +18,11 @@ export const load: PageServerLoad = ({ url }) => ({
 		noindex: true,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 6).
-	landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
+	landing: {
+		...DEFAULT_CHROME,
+		demoHref: `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`,
+	},
 	// The deadline answer's variant (plan 01 §1.3).
 	now: Date.now(),
 	// The search without JS: the form submits ?q=, the server renders the results.

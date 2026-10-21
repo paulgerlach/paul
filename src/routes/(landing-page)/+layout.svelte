@@ -9,7 +9,7 @@
 	import LandingHeader from "$lib/landing/components/LandingHeader.svelte";
 	import { DEFAULT_CHROME } from "$lib/landing/chrome";
 
-	let { data, children } = $props();
+	let { children } = $props();
 
 	// Each page returns its header texts from its load as `landing`.
 	const chrome = $derived(page.data.landing ?? DEFAULT_CHROME);
@@ -36,11 +36,9 @@
 
 <div class="lp" data-dev={dev || undefined}>
 	<LandingHeader
-		posts={data.navPosts}
 		bannerText={chrome.bannerText}
 		bannerHref={chrome.bannerHref}
-		ctaLabel={chrome.ctaLabel}
-		ctaHref={chrome.ctaHref}
+		demoHref={chrome.demoHref}
 	/>
 	{@render children()}
 	<LandingFooter />

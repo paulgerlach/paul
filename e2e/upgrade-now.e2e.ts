@@ -170,7 +170,7 @@ test.describe("CTAs", () => {
 		[
 			"header",
 			(p: Page) =>
-				p.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
+				p.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 		],
 	] as const;
 

@@ -1,6 +1,10 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { faq, figures } from "$lib/landing/pages/nachfolge/content";
-import { ROUTE_MESSDIENSTWECHSEL, ROUTE_NACHFOLGE } from "$lib/routes";
+import {
+	faq,
+	figures,
+	KONTAKT_HREF,
+} from "$lib/landing/pages/nachfolge/content";
+import { ROUTE_NACHFOLGE } from "$lib/routes";
 import {
 	emptySuccessionForm,
 	handleSuccessionInquiry,
@@ -19,8 +23,9 @@ export const load: PageServerLoad = async () => ({
 		noindex: true,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav CTA goes to /messdienstwechsel's.
-	landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+	// No signup form here: the nav's "Demo buchen" goes to the contact form,
+	// as every "Demo buchen" on the page.
+	landing: { ...DEFAULT_CHROME, demoHref: KONTAKT_HREF },
 	faq: faq.items,
 	// The deadline's figure for today (plan 01 §1.2).
 	figures: figures(Date.now()),

@@ -1,6 +1,9 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { faq } from "$lib/landing/pages/softwarepartner/content";
-import { ROUTE_MESSDIENSTWECHSEL, ROUTE_SOFTWAREPARTNER } from "$lib/routes";
+import {
+	faq,
+	MANAGER_SIGNUP_HREF,
+} from "$lib/landing/pages/softwarepartner/content";
+import { ROUTE_SOFTWAREPARTNER } from "$lib/routes";
 import {
 	emptySoftwarePartnerForm,
 	handleSoftwarePartnerInquiry,
@@ -19,8 +22,8 @@ export const load: PageServerLoad = async () => ({
 		noindex: true,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 1).
-	landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
+	landing: { ...DEFAULT_CHROME, demoHref: MANAGER_SIGNUP_HREF },
 	faq: faq.items,
 	partnerForm: await emptySoftwarePartnerForm(),
 });

@@ -27,6 +27,6 @@ export const load: PageLoad = async ({ params, data }) => {
 		seo: isLiveCity(params.city)
 			? content.seo
 			: { ...content.seo, noindex: true, keepCanonical: true },
-		landing: { bannerText: content.bannerText, ctaLabel: "Bestand prüfen" },
+		landing: { bannerText: content.bannerText },
 	};
 };

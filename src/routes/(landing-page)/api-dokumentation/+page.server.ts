@@ -1,5 +1,5 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
+import { MANAGER_SIGNUP_HREF } from "$lib/landing/pages/api-dokumentation/content";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -14,6 +14,6 @@ export const load: PageServerLoad = () => ({
 		noindex: true,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav CTA goes to /messdienstwechsel's (open question 1).
-	landing: { ...DEFAULT_CHROME, ctaHref: ROUTE_MESSDIENSTWECHSEL },
+	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
+	landing: { ...DEFAULT_CHROME, demoHref: MANAGER_SIGNUP_HREF },
 });

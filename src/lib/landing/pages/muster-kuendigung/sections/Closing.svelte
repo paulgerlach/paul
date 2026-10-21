@@ -2,7 +2,7 @@
   The design's dark closing card (.dm-end with #dcta-css) with the page's
   signup form in place of its video button "Demo buchen" (plan README, open
   question 1). It's the page's only form, so it carries the `start` anchor
-  the nav CTA and the floating CTA lead to.
+  the nav's "Demo buchen" and the floating CTA lead to.
 -->
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";

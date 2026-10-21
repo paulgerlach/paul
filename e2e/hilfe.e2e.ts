@@ -82,27 +82,6 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 	expect(overflow).toBe(0);
 });
 
-test("the nav links to the same pages as the site's", async ({ page }) => {
-	await page.goto("/");
-	const site = new Set(await hrefs(page.locator("#header a[href]")));
-
-	await page.goto(PATH);
-	const landing = new Set(await hrefs(page.locator("nav.top a[href]")));
-
-	// Landing-only: the logo links home, the CTA goes to /messdienstwechsel.
-	const landingOnly = ["/", "/messdienstwechsel"];
-	const siteOnly = ["/fragebogen"];
-	expect(
-		[...landing].filter((h) => !site.has(h) && !landingOnly.includes(h)),
-	).toEqual([]);
-	expect(
-		[...site].filter((h) => !landing.has(h) && !siteOnly.includes(h)),
-	).toEqual([]);
-	await expect(
-		page.locator("nav.top").getByRole("link", { name: "Bestand prüfen" }),
-	).toHaveAttribute("href", "/messdienstwechsel");
-});
-
 test("the footer's Hilfe-Center link and internal links resolve", async ({
 	page,
 	request,

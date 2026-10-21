@@ -1,10 +1,9 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_MESSDIENSTANBIETER_VERGLEICH } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import { BOOKING_HREF } from "$lib/landing/pages/messdienstanbieter-vergleich/content";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
 		title:
@@ -16,14 +15,5 @@ export const load: PageServerLoad = async () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	landing: DEFAULT_CHROME,
-	finalForm: await emptySwitchForm("final"),
+	landing: { ...DEFAULT_CHROME, demoHref: BOOKING_HREF },
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "messdienstanbieter-vergleich",
-			page: ROUTE_MESSDIENSTANBIETER_VERGLEICH,
-		}),
-};

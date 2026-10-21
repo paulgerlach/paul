@@ -1,21 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
-
 const PATH = "/messdienstanbieter-vergleich";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-
-const testEmail = (name: string) =>
-	`e2e-mv-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
-
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
@@ -120,7 +105,7 @@ test("the footer and the segment pages link here; the internal links resolve", a
 	}
 });
 
-test("the CTAs lead to the steps, the closing form and the other pages", async ({
+test("the CTAs lead to the steps, the signup form and the other pages", async ({
 	page,
 }) => {
 	await gotoHydrated(page);
@@ -136,18 +121,23 @@ test("the CTAs lead to the steps, the closing form and the other pages", async (
 	await expect(
 		page.getByRole("link", { name: /Zur Umrüstpflicht/ }),
 	).toHaveAttribute("href", "/upgrade-now");
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("main form")).toHaveCount(0);
+	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+		"href",
+		"/messdienstwechsel#start",
+	);
+	await expect(page.locator("a.ctab")).toHaveAttribute(
+		"href",
+		"/messdienstwechsel#start",
+	);
 	const offers = page.locator("main a", {
 		hasText:
 			/^(Demo buchen|Mit Heidi vergleichen|Heidi-Angebot für diesen Bestand)/,
 	});
 	expect(await offers.count()).toBeGreaterThanOrEqual(4);
-	expect(new Set(await hrefs(offers))).toEqual(new Set(["#start"]));
-	await page.getByRole("link", { name: /Heidi-Angebot für diesen/ }).click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	expect(new Set(await hrefs(offers))).toEqual(
+		new Set(["/messdienstwechsel#start"]),
+	);
 });
 
 test("picking scores the provider against Heidi", async ({ page }) => {
@@ -282,10 +272,6 @@ test.describe("without JS", () => {
 		await expect(score(page).locator(".you")).toBeHidden();
 		await expect(score(page).locator(".h b")).toHaveText("8 / 8");
 		await expect(result(page).locator(".on b")).toHaveText("89,00");
-		await expect(page.locator("section#start form")).toHaveAttribute(
-			"method",
-			/post/i,
-		);
 	});
 });
 
@@ -306,27 +292,4 @@ test.describe("with reduced motion", () => {
 			"none",
 		);
 	});
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

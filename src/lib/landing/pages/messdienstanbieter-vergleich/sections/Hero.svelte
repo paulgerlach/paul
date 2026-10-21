@@ -4,10 +4,9 @@
   design). The preview is rendered finished; its ticks pop in one by one and
   "8 / 8" fades in through CSS animations with a `both` fill from the first
   paint (the design starts them when the card shows, which in the hero is
-  at load). No `#start`: that's the signup form in the closing card.
+  at load). "Demo buchen" leads to /messdienstwechsel's signup form.
 -->
 <script lang="ts">
-	import { DEMO_HREF, focusSignup } from "$lib/landing/cta";
 	import Check from "$lib/landing/components/icons/Check.svelte";
 	import Icon from "../components/Icon.svelte";
 	import { hero } from "../content";
@@ -27,10 +26,7 @@
 				<a class="bk-next inv start" href={hero.start.href}
 					>{hero.start.text} <span class="ar" aria-hidden="true">↓</span></a
 				>
-				<a
-					class="pg-ghost ghost"
-					href={hero.demo.href}
-					onclick={hero.demo.href === DEMO_HREF ? focusSignup : undefined}
+				<a class="pg-ghost ghost" href={hero.demo.href}
 					>{hero.demo.text} <span class="ar" aria-hidden="true">→</span></a
 				>
 			</div>

@@ -9,7 +9,6 @@
 -->
 <script lang="ts">
 	import { enterView } from "$lib/landing/attachments/enterView";
-	import { DEMO_HREF, focusSignup } from "$lib/landing/cta";
 	import Head from "../components/Head.svelte";
 	import Icon from "../components/Icon.svelte";
 	import { COMPARE_ID, criteria, score } from "../content";
@@ -102,10 +101,7 @@
 						{/key}
 					{/if}
 				</div>
-				<a
-					class="bk-next inv cta"
-					href={score.cta.href}
-					onclick={score.cta.href === DEMO_HREF ? focusSignup : undefined}
+				<a class="bk-next inv cta" href={score.cta.href}
 					>{score.cta.text} <span class="ar" aria-hidden="true">→</span></a
 				>
 			</aside>

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { START_HREF } from "$lib/landing/cta";
 import { testimonials } from "$lib/landing/data/testimonials";
 import * as routes from "$lib/routes";
 import {
+	BOOKING_HREF,
 	closing,
 	COMPARE_ID,
 	costs,
@@ -93,13 +93,14 @@ describe("/messdienstanbieter-vergleich content", () => {
 			[
 				`#${COMPARE_ID}`,
 				`#${COSTS_ID}`,
-				START_HREF,
+				BOOKING_HREF,
 				routes.ROUTE_MESSDIENSTWECHSEL,
 				routes.ROUTE_UPGRADE_NOW,
 			].sort(),
 		);
 		for (const href of hrefs(all))
-			if (href.startsWith("/")) expect(routeValues).toContain(href);
+			if (href.startsWith("/"))
+				expect(routeValues).toContain(href.split("#")[0]);
 	});
 
 	it("has no empty, doubled-space or untrimmed text", () => {

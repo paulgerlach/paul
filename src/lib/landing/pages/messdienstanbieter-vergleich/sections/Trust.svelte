@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TrustSeals from "$lib/landing/sections/TrustSeals.svelte";
+	import { BOOKING_HREF } from "../content";
 </script>
 
-<TrustSeals />
+<TrustSeals demoHref={BOOKING_HREF} />

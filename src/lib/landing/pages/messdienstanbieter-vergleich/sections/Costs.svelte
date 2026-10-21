@@ -10,7 +10,6 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
 	import { enterView } from "$lib/landing/attachments/enterView";
-	import { DEMO_HREF, focusSignup } from "$lib/landing/cta";
 	import { tweenNumber } from "$lib/landing/motion";
 	import Head from "../components/Head.svelte";
 	import Icon from "../components/Icon.svelte";
@@ -146,12 +145,7 @@
 						><b>{euro(shown[2])}</b>
 					</div>
 				</div>
-				<a
-					class="bk-next inv cta"
-					href={costs.result.cta.href}
-					onclick={costs.result.cta.href === DEMO_HREF
-						? focusSignup
-						: undefined}
+				<a class="bk-next inv cta" href={costs.result.cta.href}
 					>{costs.result.cta.text}
 					<span class="ar" aria-hidden="true">→</span></a
 				>

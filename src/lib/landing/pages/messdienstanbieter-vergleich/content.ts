@@ -5,13 +5,19 @@
  * calculator's start values. The comparison, the criteria and the legal
  * statements await sign-off (plan §4.4).
  */
-import { DEMO_HREF } from "$lib/landing/cta";
+import { START_HREF } from "$lib/landing/cta";
 import { DEFAULT_LOGO_ORDER } from "$lib/landing/data/logos";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
 import { ROUTE_MESSDIENSTWECHSEL, ROUTE_UPGRADE_NOW } from "$lib/routes";
 import type { IconName } from "./icons";
+
+/**
+ * Target of every "Demo buchen" and offer link: /messdienstwechsel's signup
+ * form (the page has no form of its own; no booking page yet).
+ */
+export const BOOKING_HREF = `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`;
 
 /** Step 1's section, the target of "Vergleich starten ↓". */
 export const COMPARE_ID = "vergleich";
@@ -25,7 +31,7 @@ export const hero = {
 	lead: "Stellen Sie Ihren heutigen Anbieter in acht Kriterien neben Heidi und rechnen Sie aus, was Sie pro Wohnung zahlen. Mit dieser Zahl gehen Sie in jedes Angebotsgespräch.",
 	start: { text: "Vergleich starten", href: `#${COMPARE_ID}` },
 	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen")
-	demo: { text: "Demo buchen", href: DEMO_HREF },
+	demo: { text: "Demo buchen", href: BOOKING_HREF },
 	ticks: [
 		"8 Kriterien",
 		"Kostenrechner pro Wohnung",
@@ -146,7 +152,7 @@ export const score = {
 	gapsLabel: "Hier liegt Heidi vorn",
 	unsure: "bei Ihnen unklar",
 	// 44SBXKXJaSp6bvGMnbpZj6
-	cta: { text: "Mit Heidi vergleichen", href: DEMO_HREF },
+	cta: { text: "Mit Heidi vergleichen", href: BOOKING_HREF },
 };
 
 export type CostKey = "we" | "hkv" | "wz" | "phkv" | "pwz" | "pabr";
@@ -226,7 +232,7 @@ export const costs = {
 		six: "Über 6 Jahre",
 		tip: "6 Jahre = Eichfrist für Wasser- und Wärmezähler",
 		// 44SBXKXJaSp6bvGMnbpZj6
-		cta: { text: "Heidi-Angebot für diesen Bestand", href: DEMO_HREF },
+		cta: { text: "Heidi-Angebot für diesen Bestand", href: BOOKING_HREF },
 	},
 	note: "Vereinfachte Rechnung ohne Wärmezähler, Rauchmelder und Sonderleistungen. Ihre Angaben bleiben in Ihrem Browser.",
 };
@@ -320,5 +326,9 @@ export const faq = {
 export const closing = {
 	h2: "Vergleichen Sie mit Ihrem eigenen Bestand.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	button: {
+		text: "Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: BOOKING_HREF,
+	},
 };

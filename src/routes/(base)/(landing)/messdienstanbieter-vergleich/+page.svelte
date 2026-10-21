@@ -11,8 +11,6 @@
 	import Testimonials from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Testimonials.svelte";
 	import Tips from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Tips.svelte";
 	import Trust from "$lib/landing/pages/messdienstanbieter-vergleich/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="mv" {@attach reveal()}>
@@ -24,7 +22,7 @@
 	<Switch />
 	<Testimonials />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

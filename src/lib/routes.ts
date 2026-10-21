@@ -1,4 +1,3 @@
-export const ROUTE_HOME = "/";
 export const ROUTE_DATENSCHUTZHINWEISE = "/datenschutzhinweise";
 export const ROUTE_FRAGEBOGEN = "/fragebogen";
 export const ROUTE_FUNKTIONEN = "/funktionen";

@@ -58,7 +58,7 @@ blogMainImage
 }
 }`;
 
-/** What blog cards and the nav teaser show; keeps full documents off the client. */
+/** What blog cards show; keeps full documents off the client. */
 export type PostSummary = {
 	uid: string;
 	title: string;
@@ -130,10 +130,6 @@ export async function getLatestPosts(
 	});
 	return results.map(toSummary);
 }
-
-/** The six newest posts for the header nav (KI-07). */
-export const getNavPosts = (config: CreateClientConfig) =>
-	getLatestPosts(config, { limit: 6 });
 
 /** Passed to the blog post's `<SliceZone>` as `context`. */
 export type BlogContext = {

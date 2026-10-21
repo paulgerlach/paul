@@ -61,7 +61,7 @@ test("the nav links only to landing pages, the blog and the questionnaire", asyn
 	page,
 	request,
 }) => {
-	const landingRoutes = readdirSync("src/routes/(landing-page)", {
+	const landingRoutes = readdirSync("src/routes/(base)/(landing)", {
 		withFileTypes: true,
 	})
 		.filter((entry) => entry.isDirectory())

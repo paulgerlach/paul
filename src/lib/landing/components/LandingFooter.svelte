@@ -8,7 +8,7 @@
 		ADDRESS,
 		datenschutzLinksGroup,
 	} from "$lib/components/Footer/footerLinks";
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
+	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 	import {
 		companyLinks,
 		footerGroups,
@@ -20,6 +20,16 @@
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 	import LandingNewsletter from "./LandingNewsletter.svelte";
 
+	interface Props {
+		/**
+		 * Target of the "Demo buchen" link (default `DEMO_HREF`, the page's
+		 * signup form). A page without a signup form sends it elsewhere.
+		 */
+		demoHref?: string;
+	}
+
+	let { demoHref = DEMO_HREF }: Props = $props();
+
 	const year = new Date().getFullYear();
 	// Impressum · Datenschutz · AGB, in the design's order.
 	const legalLinks = ["Impressum", "Datenschutz", "AGB"].flatMap(
@@ -29,13 +39,13 @@
 </script>
 
 {#snippet link(item: LandingFooterLink)}
+	{@const href = item.href === DEMO_HREF ? demoHref : item.href}
 	<li>
-		{#if item.href}
+		{#if href}
 			<a
 				class="f-link"
-				href={item.href}
-				onclick={item.href === START_HREF ? focusSignup : undefined}
-				>{item.text}</a
+				{href}
+				onclick={href === START_HREF ? focusSignup : undefined}>{item.text}</a
 			>
 		{:else}
 			{item.text}

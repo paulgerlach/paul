@@ -56,7 +56,7 @@ describe("/hkvo-leitfaden content", () => {
 	it("links only to routes and anchors on the page", () => {
 		expect(hero.read.href).toBe(`#${GUIDE_ID}`);
 		expect(hero.penalties.href).toBe(`#${PENALTIES_ID}`);
-		expect(check.link.href).toBe("#start");
+		expect(check.link.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 		const html = [
 			...guide.articles.flatMap((a) =>
 				a.body.flatMap((b) => ("p" in b ? [b.p] : [])),

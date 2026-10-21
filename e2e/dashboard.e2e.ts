@@ -103,11 +103,13 @@ test("every CTA leads to the closing card's form", async ({ page }) => {
 		page.locator("section[aria-labelledby=db-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const ctas = page.locator("main a", {
-		hasText:
-			/Demo buchen|Bestand kostenlos prüfen|Anbindung besprechen|Feedback geben/,
+		hasText: /Bestand kostenlos prüfen|Anbindung besprechen|Feedback geben/,
 	});
-	expect(await ctas.count()).toBeGreaterThanOrEqual(5);
+	expect(await ctas.count()).toBeGreaterThanOrEqual(3);
 	for (const href of await hrefs(ctas)) expect(href).toBe("#start");
+	const demo = page.locator("main a", { hasText: "Demo buchen" });
+	expect(await demo.count()).toBeGreaterThanOrEqual(1);
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
 	await expect(page.getByText("Lieber direkt eine Demo buchen")).toHaveCount(0);
 });
 

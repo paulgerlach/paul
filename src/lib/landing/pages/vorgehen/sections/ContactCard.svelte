@@ -1,7 +1,7 @@
 <!--
   The design's contact card (.ar-ct): text left, the contact photo right. It's
   the page's only form, so it carries the `start` anchor every "Angebot
-  einholen" and "Demo buchen" leads to; the signup form takes the place of the
+  einholen" leads to; the signup form takes the place of the
   design's two buttons (plan README, Signup). `final` lets the floating CTA
   hide while it's in view.
 -->

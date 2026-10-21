@@ -1,4 +1,4 @@
-<!-- Hero (.pg-hero, light): the centred head (pill, H1, lead) over the calculator. No `#start`: that's the signup form in the closing card. -->
+<!-- Hero (.pg-hero, light): the centred head (pill, H1, lead) over the calculator. No `#start`: the page has no form. -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 	import { hero } from "../content";

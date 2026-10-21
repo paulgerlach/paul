@@ -6,15 +6,13 @@
 	import Hero from "$lib/landing/pages/neuigkeiten/sections/Hero.svelte";
 	import News from "$lib/landing/pages/neuigkeiten/sections/News.svelte";
 	import Trust from "$lib/landing/pages/neuigkeiten/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="nw" {@attach reveal()}>
 	<Hero />
 	<News />
 	<Deadlines />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

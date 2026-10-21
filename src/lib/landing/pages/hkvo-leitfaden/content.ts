@@ -78,7 +78,7 @@ export const check = {
 	hint: "Beantworten Sie die Fragen mit Ja oder Nein.",
 	ok: "Alles erfüllt. Ihr Bestand ist HKVO-konform aufgestellt.",
 	risks: "Mögliche Risiken",
-	// 44SBXKXJaSp6bvGMnbpZj6 (the design's demo booking): the closing form.
+	// 44SBXKXJaSp6bvGMnbpZj6 (the design's demo booking): /demo-buchen.
 	link: { text: "Mit Heidi alle Punkte erfüllen", href: DEMO_HREF },
 };
 
@@ -308,5 +308,10 @@ export const faq: { title: string; items: FaqItem[] } = {
 export const closing = {
 	h2: "HKVO-konform. Ohne Mehraufwand.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

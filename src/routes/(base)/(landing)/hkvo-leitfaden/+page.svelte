@@ -7,8 +7,6 @@
 	import Guide from "$lib/landing/pages/hkvo-leitfaden/sections/Guide.svelte";
 	import Penalties from "$lib/landing/pages/hkvo-leitfaden/sections/Penalties.svelte";
 	import Trust from "$lib/landing/pages/hkvo-leitfaden/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="lf" {@attach reveal()}>
@@ -16,7 +14,7 @@
 	<Guide />
 	<Penalties />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

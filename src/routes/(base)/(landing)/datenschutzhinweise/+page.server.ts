@@ -1,4 +1,4 @@
-import { LEGAL_CHROME } from "$lib/landing/pages/legal/chrome";
+import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -9,5 +9,5 @@ export const load: PageServerLoad = () => ({
 		description:
 			"Wie Heidi Systems personenbezogene Daten verarbeitet, wenn Sie diese Website nutzen oder mit uns Kontakt aufnehmen: Verantwortlicher, Zwecke, Empfänger und Ihre Rechte nach DSGVO.",
 	},
-	landing: LEGAL_CHROME,
+	landing: DEFAULT_CHROME,
 });

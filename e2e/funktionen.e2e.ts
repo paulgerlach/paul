@@ -1,20 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 
 const PATH = "/funktionen";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-
-const testEmail = (name: string) =>
-	`e2e-fk-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 /** Waits for hydration, so clicks reach the components. */
 const gotoHydrated = (page: Page) =>
@@ -68,13 +56,14 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 	expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("every Demo buchen leads to the closing card's form, the hero has no #start", async ({
+test("every Demo buchen leads to the booking page, the hero has no #start", async ({
 	page,
 }) => {
 	await page.goto(PATH);
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
+	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+		"href",
+		"/demo-buchen",
+	);
 	await expect(
 		page.locator("section[aria-labelledby=fk-h1]"),
 	).not.toHaveAttribute("id", "start");
@@ -83,7 +72,7 @@ test("every Demo buchen leads to the closing card's form, the hero has no #start
 	for (const href of await links.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
 	))
-		expect(href).toBe("#start");
+		expect(href).toBe("/demo-buchen");
 	await expect(
 		page.getByRole("link", { name: "So gehen wir vor" }),
 	).toHaveAttribute("href", "/vorgehen");
@@ -142,27 +131,4 @@ test("the dashboard tabs advance by themselves while in view", async ({
 	await expect(page.locator(".bar.run")).toBeVisible();
 	await page.clock.runFor(6_100);
 	await expect(selectedTab(page)).toHaveText(/Datenbasierte Analyse/);
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

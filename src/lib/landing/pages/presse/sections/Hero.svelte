@@ -1,4 +1,4 @@
-<!-- Hero (.pr-hero, white): the giant H1 "Hallo, Presse." and the lead set to the right. No `#start`: that's the signup form in the closing card. -->
+<!-- Hero (.pr-hero, white): the giant H1 "Hallo, Presse." and the lead set to the right. No `#start`: the page has no form. -->
 <script lang="ts">
 	import { hero } from "../content";
 </script>

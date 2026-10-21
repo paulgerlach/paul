@@ -1,6 +1,6 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { faq, KONTAKT_HREF } from "$lib/landing/pages/partnerschaften/content";
+import { faq } from "$lib/landing/pages/partnerschaften/content";
 import { ROUTE_PARTNERSCHAFTEN } from "$lib/routes";
 import {
 	emptyConnectionForm,
@@ -23,9 +23,7 @@ export const load: PageServerLoad = async () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav's "Demo buchen" goes to the contact form,
-	// as every "Demo buchen" on the page.
-	landing: { ...DEFAULT_CHROME, demoHref: KONTAKT_HREF },
+	landing: DEFAULT_CHROME,
 	faq: faq.items,
 	// Two forms, two actions (plan 01 §1.3).
 	partnershipForm: await emptyPartnershipForm(),

@@ -13,7 +13,7 @@
 	let {
 		href = DEMO_HREF,
 	}: {
-		/** The target (a page without a signup form sends it elsewhere). */
+		/** The target (default `DEMO_HREF`, /demo-buchen). */
 		href?: string;
 	} = $props();
 

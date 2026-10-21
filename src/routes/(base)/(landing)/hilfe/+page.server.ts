@@ -1,8 +1,7 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { START_HREF } from "$lib/landing/cta";
 import { readQuery } from "$lib/landing/pages/hilfe/search";
-import { ROUTE_HILFE, ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
+import { ROUTE_HILFE } from "$lib/routes";
 import { handleHelpFeedback } from "$lib/server/helpFeedback";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -19,11 +18,7 @@ export const load: PageServerLoad = ({ url }) => ({
 		noindex: !LAUNCHED || url.searchParams.has("q"),
 		keepCanonical: true,
 	},
-	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
-	landing: {
-		...DEFAULT_CHROME,
-		demoHref: `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`,
-	},
+	landing: DEFAULT_CHROME,
 	// The deadline answer's variant (plan 01 §1.3).
 	now: Date.now(),
 	// The search without JS: the form submits ?q=, the server renders the results.

@@ -112,7 +112,7 @@ test("the CTAs lead to the check, the offers, the closing form and the dashboard
 	await expect(
 		page.locator("section.final#start input[name=email]"),
 	).toHaveCount(1);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	const order = offerCards(page).getByRole("link", { name: /Jetzt bestellen/ });
 	expect(await hrefs(order)).toEqual([
 		"https://heidi.energieausweis48.de/verbrauchsausweis?servicelevel=selfservice",

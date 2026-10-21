@@ -1,4 +1,4 @@
-import { ROUTE_KARRIERE } from "$lib/routes";
+import { ROUTE_DEMO_BUCHEN, ROUTE_KARRIERE } from "$lib/routes";
 
 /**
  * Anchor of the page's signup form (the hero's on most pages, the final
@@ -21,10 +21,11 @@ export function focusSignup() {
 }
 
 /**
- * Target of every "Demo buchen" CTA. There's no booking URL yet, so they lead
- * to the signup form; set a URL here to switch all of them at once.
+ * Target of every "Demo buchen" CTA (and the other links the designs point at
+ * the booking design, such as the floating "Erstgespräch vereinbaren"): the
+ * /demo-buchen page. Set another URL here to switch all of them at once.
  */
-export const DEMO_HREF: string = START_HREF;
+export const DEMO_HREF: string = ROUTE_DEMO_BUCHEN;
 
 /**
  * Target of every careers link ("Karriere bei Heidi", "Zur Karriereseite"):

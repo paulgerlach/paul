@@ -104,13 +104,16 @@ test("every CTA leads to the contact card's form, the hero has no #start", async
 	await expect(
 		page.locator("section[aria-labelledby=vg-h1]"),
 	).not.toHaveAttribute("id", "start");
-	for (const name of ["Angebot einholen", "Demo buchen"]) {
+	for (const [name, target] of [
+		["Angebot einholen", "#start"],
+		["Demo buchen", "/demo-buchen"],
+	]) {
 		const links = page.locator("main a", { hasText: name });
 		expect(await links.count(), name).toBeGreaterThanOrEqual(1);
 		for (const href of await links.evaluateAll((els) =>
 			els.map((el) => el.getAttribute("href")),
 		))
-			expect(href, name).toBe("#start");
+			expect(href, name).toBe(target);
 	}
 });
 

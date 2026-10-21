@@ -49,5 +49,6 @@ export const ROUTE_VERBAENDE = "/verbaende";
 export const ROUTE_NACHFOLGE = "/nachfolge";
 export const ROUTE_PARTNERSCHAFTEN = "/partnerschaften";
 export const ROUTE_KONTAKT = "/kontakt";
+export const ROUTE_DEMO_BUCHEN = "/demo-buchen";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

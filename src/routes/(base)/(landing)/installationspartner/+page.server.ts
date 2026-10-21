@@ -1,9 +1,6 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import {
-	faq,
-	MANAGER_SIGNUP_HREF,
-} from "$lib/landing/pages/installationspartner/content";
+import { faq } from "$lib/landing/pages/installationspartner/content";
 import { ROUTE_INSTALLATIONSPARTNER } from "$lib/routes";
 import {
 	emptyPartnerForm,
@@ -23,8 +20,7 @@ export const load: PageServerLoad = async () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
-	landing: { ...DEFAULT_CHROME, demoHref: MANAGER_SIGNUP_HREF },
+	landing: DEFAULT_CHROME,
 	faq: faq.items,
 	partnerForm: await emptyPartnerForm(),
 });

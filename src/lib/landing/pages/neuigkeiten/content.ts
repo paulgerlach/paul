@@ -7,6 +7,7 @@
  * comment, so the job that builds that page finds it here and links it
  * (plan README, Links).
  */
+import { DEMO_HREF } from "$lib/landing/cta";
 import type { SplitHeading } from "$lib/landing/types";
 import {
 	ROUTE_API_DOKUMENTATION,
@@ -202,5 +203,10 @@ export const deadlines: {
 export const closing = {
 	h2: "Neugierig, wie Heidi für Ihren Bestand aussieht?",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

@@ -20,7 +20,7 @@ export const contact = {
 	h2: "Sprechen Sie mit uns.",
 	text: "Interviews, Hintergrundgespräche, Zahlen und Bilder: Wir melden uns schnell und persönlich.",
 	mailLabel: "Presseanfragen",
-	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): the closing form here.
+	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
 	cta: { text: "Gespräch vereinbaren", href: DEMO_HREF },
 };
 
@@ -143,5 +143,10 @@ export const pressContact = {
 export const closing = {
 	h2: "Heidi live erleben?",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

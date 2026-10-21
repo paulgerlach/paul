@@ -1,9 +1,7 @@
 <!--
   The design's dark closing card (.dm-end / .dm-cta) with the page's signup
   form in place of its link "Portfolio prüfen lassen →" (plan README, open
-  question 1). It's the page's only form, so it carries the `start` anchor
-  that "Mit eigenem Bestand auswerten", "Auswertung anfragen", the trust
-  block's "Demo buchen" and the floating CTA lead to.
+  question 1). It's the page's only form, so it carries the `start` anchor.
 -->
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";

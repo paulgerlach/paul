@@ -161,17 +161,17 @@ test("CTAs lead to the contact form, the rows, the FAQ and /sicherheit", async (
 		page.locator("#faq a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");
 
-	// The design's demo CTAs lead to the page's own form.
+	// The design's demo CTAs lead to the booking page.
 	await expect(
 		page.locator("section.end a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", KONTAKT);
+	).toHaveAttribute("href", "/demo-buchen");
 	await expect(
 		page.locator("section.trust a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", KONTAKT);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", KONTAKT);
+	).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", KONTAKT);
+	).toHaveAttribute("href", "/demo-buchen");
 });
 
 test.describe("without JavaScript", () => {

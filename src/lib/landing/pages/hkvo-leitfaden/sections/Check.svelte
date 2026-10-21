@@ -7,7 +7,6 @@
 <script lang="ts">
 	import { onDestroy } from "svelte";
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
 	import { confettiFrom } from "$lib/landing/sections/sg/confetti";
 	import { type Answers, openText, outcome, ringDash, score } from "../check";
 	import { check, type QuestionKey } from "../content";
@@ -91,11 +90,7 @@
 						<li>{r.risk} <span class="hi">({r.law})</span></li>
 					{/each}
 				</ul>
-				<a
-					href={check.link.href}
-					onclick={check.link.href === START_HREF ? focusSignup : undefined}
-					>{check.link.text} →</a
-				>
+				<a href={check.link.href}>{check.link.text} →</a>
 			</div>
 		{:else}
 			<span class="hi">{openText(result.left)}</span>

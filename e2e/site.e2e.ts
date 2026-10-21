@@ -101,16 +101,14 @@ test.describe("kept pages", () => {
 			.toBeLessThan(2);
 	});
 
-	test("Demo buchen goes to the signup form on /messdienstwechsel", async ({
-		page,
-	}) => {
+	test("Demo buchen goes to /demo-buchen", async ({ page }) => {
 		await page.goto("/blog");
 		await expect(
 			page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-		).toHaveAttribute("href", "/messdienstwechsel#start");
+		).toHaveAttribute("href", "/demo-buchen");
 		await expect(
 			page.locator("footer").getByRole("link", { name: "Demo buchen" }),
-		).toHaveAttribute("href", "/messdienstwechsel#start");
+		).toHaveAttribute("href", "/demo-buchen");
 	});
 
 	test("the mobile menu opens and closes at 375 px", async ({ page }) => {

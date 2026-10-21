@@ -30,7 +30,7 @@
 	<Team />
 	<Testimonials />
 	<Careers />
-	<FinalCta form={data.finalForm} />
+	<FinalCta />
 	<Trust />
 </main>
 

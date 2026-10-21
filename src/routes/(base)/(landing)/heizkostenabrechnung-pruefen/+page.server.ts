@@ -1,10 +1,8 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
 		title:
@@ -20,13 +18,4 @@ export const load: PageServerLoad = async () => ({
 	// The single time source of the page: the rules' "today" and the
 	// example's receipt date (the client clock takes over on mount).
 	now: Date.now(),
-	finalForm: await emptySwitchForm("final"),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "heizkostenabrechnung-pruefen",
-			page: ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
-		}),
-};

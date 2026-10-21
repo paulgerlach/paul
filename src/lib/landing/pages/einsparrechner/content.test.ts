@@ -48,8 +48,8 @@ describe("/einsparrechner content", () => {
 		expect(method.cards[1].formula).toBe("Heizkosten × Einheiten × 3 %");
 	});
 
-	it("links only to routes and the closing form", () => {
-		expect(calculator.result.cta.href).toBe("#start");
+	it("links only to routes and the booking page", () => {
+		expect(calculator.result.cta.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 		const html = faq.items.map((i) => i.answer).join(" ");
 		expect(html).not.toContain("href=");
 		const more = faq.items.flatMap((i) => (i.more ? [i.more] : []));

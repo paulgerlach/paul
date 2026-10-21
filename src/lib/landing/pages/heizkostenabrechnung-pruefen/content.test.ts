@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { START_HREF } from "$lib/landing/cta";
 import * as routes from "$lib/routes";
 import {
 	ANSWERS,
@@ -104,8 +103,10 @@ describe("/heizkostenabrechnung-pruefen content", () => {
 			[
 				`#${NUMBERS_ID}`,
 				`#${CHECKER_ID}`,
+				// The closing card's "Jetzt prüfen ↑"
+				`#${CHECKER_ID}`,
 				routes.ROUTE_FUNKTIONEN,
-				START_HREF,
+				routes.ROUTE_DEMO_BUCHEN,
 			].sort(),
 		);
 		for (const href of hrefs(all))

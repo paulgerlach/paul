@@ -1,6 +1,5 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { MANAGER_SIGNUP_HREF } from "$lib/landing/pages/api-dokumentation/content";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -15,6 +14,5 @@ export const load: PageServerLoad = () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
-	landing: { ...DEFAULT_CHROME, demoHref: MANAGER_SIGNUP_HREF },
+	landing: DEFAULT_CHROME,
 });

@@ -3,9 +3,8 @@
   .dcta-b): an accent link with a small demo video, its label and a
   sub-label. The video plays while at least 30 % of it is on screen and
   pauses off screen, never with reduced motion; on hover the frame grows and
-  shows the "Live" badge. Server-rendered with its poster. The pages before
-  /nachfolge put their signup form in its place; the default video is the
-  region pages' demo, as in the designs.
+  shows the "Live" badge. Server-rendered with its poster. The default video
+  is the region pages' demo, as in the designs.
 -->
 <script lang="ts">
 	import type { Attachment } from "svelte/attachments";

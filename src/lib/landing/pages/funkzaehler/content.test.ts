@@ -168,7 +168,7 @@ describe("funkzaehler content", () => {
 
 	it("has two audience cards: the demo and the Installationstool", () => {
 		expect(audience.cards.map((c) => c.cta.href)).toEqual([
-			"#start",
+			routes.ROUTE_DEMO_BUCHEN,
 			routes.ROUTE_INSTALLATIONSTOOL,
 		]);
 	});
@@ -194,11 +194,15 @@ describe("funkzaehler content", () => {
 		]);
 	});
 
-	it("sends every demo CTA to the closing card's form", () => {
-		expect(hero.primary.href).toBe("#start");
-		expect(rows.primary.href).toBe("#start");
-		expect(audience.cards[0].cta.href).toBe("#start");
-		expect(closing.submitLabel).toBe("Demo buchen");
+	it("sends every demo CTA to the booking page", () => {
+		expect(hero.primary.href).toBe(routes.ROUTE_DEMO_BUCHEN);
+		expect(rows.primary.href).toBe(routes.ROUTE_DEMO_BUCHEN);
+		expect(audience.cards[0].cta.href).toBe(routes.ROUTE_DEMO_BUCHEN);
+		expect(closing.button).toEqual({
+			text: "Live Demo buchen",
+			sub: "Mit Ihrem Ansprechpartner",
+			href: routes.ROUTE_DEMO_BUCHEN,
+		});
 	});
 
 	it("links only to routes and anchors on the page", () => {

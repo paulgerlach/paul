@@ -8,6 +8,7 @@
  * example data need sign-off before the cutover (plan §4.4).
  */
 import { PHONE, PHONE_HREF } from "$lib/company";
+import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type {
@@ -36,9 +37,9 @@ import {
 /** The contact form's section (the design's id). */
 export const APPLY_ID = "kontakt";
 /**
- * Every CTA to the form: the design's "Partnerschaft anfragen" and also its
- * "Demo buchen" and "Erstgespräch vereinbaren", which point at the
- * demo-booking design (plan, open question 1).
+ * Every CTA to the form: the design's "Partnerschaft anfragen", but
+ * not its "Demo buchen" and "Erstgespräch vereinbaren", which point at the
+ * demo-booking design and so lead to /demo-buchen (`DEMO_HREF`).
  */
 export const KONTAKT_HREF = `#${APPLY_ID}`;
 /** The first audience card with the form "Anbindung anfragen" (no-JS posts land here). */
@@ -403,10 +404,10 @@ export const faq = {
 export const closing = {
 	h2: "Lassen Sie uns zusammenarbeiten.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	/** The video button (the design's .dcta-b) → the form (plan, open question 1). */
+	/** The video button (the design's .dcta-b) → the booking page. */
 	button: {
 		text: "Demo buchen",
 		sub: "Mit Ihrem Ansprechpartner",
-		href: KONTAKT_HREF,
+		href: DEMO_HREF,
 	},
 };

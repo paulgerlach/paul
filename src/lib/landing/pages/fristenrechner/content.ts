@@ -3,6 +3,7 @@
  * (https://claude.ai/artifact/LWEbZPCoSDLT1D59BaULyE). Legal statements,
  * product claims and the example data await sign-off (plan §4.4).
  */
+import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
 import {
@@ -250,5 +251,10 @@ export const faq: { title: string; items: FaqItem[] } = {
 export const closing = {
 	h2: "Fristen im Blick. Den Rest erledigt Heidi.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

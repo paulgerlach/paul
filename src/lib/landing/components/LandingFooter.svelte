@@ -18,8 +18,8 @@
 
 	interface Props {
 		/**
-		 * Target of the "Demo buchen" link (default `DEMO_HREF`, the page's
-		 * signup form). A page without a signup form sends it elsewhere.
+		 * Target of the "Demo buchen" link (default `DEMO_HREF`, /demo-buchen;
+		 * the page's `landing.demoHref` when it sets one).
 		 */
 		demoHref?: string;
 	}

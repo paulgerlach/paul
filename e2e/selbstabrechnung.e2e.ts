@@ -1,20 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 
 const PATH = "/selbstabrechnung";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-
-const testEmail = (name: string) =>
-	`e2e-sa-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 /** Waits for hydration, so clicks reach the components. */
 const gotoHydrated = (page: Page) =>
@@ -64,11 +52,14 @@ test("is linked from the landing footer and /hilfe", async ({ page }) => {
 	).toHaveCount(1);
 });
 
-test("every Demo CTA leads to the signup form, the hero has no #start", async ({
+test("every Demo CTA leads to the booking page, the hero has no #start", async ({
 	page,
 }) => {
 	await page.goto(PATH);
-	await expect(page.locator("#start input[name=email]")).toHaveCount(1);
+	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+		"href",
+		"/demo-buchen",
+	);
 	await expect(
 		page.locator("section[aria-labelledby=sa-h1]"),
 	).not.toHaveAttribute("id", "start");
@@ -77,19 +68,19 @@ test("every Demo CTA leads to the signup form, the hero has no #start", async ({
 	for (const href of await demos.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
 	))
-		expect(href).toBe("#start");
+		expect(href).toBe("/demo-buchen");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "#start");
+	).toHaveAttribute("href", "/demo-buchen");
 });
 
-test("the hero CTA focuses the signup email", async ({ page }) => {
+test("the hero CTA opens the booking page", async ({ page }) => {
 	await gotoHydrated(page);
 	await page
 		.locator("section[aria-labelledby=sa-h1]")
 		.getByRole("link", { name: "Demo buchen" })
 		.click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	await expect(page).toHaveURL(/\/demo-buchen$/);
 });
 
 test.describe("hero demo", () => {
@@ -193,27 +184,4 @@ test("a focused statement key highlights its part of the sample", async ({
 	await expect(
 		section.getByRole("button", { name: /Gesamtbetrag ganz oben/ }),
 	).toHaveAttribute("aria-pressed", "true");
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

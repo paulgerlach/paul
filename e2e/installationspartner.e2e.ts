@@ -5,7 +5,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const PATH = "/installationspartner";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const MANAGER_SIGNUP = "/messdienstwechsel#start";
+const DEMO = "/demo-buchen";
 
 const testEmail = (name: string, domain = "example.com") =>
 	`e2e-ip-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;
@@ -147,14 +147,14 @@ test("CTAs lead to the partner form, the rows, the FAQ and the linked pages", as
 	await expect(
 		page.locator("main a", { hasText: "So gehen wir vor" }),
 	).toHaveAttribute("href", "/vorgehen");
-	// The managers' CTAs lead to /messdienstwechsel's signup.
+	// The managers' CTAs lead to the booking page.
 	await expect(
 		page.locator("section.trust a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", MANAGER_SIGNUP);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", MANAGER_SIGNUP);
+	).toHaveAttribute("href", DEMO);
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", MANAGER_SIGNUP);
+	).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zum Installationstool" }),
 	).toHaveAttribute("href", "/installationstool");

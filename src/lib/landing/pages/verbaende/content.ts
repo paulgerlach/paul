@@ -20,7 +20,7 @@ import type {
 } from "$lib/landing/sections/uv/types";
 import { ROUTE_PRESSE, ROUTE_SICHERHEIT } from "$lib/routes";
 
-/** Every "Demo buchen" leads to the closing card's signup form (plan, open question 1). */
+/** Every "Demo buchen" leads to the booking page. */
 const demoLink: Link = { text: "Demo buchen", href: DEMO_HREF };
 
 export const hero = {
@@ -258,9 +258,14 @@ export const faq = {
 	] satisfies FaqItem[] as FaqItem[],
 };
 
-/** The glass closing card; the signup form takes the design's video button's place. */
+/** The glass closing card with the design's video button. */
 export const closing = {
 	h2: "Ein verlässlicher Partner für Ihren Messdienst.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

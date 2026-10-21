@@ -3,8 +3,7 @@
   drawn letter (.kd-hv, hidden from screen readers like the design). The
   letter is rendered in its end state; its signature draws and its badges pop
   in through CSS animations from the first paint, and the top sheet floats
-  while the hero is in view. No `#start`: that's the signup form in the
-  closing card.
+  while the hero is in view. No `#start`: the page has no form.
 -->
 <script lang="ts">
 	import { inView } from "$lib/landing/attachments/inView";

@@ -3,14 +3,10 @@
 	import LandingFooter from "$lib/landing/components/LandingFooter.svelte";
 	import LandingHeader from "$lib/landing/components/LandingHeader.svelte";
 	import { DEFAULT_CHROME } from "$lib/landing/chrome";
-	import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
 
 	let { children } = $props();
 
-	// These pages have no signup form, so "Demo buchen" goes to
-	// /messdienstwechsel's.
 	const chrome = DEFAULT_CHROME;
-	const demoHref = `${ROUTE_MESSDIENSTWECHSEL}#start`;
 </script>
 
 <!--
@@ -24,12 +20,11 @@
 	<LandingHeader
 		bannerText={chrome.bannerText}
 		bannerHref={chrome.bannerHref}
-		{demoHref}
 	/>
 </div>
 {@render children()}
 <div class="lp lp-chrome">
-	<LandingFooter {demoHref} />
+	<LandingFooter />
 </div>
 
 <style>

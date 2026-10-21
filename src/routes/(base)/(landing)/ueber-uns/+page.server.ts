@@ -1,10 +1,8 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_UEBER_UNS } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.7).
 		title: "Über uns: Messdienst aus Berlin | Heidi Systems",
@@ -19,10 +17,4 @@ export const load: PageServerLoad = async () => ({
 	// The mission card's day count renders from this; the client clock takes
 	// over on mount.
 	now: Date.now(),
-	finalForm: await emptySwitchForm("final"),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, { source: "ueber-uns", page: ROUTE_UEBER_UNS }),
-};

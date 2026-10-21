@@ -1,7 +1,6 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { START_HREF } from "$lib/landing/cta";
-import { ROUTE_KARRIERE, ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
+import { ROUTE_KARRIERE } from "$lib/routes";
 import {
 	emptyApplicationForm,
 	handleApplication,
@@ -19,11 +18,7 @@ export const load: PageServerLoad = async () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.
-	landing: {
-		...DEFAULT_CHROME,
-		demoHref: `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`,
-	},
+	landing: DEFAULT_CHROME,
 	applicationForm: await emptyApplicationForm(),
 });
 

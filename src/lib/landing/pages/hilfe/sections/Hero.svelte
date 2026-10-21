@@ -1,4 +1,4 @@
-<!-- Light, centred hero: pill, H1, lead, the search and the popular questions. No `#start`: the header CTA goes to /messdienstwechsel. -->
+<!-- Light, centred hero: pill, H1, lead, the search and the popular questions. No `#start`: the header CTA goes to /demo-buchen. -->
 <script lang="ts">
 	import Icon from "../components/Icon.svelte";
 	import { hero } from "../content";

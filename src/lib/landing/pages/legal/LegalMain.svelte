@@ -1,13 +1,12 @@
 <!--
   A legal page (/impressum, /datenschutzhinweise, /agb): the hero, the
-  articles, the security block and the floating CTA. No signup form, so
-  "Demo buchen" and the floating CTA go to /messdienstwechsel's.
+  articles, the security block and the floating CTA. No signup form:
+  "Demo buchen" and the floating CTA go to /demo-buchen (`DEMO_HREF`).
 -->
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
 	import FloatingCta from "$lib/landing/sections/FloatingCta.svelte";
 	import TrustSeals from "$lib/landing/sections/TrustSeals.svelte";
-	import { LEGAL_DEMO_HREF } from "./chrome";
 	import Articles from "./sections/Articles.svelte";
 	import Hero from "./sections/Hero.svelte";
 	import type { LegalPage } from "./types";
@@ -18,9 +17,9 @@
 <main id="content" class="lg" {@attach reveal()}>
 	<Hero {page} />
 	<Articles {page} />
-	<TrustSeals demoHref={LEGAL_DEMO_HREF} />
+	<TrustSeals />
 </main>
-<FloatingCta href={LEGAL_DEMO_HREF} />
+<FloatingCta />
 
 <style>
 	/* The design's page tokens (its `.dm` wrapper) */

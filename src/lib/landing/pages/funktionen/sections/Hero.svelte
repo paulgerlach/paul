@@ -6,7 +6,6 @@
   already renders Heizung (plan 03 §3.1).
 -->
 <script lang="ts">
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
 	import Segmented from "$lib/landing/components/Segmented.svelte";
 	import { tweenNumber } from "$lib/landing/motion";
 	import Icon from "../components/Icon.svelte";
@@ -53,10 +52,7 @@
 			</h1>
 			<p class="lead rv">{hero.lead}</p>
 			<div class="ctas rv">
-				<a
-					class="btn-dark"
-					href={hero.primary.href}
-					onclick={hero.primary.href === START_HREF ? focusSignup : undefined}
+				<a class="btn-dark" href={hero.primary.href}
 					>{hero.primary.text} <span class="ar" aria-hidden="true">→</span></a
 				>
 				<a class="btn-ghost" href={hero.secondary.href}

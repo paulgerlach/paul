@@ -5,7 +5,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const PATH = "/kontakt";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const BOOKING = "/messdienstwechsel#start";
+const BOOKING = "/demo-buchen";
 
 const testEmail = (name: string, domain = "example.com") =>
 	`e2e-kt-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;
@@ -155,7 +155,7 @@ test("the CTAs lead to the form, the mailboxes and the booking", async ({
 			BOOKING,
 		);
 	await expect(page.locator("section.end a")).toHaveAttribute("href", BOOKING);
-	// The nav's "Demo buchen" too: this page's form isn't a signup.
+	// The nav's "Demo buchen" too.
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 	).toHaveAttribute("href", BOOKING);

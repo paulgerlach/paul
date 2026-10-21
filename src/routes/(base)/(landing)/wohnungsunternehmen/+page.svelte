@@ -30,7 +30,7 @@
 		<Steps />
 		<Testimonials />
 		<Faq items={data.faq} />
-		<Closing form={data.finalForm} />
+		<Closing />
 		<Trust />
 	</SgMain>
 </main>

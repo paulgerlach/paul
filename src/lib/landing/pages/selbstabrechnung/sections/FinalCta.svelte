@@ -1,22 +1,19 @@
 <!--
-  The page's only form, so it carries the `start` anchor every "Demo buchen"
-  leads to. The design's dark closing card becomes the shared final CTA with
-  the signup form (plan README, Signup).
+  The design's dark closing card (.dm-end with #dcta-css) with its text and
+  the video button "Live Demo buchen", which leads to /demo-buchen.
 -->
 <script lang="ts">
-	import type { SuperValidated } from "sveltekit-superforms";
-	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
-	import FinalCta from "$lib/landing/sections/FinalCta.svelte";
+	import DemoVideoButton from "$lib/landing/components/DemoVideoButton.svelte";
+	import CtaCard from "$lib/landing/sections/CtaCard.svelte";
 	import { finalCta } from "../content";
-
-	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
 </script>
 
-<!-- Trust follows, so the section is compact. -->
-<FinalCta
-	id="start"
-	title={finalCta.title}
-	{form}
-	submitLabel={finalCta.submitLabel}
-	compact
-/>
+<CtaCard id="sa-closing-h" title={finalCta.title} text={finalCta.text} final>
+	{#snippet action()}
+		<DemoVideoButton
+			href={finalCta.button.href}
+			label={finalCta.button.text}
+			sub={finalCta.button.sub}
+		/>
+	{/snippet}
+</CtaCard>

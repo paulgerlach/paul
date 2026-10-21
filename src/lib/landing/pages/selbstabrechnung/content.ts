@@ -517,5 +517,11 @@ export const faq = {
 
 export const finalCta = {
 	title: "Ihre Abrechnung. Unsere Daten.",
-	submitLabel: "Demo buchen",
+	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

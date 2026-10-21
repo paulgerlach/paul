@@ -17,7 +17,7 @@
 	}: {
 		/** "Mehr zu Sicherheit"; off on /sicherheit itself. */
 		securityLink?: boolean;
-		/** Target of "Demo buchen" (a page without a signup form sends it elsewhere). */
+		/** Target of "Demo buchen" (`#start` on /demo-buchen itself). */
 		demoHref?: string;
 	} = $props();
 

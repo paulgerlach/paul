@@ -167,11 +167,6 @@ test.describe("CTAs", () => {
 			(p: Page) =>
 				p.locator("#risiko").getByRole("link", { name: /Kürzung vermeiden/ }),
 		],
-		[
-			"header",
-			(p: Page) =>
-				p.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-		],
 	] as const;
 
 	for (const [name, cta] of ctas) {
@@ -181,6 +176,15 @@ test.describe("CTAs", () => {
 			await expect(page.locator("#start input[name=email]")).toBeFocused();
 		});
 	}
+
+	test("the header's Demo buchen opens the booking page", async ({ page }) => {
+		await page.goto(PATH);
+		await page
+			.locator("nav.top")
+			.getByRole("link", { name: "Demo buchen" })
+			.click();
+		await expect(page).toHaveURL(/\/demo-buchen$/);
+	});
 });
 
 test.describe("signup", () => {

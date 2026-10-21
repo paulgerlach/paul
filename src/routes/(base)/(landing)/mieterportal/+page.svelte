@@ -13,8 +13,6 @@
 	import Statement from "$lib/landing/pages/mieterportal/sections/Statement.svelte";
 	import Trust from "$lib/landing/pages/mieterportal/sections/Trust.svelte";
 	import UvMain from "$lib/landing/sections/uv/UvMain.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="mp" {@attach reveal()}>
@@ -28,7 +26,7 @@
 		<Quotes />
 		<Picture />
 		<Faq />
-		<CtaCard form={data.finalForm} />
+		<CtaCard />
 	</UvMain>
 	<Trust />
 </main>

@@ -1,11 +1,9 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq, figures } from "$lib/landing/pages/weg-verwaltung/content";
-import { ROUTE_WEG_VERWALTUNG } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
 		title:
@@ -20,13 +18,4 @@ export const load: PageServerLoad = async () => ({
 	landing: DEFAULT_CHROME,
 	faq: faq.items,
 	figures: figures(Date.now()),
-	finalForm: await emptySwitchForm("final"),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "weg-verwaltung",
-			page: ROUTE_WEG_VERWALTUNG,
-		}),
-};

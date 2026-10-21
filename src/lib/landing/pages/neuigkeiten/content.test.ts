@@ -62,6 +62,6 @@ describe("/neuigkeiten content", () => {
 
 	it("shares the closing card's text with /schnittstellen", () => {
 		expect(closing.text).toBe(schnittstellenClosing.text);
-		expect(closing.submitLabel).toBe(schnittstellenClosing.submitLabel);
+		expect(closing.button).toEqual(schnittstellenClosing.button);
 	});
 });

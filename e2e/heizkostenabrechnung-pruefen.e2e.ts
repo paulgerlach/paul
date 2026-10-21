@@ -1,22 +1,10 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 
 const PATH = "/heizkostenabrechnung-pruefen";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 /** 19.10.2026, noon in Berlin: the example's dates are fixed by it. */
 const TODAY = new Date("2026-10-19T10:00:00Z");
-
-const testEmail = (name: string) =>
-	`e2e-hk-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -147,7 +135,7 @@ test("the footer and the other pages lead here, the internal links on", async ({
 	}
 });
 
-test("the CTAs lead to the card, the figures, /funktionen and the closing form", async ({
+test("the CTAs lead to the card, the figures, /funktionen and the booking page", async ({
 	page,
 }) => {
 	await gotoHydrated(page);
@@ -162,17 +150,16 @@ test("the CTAs lead to the card, the figures, /funktionen and the closing form",
 	await expect(
 		page.getByRole("link", { name: /Heizkostenabrechnung mit Heidi/ }),
 	).toHaveAttribute("href", "/funktionen");
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("section.final a.bk-next")).toHaveAttribute(
+		"href",
+		"#checker",
+	);
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	const demo = page
 		.locator("main section")
 		.filter({ hasText: "Mit Heidi entstehen diese Fehler" })
 		.getByRole("link", { name: "Demo buchen" });
-	await expect(demo).toHaveAttribute("href", "#start");
-	await demo.click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	await expect(demo).toHaveAttribute("href", "/demo-buchen");
 });
 
 test("the example: the sum, the paywall, the free unlock and the letter", async ({
@@ -386,9 +373,9 @@ test.describe("without JS", () => {
 		await expect(page.locator("#zahlen .dbig b")).toHaveText("67");
 		await expect(page.locator("#zahlen .dots i.on")).toHaveCount(67);
 		await expect(page.locator("#fehler article")).toHaveCount(11);
-		await expect(page.locator("section#start form")).toHaveAttribute(
-			"method",
-			/post/i,
+		await expect(page.locator("section.final a.bk-next")).toHaveAttribute(
+			"href",
+			"#checker",
 		);
 	});
 });
@@ -405,27 +392,4 @@ test.describe("with reduced motion", () => {
 		await expect(figure(page)).toHaveText(/^\d/);
 		await expect(page.locator("#zahlen .dots i.on")).toHaveCount(67);
 	});
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

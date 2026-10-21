@@ -1,7 +1,6 @@
 <!--
   The design's dark closing card (.dm-end with #dcta-css) with its video
-  button "Demo buchen", which leads to /messdienstwechsel's signup form (no
-  booking page). The page has no form of its own.
+  button "Demo buchen", which leads to /demo-buchen. The page has no form of its own.
 -->
 <script lang="ts">
 	import DemoVideoButton from "$lib/landing/components/DemoVideoButton.svelte";

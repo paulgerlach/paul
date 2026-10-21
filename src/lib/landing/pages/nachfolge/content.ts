@@ -9,6 +9,7 @@
  */
 import { PHONE, PHONE_HREF } from "$lib/company";
 import { isExpired } from "$lib/landing/deadline/deadline";
+import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type {
@@ -32,9 +33,9 @@ import { ROUTE_PARTNERSCHAFTEN, ROUTE_SICHERHEIT } from "$lib/routes";
 /** The contact form's section (the design's id). */
 export const APPLY_ID = "kontakt";
 /**
- * Every CTA to the form: the design's "Gespräch anfragen" and also its
- * "Demo buchen" and "Erstgespräch vereinbaren", which point at the
- * demo-booking design (plan, open question 1).
+ * Every CTA to the form: the design's "Gespräch anfragen", but
+ * not its "Demo buchen" and "Erstgespräch vereinbaren", which point at the
+ * demo-booking design and so lead to /demo-buchen (`DEMO_HREF`).
  */
 export const KONTAKT_HREF = `#${APPLY_ID}`;
 
@@ -367,10 +368,10 @@ export const faq = {
 export const closing = {
 	h2: "Ihr Lebenswerk. In guten Händen.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	/** The video button (the design's .dcta-b) → the form (plan, open question 1). */
+	/** The video button (the design's .dcta-b) → the booking page. */
 	button: {
 		text: "Demo buchen",
 		sub: "Mit Ihrem Ansprechpartner",
-		href: KONTAKT_HREF,
+		href: DEMO_HREF,
 	},
 };

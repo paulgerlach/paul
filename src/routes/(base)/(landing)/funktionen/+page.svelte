@@ -24,7 +24,7 @@
 	<FiveSteps />
 	<Quote />
 	<Faq items={data.faq} />
-	<CtaCard form={data.finalForm} />
+	<CtaCard />
 	<Trust />
 </main>
 <FloatingCta />

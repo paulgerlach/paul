@@ -4,11 +4,9 @@ import {
 	faqItems,
 	figures,
 } from "$lib/landing/pages/verbrauchsinformation/content";
-import { ROUTE_VERBRAUCHSINFORMATION } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = () => {
 	const now = Date.now();
 	return {
 		seo: {
@@ -25,14 +23,5 @@ export const load: PageServerLoad = async () => {
 		landing: DEFAULT_CHROME,
 		faq: faqItems(now),
 		figures: figures(now),
-		finalForm: await emptySwitchForm("final"),
 	};
-};
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "verbrauchsinformation",
-			page: ROUTE_VERBRAUCHSINFORMATION,
-		}),
 };

@@ -23,7 +23,7 @@
 	<Milestones />
 	<Portfolio />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

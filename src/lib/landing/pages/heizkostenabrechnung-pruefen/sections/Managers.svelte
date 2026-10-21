@@ -1,6 +1,5 @@
 <!-- "Mit Heidi entstehen diese Fehler gar nicht erst." (.mc-vw): the dark band for managers with "Heizkostenabrechnung mit Heidi →" (/funktionen) and "Demo buchen" (the closing form). -->
 <script lang="ts">
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
 	import Icon from "../components/Icon.svelte";
 	import { managers } from "../content";
 </script>
@@ -17,10 +16,7 @@
 				<a class="bk-next inv" href={managers.billing.href}
 					>{managers.billing.text} <span class="ar">→</span></a
 				>
-				<a
-					class="pg-ghost ghost"
-					href={managers.demo.href}
-					onclick={managers.demo.href === START_HREF ? focusSignup : undefined}
+				<a class="pg-ghost ghost" href={managers.demo.href}
 					>{managers.demo.text}</a
 				>
 			</div>

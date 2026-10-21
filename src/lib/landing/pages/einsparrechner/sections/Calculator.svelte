@@ -10,7 +10,6 @@
 <script lang="ts">
 	import { onDestroy, untrack } from "svelte";
 	import { inView } from "$lib/landing/attachments/inView";
-	import { focusSignup } from "$lib/landing/cta";
 	import { prefersReducedMotion, tweenNumber } from "$lib/landing/motion";
 	import { formatNumber } from "$lib/landing/pages/upgrade-now/calculator";
 	import { confettiFrom } from "$lib/landing/sections/sg/confetti";
@@ -189,7 +188,7 @@
 				<b>{euros(shown.perUnit)}</b><small>{r.perUnit}</small>
 			</div>
 		</div>
-		<a class="go" href={r.cta.href} onclick={focusSignup}
+		<a class="go" href={r.cta.href}
 			>{r.cta.text} <span class="ar" aria-hidden="true">→</span></a
 		>
 		<p class="note">{r.note}</p>

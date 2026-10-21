@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // No form on this page: nothing is stored or sent.
 
 const PATH = "/api-dokumentation";
-const MANAGER_SIGNUP = "/messdienstwechsel#start";
+const DEMO = "/demo-buchen";
 const ARTICLES = [
 	"ueberblick",
 	"schnellstart",
@@ -109,7 +109,7 @@ test("the pages that waited for it link here", async ({ page }) => {
 	).toHaveAttribute("href", PATH);
 });
 
-test("the CTAs lead to the quick start, the partner page and /messdienstwechsel", async ({
+test("the CTAs lead to the quick start, the partner page and /demo-buchen", async ({
 	page,
 }) => {
 	await page.goto(PATH);
@@ -125,17 +125,17 @@ test("the CTAs lead to the quick start, the partner page and /messdienstwechsel"
 		expect(href).toBe("/softwarepartner");
 	await expect(
 		page.locator("#zugang a", { hasText: "Erstgespräch vereinbaren" }),
-	).toHaveAttribute("href", MANAGER_SIGNUP);
+	).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("section.trust a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", MANAGER_SIGNUP);
+	).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("section.trust a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", MANAGER_SIGNUP);
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", MANAGER_SIGNUP);
+	).toHaveAttribute("href", DEMO);
 	const bved = page.locator("main a", { hasText: "bved-Spezifikationen" });
 	await expect(bved).toHaveAttribute(
 		"href",

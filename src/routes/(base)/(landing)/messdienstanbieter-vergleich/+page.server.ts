@@ -1,6 +1,5 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { BOOKING_HREF } from "$lib/landing/pages/messdienstanbieter-vergleich/content";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -15,5 +14,5 @@ export const load: PageServerLoad = () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	landing: { ...DEFAULT_CHROME, demoHref: BOOKING_HREF },
+	landing: DEFAULT_CHROME,
 });

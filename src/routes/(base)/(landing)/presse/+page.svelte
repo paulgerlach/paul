@@ -9,8 +9,6 @@
 	import Name from "$lib/landing/pages/presse/sections/Name.svelte";
 	import PressContact from "$lib/landing/pages/presse/sections/PressContact.svelte";
 	import Trust from "$lib/landing/pages/presse/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="pr" {@attach reveal()}>
@@ -20,7 +18,7 @@
 	<Facts />
 	<Boilerplate />
 	<PressContact />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

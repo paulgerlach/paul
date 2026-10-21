@@ -1,4 +1,4 @@
-import { LEGAL_CHROME } from "$lib/landing/pages/legal/chrome";
+import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -9,5 +9,5 @@ export const load: PageServerLoad = () => ({
 		description:
 			"Impressum der Heidi Systems GmbH, Monbijouplatz 4, 10178 Berlin: Anbieter, Vertretung, Kontakt, Registereintrag und Umsatzsteuer-ID nach § 5 DDG.",
 	},
-	landing: LEGAL_CHROME,
+	landing: DEFAULT_CHROME,
 });

@@ -1,20 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 
 const PATH = "/neuigkeiten";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-
-const testEmail = (name: string) =>
-	`e2e-nw-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -113,15 +101,16 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	]);
 });
 
-test("every CTA leads to the closing card's form", async ({ page }) => {
+test("every CTA leads to the booking page", async ({ page }) => {
 	await page.goto(PATH);
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
+	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+		"href",
+		"/demo-buchen",
+	);
 	await expect(
 		page.locator("section[aria-labelledby=nw-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 });
 
 test("the filter shows the stories of a topic", async ({ page }) => {
@@ -176,16 +165,16 @@ test("the filter works with the keyboard", async ({ page }) => {
 test.describe("without JS", () => {
 	test.use({ javaScriptEnabled: false });
 
-	test("every story shows and the form posts", async ({ page }) => {
+	test("every story shows, the closing button its target", async ({ page }) => {
 		await page.goto(PATH);
 		await expect(visibleCards(page)).toHaveCount(9);
 		await expect(page.getByRole("radio", { name: "Alle" })).toHaveAttribute(
 			"aria-checked",
 			"true",
 		);
-		await expect(page.locator("section#start form")).toHaveAttribute(
-			"method",
-			/post/i,
+		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+			"href",
+			"/demo-buchen",
 		);
 	});
 });
@@ -203,27 +192,4 @@ test.describe("with reduced motion", () => {
 			.evaluate((el) => getComputedStyle(el).transform);
 		expect(transform).toBe("none");
 	});
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

@@ -9,7 +9,6 @@
  * on 2026-10-12.
  */
 import { PHONE, PHONE_HREF } from "$lib/company";
-import { START_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type {
@@ -22,24 +21,13 @@ import type {
 	ListEntry,
 	Row,
 } from "$lib/landing/sections/uv/types";
-import {
-	ROUTE_INSTALLATIONSTOOL,
-	ROUTE_MESSDIENSTWECHSEL,
-	ROUTE_VORGEHEN,
-} from "$lib/routes";
+import { ROUTE_INSTALLATIONSTOOL, ROUTE_VORGEHEN } from "$lib/routes";
 
 const NB = " ";
 
 /** The partner form's section (the design's id). */
 export const APPLY_ID = "bewerben";
 const APPLY_HREF = `#${APPLY_ID}`;
-
-/**
- * Target of the managers' "Demo buchen" (the trust block, the floating CTA):
- * this page has no signup form, so they lead to /messdienstwechsel's (plan,
- * open question 1).
- */
-export const MANAGER_SIGNUP_HREF = `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`;
 
 const partnerLink: Link = { text: "Partner werden", href: APPLY_HREF };
 

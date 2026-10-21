@@ -28,7 +28,7 @@
 		<Quotes />
 		<Picture />
 		<Faq items={data.faq} />
-		<CtaCard form={data.finalForm} />
+		<CtaCard />
 	</UvMain>
 	<Trust />
 </main>

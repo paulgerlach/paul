@@ -1,13 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The signup tests save leads, so they need a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 //
 // The server renders with its real time; the page's clock takes over from the
 // browser's on mount, so `page.clock` at a fixed time checks the client side.
 
 const PATH = "/ueber-uns";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 /** A Berlin wall-clock time as an instant (+01:00 in winter, +02:00 in summer). */
 const berlin = (iso: string) => new Date(iso);
@@ -15,19 +13,9 @@ const OCT_12 = berlin("2026-10-12T12:00:00+02:00");
 const DEC_31_NOON = berlin("2026-12-31T12:00:00+01:00");
 const JAN_1_AFTER = berlin("2027-01-01T00:00:05+01:00");
 
-const testEmail = (name: string) =>
-	`e2e-ub-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
 async function gotoAt(page: Page, path: string, time: Date) {
 	await page.clock.install({ time });
 	await page.goto(path);
-}
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
 }
 
 test("renders with its own layout and SEO tags", async ({ page }) => {
@@ -146,26 +134,23 @@ test.describe("service checklist", () => {
 });
 
 test.describe("CTAs", () => {
-	const ctas = [
-		[
-			"hero",
-			(p: Page) =>
-				p.locator(".hero").getByRole("link", { name: /Demo buchen/ }),
-		],
-		[
-			"header",
-			(p: Page) =>
-				p.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-		],
-	] as const;
-
-	for (const [name, cta] of ctas) {
-		test(`${name} CTA focuses the signup email`, async ({ page }) => {
-			await page.goto(PATH);
-			await cta(page).click();
-			await expect(page.locator("#start input[name=email]")).toBeFocused();
-		});
-	}
+	test("the hero's and the header's Demo buchen open the booking page", async ({
+		page,
+	}) => {
+		await page.goto(PATH);
+		await expect(
+			page.locator(".hero").getByRole("link", { name: /Demo buchen/ }),
+		).toHaveAttribute("href", "/demo-buchen");
+		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+			"href",
+			"/demo-buchen",
+		);
+		await page
+			.locator("nav.top")
+			.getByRole("link", { name: "Demo buchen" })
+			.click();
+		await expect(page).toHaveURL(/\/demo-buchen$/);
+	});
 
 	test("Kundenstimmen lesen scrolls to the testimonials", async ({ page }) => {
 		await page.goto(PATH);
@@ -187,58 +172,6 @@ test.describe("CTAs", () => {
 			await expect(link).not.toHaveAttribute("target");
 			await expect(link).not.toHaveAttribute("rel");
 		}
-	});
-});
-
-test.describe("signup", () => {
-	test("stores the lead and sends the webhook with the page", async ({
-		page,
-	}) => {
-		// 10 s behind, so the form's render time passes the timing check
-		await page.clock.install({ time: Date.now() - 10_000 });
-		await page.goto(PATH);
-		const email = testEmail("final");
-		const box = page.locator(".signup-box.final");
-		await box.locator('input[name="email"]').fill(email);
-		await box.locator("button[type=submit]").click();
-
-		await expect(box.locator(".status")).toHaveText(
-			"Danke! Wir melden uns innerhalb eines Werktags.",
-		);
-		await expect
-			.poll(() => webhookFor(page, email))
-			.toMatchObject({
-				event_type: "switchinquiry",
-				placement: "final",
-				page: PATH,
-			});
-	});
-
-	test("shows the validation error inline", async ({ page }) => {
-		await page.goto(PATH);
-		const box = page.locator(".signup-box.final");
-		await box
-			.locator("form")
-			.evaluate((form: HTMLFormElement) => (form.noValidate = true));
-		await box.locator('input[name="email"]').fill("not-an-email@");
-		await box.locator("button[type=submit]").click();
-		await expect(box.getByRole("alert")).toHaveText(
-			"Bitte eine gültige E-Mail-Adresse eingeben",
-		);
-	});
-
-	test("answers a filled honeypot with success but sends nothing", async ({
-		page,
-	}) => {
-		await page.clock.install({ time: Date.now() - 10_000 });
-		await page.goto(PATH);
-		const email = testEmail("honeypot");
-		const box = page.locator(".signup-box.final");
-		await box.locator('input[name="website"]').fill("spam", { force: true });
-		await box.locator('input[name="email"]').fill(email);
-		await box.locator("button[type=submit]").click();
-		await expect(box.locator(".status")).toContainText("Danke!");
-		expect(await webhookFor(page, email)).toBeUndefined();
 	});
 });
 

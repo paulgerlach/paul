@@ -127,14 +127,12 @@ test("the footer's legal line links the three pages", async ({ page }) => {
 	).toEqual(["/impressum", "/datenschutzhinweise", "/agb"]);
 });
 
-test("Demo buchen goes to /messdienstwechsel's signup form", async ({
-	page,
-}) => {
+test("Demo buchen goes to /demo-buchen", async ({ page }) => {
 	await page.goto("/agb");
 	for (const scope of ["nav.top", "main"])
 		await expect(
 			page.locator(scope).getByRole("link", { name: "Demo buchen" }).first(),
-		).toHaveAttribute("href", "/messdienstwechsel#start");
+		).toHaveAttribute("href", "/demo-buchen");
 });
 
 test("the Impressum names the provider and its register entry", async ({

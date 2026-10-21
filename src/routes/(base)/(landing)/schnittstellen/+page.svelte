@@ -26,7 +26,7 @@
 	<Steps />
 	<Testimonials />
 	<Faq items={data.faq} />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

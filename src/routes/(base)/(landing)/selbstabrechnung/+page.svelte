@@ -14,8 +14,6 @@
 	import TaskSplit from "$lib/landing/pages/selbstabrechnung/sections/TaskSplit.svelte";
 	import Testimonials from "$lib/landing/pages/selbstabrechnung/sections/Testimonials.svelte";
 	import Trust from "$lib/landing/pages/selbstabrechnung/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="sa" {@attach reveal()}>
@@ -30,7 +28,7 @@
 	<People />
 	<Testimonials />
 	<Faq />
-	<FinalCta form={data.finalForm} />
+	<FinalCta />
 	<Trust />
 </main>
 <FloatingCta />

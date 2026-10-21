@@ -4,7 +4,7 @@
  * gallery. Components hold markup and behaviour only.
  *
  * The devices and their properties, the company claims and the example data
- * need sign-off before the cutover (go-live gate §2).
+ * need sign-off before the cutover (go-live gate §3).
  */
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
@@ -29,7 +29,7 @@ import {
 
 const SHY = "­";
 
-/** Every "Demo buchen" leads to the closing card's signup form. */
+/** Every "Demo buchen" leads to the booking page. */
 const demoLink: Link = { text: "Demo buchen", href: DEMO_HREF };
 
 export const hero = {
@@ -422,9 +422,14 @@ export const faq = {
 	] satisfies FaqItem[] as FaqItem[],
 };
 
-/** The glass closing card; the signup form takes the design's video button's place. */
+/** The glass closing card with the design's video button. */
 export const closing = {
 	h2: "Funkzähler für Ihren ganzen Bestand.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

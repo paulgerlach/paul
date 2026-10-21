@@ -276,7 +276,7 @@ export const takeover = {
 	pill: "Noch einfacher",
 	h2: "Oder Heidi kündigt für Sie.",
 	text: "Eine Unterschrift auf der Vollmacht genügt. Heidi kündigt beim bisherigen Messdienst, plant die Montage und informiert die Mieter. Bestehende Zähler werten wir sofort aus, auch wenn Ihr Vertrag noch läuft.",
-	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): the closing form here.
+	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
 	// UFviBtC2mkneFNeWnfHAWp (the Portfolio-Checker)
 	check: { text: "Vertragsenden prüfen", href: ROUTE_PORTFOLIO_CHECKER } as {
@@ -329,5 +329,10 @@ export const faq = {
 export const closing = {
 	h2: "Lieber gar nicht selbst kündigen?",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

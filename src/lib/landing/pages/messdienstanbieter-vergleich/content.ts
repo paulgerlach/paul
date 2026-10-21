@@ -5,7 +5,7 @@
  * calculator's start values. The comparison, the criteria and the legal
  * statements await sign-off (plan §4.4).
  */
-import { START_HREF } from "$lib/landing/cta";
+import { DEMO_HREF } from "$lib/landing/cta";
 import { DEFAULT_LOGO_ORDER } from "$lib/landing/data/logos";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
@@ -14,10 +14,10 @@ import { ROUTE_MESSDIENSTWECHSEL, ROUTE_UPGRADE_NOW } from "$lib/routes";
 import type { IconName } from "./icons";
 
 /**
- * Target of every "Demo buchen" and offer link: /messdienstwechsel's signup
- * form (the page has no form of its own; no booking page yet).
+ * Target of every "Demo buchen" and offer link: the design's booking page
+ * (44SBXKXJaSp6bvGMnbpZj6), /demo-buchen.
  */
-export const BOOKING_HREF = `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`;
+export const BOOKING_HREF = DEMO_HREF;
 
 /** Step 1's section, the target of "Vergleich starten ↓". */
 export const COMPARE_ID = "vergleich";

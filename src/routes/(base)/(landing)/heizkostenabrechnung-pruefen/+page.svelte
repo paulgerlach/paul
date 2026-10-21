@@ -36,7 +36,7 @@
 	<Deadlines />
 	<Managers />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Paywall />
 	<Trust />
 </main>

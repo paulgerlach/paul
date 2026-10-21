@@ -1,4 +1,4 @@
-<!-- Hero (.pg-hero, light, as /fristenrechner's): pill, H1, lead, the two CTAs, three ticks and the Schnell-Check. No `#start`: that's the signup form in the closing card. -->
+<!-- Hero (.pg-hero, light, as /fristenrechner's): pill, H1, lead, the two CTAs, three ticks and the Schnell-Check. No `#start`: the page has no form. -->
 <script lang="ts">
 	import Check from "$lib/landing/components/icons/Check.svelte";
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";

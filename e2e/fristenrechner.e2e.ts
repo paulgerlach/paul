@@ -1,23 +1,11 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// No form on this page: its "Demo buchen" lead to /demo-buchen.
 
 const PATH = "/fristenrechner";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 /** The browser's "today" for the calculator tests: 19.10.2026 in Berlin. */
 const TODAY = new Date("2026-10-19T10:00:00+02:00");
 const NB = "\u00a0";
-
-const testEmail = (name: string) =>
-	`e2e-fr-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -109,7 +97,7 @@ test("the footer's Fristenrechner link and internal links resolve", async ({
 	}
 });
 
-test("the CTAs lead to the calculator, the dates and the closing form", async ({
+test("the CTAs lead to the calculator, the dates and the booking page", async ({
 	page,
 }) => {
 	await page.goto(PATH);
@@ -121,13 +109,14 @@ test("the CTAs lead to the calculator, the dates and the closing form", async ({
 	).toHaveAttribute("href", "#stichtage");
 	await expect(page.locator("#rechner")).toHaveCount(1);
 	await expect(page.locator("section#stichtage")).toHaveCount(1);
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
+	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+		"href",
+		"/demo-buchen",
+	);
 	await expect(
 		page.locator("section[aria-labelledby=fr-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	// Both CTAs in their design's look: the Portfolio-Checker dark, the
 	// Muster-Kündigung light.
 	const checker = page.locator("main a", { hasText: "Zum Portfolio-Checker" });
@@ -253,7 +242,9 @@ test("hydrates without console errors or warnings", async ({ page }) => {
 test.describe("without JS", () => {
 	test.use({ javaScriptEnabled: false });
 
-	test("every pane shows its result and the form posts", async ({ page }) => {
+	test("every pane shows its result, the closing button its target", async ({
+		page,
+	}) => {
 		await page.goto(PATH);
 		await expect(page.getByRole("tablist")).toBeHidden();
 		for (const name of ["Vertrag", "Eichfrist", "Abrechnung"]) {
@@ -264,9 +255,9 @@ test.describe("without JS", () => {
 			await expect(big(p), name).toHaveText(/^\d\d\.\d\d\.\d{4}$/);
 		}
 		await expect(page.locator("#stichtage .sb").first()).toHaveText("gilt");
-		await expect(page.locator("section#start form")).toHaveAttribute(
-			"method",
-			/post/i,
+		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
+			"href",
+			"/demo-buchen",
 		);
 	});
 });
@@ -285,27 +276,4 @@ test.describe("with reduced motion", () => {
 		);
 		expect(animation).toBe("none");
 	});
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

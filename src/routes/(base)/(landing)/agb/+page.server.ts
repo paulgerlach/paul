@@ -1,5 +1,5 @@
 import { LAUNCHED } from "$lib/landing/launch";
-import { LEGAL_CHROME } from "$lib/landing/pages/legal/chrome";
+import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -12,5 +12,5 @@ export const load: PageServerLoad = () => ({
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
-	landing: LEGAL_CHROME,
+	landing: DEFAULT_CHROME,
 });

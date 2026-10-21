@@ -1,6 +1,6 @@
 <!--
   Hero (.pg-hero.bl-hero, light): the pill, the H1, the lead and the featured
-  story. No `#start`: that's the signup form in the closing card.
+  story. No `#start`: the page has no form.
 -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";

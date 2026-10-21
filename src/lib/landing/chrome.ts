@@ -10,8 +10,8 @@ export type LandingChrome = {
 	/** Target of the banner's "Mehr erfahren" link (default `#faq`). */
 	bannerHref?: string;
 	/**
-	 * Target of the nav's "Demo buchen" (default `DEMO_HREF`, the page's
-	 * signup form). A page without a signup form sends it elsewhere.
+	 * Target of the nav's "Demo buchen" (default `DEMO_HREF`, /demo-buchen;
+	 * `#start` on /demo-buchen itself).
 	 */
 	demoHref?: string;
 };

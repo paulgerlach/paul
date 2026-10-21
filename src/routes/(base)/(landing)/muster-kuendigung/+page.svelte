@@ -25,7 +25,7 @@
 	<Checklist />
 	<Takeover />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

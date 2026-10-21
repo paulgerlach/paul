@@ -140,20 +140,18 @@ test("the request CTAs lead to the closing form", async ({ page }) => {
 	await gotoHydrated(page);
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "#start");
+	).toHaveAttribute("href", "/demo-buchen");
 	await expect(tool(page)).toHaveCount(1);
 	await expect(
 		page.locator("section.final#start input[name=email]"),
 	).toHaveCount(1);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	await exampleButton(page).click();
 	await expect(result(page)).toBeVisible({ timeout: 15_000 });
 	const cta = result(page).getByRole("link", {
 		name: /Mit eigenem Bestand auswerten/,
 	});
-	await expect(cta).toHaveAttribute("href", "#start");
-	await cta.click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	await expect(cta).toHaveAttribute("href", "/demo-buchen");
 });
 
 test("the example run checks five files and shows the evaluation for the day", async ({
@@ -255,7 +253,7 @@ test("own files are checked by name and size only, nothing is sent", async ({
 	).toHaveCount(0);
 	await expect(
 		result(page).getByRole("link", { name: /Auswertung anfragen/ }),
-	).toHaveAttribute("href", "#start");
+	).toHaveAttribute("href", "/demo-buchen");
 	expect(requests).toEqual([]);
 
 	// × removes a file; the example replaces the own files.

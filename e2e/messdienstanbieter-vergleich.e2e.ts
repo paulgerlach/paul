@@ -124,20 +124,15 @@ test("the CTAs lead to the steps, the signup form and the other pages", async ({
 	await expect(page.locator("main form")).toHaveCount(0);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/messdienstwechsel#start",
+		"/demo-buchen",
 	);
-	await expect(page.locator("a.ctab")).toHaveAttribute(
-		"href",
-		"/messdienstwechsel#start",
-	);
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
 	const offers = page.locator("main a", {
 		hasText:
 			/^(Demo buchen|Mit Heidi vergleichen|Heidi-Angebot für diesen Bestand)/,
 	});
 	expect(await offers.count()).toBeGreaterThanOrEqual(4);
-	expect(new Set(await hrefs(offers))).toEqual(
-		new Set(["/messdienstwechsel#start"]),
-	);
+	expect(new Set(await hrefs(offers))).toEqual(new Set(["/demo-buchen"]));
 });
 
 test("picking scores the provider against Heidi", async ({ page }) => {

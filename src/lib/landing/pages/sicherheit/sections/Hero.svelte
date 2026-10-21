@@ -4,7 +4,6 @@
   closing card, so the hero has no `start` anchor (plan README, Signup).
 -->
 <script lang="ts">
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
 	import Icon from "../components/Icon.svelte";
 	import Tick from "../components/Tick.svelte";
 	import { hero } from "../content";
@@ -20,10 +19,7 @@
 			</h1>
 			<p class="lead rv">{hero.lead}</p>
 			<div class="ctas rv">
-				<a
-					class="b-demo"
-					href={hero.demo.href}
-					onclick={hero.demo.href === START_HREF ? focusSignup : undefined}
+				<a class="b-demo" href={hero.demo.href}
 					>{hero.demo.text} <span class="ar" aria-hidden="true">→</span></a
 				>
 				<a class="b-data" href={hero.data.href}

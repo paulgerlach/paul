@@ -487,7 +487,7 @@ export const managers = {
 	text: "Funkzähler, monatliche Verbrauchsinformation und eine Heizkostenabrechnung nach HKVO, per Klick. So entsteht die nächste Abrechnung ohne diese Fehler.",
 	// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung".
 	billing: { text: "Heizkostenabrechnung mit Heidi", href: ROUTE_FUNKTIONEN },
-	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): the closing form here.
+	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): /demo-buchen.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
 };
 
@@ -523,8 +523,6 @@ export const faq: { title: string; items: FaqItem[] } = {
 
 export const closing = {
 	h2: "Ihre Abrechnung in einer Minute geprüft.",
-	// The design's "Jetzt prüfen ↑" (to the card) makes way for the signup
-	// form that the page's "Demo buchen" links need (plan README, open
-	// question 1).
-	submitLabel: "Demo buchen",
+	/** Back to the check card (the design's "Jetzt prüfen ↑"). */
+	back: { text: "Jetzt prüfen", href: `#${CHECKER_ID}` },
 };

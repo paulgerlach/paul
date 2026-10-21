@@ -1,10 +1,8 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_EINSPARRECHNER } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
 		title:
@@ -17,13 +15,4 @@ export const load: PageServerLoad = async () => ({
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,
-	finalForm: await emptySwitchForm("final"),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "einsparrechner",
-			page: ROUTE_EINSPARRECHNER,
-		}),
-};

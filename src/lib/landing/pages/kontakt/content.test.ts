@@ -27,8 +27,8 @@ describe("kontakt content", () => {
 		expect(hero.mailboxes.map((m) => m.key)).toEqual([...MAILBOX_KEYS]);
 	});
 
-	it("sends every booking link to /messdienstwechsel's signup", () => {
-		expect(BOOKING_HREF).toBe("/messdienstwechsel#start");
+	it("sends every booking link to /demo-buchen", () => {
+		expect(BOOKING_HREF).toBe("/demo-buchen");
 		expect(hero.book.href).toBe(BOOKING_HREF);
 		expect(write.alt.link.href).toBe(BOOKING_HREF);
 		expect(closing.button.href).toBe(BOOKING_HREF);

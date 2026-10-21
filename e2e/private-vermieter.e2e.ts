@@ -126,7 +126,7 @@ test("the CTAs lead to the closing card's form and the anchors", async ({
 	).toHaveCount(1);
 	await expect(
 		page.locator("main a", { hasText: "Angebot anfragen" }),
-	).toHaveAttribute("href", "#start");
+	).toHaveAttribute("href", "/demo-buchen");
 	await expect(
 		page.locator("main a", { hasText: "So funktioniert’s" }),
 	).toHaveAttribute("href", "#so");

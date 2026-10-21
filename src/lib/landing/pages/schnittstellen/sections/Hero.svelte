@@ -1,4 +1,4 @@
-<!-- Hero (.pg-hero, light): pill, H1, lead, the two CTAs, three ticks and the switch "Zwei Plattformen / Mit Heidi". No `#start`: that's the signup form in the closing card. -->
+<!-- Hero (.pg-hero, light): pill, H1, lead, the two CTAs, three ticks and the switch "Zwei Plattformen / Mit Heidi". No `#start`: the page has no form. -->
 <script lang="ts">
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import Check from "$lib/landing/components/icons/Check.svelte";

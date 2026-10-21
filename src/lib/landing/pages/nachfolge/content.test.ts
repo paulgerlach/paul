@@ -76,7 +76,7 @@ describe("nachfolge content", () => {
 		expect(content.KONTAKT_HREF).toBe("#kontakt");
 		expect(hero.primary.href).toBe(content.KONTAKT_HREF);
 		expect(hero.secondary.href).toBe("#inhalt");
-		expect(closing.button.href).toBe(content.KONTAKT_HREF);
+		expect(closing.button.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 	});
 
 	it("has no empty, untrimmed or doubled-space text", () => {

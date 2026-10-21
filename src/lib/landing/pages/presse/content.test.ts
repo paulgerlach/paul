@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ADDRESS } from "$lib/company";
-import { START_HREF } from "$lib/landing/cta";
 import { closing as einsparrechnerClosing } from "$lib/landing/pages/einsparrechner/content";
 import * as routes from "$lib/routes";
 import * as content from "./content";
@@ -96,10 +95,10 @@ describe("/presse content", () => {
 		]);
 	});
 
-	it("links only to routes, the closing form and the press mailbox", () => {
+	it("links only to routes and the press mailbox", () => {
 		for (const href of [contact.cta.href, pressContact.cta.href])
-			expect([...routeValues, START_HREF, PRESS_MAILTO]).toContain(href);
-		expect(contact.cta.href).toBe(START_HREF);
+			expect([...routeValues, PRESS_MAILTO]).toContain(href);
+		expect(contact.cta.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 		expect(pressContact.cta.href).toBe("mailto:presse@heidisystems.com");
 	});
 

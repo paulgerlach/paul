@@ -6,15 +6,13 @@
 	import Hero from "$lib/landing/pages/einsparrechner/sections/Hero.svelte";
 	import Method from "$lib/landing/pages/einsparrechner/sections/Method.svelte";
 	import Trust from "$lib/landing/pages/einsparrechner/sections/Trust.svelte";
-
-	let { data } = $props();
 </script>
 
 <main id="content" class="es" {@attach reveal()}>
 	<Hero />
 	<Method />
 	<Faq />
-	<Closing form={data.finalForm} />
+	<Closing />
 	<Trust />
 </main>
 <FloatingCta />

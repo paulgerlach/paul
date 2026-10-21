@@ -5,16 +5,15 @@
  *
  * The mailboxes, the promises ("Ein fester Ansprechpartner", "Daten auf
  * Servern in Deutschland"), the form's texts and the FAQ need sign-off
- * before the cutover (go-live gate §3).
+ * before the cutover (go-live gate §4).
  */
 import { LOGIN_URL } from "$lib/company";
-import { START_HREF } from "$lib/landing/cta";
+import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { MailboxKey } from "$lib/forms/contactInquiry";
 import {
 	ROUTE_DATENSCHUTZHINWEISE,
 	ROUTE_HILFE,
-	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_PARTNERSCHAFTEN,
 } from "$lib/routes";
 
@@ -28,11 +27,10 @@ export const MAILBOXES: Record<MailboxKey, string> = {
 export const FORM_ID = "schreiben";
 
 /**
- * Every "Termin buchen" / "Demo buchen" (the design's booking page
- * 44SBXKXJaSp6bvGMnbpZj6). There's no booking page, and this page's form is
- * a contact form, so they go to /messdienstwechsel's signup form.
+ * Every "Termin buchen" / "Demo buchen": the design's booking page
+ * (44SBXKXJaSp6bvGMnbpZj6), /demo-buchen.
  */
-export const BOOKING_HREF = `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`;
+export const BOOKING_HREF = DEMO_HREF;
 
 const mailto = (key: MailboxKey) => `mailto:${MAILBOXES[key]}`;
 

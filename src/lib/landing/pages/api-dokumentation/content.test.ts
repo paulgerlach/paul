@@ -12,7 +12,6 @@ import {
 	documents,
 	fileExchange,
 	hero,
-	MANAGER_SIGNUP_HREF,
 	overview,
 	quickStart,
 	status,
@@ -73,12 +72,11 @@ describe("/api-dokumentation content", () => {
 		];
 		for (const href of hrefs) {
 			if (href.startsWith("#")) expect(articleIds).toContain(href.slice(1));
-			else if (href === MANAGER_SIGNUP_HREF)
-				expect(href).toBe(`${routes.ROUTE_MESSDIENSTWECHSEL}#start`);
 			else expect(routeValues).toContain(href);
 		}
 		expect(hero.primary.href).toBe("#schnellstart");
 		expect(hero.secondary.href).toBe(routes.ROUTE_SOFTWAREPARTNER);
+		expect(access.primary.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 		expect(versions.source.href).toBe(
 			"https://bved.info/datenaustauschalt/spezifikationen/",
 		);

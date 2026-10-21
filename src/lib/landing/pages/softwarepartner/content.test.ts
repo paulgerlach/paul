@@ -63,14 +63,13 @@ describe("softwarepartner content", () => {
 		expect(hero.wordSize).toBe("clamp(34px, 8.6vw, 130px)");
 	});
 
-	it("links only to routes, anchors on the page and /messdienstwechsel's form", () => {
+	it("links only to routes and anchors on the page", () => {
 		for (const href of hrefs(content)) {
 			if (href.startsWith("#")) expect(ANCHORS).toContain(href);
 			else if (href.startsWith("tel:"))
 				expect(href).toBe(apply.sendError.phoneHref);
 			else expect(routeValues, href).toContain(href);
 		}
-		expect(content.MANAGER_SIGNUP_HREF).toBe("/messdienstwechsel#start");
 		expect(`#${content.APPLY_ID}`).toBe(hero.primary.href);
 	});
 

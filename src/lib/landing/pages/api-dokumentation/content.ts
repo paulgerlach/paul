@@ -4,18 +4,12 @@
  * samples and the tables. The API as described, the draft's placeholders,
  * the bved facts and the example values await sign-off (plan §4.4).
  */
-import { START_HREF } from "$lib/landing/cta";
-import { ROUTE_MESSDIENSTWECHSEL, ROUTE_SOFTWAREPARTNER } from "$lib/routes";
+import { DEMO_HREF } from "$lib/landing/cta";
+import { ROUTE_SOFTWAREPARTNER } from "$lib/routes";
 import type { IconName } from "./icons";
 
 const NB = " ";
 
-/**
- * Target of "Erstgespräch vereinbaren", the trust block's "Demo buchen" and
- * the floating CTA: this page has no signup form, so they lead to
- * /messdienstwechsel's (plan, open question 1).
- */
-export const MANAGER_SIGNUP_HREF = `${ROUTE_MESSDIENSTWECHSEL}${START_HREF}`;
 export const PARTNER_HREF = ROUTE_SOFTWAREPARTNER;
 
 /** A run of text with inline code, bold text, the "Pflicht" mark or a status code. */
@@ -503,7 +497,7 @@ export const versions = {
 export const access = {
 	h2: "Zugang anfragen",
 	text: "Ihr persönlicher Ansprechpartner richtet den Zugang ein und begleitet die Anbindung bis zum ersten erfolgreichen Abruf. Softwareanbieter binden Heidi einmal an und versorgen damit alle Verwaltungen unter ihren Kunden.",
-	primary: { text: "Erstgespräch vereinbaren", href: MANAGER_SIGNUP_HREF },
+	primary: { text: "Erstgespräch vereinbaren", href: DEMO_HREF },
 	secondary: { text: "Softwarepartner werden", href: PARTNER_HREF },
 };
 

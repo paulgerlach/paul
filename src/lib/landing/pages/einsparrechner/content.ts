@@ -145,7 +145,7 @@ export const calculator = {
 		riskLine: { cut: "× 3 % Kürzungsrecht auf", base: "€ Heizkosten" },
 		days: "Arbeitstage pro Jahr",
 		perUnit: "pro Einheit und Jahr",
-		// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): the closing form here.
+		// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
 		cta: { text: "Angebot für Ihren Bestand", href: DEMO_HREF },
 		note: "Ergebnis auf Basis Ihrer Angaben, ohne Heidi-Kosten. Ihr individuelles Angebot erhalten Sie in der Demo.",
 		/** The screen reader's status line (not in the design, plan README). */
@@ -220,5 +220,10 @@ export const faq: { title: string; items: FaqItem[] } = {
 export const closing = {
 	h2: "Ihre Zahlen. Ihr Angebot.",
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
-	submitLabel: "Demo buchen",
+	/** The video button (the design's .dcta-b) → the booking page. */
+	button: {
+		text: "Live Demo buchen",
+		sub: "Mit Ihrem Ansprechpartner",
+		href: DEMO_HREF,
+	},
 };

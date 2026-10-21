@@ -1,4 +1,4 @@
-<!-- Hero: pill, H1, lead, the two CTAs, three ticks and the billing demo card. No `#start`: that's the signup form in the closing card. -->
+<!-- Hero: pill, H1, lead, the two CTAs, three ticks and the billing demo card. No `#start`: the page has no form. -->
 <script lang="ts">
 	import ArrowLink from "$lib/landing/components/ArrowLink.svelte";
 	import Check from "$lib/landing/components/icons/Check.svelte";

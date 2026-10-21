@@ -74,7 +74,7 @@ describe("partnerschaften content", () => {
 		expect(content.KONTAKT_HREF).toBe("#kontakt");
 		expect(hero.primary.href).toBe(content.KONTAKT_HREF);
 		expect(hero.secondary.href).toBe("#inhalt");
-		expect(closing.button.href).toBe(content.KONTAKT_HREF);
+		expect(closing.button.href).toBe(routes.ROUTE_DEMO_BUCHEN);
 	});
 
 	it("links FAQ answers only to routes", () => {

@@ -54,5 +54,21 @@
 		<circle cx="10" cy="10" r="7" /><path d="M10 10l3-3M6.5 13.5h7" />
 	{:else if name === "plug"}
 		<path d="M7 2.5v4M13 2.5v4M5 6.5h10v3a5 5 0 0 1-10 0zM10 14.5v3" />
+	{:else if name === "radiator"}
+		<rect x="3" y="6" width="14" height="10" rx="2" /><path
+			d="M7 6v10M10 6v10M13 6v10M5 16v2M15 16v2M10 2.5c-.6.8.6 1.4 0 2.2"
+		/>
+	{:else if name === "tap"}
+		<path d="M3 8h8a3 3 0 0 1 3 3v1M6 8V5h4v3" /><path
+			d="M14 14.5s1.3 1.5 1.3 2.3a1.3 1.3 0 0 1-2.6 0c0-.8 1.3-2.3 1.3-2.3zM16.5 3.5c-.6.7.6 1.3 0 2M18.5 3.5c-.6.7.6 1.3 0 2"
+		/>
+	{:else if name === "drop"}
+		<path
+			d="M10 2.5S4.5 8.6 4.5 12.2a5.5 5.5 0 0 0 11 0C15.5 8.6 10 2.5 10 2.5z"
+		/>
+	{:else if name === "smoke"}
+		<circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="2.5" /><path
+			d="M10 3v2M10 15v2"
+		/>
 	{/if}
 </StrokeIcon>

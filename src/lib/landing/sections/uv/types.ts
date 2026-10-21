@@ -19,7 +19,8 @@ export type TileTone = "mint" | "ink" | "stone";
 
 export type Row<Kind extends string = string> = {
 	tag: string;
-	title: [string, string];
+	/** The H2's two lines, or one line (/funkzaehler's first row). */
+	title: [string, string] | [string];
 	paragraphs: [Paragraph, Paragraph];
 	tile: Kind;
 	/** The tile's background (the design's t-mint, t-ink2, t-stone). */

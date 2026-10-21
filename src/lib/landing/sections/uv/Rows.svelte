@@ -1,7 +1,7 @@
 <!--
   The feature rows of a `uv` page (.uv-rows, the "Mehr erfahren" target):
   text with an eyebrow pill (the design's #eb-css restyles its .uv-tag), a
-  two-line H2, two paragraphs and the CTAs on the left, an animated tile on
+  one- or two-line H2, two paragraphs and the CTAs on the left, an animated tile on
   the right. The tiles illustrate the text and are hidden from screen readers.
 -->
 <script lang="ts" generics="Kind extends string">
@@ -44,7 +44,9 @@
 			<article class="row rv" aria-labelledby="{idPrefix}-{i}">
 				<div class="txt">
 					<Eyebrow text={row.tag} />
-					<h2 id="{idPrefix}-{i}">{row.title[0]}<br />{row.title[1]}</h2>
+					<h2 id="{idPrefix}-{i}">
+						{row.title[0]}{#if row.title[1]}<br />{row.title[1]}{/if}
+					</h2>
 					{#each row.paragraphs as p, j (j)}
 						{@render paragraph(p)}
 					{/each}

@@ -20,12 +20,12 @@ import {
 	ROUTE_DASHBOARD,
 	ROUTE_FUNKTIONEN,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
-	ROUTE_KONTAKT,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SICHERHEIT,
 	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
+	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MUSTER_KUENDIGUNG,
 	ROUTE_PORTFOLIO_CHECKER,
 	ROUTE_SCHNITTSTELLEN,
@@ -313,12 +313,15 @@ export const feedback = {
 export const noResults = {
 	title: "Keine passende Antwort gefunden.",
 	text: "Schreiben Sie uns, Ihr Ansprechpartner hilft gern weiter.",
-	cta: { text: "Kontakt aufnehmen", href: ROUTE_KONTAKT },
+	cta: { text: "Kontakt aufnehmen", href: `${ROUTE_MESSDIENSTWECHSEL}#start` },
 };
 
 export const endCta = {
 	title: "Frage nicht dabei? Ihr Ansprechpartner hilft persönlich.",
-	cta: { text: "Gespräch vereinbaren", href: ROUTE_KONTAKT },
+	cta: {
+		text: "Gespräch vereinbaren",
+		href: `${ROUTE_MESSDIENSTWECHSEL}#start`,
+	},
 };
 
 export const trustMore = { text: "Mehr über Heidi", href: ROUTE_UEBER_UNS };

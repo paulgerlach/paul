@@ -8,7 +8,7 @@
  * before the cutover (plan §4.4). The KPIs 14 Tage and 1–2 h were confirmed
  * on 2026-10-12.
  */
-import { PHONE, PHONE_HREF } from "$lib/components/Header/navGroups";
+import { PHONE, PHONE_HREF } from "$lib/company";
 import { START_HREF } from "$lib/landing/cta";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";

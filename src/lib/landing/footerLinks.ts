@@ -1,4 +1,3 @@
-import { socials as siteSocials } from "$lib/components/Footer/footerLinks";
 import {
 	ROUTE_API_DOKUMENTATION,
 	ROUTE_ASSET_MANAGER,
@@ -9,7 +8,6 @@ import {
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
-	ROUTE_GERAETE,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
@@ -18,6 +16,7 @@ import {
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KARRIERE,
+	ROUTE_MESSDIENSTANBIETER,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_MIETVERWALTUNG,
@@ -54,7 +53,9 @@ export type LandingFooterGroup = { title: string; links: LandingFooterLink[] };
 export const companyLinks: LandingFooterLink[] = [
 	{ text: "Über uns", href: ROUTE_UEBER_UNS },
 	{ text: "Karriere", href: ROUTE_KARRIERE },
-	{ text: "Kunden", href: "/#kunden" },
+	// The logo strip; the "Kundenreferenzen" design (WcCFaQRPZKfbE5zFHQnnYd)
+	// isn't built.
+	{ text: "Kunden", href: `${ROUTE_MESSDIENSTANBIETER}#kunden` },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 	{ text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION },
@@ -66,7 +67,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Vorgehen", href: ROUTE_VORGEHEN },
 			{ text: "Funktionen", href: ROUTE_FUNKTIONEN },
-			{ text: "Funkzähler", href: ROUTE_GERAETE },
+			{ text: "Funkzähler" }, // 3SRjNA9CRSPQEU3cWdAkbt
 			{ text: "Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
@@ -132,14 +133,3 @@ export const footerGroups: LandingFooterGroup[] = [
 		],
 	},
 ];
-
-const socialHref = (alt: string) =>
-	siteSocials.find((social) => social.alt === alt)?.href ?? "";
-
-/** The site's social profiles, drawn with the design's line icons. */
-export const footerSocials = [
-	{ label: "YouTube", href: socialHref("youtube") },
-	{ label: "X", href: socialHref("x") },
-	{ label: "LinkedIn", href: socialHref("linkedin") },
-	{ label: "Instagram", href: socialHref("insta") },
-] as const;

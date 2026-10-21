@@ -4,19 +4,15 @@
   and newsletter, disclaimer with socials, and the legal line.
 -->
 <script lang="ts">
-	import {
-		ADDRESS,
-		datenschutzLinksGroup,
-	} from "$lib/components/Footer/footerLinks";
+	import { ADDRESS, LEGAL_LINKS, SOCIALS } from "$lib/company";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 	import {
 		companyLinks,
 		footerGroups,
-		footerSocials,
 		type LandingFooterLink,
 	} from "$lib/landing/footerLinks";
 	import { CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
-	import { cityRoute, ROUTE_HOME, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { cityRoute, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 	import LandingNewsletter from "./LandingNewsletter.svelte";
 
@@ -31,11 +27,6 @@
 	let { demoHref = DEMO_HREF }: Props = $props();
 
 	const year = new Date().getFullYear();
-	// Impressum · Datenschutz · AGB, in the design's order.
-	const legalLinks = ["Impressum", "Datenschutz", "AGB"].flatMap(
-		(text) =>
-			datenschutzLinksGroup.groupLinks.find((l) => l.text === text) ?? [],
-	);
 </script>
 
 {#snippet link(item: LandingFooterLink)}
@@ -56,7 +47,9 @@
 <footer>
 	<div class="wrap fgrid">
 		<div class="first">
-			<a class="flogo" href={ROUTE_HOME}><HeidiLogo class="heidi-logo" /></a>
+			<a class="flogo" href={ROUTE_MESSDIENSTANBIETER}
+				><HeidiLogo class="heidi-logo" /></a
+			>
 			<ul>
 				{#each companyLinks as item (item.text)}{@render link(item)}{/each}
 			</ul>
@@ -89,7 +82,9 @@
 
 		<div class="f-news">
 			<div class="f-adr">
-				<a class="flogo" href={ROUTE_HOME}><HeidiLogo class="heidi-logo" /></a>
+				<a class="flogo" href={ROUTE_MESSDIENSTANBIETER}
+					><HeidiLogo class="heidi-logo" /></a
+				>
 				<address>
 					{ADDRESS.company}<br />
 					{ADDRESS.street}<br />
@@ -123,7 +118,7 @@
 				individuellen Vertragsverhältnisses.
 			</p>
 			<div class="f-soc">
-				{#each footerSocials as social (social.label)}
+				{#each SOCIALS as social (social.label)}
 					<a
 						href={social.href}
 						target="_blank"
@@ -190,8 +185,8 @@
 		<div class="legal">
 			<span>© {year} {ADDRESS.company}, Berlin</span>
 			<span class="legal-links">
-				{#each legalLinks as item (item.text)}
-					<a href={item.url}>{item.text}</a>
+				{#each LEGAL_LINKS as item (item.text)}
+					<a href={item.href}>{item.text}</a>
 				{/each}
 			</span>
 		</div>

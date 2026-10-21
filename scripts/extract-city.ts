@@ -480,7 +480,7 @@ async function readContent(html: string) {
 		fail('pricing answer has no "Angebot" to link');
 	pricing.answer = pricing.answer.replace(
 		"Angebot",
-		'<a href="/preise">Angebot</a>',
+		'<a href="#start">Angebot</a>',
 	);
 
 	const refBg = await one(html, "img.ref-bg");

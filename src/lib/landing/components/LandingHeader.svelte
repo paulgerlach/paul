@@ -8,7 +8,7 @@
 <script lang="ts">
 	import { afterNavigate } from "$app/navigation";
 	import { page } from "$app/state";
-	import { LOGIN_URL } from "$lib/components/Header/navGroups";
+	import { LOGIN_URL } from "$lib/company";
 	import { ROUTE_FRAGEBOGEN, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
 	import { DEMO_HREF, focusSignup, START_HREF } from "../cta";
 	import { landingNav, shownItems, type LandingNavGroup } from "../navLinks";

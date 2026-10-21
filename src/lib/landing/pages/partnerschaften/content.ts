@@ -7,7 +7,7 @@
  * statements, the company claims, both forms' texts and options, and the
  * example data need sign-off before the cutover (plan §4.4).
  */
-import { PHONE, PHONE_HREF } from "$lib/components/Header/navGroups";
+import { PHONE, PHONE_HREF } from "$lib/company";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type {

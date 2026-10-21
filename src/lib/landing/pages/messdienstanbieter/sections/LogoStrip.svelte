@@ -6,4 +6,9 @@
 </script>
 
 <!-- The logos are unconfirmed: see the go-live gate, plan §6.4. -->
-<LogoStrip text={content.logoStrip.text} logos={content.logoStrip.logos} />
+<!-- id: the landing footer's "Kunden" links here. -->
+<LogoStrip
+	id="kunden"
+	text={content.logoStrip.text}
+	logos={content.logoStrip.logos}
+/>

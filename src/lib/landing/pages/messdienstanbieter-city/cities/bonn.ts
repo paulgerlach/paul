@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie ist der Preis aufgebaut?",
 			answer:
-				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="/preise">Angebot</a> für Ihren Bonner Bestand gibt es nach dem Portfolio-Check.',
+				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="#start">Angebot</a> für Ihren Bonner Bestand gibt es nach dem Portfolio-Check.',
 		},
 	],
 	final: {

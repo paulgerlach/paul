@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Was zahlen wir für Heidi?",
 			answer:
-				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="/preise">Angebot</a> für Ihren Essener Bestand gibt es nach dem Portfolio-Check.',
+				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="#start">Angebot</a> für Ihren Essener Bestand gibt es nach dem Portfolio-Check.',
 		},
 	],
 	final: {

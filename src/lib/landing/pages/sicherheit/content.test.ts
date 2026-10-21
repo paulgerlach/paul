@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ADDRESS } from "$lib/components/Footer/footerLinks";
+import { ADDRESS } from "$lib/company";
 import { COMPANY, DATA_ID, faq, hero, table } from "./content";
 
 describe("/sicherheit content", () => {

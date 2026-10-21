@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Was zahlen wir für Heidi?",
 			answer:
-				'Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes <a href="/preise">Angebot</a> für den Dortmunder Bestand bekommen Sie nach dem Portfolio-Check.',
+				'Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes <a href="#start">Angebot</a> für den Dortmunder Bestand bekommen Sie nach dem Portfolio-Check.',
 		},
 	],
 	final: {

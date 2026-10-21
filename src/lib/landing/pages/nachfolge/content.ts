@@ -7,7 +7,7 @@
  * data-protection statements, the company claims, the form's texts and
  * options, and the example data need sign-off before the cutover (plan §4.4).
  */
-import { PHONE, PHONE_HREF } from "$lib/components/Header/navGroups";
+import { PHONE, PHONE_HREF } from "$lib/company";
 import { isExpired } from "$lib/landing/deadline/deadline";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";

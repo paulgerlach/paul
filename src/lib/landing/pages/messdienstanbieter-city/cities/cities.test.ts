@@ -119,7 +119,7 @@ describe.each(pages)("%s", (slug, page) => {
 
 	it("has 5 FAQ items, the last linking to the prices", () => {
 		expect(page.faq).toHaveLength(5);
-		expect(page.faq[4].answer).toContain('<a href="/preise">');
+		expect(page.faq[4].answer).toContain('<a href="#start">');
 	});
 
 	it("shows 12 different customer logos", () => {

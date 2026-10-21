@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie wird Heidi abgerechnet?",
 			answer:
-				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="/preise">Angebot</a> für Ihren Bremer Bestand.',
+				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="#start">Angebot</a> für Ihren Bremer Bestand.',
 		},
 	],
 	final: {

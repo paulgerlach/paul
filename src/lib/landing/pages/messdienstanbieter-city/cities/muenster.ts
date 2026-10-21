@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie setzen sich die Kosten zusammen?",
 			answer:
-				'Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes <a href="/preise">Angebot</a> für den Münsteraner Bestand bekommen Sie nach dem Portfolio-Check.',
+				'Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes <a href="#start">Angebot</a> für den Münsteraner Bestand bekommen Sie nach dem Portfolio-Check.',
 		},
 	],
 	final: {

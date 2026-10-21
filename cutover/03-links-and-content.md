@@ -28,9 +28,11 @@ Landing code imports these from folders phase 5 deletes:
 | `LOGIN_URL`, `PHONE`, `PHONE_HREF`                                                                                | `$lib/components/Header/navGroups.ts`   | `LandingHeader`, the `content.ts` of installationspartner, nachfolge, partnerschaften, softwarepartner         |
 | `ADDRESS`, `socials`, `datenschutzLinksGroup` (the legal links Impressum / Datenschutz / AGB), `VDIV_PARTNER_URL` | `$lib/components/Footer/footerLinks.ts` | `LandingFooter`, `landing/footerLinks.ts`, the `content.test.ts` of presse and sicherheit, maybe more (search) |
 
-- [ ] Create **`src/lib/company.ts`** with `ADDRESS`, `PHONE`, `PHONE_HREF`, `LOGIN_URL`, `VDIV_PARTNER_URL`, the social profiles (`socials` with only `href` and a `label`; the old icon imports `insta`, `linkedin`, `xIcon`, `youtube` stay behind, `footerSocials` in `landing/footerLinks.ts` draws its own icons) and `LEGAL_LINKS` (`{ text, href }[]` in the design's order Impressum · Datenschutz · AGB; AGB keeps pointing at `ROUTE_DATENSCHUTZHINWEISE` as today). Keep the values byte for byte (the presse/sicherheit tests compare against `ADDRESS`).
-- [ ] Repoint every import (search `components/Header/navGroups` and `components/Footer/footerLinks` in `src/`, `e2e/`, `scripts/`). `LandingFooter` drops its `flatMap` over `datenschutzLinksGroup` and renders `LEGAL_LINKS`.
+- [x] Create **`src/lib/company.ts`** with `ADDRESS`, `PHONE`, `PHONE_HREF`, `LOGIN_URL`, `VDIV_PARTNER_URL`, the social profiles (`socials` with only `href` and a `label`; the old icon imports `insta`, `linkedin`, `xIcon`, `youtube` stay behind, `footerSocials` in `landing/footerLinks.ts` draws its own icons) and `LEGAL_LINKS` (`{ text, href }[]` in the design's order Impressum · Datenschutz · AGB; AGB keeps pointing at `ROUTE_DATENSCHUTZHINWEISE` as today). Keep the values byte for byte (the presse/sicherheit tests compare against `ADDRESS`).
+- [x] Repoint every import (search `components/Header/navGroups` and `components/Footer/footerLinks` in `src/`, `e2e/`, `scripts/`). `LandingFooter` drops its `flatMap` over `datenschutzLinksGroup` and renders `LEGAL_LINKS`.
 - [ ] Anything else in `$lib/components/**` that the landing code, the blog, the Fragebogen, the legal pages, `lib/server`, `lib/chat`, `lib/slices` or the API routes import stays where it is for now (`Basic/Image`, `Basic/Image/CmsImage`, `Basic/CopyLinkButton`, `Basic/RichTextBlockImage`, `Common/ChatBot`, `Lottie`, `Blog/*`, `Fragebogen/*`, `Basic/Subscription` …). Phase 5 decides what's deleted with the reachability check.
+
+Done 2026-10-21. Deviations: `VDIV_PARTNER_URL` stayed behind (only the old `Footer` used it); the socials are `SOCIALS` (`label`, `href`) and `footerSocials` is gone; `/vorgehen`'s "Digitale Funkablesung" card has no link (the card renders as a `div`); `ROUTE_HOME` is deleted in phase 5 with the old `Header`/`Footer` that still import it. The 3.4 grep prints nothing outside the old components phase 5 deletes, `sitemap.xml` (phase 4) and the parity/old e2e specs (phase 6).
 
 ## 3.3 `ROUTE_*` constants
 
@@ -40,9 +42,9 @@ Landing code imports these from folders phase 5 deletes:
 
 ## 3.4 Prove it
 
-- [ ] This must print nothing (besides `routes.ts`, `server/redirects.ts` and their tests):
+- [x] This must print nothing (besides `routes.ts`, `server/redirects.ts` and their tests):
   ```sh
   grep -rnE 'ROUTE_(HOME|PREISE|GERAETE|KONTAKT)\b|"/(preise|geraete|kontakt)\b|href="/(preise|geraete|kontakt)|"/#|href="/"' src scripts e2e
   ```
 - [ ] Phase 6 adds a unit test that walks `navLinks.ts`, `footerLinks.ts`, `company.ts` and every `content.ts` for hrefs and fails on these targets, so a later page can't bring them back.
-- [ ] Prismic: blog posts can contain links to `/preise`, `/kontakt`, `/geraete` or `/` (document links resolve to `/blog/:uid`, but web links are free text). They keep working through the redirects. List them for the content owner (search the Prismic API or the rendered posts: `curl` every `/blog/<uid>` from the sitemap and grep the HTML for those hrefs) and put the list in `ongoing-tasks/cutover.md` §5 as a content follow-up. Don't edit Prismic content.
+- [x] Prismic: blog posts can contain links to `/preise`, `/kontakt`, `/geraete` or `/` (document links resolve to `/blog/:uid`, but web links are free text). They keep working through the redirects. List them for the content owner (search the Prismic API or the rendered posts: `curl` every `/blog/<uid>` from the sitemap and grep the HTML for those hrefs) and put the list in `ongoing-tasks/cutover.md` §5 as a content follow-up. Don't edit Prismic content.

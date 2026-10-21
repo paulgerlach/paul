@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { ADDRESS } from "$lib/components/Footer/footerLinks";
+import { ADDRESS } from "$lib/company";
 import { START_HREF } from "$lib/landing/cta";
 import { closing as einsparrechnerClosing } from "$lib/landing/pages/einsparrechner/content";
 import * as routes from "$lib/routes";

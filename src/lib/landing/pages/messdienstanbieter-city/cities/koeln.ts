@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Was zahlen wir für Heidi?",
 			answer:
-				'Sie zahlen für die tatsächlich installierten Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check bekommen Sie ein konkretes <a href="/preise">Angebot</a> für Ihren Kölner Bestand.',
+				'Sie zahlen für die tatsächlich installierten Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check bekommen Sie ein konkretes <a href="#start">Angebot</a> für Ihren Kölner Bestand.',
 		},
 	],
 	final: {

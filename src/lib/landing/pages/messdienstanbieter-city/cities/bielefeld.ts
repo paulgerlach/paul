@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie rechnet Heidi ab?",
 			answer:
-				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="/preise">Angebot</a> für Ihren Bielefelder Bestand.',
+				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="#start">Angebot</a> für Ihren Bielefelder Bestand.',
 		},
 	],
 	final: {

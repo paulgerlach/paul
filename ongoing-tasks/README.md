@@ -5,7 +5,7 @@ What is still open on this repo, and the decisions you need to understand it. Ev
 | File | What's in it |
 |---|---|
 | [cutover.md](cutover.md) | What blocks the Next.js → SvelteKit cutover (PR #440), the cutover steps, post-deploy checks, rollback and the after-cutover list |
-| [go-live-gates.md](go-live-gates.md) | The go-live gate of every new landing page (§4.4–4.41): business, legal and content sign-offs and the open manual checks. All of them block the cutover |
+| [go-live-gates.md](go-live-gates.md) | The go-live gate of every new landing page (§1–38): business, legal and content sign-offs and the open manual checks. All of them block the cutover |
 | [known-issues.md](known-issues.md) | The KI list: bugs found in the Next code and fixed instead of ported (the code cites the IDs). KI-34 and KI-36 are open |
 
 ## Where the old plans are
@@ -36,7 +36,7 @@ Landing pages:
 - **KPIs (confirmed by the business 2026-10-12):** 92 % of installations at the first appointment, 14 days' notice, a 1–2 h window.
 - **Landing footer (2026-10-12):** the landing design's own footer (`$lib/landing/footerLinks.ts`); an entry without `href` is plain text until its page exists.
 - **"Demo buchen":** no booking page exists, so a page's demo CTAs go to its own signup form (`#start`, `DEMO_HREF`) or, on pages with another form, to `/messdienstwechsel#start`. Once a booking URL exists, `DEMO_HREF` switches them, and several gates list what changes with it.
-- **Shared sign-offs:** quotes, customer logos and the security block (`TrustSeals`) are the same on every page; they're settled once in the region pages' gate (§4.40).
+- **Shared sign-offs:** quotes, customer logos and the security block (`TrustSeals`) are the same on every page; they're settled once in the region pages' gate (§37).
 
 ## Building a new landing page
 

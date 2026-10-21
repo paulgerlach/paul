@@ -10,7 +10,7 @@ What is left before the SvelteKit app replaces the Next deployment in production
 
 ## 2. Blocking the cutover
 
-- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§4.4–4.41), including the `/messdienstwechsel` and city pages' gates
+- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§1–38), including the `/messdienstwechsel` and city pages' gates
 - [ ] Every item in [known-issues.md](known-issues.md) ticked: **KI-34** (placeholder phone `+49-30-555-12345` in the home JSON-LD, the Impressum lists `+49 30 52001352`; needs business confirmation, then set it in `$lib/components/Home/structuredData.ts`; the region pages' `ServiceJsonLd` leaves the phone out until then) and **KI-36** (copy typos ported verbatim; needs the content owner's sign-off)
 - [ ] The Fragebogen defaults (`questionnaireDefaults` in `$lib/fragebogen/schema.ts`, copied from what Next actually submitted) confirmed by the business owner
 - [ ] Manual QA:

@@ -81,13 +81,14 @@ describe("/energieausweis content", () => {
 		expect(price?.b).toBe(`${offers.from} ${cheapest("b")}`);
 	});
 
-	it("links only to routes and anchors", () => {
+	it("links only to routes, anchors and the offers' order pages", () => {
 		for (const href of hrefs(all))
 			expect(
 				routeValues.includes(href) ||
 					href === "#start" ||
 					href === `#${CHECK_ID}` ||
-					href === `#${OFFERS_ID}`,
+					href === `#${OFFERS_ID}` ||
+					href.startsWith("https://heidi.energieausweis48.de/"),
 				href,
 			).toBe(true);
 	});

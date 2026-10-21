@@ -113,11 +113,15 @@ test("the CTAs lead to the check, the offers, the closing form and the dashboard
 		page.locator("section.final#start input[name=email]"),
 	).toHaveCount(1);
 	await expect(page.locator("a.ctab")).toHaveAttribute("href", "#start");
-	const ask = offerCards(page).getByRole("link", { name: /Jetzt anfragen/ });
-	await expect(ask).toHaveCount(4);
-	expect(new Set(await hrefs(ask))).toEqual(new Set(["#start"]));
-	await ask.first().click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	const order = offerCards(page).getByRole("link", { name: /Jetzt bestellen/ });
+	expect(await hrefs(order)).toEqual([
+		"https://heidi.energieausweis48.de/verbrauchsausweis?servicelevel=selfservice",
+		"https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=selfservice",
+		"https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=videoservice",
+		"https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=fullservice",
+	]);
+	for (const link of await order.all())
+		await expect(link).toHaveAttribute("target", "_blank");
 });
 
 test("the scale moves between the two examples", async ({ page }) => {

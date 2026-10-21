@@ -2,7 +2,7 @@
   The design's dark closing card (.dm-end / .dm-cta) with the page's signup
   form in place of its link "Jetzt passenden Ausweis finden ↑" (plan README,
   open question 1). It's the page's only form, so it carries the `start`
-  anchor the offers' "Jetzt anfragen", the nav's "Demo buchen" and the floating CTA lead
+  anchor the nav's "Demo buchen" and the floating CTA lead
   to.
 -->
 <script lang="ts">

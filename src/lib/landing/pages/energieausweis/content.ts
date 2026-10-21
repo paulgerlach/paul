@@ -5,7 +5,6 @@
  * comparison. The product, its prices and the GEG statements await sign-off
  * (plan §4.4).
  */
-import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
 import { ROUTE_DASHBOARD } from "$lib/routes";
@@ -163,6 +162,8 @@ export type Offer = {
 	points: { lead: string; text: string }[];
 	/** "69,95 €" (with a no-break space). */
 	price: string;
+	/** The order page at heidi.energieausweis48.de, opened in a new tab. */
+	href: string;
 };
 
 const selfService = [
@@ -194,9 +195,7 @@ export const offers = {
 	recommended: "Empfehlung",
 	from: "ab",
 	vat: "inkl. MwSt.",
-	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): the closing form here
-	// (plan README, open question 2).
-	cta: { text: "Jetzt anfragen", href: DEMO_HREF },
+	cta: "Jetzt bestellen",
 	items: [
 		{
 			type: "v",
@@ -204,6 +203,7 @@ export const offers = {
 			title: "Verbrauchsausweis",
 			points: selfService,
 			price: "69,95 €",
+			href: "https://heidi.energieausweis48.de/verbrauchsausweis?servicelevel=selfservice",
 		},
 		{
 			type: "b",
@@ -214,6 +214,7 @@ export const offers = {
 				{ lead: "Präzise:", text: "fundierte Analyse des Energiebedarfs" },
 			],
 			price: "99,95 €",
+			href: "https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=selfservice",
 		},
 		{
 			type: "b",
@@ -235,6 +236,7 @@ export const offers = {
 				},
 			],
 			price: "249,95 €",
+			href: "https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=videoservice",
 		},
 		{
 			type: "b",
@@ -256,6 +258,7 @@ export const offers = {
 			],
 			// The design's figure (plan README, open question 3).
 			price: "349,96 €",
+			href: "https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=fullservice",
 		},
 	] satisfies Offer[],
 	note: "Alle Preise inklusive MwSt.",

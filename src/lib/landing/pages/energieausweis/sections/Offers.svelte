@@ -3,13 +3,14 @@
   filter (the design's .pg-seg, here a radiogroup) and four offer cards.
   The filter dims the other type's cards and rings its own; the check's
   "Passende Angebote ansehen" sets it too (the page holds the value).
+  Each card's "Jetzt bestellen" opens its order page at
+  heidi.energieausweis48.de in a new tab, as in the design.
   Without JS the filter is hidden and all four show.
 -->
 <script lang="ts">
 	import Segmented from "$lib/landing/components/Segmented.svelte";
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import Check from "$lib/landing/components/icons/Check.svelte";
-	import { focusSignup, START_HREF } from "$lib/landing/cta";
 	import { OFFERS_ID, type OfferFilter, offers } from "../content";
 
 	let { filter = $bindable() }: { filter: OfferFilter } = $props();
@@ -62,9 +63,10 @@
 					</div>
 					<a
 						class={["bk", offer.recommended && "inv"]}
-						href={offers.cta.href}
-						onclick={offers.cta.href === START_HREF ? focusSignup : undefined}
-						>{offers.cta.text} <span class="ar" aria-hidden="true">→</span></a
+						href={offer.href}
+						target="_blank"
+						rel="noopener"
+						>{offers.cta} <span class="ar" aria-hidden="true">→</span></a
 					>
 				</article>
 			{/each}

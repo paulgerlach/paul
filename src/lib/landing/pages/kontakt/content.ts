@@ -5,7 +5,7 @@
  *
  * The mailboxes, the promises ("Ein fester Ansprechpartner", "Daten auf
  * Servern in Deutschland"), the form's texts and the FAQ need sign-off
- * before the cutover (go-live gate §2).
+ * before the cutover (go-live gate §3).
  */
 import { LOGIN_URL } from "$lib/company";
 import { START_HREF } from "$lib/landing/cta";

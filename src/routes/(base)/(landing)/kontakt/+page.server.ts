@@ -10,12 +10,12 @@ import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => ({
 	seo: {
-		// Drafts for the content owner (go-live gate §2).
+		// Drafts for the content owner (go-live gate §3).
 		title: "Kontakt: Sprechen Sie mit uns | Heidi Systems",
 		description:
 			"Angebot, Wechsel, laufender Vertrag oder Partnerschaft: Schreiben Sie Heidi Systems oder buchen Sie einen Termin. Ihr persönlicher Ansprechpartner meldet sich bei Ihnen.",
 		ogTitle: "Kontakt zu Heidi: persönlich und direkt",
-		// Until its go-live gate is done (§2).
+		// Until its go-live gate is done (§3).
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},

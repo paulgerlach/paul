@@ -6,16 +6,15 @@ What is left before the SvelteKit app replaces the Next deployment in production
 
 - The SvelteKit app is built and lives at the repo root on `feat/migration` (PR #440, open); `main` still holds the Next app until #440 merges. Production is the Next deployment.
 - Automated QA on the Vercel preview passed (2026-10-03): all 246 sitemap URLs 200, unknown pages and posts 404, CDN caching works, `<head>` tags equal to the local build, smoke suite 11/11, Lighthouse at or above Next on most pages. Layout diff against production Next: 34/50 exact, the other 16 explained (the deliberate fixes in the `scripts/layout-diff.ts` header, Next still loading at capture time, `InstallFaq`'s autoplay at 375 px).
-- **Site restructure (done 2026-10-21, plan in git history, see `CLAUDE.md`):** the landing pages are the whole site in `(base)/(landing)`; of the ported Next pages only the blog, the Fragebogen, `/impressum` and `/datenschutzhinweise` stay, in `(base)/(site)` with the landing header and footer. `/` answers 307 → `/messdienstanbieter`; `/preise`, `/geraete`, `/kontakt` 301 (`$lib/server/redirects.ts`). The visual parity run and `scripts/layout-diff.ts` are retired (every page's chrome changed); Next stays the baseline only for the copy of the kept pages.
+- **Site restructure (done 2026-10-21, plan in git history, see `CLAUDE.md`):** the landing pages are the whole site in `(base)/(landing)`; of the ported Next pages only the blog and the Fragebogen stay, in `(base)/(site)` with the landing header and footer; the legal pages (`/impressum`, `/datenschutzhinweise`, `/agb`) are landing pages built from new designs (gate §1). `/` answers 307 → `/messdienstanbieter`; `/preise`, `/geraete`, `/kontakt` 301 (`$lib/server/redirects.ts`). The visual parity run and `scripts/layout-diff.ts` are retired (every page's chrome changed); Next stays the baseline only for the copy of the kept pages.
 
 ## 2. Blocking the cutover
 
-- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§1–38), including the `/messdienstwechsel` and city pages' gates
-- [ ] Every item in [known-issues.md](known-issues.md) ticked: **KI-34** (the real phone for the JSON-LD; needs business confirmation, then add it to the Organization in `$lib/seo/organization.ts` and to the region pages' `ServiceJsonLd`, which both leave it out until then) and **KI-36** (copy typos ported verbatim; needs the content owner's sign-off)
+- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§1–39), including the `/messdienstwechsel` and city pages' gates
+- [ ] Every item in [known-issues.md](known-issues.md) ticked: **KI-34** (the real phone for the JSON-LD; needs business confirmation together with the Impressum's number, gate §1, then add it to the Organization in `$lib/seo/organization.ts` and to the region pages' `ServiceJsonLd`, which both leave it out until then); KI-36 (the ported copy typos) went with the old legal pages
 - [ ] The Fragebogen defaults (`questionnaireDefaults` in `$lib/fragebogen/schema.ts`, copied from what Next actually submitted) confirmed by the business owner
 - [ ] Manual QA:
   - [ ] Safari iOS, Chrome Android, desktop Chrome/Firefox/Safari
-  - [ ] The reviews swiper on the legal pages: touch swipe, arrows; its videos play
   - [ ] The Fragebogen's Lottie animations on its final step
   - [ ] Prismic preview from the dashboard
   - [ ] Slack chat against the real workspace (staging channel)
@@ -47,7 +46,6 @@ The last Next deployment stays in Vercel's deployment history; rollback is "Prom
 
 - Delete the second Vercel project created for the migration preview (phase 1).
 - Remove `/api/contact` once the form action fully replaces it and nothing external uses it.
-- Upgrade Swiper past 11 (pinned because the `app.css` rules of `ReviewsSwiper`, the only swiper left, target Swiper 11 markup).
 - `/funktionen`: re-measure its Lighthouse score.
 - The 404 page (`src/routes/+error.svelte`) still renders without the landing header and footer; give it the landing chrome.
 - When the "Funkzähler" (`3SRjNA9CRSPQEU3cWdAkbt`) or "Kontakt" (`2eHVk9HEFKh1F7pWbMnkWb`) design is built: point its redirect in `$lib/server/redirects.ts` (`/geraete`, `/kontakt`) and the links without `href` that name its design id at the new page.

@@ -8,6 +8,7 @@ import {
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
+	ROUTE_FUNKZAEHLER,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_HKVO_LEITFADEN,
@@ -77,10 +78,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Funkablesung, Dashboard und Abrechnung im Überblick",
 						href: ROUTE_FUNKTIONEN,
 					},
-					// 3SRjNA9CRSPQEU3cWdAkbt
 					{
 						title: "Funkzähler",
 						text: "Heizkostenverteiler, Wasserzähler und Rauchwarnmelder mit Fernablesung",
+						href: ROUTE_FUNKZAEHLER,
 					},
 					// 42U8uYryb6qXPWKZCWgkaZ
 					{

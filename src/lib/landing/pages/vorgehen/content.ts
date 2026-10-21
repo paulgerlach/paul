@@ -11,6 +11,7 @@ import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import {
 	ROUTE_FUNKTIONEN,
+	ROUTE_FUNKZAEHLER,
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
@@ -123,7 +124,7 @@ export const features = {
 			icon: "signal",
 			title: "Digitale Funkablesung",
 			text: "Alle Sparten ohne manuelles Ablesen und ohne Termin in der Wohnung.",
-			// No link until the "Funkzähler" page (3SRjNA9CRSPQEU3cWdAkbt) exists.
+			href: ROUTE_FUNKZAEHLER,
 		},
 		{
 			icon: "chart",

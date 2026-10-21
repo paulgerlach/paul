@@ -24,9 +24,9 @@ test.describe("redirects", () => {
 		["/", 307, "/messdienstanbieter"],
 		["/preise", 301, "/messdienstwechsel#start"],
 		["/preise/", 301, "/messdienstwechsel#start"],
-		["/geraete", 301, "/funktionen"],
+		["/geraete", 301, "/funkzaehler"],
 		["/preise/?utm_source=x", 301, "/messdienstwechsel?utm_source=x#start"],
-		["/geraete?a=1&b=2", 301, "/funktionen?a=1&b=2"],
+		["/geraete?a=1&b=2", 301, "/funkzaehler?a=1&b=2"],
 	] as const)
 		test(`${path} → ${location}`, async ({ request }) => {
 			const response = await request.get(path, { maxRedirects: 0 });

@@ -92,6 +92,7 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 		"/dashboard",
 		"/installationstool",
 		"/funktionen",
+		"/funkzaehler",
 		"/mieterportal",
 		"/api-dokumentation",
 		"/portfolio-checker",

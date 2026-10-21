@@ -11,7 +11,10 @@ describe("redirectFor", () => {
 			to: "/messdienstwechsel#start",
 			status: 301,
 		});
-		expect(redirectFor("/geraete")).toEqual({ to: "/funktionen", status: 301 });
+		expect(redirectFor("/geraete")).toEqual({
+			to: "/funkzaehler",
+			status: 301,
+		});
 		expect(Object.keys(REDIRECTS)).toHaveLength(3);
 	});
 

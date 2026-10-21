@@ -8,6 +8,7 @@ import {
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
+	ROUTE_FUNKZAEHLER,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
@@ -69,7 +70,7 @@ export const footerGroups: LandingFooterGroup[] = [
 		links: [
 			{ text: "Vorgehen", href: ROUTE_VORGEHEN },
 			{ text: "Funktionen", href: ROUTE_FUNKTIONEN },
-			{ text: "Funkzähler" }, // 3SRjNA9CRSPQEU3cWdAkbt
+			{ text: "Funkzähler", href: ROUTE_FUNKZAEHLER },
 			{ text: "Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },

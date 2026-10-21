@@ -307,7 +307,7 @@ test.describe("interactions", () => {
 		await expect(current).toHaveCount(1);
 		await expect(current).toHaveAttribute("href", PATH);
 		await expect(current).toHaveClass(/cur/);
-		await expect(page.locator(".nv-links")).not.toContainText("Funkzähler");
+		await expect(page.locator(".nv-links")).not.toContainText("Self-Service");
 		await expect(page.locator(".nv-links .soon")).toHaveCount(2);
 	});
 

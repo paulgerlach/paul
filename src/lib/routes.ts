@@ -20,6 +20,7 @@ export const ROUTE_MIETERPORTAL = "/mieterportal";
 export const ROUTE_DASHBOARD = "/dashboard";
 export const ROUTE_AUSWERTUNG = "/auswertung";
 export const ROUTE_INSTALLATIONSTOOL = "/installationstool";
+export const ROUTE_FUNKZAEHLER = "/funkzaehler";
 export const ROUTE_SICHERHEIT = "/sicherheit";
 export const ROUTE_VERBRAUCHSINFORMATION = "/verbrauchsinformation";
 export const ROUTE_SCHNITTSTELLEN = "/schnittstellen";

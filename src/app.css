@@ -1,9 +1,6 @@
 /* Ported verbatim from src/app/(base)/globals.css. The (service) stylesheet was
    a stale copy of this file and is not needed (KI-02). */
 @import "tailwindcss";
-@import "swiper/css";
-@import "swiper/css/navigation";
-@import "swiper/css/pagination";
 
 :root {
 	--background: #ffffff;
@@ -109,20 +106,6 @@ html {
 	overflow-wrap: break-word;
 }
 
-.swiper-pagination-bullet {
-	width: 30px;
-	min-width: 30px;
-	border-radius: 0;
-	height: 3px;
-	background-color: #ffffff;
-	opacity: 20%;
-	transition: 0.3s all;
-}
-
-.swiper-pagination-bullet-active {
-	opacity: 100%;
-}
-
 @media (max-width: 768px) {
 	.hero {
 		display: grid;
@@ -134,13 +117,6 @@ html {
 			"hero1"
 			"hero2";
 	}
-}
-
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
-	transform: scale(1) !important;
 }
 
 .faq-answer-item {
@@ -230,50 +206,6 @@ html {
 	}
 }
 
-.swiper-button-prev {
-	left: 0 !important;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 80px;
-	height: 80px;
-	border-radius: 9999px;
-	color: #ffffff;
-	background-color: #d9d9d980;
-}
-
-.swiper-button-next {
-	right: 0 !important;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 80px;
-	height: 80px;
-	border-radius: 9999px;
-	color: #ffffff;
-	background-color: #d9d9d980;
-}
-
-@media (max-width: 640px) {
-	.swiper-button-next,
-	.swiper-button-prev {
-		width: 40px;
-		height: 40px;
-	}
-
-	.swiper-button-prev:after,
-	.swiper-button-next:after {
-		font-size: 16px;
-		font-weight: 700;
-	}
-}
-
-.swiper-button-prev:after,
-.swiper-button-next:after {
-	font-size: 30px;
-	font-weight: 700;
-}
-
 /* Responsive grid adjustments */
 @media (max-width: 1280px) {
 	.grid-cols-3 {
@@ -291,22 +223,6 @@ html {
 .colored-to-black {
 	filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
 		brightness(87%) contrast(89%);
-}
-
-@media (min-width: 769px) {
-	.reviews-swiper .swiper-slide-active video {
-		width: 250px;
-		height: 416px;
-		aspect-ratio: 16 / 9;
-	}
-}
-
-.reviews-swiper .swiper-slide {
-	max-width: max-content !important;
-}
-
-.reviews-swiper .swiper-wrapper {
-	align-items: center;
 }
 
 .richTextBlock h1 {

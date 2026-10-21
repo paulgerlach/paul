@@ -20,7 +20,6 @@ import private_person_icon from "$lib/assets/private_person.png?enhanced";
 import group_icon from "$lib/assets/group.png?enhanced";
 import fund_icon from "$lib/assets/fund.png?enhanced";
 import small_counter from "$lib/assets/small_counter.png?enhanced";
-import trustpilot from "$lib/assets/trustpilot.png?enhanced";
 import yes_icon from "$lib/assets/yes_icon.png?enhanced";
 import linkUrl from "$lib/assets/link.svg";
 const link = svg(linkUrl, 640, 512);
@@ -49,7 +48,6 @@ export {
 	group_icon,
 	fund_icon,
 	small_counter,
-	trustpilot,
 	yes_icon,
 	link,
 	max_chat_avatar,

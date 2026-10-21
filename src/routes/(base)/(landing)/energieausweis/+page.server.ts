@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_ENERGIEAUSWEIS } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Verbrauchsausweis ab 69,95 €, Bedarfsausweis ab 99,95 €: rechtsgültig nach GEG, online selbst erfasst oder mit unserem Expertenteam per Video-Call oder vor Ort. Der Check zeigt in vier Fragen, welchen Ausweis Sie brauchen.",
 		ogTitle: "Der Energieausweis für Ihre Liegenschaft.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

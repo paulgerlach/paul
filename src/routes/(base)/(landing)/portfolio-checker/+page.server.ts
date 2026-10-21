@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_PORTFOLIO_CHECKER } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Kostenlos und unverbindlich: Laden Sie Messdienstverträge, Nachträge und Preisblätter hoch. Heidi prüft jedes Dokument, analysiert Laufzeiten und Fristen und zeigt für jede Liegenschaft den nächsten Schritt.",
 		ogTitle: "Vertragsunterlagen hochladen. Heidi liest den Rest.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

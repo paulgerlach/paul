@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import {
 	faq,
@@ -19,7 +20,7 @@ export const load: PageServerLoad = async () => ({
 			"Werden Sie zertifizierter Installationspartner von Heidi Systems: Wir schulen Ihr Team auf Funkzähler und das Installationstool, informieren die Mieter und planen die Einsätze in Ihrer Region. Deutschlandweit, ohne Klemmbrett.",
 		ogTitle: "Installationspartner von Heidi Systems",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.

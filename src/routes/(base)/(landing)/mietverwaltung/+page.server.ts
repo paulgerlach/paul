@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq, figures } from "$lib/landing/pages/mietverwaltung/content";
 import { ROUTE_MIETVERWALTUNG } from "$lib/routes";
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi liefert Mietverwaltungen die Heizkostenabrechnung rechtzeitig zur Betriebskostenabrechnung, für jedes Objekt und jeden Eigentümer. Mit Funkzählern, Zwischenablesung per Funk beim Mieterwechsel und Verbrauchsinfo für Ihre Mieter.",
 		ogTitle: "Messdienst für Mietverwaltungen mit Heidi",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_VORGEHEN } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Bedarfsanalyse, Installation der Funktechnik, Verbrauchsanalyse und Abrechnung: So rüstet Heidi Ihren Bestand auf fernablesbare Zähler um. Alles aus einer Hand.",
 		ogTitle: "So geht Heidi vor. In drei Schritten digital.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

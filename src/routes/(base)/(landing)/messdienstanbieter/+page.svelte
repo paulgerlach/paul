@@ -18,10 +18,17 @@
 	import RegionMain from "$lib/landing/sections/region/RegionMain.svelte";
 	import ServiceJsonLd from "$lib/landing/sections/region/ServiceJsonLd.svelte";
 	import { ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { organizationJsonLdScript } from "$lib/seo/organization";
 
 	let { data } = $props();
 	const content = $derived(data.content);
 </script>
+
+<!-- The new home carries the site's Organization. -->
+<svelte:head>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- static data, "<" escaped -->
+	{@html organizationJsonLdScript}
+</svelte:head>
 
 <ServiceJsonLd
 	area={{ type: "Country", name: "Deutschland" }}

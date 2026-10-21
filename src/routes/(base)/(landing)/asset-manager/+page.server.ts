@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq } from "$lib/landing/pages/asset-manager/content";
 import { ROUTE_ASSET_MANAGER } from "$lib/routes";
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi liefert Asset Managern und Fonds eine einheitliche Datenbasis über alle Objekte und Verwaltungen: fernablesbare Zähler, monatliche Verbräuche und Abrechnungen nach HKVO in einem Dashboard.",
 		ogTitle: "Verbräuche im ganzen Portfolio. Auf einen Blick.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

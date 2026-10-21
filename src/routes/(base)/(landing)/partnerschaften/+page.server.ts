@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq, KONTAKT_HREF } from "$lib/landing/pages/partnerschaften/content";
 import { ROUTE_PARTNERSCHAFTEN } from "$lib/routes";
@@ -19,7 +20,7 @@ export const load: PageServerLoad = async () => ({
 			"Sie haben ein Produkt, ein Netzwerk oder eine Idee, die zu Heidi passt? Heidi Systems arbeitet mit Softwareanbietern, Installationsbetrieben, Verbänden und Messdienstanbietern zusammen. Lassen Sie uns sprechen.",
 		ogTitle: "Partnerschaften mit Heidi Systems",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	// No signup form here: the nav's "Demo buchen" goes to the contact form,

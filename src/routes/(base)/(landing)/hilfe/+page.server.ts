@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { START_HREF } from "$lib/landing/cta";
 import { readQuery } from "$lib/landing/pages/hilfe/search";
@@ -12,10 +13,10 @@ export const load: PageServerLoad = ({ url }) => ({
 		description:
 			"Antworten zu Messdienstwechsel, Montage, Funkablesung, unterjähriger Verbrauchsinformation und Heizkostenabrechnung. Finden Sie Ihre Frage oder sprechen Sie mit Ihrem Ansprechpartner.",
 		ogTitle: "Wie können wir helfen?",
-		// Until its go-live gate is done (plan §4.5). Then also add it to the
-		// sitemap. A search URL (?q=) stays noindex after that; its canonical
-		// is /hilfe, since Seo builds it from the path.
-		noindex: true,
+		// Until its go-live gate is done (plan §4.5). A search URL (?q=) stays
+		// noindex after that; its canonical is /hilfe, since Seo builds it from
+		// the path.
+		noindex: !LAUNCHED || url.searchParams.has("q"),
 		keepCanonical: true,
 	},
 	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.

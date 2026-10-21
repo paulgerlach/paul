@@ -8,8 +8,11 @@
  * A city with `live: false` renders with `noindex` for review and is left
  * out of the sitemap, the Germany map and other pages' "nearby" links. The
  * footer "Städte" group lists every city. Set it `live: true`
- * once its go-live items are done (plan §6.4 / §7.6).
+ * once its go-live items are done (plan §6.4 / §7.6). After the cutover
+ * (`LAUNCHED`) every city is live.
  */
+import { LAUNCHED } from "$lib/landing/launch";
+
 export type CityEntry = {
 	slug: string;
 	name: string;
@@ -58,6 +61,11 @@ export const isCitySlug = (s: string): s is CitySlug =>
 export const cityBySlug = (slug: string): CityEntry | undefined =>
 	CITIES.find((c) => c.slug === slug);
 
-export const LIVE_CITIES: readonly CityEntry[] = CITIES.filter((c) => c.live);
+const isLive = (city: CityEntry) => LAUNCHED || city.live;
 
-export const isLiveCity = (slug: string) => cityBySlug(slug)?.live ?? false;
+export const LIVE_CITIES: readonly CityEntry[] = CITIES.filter(isLive);
+
+export const isLiveCity = (slug: string) => {
+	const city = cityBySlug(slug);
+	return city ? isLive(city) : false;
+};

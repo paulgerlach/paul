@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq, figures } from "$lib/landing/pages/weg-verwaltung/content";
 import { ROUTE_WEG_VERWALTUNG } from "$lib/routes";
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi liefert WEG-Verwaltungen die Heizkostenabrechnung rechtzeitig vor der Eigentümerversammlung, nachvollziehbar für jede Einheit. Der Wechsel des Messdienstes passt zur ETV, mit einer Vollmacht statt vieler Termine.",
 		ogTitle: "Heizkostenabrechnung für WEG-Verwaltungen mit Heidi",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

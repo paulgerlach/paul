@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_DASHBOARD } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Alle Objekte in einem Dashboard: Verbräuche, Kosten und CO₂-Einsparung je Liegenschaft, Benachrichtigungen, Leckage-Wächter und Heizkostenabrechnung per Klick. Mit bedienbarer Vorschau.",
 		ogTitle: "Ihr ganzer Bestand. In einem Dashboard.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

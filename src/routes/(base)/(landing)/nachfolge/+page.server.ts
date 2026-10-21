@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import {
 	faq,
@@ -20,7 +21,7 @@ export const load: PageServerLoad = async () => ({
 			"Sie führen einen Messdienst und suchen eine Nachfolge? Heidi Systems führt Kunden, Geräte und Verträge verlässlich weiter. Vertraulich, persönlich und mit Respekt vor dem, was Sie aufgebaut haben.",
 		ogTitle: "Nachfolge für Messdienstanbieter mit Heidi",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	// No signup form here: the nav's "Demo buchen" goes to the contact form,

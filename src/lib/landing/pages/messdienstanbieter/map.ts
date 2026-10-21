@@ -5,7 +5,7 @@
  * that isn't live and never names one.
  */
 import {
-	CITIES,
+	LIVE_CITIES,
 	type CityEntry,
 } from "$lib/landing/pages/messdienstanbieter-city/cities";
 import type {
@@ -97,7 +97,7 @@ export function cityHint(
 
 export function germanyMap(
 	{ states, cityDots, ...geometry }: GermanyMapData,
-	cities: readonly CityEntry[] = CITIES.filter((c) => c.live),
+	cities: readonly CityEntry[] = LIVE_CITIES,
 ): MapGeometry {
 	const stateDistricts: MapDistrict[] = states.map((s) => {
 		const { name, shape, label, stock } = s;

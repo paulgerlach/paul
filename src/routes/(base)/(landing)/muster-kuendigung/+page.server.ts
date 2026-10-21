@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_MUSTER_KUENDIGUNG } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Kostenlos und ohne Anmeldung: Erstellen Sie die Kündigung für Ihren bisherigen Messdienstleister in zwei Minuten, für mehrere Liegenschaften, als Word-Datei oder PDF. Ihre Eingaben bleiben in Ihrem Browser.",
 		ogTitle: "Messdienst kündigen. In zwei Minuten.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_PRESSE } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -11,7 +12,7 @@ export const load: PageServerLoad = async () => ({
 			"Pressekontakt, Logos, Unternehmensprofil und die wichtigsten Fakten zu Heidi Systems, dem digitalen Messdienst aus Berlin für Hausverwaltungen in ganz Deutschland.",
 		ogTitle: "Hallo, Presse.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

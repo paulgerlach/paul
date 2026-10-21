@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq, figures } from "$lib/landing/pages/hausverwaltung/content";
 import { ROUTE_HAUSVERWALTUNG } from "$lib/routes";
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi übernimmt für Hausverwaltungen Funkzähler, Fernablesung und Heizkostenabrechnung aus einer Hand. Ohne Ablesetermine, mit Verbrauchsinfo für Ihre Mieter und Daten direkt in Ihrer Software.",
 		ogTitle: "Messdienst für Hausverwaltungen mit Heidi",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

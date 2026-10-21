@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_UPGRADE_NOW } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -10,7 +11,7 @@ export const load: PageServerLoad = async () => ({
 			"Bis 31.12.2026 müssen Heizkostenverteiler und Wärmezähler fernablesbar sein, sonst dürfen Mieter um 3\u00a0% kürzen. Heidi rüstet um, die Installation ist kostenlos.",
 		ogTitle: "Nur noch wenige Monate bis zur Umrüstpflicht.",
 		// Until its go-live gate is done (plan §4.8). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: {

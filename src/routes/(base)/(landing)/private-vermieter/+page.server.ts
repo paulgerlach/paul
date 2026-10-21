@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq } from "$lib/landing/pages/private-vermieter/content";
 import { ROUTE_PRIVATE_VERMIETER } from "$lib/routes";
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi übernimmt für private Vermieter Funkzähler, Ablesung und die Heizkostenabrechnung nach HKVO, schon ab zwei Wohneinheiten, mit festem Ansprechpartner und ohne Ablesetermine.",
 		ogTitle: "Ihre Wohnungen. Unser Messdienst. Ihre Ruhe.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

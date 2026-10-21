@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_UEBER_UNS } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -11,7 +12,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi Systems übernimmt für Hausverwaltungen den kompletten Messdienst: eigene Funkzähler, kostenlose Installation, Ablesung per Funk und die Heizkostenabrechnung auf Knopfdruck.",
 		ogTitle: "Messdienst, wie er heute sein sollte.",
 		// Until its go-live gate is done (plan §4.7). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

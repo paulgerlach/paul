@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { faq } from "$lib/landing/pages/installationstool/content";
 import { ROUTE_INSTALLATIONSTOOL } from "$lib/routes";
@@ -14,7 +15,7 @@ export const load: PageServerLoad = async () => ({
 		ogTitle:
 			"Das Heidi Installationstool: Einmal in die Wohnung, dann nie wieder.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

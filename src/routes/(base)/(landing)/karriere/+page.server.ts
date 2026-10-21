@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { START_HREF } from "$lib/landing/cta";
 import { ROUTE_KARRIERE, ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
@@ -15,7 +16,7 @@ export const load: PageServerLoad = async () => ({
 			"Bauen Sie mit uns den Messdienst von morgen: Funkzähler, Software und Service aus Berlin. Offene Stellen in Engineering, Operations, Kundenservice und Vertrieb, Initiativbewerbungen willkommen.",
 		ogTitle: "Bauen Sie mit uns den Messdienst von morgen.",
 		// Until its go-live gate is done (plan §4.6). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	// No signup form here: the nav's "Demo buchen" goes to /messdienstwechsel's.

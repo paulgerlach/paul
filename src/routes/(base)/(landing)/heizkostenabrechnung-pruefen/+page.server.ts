@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Laden Sie Ihre Heizkostenabrechnung hoch oder geben Sie die Werte ein: Der Checker prüft sie gegen Heizkostenverordnung und BGB und zeigt, ob Sie kürzen dürfen oder eine Nachzahlung entfällt. Mit Musterschreiben.",
 		ogTitle: "Heizkostenabrechnung jetzt überprüfen.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

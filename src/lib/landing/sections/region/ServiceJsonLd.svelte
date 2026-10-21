@@ -17,7 +17,7 @@
 			"@type": "Service",
 			serviceType: "Messdienst / Heizkostenabrechnung",
 			url: `${SITE_URL}${url}`,
-			// The Organization the home page describes
+			// The Organization /messdienstanbieter describes
 			provider: {
 				"@type": "Organization",
 				"@id": `${SITE_URL}/#organization`,

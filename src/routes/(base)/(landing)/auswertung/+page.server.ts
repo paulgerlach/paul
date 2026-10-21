@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_AUSWERTUNG } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Heidi wertet die Funkdaten aller Zähler für jede Liegenschaft aus: geprüfte Werte, Vergleich im Portfolio, Jahresverlauf zum Vorjahr, Hinweise mit nächsten Schritten und Berichte für Eigentümer.",
 		ogTitle: "Ihre Verbräuche. Klar ausgewertet.",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

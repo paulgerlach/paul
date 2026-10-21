@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { ROUTE_MIETERPORTAL } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
@@ -12,7 +13,7 @@ export const load: PageServerLoad = async () => ({
 			"Im Heidi Mieterportal sehen Ihre Mieter ihren Verbrauch jeden Monat, mit Vergleich zu Vormonat, Vorjahr und Durchschnitt. Nach § 6a HeizkostenV, ohne Aufwand für Ihr Team.",
 		ogTitle: "Das Heidi Mieterportal für Ihre Mieter",
 		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-		noindex: true,
+		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},
 	landing: DEFAULT_CHROME,

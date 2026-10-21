@@ -1,7 +1,9 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { LIVE_CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
-import { cityRoute, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+import { cityRoute } from "$lib/routes";
 import { SITE_URL } from "$lib/seo/site";
 import { getSitemapPosts } from "$lib/server/blog";
+import { SITE_PAGES } from "$lib/sitePages";
 
 type Entry = {
 	path: string;
@@ -11,23 +13,13 @@ type Entry = {
 };
 
 const pages: Entry[] = [
-	{ path: "", changefreq: "weekly", priority: 1 },
-	{ path: "/funktionen", changefreq: "monthly", priority: 0.8 },
-	{ path: "/preise", changefreq: "monthly", priority: 0.8 },
-	{ path: "/geraete", changefreq: "monthly", priority: 0.8 },
-	{ path: "/messdienstwechsel", changefreq: "monthly", priority: 0.8 },
-	// The hub of the city pages, above them
-	{ path: ROUTE_MESSDIENSTANBIETER, changefreq: "monthly", priority: 0.9 },
-	// Only live cities; the others render with noindex until their go-live
+	// The gated pages only after the launch (LAUNCHED), the cities once live.
+	...SITE_PAGES.filter((p) => !p.gated || LAUNCHED),
 	...LIVE_CITIES.map((c) => ({
 		path: cityRoute(c.slug),
 		changefreq: "monthly",
 		priority: 0.8,
 	})),
-	{ path: "/kontakt", changefreq: "monthly", priority: 0.7 },
-	{ path: "/blog", changefreq: "weekly", priority: 0.7 },
-	{ path: "/impressum", changefreq: "yearly", priority: 0.3 },
-	{ path: "/datenschutzhinweise", changefreq: "yearly", priority: 0.3 },
 ];
 
 export const GET = async ({ fetch, setHeaders }) => {

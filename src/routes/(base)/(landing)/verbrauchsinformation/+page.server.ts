@@ -1,3 +1,4 @@
+import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import {
 	faqItems,
@@ -18,7 +19,7 @@ export const load: PageServerLoad = async () => {
 				"Heidi stellt die monatliche Verbrauchsinformation nach § 6a HeizkostenV automatisch für jede Wohnung bereit: Verbrauch in kWh, Vergleich mit Vormonat, Vorjahresmonat und Durchschnitt. Ohne Aufwand für Ihr Team.",
 			ogTitle: "uVI: Unterjährige Verbrauchsinformation mit Heidi",
 			// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
-			noindex: true,
+			noindex: !LAUNCHED,
 			keepCanonical: true,
 		},
 		landing: DEFAULT_CHROME,

@@ -6,7 +6,7 @@ What is left before the SvelteKit app replaces the Next deployment in production
 
 - The SvelteKit app is built and lives at the repo root on `feat/migration` (PR #440, open); `main` still holds the Next app until #440 merges. Production is the Next deployment.
 - Automated QA on the Vercel preview passed (2026-10-03): all 246 sitemap URLs 200, unknown pages and posts 404, CDN caching works, `<head>` tags equal to the local build, smoke suite 11/11, Lighthouse at or above Next on most pages. Layout diff against production Next: 34/50 exact, the other 16 explained (the deliberate fixes in the `scripts/layout-diff.ts` header, Next still loading at capture time, `InstallFaq`'s autoplay at 375 px).
-- The new landing pages have no Next baseline: they're out of the visual parity loop (`VISUAL_PAGES` in `e2e/parity/pages.ts`) and the only allowed additions in the SEO diff. `/funktionen` is a new design, not a port: out of the visual loop and `layout-diff.ts`; its title, description and content differ on purpose. Every new page must be in that exclusion list.
+- **Site restructure (done 2026-10-21, plan in git history, see `CLAUDE.md`):** the landing pages are the whole site in `(base)/(landing)`; of the ported Next pages only the blog, the Fragebogen, `/impressum` and `/datenschutzhinweise` stay, in `(base)/(site)` with the landing header and footer. `/` answers 307 → `/messdienstanbieter`; `/preise`, `/geraete`, `/kontakt` 301 (`$lib/server/redirects.ts`). The visual parity run and `scripts/layout-diff.ts` are retired (every page's chrome changed); Next stays the baseline only for the copy of the kept pages.
 
 ## 2. Blocking the cutover
 
@@ -15,12 +15,11 @@ What is left before the SvelteKit app replaces the Next deployment in production
 - [ ] The Fragebogen defaults (`questionnaireDefaults` in `$lib/fragebogen/schema.ts`, copied from what Next actually submitted) confirmed by the business owner
 - [ ] Manual QA:
   - [ ] Safari iOS, Chrome Android, desktop Chrome/Firefox/Safari
-  - [ ] Swipers: touch swipe, autoplay, pagination dots, arrows
-  - [ ] Lottie animations start when scrolled into view
-  - [ ] Review videos play
+  - [ ] The reviews swiper on the legal pages: touch swipe, arrows; its videos play
+  - [ ] The Fragebogen's Lottie animations on its final step
   - [ ] Prismic preview from the dashboard
   - [ ] Slack chat against the real workspace (staging channel)
-  - [ ] Make.com scenarios receive contactform / newsletter / newinquiry events
+  - [ ] Make.com scenarios receive newsletter / newinquiry events
   - [ ] A leads row appears in Postgres
 
 Not blocking, still open from the migration: a Playwright test of the Slack chat with a mocked clock (polling, the 5-minute timeout; verified by hand only).
@@ -31,11 +30,12 @@ Not blocking, still open from the migration: a Playwright test of the Slack chat
 2. ~~Promote the Svelte app to the repo root~~ (done in `bd0bf304`; Next code, `components.json` and the React agent skills removed, KI-26/27).
 3. **Vercel project settings:** framework preset → SvelteKit, root directory → `/`, output auto-detected. Copy env vars and set `PUBLIC_PRISMIC_ENVIRONMENT` next to `NEXT_PUBLIC_PRISMIC_ENVIRONMENT` (keep both for the first week, see Rollback). AI Gateway access enabled.
 4. **Prismic dashboard:** preview URL → `https://heidisystems.com/api/preview`. Remove the revalidate webhook (there's no revalidate endpoint; pages are SSR with `s-maxage=60, stale-while-revalidate=600`). Push the slice models from the Svelte Slice Machine.
-5. **New landing pages:** remove `noindex`, add every page to `src/routes/sitemap.xml/+server.ts`, set every city `live: true` (the last item of each gate).
-6. **Deploy to a preview URL,** rerun the full Playwright suite and the parity checks against production Next (`bunx playwright test -c playwright.parity.config.ts`, `scripts/layout-diff.ts`), then promote to production.
+5. **New landing pages:** set `LAUNCHED = true` in `$lib/landing/launch.ts` (the last item of each gate). It removes every gated page's `noindex`, adds them to the sitemap (`SITE_PAGES`) and makes every city live; the per-city `live` flags can then go.
+6. **Deploy to a preview URL,** rerun the full Playwright suite and the smoke run (`BASE_URL=<preview> bunx playwright test -c playwright.parity.config.ts`), check the redirects (`curl -sI` for `/`, `/preise`, `/geraete`, `/kontakt?x=1`: status, `location` with the query string, a CDN `HIT` on the second request), then promote to production.
 7. **Post-deploy checks (first hour):**
    - Search Console shows no spike in 404s or coverage errors; Vercel logs are free of 5xx.
-   - Each site form submits once on prod (contact, newsletter, Fragebogen); the chat works.
+   - `/`, `/preise`, `/geraete` and `/kontakt` redirect on prod as on the preview.
+   - Each site form submits once on prod (newsletter, Fragebogen); the chat works.
    - Signups: a signup on `/messdienstwechsel` and on every landing page with the signup form creates a `leads` row with the page's `source` (the city pages: `messdienstanbieter-<slug>`, and the webhook carries `city`) and its `switchinquiry` webhook reaches Make.com with the page's `page`.
    - The other Make.com routes arrive with their owners: `jobapplication` (`/karriere`, hiring inbox), `helpfeedback` (`/hilfe`, feedback sheet), `partnerinquiry` (`/installationspartner`), `softwarepartnerinquiry` (`/softwarepartner`), `successioninquiry` (`/nachfolge`, confidential), `partnershipinquiry` and `connectioninquiry` (`/partnerschaften`).
 
@@ -47,8 +47,10 @@ The last Next deployment stays in Vercel's deployment history; rollback is "Prom
 
 - Delete the second Vercel project created for the migration preview (phase 1).
 - Remove `/api/contact` once the form action fully replaces it and nothing external uses it.
-- Upgrade Swiper past 11 (pinned because ~100 rules in `app.css` target Swiper 11 markup).
-- `/funktionen`: delete the old-only components (`Funktionen/*`, `Hero/FunktionenHero`) kept so its route commit could be reverted; give it Svelte-generated visual snapshots once its design is signed off; re-measure its Lighthouse score.
+- Upgrade Swiper past 11 (pinned because the `app.css` rules of `ReviewsSwiper`, the only swiper left, target Swiper 11 markup).
+- `/funktionen`: re-measure its Lighthouse score.
+- The 404 page (`src/routes/+error.svelte`) still renders without the landing header and footer; give it the landing chrome.
+- When the "Funkzähler" (`3SRjNA9CRSPQEU3cWdAkbt`) or "Kontakt" (`2eHVk9HEFKh1F7pWbMnkWb`) design is built: point its redirect in `$lib/server/redirects.ts` (`/geraete`, `/kontakt`) and the links without `href` that name its design id at the new page.
 - Revisit Kit 3 once `@prismicio/svelte`, `sveltekit-superforms` and `@slicemachine/adapter-sveltekit` support it.
 - Prismic content (for the content owner; found 2026-10-21, the redirects keep these working): 21 blog posts link the old home as an absolute URL (`https://heidisystems.com/` or `https://www.heidisystems.com/`), which now redirects to `/messdienstanbieter`: abrechnungsdienstleister, abrechnungsdienstleister-heidi-systems, api-schnittstelle-hausverwaltung, betriebskostenabrechnung, betriebskostenabrechnung-frist, funkzaehler, funkzaehler-pflicht, funkzaehler-wasser, hausverwaltung-berlin, hausverwaltung-in-der-naehe, heidi-systems-funkablesung, heizkostenabrechnung-firma, heizkostenabrechnung-formel, heizkostenabrechnung-pruefen, heizkostenverteiler, kosten-hausverwaltung, messdienstanbieter-heidi-systems, miete-rauchwarnmelder-umlagefaehig, weg-hausverwaltung-kosten, weg-hausverwaltung-software, zaehlerwechsel. `/blog/funkzaehler-pflicht` also links `https://www.heidisystems.com/geraete` (→ `/funktionen`). Repoint them in Prismic to the page each means.
-- The follow-ups the gates list "for after the cutover" (e.g. `/hilfe`'s Prismic type, `/ueber-uns` in the site header/footer, a booking URL for `DEMO_HREF`).
+- The follow-ups the gates list "for after the cutover" (e.g. `/hilfe`'s Prismic type, a booking URL for `DEMO_HREF`).

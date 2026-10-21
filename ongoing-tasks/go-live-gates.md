@@ -554,12 +554,12 @@ From the `/funktionen` plan (`6a74f274`, §4.4; its open questions are quoted he
 - [ ] "Betriebskostenabrechnung" as a service and a feature card aligned with the FAQ answer (Heidi supplies the data and creates the Heizkostenabrechnung)
 - [ ] Example data signed off: the chart's apartment and values, the October highlight and empty November/December under "Verbrauch 2026" (fine until the end of 2026; update or make relative for 2027), "Whg. 7 · September" in the dashboard with the hero's October values, the four Liegenschaften, and "Lindenallee 12" aligned with `/vorgehen` and `/selbstabrechnung`
 - [ ] The expired answer (`faq.items[0].answerExpired`) written and signed off (its open question: from 1.1.2027 "Heidi rüstet Ihren Bestand rechtzeitig um" is past; a placeholder today)
-- [ ] Feature card targets decided (its default: the six "Alle Funktionen" cards without links, since the design's product pages don't exist; alternatively "Laufende Verbrauchsdaten" → `/geraete`; "Benachrichtigungen" could now go to `/mieterportal`, and "Dashboard" to `/dashboard`)
+- [ ] Feature card targets decided (its default: the six "Alle Funktionen" cards without links, since the design's product pages don't exist; alternatively "Laufende Verbrauchsdaten" → the "Funkzähler" page once it's built (`/geraete` was dropped in the site cutover); "Benachrichtigungen" could now go to `/mieterportal`, and "Dashboard" to `/dashboard`)
 - [ ] Permission to show the Höhne quote with the "Verifizierter Heidi-Kunde" badge (shared with the gates below)
 - [ ] Security block statements: covered by the region pages' item in §37 (same `TrustSeals`)
 - [ ] Page copy, SEO title and description signed off by the content owner (a ranking URL: also compare with the old page's search terms in Search Console)
 - [ ] Make.com `switchinquiry` route live and able to tell `/funktionen` leads apart (`page: "/funktionen"`)
-- [ ] After go-live: delete `Funktionen/AnimationsSection.svelte`, `Funktionen/Grid.svelte`, `Hero/FunktionenHero.svelte` and its kitchen-sink entry, and whatever only they used (check `Animation_10`: `FunktionenHighlight` and `InstallFaq` use it too)
+- [x] After go-live: delete `Funktionen/AnimationsSection.svelte`, `Funktionen/Grid.svelte`, `Hero/FunktionenHero.svelte` and its kitchen-sink entry, and whatever only they used (done in the site cutover, with the rest of the old site)
 - [ ] If a booking URL exists by then: the closing card's video button back, with the clip and poster licensed (its default: the signup form in the dark card)
 
 ## 31. `/vorgehen`
@@ -572,7 +572,7 @@ From the `/vorgehen` plan (`93952e28`, §4.4; its open questions are quoted here
 - [ ] Photos licensed for use (7 new ones in `src/lib/assets/landing/vorgehen/`, plus the shared contact photo and avatars of §37); the "Heidi"-branded devices in `kitchen-meters.webp` show real Heidi hardware or are replaced; `dashboard.webp` matches the real dashboard
 - [ ] Example data aligned with `/selbstabrechnung` and `/funktionen` ("Lindenallee 12 · 36 Einheiten" here, "6 Wohnungen" there, "Whg. 7" on `/funktionen`)
 - [ ] The expired texts (`remoteDuty.h2Expired`, `remoteDuty.textExpired`) written and signed off (its open question: from 1.1.2027 the H2 "Bis 2027 muss jeder Zähler fernablesbar sein." and "Heidi rüstet Ihren Bestand rechtzeitig um" are past tense; placeholders today)
-- [ ] Feature card targets confirmed (its default: Digitale Funkablesung → `/geraete`, Dokumenten-Management and Heizkostenabrechnung → `/funktionen`, the other three without a link) and the "Angebot einholen" target decided (its default: the signup form; alternatively both "Angebot einholen" buttons go to `/fragebogen` and only "Demo buchen" stays on the form)
+- [ ] Feature card targets confirmed (its default: Digitale Funkablesung without a link until the "Funkzähler" page exists (it linked `/geraete`, dropped in the site cutover), Dokumenten-Management and Heizkostenabrechnung → `/funktionen`, the other three without a link) and the "Angebot einholen" target decided (its default: the signup form; alternatively both "Angebot einholen" buttons go to `/fragebogen` and only "Demo buchen" stays on the form)
 - [ ] Permission to show the Werne, Höhne and Gerhard quotes without the "Verifiziert" badge (shared with the gates below)
 - [ ] Security block statements: covered by the region pages' item in §37 (same `TrustSeals`)
 - [ ] Page copy, SEO title and description signed off by the content owner
@@ -615,7 +615,7 @@ From the `/hilfe` plan (`3b70270e`, §4.4; its open questions are quoted here). 
 - [ ] Slug decided: `/hilfe` by default, `/hilfe-center` or `/faq` are the alternatives
 - [ ] At the cutover: remove `noindex` (keep it for `?q=`), add the sitemap entry
 
-Its open questions for after the cutover stay: a Prismic `help_article` type instead of `content.ts`, the site footer's "FAQ" pointing here instead of `/blog` (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`), and "Gespräch vereinbaren" going to `DEMO_HREF` once a booking URL exists.
+Its open questions for after the cutover stay: a Prismic `help_article` type instead of `content.ts`, and "Gespräch vereinbaren" going to `DEMO_HREF` once a booking URL exists.
 
 ## 34. `/karriere`
 
@@ -646,7 +646,7 @@ From the `/ueber-uns` plan (`7a777e92`, §4.4; its open questions are quoted her
 - [ ] Make.com `switchinquiry` route live and able to tell `/ueber-uns` leads apart (`page: "/ueber-uns"`)
 - [ ] At the cutover: remove `noindex`, add the sitemap entry
 
-Its discoverability question stays open for after the cutover: the site footer and header could link to it too (a deliberate deviation from Next, to be listed in `scripts/layout-diff.ts`).
+Its discoverability question is settled by the site cutover: the landing footer, now on every page, links it.
 
 ## 36. `/upgrade-now`
 

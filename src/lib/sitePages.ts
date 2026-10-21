@@ -70,4 +70,5 @@ export const SITE_PAGES: SitePage[] = [
 	// Legal
 	page(r.ROUTE_IMPRESSUM, 0.3, false, "yearly"),
 	page(r.ROUTE_DATENSCHUTZHINWEISE, 0.3, false, "yearly"),
+	page(r.ROUTE_AGB, 0.3, true, "yearly"),
 ];

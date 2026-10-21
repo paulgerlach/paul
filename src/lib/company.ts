@@ -1,4 +1,8 @@
-import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_IMPRESSUM } from "$lib/routes";
+import {
+	ROUTE_AGB,
+	ROUTE_DATENSCHUTZHINWEISE,
+	ROUTE_IMPRESSUM,
+} from "$lib/routes";
 
 /** Heidi Systems' address, phone, profiles and legal links, used site-wide. */
 export const ADDRESS = {
@@ -24,9 +28,9 @@ export const SOCIALS = [
 	{ label: "Instagram", href: "https://www.instagram.com/heidisystems/" },
 ] as const;
 
-/** The footer's legal line, in the design's order. AGB has no page of its own. */
+/** The footer's legal line, in the design's order. */
 export const LEGAL_LINKS = [
 	{ text: "Impressum", href: ROUTE_IMPRESSUM },
 	{ text: "Datenschutz", href: ROUTE_DATENSCHUTZHINWEISE },
-	{ text: "AGB", href: ROUTE_DATENSCHUTZHINWEISE },
+	{ text: "AGB", href: ROUTE_AGB },
 ];

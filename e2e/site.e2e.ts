@@ -1,17 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // The site cutover: old URLs redirect, and the kept old pages (blog,
-// Fragebogen, legal pages) render inside the landing header and footer.
+// Fragebogen) render inside the landing header and footer. The legal pages
+// are landing pages now (legal.e2e.ts).
 
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
-const KEPT_PAGES = [
-	"/blog",
-	"/blog/weg-hausverwaltung-excel",
-	"/fragebogen",
-	"/impressum",
-	"/datenschutzhinweise",
-];
+const KEPT_PAGES = ["/blog", "/blog/weg-hausverwaltung-excel", "/fragebogen"];
 
 /** Console errors, warnings (hydration) and page errors from now on. */
 function collectProblems(page: Page) {
@@ -82,7 +77,7 @@ test.describe("kept pages", () => {
 		});
 
 	test("the content keeps Exo 2, the chrome is Geist", async ({ page }) => {
-		await page.goto("/impressum");
+		await page.goto("/blog");
 		expect(
 			await page
 				.locator("main h1")
@@ -96,7 +91,7 @@ test.describe("kept pages", () => {
 	});
 
 	test("the nav sticks while scrolling", async ({ page }) => {
-		await page.goto("/impressum");
+		await page.goto("/blog");
 		await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 		await expect
 			.poll(async () => (await page.locator("nav.top").boundingBox())?.y)
@@ -124,22 +119,6 @@ test.describe("kept pages", () => {
 		await expect(menu).toBeVisible();
 		await page.keyboard.press("Escape");
 		await expect(menu).toBeHidden();
-	});
-
-	test("the reviews swiper on the legal pages initializes", async ({
-		page,
-	}) => {
-		await page.goto("/impressum", { waitUntil: "networkidle" });
-		await expect
-			.poll(() =>
-				page
-					.locator(".reviews-swiper")
-					.first()
-					.evaluate(
-						(el) => !!(el as HTMLElement & { swiper?: unknown }).swiper,
-					),
-			)
-			.toBe(true);
 	});
 });
 

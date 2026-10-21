@@ -5,7 +5,6 @@ export const ROUTE_FUNKTIONEN = "/funktionen";
 export const ROUTE_IMPRESSUM = "/impressum";
 // Old pages that are gone; only the redirect map ($lib/server/redirects.ts)
 // uses them.
-export const ROUTE_KONTAKT = "/kontakt";
 export const ROUTE_GERAETE = "/geraete";
 export const ROUTE_PREISE = "/preise";
 export const ROUTE_BLOG = "/blog";
@@ -48,5 +47,6 @@ export const ROUTE_API_DOKUMENTATION = "/api-dokumentation";
 export const ROUTE_VERBAENDE = "/verbaende";
 export const ROUTE_NACHFOLGE = "/nachfolge";
 export const ROUTE_PARTNERSCHAFTEN = "/partnerschaften";
+export const ROUTE_KONTAKT = "/kontakt";
 export const cityRoute = (slug: string) =>
 	`${ROUTE_MESSDIENSTANBIETER}/${slug}`;

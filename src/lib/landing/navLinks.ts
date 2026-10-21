@@ -13,6 +13,7 @@ import {
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
+	ROUTE_KONTAKT,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
@@ -318,10 +319,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Für Softwareanbieter: Daten direkt anbinden",
 						href: ROUTE_SOFTWAREPARTNER,
 					},
-					// 2eHVk9HEFKh1F7pWbMnkWb
 					{
 						title: "Kontakt",
 						text: "Persönlich, per Telefon oder E-Mail",
+						href: ROUTE_KONTAKT,
 					},
 					{
 						title: "API-Dokumentation",

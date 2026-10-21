@@ -1,7 +1,6 @@
 import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
-	ROUTE_KONTAKT,
 	ROUTE_MESSDIENSTANBIETER,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_PREISE,
@@ -18,7 +17,6 @@ export const REDIRECTS: Record<string, Redirect> = {
 	"/": { to: ROUTE_MESSDIENSTANBIETER, status: 307 },
 	[ROUTE_PREISE]: { to: `${ROUTE_MESSDIENSTWECHSEL}#start`, status: 301 },
 	[ROUTE_GERAETE]: { to: ROUTE_FUNKTIONEN, status: 301 },
-	[ROUTE_KONTAKT]: { to: `${ROUTE_MESSDIENSTWECHSEL}#start`, status: 301 },
 };
 
 /** The redirect for a path, ignoring one trailing slash; null if none. */

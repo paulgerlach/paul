@@ -27,6 +27,11 @@ type EventType =
 	// region, crew, trades (array), experience, message, page. Make.com
 	// forwards it to whoever answers partner inquiries; nothing is stored here.
 	| "partnerinquiry"
+	// Contact form on /kontakt. Payload: topic, mailbox ("vertrieb" | "info" |
+	// "presse", from the topic), first_name, last_name, phone, company, units,
+	// message, page. Make.com forwards it to that mailbox's team; nothing is
+	// stored here.
+	| "contactinquiry"
 	// Partner form on /softwarepartner. Payload: company, name, phone,
 	// product, customers, kinds (array), message, page. Make.com forwards it
 	// to whoever answers software partners; nothing is stored here.

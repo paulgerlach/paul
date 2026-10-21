@@ -15,6 +15,7 @@ import {
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
+	ROUTE_KONTAKT,
 	ROUTE_KARRIERE,
 	ROUTE_MESSDIENSTANBIETER,
 	ROUTE_MESSDIENSTWECHSEL,
@@ -58,6 +59,7 @@ export const companyLinks: LandingFooterLink[] = [
 	{ text: "Kunden", href: `${ROUTE_MESSDIENSTANBIETER}#kunden` },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
+	{ text: "Kontakt", href: ROUTE_KONTAKT },
 	{ text: "API-Dokumentation", href: ROUTE_API_DOKUMENTATION },
 ];
 

@@ -42,6 +42,6 @@ test("sitemap.xml lists the site's pages and blog posts", async ({
 	// Blog posts from Prismic (KI-05).
 	expect(body).toMatch(/<loc>https:\/\/heidisystems\.com\/blog\/[^<]+<\/loc>/);
 	// The dropped pages redirect, and / is no page.
-	for (const path of ["/preise", "/geraete", "/kontakt", ""])
+	for (const path of ["/preise", "/geraete", ""])
 		expect(body).not.toContain(`<loc>https://heidisystems.com${path}</loc>`);
 });

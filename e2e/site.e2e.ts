@@ -25,7 +25,6 @@ test.describe("redirects", () => {
 		["/preise", 301, "/messdienstwechsel#start"],
 		["/preise/", 301, "/messdienstwechsel#start"],
 		["/geraete", 301, "/funktionen"],
-		["/kontakt", 301, "/messdienstwechsel#start"],
 		["/preise/?utm_source=x", 301, "/messdienstwechsel?utm_source=x#start"],
 		["/geraete?a=1&b=2", 301, "/funktionen?a=1&b=2"],
 	] as const)
@@ -50,6 +49,10 @@ test.describe("redirects", () => {
 
 	test("the removed pages are gone", async ({ request }) => {
 		expect((await request.get("/kitchen-sink")).status()).toBe(404);
+		// /kontakt is a page again (2026-10-21), not a redirect.
+		expect((await request.get("/kontakt", { maxRedirects: 0 })).status()).toBe(
+			200,
+		);
 		// Only the blog sits under the preview segment now.
 		expect((await request.get("/preview/fragebogen")).status()).toBe(404);
 	});

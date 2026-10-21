@@ -76,7 +76,8 @@ export function spamTrapReason(body: {
 
 /**
  * Honeypot → timing → zod → gibberish → rate limit, then the Make.com
- * webhook. Shared by `/api/contact` and the /kontakt form action (phase 7).
+ * webhook, for `/api/contact`. The layers 1, 2 and 4 (`spamTrapReason`,
+ * `isGibberish`) are shared with the other public forms.
  */
 export async function runContactPipeline(
 	body: Record<string, unknown>,

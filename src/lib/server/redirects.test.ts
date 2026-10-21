@@ -12,11 +12,7 @@ describe("redirectFor", () => {
 			status: 301,
 		});
 		expect(redirectFor("/geraete")).toEqual({ to: "/funktionen", status: 301 });
-		expect(redirectFor("/kontakt")).toEqual({
-			to: "/messdienstwechsel#start",
-			status: 301,
-		});
-		expect(Object.keys(REDIRECTS)).toHaveLength(4);
+		expect(Object.keys(REDIRECTS)).toHaveLength(3);
 	});
 
 	it("ignores one trailing slash", () => {
@@ -30,6 +26,8 @@ describe("redirectFor", () => {
 			"/preview",
 			"/preview/blog/x",
 			"/messdienstanbieter",
+			// A page again (2026-10-21), no longer redirected
+			"/kontakt",
 			"/preise/x",
 			"/toString",
 			"/constructor",

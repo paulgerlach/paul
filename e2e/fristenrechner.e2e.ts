@@ -246,7 +246,7 @@ test("hydrates without console errors or warnings", async ({ page }) => {
 	await gotoOnDay(page);
 	await page.getByRole("tab", { name: "Abrechnung" }).click();
 	await expect(pane(page, "Abrechnung")).toBeVisible();
-	await page.locator("summary").nth(1).click();
+	await page.locator("main summary").nth(1).click();
 	expect(messages).toEqual([]);
 });
 

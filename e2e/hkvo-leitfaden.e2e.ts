@@ -227,7 +227,7 @@ test("hydrates without console errors or warnings", async ({ page }) => {
 	page.on("pageerror", (error) => messages.push(error.message));
 	await gotoHydrated(page);
 	await answer(page, /jeder Wohnung/, "Nein");
-	await page.locator("summary").nth(1).click();
+	await page.locator("main summary").nth(1).click();
 	await page.mouse.wheel(0, 3000);
 	await page.waitForTimeout(300);
 	expect(messages).toEqual([]);

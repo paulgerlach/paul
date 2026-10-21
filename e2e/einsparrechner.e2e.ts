@@ -196,7 +196,7 @@ test("hydrates without console errors or warnings", async ({ page }) => {
 	await gotoHydrated(page);
 	await calc(page).getByRole("slider", { name: "Liegenschaften" }).fill("40");
 	await toggle(page, /Verbrauchsinfo/).click();
-	await page.locator("summary").nth(1).click();
+	await page.locator("main summary").nth(1).click();
 	await page.mouse.wheel(0, 3000);
 	await page.waitForTimeout(600);
 	expect(messages).toEqual([]);

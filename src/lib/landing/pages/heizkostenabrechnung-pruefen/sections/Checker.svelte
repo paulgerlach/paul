@@ -1,6 +1,7 @@
 <!--
   The check card (.mc-card): the tabs "Hochladen" / "Werte eingeben" and
-  the three panes (upload with the guided flow, values, result), state in
+  the four panes (upload with the guided flow, the example's scan, values,
+  result), state in
   the page's `BillCheck`. The server renders the empty upload pane; without
   JS the card is hidden, since nothing in it works then (plan README, open
   question 4).
@@ -10,10 +11,12 @@
 	import { getBillCheck, type Pane } from "../check.svelte";
 	import { card } from "../content";
 	import Result from "./Result.svelte";
+	import Run from "./Run.svelte";
 	import Upload from "./Upload.svelte";
 	import Values from "./Values.svelte";
 
 	const check = getBillCheck();
+	const tabbed = $derived(check.pane === "up" || check.pane === "man");
 
 	const tabs = [
 		{ pane: "up", label: card.tabs.upload, icon: "doc" },
@@ -39,11 +42,13 @@
 	<div
 		class="pane"
 		id="mc-pane"
-		role={check.pane === "res" ? undefined : "tabpanel"}
-		aria-labelledby={check.pane === "res" ? undefined : `mc-tab-${check.pane}`}
+		role={tabbed ? "tabpanel" : undefined}
+		aria-labelledby={tabbed ? `mc-tab-${check.pane}` : undefined}
 	>
 		{#if check.pane === "up"}
 			<Upload />
+		{:else if check.pane === "run"}
+			<Run />
 		{:else if check.pane === "man"}
 			<Values />
 		{:else}

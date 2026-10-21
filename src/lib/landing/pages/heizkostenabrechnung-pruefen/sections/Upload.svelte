@@ -1,8 +1,9 @@
 <!--
   The upload pane (#mc-up): the drop zone (a label around the file input,
   compact once there are files), the thumbnails, the guided flow, the
-  privacy note, the message and "Beispiel ansehen". Only the files' names
-  and local previews are used; nothing is read or sent.
+  privacy note, the message and "Beispiel ansehen" (whose file card flies
+  into the drop zone first, .mc-fly). Only the files' names and local
+  previews are used; nothing is read or sent.
 -->
 <script lang="ts">
 	import Icon from "../components/Icon.svelte";
@@ -12,6 +13,7 @@
 
 	const check = getBillCheck();
 	const t = card.upload;
+	const file = t.exampleFile;
 
 	let over = $state(false);
 
@@ -35,7 +37,12 @@
 
 <div class={["up", check.flowOpen && "has"]}>
 	<label
-		class={["drop", over && "over"]}
+		class={[
+			"drop",
+			over && "over",
+			check.exampleFile && "ex",
+			check.exampleFile === "got" && "got",
+		]}
 		ondragenter={ondragover}
 		{ondragover}
 		ondragleave={() => (over = false)}
@@ -45,6 +52,26 @@
 		<span class="dic"><Icon name="upload" /></span>
 		<b>{check.flowOpen ? t.more : t.drop}</b>
 		<small>{t.or}<u>{t.pick}</u>{t.formats}</small>
+		{#if check.exampleFile}
+			<span class="fly" aria-hidden="true"
+				><span class="fi"
+					><svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linejoin="round"
+						><path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4" /></svg
+					><em>{file.type}</em></span
+				><span class="fn"
+					><b>{file.name}</b><small
+						>{check.exampleFile === "got"
+							? file.uploaded
+							: file.uploading}</small
+					><i><u></u></i></span
+				></span
+			>
+		{/if}
 	</label>
 	{#if check.files.length}
 		<div class="thumbs">
@@ -132,6 +159,122 @@
 	.drop small {
 		font-size: 13px;
 		color: var(--muted);
+	}
+	/* The example's file card (.mc-drop.demo, .mc-fly) */
+	.drop.ex {
+		border-color: var(--accent-deep, #5db864);
+		background: #f2faf3;
+	}
+	.drop.ex > :is(.dic, b, small) {
+		opacity: 0;
+		transition: opacity 0.25s;
+	}
+	.fly {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: min(370px, 92%);
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		background: #fff;
+		border: 1px solid var(--hair);
+		border-radius: 14px;
+		padding: 12px 14px;
+		box-shadow: 0 22px 40px -24px rgba(30, 50, 45, 0.55);
+		transform: translate(-50%, -190%) rotate(-6deg);
+		opacity: 0;
+		pointer-events: none;
+		text-align: left;
+		animation: fly 0.9s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+	}
+	@keyframes fly {
+		0% {
+			transform: translate(-50%, -190%) rotate(-6deg);
+			opacity: 0;
+		}
+		60% {
+			opacity: 1;
+		}
+		100% {
+			transform: translate(-50%, -50%) rotate(0);
+			opacity: 1;
+		}
+	}
+	.fi {
+		position: relative;
+		width: 38px;
+		height: 46px;
+		border-radius: 8px;
+		background: #f2f6f3;
+		display: grid;
+		place-items: center;
+		flex: none;
+		color: var(--ink);
+	}
+	.fi svg {
+		width: 24px;
+		height: 24px;
+	}
+	.fi em {
+		position: absolute;
+		bottom: -5px;
+		right: -6px;
+		font-style: normal;
+		font-size: 9px;
+		font-weight: 700;
+		background: #d9622b;
+		color: #fff;
+		border-radius: 5px;
+		padding: 1px 4px;
+	}
+	.fn {
+		display: grid;
+		gap: 3px;
+		min-width: 0;
+		flex: 1;
+	}
+	.fn b {
+		font-size: 13px;
+		font-weight: 600;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fn small {
+		font-size: 12px;
+		color: var(--muted);
+	}
+	.fn i {
+		display: block;
+		height: 4px;
+		border-radius: 2px;
+		background: #edf1ee;
+		overflow: hidden;
+	}
+	.fn u {
+		display: block;
+		height: 100%;
+		width: 0;
+		background: #8ad68f;
+		border-radius: 2px;
+		animation: up 0.7s 0.75s ease-out forwards;
+	}
+	@keyframes up {
+		to {
+			width: 100%;
+		}
+	}
+	.got .fn small {
+		color: #2f7a3c;
+		font-weight: 600;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.fly {
+			animation: none;
+			transform: translate(-50%, -50%);
+			opacity: 1;
+		}
 	}
 	/* #mc-up.has */
 	.has .drop {

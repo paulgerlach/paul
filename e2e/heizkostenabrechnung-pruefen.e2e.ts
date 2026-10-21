@@ -28,6 +28,12 @@ const button = (scope: Page | Locator, name: string | RegExp) =>
 const figure = (page: Page) => card(page).locator(".big b");
 const dialog = (page: Page) => page.getByRole("dialog");
 
+/** "Beispiel ansehen", then the result after the upload and the scan (5.6 s). */
+async function showExample(page: Page) {
+	await button(page, "Beispiel ansehen").click();
+	await expect(figure(page)).toBeVisible({ timeout: 10_000 });
+}
+
 const PDF = {
 	name: "Abrechnung_2024.pdf",
 	mimeType: "application/pdf",
@@ -90,13 +96,17 @@ for (const width of [375, 320]) {
 				() => document.documentElement.scrollWidth - window.innerWidth,
 			);
 		expect(await overflow()).toBeLessThanOrEqual(0);
-		await button(page, "Beispiel ansehen").click();
-		await button(page, /Gründe und Details ansehen/).click();
-		await button(page, "Beispiel kostenlos freischalten").click();
+		await showExample(page);
 		expect(await overflow()).toBeLessThanOrEqual(0);
-		await page.keyboard.press("Escape");
 		await button(page, /Musterschreiben erstellen/).click();
 		await expect(page.locator("#schreiben")).toBeVisible();
+		expect(await overflow()).toBeLessThanOrEqual(0);
+		// The paywall, over a result for own values
+		await button(page, "Neue Abrechnung prüfen").click();
+		await page.getByRole("tab", { name: "Werte eingeben" }).click();
+		await button(page, /Ergebnis anzeigen/).click();
+		await button(page, /Gründe und Details ansehen/).click();
+		await expect(dialog(page)).toBeVisible();
 		expect(await overflow()).toBeLessThanOrEqual(0);
 	});
 }
@@ -162,12 +172,24 @@ test("the CTAs lead to the card, the figures, /funktionen and the booking page",
 	await expect(demo).toHaveAttribute("href", "/demo-buchen");
 });
 
-test("the example: the sum, the paywall, the free unlock and the letter", async ({
+test("the example: the upload, the scan, the sum, the points and the letter", async ({
 	page,
 }) => {
 	await gotoOnDay(page);
 	await button(page, "Beispiel ansehen").click();
-	await expect(card(page).locator(".tag")).toHaveText("Beispiel");
+	// The file card flies into the drop zone, then the scan ticks off.
+	await expect(card(page).locator(".fly b")).toHaveText(
+		"Heizkostenabrechnung_2024.pdf",
+	);
+	await expect(card(page).locator(".fly small")).toHaveText(
+		"Hochgeladen · 2 Seiten",
+	);
+	const steps = card(page).locator(".steps li");
+	await expect(steps).toHaveCount(3);
+	await expect(steps.nth(2)).toHaveClass(/\bon\b/);
+	await expect(card(page).locator(".tag")).toHaveText("Beispiel", {
+		timeout: 10_000,
+	});
 	await expect(card(page).locator(".rh small")).toHaveText(
 		"Mögliche Ersparnis",
 	);
@@ -175,28 +197,8 @@ test("the example: the sum, the paywall, the free unlock and the letter", async 
 	await expect(card(page).locator(".rh p")).toHaveText(
 		"Die Beträge überschneiden sich, deshalb zählt der höhere. 3 Punkte sprechen für Sie. Erstellen Sie jetzt Ihr Musterschreiben.",
 	);
-	// Locked: the teaser instead of the points, no letter button.
-	await expect(card(page).locator(".tz b")).toHaveText(
-		"3 Fehler und 3 weitere Punkte",
-	);
-	await expect(card(page).locator(".lines")).toHaveCount(0);
-	await expect(button(page, /Musterschreiben erstellen/)).toHaveCount(0);
-
-	await button(page, /Gründe und Details ansehen/).click();
-	await expect(dialog(page)).toBeVisible();
-	await expect(dialog(page)).toHaveAccessibleName(
-		"Heizkostenabrechnung geprüft",
-	);
-	await expect(dialog(page).locator(".dr.bad")).toHaveCount(4);
-	await expect(dialog(page).locator(".rh span")).toHaveText("6 Punkte");
-	await expect(
-		button(dialog(page), "Beispiel kostenlos freischalten"),
-	).toBeFocused();
-	await button(dialog(page), "Beispiel kostenlos freischalten").click();
-	await expect(dialog(page)).not.toHaveClass(/\blocked\b/);
-	await button(dialog(page), "Schließen").click();
-	await expect(dialog(page)).toBeHidden();
-
+	// The example isn't locked: the points instead of the teaser.
+	await expect(card(page).locator(".tz")).toHaveCount(0);
 	const lines = card(page).locator(".lines li");
 	await expect(lines).toHaveCount(6);
 	await expect(lines.first()).toContainText("Abrechnung zu spät zugestellt");
@@ -241,6 +243,9 @@ test("own values: the share in %, then the amount, the payment not set up", asyn
 	await expect(card(page).locator(".big i")).toHaveText("€");
 
 	await button(page, /Gründe und Details ansehen/).click();
+	await expect(dialog(page)).toHaveAccessibleName(
+		"Heizkostenabrechnung geprüft",
+	);
 	const pay = button(dialog(page), "Zahlung wird gerade eingerichtet");
 	await expect(pay).toBeDisabled();
 	await expect(

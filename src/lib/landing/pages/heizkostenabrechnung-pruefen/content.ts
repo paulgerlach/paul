@@ -80,6 +80,23 @@ export const card = {
 		 */
 		noReading:
 			"Die automatische Erkennung ist in dieser Ansicht nicht verfügbar. Geben Sie die Werte aus Ihrer Abrechnung einfach selbst ein, das dauert etwa eine Minute.",
+		/** The example's file card flying into the drop zone (.mc-fly). */
+		exampleFile: {
+			name: "Heizkostenabrechnung_2024.pdf",
+			type: "PDF",
+			uploading: "Wird hochgeladen …",
+			uploaded: "Hochgeladen · 2 Seiten",
+		},
+	},
+	/** The scan pane (#mc-run) the example passes through. */
+	run: {
+		doc: "Heizkosten­abrechnung",
+		steps: [
+			"Dokument wird gelesen",
+			"Werte werden erkannt",
+			"Regeln werden geprüft",
+		],
+		cancel: "Abbrechen",
 	},
 	flow: {
 		step: (n: number) => `Schritt ${n} von 5`,

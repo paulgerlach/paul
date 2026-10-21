@@ -71,7 +71,6 @@ describe("the example", () => {
 			unit: "€",
 			upTo: true,
 			letter: true,
-			celebrate: true,
 		});
 		expect(head.sub).toBe(
 			"Die Beträge überschneiden sich, deshalb zählt der höhere. 3 Punkte sprechen für Sie. Erstellen Sie jetzt Ihr Musterschreiben.",
@@ -168,7 +167,6 @@ describe("the rules", () => {
 			sub: "Sie dürfen um 15 % kürzen. Tragen Sie Ihre Heizkosten ein, um den Betrag zu sehen.",
 			value: 15,
 			unit: "%",
-			celebrate: true,
 		});
 	});
 
@@ -245,7 +243,6 @@ describe("the rules", () => {
 		expect(resultHead(result)).toMatchObject({
 			label: "Kein Anspruch gefunden",
 			sub: "In den geprüften Punkten sieht Ihre Abrechnung korrekt aus.",
-			celebrate: false,
 		});
 		expect(letterText(result)).toContain(
 			"Bitte korrigieren Sie die Abrechnung entsprechend.",

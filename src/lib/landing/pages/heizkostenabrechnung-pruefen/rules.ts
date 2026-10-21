@@ -438,8 +438,6 @@ export function resultHead(result: Result) {
 		zero: result.sum <= 0,
 		/** "Musterschreiben erstellen" only with a failed point. */
 		letter: fails > 0,
-		/** Confetti for a sum or a share. */
-		celebrate: result.sum > 0 || shareOnly,
 	};
 }
 

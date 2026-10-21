@@ -1,13 +1,12 @@
 <!--
   The result pane (#mc-res): the dark head with the sum counting up, the
-  checked points (locked behind the paywall's teaser until unlocked), the
-  letter button, "Werte ändern" and "Neue Abrechnung prüfen". Confetti from
-  the sum for a claim, 500 ms after it shows.
+  checked points (locked behind the paywall's teaser until unlocked; the
+  example's show at once), the letter button, "Werte ändern" and "Neue
+  Abrechnung prüfen".
 -->
 <script lang="ts">
 	import { tick } from "svelte";
 	import { prefersReducedMotion, tweenNumber } from "$lib/landing/motion";
-	import { confettiFrom } from "$lib/landing/sections/sg/confetti";
 	import { getBillCheck } from "../check.svelte";
 	import { card, LETTER_ID } from "../content";
 	import { formatNumber, teaser } from "../rules";
@@ -17,23 +16,11 @@
 	const t = card.result;
 
 	let shown = $state(0);
-	let figure: HTMLElement | undefined = $state();
 
 	$effect(() => {
 		const head = check.head;
 		if (!head) return;
-		const stopTween = tweenNumber(0, head.value, 900, (v) => (shown = v));
-		let stopConfetti: (() => void) | undefined;
-		const timer = head.celebrate
-			? setTimeout(() => {
-					if (figure) stopConfetti = confettiFrom(figure);
-				}, 500)
-			: undefined;
-		return () => {
-			stopTween();
-			clearTimeout(timer);
-			stopConfetti?.();
-		};
+		return tweenNumber(0, head.value, 900, (v) => (shown = v));
 	});
 
 	async function makeLetter() {
@@ -53,13 +40,13 @@
 	<div class={["rh", head.zero && "zero"]}>
 		<small>{head.label}</small>
 		<div class="big">
-			{#if head.upTo}<span>{t.upTo}</span>{/if}<b bind:this={figure}
-				>{formatNumber(shown, 0)}</b
-			><i>{head.unit}</i>
+			{#if head.upTo}<span>{t.upTo}</span>{/if}<b>{formatNumber(shown, 0)}</b><i
+				>{head.unit}</i
+			>
 		</div>
 		<p>{head.sub}</p>
 	</div>
-	{#if check.unlocked}
+	{#if check.open}
 		<Points points={check.result.points} hasHeating={check.result.hasHeating} />
 	{:else if check.result.points.length}
 		<div class="tz">
@@ -76,7 +63,7 @@
 		</div>
 	{/if}
 	<div class="ra">
-		{#if head.letter && check.unlocked}
+		{#if head.letter && check.open}
 			<button type="button" class="bk-next" onclick={makeLetter}
 				>{t.letter} <span class="ar">→</span></button
 			>

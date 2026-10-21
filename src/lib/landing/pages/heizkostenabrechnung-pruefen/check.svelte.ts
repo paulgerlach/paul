@@ -9,6 +9,7 @@
  * file goes).
  */
 import { getContext, setContext } from "svelte";
+import { prefersReducedMotion } from "$lib/landing/motion";
 import type { Day } from "$lib/landing/pages/fristenrechner/fristen";
 import { card } from "./content";
 import {
@@ -22,7 +23,7 @@ import {
 	type Values,
 } from "./rules";
 
-export type Pane = "up" | "man" | "res";
+export type Pane = "up" | "run" | "man" | "res";
 
 export type BillFile = {
 	id: number;
@@ -35,6 +36,11 @@ export type BillFile = {
 const ACCEPTED = /^image\/(jpeg|png|webp)$/;
 /** The flow's wait before an answer moves on, ms (the design's). */
 const ADVANCE_MS = 280;
+/**
+ * The example's schedule, ms after the click (the design's): the file card
+ * lands, the scan pane opens, its steps tick off, the result shows.
+ */
+const EXAMPLE_MS = { got: 1500, run: 2300, steps: [3400, 4500], done: 5600 };
 
 export class BillCheck {
 	pane = $state<Pane>("up");
@@ -51,6 +57,10 @@ export class BillCheck {
 	/** The values pane's note (no reading here). */
 	valuesNote = $state("");
 	result = $state<Result | null>(null);
+	/** The example's file card in the drop zone: flying in, then uploaded. */
+	exampleFile = $state<"fly" | "got" | null>(null);
+	/** The scan pane's current step (0–2; 3 = all done). */
+	runStep = $state(0);
 	/** The paywall is open. */
 	dialogOpen = $state(false);
 	unlocked = $state(false);
@@ -58,12 +68,15 @@ export class BillCheck {
 	letter = $state<string | null>(null);
 
 	head = $derived(this.result ? resultHead(this.result) : null);
+	/** The points show: paid for, or the example (the design's `lockState`). */
+	open = $derived(this.unlocked || this.demo);
 	flowOpen = $derived(this.files.length > 0);
 
 	#today: () => Day;
 	#nextId = 0;
 	#wasDemo: boolean | null = null;
 	#advance: ReturnType<typeof setTimeout> | undefined;
+	#exampleTimers: ReturnType<typeof setTimeout>[] = [];
 
 	constructor(today: () => Day) {
 		this.#today = today;
@@ -123,11 +136,13 @@ export class BillCheck {
 	}
 
 	showPane(pane: Pane) {
+		this.#stopExample();
 		this.pane = pane;
 	}
 
 	/** "Abrechnung prüfen": nothing reads the bill here, so the values pane opens with the note. */
 	checkFiles() {
+		this.#stopExample();
 		this.message = "";
 		this.demo = false;
 		this.valuesNote = card.upload.noReading;
@@ -144,8 +159,48 @@ export class BillCheck {
 		this.pane = "res";
 	}
 
-	/** "Beispiel ansehen". */
+	/**
+	 * "Beispiel ansehen": the file card flies into the drop zone, the scan
+	 * pane ticks off its steps, then the example's result (at once with
+	 * reduced motion).
+	 */
 	example() {
+		this.#stopExample();
+		if (prefersReducedMotion()) {
+			this.#fillExample();
+			return;
+		}
+		this.pane = "up";
+		this.exampleFile = "fly";
+		const at = (ms: number, fn: () => void) =>
+			this.#exampleTimers.push(setTimeout(fn, ms));
+		at(EXAMPLE_MS.got, () => (this.exampleFile = "got"));
+		at(EXAMPLE_MS.run, () => {
+			this.exampleFile = null;
+			this.runStep = 0;
+			this.pane = "run";
+		});
+		EXAMPLE_MS.steps.forEach((ms, i) => at(ms, () => (this.runStep = i + 1)));
+		at(EXAMPLE_MS.done, () => {
+			this.#exampleTimers = [];
+			this.runStep = 3;
+			this.#fillExample();
+		});
+	}
+
+	/** "Abbrechen" in the scan pane. */
+	cancelExample() {
+		this.#stopExample();
+		this.pane = "up";
+	}
+
+	#stopExample() {
+		this.#exampleTimers.forEach(clearTimeout);
+		this.#exampleTimers = [];
+		this.exampleFile = null;
+	}
+
+	#fillExample() {
 		this.demo = true;
 		this.values = exampleValues(this.#today());
 		this.compute();
@@ -153,6 +208,7 @@ export class BillCheck {
 
 	/** "Neue Abrechnung prüfen". */
 	reset() {
+		this.#stopExample();
 		for (const file of this.files) if (file.url) URL.revokeObjectURL(file.url);
 		this.files = [];
 		this.demo = false;
@@ -176,6 +232,7 @@ export class BillCheck {
 
 	dispose() {
 		clearTimeout(this.#advance);
+		this.#exampleTimers.forEach(clearTimeout);
 		for (const file of this.files) if (file.url) URL.revokeObjectURL(file.url);
 	}
 }

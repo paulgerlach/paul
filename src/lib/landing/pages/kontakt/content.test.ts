@@ -10,6 +10,7 @@ import {
 	ROUTE_DATENSCHUTZHINWEISE,
 	ROUTE_HILFE,
 	ROUTE_PARTNERSCHAFTEN,
+	ROUTE_SELF_SERVICE,
 } from "$lib/routes";
 import * as content from "./content";
 
@@ -44,7 +45,7 @@ describe("kontakt content", () => {
 				text: "vertrieb@heidisystems.com",
 				href: "mailto:vertrieb@heidisystems.com",
 			},
-			{ text: "Selbst erfassen im Self-Service →" },
+			{ text: "Selbst erfassen im Self-Service →", href: ROUTE_SELF_SERVICE },
 			{ text: "Demo buchen →", href: BOOKING_HREF },
 			{ text: "Zum Hilfe-Center →", href: ROUTE_HILFE },
 			{ text: "info@heidisystems.com", href: "mailto:info@heidisystems.com" },
@@ -57,6 +58,7 @@ describe("kontakt content", () => {
 		expect(form.consent.link.href).toBe(ROUTE_DATENSCHUTZHINWEISE);
 		expect(faq.items[0].answer).toContain(`href="${LOGIN_URL}"`);
 		expect(faq.items[0].answer).toContain(`href="${ROUTE_HILFE}"`);
+		expect(faq.items[1].answer).toContain(`href="${ROUTE_SELF_SERVICE}"`);
 		expect(faq.items[3].answer).toContain(`href="${ROUTE_HILFE}"`);
 	});
 

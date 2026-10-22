@@ -15,6 +15,7 @@ import {
 	ROUTE_DATENSCHUTZHINWEISE,
 	ROUTE_HILFE,
 	ROUTE_PARTNERSCHAFTEN,
+	ROUTE_SELF_SERVICE,
 } from "$lib/routes";
 
 export const MAILBOXES: Record<MailboxKey, string> = {
@@ -75,9 +76,7 @@ export const ways = {
 			text: "Sie möchten zu Heidi wechseln oder Ihren Bestand ausstatten? Wir erstellen Ihnen ein Angebot.",
 			links: [
 				{ text: MAILBOXES.vertrieb, href: mailto("vertrieb") },
-				// The "Self-Service" design (42U8uYryb6qXPWKZCWgkaZ) isn't built:
-				// hidden until its page exists.
-				{ text: "Selbst erfassen im Self-Service →" },
+				{ text: "Selbst erfassen im Self-Service →", href: ROUTE_SELF_SERVICE },
 			],
 		},
 		{
@@ -190,9 +189,7 @@ export const faq: { title: string; items: FaqItem[] } = {
 		},
 		{
 			question: "Kann ich auch ohne Gespräch ein Angebot bekommen?",
-			// The "Self-Service" link (42U8uYryb6qXPWKZCWgkaZ) waits for its page.
-			answer:
-				"Ja. Im Self-Service erfassen Sie Ihren Zählerbedarf selbst und erhalten direkt ein Angebot als PDF.",
+			answer: `Ja. Im <a href="${ROUTE_SELF_SERVICE}">Self-Service</a> erfassen Sie Ihren Zählerbedarf selbst und erhalten direkt ein Angebot als PDF.`,
 		},
 		{
 			question: "Unser Vertrag mit dem bisherigen Messdienst läuft noch.",

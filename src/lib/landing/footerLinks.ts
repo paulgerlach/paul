@@ -28,6 +28,7 @@ import {
 	ROUTE_PRIVATE_VERMIETER,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SELBSTABRECHNUNG,
+	ROUTE_SELF_SERVICE,
 	ROUTE_SICHERHEIT,
 	ROUTE_SOFTWAREPARTNER,
 	ROUTE_UEBER_UNS,
@@ -75,6 +76,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },
 			{ text: "Selbstabrechnung", href: ROUTE_SELBSTABRECHNUNG },
+			{ text: "Self-Service", href: ROUTE_SELF_SERVICE },
 			{
 				text: "Verbrauchsinformation (uVI)",
 				href: ROUTE_VERBRAUCHSINFORMATION,

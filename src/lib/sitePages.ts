@@ -70,6 +70,7 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_PARTNERSCHAFTEN, 0.6),
 	page(r.ROUTE_KONTAKT, 0.6),
 	page(r.ROUTE_DEMO_BUCHEN, 0.7),
+	page(r.ROUTE_SELF_SERVICE, 0.7),
 	// Legal
 	page(r.ROUTE_IMPRESSUM, 0.3, false, "yearly"),
 	page(r.ROUTE_DATENSCHUTZHINWEISE, 0.3, false, "yearly"),

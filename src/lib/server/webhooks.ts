@@ -4,7 +4,7 @@
  *
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
- * successioninquiry, partnershipinquiry, connectioninquiry
+ * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -49,7 +49,15 @@ type EventType =
 	// The form "Anbindung anfragen" in /partnerschaften's software vendor
 	// card. Payload: company, name, software, message, page. Make.com
 	// forwards it to whoever answers software vendors; nothing is stored here.
-	| "connectioninquiry";
+	| "connectioninquiry"
+	// The Zählercheck on /self-service: the offer once made (stage
+	// "created") and when requested by email ("requested"). Payload: stage,
+	// offer_number, object_id, valid_until, first_name, last_name, company,
+	// phone, property, billing, units, once_net, yearly_net, files (count,
+	// the files stay in the browser), text (the design's Slack summary),
+	// page. Make.com forwards it to sales, who send the offer PDF; nothing
+	// is stored here.
+	| "selfserviceoffer";
 
 interface WebhookPayload {
 	event_type: EventType;

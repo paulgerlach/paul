@@ -159,10 +159,9 @@ test("the CTAs lead to the form, the mailboxes and the booking", async ({
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 	).toHaveAttribute("href", BOOKING);
-	// The Self-Service page doesn't exist: its link is hidden.
-	await expect(main.getByText("Selbst erfassen im Self-Service")).toHaveCount(
-		0,
-	);
+	await expect(
+		main.getByRole("link", { name: "Selbst erfassen im Self-Service →" }),
+	).toHaveAttribute("href", "/self-service");
 
 	await main.getByRole("link", { name: /Nachricht schreiben/ }).click();
 	await expect(page).toHaveURL(/#schreiben$/);

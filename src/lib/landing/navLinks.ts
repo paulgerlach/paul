@@ -28,6 +28,7 @@ import {
 	ROUTE_PRIVATE_VERMIETER,
 	ROUTE_SCHNITTSTELLEN,
 	ROUTE_SELBSTABRECHNUNG,
+	ROUTE_SELF_SERVICE,
 	ROUTE_SICHERHEIT,
 	ROUTE_SOFTWAREPARTNER,
 	ROUTE_UPGRADE_NOW,
@@ -83,10 +84,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Heizkostenverteiler, Wasserzähler und Rauchwarnmelder mit Fernablesung",
 						href: ROUTE_FUNKZAEHLER,
 					},
-					// 42U8uYryb6qXPWKZCWgkaZ
 					{
 						title: "Self-Service",
 						text: "Zählerbedarf selbst erfassen, Kostenvoranschlag sofort",
+						href: ROUTE_SELF_SERVICE,
 					},
 					// H4cZtgYCsvL4h7HGxZaHBs
 					{
@@ -134,10 +135,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Abrechnung selbst erstellen, Heidi liefert die Daten",
 						href: ROUTE_SELBSTABRECHNUNG,
 					},
-					// 42U8uYryb6qXPWKZCWgkaZ
 					{
 						title: "Self-Service",
 						text: "Zählerbedarf selbst erfassen und online bestellen",
+						href: ROUTE_SELF_SERVICE,
 					},
 				],
 			},

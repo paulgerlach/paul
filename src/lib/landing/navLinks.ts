@@ -276,9 +276,9 @@ export const landingNav: LandingNavGroup[] = [
 						href: ROUTE_FRISTENRECHNER,
 					},
 					{
-						title: "Portfolio-Scanner",
+						title: "Portfolio-Checker",
 						text: "Bestand automatisch auf Vertragsenden prüfen",
-						soon: true,
+						href: ROUTE_PORTFOLIO_CHECKER,
 					},
 					{
 						title: "Einsparrechner",

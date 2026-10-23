@@ -1,5 +1,5 @@
 /**
- * Texts of /datenschutzhinweise, word for word from the design
+ * Texts of /datenschutz, word for word from the design
  * (https://claude.ai/artifact/Xd6h87fFYLF5hYyiqCT3By), generated from
  * its HTML. The strings may hold trusted markup (`<br>`, `<a>`, `<b>`). The
  * legal statements await sign-off (ongoing-tasks/go-live-gates.md §1).

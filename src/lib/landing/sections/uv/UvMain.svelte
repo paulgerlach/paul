@@ -1,5 +1,5 @@
 <!--
-  The dark part of a `uv` page (/mieterportal, /verbrauchsinformation): the
+  The dark part of a `uv` page (/plattform/mieterportal, /plattform/verbrauchsinformation): the
   design sets `.uv { background: var(--ink); color: #fff }` on <main>; here it
   wraps the dark sections inside <main>, so the light trust block after it
   stays in <main>. It holds the design's page tokens and its .uv-btn buttons.

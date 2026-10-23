@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /nachfolge, word for word from the
+ * Every text and the example data of /partner/nachfolge, word for word from the
  * design, in the shapes of the shared `uv` template and the shared partner
  * section. Components hold markup and behaviour only.
  *
@@ -35,7 +35,7 @@ export const APPLY_ID = "kontakt";
 /**
  * Every CTA to the form: the design's "Gespräch anfragen", but
  * not its "Demo buchen" and "Erstgespräch vereinbaren", which point at the
- * demo-booking design and so lead to /demo-buchen (`DEMO_HREF`).
+ * demo-booking design and so lead to /demo (`DEMO_HREF`).
  */
 export const KONTAKT_HREF = `#${APPLY_ID}`;
 

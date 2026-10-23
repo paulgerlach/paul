@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons of /private-vermieter (the advantages, the
+ * The design's 20×20 line icons of /kunden/private-vermieter (the advantages, the
  * flow's readings), drawn by `components/Icon.svelte`.
  */
 type Shape = { d: string } | { cx: number; cy: number; r: number };

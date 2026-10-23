@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /verbrauchsinformation, word for word
+ * Every text and the example data of /plattform/verbrauchsinformation, word for word
  * from the design, in the shapes of the shared `uv` template. Components hold
  * markup and behaviour only.
  *

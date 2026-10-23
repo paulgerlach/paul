@@ -3,9 +3,9 @@
   is the design's visually hidden sentence), the lead and two CTAs, then a
   strip of three panels bleeding past the page edges: a photo, the page's mock
   and a second photo. Below 620 px only the mock is shown. `size="md"` is the
-  design's base layout (word left, lead and CTAs right, /verbrauchsinformation),
+  design's base layout (word left, lead and CTAs right, /plattform/verbrauchsinformation),
   `lg` its extension (word on its own line, lead and CTAs below it side by side,
-  /mieterportal).
+  /plattform/mieterportal).
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";

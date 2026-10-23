@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/weg-verwaltung";
+const PATH = "/kunden/weg-verwaltung";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -39,7 +39,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/weg-verwaltung$/,
+		/\/kunden\/weg-verwaltung$/,
 	);
 
 	const jsonLd = await page
@@ -53,7 +53,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/weg-verwaltung<\/loc>/);
+	expect(sitemap).not.toMatch(
+		/<loc>https?:\/\/[^/]+\/kunden\/weg-verwaltung<\/loc>/,
+	);
 });
 
 for (const width of [375, 320])
@@ -90,14 +92,14 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=wv-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(5);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=wv-h1] a", {
@@ -113,7 +115,7 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	// Inside closed answers, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/verbrauchsinformation");
+	).toHaveAttribute("href", "/plattform/verbrauchsinformation");
 	await expect(
 		page.locator("a", { hasText: "Zum Fristenrechner" }),
 	).toHaveAttribute("href", "/fristenrechner");
@@ -122,7 +124,7 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	).toHaveAttribute("href", "/fristenrechner");
 	await expect(
 		page.locator("a", { hasText: "Zur Muster-Kündigung" }),
-	).toHaveAttribute("href", "/muster-kuendigung");
+	).toHaveAttribute("href", "/messdienst-wechseln/muster-kuendigung");
 	// Answer 1 names the Fristenrechner as plain text, as its design does.
 	await expect(page.locator("#faq .ans a:not(.more)")).toHaveCount(1);
 });
@@ -156,7 +158,7 @@ test.describe("without JavaScript", () => {
 		await expect(billSum(page)).toHaveText("eine Unterschrift");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

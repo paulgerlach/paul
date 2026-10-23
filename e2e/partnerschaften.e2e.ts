@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // Both forms' inquiries go to the local webhook sink from playwright.config.ts;
 // no database needed. The sink answers 500 for emails at @sink-fails.example.
 
-const PATH = "/partnerschaften";
+const PATH = "/partner";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 const KONTAKT = "#kontakt";
 
@@ -89,7 +89,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/partnerschaften$/,
+		/\/partner$/,
 	);
 
 	const jsonLd = await page
@@ -103,7 +103,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/partnerschaften<\/loc>/);
+	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/partner<\/loc>/);
 });
 
 for (const width of [375, 320])
@@ -124,7 +124,7 @@ for (const width of [375, 320])
 		expect(await overflow()).toBeLessThanOrEqual(0);
 	});
 
-test("the footer, /neuigkeiten and /nachfolge lead here, every internal link resolves", async ({
+test("the footer, /neuigkeiten and /partner/nachfolge lead here, every internal link resolves", async ({
 	page,
 	request,
 }) => {
@@ -132,7 +132,7 @@ test("the footer, /neuigkeiten and /nachfolge lead here, every internal link res
 	await expect(
 		page.locator("a.card", { hasText: /^.*Partnerschaften: Mit Heidi/ }),
 	).toHaveAttribute("href", PATH);
-	await page.goto("/nachfolge");
+	await page.goto("/partner/nachfolge");
 	await expect(
 		page.locator("main a", { hasText: "Zu den Partnerschaften" }),
 	).toHaveAttribute("href", PATH);
@@ -181,31 +181,31 @@ test("CTAs lead to the contact form, the rows, the FAQ and the partner pages", a
 		page.locator(`${scope} a`, { hasText: text });
 	await expect(
 		link("#inhalt", "Mehr für Installationsbetriebe"),
-	).toHaveAttribute("href", "/installationspartner");
+	).toHaveAttribute("href", "/partner/installationspartner");
 	await expect(link("#inhalt", "Mehr zur Nachfolge")).toHaveAttribute(
 		"href",
-		"/nachfolge",
+		"/partner/nachfolge",
 	);
-	await expect(link("#inhalt", "Heidi API")).toHaveAttribute(
-		"href",
-		"/api-dokumentation",
-	);
+	await expect(link("#inhalt", "Heidi API")).toHaveAttribute("href", "/api");
 	await expect(link("#faq", "API-Dokumentation")).toHaveAttribute(
 		"href",
-		"/api-dokumentation",
+		"/api",
 	);
 	await expect(link("section.who", "Softwarepartner werden")).toHaveAttribute(
 		"href",
-		"/softwarepartner",
+		"/partner/softwarepartner",
 	);
 	await expect(
 		link("section.who", "Installationspartner werden"),
-	).toHaveAttribute("href", "/installationspartner");
+	).toHaveAttribute("href", "/partner/installationspartner");
 	await expect(link("#faq", "Softwarepartner")).toHaveAttribute(
 		"href",
-		"/softwarepartner",
+		"/partner/softwarepartner",
 	);
-	await expect(link("#faq", "Nachfolge")).toHaveAttribute("href", "/nachfolge");
+	await expect(link("#faq", "Nachfolge")).toHaveAttribute(
+		"href",
+		"/partner/nachfolge",
+	);
 	await expect(link("#faq", "Mehr zu Sicherheit")).toHaveAttribute(
 		"href",
 		"/sicherheit",
@@ -214,14 +214,14 @@ test("CTAs lead to the contact form, the rows, the FAQ and the partner pages", a
 	// The design's demo CTAs lead to the booking page.
 	await expect(
 		page.locator("section.end a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("section.trust a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 });
 
 test.describe("without JavaScript", () => {

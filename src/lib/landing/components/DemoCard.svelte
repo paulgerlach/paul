@@ -1,7 +1,7 @@
 <!--
   "Demo mit unserem Team buchen" card of the landing heroes. The demo video
   plays while the card is hovered, focused or touched. The city and Germany
-  designs have their own video (`video`); the default is /messdienstwechsel's.
+  designs have their own video (`video`); the default is /messdienst-wechseln's.
 -->
 <script lang="ts">
 	import defaultPoster from "$lib/assets/landing/demo-poster.jpg?url";

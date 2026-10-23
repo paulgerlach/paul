@@ -169,7 +169,7 @@ describe("asset-manager content", () => {
 		expect(faq.items).toHaveLength(4);
 	});
 
-	it("shares the template's texts with /wohnungsunternehmen", () => {
+	it("shares the template's texts with /kunden/wohnungsunternehmen", () => {
 		for (const key of [
 			"logos",
 			"large",

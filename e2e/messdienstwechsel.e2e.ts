@@ -6,7 +6,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // from playwright.config.ts. The action's per-IP limit (3 in 10 minutes,
 // shared by all landing pages) is raised on the e2e server (KITCHEN_SINK=1).
 
-const PATH = "/messdienstwechsel";
+const PATH = "/messdienst-wechseln";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 /** A fresh address per test, so parallel tests can find their own webhook. */
@@ -68,7 +68,7 @@ test("the nav links only to landing pages, the blog and the questionnaire", asyn
 		.map((entry) => `/${entry.name}`);
 	const allowed = [...landingRoutes, "/blog", "/fragebogen"];
 
-	for (const path of [PATH, "/messdienstanbieter/berlin", "/karriere"]) {
+	for (const path of [PATH, "/messdienst/berlin", "/karriere"]) {
 		await page.goto(path);
 		const internal = (await hrefs(page.locator("nav.top a[href]"))).filter(
 			(h) => !h.startsWith("#") && !h.startsWith("https://platform."),

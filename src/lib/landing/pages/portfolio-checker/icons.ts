@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons on /portfolio-checker, as shapes drawn by
+ * The design's 20×20 line icons on /portfolio-check, as shapes drawn by
  * `components/Icon.svelte` inside the shared `StrokeIcon`.
  */
 export type Shape =

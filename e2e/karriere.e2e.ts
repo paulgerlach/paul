@@ -74,11 +74,11 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 	expect(overflow).toBe(0);
 });
 
-test('the header\'s "Demo buchen" goes to /demo-buchen', async ({ page }) => {
+test('the header\'s "Demo buchen" goes to /demo', async ({ page }) => {
 	await page.goto(PATH);
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 });
 
 test("the footer's Karriere link and internal links resolve", async ({

@@ -1,7 +1,7 @@
 <!-- Personal contact details. Also the last step of the Under50 flow. -->
 <script lang="ts">
 	import { getQuestionnaire } from "$lib/fragebogen/questionnaire.svelte";
-	import { ROUTE_DATENSCHUTZHINWEISE } from "$lib/routes";
+	import { ROUTE_DATENSCHUTZ } from "$lib/routes";
 	import StepHeading from "../StepHeading.svelte";
 
 	const q = getQuestionnaire();
@@ -83,7 +83,7 @@
 			/>
 			<span class="text-[15px] leading-snug text-dark_text">
 				Hiermit habe ich die
-				<a class="text-[#6083CC] underline" href={ROUTE_DATENSCHUTZHINWEISE}
+				<a class="text-[#6083CC] underline" href={ROUTE_DATENSCHUTZ}
 					>Datenschutzbestimmungen</a
 				>
 				gelesen und akzeptiert

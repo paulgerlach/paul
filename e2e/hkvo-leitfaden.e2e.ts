@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/hkvo-leitfaden";
+const PATH = "/heizkostenverordnung";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -42,7 +42,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/hkvo-leitfaden$/,
+		/\/heizkostenverordnung$/,
 	);
 	const jsonLd = await page
 		.locator('script[type="application/ld+json"]')
@@ -55,7 +55,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/hkvo-leitfaden</loc>");
+	expect(sitemap).not.toContain("/heizkostenverordnung</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -83,8 +83,8 @@ test("the footer, /vorgehen and the internal links resolve", async ({
 		...(await hrefs(page.locator('footer a[href^="/"]'))),
 		...(await hrefs(page.locator('main a[href^="/"]'))),
 	]);
-	expect(links).toContain("/upgrade-now");
-	expect(links).toContain("/mieterportal");
+	expect(links).toContain("/fernablesung-umruesten");
+	expect(links).toContain("/plattform/mieterportal");
 	for (const href of links) {
 		const response = await request.get(href);
 		expect(response.status(), href).toBe(200);
@@ -111,12 +111,12 @@ test("the CTAs lead to the guide, the penalties and the booking page", async ({
 	await expect(page.locator("section#kuerzung")).toHaveCount(1);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=lf-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	// The line to the Heizkostenabrechnungs-Checker.
 	await expect(
 		page.locator("#kuerzung a", { hasText: "Heizkostenabrechnung prüfen" }),
@@ -174,7 +174,7 @@ test("the risk link leads to the booking page", async ({ page }) => {
 	const link = result(page).getByRole("link", {
 		name: "Mit Heidi alle Punkte erfüllen →",
 	});
-	await expect(link).toHaveAttribute("href", "/demo-buchen");
+	await expect(link).toHaveAttribute("href", "/demo");
 });
 
 test("the table of contents follows the reading", async ({ page }) => {
@@ -238,7 +238,7 @@ test.describe("without JS", () => {
 		);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

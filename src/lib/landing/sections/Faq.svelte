@@ -1,9 +1,9 @@
 <!--
   FAQ of the landing pages, with its FAQPage JSON-LD. `split` is the
-  two-column variant of the /upgrade-now design (title and lead on the left,
+  two-column variant of the /fernablesung-umruesten design (title and lead on the left,
   plus icons, all closed). `cards` is /vorgehen's (centred head with an
   eyebrow, each question a soft rounded card, a plus that turns into a minus).
-  The default variant takes `tone="dark"` for a dark page (/mieterportal) and
+  The default variant takes `tone="dark"` for a dark page (/plattform/mieterportal) and
   `openFirst={false}` to start with every answer closed.
 -->
 <script lang="ts">
@@ -175,7 +175,7 @@
 		text-decoration: underline;
 		text-underline-offset: 3px;
 	}
-	/* Dark tone (/mieterportal's .uv-fl) */
+	/* Dark tone (/plattform/mieterportal's .uv-fl) */
 	.faq.dark details {
 		border-top-color: rgba(255, 255, 255, 0.14);
 	}

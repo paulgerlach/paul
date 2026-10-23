@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /mietverwaltung, word for word from the
+ * Every text and the example data of /kunden/mietverwaltung, word for word from the
  * design, in the shapes of the shared `uv` template. Components hold markup
  * and behaviour only.
  *
@@ -177,7 +177,7 @@ export const phone = {
 	label: "Heizung im September",
 	value: `131${NB}kWh`,
 	comparisons: ["Vergleich zum Vorjahresmonat"],
-	/** Monthly heating values up to the current month (as on /mieterportal). */
+	/** Monthly heating values up to the current month (as on /plattform/mieterportal). */
 	bars: [171, 184, 162, 131, 74, 22, 15, 14, 96, 131],
 } satisfies PhoneTile;
 

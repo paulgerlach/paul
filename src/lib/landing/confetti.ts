@@ -1,7 +1,7 @@
 /**
  * Confetti burst on a canvas, ported from the city designs (both billing
  * demos use the same one): 60 pieces in 6 colours, falling for about 3.8 s,
- * then the canvas is cleared. The options default to that burst; /upgrade-now
+ * then the canvas is cleared. The options default to that burst; /fernablesung-umruesten
  * passes its slower one. No dependency. Does nothing with reduced motion.
  * Returns a function that stops it (for teardown).
  */

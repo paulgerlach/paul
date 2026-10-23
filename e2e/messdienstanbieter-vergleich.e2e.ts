@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const PATH = "/messdienstanbieter-vergleich";
+const PATH = "/messdienst-vergleich";
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
@@ -54,13 +54,13 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/messdienstanbieter-vergleich$/,
+		/\/messdienst-vergleich$/,
 	);
 });
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/messdienstanbieter-vergleich</loc>");
+	expect(sitemap).not.toContain("/messdienst-vergleich</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -88,7 +88,10 @@ test("the footer and the segment pages link here; the internal links resolve", a
 			page.locator("footer a", { hasText: /^Messdienstanbieter-Vergleich$/ }),
 		),
 	).toEqual([PATH]);
-	for (const other of ["/wohnungsunternehmen", "/asset-manager"]) {
+	for (const other of [
+		"/kunden/wohnungsunternehmen",
+		"/kunden/asset-manager",
+	]) {
 		await page.goto(other);
 		await expect(
 			page.locator("main a", { hasText: "Messdienstanbieter vergleichen" }),
@@ -117,22 +120,22 @@ test("the CTAs lead to the steps, the signup form and the other pages", async ({
 	).toHaveAttribute("href", "#kosten");
 	await expect(
 		page.getByRole("link", { name: /So funktioniert der Wechsel/ }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+	).toHaveAttribute("href", "/messdienst-wechseln");
 	await expect(
 		page.getByRole("link", { name: /Zur Umrüstpflicht/ }),
-	).toHaveAttribute("href", "/upgrade-now");
+	).toHaveAttribute("href", "/fernablesung-umruesten");
 	await expect(page.locator("main form")).toHaveCount(0);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	const offers = page.locator("main a", {
 		hasText:
 			/^(Demo buchen|Mit Heidi vergleichen|Heidi-Angebot für diesen Bestand)/,
 	});
 	expect(await offers.count()).toBeGreaterThanOrEqual(4);
-	expect(new Set(await hrefs(offers))).toEqual(new Set(["/demo-buchen"]));
+	expect(new Set(await hrefs(offers))).toEqual(new Set(["/demo"]));
 });
 
 test("picking scores the provider against Heidi", async ({ page }) => {

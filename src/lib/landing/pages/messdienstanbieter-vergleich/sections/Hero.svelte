@@ -4,7 +4,7 @@
   design). The preview is rendered finished; its ticks pop in one by one and
   "8 / 8" fades in through CSS animations with a `both` fill from the first
   paint (the design starts them when the card shows, which in the hero is
-  at load). "Demo buchen" leads to /demo-buchen.
+  at load). "Demo buchen" leads to /demo.
 -->
 <script lang="ts">
 	import Check from "$lib/landing/components/icons/Check.svelte";

@@ -1,4 +1,4 @@
-<!-- One of the design's 20×20 line icons on /portfolio-checker, by name. -->
+<!-- One of the design's 20×20 line icons on /portfolio-check, by name. -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 	import type { IconName } from "../icons";

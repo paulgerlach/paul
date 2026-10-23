@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/presse";
 const BOILERPLATE_START =
@@ -98,12 +98,12 @@ test("the CTAs lead to the booking page, the mail links to the press", async ({
 	await gotoHydrated(page);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=pr-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	const mail = "mailto:presse@heidisystems.com";
 	await expect(
 		page.getByRole("link", { name: "presse@heidisystems.com" }),
@@ -112,7 +112,7 @@ test("the CTAs lead to the booking page, the mail links to the press", async ({
 		page.getByRole("link", { name: "E-Mail senden" }),
 	).toHaveAttribute("href", mail);
 	const talk = page.getByRole("link", { name: "Gespräch vereinbaren" });
-	await expect(talk).toHaveAttribute("href", "/demo-buchen");
+	await expect(talk).toHaveAttribute("href", "/demo");
 });
 
 test("a download saves its file and says so", async ({ page }) => {
@@ -189,7 +189,7 @@ test.describe("without JS", () => {
 		await expect(kit(page).locator("a[download]")).toHaveCount(4);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

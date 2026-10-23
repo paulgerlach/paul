@@ -1,7 +1,7 @@
 <!--
   The page's only form, so it carries the `start` anchor every CTA leads to.
   The design's dark CTA block becomes the shared final CTA with the signup
-  form (/upgrade-now plan at `ddde6575`, §4.3); its kicker shows the live day count.
+  form (/fernablesung-umruesten plan at `ddde6575`, §4.3); its kicker shows the live day count.
 -->
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";

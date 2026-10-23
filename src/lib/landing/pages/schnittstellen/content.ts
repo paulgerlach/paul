@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /schnittstellen, word for word from the
+ * Every text and the example data of /plattform/schnittstellen, word for word from the
  * design (plan 01 §1.2). Components hold markup only. The product claims,
  * the calculator's defaults and the example data need sign-off before the
  * cutover (plan §4.4).

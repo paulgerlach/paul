@@ -25,7 +25,7 @@ const page = (
  * in robots.txt).
  */
 export const SITE_PAGES: SitePage[] = [
-	page(r.ROUTE_MESSDIENSTANBIETER, 1, false, "weekly"),
+	page(r.ROUTE_HOME, 1, false, "weekly"),
 	page(r.ROUTE_MESSDIENSTWECHSEL, 0.9, false),
 	page(r.ROUTE_FUNKTIONEN, 0.9, false),
 	// Product and segment pages
@@ -73,6 +73,6 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_SELF_SERVICE, 0.7),
 	// Legal
 	page(r.ROUTE_IMPRESSUM, 0.3, false, "yearly"),
-	page(r.ROUTE_DATENSCHUTZHINWEISE, 0.3, false, "yearly"),
+	page(r.ROUTE_DATENSCHUTZ, 0.3, false, "yearly"),
 	page(r.ROUTE_AGB, 0.3, true, "yearly"),
 ];

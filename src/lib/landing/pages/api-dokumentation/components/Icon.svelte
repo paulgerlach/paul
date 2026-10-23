@@ -1,4 +1,4 @@
-<!-- One of the design's 20×20 line icons on /api-dokumentation, by name. -->
+<!-- One of the design's 20×20 line icons on /api, by name. -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 	import { ICONS, type IconName } from "../icons";

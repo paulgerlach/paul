@@ -10,13 +10,13 @@ export type LandingChrome = {
 	/** Target of the banner's "Mehr erfahren" link (default `#faq`). */
 	bannerHref?: string;
 	/**
-	 * Target of the nav's "Demo buchen" (default `DEMO_HREF`, /demo-buchen;
-	 * `#start` on /demo-buchen itself).
+	 * Target of the nav's "Demo buchen" (default `DEMO_HREF`, /demo;
+	 * `#start` on /demo itself).
 	 */
 	demoHref?: string;
 };
 
-/** /messdienstwechsel's texts, also the fallback (e.g. on an error page). */
+/** /messdienst-wechseln's texts, also the fallback (e.g. on an error page). */
 export const DEFAULT_CHROME: LandingChrome = {
 	bannerText:
 		"Ab 1.1.2027 müssen Zähler und Heizkostenverteiler fernablesbar sein. Jetzt den Wechsel prüfen.",

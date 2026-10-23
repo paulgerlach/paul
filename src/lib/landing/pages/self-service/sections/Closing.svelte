@@ -1,6 +1,6 @@
 <!--
   The design's dark closing card (.dm-end with #dcta-css) with its video
-  button "Demo buchen", which leads to /demo-buchen.
+  button "Demo buchen", which leads to /demo.
 -->
 <script lang="ts">
 	import DemoVideoButton from "$lib/landing/components/DemoVideoButton.svelte";

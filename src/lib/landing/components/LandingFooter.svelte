@@ -12,13 +12,13 @@
 		type LandingFooterLink,
 	} from "$lib/landing/footerLinks";
 	import { CITIES } from "$lib/landing/pages/messdienstanbieter-city/cities";
-	import { cityRoute, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { cityRoute, ROUTE_HOME } from "$lib/routes";
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 	import LandingNewsletter from "./LandingNewsletter.svelte";
 
 	interface Props {
 		/**
-		 * Target of the "Demo buchen" link (default `DEMO_HREF`, /demo-buchen;
+		 * Target of the "Demo buchen" link (default `DEMO_HREF`, /demo;
 		 * the page's `landing.demoHref` when it sets one).
 		 */
 		demoHref?: string;
@@ -47,9 +47,7 @@
 <footer>
 	<div class="wrap fgrid">
 		<div class="first">
-			<a class="flogo" href={ROUTE_MESSDIENSTANBIETER}
-				><HeidiLogo class="heidi-logo" /></a
-			>
+			<a class="flogo" href={ROUTE_HOME}><HeidiLogo class="heidi-logo" /></a>
 			<ul>
 				{#each companyLinks as item (item.text)}{@render link(item)}{/each}
 			</ul>
@@ -75,16 +73,14 @@
 					</li>
 				{/each}
 				<li class="f-all">
-					<a class="f-link" href={ROUTE_MESSDIENSTANBIETER}>Ganz Deutschland</a>
+					<a class="f-link" href={ROUTE_HOME}>Ganz Deutschland</a>
 				</li>
 			</ul>
 		</nav>
 
 		<div class="f-news">
 			<div class="f-adr">
-				<a class="flogo" href={ROUTE_MESSDIENSTANBIETER}
-					><HeidiLogo class="heidi-logo" /></a
-				>
+				<a class="flogo" href={ROUTE_HOME}><HeidiLogo class="heidi-logo" /></a>
 				<address>
 					{ADDRESS.company}<br />
 					{ADDRESS.street}<br />

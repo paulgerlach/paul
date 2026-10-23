@@ -37,7 +37,9 @@ function post(
 		}),
 		getClientAddress: () => from,
 	} as unknown as RequestEvent;
-	return handleSoftwarePartnerInquiry(event, { page: "/softwarepartner" });
+	return handleSoftwarePartnerInquiry(event, {
+		page: "/partner/softwarepartner",
+	});
 }
 
 /** The status of a `fail()` / error `message()`, or 200. */
@@ -74,7 +76,7 @@ describe("handleSoftwarePartnerInquiry", () => {
 			customers: "50 bis 250",
 			kinds: ["ERP", "Abrechnung"],
 			message: "Wir möchten Verbräuche importieren.",
-			page: "/softwarepartner",
+			page: "/partner/softwarepartner",
 		});
 	});
 

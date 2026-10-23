@@ -1,5 +1,5 @@
 /**
- * Texts of /portfolio-checker, word for word from the design
+ * Texts of /portfolio-check, word for word from the design
  * (https://claude.ai/artifact/UFviBtC2mkneFNeWnfHAWp): the page, the tool,
  * the five example files and the evaluation's labels. The example
  * properties with their dates are `checker.ts`'; the per-property list's

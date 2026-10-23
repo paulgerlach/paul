@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons on /dashboard (the page and the preview),
+ * The design's 20×20 line icons on /plattform/dashboard (the page and the preview),
  * as shapes drawn by `components/Icon.svelte` inside the shared `StrokeIcon`.
  */
 export type Shape =

@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/funkzaehler";
 
@@ -110,13 +110,13 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	// The hero, four rows, the first card and the trust block
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(7);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=fz-h1] a", {
@@ -129,10 +129,10 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 
 	await expect(
 		page.locator("main a", { hasText: /^Zum Installationstool$/i }),
-	).toHaveAttribute("href", "/installationstool");
+	).toHaveAttribute("href", "/plattform/installationstool");
 	for (const [text, href] of [
-		["Jetzt noch umrüsten", "/upgrade-now"],
-		["Mehr zum Wechsel", "/messdienstwechsel"],
+		["Jetzt noch umrüsten", "/fernablesung-umruesten"],
+		["Mehr zum Wechsel", "/messdienst-wechseln"],
 		["Mehr zu Sicherheit", "/sicherheit"],
 	])
 		await expect(
@@ -142,7 +142,7 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page
 		.locator("section[aria-labelledby=fz-h1] a", { hasText: /Demo buchen/i })
 		.click();
-	await expect(page).toHaveURL(/\/demo-buchen$/);
+	await expect(page).toHaveURL(/\/demo$/);
 });
 
 test("the device tabs: click, keys, and the stage follows", async ({
@@ -208,7 +208,7 @@ test.describe("without JavaScript", () => {
 		await expect(page.locator(".bw span.on")).toHaveText("Heizkostenverteiler");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

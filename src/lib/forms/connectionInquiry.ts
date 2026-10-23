@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * The small form "Anbindung anfragen" in /partnerschaften's first audience
+ * The small form "Anbindung anfragen" in /partner's first audience
  * card ("Sie sind Softwareanbieter?"), validated in the browser
  * (superforms) and again in the form action.
  *

@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /wohnungsunternehmen, word for word from
+ * Every text and the example data of /kunden/wohnungsunternehmen, word for word from
  * the design (plan 01 §1.2), in the shapes of the shared `sg` template.
  * Components hold markup only. The product claims, the pricing statements
  * and the example data need sign-off before the cutover (plan §4.4).

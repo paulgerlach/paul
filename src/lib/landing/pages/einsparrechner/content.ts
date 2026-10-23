@@ -145,7 +145,7 @@ export const calculator = {
 		riskLine: { cut: "× 3 % Kürzungsrecht auf", base: "€ Heizkosten" },
 		days: "Arbeitstage pro Jahr",
 		perUnit: "pro Einheit und Jahr",
-		// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
+		// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo.
 		cta: { text: "Angebot für Ihren Bestand", href: DEMO_HREF },
 		note: "Ergebnis auf Basis Ihrer Angaben, ohne Heidi-Kosten. Ihr individuelles Angebot erhalten Sie in der Demo.",
 		/** The screen reader's status line (not in the design, plan README). */

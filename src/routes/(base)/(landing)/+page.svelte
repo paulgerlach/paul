@@ -17,7 +17,7 @@
 	import Trust from "$lib/landing/pages/messdienstanbieter/sections/Trust.svelte";
 	import RegionMain from "$lib/landing/sections/region/RegionMain.svelte";
 	import ServiceJsonLd from "$lib/landing/sections/region/ServiceJsonLd.svelte";
-	import { ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { ROUTE_HOME } from "$lib/routes";
 	import { organizationJsonLdScript } from "$lib/seo/organization";
 
 	let { data } = $props();
@@ -32,7 +32,7 @@
 
 <ServiceJsonLd
 	area={{ type: "Country", name: "Deutschland" }}
-	url={ROUTE_MESSDIENSTANBIETER}
+	url={ROUTE_HOME}
 />
 
 <RegionMain>

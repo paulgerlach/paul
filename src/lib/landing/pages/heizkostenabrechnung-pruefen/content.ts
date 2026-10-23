@@ -504,7 +504,7 @@ export const managers = {
 	text: "Funkzähler, monatliche Verbrauchsinformation und eine Heizkostenabrechnung nach HKVO, per Klick. So entsteht die nächste Abrechnung ohne diese Fehler.",
 	// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung".
 	billing: { text: "Heizkostenabrechnung mit Heidi", href: ROUTE_FUNKTIONEN },
-	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): /demo-buchen.
+	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): /demo.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
 };
 

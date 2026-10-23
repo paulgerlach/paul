@@ -169,7 +169,7 @@ describe("nachfolge content", () => {
 		);
 	});
 
-	it("leads the first audience card to the form, the second to /partnerschaften", () => {
+	it("leads the first audience card to the form, the second to /partner", () => {
 		expect(audience.cards).toHaveLength(2);
 		expect(audience.cards.map((c) => c.cta)).toEqual([
 			{ text: "Gespräch anfragen", href: "#kontakt" },
@@ -191,7 +191,7 @@ describe("nachfolge content", () => {
 		});
 	});
 
-	it("has three steps and the form's texts, as /softwarepartner's", () => {
+	it("has three steps and the form's texts, as /partner/softwarepartner's", () => {
 		expect(apply.steps).toHaveLength(3);
 		expect(apply.success("Max")).toBe(software.apply.success("Max"));
 		for (const key of ["sending", "missing", "sendError"] as const)

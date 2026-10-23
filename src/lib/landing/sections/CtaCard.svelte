@@ -2,10 +2,10 @@
   The designs' dark closing card (.dm-end / .dm-cta): a heading and a light
   ArrowLink (/karriere, /hilfe). With `text`, the heading gets the line under
   it and the card the `#dcta-css` spacing; `action` replaces the ArrowLink
-  (the signup form on /funktionen and /mieterportal, styled here for the dark
-  card). `tone="glass"` is the translucent card of a dark page (/mieterportal,
+  (the signup form on /funktionen and /plattform/mieterportal, styled here for the dark
+  card). `tone="glass"` is the translucent card of a dark page (/plattform/mieterportal,
   the design's `#end-css`). `visual` is drawn below, across the card (the
-  chart on /dashboard).
+  chart on /plattform/dashboard).
 -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
@@ -26,7 +26,7 @@
 		/** The heading's id, for the section's `aria-labelledby`. */
 		id: string;
 		title: string;
-		/** Rendered after the title in a span (/dashboard's muted second part). */
+		/** Rendered after the title in a span (/plattform/dashboard's muted second part). */
 		accent?: string;
 		text?: string;
 		cta?: { text: string; href: string };

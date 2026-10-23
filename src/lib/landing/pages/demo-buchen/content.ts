@@ -1,5 +1,5 @@
 /**
- * /demo-buchen, word for word from its design
+ * /demo, word for word from its design
  * (https://claude.ai/artifact/44SBXKXJaSp6bvGMnbpZj6): the hero with the
  * booking card, the logos, the four steps, the checklist, the quotes, the FAQ
  * and the closing card. Copy and claims need sign-off (go-live gate §2).

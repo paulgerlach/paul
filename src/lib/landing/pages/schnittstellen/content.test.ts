@@ -19,7 +19,7 @@ import { doppelpflege, type Inputs } from "./doppelpflege";
 const routeValues = Object.values(routes).filter((v) => typeof v === "string");
 const anchors = [START_HREF, `#${CALC_ID}`];
 
-describe("/schnittstellen content", () => {
+describe("/plattform/schnittstellen content", () => {
 	it("has the design's H1", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`).toBe(
 			"Eine Plattform pflegen. Nicht zwei.",

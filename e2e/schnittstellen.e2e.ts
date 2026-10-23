@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/schnittstellen";
+const PATH = "/plattform/schnittstellen";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -37,7 +37,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/schnittstellen$/,
+		/\/plattform\/schnittstellen$/,
 	);
 	const jsonLd = page.locator('script[type="application/ld+json"]');
 	await expect(jsonLd).toHaveCount(1);
@@ -48,7 +48,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/schnittstellen</loc>");
+	expect(sitemap).not.toContain("/plattform/schnittstellen</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -91,14 +91,14 @@ test("every CTA leads to the booking page", async ({ page }) => {
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=si-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: "Demo buchen" });
 	expect(await demo.count()).toBeGreaterThanOrEqual(2);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 	await expect(
 		page.locator("main a", { hasText: "Doppelpflege berechnen" }),
 	).toHaveAttribute("href", "#doppelpflege");
@@ -125,7 +125,7 @@ test.describe("without JS", () => {
 		await expect(result.locator(".hrs i.on")).toHaveCount(7);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

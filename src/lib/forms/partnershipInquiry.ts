@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Contact form of /partnerschaften ("Partnerschaft anfragen"), validated in
+ * Contact form of /partner ("Partnerschaft anfragen"), validated in
  * the browser (superforms) and again in the form action.
  *
  * The options are the design's, word for word; the page shows them as they

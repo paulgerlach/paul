@@ -1,5 +1,5 @@
 <!--
-  The frame of /dashboard and /auswertung (the design's `.db` main): the page
+  The frame of /plattform/dashboard and /plattform/auswertung (the design's `.db` main): the page
   tokens, the reveal and the rules the sections share (`.db-h2`, `.db-lead`,
   `.db-btn`, `.okb`, `.badge`, `#hs-css`).
 -->
@@ -18,7 +18,7 @@
 	/* The design's page tokens (#dash-css `.db`). The rules below start with
 	   `main.db`: one notch above a section's own rule of the same classes, so
 	   the frame wins those ties whatever order the bundle puts the CSS in (as
-	   it did when these rules lived in /dashboard's route, after the sections). */
+	   it did when these rules lived in /plattform/dashboard's route, after the sections). */
 	.db {
 		--bg: #f6f7f6;
 		--card: #fff;

@@ -1,7 +1,7 @@
 import { SITE_URL } from "$lib/seo/site";
 
 /**
- * The Organization and WebSite JSON-LD of the home (/messdienstanbieter since
+ * The Organization and WebSite JSON-LD of the home (/ since
  * the site cutover; Next's home had them). Other pages refer to the
  * Organization by its `@id`. No phone until KI-34 is resolved.
  */

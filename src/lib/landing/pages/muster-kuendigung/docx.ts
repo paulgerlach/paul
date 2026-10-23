@@ -1,5 +1,5 @@
 /**
- * The Word file of /muster-kuendigung: the design's three parts (its
+ * The Word file of /messdienst-wechseln/muster-kuendigung: the design's three parts (its
  * `makeDocx()`, which builds them with JSZip) in a ZIP with stored entries
  * (JSZip's default, no compression) and their CRC-32. Pure; loaded on the
  * first click.

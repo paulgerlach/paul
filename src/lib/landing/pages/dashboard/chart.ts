@@ -1,5 +1,5 @@
 /**
- * Chart geometry for /dashboard, without DOM access: the server and the
+ * Chart geometry for /plattform/dashboard, without DOM access: the server and the
  * browser draw the same paths. Plots live in a 0–100 box (an SVG with
  * `preserveAspectRatio="none"`); labels and markers are positioned in percent
  * of the same box (plan README, Charts).

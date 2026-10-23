@@ -1,6 +1,6 @@
 /**
  * Content shapes of the partner form section (the designs' `.ipf`), shared by
- * the "Partner" pages (/installationspartner, /softwarepartner). Each page
+ * the "Partner" pages (/partner/installationspartner, /partner/softwarepartner). Each page
  * fills them in its `content.ts` and keeps its own fields, schema and action.
  */
 

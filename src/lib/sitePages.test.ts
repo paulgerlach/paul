@@ -4,11 +4,7 @@ import { SITE_PAGES } from "./sitePages";
 // Every page route under (base) is in SITE_PAGES once, so a new page can't be
 // left out of the sitemap. Not in it on purpose: the city pages (LIVE_CITIES),
 // the blog posts (Prismic) and /fragebogen (disallowed in robots.txt).
-const NOT_LISTED = [
-	"/messdienstanbieter/[city=city]",
-	"/blog/[uid]",
-	"/fragebogen",
-];
+const NOT_LISTED = ["/messdienst/[city=city]", "/blog/[uid]", "/fragebogen"];
 
 // "(base)" can't be in the pattern: parentheses are glob syntax.
 const routes = Object.keys(import.meta.glob("/src/routes/**/+page.svelte"))
@@ -31,12 +27,12 @@ describe("SITE_PAGES", () => {
 
 	it("keeps only the pages that are live today ungated", () => {
 		expect(SITE_PAGES.filter((p) => !p.gated).map((p) => p.path)).toEqual([
-			"/messdienstanbieter",
-			"/messdienstwechsel",
+			"/",
+			"/messdienst-wechseln",
 			"/funktionen",
 			"/blog",
 			"/impressum",
-			"/datenschutzhinweise",
+			"/datenschutz",
 		]);
 	});
 });

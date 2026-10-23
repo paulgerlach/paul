@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /installationstool, word for word from
+ * Every text and the example data of /plattform/installationstool, word for word from
  * the design, in the shapes of the shared `uv` template. Components hold
  * markup and behaviour only.
  *
@@ -95,7 +95,7 @@ export const statement = {
 	text: "Eine Montage soll schnell gehen und sauber dokumentiert sein. Mit dem Heidi Installationstool öffnet der Installateur einen Link und sieht das Gebäude als digitalen Zwilling. Ein Foto vom alten Zähler, ein Foto vom neuen, und alles ist digitalisiert. Einmal in die Wohnung, dann nie wieder.",
 };
 
-/** Confirmed KPIs (2026-10-12), as /installationspartner's. */
+/** Confirmed KPIs (2026-10-12), as /partner/installationspartner's. */
 export const KPI = {
 	notice: 14,
 	window: `1–2${NB}h`,

@@ -35,7 +35,7 @@ function post(
 		}),
 		getClientAddress: () => from,
 	} as unknown as RequestEvent;
-	return handlePartnershipInquiry(event, { page: "/partnerschaften" });
+	return handlePartnershipInquiry(event, { page: "/partner" });
 }
 
 /** The status of a `fail()` / error `message()`, or 200. */
@@ -70,7 +70,7 @@ describe("handlePartnershipInquiry", () => {
 			phone: "+49 30 1234567",
 			kind: "Softwareanbieter",
 			message: "Wir möchten unsere Software anbinden.",
-			page: "/partnerschaften",
+			page: "/partner",
 		});
 	});
 
@@ -82,7 +82,7 @@ describe("handlePartnershipInquiry", () => {
 			phone: undefined,
 			kind: "Softwareanbieter",
 			message: undefined,
-			page: "/partnerschaften",
+			page: "/partner",
 		});
 	});
 

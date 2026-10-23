@@ -1,5 +1,5 @@
 /**
- * The letter of /muster-kuendigung (the design's `build()` in `#kd-js`):
+ * The letter of /messdienst-wechseln/muster-kuendigung (the design's `build()` in `#kd-js`):
  * paragraphs of lines of segments, built from the form's fields. A segment
  * of an empty field is its placeholder in brackets, marked so the preview can
  * highlight it. Pure: the preview, the plain text, the Word file and the PDF

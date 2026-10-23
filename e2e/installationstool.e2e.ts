@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/installationstool";
+const PATH = "/plattform/installationstool";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -45,7 +45,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/installationstool$/,
+		/\/plattform\/installationstool$/,
 	);
 
 	const jsonLd = await page
@@ -60,7 +60,7 @@ test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
 	expect(sitemap).not.toMatch(
-		/<loc>https?:\/\/[^/]+\/installationstool<\/loc>/,
+		/<loc>https?:\/\/[^/]+\/plattform\/installationstool<\/loc>/,
 	);
 });
 
@@ -93,7 +93,7 @@ test("the footer leads here and every internal link resolves", async ({
 });
 
 test("the pages that waited for it link here", async ({ page }) => {
-	await page.goto("/installationspartner");
+	await page.goto("/partner/installationspartner");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zum Installationstool" }),
 	).toHaveAttribute("href", PATH);
@@ -117,7 +117,7 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=it-h1]"),
@@ -125,11 +125,11 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	// The hero, four rows, the first card and the trust block
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(7);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=it-h1] a", {
@@ -144,11 +144,11 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 
 	await expect(
 		page.locator("main a", { hasText: /^Partner werden$/i }),
-	).toHaveAttribute("href", "/installationspartner");
+	).toHaveAttribute("href", "/partner/installationspartner");
 	// Inside closed answers, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq a.more", { hasText: "Installationspartner werden" }),
-	).toHaveAttribute("href", "/installationspartner");
+	).toHaveAttribute("href", "/partner/installationspartner");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");
@@ -157,7 +157,7 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page
 		.locator("section[aria-labelledby=it-h1] a", { hasText: /Demo buchen/i })
 		.click();
-	await expect(page).toHaveURL(/\/demo-buchen$/);
+	await expect(page).toHaveURL(/\/demo$/);
 });
 
 test.describe("without JavaScript", () => {
@@ -183,7 +183,7 @@ test.describe("without JavaScript", () => {
 		await expect(page.locator(".bw span.on")).toHaveText("Digitaler Zwilling");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

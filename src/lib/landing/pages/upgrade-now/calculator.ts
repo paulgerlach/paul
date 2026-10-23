@@ -1,5 +1,5 @@
 /**
- * The risk calculator of /upgrade-now: what tenants may cut (3 % of the
+ * The risk calculator of /fernablesung-umruesten: what tenants may cut (3 % of the
  * heating and hot-water costs of the units without remote-readable devices,
  * § 12 Abs. 1 HeizkostenV) per billing period. Pure, no DOM.
  */

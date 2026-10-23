@@ -1,6 +1,6 @@
 /**
  * The bento's retrofit-deadline figure, shared by the `uv` pages that show it
- * (/verbrauchsinformation, /hausverwaltung and the other segment pages): the
+ * (/plattform/verbrauchsinformation, /kunden/hausverwaltung and the other segment pages): the
  * date until the deadline, then its expired text. Pages pick it in `load`
  * with `now`, so components never read the clock.
  */

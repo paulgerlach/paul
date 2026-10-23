@@ -1,4 +1,4 @@
-<!-- "Wechseln, ohne aufs Vertragsende zu warten." (.mv-sw): the dark band with "So funktioniert der Wechsel →" (/messdienstwechsel) and three figures. -->
+<!-- "Wechseln, ohne aufs Vertragsende zu warten." (.mv-sw): the dark band with "So funktioniert der Wechsel →" (/messdienst-wechseln) and three figures. -->
 <script lang="ts">
 	import Icon from "../components/Icon.svelte";
 	import { switching } from "../content";

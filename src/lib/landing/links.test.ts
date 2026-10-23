@@ -49,7 +49,6 @@ const redirected = new Set(Object.keys(REDIRECTS));
 function problem(href: string): string | null {
 	if (!href.startsWith("/")) return null; // anchors, mailto:, https://…
 	const path = href.split(/[?#]/)[0];
-	if (href.startsWith("/#") || path === "/") return "the old home";
 	if (redirected.has(path)) return "a removed page";
 	if (pages.has(path) || path.startsWith(`${routes.ROUTE_BLOG}/`)) return null;
 	if (existsSync(`static${path}`)) return null;

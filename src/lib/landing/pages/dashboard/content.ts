@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /dashboard outside the preview, word for
+ * Every text and the example data of /plattform/dashboard outside the preview, word for
  * word from the design (the preview's data is in `demo/data.ts`). Components
  * hold markup and behaviour only.
  *
@@ -332,7 +332,7 @@ export const recommendations = {
 	pill: "Auswertungen",
 	h2: "Für jede Liegenschaft der nächste Schritt",
 	lead: "Heidi prüft Vertragslaufzeit und Zähler jeder Liegenschaft und zeigt den nächsten Schritt: Vertrag übernehmen, Vertrag kündigen oder direkt abrechnen.",
-	// The list itself is shared with /portfolio-checker.
+	// The list itself is shared with /portfolio-check.
 	...nextSteps,
 	cards: [
 		{

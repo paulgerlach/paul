@@ -36,7 +36,7 @@ const hrefs = (value: unknown): string[] =>
 
 const all = { hero, generator, letterText, checklist, takeover, faq, closing };
 
-describe("/muster-kuendigung content", () => {
+describe("/messdienst-wechseln/muster-kuendigung content", () => {
 	it("has the design's H1", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`).toBe(
 			"Messdienst kündigen. In zwei Minuten.",

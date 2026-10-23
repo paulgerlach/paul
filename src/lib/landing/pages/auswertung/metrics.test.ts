@@ -15,7 +15,7 @@ import {
 
 const heat = metrics.heiz.values;
 
-describe("/auswertung metrics", () => {
+describe("/plattform/auswertung metrics", () => {
 	it("averages the heating values to 111", () => {
 		expect(average(heat)).toBeCloseTo(111.14, 2);
 		expect(average(metrics.ww.values)).toBeCloseTo(13.71, 2);

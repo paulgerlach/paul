@@ -38,7 +38,7 @@ function post(
 		}),
 		getClientAddress: () => from,
 	} as unknown as RequestEvent;
-	return handlePartnerInquiry(event, { page: "/installationspartner" });
+	return handlePartnerInquiry(event, { page: "/partner/installationspartner" });
 }
 
 /** The status of a `fail()` / error `message()`, or 200. */
@@ -76,7 +76,7 @@ describe("handlePartnerInquiry", () => {
 			trades: ["Heizung", "Sanitär"],
 			experience: "teilweise",
 			message: "Wir sind in Sachsen unterwegs.",
-			page: "/installationspartner",
+			page: "/partner/installationspartner",
 		});
 	});
 

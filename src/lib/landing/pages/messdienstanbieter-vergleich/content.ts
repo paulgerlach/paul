@@ -1,5 +1,5 @@
 /**
- * Texts of /messdienstanbieter-vergleich, word for word from the design
+ * Texts of /messdienst-vergleich, word for word from the design
  * (https://claude.ai/artifact/Tms67Y5GnupQ4MPsxm8ux6), including the eight
  * criteria the design builds in its script, the score's verdicts and the
  * calculator's start values. The comparison, the criteria and the legal
@@ -15,7 +15,7 @@ import type { IconName } from "./icons";
 
 /**
  * Target of every "Demo buchen" and offer link: the design's booking page
- * (44SBXKXJaSp6bvGMnbpZj6), /demo-buchen.
+ * (44SBXKXJaSp6bvGMnbpZj6), /demo.
  */
 export const BOOKING_HREF = DEMO_HREF;
 

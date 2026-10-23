@@ -1,4 +1,4 @@
-<!-- "Sechs Fragen, bevor Sie unterschreiben." (.mv-tips): six numbered cards, two with a link ("Zur Umrüstpflicht" → /upgrade-now, "Zum Kostenrechner" → #kosten). -->
+<!-- "Sechs Fragen, bevor Sie unterschreiben." (.mv-tips): six numbered cards, two with a link ("Zur Umrüstpflicht" → /fernablesung-umruesten, "Zum Kostenrechner" → #kosten). -->
 <script lang="ts">
 	import Head from "../components/Head.svelte";
 	import { tips } from "../content";

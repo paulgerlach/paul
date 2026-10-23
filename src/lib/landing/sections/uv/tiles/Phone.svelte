@@ -1,7 +1,7 @@
 <!--
   A row's tile: a phone with a notification and a figure with its chips, then
   monthly bars (the Verbrauchsinformation) or detail rows (an appointment);
-  or the page's own `screen` in place of the figure (/softwarepartner's list
+  or the page's own `screen` in place of the figure (/partner/softwarepartner's list
   of transfers). Every 7 s in view the notification drops in again, then the
   figure or screen appears and the bars grow.
 -->

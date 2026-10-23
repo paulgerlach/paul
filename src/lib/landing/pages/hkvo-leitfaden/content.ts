@@ -1,5 +1,5 @@
 /**
- * Texts of /hkvo-leitfaden, word for word from the design
+ * Texts of /heizkostenverordnung, word for word from the design
  * (https://claude.ai/artifact/SJbSeTYRqntQxpZQ8RVNf7). The legal statements
  * and the product claims await sign-off (plan §4.4).
  */
@@ -78,7 +78,7 @@ export const check = {
 	hint: "Beantworten Sie die Fragen mit Ja oder Nein.",
 	ok: "Alles erfüllt. Ihr Bestand ist HKVO-konform aufgestellt.",
 	risks: "Mögliche Risiken",
-	// 44SBXKXJaSp6bvGMnbpZj6 (the design's demo booking): /demo-buchen.
+	// 44SBXKXJaSp6bvGMnbpZj6 (the design's demo booking): /demo.
 	link: { text: "Mit Heidi alle Punkte erfüllen", href: DEMO_HREF },
 };
 

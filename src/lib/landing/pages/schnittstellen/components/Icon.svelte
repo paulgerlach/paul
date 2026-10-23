@@ -1,4 +1,4 @@
-<!-- One of the design's 20×20 line icons on /schnittstellen, by name; `heidi` is the shared Heidi mark. -->
+<!-- One of the design's 20×20 line icons on /plattform/schnittstellen, by name; `heidi` is the shared Heidi mark. -->
 <script lang="ts">
 	import HeidiMark from "$lib/landing/components/icons/HeidiMark.svelte";
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";

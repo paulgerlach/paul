@@ -1,6 +1,6 @@
 /**
- * Content shapes of the dark `uv` template (/mieterportal, /verbrauchsinformation,
- * /hausverwaltung, /mietverwaltung, /weg-verwaltung).
+ * Content shapes of the dark `uv` template (/plattform/mieterportal, /plattform/verbrauchsinformation,
+ * /kunden/hausverwaltung, /kunden/mietverwaltung, /kunden/weg-verwaltung).
  * Each page fills them in its `content.ts`; the components hold markup and
  * behaviour only.
  */
@@ -148,6 +148,6 @@ export type AudienceCard = {
 	objectPosition?: string;
 	/** A mock in place of the photo (no frame, centred: the design's .pcm-fig). */
 	media?: Snippet;
-	/** A block in place of the photo that isn't a figure (/partnerschaften: a form). */
+	/** A block in place of the photo that isn't a figure (/partner: a form). */
 	panel?: Snippet;
 };

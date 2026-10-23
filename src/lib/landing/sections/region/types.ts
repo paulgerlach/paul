@@ -1,6 +1,6 @@
 /**
  * Content model of the 16-section region template, shared by the city pages
- * (/messdienstanbieter/<slug>) and the Germany page (/messdienstanbieter).
+ * (/messdienst/<slug>) and the Germany page (/).
  *
  * Designed against all 27 designs (26 cities + Germany): it holds every text
  * that differs between them, written out in full. What is identical in every

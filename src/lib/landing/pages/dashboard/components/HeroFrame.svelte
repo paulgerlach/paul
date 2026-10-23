@@ -1,5 +1,5 @@
 <!--
-  The hero's frame of /dashboard and /auswertung (`.db-hero`): the pill with
+  The hero's frame of /plattform/dashboard and /plattform/auswertung (`.db-hero`): the pill with
   the live dot, the two-line H1, the line below it, the two CTAs and the
   visual (`children`). The line is a snippet, so a page can put chips in it.
 -->

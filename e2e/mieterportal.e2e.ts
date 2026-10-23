@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/mieterportal";
+const PATH = "/plattform/mieterportal";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -37,7 +37,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/mieterportal$/,
+		/\/plattform\/mieterportal$/,
 	);
 
 	const jsonLd = await page
@@ -50,7 +50,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/mieterportal</loc>");
+	expect(sitemap).not.toContain("/plattform/mieterportal</loc>");
 });
 
 test("has no horizontal overflow at 375 px", async ({ page }) => {
@@ -86,14 +86,14 @@ test("CTAs lead to the booking page, the rows and the FAQ", async ({
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=mp-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(6);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=mp-h1] a", {
@@ -108,7 +108,7 @@ test("CTAs lead to the booking page, the rows and the FAQ", async ({
 	// Inside a closed answer, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/verbrauchsinformation");
+	).toHaveAttribute("href", "/plattform/verbrauchsinformation");
 	await expect(
 		page.getByRole("link", { name: "Zum Heizkostenabrechnungs-Checker" }),
 	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");

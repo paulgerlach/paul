@@ -21,11 +21,11 @@ function collectProblems(page: Page) {
 
 test.describe("redirects", () => {
 	for (const [path, status, location] of [
-		["/", 307, "/messdienstanbieter"],
-		["/preise", 301, "/messdienstwechsel#start"],
-		["/preise/", 301, "/messdienstwechsel#start"],
+		["/datenschutzhinweise", 301, "/datenschutz"],
+		["/preise", 301, "/messdienst-wechseln#start"],
+		["/preise/", 301, "/messdienst-wechseln#start"],
 		["/geraete", 301, "/funkzaehler"],
-		["/preise/?utm_source=x", 301, "/messdienstwechsel?utm_source=x#start"],
+		["/preise/?utm_source=x", 301, "/messdienst-wechseln?utm_source=x#start"],
 		["/geraete?a=1&b=2", 301, "/funkzaehler?a=1&b=2"],
 	] as const)
 		test(`${path} → ${location}`, async ({ request }) => {
@@ -37,13 +37,13 @@ test.describe("redirects", () => {
 			);
 		});
 
-	test("the home lands on /messdienstanbieter", async ({ page }) => {
+	test("the home is the Germany hub", async ({ page }) => {
 		const response = await page.goto("/");
 		expect(response?.status()).toBe(200);
-		await expect(page).toHaveURL(/\/messdienstanbieter$/);
+		await expect(page).toHaveURL(/\/$/);
 		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 			"href",
-			"https://heidisystems.com/messdienstanbieter",
+			"https://heidisystems.com",
 		);
 	});
 
@@ -101,14 +101,14 @@ test.describe("kept pages", () => {
 			.toBeLessThan(2);
 	});
 
-	test("Demo buchen goes to /demo-buchen", async ({ page }) => {
+	test("Demo buchen goes to /demo", async ({ page }) => {
 		await page.goto("/blog");
 		await expect(
 			page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-		).toHaveAttribute("href", "/demo-buchen");
+		).toHaveAttribute("href", "/demo");
 		await expect(
 			page.locator("footer").getByRole("link", { name: "Demo buchen" }),
-		).toHaveAttribute("href", "/demo-buchen");
+		).toHaveAttribute("href", "/demo");
 	});
 
 	test("the mobile menu opens and closes at 375 px", async ({ page }) => {

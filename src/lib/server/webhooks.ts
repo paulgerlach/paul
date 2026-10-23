@@ -13,7 +13,7 @@ type EventType =
 	| "newsletter"
 	| "newinquiry"
 	| "contactform"
-	// Signup on a landing page (/messdienstwechsel, /messdienstanbieter and
+	// Signup on a landing page (/messdienst-wechseln, / and
 	// its city pages). Payload: placement, page, and `city` (slug) on city pages.
 	| "switchinquiry"
 	// Application on /karriere. Payload: role, role_title, name, link, message,
@@ -23,7 +23,7 @@ type EventType =
 	// ("yes" | "no"), page. No email, nothing personal; Make.com writes it to
 	// the content owner's sheet.
 	| "helpfeedback"
-	// Partner form on /installationspartner. Payload: company, name, phone,
+	// Partner form on /partner/installationspartner. Payload: company, name, phone,
 	// region, crew, trades (array), experience, message, page. Make.com
 	// forwards it to whoever answers partner inquiries; nothing is stored here.
 	| "partnerinquiry"
@@ -32,21 +32,21 @@ type EventType =
 	// message, page. Make.com forwards it to that mailbox's team; nothing is
 	// stored here.
 	| "contactinquiry"
-	// Partner form on /softwarepartner. Payload: company, name, phone,
+	// Partner form on /partner/softwarepartner. Payload: company, name, phone,
 	// product, customers, kinds (array), message, page. Make.com forwards it
 	// to whoever answers software partners; nothing is stored here.
 	| "softwarepartnerinquiry"
-	// Contact form on /nachfolge (owners of metering businesses looking for a
+	// Contact form on /partner/nachfolge (owners of metering businesses looking for a
 	// successor). Payload: company, name, phone, properties, timeframe,
 	// message, page. Make.com forwards it, confidentially, to whoever answers
 	// succession inquiries; nothing is stored here.
 	| "successioninquiry"
-	// Contact form on /partnerschaften ("Partnerschaft anfragen"). Payload:
+	// Contact form on /partner ("Partnerschaft anfragen"). Payload:
 	// company, name, phone, kind (of partnership), message, page. Make.com
 	// forwards it to whoever triages partnership inquiries; nothing is stored
 	// here.
 	| "partnershipinquiry"
-	// The form "Anbindung anfragen" in /partnerschaften's software vendor
+	// The form "Anbindung anfragen" in /partner's software vendor
 	// card. Payload: company, name, software, message, page. Make.com
 	// forwards it to whoever answers software vendors; nothing is stored here.
 	| "connectioninquiry"

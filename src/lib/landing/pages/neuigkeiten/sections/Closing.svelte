@@ -1,6 +1,6 @@
 <!--
   The design's dark closing card with its text and the video button "Live
-  Demo buchen", which leads to /demo-buchen.
+  Demo buchen", which leads to /demo.
 -->
 <script lang="ts">
 	import DemoVideoButton from "$lib/landing/components/DemoVideoButton.svelte";

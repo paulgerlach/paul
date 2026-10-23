@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /private-vermieter, word for word from
+ * Every text and the example data of /kunden/private-vermieter, word for word from
  * the design (plan 01 §1.2). Components hold markup only. The product
  * claims, the comparison, the legal statements and the example data need
  * sign-off before the cutover (plan §4.4).

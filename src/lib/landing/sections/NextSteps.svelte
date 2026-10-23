@@ -1,6 +1,6 @@
 <!--
   The per-property list "Für jede Liegenschaft der nächste Schritt" (the
-  designs' `.pl` card, on /dashboard and /portfolio-checker): filters with
+  designs' `.pl` card, on /plattform/dashboard and /portfolio-check): filters with
   counts, the search, seven rows with a recommendation chip and its
   toggletip, the footer. The server renders it checked; below the fold and
   with motion it runs the design's check once on first view. `top` is the
@@ -31,7 +31,7 @@
 	}: {
 		top?: number;
 		indent?: number;
-		/** The done line's tick: /dashboard's accent one or /portfolio-checker's green one with a white tick. */
+		/** The done line's tick: /plattform/dashboard's accent one or /portfolio-check's green one with a white tick. */
 		tick?: "accent" | "green";
 	} = $props();
 

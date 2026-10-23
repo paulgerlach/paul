@@ -1,4 +1,4 @@
-<!-- "Unsere Mission": text with a link to /upgrade-now, and the deadline card. -->
+<!-- "Unsere Mission": text with a link to /fernablesung-umruesten, and the deadline card. -->
 <script lang="ts">
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import { getDeadlineClock } from "$lib/landing/deadline/clock.svelte";

@@ -1,6 +1,6 @@
 <!--
-  "Partner und Verbände" as cards (DEUMESS, VDIV, bved), on /messdienstwechsel
-  and /ueber-uns. /upgrade-now uses the plain logo row of
+  "Partner und Verbände" as cards (DEUMESS, VDIV, bved), on /messdienst-wechseln
+  and /ueber-uns. /fernablesung-umruesten uses the plain logo row of
   $lib/landing/sections/Trust.svelte, the city and Germany pages the seals of
   $lib/landing/sections/TrustSeals.svelte.
 -->

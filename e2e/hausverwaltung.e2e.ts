@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/hausverwaltung";
+const PATH = "/kunden/hausverwaltung";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -38,7 +38,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/hausverwaltung$/,
+		/\/kunden\/hausverwaltung$/,
 	);
 
 	const jsonLd = await page
@@ -52,7 +52,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path: blog posts end in "-hausverwaltung" too.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/hausverwaltung<\/loc>/);
+	expect(sitemap).not.toMatch(
+		/<loc>https?:\/\/[^/]+\/kunden\/hausverwaltung<\/loc>/,
+	);
 });
 
 for (const width of [375, 320])
@@ -82,7 +84,7 @@ test("the footer and the uVI card lead here and every internal link resolves", a
 		expect(response.status(), href).toBe(200);
 	}
 
-	await page.goto("/verbrauchsinformation");
+	await page.goto("/plattform/verbrauchsinformation");
 	await expect(
 		page.getByRole("link", { name: "Erfahren Sie mehr" }),
 	).toHaveAttribute("href", PATH);
@@ -94,14 +96,14 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=hv-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(5);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=hv-h1] a", {
@@ -117,10 +119,10 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	// Inside closed answers, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq .ans a", { hasText: "Schnittstellen" }),
-	).toHaveAttribute("href", "/schnittstellen");
+	).toHaveAttribute("href", "/plattform/schnittstellen");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/verbrauchsinformation");
+	).toHaveAttribute("href", "/plattform/verbrauchsinformation");
 	await expect(
 		page.locator("a", { hasText: "Zum Fristenrechner" }),
 	).toHaveAttribute("href", "/fristenrechner");
@@ -148,7 +150,7 @@ test.describe("without JavaScript", () => {
 		await expect(billSum(page)).toHaveText("nein");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

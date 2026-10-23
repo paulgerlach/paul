@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/verbrauchsinformation";
+const PATH = "/plattform/verbrauchsinformation";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -37,7 +37,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/verbrauchsinformation$/,
+		/\/plattform\/verbrauchsinformation$/,
 	);
 
 	const jsonLd = await page
@@ -95,14 +95,14 @@ test("CTAs lead to the booking page, the rows, the FAQ and the portal", async ({
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=vi-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(5);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=vi-h1] a", {
@@ -117,20 +117,20 @@ test("CTAs lead to the booking page, the rows, the FAQ and the portal", async ({
 
 	await expect(
 		page.locator("#inhalt a", { hasText: /Zum Mieterportal/i }),
-	).toHaveAttribute("href", "/mieterportal");
+	).toHaveAttribute("href", "/plattform/mieterportal");
 	await expect(
 		page.locator("#inhalt p a", { hasText: "Mieterportal" }),
-	).toHaveAttribute("href", "/mieterportal");
+	).toHaveAttribute("href", "/plattform/mieterportal");
 	await expect(
 		page.locator("#faq .ans a", { hasText: "Mieterportal" }),
-	).toHaveAttribute("href", "/mieterportal");
+	).toHaveAttribute("href", "/plattform/mieterportal");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Jetzt noch umrüsten" }),
-	).toHaveAttribute("href", "/upgrade-now");
-	// The Verwalter card leads to /hausverwaltung, the Mieter card to the checker.
+	).toHaveAttribute("href", "/fernablesung-umruesten");
+	// The Verwalter card leads to /kunden/hausverwaltung, the Mieter card to the checker.
 	await expect(
 		page.getByRole("link", { name: "Erfahren Sie mehr" }),
-	).toHaveAttribute("href", "/hausverwaltung");
+	).toHaveAttribute("href", "/kunden/hausverwaltung");
 	await expect(
 		page.getByRole("link", { name: "Zur Heizkosten-Prüfung" }),
 	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
@@ -152,7 +152,7 @@ test.describe("without JavaScript", () => {
 		await expect(page.locator(".bento .fig b").last()).toHaveText("0");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

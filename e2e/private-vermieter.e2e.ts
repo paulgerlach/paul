@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // The signup test saves a lead, so it needs a database with the `leads` table.
 // Webhooks go to the local sink from playwright.config.ts.
 
-const PATH = "/private-vermieter";
+const PATH = "/kunden/private-vermieter";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 const testEmail = (name: string) =>
@@ -62,7 +62,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/private-vermieter$/,
+		/\/kunden\/private-vermieter$/,
 	);
 	const jsonLd = page.locator('script[type="application/ld+json"]');
 	await expect(jsonLd).toHaveCount(1);
@@ -73,7 +73,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/private-vermieter</loc>");
+	expect(sitemap).not.toContain("/kunden/private-vermieter</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -93,12 +93,12 @@ test("the footer links every customer page, and internal links resolve", async (
 }) => {
 	await page.goto(PATH);
 	const segments = {
-		Hausverwaltung: "/hausverwaltung",
-		Mietverwaltung: "/mietverwaltung",
-		"WEG-Verwaltung": "/weg-verwaltung",
-		Wohnungsunternehmen: "/wohnungsunternehmen",
+		Hausverwaltung: "/kunden/hausverwaltung",
+		Mietverwaltung: "/kunden/mietverwaltung",
+		"WEG-Verwaltung": "/kunden/weg-verwaltung",
+		Wohnungsunternehmen: "/kunden/wohnungsunternehmen",
 		"Private Vermieter": PATH,
-		"Asset Manager & Fonds": "/asset-manager",
+		"Asset Manager & Fonds": "/kunden/asset-manager",
 	};
 	for (const [text, href] of Object.entries(segments))
 		expect(
@@ -126,7 +126,7 @@ test("the CTAs lead to the closing card's form and the anchors", async ({
 	).toHaveCount(1);
 	await expect(
 		page.locator("main a", { hasText: "Angebot anfragen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("main a", { hasText: "So funktioniert’s" }),
 	).toHaveAttribute("href", "#so");
@@ -137,7 +137,7 @@ test("the CTAs lead to the closing card's form and the anchors", async ({
 	await expect(page.locator("section#faq")).toHaveCount(1);
 	await expect(
 		page.locator("main a", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/verbrauchsinformation");
+	).toHaveAttribute("href", "/plattform/verbrauchsinformation");
 });
 
 test.describe("without JS", () => {

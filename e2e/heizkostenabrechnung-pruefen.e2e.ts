@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/heizkostenabrechnung-pruefen";
 /** 19.10.2026, noon in Berlin: the example's dates are fixed by it. */
@@ -130,12 +130,12 @@ test("the footer and the other pages lead here, the internal links on", async ({
 		expect(response.status(), href).toBe(200);
 	}
 	for (const [path, text] of [
-		["/hkvo-leitfaden", "Heizkostenabrechnung prüfen"],
+		["/heizkostenverordnung", "Heizkostenabrechnung prüfen"],
 		["/selbstabrechnung", "Zum Heizkostenabrechnungs-Checker"],
 		["/hilfe", "Abrechnung prüfen"],
 		["/hilfe", "Zum Heizkostenabrechnungs-Checker"],
-		["/mieterportal", "Zum Heizkostenabrechnungs-Checker"],
-		["/verbrauchsinformation", "Zur Heizkosten-Prüfung"],
+		["/plattform/mieterportal", "Zum Heizkostenabrechnungs-Checker"],
+		["/plattform/verbrauchsinformation", "Zur Heizkosten-Prüfung"],
 	]) {
 		await page.goto(path);
 		expect(
@@ -164,12 +164,12 @@ test("the CTAs lead to the card, the figures, /funktionen and the booking page",
 		"href",
 		"#checker",
 	);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	const demo = page
 		.locator("main section")
 		.filter({ hasText: "Mit Heidi entstehen diese Fehler" })
 		.getByRole("link", { name: "Demo buchen" });
-	await expect(demo).toHaveAttribute("href", "/demo-buchen");
+	await expect(demo).toHaveAttribute("href", "/demo");
 });
 
 test("the example: the upload, the scan, the sum, the points and the letter", async ({

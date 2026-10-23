@@ -1,6 +1,6 @@
 /**
  * Customer quotes of the landing pages, word for word from the designs.
- * Used by the region pages' References and /upgrade-now's Testimonials.
+ * Used by the region pages' References and /fernablesung-umruesten's Testimonials.
  * Copy and roles need the content owner's sign-off (go-live gates).
  */
 export type Testimonial = {

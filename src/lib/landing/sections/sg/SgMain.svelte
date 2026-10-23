@@ -1,5 +1,5 @@
 <!--
-  Wrapper of an `sg` page (/wohnungsunternehmen, next /asset-manager) inside
+  Wrapper of an `sg` page (/kunden/wohnungsunternehmen, next /kunden/asset-manager) inside
   its <main>: the design's page tokens (its `.dm`), the sections' `.pg-sec`
   spacing, the reveal transition, `#hs-css`'s heading sizes and `#demo-css`'s
   two-quote row, i.e. what spans the template's and the shared sections.

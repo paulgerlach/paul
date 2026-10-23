@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/selbstabrechnung";
 
@@ -58,7 +58,7 @@ test("every Demo CTA leads to the booking page, the hero has no #start", async (
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=sa-h1]"),
@@ -68,10 +68,10 @@ test("every Demo CTA leads to the booking page, the hero has no #start", async (
 	for (const href of await demos.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
 	))
-		expect(href).toBe("/demo-buchen");
+		expect(href).toBe("/demo");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 });
 
 test("the hero CTA opens the booking page", async ({ page }) => {
@@ -80,7 +80,7 @@ test("the hero CTA opens the booking page", async ({ page }) => {
 		.locator("section[aria-labelledby=sa-h1]")
 		.getByRole("link", { name: "Demo buchen" })
 		.click();
-	await expect(page).toHaveURL(/\/demo-buchen$/);
+	await expect(page).toHaveURL(/\/demo$/);
 });
 
 test.describe("hero demo", () => {

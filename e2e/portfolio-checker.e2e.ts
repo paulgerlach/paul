@@ -4,7 +4,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // The signup test saves a lead, so it needs a database with the `leads` table.
 // Webhooks go to the local sink from playwright.config.ts.
 
-const PATH = "/portfolio-checker";
+const PATH = "/portfolio-check";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 /** 19.10.2026, noon in Berlin: the example's dates are fixed by it. */
 const TODAY = new Date("2026-10-19T10:00:00Z");
@@ -73,7 +73,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/portfolio-checker$/,
+		/\/portfolio-check$/,
 	);
 	// The result only exists after a run.
 	await expect(result(page)).toHaveCount(0);
@@ -81,7 +81,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/portfolio-checker</loc>");
+	expect(sitemap).not.toContain("/portfolio-check</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -119,10 +119,10 @@ test("the footer and the other pages lead here, the internal links on", async ({
 	}
 	for (const [path, text] of [
 		["/fristenrechner", "Zum Portfolio-Checker"],
-		["/muster-kuendigung", "Vertragsenden prüfen"],
+		["/messdienst-wechseln/muster-kuendigung", "Vertragsenden prüfen"],
 		["/neuigkeiten", "Bestand prüfen"],
-		["/wohnungsunternehmen", "Portfolio kostenlos prüfen"],
-		["/asset-manager", "Portfolio kostenlos prüfen"],
+		["/kunden/wohnungsunternehmen", "Portfolio kostenlos prüfen"],
+		["/kunden/asset-manager", "Portfolio kostenlos prüfen"],
 	]) {
 		await page.goto(path);
 		await expect(
@@ -140,18 +140,18 @@ test("the request CTAs lead to the closing form", async ({ page }) => {
 	await gotoHydrated(page);
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 	await expect(tool(page)).toHaveCount(1);
 	await expect(
 		page.locator("section.final#start input[name=email]"),
 	).toHaveCount(1);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await exampleButton(page).click();
 	await expect(result(page)).toBeVisible({ timeout: 15_000 });
 	const cta = result(page).getByRole("link", {
 		name: /Mit eigenem Bestand auswerten/,
 	});
-	await expect(cta).toHaveAttribute("href", "/demo-buchen");
+	await expect(cta).toHaveAttribute("href", "/demo");
 });
 
 test("the example run checks five files and shows the evaluation for the day", async ({
@@ -253,7 +253,7 @@ test("own files are checked by name and size only, nothing is sent", async ({
 	).toHaveCount(0);
 	await expect(
 		result(page).getByRole("link", { name: /Auswertung anfragen/ }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 	expect(requests).toEqual([]);
 
 	// × removes a file; the example replaces the own files.

@@ -1,6 +1,6 @@
 <!--
-  "… in Zahlen": a bento of figures with a media cell second (/mieterportal:
-  its animated mini dashboard, `media="tile"`; /verbrauchsinformation: a
+  "… in Zahlen": a bento of figures with a media cell second (/plattform/mieterportal:
+  its animated mini dashboard, `media="tile"`; /plattform/verbrauchsinformation: a
   photo). Figures with a `count` count up once when they come into view.
 -->
 <script lang="ts">

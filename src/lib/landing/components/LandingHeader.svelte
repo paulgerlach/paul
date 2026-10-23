@@ -9,7 +9,7 @@
 	import { afterNavigate } from "$app/navigation";
 	import { page } from "$app/state";
 	import { LOGIN_URL } from "$lib/company";
-	import { ROUTE_FRAGEBOGEN, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { ROUTE_FRAGEBOGEN, ROUTE_HOME } from "$lib/routes";
 	import { DEMO_HREF, focusSignup, START_HREF } from "../cta";
 	import { landingNav, shownItems, type LandingNavGroup } from "../navLinks";
 	import Chevron from "./icons/Chevron.svelte";
@@ -102,7 +102,7 @@
 
 <nav class="top" aria-label="Hauptnavigation">
 	<div class="wrap bar">
-		<a class="logo" href={ROUTE_MESSDIENSTANBIETER}>
+		<a class="logo" href={ROUTE_HOME}>
 			<HeidiLogo class="heidi-logo" />
 		</a>
 		<div class="nv-links">

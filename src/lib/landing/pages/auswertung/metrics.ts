@@ -1,5 +1,5 @@
 /**
- * The math of /auswertung's mock-up, comparison, heatmap and notes, as the
+ * The math of /plattform/auswertung's mock-up, comparison, heatmap and notes, as the
  * design's `#aw2-js` does it. Pure, so the server renders every block in its
  * end state and the browser derives the same values.
  */

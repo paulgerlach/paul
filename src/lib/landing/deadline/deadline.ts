@@ -1,5 +1,5 @@
 /**
- * Date logic of the retrofit deadline (/upgrade-now, /ueber-uns): everything
+ * Date logic of the retrofit deadline (/fernablesung-umruesten, /ueber-uns): everything
  * that depends on "now", computed in Europe/Berlin. Pure functions, no DOM
  * and no `Date.now()`: every function takes `now` (ms), so SSR and hydration
  * render the same values from the single `now` that `load` passes down.

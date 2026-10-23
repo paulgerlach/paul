@@ -1,7 +1,7 @@
 <!--
   The articles (.pg-sec#inhalt, .lf-g): the table of contents, sticky above
   900 px, marking the article being read and filling its progress bar (the
-  design's `spy()` in #lg-js, pure in /hkvo-leitfaden's toc.ts), next to the
+  design's `spy()` in #lg-js, pure in /heizkostenverordnung's toc.ts), next to the
   article cards. The server renders the first link marked and the bar empty.
 -->
 <script lang="ts">

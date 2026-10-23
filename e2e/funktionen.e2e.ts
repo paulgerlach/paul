@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/funktionen";
 
@@ -62,7 +62,7 @@ test("every Demo buchen leads to the booking page, the hero has no #start", asyn
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=fk-h1]"),
@@ -72,7 +72,7 @@ test("every Demo buchen leads to the booking page, the hero has no #start", asyn
 	for (const href of await links.evaluateAll((els) =>
 		els.map((el) => el.getAttribute("href")),
 	))
-		expect(href).toBe("/demo-buchen");
+		expect(href).toBe("/demo");
 	await expect(
 		page.getByRole("link", { name: "So gehen wir vor" }),
 	).toHaveAttribute("href", "/vorgehen");

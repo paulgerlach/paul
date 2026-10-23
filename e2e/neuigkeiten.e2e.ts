@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/neuigkeiten";
 
@@ -75,17 +75,20 @@ test("the footer's Neuigkeiten link and internal links resolve", async ({
 test("stories and rows link only where a page exists", async ({ page }) => {
 	await page.goto(PATH);
 	await expect(page.locator(".feat")).toHaveCount(1);
-	await expect(page.locator("a.feat")).toHaveAttribute("href", "/auswertung");
+	await expect(page.locator("a.feat")).toHaveAttribute(
+		"href",
+		"/plattform/auswertung",
+	);
 	expect(await hrefs(news(page).locator("a.card"))).toEqual([
-		"/dashboard",
-		"/installationstool",
+		"/plattform/dashboard",
+		"/plattform/installationstool",
 		"/funktionen",
 		"/funkzaehler",
-		"/mieterportal",
-		"/api-dokumentation",
-		"/portfolio-checker",
-		"/nachfolge",
-		"/partnerschaften",
+		"/plattform/mieterportal",
+		"/api",
+		"/portfolio-check",
+		"/partner/nachfolge",
+		"/partner",
 	]);
 	await expect(news(page).locator(".card")).toHaveCount(9);
 	await expect(
@@ -94,8 +97,8 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	expect(
 		await hrefs(page.locator("section[aria-labelledby=nw-rg-h] a.row")),
 	).toEqual([
-		"/upgrade-now",
-		"/verbrauchsinformation",
+		"/fernablesung-umruesten",
+		"/plattform/verbrauchsinformation",
 		"/funktionen",
 		"/fristenrechner",
 	]);
@@ -105,12 +108,12 @@ test("every CTA leads to the booking page", async ({ page }) => {
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=nw-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 });
 
 test("the filter shows the stories of a topic", async ({ page }) => {
@@ -174,7 +177,7 @@ test.describe("without JS", () => {
 		);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

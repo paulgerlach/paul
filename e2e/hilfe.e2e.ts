@@ -126,7 +126,7 @@ test.describe("search", () => {
 		await expect(questions(page)).toHaveCount(0);
 		await expect(
 			page.getByRole("link", { name: /Kontakt aufnehmen/ }),
-		).toHaveAttribute("href", "/messdienstwechsel#start");
+		).toHaveAttribute("href", "/messdienst-wechseln#start");
 		await expect(page).toHaveURL(/\?q=xyz$/);
 
 		await searchField(page).press("Escape");

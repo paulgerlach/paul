@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /verbaende, word for word from the
+ * Every text and the example data of /partner/verbaende, word for word from the
  * design, in the shapes of the shared `uv` template. Components hold markup
  * and behaviour only.
  *

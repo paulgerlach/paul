@@ -1,5 +1,5 @@
 /**
- * Texts of /api-dokumentation, word for word from the design
+ * Texts of /api, word for word from the design
  * (https://claude.ai/artifact/3AZnpE4apaUo694utixF1d): the copy, the code
  * samples and the tables. The API as described, the draft's placeholders,
  * the bved facts and the example values await sign-off (plan §4.4).

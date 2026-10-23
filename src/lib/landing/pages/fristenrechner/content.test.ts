@@ -89,7 +89,7 @@ describe("/fristenrechner content", () => {
 		}
 	});
 
-	it("shares the closing text with /schnittstellen", () => {
+	it("shares the closing text with /plattform/schnittstellen", () => {
 		expect(closing.text).toBe(schnittstellenClosing.text);
 	});
 });

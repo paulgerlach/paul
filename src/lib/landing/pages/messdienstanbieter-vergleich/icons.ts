@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons on /messdienstanbieter-vergleich, as shapes
+ * The design's 20×20 line icons on /messdienst-vergleich, as shapes
  * drawn by `components/Icon.svelte` inside the shared `StrokeIcon`.
  */
 export type Shape =

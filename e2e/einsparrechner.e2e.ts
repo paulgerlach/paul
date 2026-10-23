@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/einsparrechner";
 
@@ -92,7 +92,7 @@ test("the footer, the segment pages and the internal links resolve", async ({
 		const response = await request.get(href);
 		expect(response.status(), href).toBe(200);
 	}
-	for (const segment of ["/hausverwaltung", "/mietverwaltung"]) {
+	for (const segment of ["/kunden/hausverwaltung", "/kunden/mietverwaltung"]) {
 		await page.goto(segment);
 		await page.getByRole("link", { name: "Zum Einsparrechner" }).click();
 		await expect(page).toHaveURL(new RegExp(`${PATH}$`));
@@ -103,12 +103,12 @@ test("the CTAs lead to the booking page", async ({ page }) => {
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=es-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("#faq a.more", { hasText: "Kündigungsfrist berechnen" }),
 	).toHaveAttribute("href", "/fristenrechner");
@@ -168,7 +168,7 @@ test("the result's button leads to the booking page", async ({ page }) => {
 	const link = calc(page).getByRole("link", {
 		name: "Angebot für Ihren Bestand",
 	});
-	await expect(link).toHaveAttribute("href", "/demo-buchen");
+	await expect(link).toHaveAttribute("href", "/demo");
 });
 
 test("hydrates without console errors or warnings", async ({ page }) => {
@@ -201,7 +201,7 @@ test.describe("without JS", () => {
 		);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

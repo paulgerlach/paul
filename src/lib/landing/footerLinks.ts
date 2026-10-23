@@ -18,7 +18,7 @@ import {
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
 	ROUTE_KARRIERE,
-	ROUTE_MESSDIENSTANBIETER,
+	ROUTE_HOME,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_MIETVERWALTUNG,
@@ -58,7 +58,7 @@ export const companyLinks: LandingFooterLink[] = [
 	{ text: "Karriere", href: ROUTE_KARRIERE },
 	// The logo strip; the "Kundenreferenzen" design (WcCFaQRPZKfbE5zFHQnnYd)
 	// isn't built.
-	{ text: "Kunden", href: `${ROUTE_MESSDIENSTANBIETER}#kunden` },
+	{ text: "Kunden", href: `${ROUTE_HOME}#kunden` },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 	{ text: "Kontakt", href: ROUTE_KONTAKT },

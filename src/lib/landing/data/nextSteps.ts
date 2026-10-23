@@ -1,8 +1,8 @@
 /**
  * The per-property list "Für jede Liegenschaft der nächste Schritt" (the
  * designs' `.pl` card): its seven example rows, the three recommendations'
- * explanations and labels, and its filter (pure). /dashboard and
- * /portfolio-checker show it through `$lib/landing/sections/NextSteps.svelte`;
+ * explanations and labels, and its filter (pure). /plattform/dashboard and
+ * /portfolio-check show it through `$lib/landing/sections/NextSteps.svelte`;
  * both designs carry the same texts and thumbnails.
  */
 

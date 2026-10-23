@@ -21,7 +21,7 @@
 		compact?: boolean;
 		/** Anchor of the section (`start` where this is the page's only form). */
 		id?: string;
-		/** Rendered above the title (e.g. /upgrade-now's day count). */
+		/** Rendered above the title (e.g. /fernablesung-umruesten's day count). */
 		kicker?: Snippet;
 	} = $props();
 </script>

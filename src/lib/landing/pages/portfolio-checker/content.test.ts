@@ -54,7 +54,7 @@ const all = {
 	closing,
 };
 
-describe("/portfolio-checker content", () => {
+describe("/portfolio-check content", () => {
 	it("has the design's H1", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`).toBe(
 			"Vertragsunterlagen hochladen. Heidi liest den Rest.",

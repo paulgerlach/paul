@@ -1,6 +1,6 @@
 <!--
   "Für jede Liegenschaft der nächste Schritt" (`.db-rep`): the shared
-  per-property list (`NextSteps`, also on /portfolio-checker) and the three
+  per-property list (`NextSteps`, also on /portfolio-check) and the three
   small cards.
 -->
 <script lang="ts">

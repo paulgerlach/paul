@@ -1,5 +1,5 @@
 /**
- * Partner form of /installationspartner: the empty form for the page load
+ * Partner form of /partner/installationspartner: the empty form for the page load
  * and the form action. Inquiries go to Make.com (`partnerinquiry`); nothing
  * is stored in our database.
  *

@@ -3,9 +3,9 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // Partner inquiries go to the local webhook sink from playwright.config.ts;
 // no database needed. The sink answers 500 for emails at @sink-fails.example.
 
-const PATH = "/softwarepartner";
+const PATH = "/partner/softwarepartner";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const DEMO = "/demo-buchen";
+const DEMO = "/demo";
 
 const testEmail = (name: string, domain = "example.com") =>
 	`e2e-sp-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;
@@ -70,7 +70,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/softwarepartner$/,
+		/\/partner\/softwarepartner$/,
 	);
 
 	const jsonLd = await page
@@ -84,7 +84,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/softwarepartner<\/loc>/);
+	expect(sitemap).not.toMatch(
+		/<loc>https?:\/\/[^/]+\/partner\/softwarepartner<\/loc>/,
+	);
 });
 
 for (const width of [375, 320])
@@ -130,7 +132,7 @@ test("CTAs lead to the partner form, the FAQ and the linked pages", async ({
 
 	await expect(
 		page.locator("main a", { hasText: /API-Dokumentation/i }),
-	).toHaveAttribute("href", "/api-dokumentation");
+	).toHaveAttribute("href", "/api");
 	const faqLinks = page.locator("#inhalt a", { hasText: /Häufige Fragen/i });
 	await expect(faqLinks).toHaveCount(4);
 	for (const href of await hrefs(faqLinks)) expect(href).toBe("#faq");
@@ -138,7 +140,7 @@ test("CTAs lead to the partner form, the FAQ and the linked pages", async ({
 
 	await expect(
 		page.locator("main a", { hasText: "Zu den Schnittstellen" }),
-	).toHaveAttribute("href", "/schnittstellen");
+	).toHaveAttribute("href", "/plattform/schnittstellen");
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");

@@ -13,7 +13,7 @@
 	let {
 		href = DEMO_HREF,
 	}: {
-		/** The target (default `DEMO_HREF`, /demo-buchen). */
+		/** The target (default `DEMO_HREF`, /demo). */
 		href?: string;
 	} = $props();
 

@@ -223,7 +223,7 @@ describe("partnerschaften content", () => {
 		});
 	});
 
-	it("has three steps and the form's texts, as /nachfolge's", () => {
+	it("has three steps and the form's texts, as /partner/nachfolge's", () => {
 		expect(apply.steps).toHaveLength(3);
 		expect(apply.success("Max")).toBe(nachfolge.apply.success("Max"));
 		for (const key of ["sending", "missing", "sendError"] as const)

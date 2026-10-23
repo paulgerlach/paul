@@ -3,7 +3,7 @@
   page's signup form (in place of the design's own e-mail form) and the
   animated chart below. It's the page's only form, so it carries the `start`
   anchor. "Lieber direkt eine Demo buchen" is left out while DEMO_HREF is
-  this form (plan README, open question 2). /auswertung passes its own texts
+  this form (plan README, open question 2). /plattform/auswertung passes its own texts
   as `content`.
 -->
 <script lang="ts">

@@ -1,5 +1,5 @@
 /**
- * Contact form of /nachfolge: the empty form for the page load and the form
+ * Contact form of /partner/nachfolge: the empty form for the page load and the form
  * action. Inquiries go to Make.com (`successioninquiry`); nothing is stored
  * in our database. Owners write in confidence, before their customers or
  * staff know.

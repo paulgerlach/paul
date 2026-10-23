@@ -43,7 +43,7 @@ export const customerLogos = {
 
 export type LogoKey = keyof typeof customerLogos;
 
-/** The order of the /messdienstwechsel design, also Berlin's. */
+/** The order of the /messdienst-wechseln design, also Berlin's. */
 export const DEFAULT_LOGO_ORDER: LogoKey[] = [
 	"berlin",
 	"dumax",

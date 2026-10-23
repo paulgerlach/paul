@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/muster-kuendigung";
+const PATH = "/messdienst-wechseln/muster-kuendigung";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -48,13 +48,13 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/muster-kuendigung$/,
+		/\/messdienst-wechseln\/muster-kuendigung$/,
 	);
 });
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/muster-kuendigung</loc>");
+	expect(sitemap).not.toContain("/messdienst-wechseln/muster-kuendigung</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -86,9 +86,9 @@ test("the footer, the other pages and the internal links lead here", async ({
 	}
 	for (const [path, text] of [
 		["/fristenrechner", "Muster-Kündigung"],
-		["/weg-verwaltung", "Zur Muster-Kündigung"],
-		["/wohnungsunternehmen", "Muster-Kündigung herunterladen"],
-		["/asset-manager", "Muster-Kündigung herunterladen"],
+		["/kunden/weg-verwaltung", "Zur Muster-Kündigung"],
+		["/kunden/wohnungsunternehmen", "Muster-Kündigung herunterladen"],
+		["/kunden/asset-manager", "Muster-Kündigung herunterladen"],
 	]) {
 		await page.goto(path);
 		expect(
@@ -112,19 +112,19 @@ test("the CTAs lead to the generator, the booking page and the switch page", asy
 	await expect(page.locator("section#vorlage")).toHaveCount(1);
 	await expect(
 		page.getByRole("link", { name: /Heidi kündigt für Sie/ }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+	).toHaveAttribute("href", "/messdienst-wechseln");
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("main a", { hasText: "Vertragsenden prüfen" }),
-	).toHaveAttribute("href", "/portfolio-checker");
+	).toHaveAttribute("href", "/portfolio-check");
 	const demo = page.locator("section[aria-labelledby=mk-hu-h] a", {
 		hasText: /^Demo buchen/,
 	});
-	await expect(demo).toHaveAttribute("href", "/demo-buchen");
+	await expect(demo).toHaveAttribute("href", "/demo");
 });
 
 test("the preview follows the form", async ({ page }) => {
@@ -263,7 +263,7 @@ test.describe("without JS", () => {
 		await expect(page.locator(".sig path")).toBeVisible();
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

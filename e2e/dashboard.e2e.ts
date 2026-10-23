@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // The signup test saves a lead, so it needs a database with the `leads` table.
 // Webhooks go to the local sink from playwright.config.ts.
 
-const PATH = "/dashboard";
+const PATH = "/plattform/dashboard";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 const testEmail = (name: string) =>
@@ -48,7 +48,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/dashboard$/,
+		/\/plattform\/dashboard$/,
 	);
 	await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
 		0,
@@ -57,7 +57,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/dashboard</loc>");
+	expect(sitemap).not.toContain("/plattform/dashboard</loc>");
 });
 
 test("has no horizontal overflow at 375 px", async ({ page }) => {
@@ -109,7 +109,7 @@ test("every CTA leads to the closing card's form", async ({ page }) => {
 	for (const href of await hrefs(ctas)) expect(href).toBe("#start");
 	const demo = page.locator("main a", { hasText: "Demo buchen" });
 	expect(await demo.count()).toBeGreaterThanOrEqual(1);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 	await expect(page.getByText("Lieber direkt eine Demo buchen")).toHaveCount(0);
 });
 

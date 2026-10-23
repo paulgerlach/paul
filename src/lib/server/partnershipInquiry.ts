@@ -1,5 +1,5 @@
 /**
- * Contact form of /partnerschaften ("Partnerschaft anfragen"): the empty
+ * Contact form of /partner ("Partnerschaft anfragen"): the empty
  * form for the page load and the form action (`?/partnership`). Inquiries go
  * to Make.com (`partnershipinquiry`); nothing is stored in our database.
  *

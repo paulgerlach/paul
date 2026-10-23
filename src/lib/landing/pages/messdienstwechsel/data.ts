@@ -1,5 +1,5 @@
 /**
- * Content of the /messdienstwechsel landing page, ported from the design
+ * Content of the /messdienst-wechseln landing page, ported from the design
  * artifact. It's kept as typed constants (not Prismic), so the section
  * components stay small and the copy can move to a CMS later.
  */

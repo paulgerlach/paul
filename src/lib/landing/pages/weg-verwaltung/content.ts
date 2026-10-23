@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /weg-verwaltung, word for word from the
+ * Every text and the example data of /kunden/weg-verwaltung, word for word from the
  * design, in the shapes of the shared `uv` template. Components hold markup
  * and behaviour only.
  *

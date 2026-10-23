@@ -1,5 +1,5 @@
 /**
- * Texts of /muster-kuendigung, word for word from the design
+ * Texts of /messdienst-wechseln/muster-kuendigung, word for word from the design
  * (https://claude.ai/artifact/4WYU5hjVsWSLrxuo7wsdm6): the page, the form's
  * fields and clauses, and the letter's sentences (`letter.ts` puts them
  * together). The letter, the checklist and the FAQ await legal sign-off
@@ -276,7 +276,7 @@ export const takeover = {
 	pill: "Noch einfacher",
 	h2: "Oder Heidi kündigt für Sie.",
 	text: "Eine Unterschrift auf der Vollmacht genügt. Heidi kündigt beim bisherigen Messdienst, plant die Montage und informiert die Mieter. Bestehende Zähler werten wir sofort aus, auch wenn Ihr Vertrag noch läuft.",
-	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
+	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
 	// UFviBtC2mkneFNeWnfHAWp (the Portfolio-Checker)
 	check: { text: "Vertragsenden prüfen", href: ROUTE_PORTFOLIO_CHECKER } as {

@@ -18,12 +18,12 @@
 		id,
 	}: {
 		text: string;
-		/** A bold end of the label (/dashboard's "Hausverwaltungen in ganz Deutschland"). */
+		/** A bold end of the label (/plattform/dashboard's "Hausverwaltungen in ganz Deutschland"). */
 		strong?: string;
 		/** Marks the claim as unconfirmed (go-live gate). */
 		placeholder?: boolean;
 		logos?: LogoKey[];
-		/** An anchor (`kunden` on /messdienstanbieter, the footer's "Kunden"). */
+		/** An anchor (`kunden` on /, the footer's "Kunden"). */
 		id?: string;
 	} = $props();
 </script>

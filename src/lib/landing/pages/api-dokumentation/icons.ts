@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons on /api-dokumentation, as shapes drawn by
+ * The design's 20×20 line icons on /api, as shapes drawn by
  * `components/Icon.svelte` inside the shared `StrokeIcon`.
  */
 export type Shape =

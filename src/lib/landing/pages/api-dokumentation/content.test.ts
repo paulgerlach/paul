@@ -49,7 +49,7 @@ const content = {
 	access,
 };
 
-describe("/api-dokumentation content", () => {
+describe("/api content", () => {
 	it("has the design's H1", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`).toBe(
 			"Verbrauchsdaten direkt in Ihre Software. Nach bved-Standard.",

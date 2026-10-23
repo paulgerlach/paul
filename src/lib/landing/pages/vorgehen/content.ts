@@ -61,7 +61,7 @@ export const stats = [
 
 /**
  * Target of "Zum HKVO-Leitfaden →" (the design's SJbSeTYRqntQxpZQ8RVNf7):
- * /hkvo-leitfaden. Without a target the link isn't rendered.
+ * /heizkostenverordnung. Without a target the link isn't rendered.
  */
 export const HKVO_GUIDE_HREF: string | undefined = ROUTE_HKVO_LEITFADEN;
 

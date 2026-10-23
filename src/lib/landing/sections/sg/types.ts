@@ -1,6 +1,6 @@
 /**
- * Content shapes of the light `sg` segment template (/wohnungsunternehmen,
- * and next /asset-manager, whose design shares every style and script block).
+ * Content shapes of the light `sg` segment template (/kunden/wohnungsunternehmen,
+ * and next /kunden/asset-manager, whose design shares every style and script block).
  * Each page fills them in its `content.ts`; the components hold markup and
  * behaviour only.
  */

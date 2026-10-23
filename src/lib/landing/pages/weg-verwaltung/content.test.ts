@@ -88,7 +88,7 @@ describe("weg-verwaltung content", () => {
 		}
 	});
 
-	it("lists four associations: /hausverwaltung's buildings with their unit counts", () => {
+	it("lists four associations: /kunden/hausverwaltung's buildings with their unit counts", () => {
 		expect(list.entries).toHaveLength(4);
 		expect(list.head).toBe(`${list.entries.length} Gemeinschaften`);
 		list.entries.forEach((entry, i) => {

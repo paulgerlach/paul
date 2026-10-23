@@ -1,5 +1,5 @@
 /**
- * The form "Anbindung anfragen" in /partnerschaften's first audience card:
+ * The form "Anbindung anfragen" in /partner's first audience card:
  * the empty form for the page load and the form action (`?/connection`).
  * Inquiries go to Make.com (`connectioninquiry`); nothing is stored in our
  * database.

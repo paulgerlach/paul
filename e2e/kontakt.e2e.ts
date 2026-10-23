@@ -5,7 +5,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const PATH = "/kontakt";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const BOOKING = "/demo-buchen";
+const BOOKING = "/demo";
 
 const testEmail = (name: string, domain = "example.com") =>
 	`e2e-kt-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;

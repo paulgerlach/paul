@@ -6,24 +6,25 @@ import { CITIES } from "../src/lib/landing/pages/messdienstanbieter-city/cities/
 // interaction tests on Berlin only, because the template is the same.
 // Signups need the local Postgres with the `leads` table, and the server's
 // KITCHEN_SINK=1 (playwright.config.ts) lifts the per-IP signup limit, which
-// the /messdienstwechsel tests would use up otherwise.
+// the /messdienst-wechseln tests would use up otherwise.
 
 const SITE_URL = "https://heidisystems.com";
-const HUB = "/messdienstanbieter";
-const BERLIN = `${HUB}/berlin`;
+const HUB = "/";
+const CITY = "/messdienst";
+const BERLIN = `${CITY}/berlin`;
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 const PAGES = [
 	...CITIES.map((c) => ({
-		path: `${HUB}/${c.slug}`,
+		path: `${CITY}/${c.slug}`,
 		name: c.name,
 		live: c.live,
 	})),
 	{ path: HUB, name: "Deutschland", live: true },
 ];
-const LIVE_PATHS = CITIES.filter((c) => c.live).map((c) => `${HUB}/${c.slug}`);
+const LIVE_PATHS = CITIES.filter((c) => c.live).map((c) => `${CITY}/${c.slug}`);
 const NOT_LIVE_PATHS = CITIES.filter((c) => !c.live).map(
-	(c) => `${HUB}/${c.slug}`,
+	(c) => `${CITY}/${c.slug}`,
 );
 
 const testEmail = (name: string) =>
@@ -79,7 +80,7 @@ for (const p of PAGES) {
 		await expect(page.locator("h1")).toContainText(p.name);
 		await expect(page.locator("#header")).toHaveCount(0);
 
-		const url = SITE_URL + p.path;
+		const url = p.path === "/" ? SITE_URL : SITE_URL + p.path;
 		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 			"href",
 			url,
@@ -119,8 +120,8 @@ test("no horizontal page scroll at 375px on any page", async ({ page }) => {
 });
 
 test("unknown cities 404, and a trailing slash redirects", async ({ page }) => {
-	expect((await page.goto(`${HUB}/foo`))?.status()).toBe(404);
-	expect((await page.goto(`${HUB}/potsdam`))?.status()).toBe(404);
+	expect((await page.goto(`${CITY}/foo`))?.status()).toBe(404);
+	expect((await page.goto(`${CITY}/potsdam`))?.status()).toBe(404);
 	const response = await page.goto(`${BERLIN}/`);
 	expect(response?.status()).toBe(200);
 	expect(new URL(page.url()).pathname).toBe(BERLIN);
@@ -129,7 +130,7 @@ test("unknown cities 404, and a trailing slash redirects", async ({ page }) => {
 test("the footer lists every city and the hub", async ({ page }) => {
 	await page.goto(BERLIN);
 	const links = await hrefs(page.locator("footer .f-cities a"));
-	expect(links).toEqual([...CITIES.map((c) => `${HUB}/${c.slug}`), HUB]);
+	expect(links).toEqual([...CITIES.map((c) => `${CITY}/${c.slug}`), HUB]);
 });
 
 test("internal links resolve; page content never leads to a city that isn't live", async ({

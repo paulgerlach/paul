@@ -1,8 +1,8 @@
 /**
- * Every text and the example data of /asset-manager, word for word from the
+ * Every text and the example data of /kunden/asset-manager, word for word from the
  * design (plan 01 §1.2), in the shapes of the shared `sg` template. Apart
  * from the hero, the benefits, the quotes and FAQ 1–2 the texts are
- * /wohnungsunternehmen's (its design shares them; content.test.ts checks).
+ * /kunden/wohnungsunternehmen's (its design shares them; content.test.ts checks).
  * Components hold markup only. The product claims, the pricing statements
  * and the example data need sign-off before the cutover (plan §4.4).
  */

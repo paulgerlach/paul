@@ -1,5 +1,5 @@
 /**
- * Email signup of the landing pages (/messdienstwechsel, /messdienstanbieter
+ * Email signup of the landing pages (/messdienst-wechseln, /
  * and its city pages): empty forms for the page load and the form action.
  */
 import { fail, type RequestEvent } from "@sveltejs/kit";

@@ -1,5 +1,5 @@
 /**
- * The city pages at /messdienstanbieter/<slug>, in the designs' footer order.
+ * The city pages at /messdienst/<slug>, in the designs' footer order.
  * Tiny on purpose: the `city` param matcher bundles it into the client router.
  * The sitemap, the footer "Städte" group and the Germany map read it too.
  *

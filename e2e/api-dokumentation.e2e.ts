@@ -2,8 +2,8 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 // No form on this page: nothing is stored or sent.
 
-const PATH = "/api-dokumentation";
-const DEMO = "/demo-buchen";
+const PATH = "/api";
+const DEMO = "/demo";
 const ARTICLES = [
 	"ueberblick",
 	"schnellstart",
@@ -52,13 +52,13 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/api-dokumentation$/,
+		/\/api$/,
 	);
 });
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/api-dokumentation</loc>");
+	expect(sitemap).not.toContain("/api</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -84,7 +84,7 @@ test("the footer leads here and every internal link resolves", async ({
 		...(await hrefs(page.locator('footer a[href^="/"]'))),
 		...(await hrefs(page.locator('main a[href^="/"]'))),
 	]);
-	expect(links).toContain("/softwarepartner");
+	expect(links).toContain("/partner/softwarepartner");
 	for (const href of links) {
 		const response = await request.get(href.split("#")[0]);
 		expect(response.status(), href).toBe(200);
@@ -92,11 +92,11 @@ test("the footer leads here and every internal link resolves", async ({
 });
 
 test("the pages that waited for it link here", async ({ page }) => {
-	await page.goto("/softwarepartner");
+	await page.goto("/partner/softwarepartner");
 	await expect(
 		page.locator("main a", { hasText: "API-Dokumentation" }),
 	).toHaveAttribute("href", PATH);
-	await page.goto("/partnerschaften");
+	await page.goto("/partner");
 	await expect(
 		page.locator("main a", { hasText: "Heidi API" }),
 	).toHaveAttribute("href", PATH);
@@ -109,7 +109,7 @@ test("the pages that waited for it link here", async ({ page }) => {
 	).toHaveAttribute("href", PATH);
 });
 
-test("the CTAs lead to the quick start, the partner page and /demo-buchen", async ({
+test("the CTAs lead to the quick start, the partner page and /demo", async ({
 	page,
 }) => {
 	await page.goto(PATH);
@@ -122,7 +122,7 @@ test("the CTAs lead to the quick start, the partner page and /demo-buchen", asyn
 	const partner = page.locator("main a", { hasText: "Softwarepartner werden" });
 	await expect(partner).toHaveCount(2);
 	for (const href of await hrefs(partner))
-		expect(href).toBe("/softwarepartner");
+		expect(href).toBe("/partner/softwarepartner");
 	await expect(
 		page.locator("#zugang a", { hasText: "Erstgespräch vereinbaren" }),
 	).toHaveAttribute("href", DEMO);

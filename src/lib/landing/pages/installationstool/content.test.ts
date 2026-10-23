@@ -139,7 +139,7 @@ describe("installationstool content", () => {
 		expect(figures.at(-1)?.count).toBeUndefined();
 	});
 
-	it("uses the confirmed KPIs of /installationspartner", () => {
+	it("uses the confirmed KPIs of /partner/installationspartner", () => {
 		expect(KPI).toEqual(PARTNER_KPI);
 		expect(numbers.rest.map((f) => f.value)).toContain(String(KPI.notice));
 		expect(numbers.rest.map((f) => f.value)).toContain(KPI.window);

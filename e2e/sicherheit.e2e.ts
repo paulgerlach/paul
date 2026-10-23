@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/sicherheit";
 
@@ -84,7 +84,7 @@ test("other pages link here", async ({ page }) => {
 	await expect(
 		page.locator("main a", { hasText: "Sicherheit & Datenschutz" }),
 	).toHaveAttribute("href", PATH);
-	await page.goto("/messdienstanbieter/berlin");
+	await page.goto("/messdienst/berlin");
 	await expect(
 		page.locator("section.trust a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", PATH);
@@ -94,14 +94,14 @@ test("every CTA leads to the booking page", async ({ page }) => {
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=sc-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: "Demo buchen" });
 	expect(await demo.count()).toBeGreaterThanOrEqual(2);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 	await expect(
 		page.locator("main a", { hasText: "Welche Daten wo liegen" }),
 	).toHaveAttribute("href", "#daten");
@@ -129,7 +129,7 @@ test.describe("without JS", () => {
 		await expect(rows.nth(2).locator(".d")).toBeVisible();
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

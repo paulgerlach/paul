@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /auswertung, word for word from the
+ * Every text and the example data of /plattform/auswertung, word for word from the
  * design (https://claude.ai/artifact/1qV4qjvQqWxzL76fobN5Hs). Components hold
  * markup and behaviour only; the math is in `metrics.ts`.
  *

@@ -12,7 +12,7 @@
 		cityBySlug,
 		isLiveCity,
 	} from "$lib/landing/pages/messdienstanbieter-city/cities";
-	import { cityRoute, ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+	import { cityRoute, ROUTE_HOME } from "$lib/routes";
 	import { districtId, type MapDistrict, type RegionContent } from "./types";
 
 	let { content }: { content: RegionContent } = $props();
@@ -94,7 +94,7 @@
 						</p>
 					{/if}
 					{#if isCity}
-						<a class="hub" href={ROUTE_MESSDIENSTANBIETER}>
+						<a class="hub" href={ROUTE_HOME}>
 							Messdienst in ganz Deutschland <span class="ar">→</span>
 						</a>
 					{/if}

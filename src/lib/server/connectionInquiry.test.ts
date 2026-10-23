@@ -34,7 +34,7 @@ function post(
 		}),
 		getClientAddress: () => from,
 	} as unknown as RequestEvent;
-	return handleConnectionInquiry(event, { page: "/partnerschaften" });
+	return handleConnectionInquiry(event, { page: "/partner" });
 }
 
 /** The status of a `fail()` / error `message()`, or 200. */
@@ -68,7 +68,7 @@ describe("handleConnectionInquiry", () => {
 			name: "Erika Musterfrau",
 			software: "CRM",
 			message: "Verbräuche und Dokumente",
-			page: "/partnerschaften",
+			page: "/partner",
 		});
 	});
 
@@ -79,7 +79,7 @@ describe("handleConnectionInquiry", () => {
 			name: "Erika Musterfrau",
 			software: "CRM",
 			message: undefined,
-			page: "/partnerschaften",
+			page: "/partner",
 		});
 	});
 

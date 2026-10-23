@@ -1,5 +1,5 @@
 /**
- * The design's 20×20 line icons on /schnittstellen, as shapes drawn by
+ * The design's 20×20 line icons on /plattform/schnittstellen, as shapes drawn by
  * `components/Icon.svelte` inside the shared `StrokeIcon`. The Heidi mark is
  * the shared `HeidiMark`, not a line icon.
  */

@@ -1,6 +1,6 @@
 <!--
   The design's dark closing card with its text and the video button "Live
-  Demo buchen", which leads to /demo-buchen. After the grey FAQ band the
+  Demo buchen", which leads to /demo. After the grey FAQ band the
   design gives it 110 px of top padding.
 -->
 <script lang="ts">

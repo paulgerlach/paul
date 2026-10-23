@@ -30,7 +30,7 @@ const strings = (value: unknown): string[] =>
 
 const all = { hero, mock, steps, compare, heatmap, hints, report, closing };
 
-describe("/auswertung content", () => {
+describe("/plattform/auswertung content", () => {
 	it("has the design's H1", () => {
 		expect(hero.h1.join(" ")).toBe("Ihre Verbräuche. Klar ausgewertet.");
 	});

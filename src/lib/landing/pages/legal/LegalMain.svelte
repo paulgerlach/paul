@@ -1,7 +1,7 @@
 <!--
-  A legal page (/impressum, /datenschutzhinweise, /agb): the hero, the
+  A legal page (/impressum, /datenschutz, /agb): the hero, the
   articles, the security block and the floating CTA. No signup form:
-  "Demo buchen" and the floating CTA go to /demo-buchen (`DEMO_HREF`).
+  "Demo buchen" and the floating CTA go to /demo (`DEMO_HREF`).
 -->
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";

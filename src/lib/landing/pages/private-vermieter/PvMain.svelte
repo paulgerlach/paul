@@ -1,5 +1,5 @@
 <!--
-  The dark part of /private-vermieter (the design's `.pv` on <main>): it
+  The dark part of /kunden/private-vermieter (the design's `.pv` on <main>): it
   wraps sections 1–10 inside <main>, so the light trust block after it stays
   in <main>. It holds the page tokens, the two photos the scene, the figures
   and the marquee draw as backgrounds (`--img-room`, `--img-meter`), and the

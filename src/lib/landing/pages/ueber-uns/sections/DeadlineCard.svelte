@@ -1,6 +1,6 @@
 <!--
   "Bis zur Fernablesepflicht … Tage" with the elapsed share of 2022–2026.
-  The same day count as /upgrade-now (Berlin calendar days, from the page's
+  The same day count as /fernablesung-umruesten (Berlin calendar days, from the page's
   clock). SSR renders the final number and bar; in the browser the number
   counts up and the bar grows when the card scrolls into view.
 -->

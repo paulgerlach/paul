@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /softwarepartner, word for word from
+ * Every text and the example data of /partner/softwarepartner, word for word from
  * the design, in the shapes of the shared `uv` template and the shared
  * partner section. Components hold markup and behaviour only.
  *

@@ -2,7 +2,7 @@
   The designs' segmented control: a radiogroup of buttons with a roving
   tabindex; the arrow keys, Home and End move the choice. Two looks: `track`
   (grey track, white pill: /karriere's areas) and `ink` (white track, dark
-  pill, equal columns: /upgrade-now's risk calculator).
+  pill, equal columns: /fernablesung-umruesten's risk calculator).
 -->
 <script lang="ts" generics="T extends string | number">
 	let {
@@ -97,7 +97,7 @@
 		box-shadow: 0 1px 2px rgba(30, 50, 45, 0.12);
 	}
 
-	/* /upgrade-now's `.seg` */
+	/* /fernablesung-umruesten's `.seg` */
 	.ink {
 		display: grid;
 		grid-template-columns: repeat(var(--n), minmax(0, 1fr));

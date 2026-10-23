@@ -188,7 +188,7 @@ describe("Germany map", () => {
 		expect(links).toEqual(
 			LIVE_CITIES.filter(
 				(c) => germanyData.cityDots[c.slug] ?? EXTRA_CITY_DOTS[c.slug],
-			).map((c) => `/messdienstanbieter/${c.slug}`),
+			).map((c) => `/messdienst/${c.slug}`),
 		);
 	});
 

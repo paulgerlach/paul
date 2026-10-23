@@ -67,7 +67,7 @@
 		max-width: 760px;
 	}
 	/* .dm-h2's 18 px above the H2, lost to the landing heading reset at equal
-	   specificity (as on /schnittstellen). */
+	   specificity (as on /plattform/schnittstellen). */
 	.head :global(h2) {
 		margin-top: 18px;
 	}

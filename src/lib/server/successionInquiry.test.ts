@@ -36,7 +36,7 @@ function post(
 		}),
 		getClientAddress: () => from,
 	} as unknown as RequestEvent;
-	return handleSuccessionInquiry(event, { page: "/nachfolge" });
+	return handleSuccessionInquiry(event, { page: "/partner/nachfolge" });
 }
 
 /** The status of a `fail()` / error `message()`, or 200. */
@@ -72,7 +72,7 @@ describe("handleSuccessionInquiry", () => {
 			properties: "100 bis 500",
 			timeframe: "in 1 bis 2 Jahren",
 			message: "Wir suchen eine Nachfolge für unsere Kunden.",
-			page: "/nachfolge",
+			page: "/partner/nachfolge",
 		});
 	});
 
@@ -85,7 +85,7 @@ describe("handleSuccessionInquiry", () => {
 			properties: undefined,
 			timeframe: undefined,
 			message: undefined,
-			page: "/nachfolge",
+			page: "/partner/nachfolge",
 		});
 	});
 

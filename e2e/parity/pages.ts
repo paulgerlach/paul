@@ -4,7 +4,7 @@ import { SITE_PAGES } from "../../src/lib/sitePages";
 // and the questionnaire.
 export const PAGES = [
 	...SITE_PAGES.map((p) => p.path),
-	"/messdienstanbieter/berlin",
+	"/messdienst/berlin",
 	"/blog/wasserzaehler-mit-fernablesung",
 	"/fragebogen",
 ];

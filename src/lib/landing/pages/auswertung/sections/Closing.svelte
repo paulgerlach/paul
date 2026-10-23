@@ -1,4 +1,4 @@
-<!-- /dashboard's closing card (`.db-end`) with this page's texts. -->
+<!-- /plattform/dashboard's closing card (`.db-end`) with this page's texts. -->
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { SwitchInquiry } from "$lib/forms/switchInquiry";

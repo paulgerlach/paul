@@ -3,16 +3,16 @@ import { REDIRECTS, redirectFor, withQuery } from "./redirects";
 
 describe("redirectFor", () => {
 	it("maps every old URL", () => {
-		expect(redirectFor("/")).toEqual({
-			to: "/messdienstanbieter",
-			status: 307,
-		});
 		expect(redirectFor("/preise")).toEqual({
-			to: "/messdienstwechsel#start",
+			to: "/messdienst-wechseln#start",
 			status: 301,
 		});
 		expect(redirectFor("/geraete")).toEqual({
 			to: "/funkzaehler",
+			status: 301,
+		});
+		expect(redirectFor("/datenschutzhinweise")).toEqual({
+			to: "/datenschutz",
 			status: 301,
 		});
 		expect(Object.keys(REDIRECTS)).toHaveLength(3);
@@ -28,7 +28,8 @@ describe("redirectFor", () => {
 			"/blog",
 			"/preview",
 			"/preview/blog/x",
-			"/messdienstanbieter",
+			// The home page (the Germany hub) since the new URLs
+			"/",
 			// A page again (2026-10-21), no longer redirected
 			"/kontakt",
 			"/preise/x",
@@ -41,8 +42,8 @@ describe("redirectFor", () => {
 
 describe("withQuery", () => {
 	it("keeps the query string before the fragment", () => {
-		expect(withQuery("/messdienstwechsel#start", "?x=1")).toBe(
-			"/messdienstwechsel?x=1#start",
+		expect(withQuery("/messdienst-wechseln#start", "?x=1")).toBe(
+			"/messdienst-wechseln?x=1#start",
 		);
 		expect(withQuery("/funktionen", "?utm_source=a&b=2")).toBe(
 			"/funktionen?utm_source=a&b=2",
@@ -50,8 +51,8 @@ describe("withQuery", () => {
 	});
 
 	it("adds nothing without a query string", () => {
-		expect(withQuery("/messdienstwechsel#start", "")).toBe(
-			"/messdienstwechsel#start",
+		expect(withQuery("/messdienst-wechseln#start", "")).toBe(
+			"/messdienst-wechseln#start",
 		);
 	});
 });

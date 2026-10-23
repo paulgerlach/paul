@@ -7,7 +7,7 @@ import {
 } from "$lib/forms/contactInquiry";
 import { LOGIN_URL } from "$lib/company";
 import {
-	ROUTE_DATENSCHUTZHINWEISE,
+	ROUTE_DATENSCHUTZ,
 	ROUTE_HILFE,
 	ROUTE_PARTNERSCHAFTEN,
 	ROUTE_SELF_SERVICE,
@@ -28,8 +28,8 @@ describe("kontakt content", () => {
 		expect(hero.mailboxes.map((m) => m.key)).toEqual([...MAILBOX_KEYS]);
 	});
 
-	it("sends every booking link to /demo-buchen", () => {
-		expect(BOOKING_HREF).toBe("/demo-buchen");
+	it("sends every booking link to /demo", () => {
+		expect(BOOKING_HREF).toBe("/demo");
 		expect(hero.book.href).toBe(BOOKING_HREF);
 		expect(write.alt.link.href).toBe(BOOKING_HREF);
 		expect(closing.button.href).toBe(BOOKING_HREF);
@@ -55,7 +55,7 @@ describe("kontakt content", () => {
 				href: "mailto:presse@heidisystems.com",
 			},
 		]);
-		expect(form.consent.link.href).toBe(ROUTE_DATENSCHUTZHINWEISE);
+		expect(form.consent.link.href).toBe(ROUTE_DATENSCHUTZ);
 		expect(faq.items[0].answer).toContain(`href="${LOGIN_URL}"`);
 		expect(faq.items[0].answer).toContain(`href="${ROUTE_HILFE}"`);
 		expect(faq.items[1].answer).toContain(`href="${ROUTE_SELF_SERVICE}"`);

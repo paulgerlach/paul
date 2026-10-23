@@ -1,7 +1,7 @@
 <!--
   The hero's middle panel on a `uv` page: an app window listing four entries
   whose status pills turn from amber to green one after another, every 9 s
-  while in view (the design's loop; the tenant portal on /mieterportal, the
+  while in view (the design's loop; the tenant portal on /plattform/mieterportal, the
   dashboard on the segment pages). The server renders the finished list; the
   first pass waits a full interval, so the in-view hero doesn't flash on
   load. The window is hidden from screen readers; a plain list states the

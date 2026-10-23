@@ -7,7 +7,7 @@ import { expect, test, type Page } from "@playwright/test";
 // browser's on mount. So `page.clock` at a fixed time checks the client side,
 // and the switch from the server's values is part of every test.
 
-const PATH = "/upgrade-now";
+const PATH = "/fernablesung-umruesten";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 /** A Berlin wall-clock time as an instant (+01:00 in winter, +02:00 in summer). */
@@ -46,7 +46,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/upgrade-now$/,
+		/\/fernablesung-umruesten$/,
 	);
 	// The banner's "Mehr erfahren" goes to the calculator here
 	await expect(
@@ -183,7 +183,7 @@ test.describe("CTAs", () => {
 			.locator("nav.top")
 			.getByRole("link", { name: "Demo buchen" })
 			.click();
-		await expect(page).toHaveURL(/\/demo-buchen$/);
+		await expect(page).toHaveURL(/\/demo$/);
 	});
 });
 

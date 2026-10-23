@@ -51,7 +51,7 @@ const all = {
 	closing,
 };
 
-describe("/messdienstanbieter-vergleich content", () => {
+describe("/messdienst-vergleich content", () => {
 	it("has the design's H1", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`).toBe(
 			"Wie gut ist Ihr Messdienst wirklich?",

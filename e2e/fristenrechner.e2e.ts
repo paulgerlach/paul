@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
 const PATH = "/fristenrechner";
 /** The browser's "today" for the calculator tests: 19.10.2026 in Berlin. */
@@ -90,7 +90,7 @@ test("the footer's Fristenrechner link and internal links resolve", async ({
 		...(await hrefs(page.locator('footer a[href^="/"]'))),
 		...(await hrefs(page.locator('main a[href^="/"]'))),
 	]);
-	expect(links).toContain("/messdienstwechsel");
+	expect(links).toContain("/messdienst-wechseln");
 	for (const href of links) {
 		const response = await request.get(href);
 		expect(response.status(), href).toBe(200);
@@ -111,19 +111,22 @@ test("the CTAs lead to the calculator, the dates and the booking page", async ({
 	await expect(page.locator("section#stichtage")).toHaveCount(1);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=fr-h1]"),
 	).not.toHaveAttribute("id", "start");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	// Both CTAs in their design's look: the Portfolio-Checker dark, the
 	// Muster-Kündigung light.
 	const checker = page.locator("main a", { hasText: "Zum Portfolio-Checker" });
-	await expect(checker).toHaveAttribute("href", "/portfolio-checker");
+	await expect(checker).toHaveAttribute("href", "/portfolio-check");
 	await expect(checker).toHaveClass(/\bbk\b/);
 	const template = page.locator("main a", { hasText: "Muster-Kündigung" });
-	await expect(template).toHaveAttribute("href", "/muster-kuendigung");
+	await expect(template).toHaveAttribute(
+		"href",
+		"/messdienst-wechseln/muster-kuendigung",
+	);
 	await expect(template).toHaveClass(/\bghost\b/);
 });
 
@@ -154,7 +157,7 @@ test("the contract pane computes the last day to cancel", async ({ page }) => {
 
 	await expect(
 		p.getByRole("link", { name: /So funktioniert/ }),
-	).toHaveAttribute("href", "/messdienstwechsel");
+	).toHaveAttribute("href", "/messdienst-wechseln");
 });
 
 test("the calibration and billing panes", async ({ page }) => {
@@ -257,7 +260,7 @@ test.describe("without JS", () => {
 		await expect(page.locator("#stichtage .sb").first()).toHaveText("gilt");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

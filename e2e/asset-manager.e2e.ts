@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/asset-manager";
+const PATH = "/kunden/asset-manager";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -43,7 +43,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/asset-manager$/,
+		/\/kunden\/asset-manager$/,
 	);
 	const jsonLd = page.locator('script[type="application/ld+json"]');
 	await expect(jsonLd).toHaveCount(1);
@@ -54,7 +54,7 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toContain("/asset-manager</loc>");
+	expect(sitemap).not.toContain("/kunden/asset-manager</loc>");
 });
 
 for (const width of [375, 320]) {
@@ -80,10 +80,10 @@ test("the footer link, the tabs and the internal links resolve", async ({
 	).toEqual([PATH]);
 	const tabs = page.getByRole("navigation", { name: "Zielgruppen" });
 	expect(await hrefs(tabs.locator("a"))).toEqual([
-		"/hausverwaltung",
-		"/mietverwaltung",
-		"/weg-verwaltung",
-		"/wohnungsunternehmen",
+		"/kunden/hausverwaltung",
+		"/kunden/mietverwaltung",
+		"/kunden/weg-verwaltung",
+		"/kunden/wohnungsunternehmen",
 		PATH,
 	]);
 	await expect(tabs.locator('a[aria-current="page"]')).toHaveText(
@@ -105,12 +105,12 @@ test("every CTA leads to the booking page; pending links are hidden", async ({
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	for (const text of ["Demo buchen", "Angebot anfragen"]) {
 		const links = page.locator("main a", { hasText: text });
 		expect(await links.count(), text).toBeGreaterThanOrEqual(1);
-		for (const href of await hrefs(links)) expect(href).toBe("/demo-buchen");
+		for (const href of await hrefs(links)) expect(href).toBe("/demo");
 	}
 	await expect(
 		page.locator("main a", { hasText: "Unzufrieden mit Ihrem Messdienst?" }),
@@ -118,13 +118,13 @@ test("every CTA leads to the booking page; pending links are hidden", async ({
 	await expect(page.locator("section#wechsel")).toHaveCount(1);
 	await expect(
 		page.locator("main a", { hasText: "Portfolio kostenlos prüfen" }),
-	).toHaveAttribute("href", "/portfolio-checker");
+	).toHaveAttribute("href", "/portfolio-check");
 	await expect(
 		page.locator("main a", { hasText: "Muster-Kündigung herunterladen" }),
-	).toHaveAttribute("href", "/muster-kuendigung");
+	).toHaveAttribute("href", "/messdienst-wechseln/muster-kuendigung");
 	await expect(
 		page.locator("main a", { hasText: "Messdienstanbieter vergleichen" }),
-	).toHaveAttribute("href", "/messdienstanbieter-vergleich");
+	).toHaveAttribute("href", "/messdienst-vergleich");
 	await expect(
 		page.locator("main a", { hasText: "Bisherige Abrechnung prüfen" }),
 	).toHaveAttribute("href", "/heizkostenabrechnung-pruefen");
@@ -147,7 +147,7 @@ test.describe("without JS", () => {
 		await expect(page.locator(".steps li.on.done")).toHaveCount(4);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });
@@ -203,7 +203,7 @@ test("the problem picker answers, newest first", async ({ page }) => {
 	await expect(answers).toHaveCount(2);
 	await expect(
 		page.locator("#wechsel a", { hasText: "Wechsel besprechen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 });
 
 test("the tiles play when they come into view", async ({ page }) => {

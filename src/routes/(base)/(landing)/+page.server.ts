@@ -1,4 +1,4 @@
-import { ROUTE_MESSDIENSTANBIETER } from "$lib/routes";
+import { ROUTE_HOME } from "$lib/routes";
 import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
 import type { Actions, PageServerLoad } from "./$types";
 
@@ -12,6 +12,6 @@ export const actions: Actions = {
 	default: (event) =>
 		handleSwitchSignup(event, {
 			source: "messdienstanbieter",
-			page: ROUTE_MESSDIENSTANBIETER,
+			page: ROUTE_HOME,
 		}),
 };

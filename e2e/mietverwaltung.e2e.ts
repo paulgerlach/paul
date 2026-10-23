@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/mietverwaltung";
+const PATH = "/kunden/mietverwaltung";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -39,7 +39,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/mietverwaltung$/,
+		/\/kunden\/mietverwaltung$/,
 	);
 
 	const jsonLd = await page
@@ -53,7 +53,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, so a similar slug can't match.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/mietverwaltung<\/loc>/);
+	expect(sitemap).not.toMatch(
+		/<loc>https?:\/\/[^/]+\/kunden\/mietverwaltung<\/loc>/,
+	);
 });
 
 for (const width of [375, 320])
@@ -90,14 +92,14 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 	await page.goto(PATH);
 	await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 		"href",
-		"/demo-buchen",
+		"/demo",
 	);
 	await expect(
 		page.locator("section[aria-labelledby=mv-h1]"),
 	).not.toHaveAttribute("id", "start");
 	const demo = page.locator("main a", { hasText: /Demo buchen/i });
 	expect(await demo.count()).toBeGreaterThanOrEqual(5);
-	for (const href of await hrefs(demo)) expect(href).toBe("/demo-buchen");
+	for (const href of await hrefs(demo)) expect(href).toBe("/demo");
 
 	await expect(
 		page.locator("section[aria-labelledby=mv-h1] a", {
@@ -112,11 +114,11 @@ test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", as
 
 	await expect(
 		page.locator("#inhalt a", { hasText: /^Mieterportal$/ }),
-	).toHaveAttribute("href", "/mieterportal");
+	).toHaveAttribute("href", "/plattform/mieterportal");
 	// Inside a closed answer, so not in the accessibility tree yet.
 	await expect(
 		page.locator("#faq a.more", { hasText: "Mehr zur uVI" }),
-	).toHaveAttribute("href", "/verbrauchsinformation");
+	).toHaveAttribute("href", "/plattform/verbrauchsinformation");
 	await expect(
 		page.locator("a", { hasText: "Zum Fristenrechner" }),
 	).toHaveAttribute("href", "/fristenrechner");
@@ -150,7 +152,7 @@ test.describe("without JavaScript", () => {
 		);
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 	});
 });

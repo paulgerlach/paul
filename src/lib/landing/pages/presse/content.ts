@@ -20,7 +20,7 @@ export const contact = {
 	h2: "Sprechen Sie mit uns.",
 	text: "Interviews, Hintergrundgespräche, Zahlen und Bilder: Wir melden uns schnell und persönlich.",
 	mailLabel: "Presseanfragen",
-	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo-buchen.
+	// 44SBXKXJaSp6bvGMnbpZj6 ("Demo buchen"): /demo.
 	cta: { text: "Gespräch vereinbaren", href: DEMO_HREF },
 };
 

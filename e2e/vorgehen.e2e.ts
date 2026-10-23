@@ -91,7 +91,7 @@ test("the remote-reading block links to the HKVO-Leitfaden", async ({
 	await page.goto(PATH);
 	await expect(
 		page.getByRole("link", { name: "Zum HKVO-Leitfaden" }),
-	).toHaveAttribute("href", "/hkvo-leitfaden");
+	).toHaveAttribute("href", "/heizkostenverordnung");
 });
 
 test("every CTA leads to the contact card's form, the hero has no #start", async ({
@@ -106,7 +106,7 @@ test("every CTA leads to the contact card's form, the hero has no #start", async
 	).not.toHaveAttribute("id", "start");
 	for (const [name, target] of [
 		["Angebot einholen", "#start"],
-		["Demo buchen", "/demo-buchen"],
+		["Demo buchen", "/demo"],
 	]) {
 		const links = page.locator("main a", { hasText: name });
 		expect(await links.count(), name).toBeGreaterThanOrEqual(1);

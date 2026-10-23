@@ -13,7 +13,7 @@ What is still open on this repo, and the decisions you need to understand it. Ev
 All at `6138407c` (`git show 6138407c:<path>`):
 
 - `svelte-migration-plan/`: the migration (README with the strategy and decisions, `00-inventory.md`, phases `01`–`10`, `patterns.md`).
-- `new-landing-page-plan/`: the `/installationstool` plan, the last page plan. Every earlier page's plan is at the commit named in its `CLAUDE.md` paragraph and its gate.
+- `new-landing-page-plan/`: the `/plattform/installationstool` plan, the last page plan. Every earlier page's plan is at the commit named in its `CLAUDE.md` paragraph and its gate.
 
 ## Decisions to keep in mind
 
@@ -33,9 +33,9 @@ Site cutover (2026-10-21; the landing pages become the site):
 
 | Topic | Decision |
 |---|---|
-| Kept old pages | Only `/blog` (+ posts and previews) and `/fragebogen`. They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutzhinweise` were kept too until the legal pages' designs replaced them at the same URLs (2026-10-21, gate §1) |
-| Home | `/` → `/messdienstanbieter` with **307** (temporary, so `/` can become a page again) |
-| Dropped URLs | **301** to the closest page: `/preise` → `/messdienstwechsel#start`, `/geraete` → `/funkzaehler` (`/funktionen` until the Funkzähler page was built, 2026-10-21, gate §4). `/kontakt` did the same until its own design was built there (2026-10-21, gate §5). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
+| Kept old pages | Only `/blog` (+ posts and previews) and `/fragebogen`. They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutz` were kept too until the legal pages' designs replaced them at the same URLs (2026-10-21, gate §1) |
+| Home | `/` was a **307** to the Germany hub; since the new URLs (2026-10-23) the hub is `/` itself |
+| Dropped URLs | **301** to the closest page: `/preise` → `/messdienst-wechseln#start`, `/geraete` → `/funkzaehler` (`/funktionen` until the Funkzähler page was built, 2026-10-21, gate §4). `/kontakt` did the same until its own design was built there (2026-10-21, gate §5). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
 | Go-live gates | Unchanged; `LAUNCHED` (`$lib/landing/launch.ts`) is the one switch for the gated pages' indexing |
 
 Landing pages:
@@ -43,7 +43,7 @@ Landing pages:
 - **Indexing (2026-10-17):** after the cutover every page, every city included, is indexed and in the sitemap. That's why every gate blocks the cutover; until then the new pages are `noindex` and out of the sitemap (cities: only `live: true` ones, Berlin so far).
 - **KPIs (confirmed by the business 2026-10-12):** 92 % of installations at the first appointment, 14 days' notice, a 1–2 h window.
 - **Landing footer (2026-10-12):** the landing design's own footer (`$lib/landing/footerLinks.ts`), on every page since the site cutover; an entry without `href` is plain text until its page exists.
-- **"Demo buchen" (2026-10-21):** every "Demo buchen", and every other link the designs point at the booking design, goes to `/demo-buchen` (`DEMO_HREF`, gate §3), which books through Google Calendar. The closing cards whose signup form said "Demo buchen" have their design's video button again and no form; pages whose form has its own label (the city pages, `/messdienstwechsel`, `/upgrade-now` …) keep it.
+- **"Demo buchen" (2026-10-21):** every "Demo buchen", and every other link the designs point at the booking design, goes to `/demo` (`DEMO_HREF`, gate §3), which books through Google Calendar. The closing cards whose signup form said "Demo buchen" have their design's video button again and no form; pages whose form has its own label (the city pages, `/messdienst-wechseln`, `/fernablesung-umruesten` …) keep it.
 - **Shared sign-offs:** quotes, customer logos and the security block (`TrustSeals`) are the same on every page; they're settled once in the region pages' gate (§42).
 
 ## Building a new landing page

@@ -1,4 +1,4 @@
-<!-- One of the design's 20×20 line icons on /messdienstanbieter-vergleich, by name. -->
+<!-- One of the design's 20×20 line icons on /messdienst-vergleich, by name. -->
 <script lang="ts">
 	import StrokeIcon from "$lib/landing/components/icons/StrokeIcon.svelte";
 	import type { IconName } from "../icons";

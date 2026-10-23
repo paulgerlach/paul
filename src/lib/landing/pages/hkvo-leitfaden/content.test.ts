@@ -26,7 +26,7 @@ const strings = (value: unknown): string[] =>
 const hrefs = (html: string) =>
 	[...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
 
-describe("/hkvo-leitfaden content", () => {
+describe("/heizkostenverordnung content", () => {
 	it("has the design's H1 (with its soft hyphen)", () => {
 		expect(`${hero.h1} ${hero.h1Accent}`.replace("­", "")).toBe(
 			"Die Heizkostenverordnung. Einfach erklärt.",

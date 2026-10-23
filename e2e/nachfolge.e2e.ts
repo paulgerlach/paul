@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // Succession inquiries go to the local webhook sink from playwright.config.ts;
 // no database needed. The sink answers 500 for emails at @sink-fails.example.
 
-const PATH = "/nachfolge";
+const PATH = "/partner/nachfolge";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 const KONTAKT = "#kontakt";
 
@@ -72,7 +72,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/nachfolge$/,
+		/\/partner\/nachfolge$/,
 	);
 
 	const jsonLd = await page
@@ -86,7 +86,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/nachfolge<\/loc>/);
+	expect(sitemap).not.toMatch(
+		/<loc>https?:\/\/[^/]+\/partner\/nachfolge<\/loc>/,
+	);
 });
 
 for (const width of [375, 320])
@@ -156,7 +158,7 @@ test("CTAs lead to the contact form, the rows, the FAQ and /sicherheit", async (
 	await expect(page.getByText("Mehr Partnerschaften?")).toBeVisible();
 	await expect(
 		page.locator("main a", { hasText: /Zu den Partnerschaften/i }),
-	).toHaveAttribute("href", "/partnerschaften");
+	).toHaveAttribute("href", "/partner");
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zu Sicherheit" }),
 	).toHaveAttribute("href", "/sicherheit");
@@ -164,14 +166,14 @@ test("CTAs lead to the contact form, the rows, the FAQ and /sicherheit", async (
 	// The design's demo CTAs lead to the booking page.
 	await expect(
 		page.locator("section.end a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("section.trust a", { hasText: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
-	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
+	await expect(page.locator("a.ctab")).toHaveAttribute("href", "/demo");
 	await expect(
 		page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
-	).toHaveAttribute("href", "/demo-buchen");
+	).toHaveAttribute("href", "/demo");
 });
 
 test.describe("without JavaScript", () => {

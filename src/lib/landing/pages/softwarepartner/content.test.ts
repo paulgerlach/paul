@@ -173,7 +173,7 @@ describe("softwarepartner content", () => {
 		});
 	});
 
-	it("has three steps and the form's texts, as /installationspartner's", () => {
+	it("has three steps and the form's texts, as /partner/installationspartner's", () => {
 		expect(apply.steps).toHaveLength(3);
 		expect(apply.success("Max")).toBe(installer.apply.success("Max"));
 		for (const key of ["submit", "sending", "missing", "sendError"] as const)

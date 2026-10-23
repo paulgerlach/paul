@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /mieterportal, word for word from the
+ * Every text and the example data of /plattform/mieterportal, word for word from the
  * design. Components hold markup and behaviour only.
  *
  * The product description, the legal statements, the company claims and the

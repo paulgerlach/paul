@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Partner form of /installationspartner ("Als Partner melden"), validated in
+ * Partner form of /partner/installationspartner ("Als Partner melden"), validated in
  * the browser (superforms) and again in the form action.
  *
  * The options are the design's, word for word; the page shows them as they

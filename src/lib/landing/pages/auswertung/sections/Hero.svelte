@@ -1,4 +1,4 @@
-<!-- The hero (`.db-hero`): /dashboard's frame with one line and the mock-up. -->
+<!-- The hero (`.db-hero`): /plattform/dashboard's frame with one line and the mock-up. -->
 <script lang="ts">
 	import HeroFrame from "$lib/landing/pages/dashboard/components/HeroFrame.svelte";
 	import { hero } from "../content";

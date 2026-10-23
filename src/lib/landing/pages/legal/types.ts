@@ -1,6 +1,6 @@
 /**
- * The legal pages (/impressum, /datenschutzhinweise, /agb) share one design:
- * a hero with pill, H1 and lead over the `/hkvo-leitfaden` guide's table of
+ * The legal pages (/impressum, /datenschutz, /agb) share one design:
+ * a hero with pill, H1 and lead over the `/heizkostenverordnung` guide's table of
  * contents and article cards (`.lf-g`), with the legal page's own blocks
  * (`.lg-h3`, `.lg-list`, `.lg-doc`, `.lg-stand`, `.lg-nr`).
  */

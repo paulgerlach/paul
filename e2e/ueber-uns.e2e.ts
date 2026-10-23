@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// No form on this page: its "Demo buchen" lead to /demo-buchen.
+// No form on this page: its "Demo buchen" lead to /demo.
 //
 // The server renders with its real time; the page's clock takes over from the
 // browser's on mount, so `page.clock` at a fixed time checks the client side.
@@ -53,7 +53,7 @@ test("has no horizontal overflow at 375 px", async ({ page }) => {
 });
 
 test("the landing footer links here", async ({ page }) => {
-	await page.goto("/messdienstwechsel");
+	await page.goto("/messdienst-wechseln");
 	await expect(
 		page.locator("footer").getByRole("link", { name: "Über uns" }),
 	).toHaveAttribute("href", PATH);
@@ -67,10 +67,12 @@ test.describe("deadline card", () => {
 	test.use({ reducedMotion: "reduce" });
 	const card = (page: Page) => page.locator(".cd");
 
-	test("12.10.2026: the same day count as /upgrade-now", async ({ page }) => {
+	test("12.10.2026: the same day count as /fernablesung-umruesten", async ({
+		page,
+	}) => {
 		await gotoAt(page, PATH, OCT_12);
 		await expect(card(page)).toContainText("80Tage");
-		await gotoAt(page, "/upgrade-now", OCT_12);
+		await gotoAt(page, "/fernablesung-umruesten", OCT_12);
 		await expect(page.getByText("Noch 80 Tage").first()).toBeVisible();
 	});
 
@@ -140,16 +142,16 @@ test.describe("CTAs", () => {
 		await page.goto(PATH);
 		await expect(
 			page.locator(".hero").getByRole("link", { name: /Demo buchen/ }),
-		).toHaveAttribute("href", "/demo-buchen");
+		).toHaveAttribute("href", "/demo");
 		await expect(page.locator("section.final a.dcta")).toHaveAttribute(
 			"href",
-			"/demo-buchen",
+			"/demo",
 		);
 		await page
 			.locator("nav.top")
 			.getByRole("link", { name: "Demo buchen" })
 			.click();
-		await expect(page).toHaveURL(/\/demo-buchen$/);
+		await expect(page).toHaveURL(/\/demo$/);
 	});
 
 	test("Kundenstimmen lesen scrolls to the testimonials", async ({ page }) => {

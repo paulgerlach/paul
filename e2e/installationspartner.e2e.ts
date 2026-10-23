@@ -3,9 +3,9 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 // Partner inquiries go to the local webhook sink from playwright.config.ts;
 // no database needed. The sink answers 500 for emails at @sink-fails.example.
 
-const PATH = "/installationspartner";
+const PATH = "/partner/installationspartner";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-const DEMO = "/demo-buchen";
+const DEMO = "/demo";
 
 const testEmail = (name: string, domain = "example.com") =>
 	`e2e-ip-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;
@@ -73,7 +73,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/installationspartner$/,
+		/\/partner\/installationspartner$/,
 	);
 
 	const jsonLd = await page
@@ -88,7 +88,7 @@ test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// The host followed by the path, exactly.
 	expect(sitemap).not.toMatch(
-		/<loc>https?:\/\/[^/]+\/installationspartner<\/loc>/,
+		/<loc>https?:\/\/[^/]+\/partner\/installationspartner<\/loc>/,
 	);
 });
 
@@ -157,7 +157,7 @@ test("CTAs lead to the partner form, the rows, the FAQ and the linked pages", as
 	).toHaveAttribute("href", DEMO);
 	await expect(
 		page.locator("#faq a", { hasText: "Mehr zum Installationstool" }),
-	).toHaveAttribute("href", "/installationstool");
+	).toHaveAttribute("href", "/plattform/installationstool");
 });
 
 test.describe("without JavaScript", () => {

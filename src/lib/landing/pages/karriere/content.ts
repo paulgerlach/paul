@@ -11,7 +11,7 @@
  */
 import type { RoleId } from "$lib/forms/application";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_DATENSCHUTZHINWEISE, ROUTE_UEBER_UNS } from "$lib/routes";
+import { ROUTE_DATENSCHUTZ, ROUTE_UEBER_UNS } from "$lib/routes";
 import type { IconName } from "./icons";
 
 export type AreaId = "eng" | "ops" | "cs" | "sales";
@@ -341,7 +341,7 @@ export const apply = {
 	privacy: {
 		before: "Wie wir mit Ihren Daten umgehen, lesen Sie in den ",
 		link: "Datenschutzhinweisen",
-		href: ROUTE_DATENSCHUTZHINWEISE,
+		href: ROUTE_DATENSCHUTZ,
 		after: ".",
 	},
 	// The address is a placeholder until business names one (open question 2).

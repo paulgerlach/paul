@@ -1,5 +1,5 @@
 /**
- * Every text of /upgrade-now ("Jetzt noch umrüsten"), word for word from the
+ * Every text of /fernablesung-umruesten ("Jetzt noch umrüsten"), word for word from the
  * design. Components hold markup and behaviour only. Date-dependent words
  * ("knapp drei Monate", "Noch 85 Tage") come from `$lib/landing/deadline/deadline.ts`.
  *

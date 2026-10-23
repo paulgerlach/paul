@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { LAUNCHED } from "./launch.ts";
 
 // The offer goes to the local webhook sink from playwright.config.ts; the sink
 // answers 500 for emails at @sink-fails.example.
@@ -106,7 +107,7 @@ test("renders the page without errors", async ({ page }) => {
 	);
 	await expect(
 		page.locator('meta[name="robots"][content*="noindex"]'),
-	).toHaveCount(1);
+	).toHaveCount(LAUNCHED ? 0 : 1);
 	expect(errors).toEqual([]);
 });
 

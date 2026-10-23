@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { GATED_ROBOTS } from "./launch.ts";
 
 // No form on this page: its "Demo buchen" lead to /demo.
 
@@ -15,10 +16,10 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	await expect(page).toHaveTitle(/^Heizkostenabrechnung selbst erstellen/);
 	await expect(page.locator("h1")).toHaveCount(1);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.4), with a self-canonical
+	// noindex until LAUNCHED (its go-live gate), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		"noindex",
+		GATED_ROBOTS,
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",

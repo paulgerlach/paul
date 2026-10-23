@@ -1,6 +1,9 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import postgres from "postgres";
-import { CITIES } from "../src/lib/landing/pages/messdienstanbieter-city/cities/index.ts";
+import {
+	CITIES,
+	isLiveCity,
+} from "../src/lib/landing/pages/messdienstanbieter-city/cities/index.ts";
 
 // The smoke checks run on every city page and the Germany page; the form and
 // interaction tests on Berlin only, because the template is the same.
@@ -18,12 +21,14 @@ const PAGES = [
 	...CITIES.map((c) => ({
 		path: `${CITY}/${c.slug}`,
 		name: c.name,
-		live: c.live,
+		live: isLiveCity(c.slug),
 	})),
 	{ path: HUB, name: "Deutschland", live: true },
 ];
-const LIVE_PATHS = CITIES.filter((c) => c.live).map((c) => `${CITY}/${c.slug}`);
-const NOT_LIVE_PATHS = CITIES.filter((c) => !c.live).map(
+const LIVE_PATHS = CITIES.filter((c) => isLiveCity(c.slug)).map(
+	(c) => `${CITY}/${c.slug}`,
+);
+const NOT_LIVE_PATHS = CITIES.filter((c) => !isLiveCity(c.slug)).map(
 	(c) => `${CITY}/${c.slug}`,
 );
 

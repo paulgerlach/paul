@@ -10,7 +10,7 @@ What is left before the SvelteKit app replaces the Next deployment in production
 
 ## 2. Blocking the cutover
 
-- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§1–43), including the `/messdienst-wechseln` and city pages' gates
+- [ ] Every go-live gate in [go-live-gates.md](go-live-gates.md) (§1–43), including the `/messdienst-wechseln` and city pages' gates: signed off by the business on 2026-10-23; what that couldn't close is in its "Still open after the business sign-off"
 - [ ] Every item in [known-issues.md](known-issues.md) ticked: **KI-34** (the real phone for the JSON-LD; needs business confirmation together with the Impressum's number, gate §1, then add it to the Organization in `$lib/seo/organization.ts` and to the region pages' `ServiceJsonLd`, which both leave it out until then); KI-36 (the ported copy typos) went with the old legal pages
 - [ ] The Fragebogen defaults (`questionnaireDefaults` in `$lib/fragebogen/schema.ts`, copied from what Next actually submitted) confirmed by the business owner
 - [ ] Manual QA:
@@ -29,7 +29,7 @@ Not blocking, still open from the migration: a Playwright test of the Slack chat
 2. ~~Promote the Svelte app to the repo root~~ (done in `bd0bf304`; Next code, `components.json` and the React agent skills removed, KI-26/27).
 3. **Vercel project settings:** framework preset → SvelteKit, root directory → `/`, output auto-detected. Copy env vars and set `PUBLIC_PRISMIC_ENVIRONMENT` next to `NEXT_PUBLIC_PRISMIC_ENVIRONMENT` (keep both for the first week, see Rollback). AI Gateway access enabled.
 4. **Prismic dashboard:** preview URL → `https://heidisystems.com/api/preview`. Remove the revalidate webhook (there's no revalidate endpoint; pages are SSR with `s-maxage=60, stale-while-revalidate=600`). Push the slice models from the Svelte Slice Machine.
-5. **New landing pages:** set `LAUNCHED = true` in `$lib/landing/launch.ts` (the last item of each gate). It removes every gated page's `noindex`, adds them to the sitemap (`SITE_PAGES`) and makes every city live; the per-city `live` flags can then go.
+5. ~~**New landing pages:** set `LAUNCHED = true` in `$lib/landing/launch.ts`~~ (done 2026-10-23, ahead of the cutover, for the SEO review of the preview). It removes every gated page's `noindex`, adds them to the sitemap (`SITE_PAGES`) and makes every city live; the per-city `live` flags can then go.
 6. **Deploy to a preview URL,** rerun the full Playwright suite and the smoke run (`BASE_URL=<preview> bunx playwright test -c playwright.parity.config.ts`), check the old URLs (`curl -sI` for `/datenschutzhinweise`, `/preise`, `/geraete?x=1`: 200, no redirect), then promote to production.
 7. **Post-deploy checks (first hour):**
    - Search Console shows no spike in 404s or coverage errors; Vercel logs are free of 5xx.

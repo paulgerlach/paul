@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectGated, LAUNCHED } from "./launch.ts";
 
 // The legal pages (/impressum, /datenschutzhinweise, /agb): one template,
 // three texts. /impressum and /datenschutzhinweise replace live URLs and stay
-// indexed; /agb is new and noindex until its go-live gate.
+// indexed; /agb is new and noindex until LAUNCHED.
 
 const PAGES = [
 	{
@@ -26,7 +27,7 @@ const PAGES = [
 		title: /^Allgemeine Geschäftsbedingungen \(AGB\) \|/,
 		h1: "Allgemeine Geschäftsbedingungen",
 		articles: 5,
-		indexed: false,
+		indexed: LAUNCHED,
 		last: { name: /Teil C/, id: "s-gm-c" },
 	},
 ];
@@ -115,7 +116,7 @@ test("the sitemap lists the indexed legal pages only", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	expect(sitemap).toContain("/impressum</loc>");
 	expect(sitemap).toContain("/datenschutzhinweise</loc>");
-	expect(sitemap).not.toContain("/agb</loc>");
+	expectGated(sitemap).toContain("/agb</loc>");
 });
 
 test("the footer's legal line links the three pages", async ({ page }) => {

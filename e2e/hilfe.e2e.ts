@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { GATED_ROBOTS } from "./launch.ts";
 
 // Votes go to the local webhook sink from playwright.config.ts; no database
 // needed. A vote has no email, so each test votes on its own question and
@@ -46,10 +47,10 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page).toHaveTitle(/^Hilfe-Center/);
 	await expect(page.locator("h1")).toHaveCount(1);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.5), with a self-canonical
+	// noindex until LAUNCHED (its go-live gate), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		"noindex",
+		GATED_ROBOTS,
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",

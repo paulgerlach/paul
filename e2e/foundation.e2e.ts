@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectGated } from "./launch.ts";
 
 test("a page serves an optimized image", async ({ page }) => {
 	await page.goto("/");
@@ -42,7 +43,7 @@ test("sitemap.xml lists the site's pages and blog posts", async ({
 		expect(body).toContain(`<loc>https://heidisystems.com${path}</loc>`);
 	// Blog posts from Prismic (KI-05).
 	expect(body).toMatch(/<loc>https:\/\/heidisystems\.com\/blog\/[^<]+<\/loc>/);
-	// /geraete is behind its go-live gate, and / is no page.
-	for (const path of ["/geraete", ""])
-		expect(body).not.toContain(`<loc>https://heidisystems.com${path}</loc>`);
+	// /geraete is behind its go-live gate, and no entry without a path.
+	expectGated(body).toContain("<loc>https://heidisystems.com/geraete</loc>");
+	expect(body).not.toContain("<loc>https://heidisystems.com</loc>");
 });

@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
 // No form on this page: its "Demo buchen" lead to /demo.
 
@@ -32,10 +33,10 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 			name: "Funkzähler von Heidi: Heizkostenverteiler, Wasserzähler und Rauchwarnmelder",
 		}),
 	).toBeVisible();
-	// noindex until the go-live gate (§3), with a self-canonical
+	// noindex until LAUNCHED (its go-live gate), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		"noindex",
+		GATED_ROBOTS,
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
@@ -50,9 +51,9 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	expect(faq.mainEntity).toHaveLength(6);
 });
 
-test("is not in the sitemap yet", async ({ request }) => {
+test("is in the sitemap once launched", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/geraete<\/loc>/);
+	expectGated(sitemap).toMatch(/<loc>https?:\/\/[^/]+\/geraete<\/loc>/);
 });
 
 for (const width of [375, 320])

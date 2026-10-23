@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { GATED_ROBOTS } from "./launch.ts";
 
 // Applications go to the local webhook sink from playwright.config.ts; no
 // database needed. The sink answers 500 for emails at @sink-fails.example.
@@ -54,10 +55,10 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page).toHaveTitle(/^Karriere/);
 	await expect(page.locator("h1")).toHaveCount(1);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.6), with a self-canonical
+	// noindex until LAUNCHED (its go-live gate), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		"noindex",
+		GATED_ROBOTS,
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",

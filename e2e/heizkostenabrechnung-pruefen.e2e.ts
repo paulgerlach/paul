@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
 // No form on this page: its "Demo buchen" lead to /demo.
 
@@ -64,10 +65,10 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 		"Heizkosten­abrechnung jetzt überprüfen.",
 	);
 	await expect(page.locator("#header")).toHaveCount(0);
-	// noindex until the go-live gate (plan §4.4), with a self-canonical
+	// noindex until LAUNCHED (its go-live gate), with a self-canonical
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		"noindex",
+		GATED_ROBOTS,
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
@@ -77,10 +78,10 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page.locator("#schreiben")).toHaveCount(0);
 });
 
-test("is not in the sitemap yet", async ({ request }) => {
+test("is in the sitemap once launched", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	// Exact: the blog has a post /blog/heizkostenabrechnung-pruefen.
-	expect(sitemap).not.toMatch(
+	expectGated(sitemap).toMatch(
 		/<loc>https?:\/\/[^/<]+\/heizkostenabrechnung-pruefen<\/loc>/,
 	);
 });

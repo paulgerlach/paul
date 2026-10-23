@@ -1,5 +1,7 @@
 import { readdirSync } from "node:fs";
+import { join, relative } from "node:path";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { landingNav } from "../src/lib/landing/navLinks.ts";
 
 // The signup tests save leads, so they need a database with the `leads` table
 // (`bunx drizzle-kit push` on a fresh local DB). Webhooks go to the local sink
@@ -57,16 +59,26 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	expect(faq.mainEntity).toHaveLength(8);
 });
 
-test("the nav links only to landing pages, the blog and the questionnaire", async ({
+const NAV_ITEMS = landingNav.flatMap((g) => g.columns.flatMap((c) => c.items));
+
+/** The paths of the static pages under a route group, nested ones included. */
+function pagePaths(group: string): string[] {
+	return readdirSync(group, { recursive: true, encoding: "utf8" })
+		.filter((file) => file.endsWith("+page.svelte") && !file.includes("["))
+		.map((file) => `/${relative(group, join(group, file, ".."))}`)
+		.map((path) => (path === "/" ? path : path.replace(/\/$/, "")));
+}
+
+test("the nav links only to landing pages, the blog, /preise and the questionnaire", async ({
 	page,
 	request,
 }) => {
-	const landingRoutes = readdirSync("src/routes/(base)/(landing)", {
-		withFileTypes: true,
-	})
-		.filter((entry) => entry.isDirectory())
-		.map((entry) => `/${entry.name}`);
-	const allowed = [...landingRoutes, "/blog", "/fragebogen"];
+	const allowed = [
+		...pagePaths("src/routes/(base)/(landing)"),
+		"/blog",
+		"/preise",
+		"/fragebogen",
+	];
 
 	for (const path of [PATH, "/messdienst/berlin", "/karriere"]) {
 		await page.goto(path);
@@ -307,8 +319,13 @@ test.describe("interactions", () => {
 		await expect(current).toHaveCount(1);
 		await expect(current).toHaveAttribute("href", PATH);
 		await expect(current).toHaveClass(/cur/);
-		await expect(page.locator(".nv-links")).not.toContainText("Self-Service");
-		await expect(page.locator(".nv-links .soon")).toHaveCount(2);
+		// Each entry's title is its own element; an entry without a page has none.
+		const titles = await page.locator(".nv-links .nv-t").allTextContents();
+		for (const item of NAV_ITEMS.filter((i) => !i.href && !i.soon))
+			expect(titles.map((t) => t.trim())).not.toContain(item.title);
+		await expect(page.locator(".nv-links .soon")).toHaveCount(
+			NAV_ITEMS.filter((i) => i.soon).length,
+		);
 	});
 
 	test("burger menu opens the nav with accordions", async ({ page }) => {

@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie setzen sich die Kosten zusammen?",
 			answer:
-				'Sie zahlen pro tatsächlich installiertem Zähler, dazu kommt eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein konkretes <a href="#start">Angebot</a> für Ihren Münchner Bestand.',
+				"Sie zahlen pro tatsächlich installiertem Zähler, dazu kommt eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein konkretes Angebot für Ihren Münchner Bestand.",
 		},
 	],
 	final: {

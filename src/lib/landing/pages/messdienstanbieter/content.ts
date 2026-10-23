@@ -153,7 +153,7 @@ const content: RegionContent = {
 		{
 			question: "Wie sieht das Preismodell aus?",
 			answer:
-				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="#start">Angebot</a> für Ihren bundesweiten Bestand.',
+				"Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein Angebot für Ihren bundesweiten Bestand.",
 		},
 	],
 	final: {

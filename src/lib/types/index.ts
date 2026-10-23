@@ -41,3 +41,10 @@ export type FAQItemType = {
 	question: string;
 	answer: string;
 };
+
+export type ChartSwiperType = {
+	name: string;
+	image: Snippet;
+	title: string;
+	text: string;
+};

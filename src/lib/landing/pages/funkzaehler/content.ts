@@ -1,5 +1,5 @@
 /**
- * Every text and the example data of /funkzaehler, word for word from the
+ * Every text and the example data of /geraete (Funkzähler), word for word from the
  * design, in the shapes of the shared `uv` template and of the page's device
  * gallery. Components hold markup and behaviour only.
  *

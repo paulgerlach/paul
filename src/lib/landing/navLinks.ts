@@ -8,7 +8,7 @@ import {
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
-	ROUTE_FUNKZAEHLER,
+	ROUTE_GERAETE,
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_HKVO_LEITFADEN,
@@ -24,6 +24,7 @@ import {
 	ROUTE_NEUIGKEITEN,
 	ROUTE_PARTNERSCHAFTEN,
 	ROUTE_PORTFOLIO_CHECKER,
+	ROUTE_PREISE,
 	ROUTE_PRESSE,
 	ROUTE_PRIVATE_VERMIETER,
 	ROUTE_SCHNITTSTELLEN,
@@ -41,7 +42,7 @@ import {
 
 /**
  * Top nav of the landing pages, the designs' own (the same in every design).
- * It links only to landing pages, the blog and the questionnaire.
+ * It links only to landing pages, the blog, /preise and the questionnaire.
  *
  * An entry without `href` has no landing page yet and isn't shown; its
  * comment names the design id of its target, so building that page means
@@ -82,7 +83,7 @@ export const landingNav: LandingNavGroup[] = [
 					{
 						title: "Funkzähler",
 						text: "Heizkostenverteiler, Wasserzähler und Rauchwarnmelder mit Fernablesung",
-						href: ROUTE_FUNKZAEHLER,
+						href: ROUTE_GERAETE,
 					},
 					{
 						title: "Self-Service",
@@ -94,10 +95,10 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Heizkostenabrechnung",
 						text: "Auf Knopfdruck, Rechnungen per DocuScan",
 					},
-					// The site's /preise, not a landing page yet.
 					{
 						title: "Preise",
 						text: "Nach installierten Zählern plus Abrechnungspauschale",
+						href: ROUTE_PREISE,
 					},
 					{
 						title: "Sicherheit & Datenschutz",

@@ -12,7 +12,7 @@ import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { MailboxKey } from "$lib/forms/contactInquiry";
 import {
-	ROUTE_DATENSCHUTZ,
+	ROUTE_DATENSCHUTZHINWEISE,
 	ROUTE_HILFE,
 	ROUTE_PARTNERSCHAFTEN,
 	ROUTE_SELF_SERVICE,
@@ -156,7 +156,7 @@ export const form = {
 	consent: {
 		before:
 			"Ich bin einverstanden, dass Heidi Systems meine Angaben zur Bearbeitung meiner Anfrage verarbeitet. Details in der ",
-		link: { text: "Datenschutzerklärung", href: ROUTE_DATENSCHUTZ },
+		link: { text: "Datenschutzerklärung", href: ROUTE_DATENSCHUTZHINWEISE },
 		after: ".",
 	},
 	submit: "Nachricht senden",

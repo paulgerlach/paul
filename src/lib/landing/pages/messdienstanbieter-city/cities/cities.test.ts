@@ -117,9 +117,10 @@ describe.each(pages)("%s", (slug, page) => {
 		expect(page.map.viewBox).toMatch(/^-?[\d.]+ -?[\d.]+ [\d.]+ [\d.]+$/);
 	});
 
-	it("has 5 FAQ items, the last linking to the prices", () => {
+	it("has 5 FAQ items, the pricing answer without a link", () => {
 		expect(page.faq).toHaveLength(5);
-		expect(page.faq[4].answer).toContain('<a href="#start">');
+		expect(page.faq[4].answer).toContain("Angebot");
+		expect(page.faq[4].answer).not.toContain("<a ");
 	});
 
 	it("shows 12 different customer logos", () => {

@@ -33,6 +33,18 @@ import zufrieden_check from "$lib/assets/zufrieden_check.png?enhanced";
 import teils_teils_scale from "$lib/assets/teils_teils_scale.png?enhanced";
 import unzufrieden_x from "$lib/assets/unzufrieden_x.png?enhanced";
 
+// /preise
+import checkmark_bold from "$lib/assets/checkmark_bold.png?enhanced";
+import clock from "$lib/assets/clock.png?enhanced";
+import doc from "$lib/assets/doc.png?enhanced";
+import instruments from "$lib/assets/instruments.png?enhanced";
+import right_arrow from "$lib/assets/right_arrow.png?enhanced";
+import swiper_chart from "$lib/assets/swiper_chart.png?enhanced";
+import chart_slide_2 from "$lib/assets/chart_slide_2.png?enhanced";
+import chart_slide_3 from "$lib/assets/chart_slide_3.png?enhanced";
+import vitolosUrl from "$lib/assets/vitolos.svg";
+const vitolos = svg(vitolosUrl, 130, 32);
+
 export {
 	caract_mind,
 	checkmark_icon_big,
@@ -58,4 +70,13 @@ export {
 	zufrieden_check,
 	teils_teils_scale,
 	unzufrieden_x,
+	checkmark_bold,
+	clock,
+	doc,
+	instruments,
+	right_arrow,
+	swiper_chart,
+	chart_slide_2,
+	chart_slide_3,
+	vitolos,
 };

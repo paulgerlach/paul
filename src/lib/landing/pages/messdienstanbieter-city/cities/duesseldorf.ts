@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie ist der Preis aufgebaut?",
 			answer:
-				'Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes <a href="#start">Angebot</a> für den Düsseldorfer Bestand bekommen Sie nach dem Portfolio-Check.',
+				"Abgerechnet wird pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Ihr konkretes Angebot für den Düsseldorfer Bestand bekommen Sie nach dem Portfolio-Check.",
 		},
 	],
 	final: {

@@ -1,5 +1,4 @@
 export const ROUTE_AGB = "/agb";
-export const ROUTE_DATENSCHUTZ = "/datenschutz";
 export const ROUTE_FRAGEBOGEN = "/fragebogen";
 export const ROUTE_FUNKTIONEN = "/funktionen";
 export const ROUTE_IMPRESSUM = "/impressum";
@@ -24,7 +23,6 @@ export const ROUTE_MIETERPORTAL = "/plattform/mieterportal";
 export const ROUTE_DASHBOARD = "/plattform/dashboard";
 export const ROUTE_AUSWERTUNG = "/plattform/auswertung";
 export const ROUTE_INSTALLATIONSTOOL = "/plattform/installationstool";
-export const ROUTE_FUNKZAEHLER = "/funkzaehler";
 export const ROUTE_SICHERHEIT = "/sicherheit";
 export const ROUTE_VERBRAUCHSINFORMATION = "/plattform/verbrauchsinformation";
 export const ROUTE_SCHNITTSTELLEN = "/plattform/schnittstellen";

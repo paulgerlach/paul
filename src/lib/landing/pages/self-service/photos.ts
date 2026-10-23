@@ -1,5 +1,5 @@
 /**
- * The page's photos. The six devices are /funkzaehler's and the dashboard is
+ * The page's photos. The six devices are /geraete's and the dashboard is
  * /vorgehen's, byte-identical to the design's; the capsules, the other
  * meter, the heat meter's site, the statement and the signature are new.
  */

@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 // No form on this page: its "Demo buchen" lead to /demo.
 
-const PATH = "/funkzaehler";
+const PATH = "/geraete";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -39,7 +39,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
 		"href",
-		/\/funkzaehler$/,
+		/\/geraete$/,
 	);
 
 	const jsonLd = await page
@@ -52,7 +52,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 
 test("is not in the sitemap yet", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/funkzaehler<\/loc>/);
+	expect(sitemap).not.toMatch(/<loc>https?:\/\/[^/]+\/geraete<\/loc>/);
 });
 
 for (const width of [375, 320])
@@ -87,10 +87,7 @@ test("the footer and the nav lead here and every internal link resolves", async 
 	}
 });
 
-test("the pages that waited for it link here, and /geraete redirects here", async ({
-	page,
-	request,
-}) => {
+test("the pages that waited for it link here", async ({ page }) => {
 	await page.goto("/vorgehen");
 	await expect(
 		page.locator("main a", { hasText: "Digitale Funkablesung" }),
@@ -99,9 +96,6 @@ test("the pages that waited for it link here, and /geraete redirects here", asyn
 	await expect(
 		page.locator("main a.card", { hasText: "Funkzähler im Überblick" }),
 	).toHaveAttribute("href", PATH);
-	const response = await request.get("/geraete", { maxRedirects: 0 });
-	expect(response.status()).toBe(301);
-	expect(response.headers().location).toBe(PATH);
 });
 
 test("CTAs lead to the booking page, the rows, the FAQ and the linked pages", async ({

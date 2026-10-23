@@ -1,12 +1,17 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The site cutover: old URLs redirect, and the kept old pages (blog,
-// Fragebogen) render inside the landing header and footer. The legal pages
+// The site cutover: the old URLs stay pages, and the kept old pages (blog,
+// Fragebogen, /preise) render inside the landing header and footer. The legal pages
 // are landing pages now (legal.e2e.ts).
 
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
-const KEPT_PAGES = ["/blog", "/blog/weg-hausverwaltung-excel", "/fragebogen"];
+const KEPT_PAGES = [
+	"/blog",
+	"/blog/weg-hausverwaltung-excel",
+	"/fragebogen",
+	"/preise",
+];
 
 /** Console errors, warnings (hydration) and page errors from now on. */
 function collectProblems(page: Page) {
@@ -19,22 +24,14 @@ function collectProblems(page: Page) {
 	return problems;
 }
 
-test.describe("redirects", () => {
-	for (const [path, status, location] of [
-		["/datenschutzhinweise", 301, "/datenschutz"],
-		["/preise", 301, "/messdienst-wechseln#start"],
-		["/preise/", 301, "/messdienst-wechseln#start"],
-		["/geraete", 301, "/funkzaehler"],
-		["/preise/?utm_source=x", 301, "/messdienst-wechseln?utm_source=x#start"],
-		["/geraete?a=1&b=2", 301, "/funkzaehler?a=1&b=2"],
-	] as const)
-		test(`${path} → ${location}`, async ({ request }) => {
-			const response = await request.get(path, { maxRedirects: 0 });
-			expect(response.status()).toBe(status);
-			expect(response.headers().location).toBe(location);
-			expect(response.headers()["cache-control"]).toBe(
-				"s-maxage=3600, stale-while-revalidate=86400",
-			);
+test.describe("old URLs", () => {
+	// Every URL of the old site is a page again (2026-10-23), none redirects.
+	for (const path of ["/preise", "/geraete", "/datenschutzhinweise"])
+		test(`${path} is a page`, async ({ request }) => {
+			const response = await request.get(`${path}?utm_source=x`, {
+				maxRedirects: 0,
+			});
+			expect(response.status()).toBe(200);
 		});
 
 	test("the home is the Germany hub", async ({ page }) => {

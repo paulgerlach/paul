@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// The legal pages (/impressum, /datenschutz, /agb): one template,
-// three texts. /impressum and /datenschutz replace live URLs and stay
+// The legal pages (/impressum, /datenschutzhinweise, /agb): one template,
+// three texts. /impressum and /datenschutzhinweise replace live URLs and stay
 // indexed; /agb is new and noindex until its go-live gate.
 
 const PAGES = [
@@ -14,7 +14,7 @@ const PAGES = [
 		last: { name: /Urheberrecht/, id: "s-urheber" },
 	},
 	{
-		path: "/datenschutz",
+		path: "/datenschutzhinweise",
 		title: /^Datenschutzerklärung \|/,
 		h1: "Datenschutzerklärung",
 		articles: 11,
@@ -114,7 +114,7 @@ for (const legal of PAGES)
 test("the sitemap lists the indexed legal pages only", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
 	expect(sitemap).toContain("/impressum</loc>");
-	expect(sitemap).toContain("/datenschutz</loc>");
+	expect(sitemap).toContain("/datenschutzhinweise</loc>");
 	expect(sitemap).not.toContain("/agb</loc>");
 });
 
@@ -124,7 +124,7 @@ test("the footer's legal line links the three pages", async ({ page }) => {
 	await expect(links).toHaveText(["Impressum", "Datenschutz", "AGB"]);
 	expect(
 		await links.evaluateAll((els) => els.map((a) => a.getAttribute("href"))),
-	).toEqual(["/impressum", "/datenschutz", "/agb"]);
+	).toEqual(["/impressum", "/datenschutzhinweise", "/agb"]);
 });
 
 test("Demo buchen goes to /demo", async ({ page }) => {

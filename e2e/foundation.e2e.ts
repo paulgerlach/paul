@@ -34,14 +34,15 @@ test("sitemap.xml lists the site's pages and blog posts", async ({
 		"/",
 		"/messdienst-wechseln",
 		"/funktionen",
+		"/preise",
 		"/blog",
 		"/impressum",
-		"/datenschutz",
+		"/datenschutzhinweise",
 	])
 		expect(body).toContain(`<loc>https://heidisystems.com${path}</loc>`);
 	// Blog posts from Prismic (KI-05).
 	expect(body).toMatch(/<loc>https:\/\/heidisystems\.com\/blog\/[^<]+<\/loc>/);
-	// The dropped pages redirect, and / is no page.
-	for (const path of ["/preise", "/geraete", ""])
+	// /geraete is behind its go-live gate, and / is no page.
+	for (const path of ["/geraete", ""])
 		expect(body).not.toContain(`<loc>https://heidisystems.com${path}</loc>`);
 });

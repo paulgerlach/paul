@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie sieht das Preismodell aus?",
 			answer:
-				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="#start">Angebot</a> für Ihren Karlsruher Bestand gibt es nach dem Portfolio-Check.',
+				"Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes Angebot für Ihren Karlsruher Bestand gibt es nach dem Portfolio-Check.",
 		},
 	],
 	final: {

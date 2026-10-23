@@ -33,9 +33,9 @@ Site cutover (2026-10-21; the landing pages become the site):
 
 | Topic | Decision |
 |---|---|
-| Kept old pages | Only `/blog` (+ posts and previews) and `/fragebogen`. They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutz` were kept too until the legal pages' designs replaced them at the same URLs (2026-10-21, gate §1) |
+| Kept old pages | Only `/blog` (+ posts and previews), `/fragebogen` and `/preise` (deleted in the cutover, restored 2026-10-23). They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutzhinweise` were kept too until the legal pages' designs replaced them (2026-10-21, gate §1; the Datenschutzerklärung moved from `/datenschutz` back to `/datenschutzhinweise` on 2026-10-23) |
 | Home | `/` was a **307** to the Germany hub; since the new URLs (2026-10-23) the hub is `/` itself |
-| Dropped URLs | **301** to the closest page: `/preise` → `/messdienst-wechseln#start`, `/geraete` → `/funkzaehler` (`/funktionen` until the Funkzähler page was built, 2026-10-21, gate §4). `/kontakt` did the same until its own design was built there (2026-10-21, gate §5). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
+| Dropped URLs | None since 2026-10-23: every old URL is a page (`/preise` restored, the Funkzähler page at `/geraete`, the Datenschutzerklärung at `/datenschutzhinweise`). Until then `/preise` → `/messdienst-wechseln#start` and `/geraete` → `/funkzaehler` 301ed. `/kontakt` did the same until its own design was built there (2026-10-21, gate §5). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
 | Go-live gates | Unchanged; `LAUNCHED` (`$lib/landing/launch.ts`) is the one switch for the gated pages' indexing |
 
 Landing pages:

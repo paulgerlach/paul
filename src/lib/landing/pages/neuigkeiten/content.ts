@@ -16,7 +16,7 @@ import {
 	ROUTE_DASHBOARD,
 	ROUTE_FRISTENRECHNER,
 	ROUTE_FUNKTIONEN,
-	ROUTE_FUNKZAEHLER,
+	ROUTE_GERAETE,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_NACHFOLGE,
@@ -107,7 +107,7 @@ const stories: Story[] = [
 		title:
 			"Funkzähler im Überblick: Heizkostenverteiler, Wasserzähler und Rauchwarnmelder",
 		photo: "buildingWide",
-		more: { text: "Mehr erfahren", href: ROUTE_FUNKZAEHLER },
+		more: { text: "Mehr erfahren", href: ROUTE_GERAETE },
 	},
 	{
 		topic: "p",

@@ -1,20 +1,11 @@
-import {
-	ROUTE_DATENSCHUTZ,
-	ROUTE_DATENSCHUTZHINWEISE,
-	ROUTE_FUNKZAEHLER,
-	ROUTE_GERAETE,
-	ROUTE_MESSDIENSTWECHSEL,
-	ROUTE_PREISE,
-} from "$lib/routes";
-
 export type Redirect = { to: string; status: 301 | 307 };
 
-/** Old URLs of the site and where they live now (site cutover, new URLs). */
-export const REDIRECTS: Record<string, Redirect> = {
-	[ROUTE_PREISE]: { to: `${ROUTE_MESSDIENSTWECHSEL}#start`, status: 301 },
-	[ROUTE_GERAETE]: { to: ROUTE_FUNKZAEHLER, status: 301 },
-	[ROUTE_DATENSCHUTZHINWEISE]: { to: ROUTE_DATENSCHUTZ, status: 301 },
-};
+/**
+ * Old URLs of the site and where they live now. Empty since every old URL is
+ * a page again (/preise, /geraete and /datenschutzhinweise, 2026-10-23); a
+ * URL that moves gets its entry here.
+ */
+export const REDIRECTS: Record<string, Redirect> = {};
 
 /** The redirect for a path, ignoring one trailing slash; null if none. */
 export function redirectFor(pathname: string): Redirect | null {

@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie berechnet Heidi die Kosten?",
 			answer:
-				'Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein <a href="#start">Angebot</a> für Ihren Mannheimer Bestand.',
+				"Sie zahlen nur für tatsächlich installierte Zähler plus eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein Angebot für Ihren Mannheimer Bestand.",
 		},
 	],
 	final: {

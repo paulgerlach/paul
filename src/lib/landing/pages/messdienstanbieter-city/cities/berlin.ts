@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Was kostet Heidi?",
 			answer:
-				'Abgerechnet wird nach der Anzahl der tatsächlich installierten Zähler, dazu kommt eine Abrechnungspauschale. Ein konkretes <a href="#start">Angebot</a> für Ihren Berliner Bestand erhalten Sie nach dem Portfolio-Check.',
+				"Abgerechnet wird nach der Anzahl der tatsächlich installierten Zähler, dazu kommt eine Abrechnungspauschale. Ein konkretes Angebot für Ihren Berliner Bestand erhalten Sie nach dem Portfolio-Check.",
 		},
 	],
 	final: {

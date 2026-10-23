@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie berechnet Heidi die Kosten?",
 			answer:
-				'Pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein konkretes <a href="#start">Angebot</a> für Ihren Frankfurter Bestand.',
+				"Pro tatsächlich installiertem Zähler, dazu eine Abrechnungspauschale. Nach dem Portfolio-Check erhalten Sie ein konkretes Angebot für Ihren Frankfurter Bestand.",
 		},
 	],
 	final: {

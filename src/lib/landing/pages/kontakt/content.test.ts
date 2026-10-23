@@ -7,7 +7,7 @@ import {
 } from "$lib/forms/contactInquiry";
 import { LOGIN_URL } from "$lib/company";
 import {
-	ROUTE_DATENSCHUTZ,
+	ROUTE_DATENSCHUTZHINWEISE,
 	ROUTE_HILFE,
 	ROUTE_PARTNERSCHAFTEN,
 	ROUTE_SELF_SERVICE,
@@ -55,7 +55,7 @@ describe("kontakt content", () => {
 				href: "mailto:presse@heidisystems.com",
 			},
 		]);
-		expect(form.consent.link.href).toBe(ROUTE_DATENSCHUTZ);
+		expect(form.consent.link.href).toBe(ROUTE_DATENSCHUTZHINWEISE);
 		expect(faq.items[0].answer).toContain(`href="${LOGIN_URL}"`);
 		expect(faq.items[0].answer).toContain(`href="${ROUTE_HILFE}"`);
 		expect(faq.items[1].answer).toContain(`href="${ROUTE_SELF_SERVICE}"`);

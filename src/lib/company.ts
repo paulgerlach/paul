@@ -1,4 +1,8 @@
-import { ROUTE_AGB, ROUTE_DATENSCHUTZ, ROUTE_IMPRESSUM } from "$lib/routes";
+import {
+	ROUTE_AGB,
+	ROUTE_DATENSCHUTZHINWEISE,
+	ROUTE_IMPRESSUM,
+} from "$lib/routes";
 
 /** Heidi Systems' address, phone, profiles and legal links, used site-wide. */
 export const ADDRESS = {
@@ -27,6 +31,6 @@ export const SOCIALS = [
 /** The footer's legal line, in the design's order. */
 export const LEGAL_LINKS = [
 	{ text: "Impressum", href: ROUTE_IMPRESSUM },
-	{ text: "Datenschutz", href: ROUTE_DATENSCHUTZ },
+	{ text: "Datenschutz", href: ROUTE_DATENSCHUTZHINWEISE },
 	{ text: "AGB", href: ROUTE_AGB },
 ];

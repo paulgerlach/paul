@@ -28,6 +28,7 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_HOME, 1, false, "weekly"),
 	page(r.ROUTE_MESSDIENSTWECHSEL, 0.9, false),
 	page(r.ROUTE_FUNKTIONEN, 0.9, false),
+	page(r.ROUTE_PREISE, 0.8, false),
 	// Product and segment pages
 	page(r.ROUTE_VORGEHEN, 0.8),
 	page(r.ROUTE_UPGRADE_NOW, 0.8),
@@ -38,7 +39,7 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_AUSWERTUNG, 0.8),
 	page(r.ROUTE_SCHNITTSTELLEN, 0.8),
 	page(r.ROUTE_INSTALLATIONSTOOL, 0.8),
-	page(r.ROUTE_FUNKZAEHLER, 0.8),
+	page(r.ROUTE_GERAETE, 0.8),
 	page(r.ROUTE_HAUSVERWALTUNG, 0.8),
 	page(r.ROUTE_MIETVERWALTUNG, 0.8),
 	page(r.ROUTE_WEG_VERWALTUNG, 0.8),
@@ -73,6 +74,6 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_SELF_SERVICE, 0.7),
 	// Legal
 	page(r.ROUTE_IMPRESSUM, 0.3, false, "yearly"),
-	page(r.ROUTE_DATENSCHUTZ, 0.3, false, "yearly"),
+	page(r.ROUTE_DATENSCHUTZHINWEISE, 0.3, false, "yearly"),
 	page(r.ROUTE_AGB, 0.3, true, "yearly"),
 ];

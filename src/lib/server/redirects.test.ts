@@ -2,25 +2,10 @@ import { describe, expect, it } from "vitest";
 import { REDIRECTS, redirectFor, withQuery } from "./redirects";
 
 describe("redirectFor", () => {
-	it("maps every old URL", () => {
-		expect(redirectFor("/preise")).toEqual({
-			to: "/messdienst-wechseln#start",
-			status: 301,
-		});
-		expect(redirectFor("/geraete")).toEqual({
-			to: "/funkzaehler",
-			status: 301,
-		});
-		expect(redirectFor("/datenschutzhinweise")).toEqual({
-			to: "/datenschutz",
-			status: 301,
-		});
-		expect(Object.keys(REDIRECTS)).toHaveLength(3);
-	});
-
-	it("ignores one trailing slash", () => {
-		expect(redirectFor("/preise/")).toEqual(REDIRECTS["/preise"]);
-		expect(redirectFor("/preise//")).toBeNull();
+	it("redirects no old URL: each is a page again", () => {
+		expect(Object.keys(REDIRECTS)).toHaveLength(0);
+		for (const path of ["/preise", "/geraete", "/datenschutzhinweise"])
+			expect(redirectFor(path)).toBeNull();
 	});
 
 	it("leaves every other path alone", () => {
@@ -28,11 +13,9 @@ describe("redirectFor", () => {
 			"/blog",
 			"/preview",
 			"/preview/blog/x",
-			// The home page (the Germany hub) since the new URLs
 			"/",
-			// A page again (2026-10-21), no longer redirected
 			"/kontakt",
-			"/preise/x",
+			"/preise/",
 			"/toString",
 			"/constructor",
 		])

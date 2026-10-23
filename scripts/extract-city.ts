@@ -470,18 +470,13 @@ async function readContent(html: string) {
 			console.warn(
 				`⚠ FAQ answer starts with "Nein" but the question doesn't ask "Müssen …": "${item.question}"`,
 			);
-	// The pricing answer links to the price page (README, internal links).
+	// The pricing answer stays plain text: its "Angebot" isn't linked
+	// (decision 2026-10-23).
 	const pricing = faqItems[4];
 	if (!/kost|zahl|rechnet|Preis/i.test(pricing.question))
 		console.warn(
 			`⚠ 5th FAQ question doesn't look like the pricing one: "${pricing.question}"`,
 		);
-	if (!pricing.answer.includes("Angebot"))
-		fail('pricing answer has no "Angebot" to link');
-	pricing.answer = pricing.answer.replace(
-		"Angebot",
-		'<a href="#start">Angebot</a>',
-	);
 
 	const refBg = await one(html, "img.ref-bg");
 	const peopleImg = await one(html, "section.pp .pp-f img");

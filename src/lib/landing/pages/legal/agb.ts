@@ -177,7 +177,7 @@ export const page: LegalPage = {
 				{ h3: "A 12 Datenschutz, Vertraulichkeit, Referenznennung" },
 				{
 					nr: "12.1",
-					p: "Soweit Heidi Systems personenbezogene Daten der Nutzer, Bewohner und Mieter des Auftraggebers verarbeitet, handelt sie als Auftragsverarbeiterin des Auftraggebers; es gilt die beigefügte Vereinbarung zur Auftragsverarbeitung. Vertrags- und Kontaktdaten des Auftraggebers und seiner Ansprechpartner verarbeitet Heidi Systems als Verantwortliche zur Vertragsdurchführung (Art. 6 Abs. 1 lit. b DSGVO); Informationen hierzu enthält die Datenschutzinformation unter www.heidisystems.com/datenschutz.",
+					p: 'Soweit Heidi Systems personenbezogene Daten der Nutzer, Bewohner und Mieter des Auftraggebers verarbeitet, handelt sie als Auftragsverarbeiterin des Auftraggebers; es gilt die beigefügte Vereinbarung zur Auftragsverarbeitung. Vertrags- und Kontaktdaten des Auftraggebers und seiner Ansprechpartner verarbeitet Heidi Systems als Verantwortliche zur Vertragsdurchführung (Art. 6 Abs. 1 lit. b DSGVO); Informationen hierzu enthält die Datenschutzinformation unter <a href="/datenschutzhinweise">www.heidisystems.com/datenschutzhinweise</a>.',
 				},
 				{
 					nr: "12.2",
@@ -522,7 +522,7 @@ export const page: LegalPage = {
 				{ h3: "A 12 Datenschutz, Vertraulichkeit, Referenznennung" },
 				{
 					nr: "12.1",
-					p: "Soweit Heidi Systems personenbezogene Daten der Nutzer, Bewohner und Mieter des Auftraggebers verarbeitet, handelt sie als Auftragsverarbeiterin des Auftraggebers; es gilt die beigefügte Vereinbarung zur Auftragsverarbeitung. Vertrags- und Kontaktdaten des Auftraggebers und seiner Ansprechpartner verarbeitet Heidi Systems als Verantwortliche zur Vertragsdurchführung (Art. 6 Abs. 1 lit. b DSGVO); Informationen hierzu enthält die Datenschutzinformation unter www.heidisystems.com/datenschutz.",
+					p: 'Soweit Heidi Systems personenbezogene Daten der Nutzer, Bewohner und Mieter des Auftraggebers verarbeitet, handelt sie als Auftragsverarbeiterin des Auftraggebers; es gilt die beigefügte Vereinbarung zur Auftragsverarbeitung. Vertrags- und Kontaktdaten des Auftraggebers und seiner Ansprechpartner verarbeitet Heidi Systems als Verantwortliche zur Vertragsdurchführung (Art. 6 Abs. 1 lit. b DSGVO); Informationen hierzu enthält die Datenschutzinformation unter <a href="/datenschutzhinweise">www.heidisystems.com/datenschutzhinweise</a>.',
 				},
 				{
 					nr: "12.2",

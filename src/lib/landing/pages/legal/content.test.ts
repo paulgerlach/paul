@@ -31,12 +31,12 @@ describe.each(PAGES)("%s", (_, page) => {
 			expect(article.body.length).toBeGreaterThan(0);
 	});
 
-	it("holds only <br>, <b> and tel:/mailto: links as markup", () => {
+	it("holds only <br>, <b>, tel:/mailto: links and the privacy page's link as markup", () => {
 		const tags = markup(page).flatMap((html) => html.match(/<[^>]+>/g) ?? []);
 		expect(
 			tags.filter(
 				(tag) =>
-					!/^<(br|b|\/b|\/a|a href="(tel:\+\d+|mailto:[\w.-]+@heidisystems\.com)")>$/.test(
+					!/^<(br|b|\/b|\/a|a href="(tel:\+\d+|mailto:[\w.-]+@heidisystems\.com|\/datenschutzhinweise)")>$/.test(
 						tag,
 					),
 			),
@@ -45,6 +45,12 @@ describe.each(PAGES)("%s", (_, page) => {
 });
 
 describe("agb", () => {
+	it("links the privacy notice at /datenschutzhinweise", () => {
+		const html = markup(agb).join("\n");
+		expect(html.match(/<a href="\/datenschutzhinweise">/g)).toHaveLength(2);
+		expect(html).not.toMatch(/heidisystems\.com\/datenschutz\b(?!hinweise)/);
+	});
+
 	it("numbers each part's clauses in order, but for the design's gap", () => {
 		const gaps: string[] = [];
 		for (const article of agb.articles) {

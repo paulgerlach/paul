@@ -30,9 +30,10 @@ describe("SITE_PAGES", () => {
 			"/",
 			"/messdienst-wechseln",
 			"/funktionen",
+			"/preise",
 			"/blog",
 			"/impressum",
-			"/datenschutz",
+			"/datenschutzhinweise",
 		]);
 	});
 });

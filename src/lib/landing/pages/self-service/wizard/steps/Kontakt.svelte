@@ -5,7 +5,7 @@
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
-	import { ROUTE_DATENSCHUTZ } from "$lib/routes";
+	import { ROUTE_DATENSCHUTZHINWEISE } from "$lib/routes";
 	import { unknownCount } from "../model";
 	import { CHECK } from "../svg";
 	import NextSteps from "../ui/NextSteps.svelte";
@@ -57,7 +57,7 @@
 	><span
 		>Ich bin einverstanden, dass Heidi Systems meine Angaben zur Erstellung
 		meines Angebots verarbeitet. Mehr dazu in der <a
-			href={ROUTE_DATENSCHUTZ}
+			href={ROUTE_DATENSCHUTZHINWEISE}
 			target="_blank"
 			rel="noopener">Datenschutzerklärung</a
 		>.</span

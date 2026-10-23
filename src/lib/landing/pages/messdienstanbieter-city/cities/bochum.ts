@@ -154,7 +154,7 @@ const content: RegionContent = {
 		{
 			question: "Wie rechnet Heidi ab?",
 			answer:
-				'Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes <a href="#start">Angebot</a> für Ihren Bochumer Bestand gibt es nach dem Portfolio-Check.',
+				"Grundlage sind die installierten Zähler und eine Abrechnungspauschale. Ein konkretes Angebot für Ihren Bochumer Bestand gibt es nach dem Portfolio-Check.",
 		},
 	],
 	final: {

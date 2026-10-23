@@ -1,3 +1,4 @@
+import { scrollIn } from "./inView.ts";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
@@ -202,13 +203,13 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await page.clock.install();
 	await gotoHydrated(page);
 
-	await page.locator(".cal").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".cal"));
 	await page.clock.runFor(400);
 	await expect(gridNote(page)).toHaveText("Objekt 1: Abrechnung fertig");
 	await page.clock.runFor(4400);
 	await expect(gridNote(page)).toHaveText("Objekt 12 wird erstellt");
 
-	await page.locator(".tile .bill").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".tile .bill"));
 	await page.clock.runFor(200);
 	await expect(billSum(page)).toHaveText("2");
 	await expect(page.locator(".tile .bill .xa").first()).toBeVisible();
@@ -216,7 +217,7 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await expect(page.locator(".tile .bill.good")).toHaveCount(1);
 	await expect(billSum(page)).toHaveText("1");
 
-	await page.locator(".bw").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".bw"));
 	await page.clock.runFor(200);
 	await expect(page.locator(".bw span.on")).toHaveText(
 		"Zwischenablesung beim Auszug",
@@ -225,7 +226,7 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await expect(page.locator(".bw span.on")).toHaveText("Heizkostenabrechnung");
 
 	// Out of view, the bill doesn't start a new pass.
-	await page.locator("section.final").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("section.final"));
 	await page.clock.runFor(8000);
 	await expect(billSum(page)).toHaveText("1");
 });

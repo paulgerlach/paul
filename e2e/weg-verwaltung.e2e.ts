@@ -1,3 +1,4 @@
+import { scrollIn } from "./inView.ts";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
@@ -206,7 +207,7 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await page.clock.install();
 	await gotoHydrated(page);
 
-	await page.locator(".cal").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".cal"));
 	await page.clock.runFor(400);
 	// January is done; a placeholder leaves the last pass's note.
 	await expect(page.locator(".cal li.done")).toHaveCount(1);
@@ -220,14 +221,14 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await expect(gridNote(page)).toHaveText("Dez: Heidi übernimmt");
 	await expect(page.locator(".cal li.now")).toHaveText(/Vertragsende/);
 
-	await page.locator(".bill").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".bill"));
 	await page.clock.runFor(200);
 	await expect(billSum(page)).toHaveText("hoch");
 	await page.clock.runFor(2600);
 	await expect(page.locator(".bill.good")).toHaveCount(1);
 	await expect(billSum(page)).toHaveText("eine Unterschrift");
 
-	await page.locator(".bw").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator(".bw"));
 	await page.clock.runFor(200);
 	await expect(page.locator(".bw span.on")).toHaveText(
 		"Kündigung per Vollmacht",
@@ -236,7 +237,7 @@ test("the tiles and the rotator loop while in view", async ({ page }) => {
 	await expect(page.locator(".bw span.on")).toHaveText("Montage und Ablesung");
 
 	// Out of view, the bill doesn't start a new pass.
-	await page.locator("section.final").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("section.final"));
 	await page.clock.runFor(8000);
 	await expect(billSum(page)).toHaveText("eine Unterschrift");
 });

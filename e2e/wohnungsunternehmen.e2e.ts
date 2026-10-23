@@ -1,3 +1,4 @@
+import { scrollIn } from "./inView.ts";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
@@ -208,24 +209,24 @@ test("the tiles play when they come into view", async ({ page }) => {
 	await gotoHydrated(page);
 	// Below the fold, the Abrechnung waits at 0.
 	await expect(billing(page)).toHaveText("0 / 24");
-	await page.locator("#fr2").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("#fr2"));
 	await page.clock.runFor(500 + 24 * 90 + 100);
 	await expect(billing(page)).toHaveText("24 / 24");
 
-	await page.locator("#fr3").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("#fr3"));
 	await page.clock.runFor(100);
 	await expect(page.locator("#fr3 .list")).not.toHaveClass(/\bs2\b/);
 	await page.clock.runFor(4700);
 	await expect(page.locator("#fr3 .list")).toHaveClass(/\bs5\b/);
 	await expect(outlier(page).locator(".v b")).toHaveText("318");
 
-	await page.locator("#fr4").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("#fr4"));
 	await page.clock.runFor(900 + 700);
 	await expect(page.locator("#fr4 .t.on")).toHaveText(/Ihr ERP/);
 	await page.clock.runFor(2200);
 	await expect(page.locator("#fr4 .t.on")).toHaveText(/Ihr CRM/);
 
-	await page.locator("#fr5").scrollIntoViewIfNeeded();
+	await scrollIn(page.locator("#fr5"));
 	await page.clock.runFor(1800 + 11_100);
 	await expect(rolloutCount(page)).toHaveText("Alle 4 Liegenschaften fertig");
 	await page.clock.runFor(4000);

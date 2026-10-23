@@ -74,6 +74,7 @@ Package manager is **bun**.
 | `bun run slicemachine`                                | Prismic Slice Machine                                                                                                                                         |
 
 - The landing signup e2e tests need the local Postgres from `DATABASE_URL` (`127.0.0.1:54322`) with the `leads` table.
+- A test that scrolls a block in and then advances `page.clock` uses `scrollIn` (`e2e/inView.ts`): the page's `IntersectionObserver` callbacks come with the browser's rendering, not with the fake clock, so the clock must wait for them.
 - CI (`.github/workflows/web.yml`): `check`, `lint`, `build`, and fails on any `next`/`react`/`react-dom` import in `src`.
 - `bun scripts/extract-city.ts <design.html> <slug>|--germany` turns a saved city design into `cities/<slug>.ts`, `<slug>-map.ts` and its photos (strict; keeps the hand-written `seo`/`links`). The designs aren't in the repo; save one with the Artifact tool's `read` action.
 - Other scripts: `scripts/compare-endpoints.ts` (webhook payload parity with Next for the Fragebogen, newsletter and chat endpoints).

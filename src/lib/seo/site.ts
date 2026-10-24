@@ -16,6 +16,8 @@ export const DEFAULT_OG_TITLE =
 export const DEFAULT_OG_DESCRIPTION =
 	"Kostenlose Installation fernablesbarer Funkzähler für Warmwasser, Kaltwasser und Heizung. Automatisierte Betriebskostenabrechnung in Deutschland.";
 
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
 export const KEYWORDS = [
 	"Fernablesbare Zähler",
 	"Funkzähler",

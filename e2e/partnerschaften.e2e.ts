@@ -506,7 +506,7 @@ test.describe("the contact form", () => {
 		await expect(alert).toContainText("Das hat gerade nicht geklappt.");
 		await expect(alert.getByRole("link")).toHaveAttribute(
 			"href",
-			"tel:+493052001352",
+			"tel:+493080098852",
 		);
 		await expect(form.locator('input[name="email"]')).toHaveValue(email);
 	});
@@ -578,7 +578,7 @@ test.describe("the card form", () => {
 		await expect(alert).toContainText("Das hat gerade nicht geklappt.");
 		await expect(alert.getByRole("link")).toHaveAttribute(
 			"href",
-			"tel:+493052001352",
+			"tel:+493080098852",
 		);
 		await expect(form.locator('input[name="email"]')).toHaveValue(email);
 	});

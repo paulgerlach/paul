@@ -173,7 +173,7 @@ describe("installationspartner content", () => {
 	it("has three steps and the form's texts", () => {
 		expect(apply.steps).toHaveLength(3);
 		expect(apply.success("Max")).toBe("Danke, Max! Wir melden uns bei Ihnen.");
-		expect(apply.sendError.phone).toBe("+49 30 52001352");
+		expect(apply.sendError.phone).toBe("+49 30 80098852");
 		expect(closing.cta.href).toBe("#bewerben");
 	});
 });

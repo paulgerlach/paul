@@ -130,7 +130,7 @@ describe("handleSoftwarePartnerInquiry", () => {
 		expect(statusOf(result)).toBe(502);
 		const { form } = formOf(result);
 		expect(form.message?.type).toBe("error");
-		expect(form.message?.text).toContain("+49 30 52001352");
+		expect(form.message?.text).toContain("+49 30 80098852");
 		expect(form.data).toMatchObject({ company: "Muster Software GmbH" });
 	});
 

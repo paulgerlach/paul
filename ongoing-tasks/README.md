@@ -6,7 +6,7 @@ What is still open on this repo, and the decisions you need to understand it. Ev
 |---|---|
 | [cutover.md](cutover.md) | What blocks the Next.js → SvelteKit cutover (PR #440), the cutover steps, post-deploy checks, rollback and the after-cutover list. The site restructure (landing pages as the whole site) is done |
 | [go-live-gates.md](go-live-gates.md) | The go-live gate of every new landing page (§1–43): business, legal and content sign-offs and the open manual checks. All of them block the cutover |
-| [known-issues.md](known-issues.md) | The KI list: bugs found in the Next code and fixed instead of ported (the code cites the IDs). KI-34 is open |
+| [known-issues.md](known-issues.md) | The KI list: bugs found in the Next code and fixed instead of ported (the code cites the IDs). None open |
 
 ## Where the old plans are
 

@@ -1,9 +1,10 @@
+import { PHONE } from "$lib/company";
 import { SITE_URL } from "$lib/seo/site";
 
 /**
  * The Organization and WebSite JSON-LD of the home (/ since
  * the site cutover; Next's home had them). Other pages refer to the
- * Organization by its `@id`. No phone until KI-34 is resolved.
+ * Organization by its `@id`.
  */
 export const organizationJsonLd = {
 	"@context": "https://schema.org",
@@ -19,6 +20,12 @@ export const organizationJsonLd = {
 			},
 			description:
 				"Digitale Erfassung aller Verbrauchsdaten im Gebäude. Heidi Systems bündelt alle Energiedaten Ihres Portfolios und vereinfacht die Betriebs- und Heizkostenabrechnung.",
+			contactPoint: {
+				"@type": "ContactPoint",
+				telephone: PHONE,
+				contactType: "customer service",
+				availableLanguage: ["de", "en"],
+			},
 			sameAs: [],
 		},
 		{

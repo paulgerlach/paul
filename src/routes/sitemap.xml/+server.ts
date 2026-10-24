@@ -30,7 +30,6 @@ export const GET = async ({ fetch, setHeaders }) => {
 		priority: 0.6,
 		lastmod: post.lastmod,
 	}));
-	const now = new Date().toISOString();
 	setHeaders({
 		"cache-control": "s-maxage=3600, stale-while-revalidate=86400",
 	});
@@ -39,8 +38,7 @@ export const GET = async ({ fetch, setHeaders }) => {
 		.map(
 			(p) => `<url>
 <loc>${SITE_URL}${p.path}</loc>
-<lastmod>${p.lastmod ?? now}</lastmod>
-<changefreq>${p.changefreq}</changefreq>
+${p.lastmod ? `<lastmod>${p.lastmod}</lastmod>\n` : ""}<changefreq>${p.changefreq}</changefreq>
 <priority>${p.priority}</priority>
 </url>`,
 		)

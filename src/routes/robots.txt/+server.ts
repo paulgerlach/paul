@@ -7,7 +7,6 @@ export const GET = () =>
 		`User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /fragebogen
 Disallow: /preview/
 Disallow: /slice-simulator
 

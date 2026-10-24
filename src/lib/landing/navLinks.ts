@@ -42,7 +42,7 @@ import {
 
 /**
  * Top nav of the landing pages, the designs' own (the same in every design).
- * It links only to landing pages, the blog, /preise and the questionnaire.
+ * It links only to landing pages, the blog and the questionnaire.
  *
  * An entry without `href` has no landing page yet and isn't shown; its
  * comment names the design id of its target, so building that page means

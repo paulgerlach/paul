@@ -69,14 +69,13 @@ function pagePaths(group: string): string[] {
 		.map((path) => (path === "/" ? path : path.replace(/\/$/, "")));
 }
 
-test("the nav links only to landing pages, the blog, /preise and the questionnaire", async ({
+test("the nav links only to landing pages, the blog and the questionnaire", async ({
 	page,
 	request,
 }) => {
 	const allowed = [
 		...pagePaths("src/routes/(base)/(landing)"),
 		"/blog",
-		"/preise",
 		"/fragebogen",
 	];
 

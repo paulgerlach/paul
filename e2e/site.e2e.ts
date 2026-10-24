@@ -1,17 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // The site cutover: the old URLs stay pages, and the kept old pages (blog,
-// Fragebogen, /preise) render inside the landing header and footer. The legal pages
-// are landing pages now (legal.e2e.ts).
+// Fragebogen) render inside the landing header and footer. The legal pages
+// and /preise are landing pages now (legal.e2e.ts, preise.e2e.ts).
 
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
-const KEPT_PAGES = [
-	"/blog",
-	"/blog/weg-hausverwaltung-excel",
-	"/fragebogen",
-	"/preise",
-];
+const KEPT_PAGES = ["/blog", "/blog/weg-hausverwaltung-excel", "/fragebogen"];
 
 /** Console errors, warnings (hydration) and page errors from now on. */
 function collectProblems(page: Page) {

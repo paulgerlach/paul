@@ -2,8 +2,8 @@ import { json } from "@sveltejs/kit";
 import { runContactPipeline } from "$lib/server/contact";
 import type { RequestHandler } from "./$types";
 
-// Kept until cutover in case anything external posts here; /kontakt uses a
-// form action from phase 7 on.
+// Kept until cutover in case anything external posts here; the /kontakt page
+// has its own form action ($lib/server/contactInquiry.ts).
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	try {
 		const body = await request.json();

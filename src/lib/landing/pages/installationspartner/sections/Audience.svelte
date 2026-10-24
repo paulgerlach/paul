@@ -1,0 +1,14 @@
+<script lang="ts">
+	import team from "$lib/assets/landing/installationspartner/team.jpg?enhanced";
+	import installer from "$lib/assets/landing/vorgehen/installer.webp?enhanced";
+	import Audience from "$lib/landing/sections/uv/Audience.svelte";
+	import { audience } from "../content";
+
+	const images = { installer, team };
+	const cards = audience.cards.map((card) => ({
+		...card,
+		image: images[card.image],
+	}));
+</script>
+
+<Audience idPrefix="ip-who" label={audience.label} {cards} />

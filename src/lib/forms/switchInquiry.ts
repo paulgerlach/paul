@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Email signup of the /messdienstwechsel landing page (hero and final CTA),
+ * Email signup of the /messdienst-wechseln landing page (hero and final CTA),
  * validated in the browser (superforms) and again in the form action.
  */
 export const switchInquirySchema = z.object({

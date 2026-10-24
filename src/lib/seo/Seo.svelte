@@ -38,6 +38,7 @@
 	<meta name="keywords" content={KEYWORDS.join(",")} />
 	{#if noindex}
 		<meta name="robots" content="noindex" />
+		{#if seo.keepCanonical}<link rel="canonical" href={canonical} />{/if}
 	{:else}
 		<meta name="robots" content="index, follow" />
 		<meta

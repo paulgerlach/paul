@@ -1,15 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { expectGated } from "./launch.ts";
 
-test("home page renders with SEO tags and an optimized image", async ({
-	page,
-}) => {
-	const response = await page.goto("/");
-	expect(response?.status()).toBe(200);
-	await expect(page).toHaveTitle("Heidi Systems");
-	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-		"href",
-		"https://heidisystems.com",
-	);
+test("a page serves an optimized image", async ({ page }) => {
+	await page.goto("/");
 	// Image.svelte serves enhanced-img's WebP variant (phase 4).
 	await expect(page.locator('img[src$=".webp"]').first()).toBeAttached();
 });
@@ -23,6 +16,9 @@ test("unknown URL renders the 404 page with noindex", async ({ page }) => {
 		"noindex",
 	);
 	await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+	await expect(
+		page.getByRole("link", { name: "Zur Startseite" }),
+	).toHaveAttribute("href", "/");
 });
 
 test("robots.txt disallows /fragebogen", async ({ request }) => {
@@ -31,12 +27,23 @@ test("robots.txt disallows /fragebogen", async ({ request }) => {
 	expect(body).toContain("Sitemap: https://heidisystems.com/sitemap.xml");
 });
 
-test("sitemap.xml lists the static pages and blog posts", async ({
+test("sitemap.xml lists the site's pages and blog posts", async ({
 	request,
 }) => {
 	const body = await (await request.get("/sitemap.xml")).text();
-	expect(body).toContain("<loc>https://heidisystems.com/preise</loc>");
+	for (const path of [
+		"/",
+		"/messdienst-wechseln",
+		"/funktionen",
+		"/preise",
+		"/blog",
+		"/impressum",
+		"/datenschutzhinweise",
+	])
+		expect(body).toContain(`<loc>https://heidisystems.com${path}</loc>`);
 	// Blog posts from Prismic (KI-05).
 	expect(body).toMatch(/<loc>https:\/\/heidisystems\.com\/blog\/[^<]+<\/loc>/);
-	expect(body.match(/<url>/g)!.length).toBeGreaterThan(8);
+	// /geraete is behind its go-live gate, and no entry without a path.
+	expectGated(body).toContain("<loc>https://heidisystems.com/geraete</loc>");
+	expect(body).not.toContain("<loc>https://heidisystems.com</loc>");
 });

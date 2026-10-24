@@ -1,11 +1,14 @@
+import { readdirSync } from "node:fs";
+import { join, relative } from "node:path";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { landingNav } from "../src/lib/landing/navLinks.ts";
 
 // The signup tests save leads, so they need a database with the `leads` table
 // (`bunx drizzle-kit push` on a fresh local DB). Webhooks go to the local sink
-// from playwright.config.ts. Three tests send valid signups, which is exactly
-// the action's rate limit per IP (3 in 10 minutes) for one server run.
+// from playwright.config.ts. The action's per-IP limit (3 in 10 minutes,
+// shared by all landing pages) is raised on the e2e server (KITCHEN_SINK=1).
 
-const PATH = "/messdienstwechsel";
+const PATH = "/messdienst-wechseln";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
 /** A fresh address per test, so parallel tests can find their own webhook. */
@@ -27,6 +30,10 @@ async function webhookFor(page: Page, email: string) {
 	).json();
 	return events.find((event) => event.email === email);
 }
+
+/** Waits until the page is interactive. */
+const gotoHydrated = (page: Page) =>
+	page.goto(PATH, { waitUntil: "networkidle" });
 
 /** Every link target in `scope`, without duplicates. */
 const hrefs = (scope: Locator) =>
@@ -52,32 +59,93 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 	expect(faq.mainEntity).toHaveLength(8);
 });
 
-test("nav and footer link to the same pages as the site's", async ({
+const NAV_ITEMS = landingNav.flatMap((g) => g.columns.flatMap((c) => c.items));
+
+/** The paths of the static pages under a route group, nested ones included. */
+function pagePaths(group: string): string[] {
+	return readdirSync(group, { recursive: true, encoding: "utf8" })
+		.filter((file) => file.endsWith("+page.svelte") && !file.includes("["))
+		.map((file) => `/${relative(group, join(group, file, ".."))}`)
+		.map((path) => (path === "/" ? path : path.replace(/\/$/, "")));
+}
+
+test("the nav links only to landing pages, the blog and the questionnaire", async ({
 	page,
+	request,
 }) => {
-	await page.goto("/");
-	const site = new Set([
-		...(await hrefs(page.locator("#header a[href]"))),
-		...(await hrefs(page.locator("footer a[href]"))),
-	]);
+	const allowed = [
+		...pagePaths("src/routes/(base)/(landing)"),
+		"/blog",
+		"/fragebogen",
+	];
 
+	for (const path of [PATH, "/messdienst/berlin", "/karriere"]) {
+		await page.goto(path);
+		const internal = (await hrefs(page.locator("nav.top a[href]"))).filter(
+			(h) => !h.startsWith("#") && !h.startsWith("https://platform."),
+		);
+		expect(
+			internal.filter((h) => !allowed.includes(h.split("#")[0])),
+			path,
+		).toEqual([]);
+		for (const href of internal) {
+			expect((await request.get(href)).status(), href).toBe(200);
+		}
+	}
+	await expect(
+		page.locator("nav.top").getByRole("link", { name: "Angebot einholen" }),
+	).toHaveAttribute("href", "/fragebogen");
+	await expect(
+		page.locator("nav.top").getByRole("link", { name: "Anmelden" }),
+	).toHaveAttribute("href", "https://platform.heidisystems.com/");
+});
+
+// The footer is the landing design's own (not the site's); every internal
+// link in it must resolve.
+test("the footer's internal links resolve", async ({ page, request }) => {
 	await page.goto(PATH);
-	const landing = new Set([
-		...(await hrefs(page.locator("nav.top a[href]"))),
-		...(await hrefs(page.locator("footer a[href]"))),
-	]);
+	const links = new Set(await hrefs(page.locator('footer a[href^="/"]')));
+	for (const href of links) {
+		const response = await request.get(href);
+		expect(response.status(), href).toBe(200);
+	}
+});
 
-	// Landing-only: the logo links home, the CTAs go to the page's own anchors.
-	const landingOnly = ["/", "#start", "#faq"];
-	// Site-only: the "Angebot einholen" CTA.
-	const siteOnly = ["/fragebogen"];
+test.describe("footer newsletter", () => {
+	test("rejects an invalid address, then thanks and sends the event", async ({
+		page,
+	}) => {
+		await page.goto(PATH);
+		const form = page.locator("footer .f-form");
+		await form.getByLabel("E-Mail-Adresse").fill("not-an-email");
+		await form.getByRole("button", { name: "Los geht’s" }).click();
+		await expect(form).toHaveClass(/err/);
+		await expect(page.locator("#f-mail-err")).toHaveText(
+			"Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+		);
 
-	expect(
-		[...landing].filter((h) => !site.has(h) && !landingOnly.includes(h)),
-	).toEqual([]);
-	expect(
-		[...site].filter((h) => !landing.has(h) && !siteOnly.includes(h)),
-	).toEqual([]);
+		const email = testEmail("newsletter");
+		await form.getByLabel("E-Mail-Adresse").fill(email);
+		await form.getByRole("button", { name: "Los geht’s" }).click();
+		await expect(page.locator("footer .f-ok")).toHaveText(
+			"Danke! Wir halten Sie auf dem Laufenden.",
+		);
+		await expect.poll(() => webhookFor(page, email)).toBeTruthy();
+	});
+
+	test.describe("without JS", () => {
+		test.use({ javaScriptEnabled: false });
+
+		test("posts the form and returns to the page", async ({ page }) => {
+			await page.goto(PATH);
+			const email = testEmail("newsletter-nojs");
+			const form = page.locator("footer .f-form");
+			await form.getByLabel("E-Mail-Adresse").fill(email);
+			await form.getByLabel("E-Mail-Adresse").press("Enter");
+			await expect(page).toHaveURL(PATH);
+			await expect.poll(() => webhookFor(page, email)).toBeTruthy();
+		});
+	});
 });
 
 test.describe("signup", () => {
@@ -218,41 +286,69 @@ test.describe("interactions", () => {
 		);
 	});
 
-	test("nav dropdown opens on keyboard focus and closes on Escape", async ({
+	test("nav dropdown opens on keyboard focus and click, closes on Escape", async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await gotoHydrated(page);
+		const group = page.locator(".nv-dd").first();
+		const panel = group.locator(".nv-panel");
+		await expect(panel).toBeHidden();
+
+		const button = group.getByRole("button", { name: "Produkt" });
+		await button.focus();
+		await expect(panel).toBeVisible();
+		await page.keyboard.press("Escape");
+		await expect(panel).toBeHidden();
+
+		await page.mouse.move(0, 600);
+		await button.click();
+		await expect(button).toHaveAttribute("aria-expanded", "true");
+		await expect(panel.getByRole("link", { name: /Vorgehen/ })).toBeVisible();
+		await page.mouse.click(700, 700);
+		await expect(button).toHaveAttribute("aria-expanded", "false");
+	});
+
+	test("nav marks the current page and hides entries without a page", async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await page.goto(PATH);
-		const group = page.locator("[data-nav-group]").first();
-		const panel = group.locator(".panel");
-		await expect(panel).toBeHidden();
-
-		await group.getByRole("link", { name: "Geräte" }).focus();
-		await expect(panel).toBeVisible();
-		await page.keyboard.press("Escape");
-		await expect(panel).toBeHidden();
+		const current = page.locator(".nv-links a[aria-current=page]");
+		await expect(current).toHaveCount(1);
+		await expect(current).toHaveAttribute("href", PATH);
+		await expect(current).toHaveClass(/cur/);
+		// Each entry's title is its own element; an entry without a page has none.
+		const titles = await page.locator(".nv-links .nv-t").allTextContents();
+		for (const item of NAV_ITEMS.filter((i) => !i.href && !i.soon))
+			expect(titles.map((t) => t.trim())).not.toContain(item.title);
+		await expect(page.locator(".nv-links .soon")).toHaveCount(
+			NAV_ITEMS.filter((i) => i.soon).length,
+		);
 	});
 
 	test("burger menu opens the nav with accordions", async ({ page }) => {
 		await page.setViewportSize({ width: 375, height: 812 });
-		await page.goto(PATH);
-		const burger = page.getByRole("button", { name: "Menü öffnen" });
-		await burger.click();
-
+		await gotoHydrated(page);
 		const menu = page.locator("#lp-menu");
+		await expect(menu).toBeHidden();
+		await page.getByRole("button", { name: "Menü öffnen" }).click();
 		await expect(menu).toBeVisible();
-		await expect(page.locator("html")).toHaveClass(/_lock/);
-
-		const geraete = menu.getByRole("button", { name: "Geräte" });
-		await geraete.click();
-		await expect(geraete).toHaveAttribute("aria-expanded", "true");
 		await expect(
-			menu.getByRole("link", { name: "Heizungszähler" }),
+			page.getByRole("button", { name: "Menü schließen" }),
+		).toHaveAttribute("aria-expanded", "true");
+
+		// The group with the current page starts open.
+		const loesungen = menu.locator("details", { hasText: "Lösungen" });
+		await expect(loesungen).toHaveAttribute("open", "");
+		const kunden = menu.locator("summary", { hasText: "Kunden" });
+		await kunden.click();
+		await expect(
+			menu.getByRole("link", { name: /Hausverwaltung/ }),
 		).toBeVisible();
 
 		await page.keyboard.press("Escape");
-		await expect(menu).toHaveCount(0);
-		await expect(page.locator("html")).not.toHaveClass(/_lock/);
+		await expect(menu).toBeHidden();
 	});
 
 	test("reduced motion shows every old-way tile without animating", async ({

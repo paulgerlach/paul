@@ -4,11 +4,7 @@
   A form action isn't used because the footer is on every route.
 -->
 <script lang="ts" module>
-	import { z } from "zod";
-
-	const emailSchema = z.email(
-		"Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-	);
+	import { newsletterEmailSchema as emailSchema } from "$lib/forms/newsletter";
 
 	const styles = {
 		footer: {

@@ -37,38 +37,7 @@ export type FunctionsSlideType = {
 	item: Snippet;
 };
 
-export type NumberedSwiperDataItemSlideType = {
-	text: string;
-	title: string;
-	longText: string;
-};
-
-export type NumberedSwiperDataItemType = {
-	mainImage: ImageAsset;
-	mobileImage?: ImageAsset;
-	slides: NumberedSwiperDataItemSlideType[];
-};
-
-export type ReviewSwiperType = {
-	text: string;
-	name: string;
-	position: string;
-	video: string;
-};
-
 export type FAQItemType = {
 	question: string;
 	answer: string;
-};
-
-export type GeraeteangebotSwiperType = {
-	image: ImageAsset;
-	name: string;
-};
-
-export type ChartSwiperType = {
-	name: string;
-	image: Snippet;
-	title: string;
-	text: string;
 };

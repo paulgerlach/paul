@@ -7,6 +7,13 @@ export const load = async ({ fetch, cookies, url }) => {
 	const tag = url.searchParams.get("tag");
 
 	return {
+		// Its own title and description instead of the defaults (KI-37); drafts
+		// for the content owner.
+		seo: {
+			title: "Blog zu Messdienst und Heizkostenabrechnung | Heidi Systems",
+			description:
+				"Ratgeber für Hausverwaltungen und Vermieter: Funkzähler, Heizkostenverordnung, Betriebskostenabrechnung und der Wechsel des Messdienstleisters.",
+		},
 		newest: posts.slice(0, 3),
 		posts: tag ? posts.filter((post) => post.tags.includes(tag)) : posts,
 		tags: [...new Set(posts.flatMap((post) => post.tags))],

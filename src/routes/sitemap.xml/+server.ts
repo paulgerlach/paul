@@ -30,17 +30,17 @@ export const GET = async ({ fetch, setHeaders }) => {
 		priority: 0.6,
 		lastmod: post.lastmod,
 	}));
-	const now = new Date().toISOString();
 	setHeaders({
 		"cache-control": "s-maxage=3600, stale-while-revalidate=86400",
 	});
 
+	// A <lastmod> only where it's real (KI-40): Google ignores the dates of a
+	// sitemap that says every page changed just now.
 	const urls = [...pages, ...posts]
 		.map(
 			(p) => `<url>
 <loc>${SITE_URL}${p.path}</loc>
-<lastmod>${p.lastmod ?? now}</lastmod>
-<changefreq>${p.changefreq}</changefreq>
+${p.lastmod ? `<lastmod>${p.lastmod}</lastmod>\n` : ""}<changefreq>${p.changefreq}</changefreq>
 <priority>${p.priority}</priority>
 </url>`,
 		)

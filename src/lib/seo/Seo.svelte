@@ -2,6 +2,7 @@
 	import { page } from "$app/state";
 	import {
 		DEFAULT_DESCRIPTION,
+		DEFAULT_OG_IMAGE,
 		DEFAULT_OG_DESCRIPTION,
 		DEFAULT_OG_TITLE,
 		DEFAULT_TITLE,
@@ -22,6 +23,7 @@
 	);
 	const ogTitle = $derived(seo.ogTitle ?? DEFAULT_OG_TITLE);
 	const ogDescription = $derived(seo.ogDescription ?? DEFAULT_OG_DESCRIPTION);
+	const ogImage = $derived(seo.ogImage ?? DEFAULT_OG_IMAGE);
 	// Prismic preview sessions (/preview/…) show drafts.
 	const noindex = $derived(
 		seo.noindex ?? (isError || page.params.preview !== undefined),
@@ -54,16 +56,9 @@
 	<meta property="og:site_name" content="Heidi Systems" />
 	<meta property="og:locale" content="de_DE" />
 	<meta property="og:type" content="website" />
-	{#if seo.ogImage}
-		<meta property="og:image" content={seo.ogImage} />
-	{/if}
-	<meta
-		name="twitter:card"
-		content={seo.ogImage ? "summary_large_image" : "summary"}
-	/>
+	<meta property="og:image" content={ogImage} />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={ogTitle} />
 	<meta name="twitter:description" content={ogDescription} />
-	{#if seo.ogImage}
-		<meta name="twitter:image" content={seo.ogImage} />
-	{/if}
+	<meta name="twitter:image" content={ogImage} />
 </svelte:head>

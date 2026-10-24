@@ -3,7 +3,7 @@ import { SITE_PAGES } from "./sitePages";
 
 // Every page route under (base) is in SITE_PAGES once, so a new page can't be
 // left out of the sitemap. Not in it on purpose: the city pages (LIVE_CITIES),
-// the blog posts (Prismic) and /fragebogen (disallowed in robots.txt).
+// the blog posts (Prismic) and /fragebogen (noindex, KI-38).
 const NOT_LISTED = ["/messdienst/[city=city]", "/blog/[uid]", "/fragebogen"];
 
 // "(base)" can't be in the pattern: parentheses are glob syntax.

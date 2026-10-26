@@ -12,6 +12,7 @@ import {
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_HKVO_LEITFADEN,
+	ROUTE_INTEROPERABILITAET,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
@@ -84,6 +85,11 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Funkzähler",
 						text: "Heizkostenverteiler, Wasserzähler und Rauchwarnmelder mit Fernablesung",
 						href: ROUTE_GERAETE,
+					},
+					{
+						title: "Zähler-Interoperabilität",
+						text: "Vorhandene Zähler jedes Herstellers auswerten und abrechnen",
+						href: ROUTE_INTEROPERABILITAET,
 					},
 					{
 						title: "Self-Service",

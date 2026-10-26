@@ -9,6 +9,7 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import {
+	ROUTE_INTEROPERABILITAET,
 	ROUTE_KONTAKT,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SELF_SERVICE,
@@ -240,9 +241,11 @@ export const faq = {
 			question: "Was ist mit unseren vorhandenen Zählern?",
 			answer:
 				"Heidi liest funkfähige Zähler aller Hersteller aus. Dann zahlen Sie nur die Heizkostenabrechnung, keine neue Gerätemiete.",
-			// The design's Interoperabilität page (FjqCR6cUXnsq1ucgpPdxX7)
-			// doesn't exist yet; without `href` the link isn't shown.
-			more: { text: "Mehr zur Interoperabilität" },
+			// FjqCR6cUXnsq1ucgpPdxX7
+			more: {
+				text: "Mehr zur Interoperabilität",
+				href: ROUTE_INTEROPERABILITAET,
+			},
 		},
 		{
 			question: "Warum stehen hier keine Preise?",

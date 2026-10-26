@@ -65,8 +65,9 @@ test("the CTAs lead to the request, the contracts and the ways to an offer", asy
 	await expect(
 		page.locator("section.end").getByRole("link", { name: /Preise anfragen/ }),
 	).toHaveAttribute("href", "#anfrage");
-	// The design's Interoperabilität page doesn't exist yet.
-	await expect(page.getByText("Mehr zur Interoperabilität")).toHaveCount(0);
+	await expect(
+		page.locator("#faq a", { hasText: "Mehr zur Interoperabilität" }),
+	).toHaveAttribute("href", "/geraete/herstellerunabhaengig");
 });
 
 for (const width of [375, 320]) {

@@ -31,7 +31,8 @@
 		/** The H1's id. */
 		id: string;
 		srTitle: string;
-		word: string;
+		/** One word, or two lines, the second in the accent colour (the design's `<em>`). */
+		word: string | [string, string];
 		lead: string;
 		primary: Link;
 		/** Without `href` (no page yet) it isn't shown. */
@@ -65,7 +66,9 @@
 			<h1 {id}>
 				<span class="sr-only">{srTitle}</span>
 				<span class="word" aria-hidden="true" style:font-size={wordSize}
-					>{word}</span
+					>{#if typeof word === "string"}{word}{:else}{word[0]}<br /><em
+							>{word[1]}</em
+						>{/if}</span
 				>
 			</h1>
 			<div class="sub">
@@ -112,6 +115,10 @@
 		letter-spacing: -0.075em;
 		line-height: 0.78;
 		margin: 0 0 -0.02em -0.06em;
+	}
+	.word em {
+		font-style: normal;
+		color: var(--accent);
 	}
 	.sub {
 		padding-bottom: 0.6vw;

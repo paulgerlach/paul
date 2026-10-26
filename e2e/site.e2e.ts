@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { PHONE, PHONE_HREF } from "../src/lib/company.ts";
 
 // The site cutover: the old URLs stay pages, and the kept old pages (blog,
 // Fragebogen) render inside the landing header and footer. The legal pages
@@ -115,9 +116,8 @@ test.describe("kept pages", () => {
 	});
 });
 
-test("the Fragebogen sends an inquiry", async ({ page }) => {
-	const problems = collectProblems(page);
-	const email = `fragebogen-${Date.now()}@example.com`;
+/** Answers the Fragebogen with the shortest path and sends it. */
+async function sendFragebogen(page: Page, email: string) {
 	await page.goto("/fragebogen", { waitUntil: "networkidle" });
 
 	// A picked card moves on after 300 ms, so wait for each next step.
@@ -138,6 +138,12 @@ test("the Fragebogen sends an inquiry", async ({ page }) => {
 	await page.locator("#email").fill(email);
 	await page.locator("#form_confirm").check();
 	await page.getByRole("button", { name: "Bestätigen" }).click();
+}
+
+test("the Fragebogen sends an inquiry", async ({ page }) => {
+	const problems = collectProblems(page);
+	const email = `fragebogen-${Date.now()}@example.com`;
+	await sendFragebogen(page, email);
 
 	await expect(page.getByRole("heading", { level: 1 })).toHaveText(
 		"Anfrage erfolgreich versendet",
@@ -147,4 +153,18 @@ test("the Fragebogen sends an inquiry", async ({ page }) => {
 	).json();
 	expect(events.find((e) => e.email === email)).toBeTruthy();
 	expect(problems).toEqual([]);
+});
+
+test("the Fragebogen shows an error when Make.com fails (KI-37)", async ({
+	page,
+}) => {
+	await sendFragebogen(page, `fragebogen-${Date.now()}@sink-fails.example`);
+
+	await expect(page.getByRole("alert")).toContainText(
+		"Das hat leider nicht geklappt.",
+	);
+	await expect(
+		page.getByRole("alert").getByRole("link", { name: PHONE }),
+	).toHaveAttribute("href", PHONE_HREF);
+	await expect(page.getByRole("button", { name: "Bestätigen" })).toBeEnabled();
 });

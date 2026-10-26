@@ -250,6 +250,22 @@ export const isOptional = (id: StepId) =>
 export const devOf = (id: StepId): DevKey | null =>
 	id.startsWith("dev:") ? (id.slice(4) as DevKey) : null;
 
+/**
+ * A meter under plaster whose capsule is swapped (`kap`): no stop valve is
+ * needed for it.
+ */
+export function capsuleMeter(d: DevKey, g: Group) {
+	if (d === "kwz" || d === "wwz") return g.einbau === "up";
+	if (d === "wmz") return g.wtyp === "up";
+	return false;
+}
+
+/** A further service's starting price with its unit (`zpl`). */
+export function extraPrice(v: string) {
+	const z = EXTRAS.find((x) => x.v === v);
+	return z ? z.price + (z.per ? ` ${z.per}` : "") : "auf Anfrage";
+}
+
 /** Smoke alarms: the given total or the minimum from the rooms. */
 export function smokeAlarms(s: State) {
 	const r = s.rwm;
@@ -393,7 +409,7 @@ export function calc(s: State) {
 							} as Record<string, string>
 						)[g.einbau] || "Einbau offen",
 					);
-					if (g.einbau === "up" && g.ksys)
+					if (g.einbau === "up" && g.inst !== "nein" && g.ksys)
 						sub.push(
 							g.ksys === "andere"
 								? g.ksysx
@@ -405,7 +421,11 @@ export function calc(s: State) {
 						ck = true;
 						checks.push(`${lab}: Einbauart prüfen`);
 					}
-					if (g.einbau === "up" && (!g.ksys || g.ksys === "andere"))
+					if (
+						g.einbau === "up" &&
+						g.inst !== "nein" &&
+						(!g.ksys || g.ksys === "andere")
+					)
 						checks.push(`${lab}: MID-Norm der Messkapsel bestimmen`);
 					if (g.einbau === "neu")
 						checks.push(`${lab}: neuen Einbauplatz vorbereiten`);
@@ -444,7 +464,7 @@ export function calc(s: State) {
 					checks.push(
 						`${lab}: Funkprotokoll und Zugangsschlüssel für Übernahme prüfen`,
 					);
-				if (g.absv === "nein")
+				if (g.absv === "nein" && !capsuleMeter(dv, g))
 					checks.push(
 						`${lab}: kein Absperrventil, Ventil vor dem Tausch setzen`,
 					);
@@ -506,10 +526,10 @@ export function calc(s: State) {
 		);
 	}
 	if (s.kauf === "offen") checks.push("Kauf oder Miete in der Beratung klären");
-	const extras = EXTRAS.filter((z) => s.zusatz.includes(z.v)).map(
-		(z) => z.title,
-	);
-	for (const z of extras) checks.push(`${z}: Angebot erstellen`);
+	const chosen = EXTRAS.filter((z) => s.zusatz.includes(z.v));
+	for (const z of chosen) checks.push(`${z.title}: Angebot erstellen`);
+	// Each with its starting price, as the offer and the notification name them.
+	const extras = chosen.map((z) => `${z.title} (${extraPrice(z.v)})`);
 	return {
 		buy,
 		extras,
@@ -643,7 +663,9 @@ export function validate(
 				if (!sizeValue(g, "q3")) miss.push("Dauerdurchfluss Q3/Qn");
 				if (!sizeValue(g, "gew")) miss.push("Anschlussgewinde");
 			}
-			if (!g.absv) miss.push("Absperrventil vorhanden?");
+			if (g.einbau === "up" && g.inst !== "nein" && !g.ksys)
+				miss.push("MID-Norm der Messkapsel (oder „Andere / unklar“)");
+			if (!g.absv && !capsuleMeter(d, g)) miss.push("Absperrventil vorhanden?");
 		}
 		if (d === "wmz") {
 			if (!g.wtyp)
@@ -660,7 +682,7 @@ export function validate(
 				if (!sizeValue(g, "qp")) miss.push("Nenndurchfluss qp");
 				if (!g.fg) miss.push("Temperaturfühlergröße");
 			}
-			if (!g.absv) miss.push("Absperrventil vorhanden?");
+			if (!g.absv && !capsuleMeter(d, g)) miss.push("Absperrventil vorhanden?");
 		}
 		if (miss.length)
 			return fail(`${pre(i)}Bitte ergänzen Sie: ${miss.join(", ")}.`, g.id);
@@ -674,10 +696,6 @@ export function liveRows(s: State, listFiles: number): [string, string][] {
 	const list = steps(s);
 	const cur = s.cur;
 	const units = list.indexOf("einheiten");
-	let lastDev = units;
-	list.forEach((x, i) => {
-		if (x.startsWith("dev:")) lastDev = i;
-	});
 	const rows: [string, string][] = [];
 	if (tech(s))
 		for (const d of ORDER) {
@@ -694,7 +712,6 @@ export function liveRows(s: State, listFiles: number): [string, string][] {
 	else rows.push(["Unterlagen", `${listFiles} Datei(en)`]);
 	if (c.units && cur >= units)
 		rows.push(["Einheiten", String(c.units)], ["Funk-Gateways", String(c.gw)]);
-	if (c.yearly && cur > lastDev) rows.push(["Laufend pro Jahr", eur(c.yearly)]);
 	return rows;
 }
 
@@ -806,6 +823,64 @@ export function positions(c: Calc) {
 }
 export type Positions = ReturnType<typeof positions>;
 
+/** One offer document: "g" Gerätemiete und Service, "a" Heizkostenabrechnung. */
+export type OfferPart = {
+	kind: "g" | "a";
+	/** Its number: the offer's, with `-G` / `-A` when there are two. */
+	nr: string;
+	/** "1 von 2". */
+	of: string;
+	/** "Gerätemiete und Service" / "Heizkostenabrechnung". */
+	title: string;
+	p: Positions;
+};
+
+/**
+ * The offer as separate documents (`splitP`, `docsHtml`): the billing goes
+ * into its own when chosen.
+ */
+export function offerParts(p: Positions, o: Offer): OfferPart[] {
+	const sum = (a: Position[]) => a.reduce((s, x) => s + x.n * x.ep, 0);
+	const isAbr = (r: Position) => r.t === "Einzelabrechnung";
+	const total = (
+		x: Omit<Positions, "sS" | "sM" | "sO" | "year" | "first">,
+	): Positions => {
+		const sS = sum(x.svc);
+		const sM = x.buy ? 0 : sum(x.rental);
+		const sO = sum(x.once);
+		return { ...x, sS, sM, sO, year: sS + sM, first: sS + sM + sO };
+	};
+	const g = total({
+		buy: p.buy,
+		extras: p.extras,
+		onRequest: p.onRequest,
+		svc: p.svc.filter((r) => !isAbr(r)),
+		rental: p.rental,
+		once: p.once,
+	});
+	const a = total({
+		buy: false,
+		extras: [],
+		onRequest: [],
+		svc: p.svc.filter(isAbr),
+		rental: [],
+		once: [],
+	});
+	const docs: [OfferPart["kind"], Positions][] = a.svc.length
+		? [
+				["g", g],
+				["a", a],
+			]
+		: [["g", g]];
+	return docs.map(([kind, x], i) => ({
+		kind,
+		nr: o.nr + (docs.length > 1 ? (kind === "g" ? "-G" : "-A") : ""),
+		of: `${i + 1} von ${docs.length}`,
+		title: kind === "g" ? "Gerätemiete und Service" : "Heizkostenabrechnung",
+		p: x,
+	}));
+}
+
 /** A position's unit price and total ("auf Anfrage" when bought). */
 export const unitPrice = (r: Position) => (r.kauf ? "auf Anfrage" : n2(r.ep));
 export const totalPrice = (r: Position) =>
@@ -886,10 +961,10 @@ export function scope(s: State): string[] {
 	return o;
 }
 
-/** The offer's file name, as the preview's bar shows it. */
-export function offerFileName(s: State, o: Offer) {
+/** The offer's file name, as the preview's bar shows it; `title` the document's. */
+export function offerFileName(s: State, o: Offer, title = "") {
 	const st = (s.adr.l.str || "").replace(/[\\/:*?"<>|]+/g, "").trim();
-	return `Heidi Systems - Angebot ${o.id}${st ? `, ${st}` : ""}.pdf`;
+	return `Heidi Systems - Angebot ${title ? `${title} ` : ""}${o.id}${st ? `, ${st}` : ""}.pdf`;
 }
 
 const slackEscape = (v: unknown) =>
@@ -931,6 +1006,9 @@ export function offerSummary(
 		L.push("Geräte: aus Geräteliste/Rechnung, Dokumentenprüfung nötig");
 	L.push(
 		`Leistung: ${slackEscape(SERVICES[s.leist] || "offen")} · ${({ miete: "Mieten", kauf: "Kaufen", offen: "Kauf/Miete offen" } as Record<string, string>)[s.kauf] || ""} · Montage: ${({ eigen: "selbst", heidi: "durch Heidi", offen: "offen" } as Record<string, string>)[s.mont.wer] || "offen"}`,
+	);
+	L.push(
+		`Angebote: Gerätemiete und Service${c.withAbr ? " + Heizkostenabrechnung (zwei getrennte Dokumente)" : ""}`,
 	);
 	L.push(
 		`Einmalig: ${n2(P.sO)} € · Pro Jahr: ${n2(P.year)} € (netto)${P.buy ? " · Gerätekauf auf Anfrage" : ""}`,

@@ -1,14 +1,13 @@
 <!--
-  Step "Ihre Kontaktdaten", with the consent, the nudge for three or more
-  unknown answers and "So geht es weiter". The hidden `website` field is the
-  honeypot the endpoint checks.
+  Step "Ihre Kontaktdaten", with the consent and the nudge for three or more
+  unknown answers. The hidden `website` field is the honeypot the endpoint
+  checks.
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
 	import { ROUTE_DATENSCHUTZHINWEISE } from "$lib/routes";
 	import { unknownCount } from "../model";
 	import { CHECK } from "../svg";
-	import NextSteps from "../ui/NextSteps.svelte";
 	import Nudge from "../ui/Nudge.svelte";
 	import Text from "../ui/Text.svelte";
 	import { getSelfService } from "../wizard.svelte";
@@ -64,4 +63,3 @@
 	>
 </label>
 {#if unknownCount(w.s) >= 3}<Nudge strong />{/if}
-<NextSteps cur={0} />

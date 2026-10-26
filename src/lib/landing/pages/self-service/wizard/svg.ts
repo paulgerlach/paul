@@ -31,6 +31,8 @@ export const ICONS = {
 		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/></svg>',
 	cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2.2l2.2 10.5h10.2L20 7.5H6.3"/><circle cx="9.5" cy="18.8" r="1.4"/><circle cx="16.5" cy="18.8" r="1.4"/></svg>',
 	rent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></svg>',
+	phone:
+		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h3l1.6 4.2-2.1 1.3a10 10 0 0 0 4.5 4.5l1.3-2.1 4.2 1.6v3a1.6 1.6 0 0 1-1.7 1.6A15 15 0 0 1 4.4 5.2 1.6 1.6 0 0 1 6 3.5z"/></svg>',
 	cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>',
 	energy:
 		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 17h2M9 14h4M9 11h6"/></svg>',

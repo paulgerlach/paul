@@ -1,6 +1,7 @@
 <!--
-  The whole offer as a scrollable preview (the design's `docHtml`, laid out
-  like the Heidi offer template): four A4 pages sized in container units.
+  One offer document as a scrollable preview (the design's `docHtml`, laid
+  out like the Heidi offer template), A4 pages sized in container units:
+  "Gerätemiete und Service" on four pages, "Heizkostenabrechnung" on three.
 -->
 <script lang="ts">
 	import Image from "$lib/components/Basic/Image/Image.svelte";
@@ -15,25 +16,27 @@
 		n2,
 		offerDates,
 		offerFileName,
-		positions,
 		propertyLines,
 		scope,
 		tech,
 		totalPrice,
 		unitPrice,
 		type Offer,
+		type OfferPart,
 		type Position,
 	} from "../model";
 	import { getSelfService } from "../wizard.svelte";
 
-	let { offer }: { offer: Offer } = $props();
+	let { offer, part }: { offer: Offer; part: OfferPart } = $props();
 	const w = getSelfService();
 	const c = $derived(calc(w.s));
-	const p = $derived(positions(c));
+	const p = $derived(part.p);
+	/** The billing's own document. */
+	const abr = $derived(part.kind === "a");
 	const dates = $derived(offerDates(offer));
 	const billing = $derived(billingLines(w.s));
 	const property = $derived(propertyLines(w.s));
-	const pages = 4;
+	const pages = $derived(abr ? 3 : 4);
 	const services: [string, boolean][] = [
 		["Servicedienstleistungen jährlich", false],
 		["Mengeneinheit", true],
@@ -62,7 +65,7 @@
 			</div>
 			<div class="r">
 				{#each OFFER_COMPANY.sender as line (line)}{line}<br
-					/>{/each}Angebotsnummer: {offer.nr}
+					/>{/each}Angebotsnummer: {part.nr}
 			</div>
 		</div>
 		<div class="dp-meta">
@@ -126,9 +129,16 @@
 	<span class="dp-pn">Seite {n} von {pages}</span>
 {/snippet}
 
+{#snippet terms()}
+	{#each OFFER_TERMS as t (t)}<p class="dp-p dp-sm">{t}</p>{/each}
+{/snippet}
+
 <div class="dp-view">
+	<div class="dp-doc"><b>Dokument {part.of}</b>{part.title}</div>
 	<div class="dp-bar">
-		<span>{offerFileName(w.s, offer)}</span><span>{pages} Seiten</span>
+		<span>{offerFileName(w.s, offer, part.title)}</span><span
+			>{pages} Seiten</span
+		>
 	</div>
 	<!-- A scrolling region needs focus to scroll by keyboard. -->
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -141,7 +151,7 @@
 		<section class="dp-pg">
 			<div class="dp-in">
 				{@render head(true)}
-				<h2 class="dp-h">Unser Angebot für Ihre Liegenschaft</h2>
+				<h2 class="dp-h">Angebot {part.title}</h2>
 				<p class="dp-p">
 					Sehr geehrte Damen und Herren, auf den folgenden Seiten finden Sie
 					unser Angebot für <b>{property.join(", ")}</b>. Ihr Lieferumfang im
@@ -174,39 +184,46 @@
 			<div class="dp-in">
 				{@render head(true)}
 				<h2 class="dp-h dp-h2">Angebotsübersicht zu Ihrer Anfrage</h2>
-				<div class="dp-box l">
-					<b>Einmalige Servicedienstleistungen</b><b>{n2(p.sO)} €</b><small
-						>zzgl. der gesetzlichen MwSt.</small
-					>
-				</div>
+				{#if !abr}
+					<div class="dp-box l">
+						<b>Einmalige Servicedienstleistungen</b><b>{n2(p.sO)} €</b><small
+							>zzgl. der gesetzlichen MwSt.</small
+						>
+					</div>
+				{/if}
 				<div class="dp-box d">
 					<b>Gesamtpreis pro Jahr</b><b>{n2(p.year)} €</b><small
 						>zzgl. der gesetzlichen MwSt.</small
 					>
 				</div>
 				<div class="dp-sub">
-					<span>Abrechnungs- und Geräteservice pro Jahr</span><b>{n2(p.sS)} €</b
-					><small>zzgl. der gesetzlichen MwSt.</small>
+					<span
+						>{abr
+							? "Heizkostenabrechnung pro Jahr"
+							: "Geräteservice pro Jahr"}</span
+					><b>{n2(p.sS)} €</b><small>zzgl. der gesetzlichen MwSt.</small>
 				</div>
-				{#if p.buy}
+				{#if !abr}
 					<div class="dp-sub">
-						<span>Gerätekauf (einmalig)</span><b>auf Anfrage</b><small
-							>zzgl. der gesetzlichen MwSt.</small
-						>
-					</div>
-				{:else}
-					<div class="dp-sub">
-						<span>Gerätemiete pro Jahr</span><b>{n2(p.sM)} €</b><small
-							>zzgl. der gesetzlichen MwSt.</small
-						>
+						{#if p.buy}
+							<span>Gerätekauf (einmalig)</span><b>auf Anfrage</b>
+						{:else}
+							<span>Gerätemiete pro Jahr</span><b>{n2(p.sM)} €</b>
+						{/if}<small>zzgl. der gesetzlichen MwSt.</small>
 					</div>
 				{/if}
+				<p class="dp-p dp-mu">
+					{abr
+						? "Die Gerätemiete bieten wir Ihnen in einem separaten Angebot an."
+						: "Die Heizkostenabrechnung bieten wir Ihnen in einem separaten Angebot an."}
+				</p>
 				{#if p.onRequest.length || p.extras.length}
 					<p class="dp-p dp-mu">
 						Zusätzlich angefragt: {[
 							...p.onRequest.map((r) => `${r.n} × ${r.sub}`),
 							...p.extras,
-						].join(", ")}. Preis auf Anfrage, wir ergänzen das Angebot.
+						].join(", ")}. Richtwerte netto, den genauen Preis ergänzen wir im
+						Angebot.
 					</p>
 				{/if}
 				<p class="dp-p">
@@ -244,69 +261,77 @@
 					"Gesamtpreis Servicedienstleistungen pro Jahr inkl. 19% MwSt.",
 					gross(p.sS),
 				)}
-				<h2 class="dp-h3">{p.buy ? "Gerätekauf" : "Gerätemiete"}</h2>
-				<p class="dp-k">{p.buy ? "Einmalig, Preis auf Anfrage" : "Jährlich"}</p>
-				{@render table(
-					devices,
-					p.rental.map((r) => [
-						r.t,
-						r.lz || "–",
-						r.me,
-						r.n,
-						unitPrice(r),
-						totalPrice(r),
-					]),
-					tech(w.s)
-						? ""
-						: "Gerätepositionen ergänzen wir nach Prüfung Ihrer Unterlagen.",
-					"Gesamtpreis Gerätemiete pro Jahr netto",
-					p.sM,
-					"Gesamtpreis Gerätemiete pro Jahr inkl. 19% MwSt.",
-					gross(p.sM),
-				)}
+				{#if abr}
+					{@render terms()}
+				{:else}
+					<h2 class="dp-h3">{p.buy ? "Gerätekauf" : "Gerätemiete"}</h2>
+					<p class="dp-k">
+						{p.buy ? "Einmalig, Preis auf Anfrage" : "Jährlich"}
+					</p>
+					{@render table(
+						devices,
+						p.rental.map((r) => [
+							r.t,
+							r.lz || "–",
+							r.me,
+							r.n,
+							unitPrice(r),
+							totalPrice(r),
+						]),
+						tech(w.s)
+							? ""
+							: "Gerätepositionen ergänzen wir nach Prüfung Ihrer Unterlagen.",
+						"Gesamtpreis Gerätemiete pro Jahr netto",
+						p.sM,
+						"Gesamtpreis Gerätemiete pro Jahr inkl. 19% MwSt.",
+						gross(p.sM),
+					)}
+				{/if}
 			</div>
 			{@render foot(3)}
 		</section>
-		<section class="dp-pg">
-			<div class="dp-in">
-				{@render head(false)}
-				<h2 class="dp-h3">Servicedienstleistungen</h2>
-				<p class="dp-k">Einmalig</p>
-				{@render table(
-					servicesOnce,
-					p.once.map(row),
-					p.once.length
-						? ""
-						: c.self && tech(w.s)
-							? "Montage durch Sie oder Ihren Hausinstallateur, keine Installationspauschale."
-							: "Keine einmaligen Leistungen.",
-					"Gesamtpreis einmalige Servicedienstleistungen netto",
-					p.sO,
-					"Gesamtpreis einmalige Servicedienstleistungen inkl. 19% MwSt.",
-					gross(p.sO),
-				)}
-				{#each OFFER_TERMS as t (t)}<p class="dp-p dp-sm">{t}</p>{/each}
-				{#if c.self && tech(w.s)}
-					<p class="dp-p dp-sm">
-						Die Montage übernehmen Sie oder Ihr Hausinstallateur. Eine
-						Installationspauschale fällt nicht an. Einbausätze, Rohr- und
-						Sanitärarbeiten sind nicht enthalten.
-					</p>
-				{/if}
-				{#if c.checks.length}
-					<p class="dp-p dp-sm">
-						<b
-							>Grundlage dieses Angebots sind Ihre Angaben im Heidi
-							Self-Service. Vor der Lieferung prüfen wir:</b
-						>
-					</p>
-					<ul class="dp-ul">
-						{#each c.checks.slice(0, 8) as x, i (i)}<li>{x}</li>{/each}
-					</ul>
-				{/if}
-			</div>
-			{@render foot(4)}
-		</section>
+		{#if !abr}
+			<section class="dp-pg">
+				<div class="dp-in">
+					{@render head(false)}
+					<h2 class="dp-h3">Servicedienstleistungen</h2>
+					<p class="dp-k">Einmalig</p>
+					{@render table(
+						servicesOnce,
+						p.once.map(row),
+						p.once.length
+							? ""
+							: c.self && tech(w.s)
+								? "Montage durch Sie oder Ihren Hausinstallateur, keine Installationspauschale."
+								: "Keine einmaligen Leistungen.",
+						"Gesamtpreis einmalige Servicedienstleistungen netto",
+						p.sO,
+						"Gesamtpreis einmalige Servicedienstleistungen inkl. 19% MwSt.",
+						gross(p.sO),
+					)}
+					{@render terms()}
+					{#if c.self && tech(w.s)}
+						<p class="dp-p dp-sm">
+							Die Montage übernehmen Sie oder Ihr Hausinstallateur. Eine
+							Installationspauschale fällt nicht an. Einbausätze, Rohr- und
+							Sanitärarbeiten sind nicht enthalten.
+						</p>
+					{/if}
+					{#if c.checks.length}
+						<p class="dp-p dp-sm">
+							<b
+								>Grundlage dieses Angebots sind Ihre Angaben im Heidi
+								Self-Service. Vor der Lieferung prüfen wir:</b
+							>
+						</p>
+						<ul class="dp-ul">
+							{#each c.checks.slice(0, 8) as x, i (i)}<li>{x}</li>{/each}
+						</ul>
+					{/if}
+				</div>
+				{@render foot(4)}
+			</section>
+		{/if}
 	</div>
 </div>
 
@@ -318,6 +343,21 @@
 		border-radius: 16px;
 		overflow: hidden;
 		background: #e8ecea;
+	}
+	:global(.dp-view) + .dp-view {
+		margin-top: 22px;
+	}
+	.dp-doc {
+		display: flex;
+		gap: 10px;
+		align-items: baseline;
+		padding: 12px 16px 0;
+		font-size: 13.5px;
+		color: var(--muted);
+	}
+	.dp-doc b {
+		color: var(--ink);
+		font-weight: 600;
 	}
 	.dp-bar {
 		display: flex;

@@ -18,7 +18,7 @@
 		YES_NO_UNKNOWN,
 		type GroupDev,
 	} from "../data";
-	import { swapAll, type Group } from "../model";
+	import { capsuleMeter, swapAll, type Group } from "../model";
 	import { ICONS, RADIATORS, SKETCHES } from "../svg";
 	import Drop from "../ui/Drop.svelte";
 	import Note from "../ui/Note.svelte";
@@ -279,34 +279,36 @@
 						onpick={(v) => (g.einbau = v)}
 					/>
 					{#if g.einbau === "up"}
-						<div class="ss-cond">
-							<Question
-								text="MID-Norm der Messkapsel"
-								kind="sub"
-								hint="(Aufschrift auf dem Zähler oder Einbausatz)"
-							/>
-							<div class="ss-mid">
-								{#each MID_NORMS as x (x)}
-									<button
-										type="button"
-										data-v={x}
-										class={[g.ksys === x && "on"]}
-										aria-pressed={g.ksys === x}
-										onclick={() => (g.ksys = g.ksys === x ? "" : x)}
-										>{x === "andere" ? "Andere / unklar" : x}</button
-									>
-								{/each}
-							</div>
-							{#if g.ksys === "andere"}
-								<div class="ss-cond">
-									<Text
-										label="Aufschrift (falls lesbar)"
-										bind:value={g.ksysx}
-										placeholder="z. B. Aufschrift am Zähler oder Einbausatz"
-									/>
+						{#if g.inst !== "nein"}
+							<div class="ss-cond">
+								<Question
+									text="MID-Norm der Messkapsel*"
+									kind="sub"
+									hint="(Aufschrift auf dem Zähler oder Einbausatz)"
+								/>
+								<div class="ss-mid">
+									{#each MID_NORMS as x (x)}
+										<button
+											type="button"
+											data-v={x}
+											class={[g.ksys === x && "on"]}
+											aria-pressed={g.ksys === x}
+											onclick={() => (g.ksys = g.ksys === x ? "" : x)}
+											>{x === "andere" ? "Andere / unklar" : x}</button
+										>
+									{/each}
 								</div>
-							{/if}
-						</div>
+								{#if g.ksys === "andere"}
+									<div class="ss-cond">
+										<Text
+											label="Aufschrift (falls lesbar)"
+											bind:value={g.ksysx}
+											placeholder="z. B. Aufschrift am Zähler oder Einbausatz"
+										/>
+									</div>
+								{/if}
+							</div>
+						{/if}
 					{:else if g.einbau === "ap"}
 						<div class="ss-cond">
 							<div class="ss-f3">
@@ -486,7 +488,7 @@
 					</div>
 				{/if}
 
-				{#if d !== "hkv"}
+				{#if d !== "hkv" && !capsuleMeter(d, g)}
 					<p class="ss-sub">Absperrventil vorhanden?*</p>
 					<Options
 						class="grid2 absv"

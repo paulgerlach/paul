@@ -13,8 +13,16 @@
 	import Markup from "../wizard/ui/Markup.svelte";
 	import { onMount, tick, untrack } from "svelte";
 	import { prefersReducedMotion } from "$lib/landing/motion";
-	import { deviceStep, SENT_LEAD, STEPS, type GroupDev } from "../wizard/data";
+	import {
+		deviceStep,
+		NEXT_STEP_AT,
+		NEXT_STEPS,
+		SENT_LEAD,
+		STEPS,
+		type GroupDev,
+	} from "../wizard/data";
 	import { devOf, isOptional, liveRows } from "../wizard/model";
+	import { CHECK } from "../wizard/svg";
 	import Abr from "../wizard/steps/Abr.svelte";
 	import Adr from "../wizard/steps/Adr.svelte";
 	import Bestand from "../wizard/steps/Bestand.svelte";
@@ -58,6 +66,8 @@
 			} as Record<string, string>
 		)[id] ?? "Weiter",
 	);
+	/** Where "So geht es weiter" stands, on the last steps only (`sideNext`). */
+	const nextAt = $derived(sent ? 3 : NEXT_STEP_AT[id]);
 	const live = $derived(
 		["res", "adr", "ang"].includes(id) ? [] : liveRows(w.s, w.count("liste")),
 	);
@@ -223,6 +233,21 @@
 									</div>
 								{/each}
 							</div>
+						</div>
+					{/if}
+					{#if nextAt !== undefined}
+						<div class="ss-nx">
+							<p class="ss-info-k">So geht es weiter</p>
+							<ol>
+								{#each NEXT_STEPS as step, i (step)}
+									<li class={[i < nextAt && "done", i === nextAt && "cur"]}>
+										<span class="n"
+											>{#if i < nextAt}<Markup html={CHECK} />{:else}{i +
+													1}{/if}</span
+										>{step}
+									</li>
+								{/each}
+							</ol>
 						</div>
 					{/if}
 				</aside>
@@ -501,13 +526,13 @@
 			width: 26px;
 			height: 26px;
 			border-radius: 50%;
-			border: 1.5px solid #c9d3ce;
+			border: 1.5px solid #dde4e0;
 			display: grid;
 			place-items: center;
 			font-size: 13px;
 			font-style: normal;
 			font-weight: 600;
-			color: var(--muted);
+			color: #a3afaa;
 		}
 		.ss-info-b h4 {
 			font-size: 16px;
@@ -778,6 +803,22 @@
 			line-height: 1.45;
 			color: var(--muted);
 		}
+		.ss-zpr {
+			display: inline-block;
+			margin-left: 8px;
+			font-size: 12.5px;
+			font-weight: 600;
+			color: #2f6a39;
+			background: #e3f3e4;
+			border-radius: 999px;
+			padding: 2px 9px;
+			vertical-align: 2px;
+			white-space: nowrap;
+		}
+		.ss-zpr i {
+			font-style: normal;
+			font-weight: 500;
+		}
 		.ss-zmore {
 			margin: 14px 0 0;
 			font-size: 14px;
@@ -821,6 +862,92 @@
 			display: block;
 			color: #3f320f;
 			margin-bottom: 2px;
+		}
+		/* "Beratungstermin mit Zähleridentifikation" */
+		.ss-ber {
+			position: relative;
+			display: flex;
+			color: var(--ink);
+			text-decoration: none;
+			align-items: center;
+			gap: 16px;
+			margin-top: 18px;
+			background: #fff;
+			border: 1.5px solid var(--hair);
+			border-radius: 18px;
+			padding: 18px 20px;
+			cursor: pointer;
+			transition:
+				border-color 0.2s,
+				background 0.2s;
+		}
+		.ss-ber:hover {
+			border-color: #c6e6c8;
+		}
+		.ss-ber:focus-visible {
+			box-shadow: 0 0 0 3px rgba(138, 214, 143, 0.4);
+		}
+		.ss-ber-i {
+			width: 44px;
+			height: 44px;
+			border-radius: 12px;
+			background: #e3f3e4;
+			display: grid;
+			place-items: center;
+			flex: none;
+			color: #2f7a3c;
+		}
+		.ss-ber-i svg {
+			width: 22px;
+			height: 22px;
+		}
+		.ss-ber-t {
+			flex: 1;
+			min-width: 0;
+		}
+		.ss-ber-t b {
+			display: block;
+			font-size: 16px;
+			font-weight: 600;
+		}
+		.ss-ber-t small {
+			display: block;
+			font-size: 13.5px;
+			color: var(--muted);
+			line-height: 1.45;
+			margin-top: 3px;
+		}
+		.ss-ber-t small.ss-ber-k {
+			font-size: 12.5px;
+			font-weight: 600;
+			color: #2f7a3c;
+			margin: 0 0 2px;
+		}
+		.ss-ber-p {
+			text-align: right;
+			flex: none;
+		}
+		.ss-ber-p b {
+			display: block;
+			font-size: 20px;
+			font-weight: 600;
+		}
+		.ss-ber-p small {
+			display: block;
+			font-size: 12px;
+			color: #2f7a3c;
+			font-weight: 600;
+		}
+		.ss-ber-p small.nt {
+			color: var(--muted);
+			font-weight: 400;
+			margin-top: -2px;
+		}
+		.ss-ber-p small.go {
+			margin-top: 6px;
+		}
+		.ss-ber:hover .ss-ber-p small.go {
+			text-decoration: underline;
 		}
 		.ss-nudge.strong {
 			border: 1px solid #ebcb85;
@@ -1637,6 +1764,11 @@
 			background: #fbf5e8;
 			color: #7a5a12;
 		}
+		.ss-chips {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
 		.ss-chk-l {
 			margin: -4px 0 14px;
 			font-size: 14.5px;
@@ -1818,79 +1950,58 @@
 			color: #2f6a39;
 		}
 
-		/* "So geht es weiter" */
-		.ss-ns {
-			margin-top: 26px;
-			background: var(--ink);
-			color: #fff;
-			border-radius: 22px;
-			padding: 24px 24px 20px;
+		/* "So geht es weiter", beside the last steps */
+		.ss-nx {
+			background: var(--bg);
+			border-radius: 20px;
+			padding: 18px 22px;
+			margin-top: 12px;
 		}
-		.ss-ns-h {
-			margin: 0 0 14px;
-			font-size: 19px;
-			font-weight: 600;
-			letter-spacing: -0.01em;
+		.ss-nx .ss-info-k::after {
+			display: none;
 		}
-		.ss-ns ol {
+		.ss-nx ol {
 			list-style: none;
 			margin: 0;
 			padding: 0;
 			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			gap: 12px;
+			gap: 10px;
 		}
-		.ss-ns li {
+		.ss-nx li {
 			display: flex;
-			align-items: flex-start;
-			gap: 12px;
-			overflow-wrap: anywhere;
-			background: rgba(255, 255, 255, 0.06);
-			border: 1px solid rgba(255, 255, 255, 0.1);
-			border-radius: 16px;
-			padding: 16px;
-			font-size: 13.5px;
-			line-height: 1.45;
-			color: rgba(255, 255, 255, 0.72);
+			align-items: center;
+			gap: 10px;
+			font-size: 14.5px;
+			color: var(--muted);
 		}
-		.ss-ns li b {
-			display: block;
-			color: #fff;
-			font-size: 15.5px;
-			font-weight: 600;
-			margin-bottom: 3px;
-		}
-		.ss-ns .n {
-			flex: none;
-			width: 30px;
-			height: 30px;
+		.ss-nx .n {
+			width: 24px;
+			height: 24px;
 			border-radius: 50%;
-			background: rgba(255, 255, 255, 0.12);
+			border: 1.5px solid #d5ddd9;
 			display: grid;
 			place-items: center;
-			font-size: 14px;
+			font-size: 12px;
 			font-weight: 600;
+			flex: none;
+		}
+		.ss-nx li.cur {
+			color: var(--ink);
+			font-weight: 600;
+		}
+		.ss-nx li.cur .n {
+			background: var(--ink);
+			border-color: var(--ink);
 			color: #fff;
 		}
-		.ss-ns li.cur {
-			background: #fff;
-			color: var(--muted);
-			border-color: #fff;
-		}
-		.ss-ns li.cur b {
-			color: var(--ink);
-		}
-		.ss-ns li.cur .n {
+		.ss-nx li.done .n {
 			background: #8ad68f;
-			color: var(--ink);
+			border-color: #8ad68f;
 		}
-		.ss-ns li.done .n {
-			background: #8ad68f;
-		}
-		.ss-ns li.done .n svg {
-			width: 14px;
-			height: 14px;
-			color: var(--ink);
+		.ss-nx li.done .n svg {
+			width: 12px;
+			height: 12px;
+			color: #1e322d;
 		}
 
 		/* The offer: sending and confirmation */
@@ -1903,8 +2014,11 @@
 		}
 		.ss-send1 .bk-next {
 			width: auto;
-			margin-top: 0;
+			margin: 0;
 			padding-inline: 28px;
+		}
+		.ss-send1.top {
+			margin: 18px 0 22px;
 		}
 		.ss-send1 small {
 			font-size: 14px;
@@ -2050,8 +2164,7 @@
 			.ss-tipb {
 				width: 190px;
 			}
-			.ss-k2,
-			.ss-ns ol {
+			.ss-k2 {
 				grid-template-columns: minmax(0, 1fr);
 			}
 		}
@@ -2092,8 +2205,20 @@
 		}
 	}
 	@media (max-width: 560px) {
-		.ss-wiz :global(.ss-mid) {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+		.ss-wiz :global {
+			.ss-mid {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+			.ss-ber {
+				flex-wrap: wrap;
+			}
+			.ss-ber-t {
+				flex-basis: calc(100% - 60px);
+			}
+			.ss-ber-p {
+				text-align: left;
+				margin-left: 60px;
+			}
 		}
 	}
 	@media (max-width: 520px) {

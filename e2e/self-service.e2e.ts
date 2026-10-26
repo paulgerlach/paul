@@ -93,7 +93,15 @@ async function toOffer(page: Page, email: string) {
 	await check.getByLabel("Ort*").fill("Berlin");
 	await next();
 	await expect(title).toHaveText("Ihr Angebot");
-	await expect(check.locator(".dp-pg")).toHaveCount(4);
+	// Two documents: Gerätemiete und Service (4 pages), Heizkostenabrechnung (3).
+	await expect(check.locator(".dp-doc")).toHaveText([
+		/Dokument 1 von 2\s*Gerätemiete und Service/,
+		/Dokument 2 von 2\s*Heizkostenabrechnung/,
+	]);
+	await expect(check.locator(".dp-pg")).toHaveCount(7);
+	await expect(check.locator(".ss-nx li.cur")).toHaveText(
+		"3Angebot per E-Mail erhalten",
+	);
 	return check;
 }
 

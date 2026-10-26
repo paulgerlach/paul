@@ -99,7 +99,10 @@ export class SelfService {
 	count = (id: string) => this.files[id]?.length ?? 0;
 
 	addFiles(id: string, list: FileList | File[], max: number) {
-		const have = (this.files[id] ??= []);
+		// Read the list back after creating it: the assignment's value is the
+		// plain array, and pushes onto it would bypass the `$state` proxy.
+		this.files[id] ??= [];
+		const have = this.files[id];
 		for (const f of Array.from(list)) {
 			if (have.length >= max) break;
 			const image = f.type.startsWith("image/");

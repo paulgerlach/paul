@@ -209,7 +209,7 @@ Prettier with tabs, double quotes, semicolons, trailing commas, `prettier-plugin
 
 - `<Seo>` is rendered **once**, in the root layout. It reads `page.data.seo` (`SeoData`, `$lib/seo/site.ts`). A page overrides tags by returning `seo` from its `load`; never add `<svelte:head>` meta tags per page.
 - Canonical / `og:url` / hreflang are per path. Preview URLs and error pages get `noindex`.
-- New public pages go into `SITE_PAGES` (`$lib/sitePages.ts`, `gated: true` while behind a go-live gate); `sitemap.xml/+server.ts` reads it, `sitePages.test.ts` fails on a route that's missing. `robots.txt` disallows `/fragebogen`, `/preview/`, `/slice-simulator`.
+- New public pages go into `SITE_PAGES` (`$lib/sitePages.ts`, `gated: true` while behind a go-live gate); `sitemap.xml/+server.ts` reads it, `sitePages.test.ts` fails on a route that's missing. `robots.txt` disallows `/preview/` and `/slice-simulator`; `/fragebogen` is `noindex` instead (KI-39).
 
 ### Data loading, caching and Prismic
 

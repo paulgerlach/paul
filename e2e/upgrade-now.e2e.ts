@@ -209,6 +209,7 @@ test.describe("signup", () => {
 				event_type: "switchinquiry",
 				placement: "final",
 				page: PATH,
+				source: "fernablesung-umruesten",
 			});
 	});
 

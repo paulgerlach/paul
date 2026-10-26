@@ -27,7 +27,7 @@ export const load: PageServerLoad = async () => ({
 export const actions: Actions = {
 	default: (event) =>
 		handleSwitchSignup(event, {
-			source: "upgrade-now",
+			source: "fernablesung-umruesten",
 			page: ROUTE_UPGRADE_NOW,
 		}),
 };

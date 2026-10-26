@@ -295,5 +295,6 @@ test("signup stores the lead and sends the webhook with the page", async ({
 			event_type: "switchinquiry",
 			placement: "final",
 			page: PATH,
+			source: "auswertung",
 		});
 });

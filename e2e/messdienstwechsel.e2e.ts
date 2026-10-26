@@ -208,6 +208,7 @@ test.describe("signup", () => {
 					event_type: "switchinquiry",
 					placement,
 					page: PATH,
+					source: "messdienstwechsel",
 				});
 		});
 	}

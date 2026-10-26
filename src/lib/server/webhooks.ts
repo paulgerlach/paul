@@ -175,11 +175,12 @@ export async function sendNewsletterEvent(
 }
 
 /**
- * Send offer inquiry event (with full questionnaire data)
+ * Send offer inquiry event (with full questionnaire data). Throws when it
+ * can't be delivered, so the Fragebogen can tell the visitor (KI-37).
  */
 export async function sendOfferInquiryEvent(
 	email: string,
 	questionnaireData: Record<string, unknown>,
 ): Promise<void> {
-	await sendWebhookEvent("newinquiry", email, questionnaireData);
+	await sendWebhookEventOrThrow("newinquiry", email, questionnaireData);
 }

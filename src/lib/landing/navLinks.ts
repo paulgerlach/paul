@@ -12,6 +12,7 @@ import {
 	ROUTE_HAUSVERWALTUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_HKVO_LEITFADEN,
+	ROUTE_INTEROPERABILITAET,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
@@ -42,7 +43,7 @@ import {
 
 /**
  * Top nav of the landing pages, the designs' own (the same in every design).
- * It links only to landing pages, the blog, /preise and the questionnaire.
+ * It links only to landing pages, the blog and the questionnaire.
  *
  * An entry without `href` has no landing page yet and isn't shown; its
  * comment names the design id of its target, so building that page means
@@ -84,6 +85,11 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Funkzähler",
 						text: "Heizkostenverteiler, Wasserzähler und Rauchwarnmelder mit Fernablesung",
 						href: ROUTE_GERAETE,
+					},
+					{
+						title: "Zähler-Interoperabilität",
+						text: "Vorhandene Zähler jedes Herstellers auswerten und abrechnen",
+						href: ROUTE_INTEROPERABILITAET,
 					},
 					{
 						title: "Self-Service",

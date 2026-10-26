@@ -20,6 +20,7 @@
 		v: z.v,
 		label: z.title,
 		icon: z.icon,
+		price: [z.price, z.per],
 		small: z.small,
 		more: z.text,
 	}))}
@@ -31,6 +32,10 @@
 		w.s.zusatz = order.filter((k) => next.includes(k));
 	}}
 />
+<p class="ss-zmore">
+	Einstiegspreise als Richtwert, netto. Den genauen Preis ergänzen wir in Ihrem
+	Angebot.
+</p>
 <p class="ss-zmore">
 	Mehr zum Thema: <a
 		class="ss-zl"

@@ -16,6 +16,8 @@
 		more?: string;
 		/** The "Empfohlen" badge. */
 		rec?: boolean;
+		/** A starting price and its unit after the label (`.ss-zpr`). */
+		price?: readonly [string, string];
 	};
 </script>
 
@@ -59,8 +61,13 @@
 			>
 			<span class="tx"
 				>{#if o.rec}{o.label}
-					<span class="ss-rec">Empfohlen</span
-					>{:else}{o.label}{/if}{#if o.small || o.more}<small
+					<span class="ss-rec">Empfohlen</span>{:else}{o.price
+						? `${o.label} `
+						: o.label}{/if}{#if o.price}<span class="ss-zpr"
+						>{o.price[1] ? `${o.price[0]} ` : o.price[0]}{#if o.price[1]}<i
+								>{o.price[1]}</i
+							>{/if}</span
+					>{/if}{#if o.small || o.more}<small
 						>{#if o.more}<span class="ss-zs">{o.small}</span><span class="ss-zx"
 								>{o.more}</span
 							>{:else}{o.small}{/if}</small

@@ -2,21 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { GATED_ROBOTS } from "./launch.ts";
 import { daysUntilObligation } from "../src/lib/landing/deadline/deadline.ts";
 
-// The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
-
 const PATH = "/vorgehen";
-const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
-
-const testEmail = (name: string) =>
-	`e2e-vg-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-async function webhookFor(page: Page, email: string) {
-	const events: { email: string }[] = await (
-		await page.request.get(WEBHOOK_EVENTS)
-	).json();
-	return events.find((event) => event.email === email);
-}
 
 /** Waits for hydration, so clicks reach the components. */
 const gotoHydrated = (page: Page) =>
@@ -95,36 +81,69 @@ test("the remote-reading block links to the HKVO-Leitfaden", async ({
 	).toHaveAttribute("href", "/heizkostenverordnung");
 });
 
-test("every CTA leads to the contact card's form, the hero has no #start", async ({
+test("the hero and the contact card offer the questionnaire and the demo, no form", async ({
 	page,
 }) => {
 	await page.goto(PATH);
-	await expect(
-		page.locator("section.final#start input[name=email]"),
-	).toHaveCount(1);
-	await expect(
-		page.locator("section[aria-labelledby=vg-h1]"),
-	).not.toHaveAttribute("id", "start");
-	for (const [name, target] of [
-		["Angebot einholen", "#start"],
-		["Demo buchen", "/demo"],
-	]) {
-		const links = page.locator("main a", { hasText: name });
-		expect(await links.count(), name).toBeGreaterThanOrEqual(1);
-		for (const href of await links.evaluateAll((els) =>
-			els.map((el) => el.getAttribute("href")),
-		))
-			expect(href, name).toBe(target);
+	await expect(page.locator("main form")).toHaveCount(0);
+	await expect(page.locator("section[aria-labelledby=vg-h1]")).toHaveAttribute(
+		"id",
+		"start",
+	);
+	for (const section of ["section[aria-labelledby=vg-h1]", "section.final"]) {
+		const box = page.locator(section);
+		await expect(
+			box.getByRole("link", { name: "Angebot einholen" }),
+		).toHaveAttribute("href", "/fragebogen");
+		await expect(
+			box.getByRole("link", { name: "Demo buchen" }),
+		).toHaveAttribute("href", "/demo");
+		await expect(box.locator("a video")).toHaveCount(1);
 	}
 });
 
-test("Angebot einholen focuses the signup email", async ({ page }) => {
+test("the journey lists eleven stations and links the built pages", async ({
+	page,
+	request,
+}) => {
+	await page.goto(PATH);
+	const journey = page.locator("#ablauf");
+	await expect(journey.locator("article")).toHaveCount(11);
+	await expect(journey.locator("nav a")).toHaveCount(11);
+	await expect(journey.locator('nav a[aria-current="location"]')).toHaveText(
+		/Portfolio-Check/,
+	);
+	// No page for the Vollmacht-Vorlage yet: its link isn't rendered.
+	await expect(
+		journey.getByRole("link", { name: /Vollmacht-Vorlage/ }),
+	).toHaveCount(0);
+	const hrefs = await journey
+		.locator("article a")
+		.evaluateAll((els) => els.map((el) => el.getAttribute("href") ?? ""));
+	expect(hrefs).toHaveLength(9);
+	for (const href of hrefs) {
+		const response = await request.get(href);
+		expect(response.status(), href).toBe(200);
+	}
+});
+
+test("the journey's nav follows the scroll", async ({ page }) => {
 	await gotoHydrated(page);
-	await page
-		.locator("section[aria-labelledby=vg-h1]")
-		.getByRole("link", { name: "Angebot einholen" })
-		.click();
-	await expect(page.locator("#start input[name=email]")).toBeFocused();
+	await page.locator("#ablauf nav a", { hasText: "Fotodokumentation" }).click();
+	await expect(
+		page.locator('#ablauf nav a[aria-current="location"]'),
+	).toHaveText(/Fotodokumentation/);
+	await expect(page).toHaveURL(new RegExp(`${PATH}$`));
+});
+
+test("Heidi's part counts up to eight tasks in view", async ({ page }) => {
+	await gotoHydrated(page);
+	const heidi = page.locator(".heidi");
+	await expect(heidi.locator("li")).toHaveCount(8);
+	// Below the fold it waits at 0 and counts once it scrolls in.
+	await expect(heidi.locator(".big")).toHaveText("0 Aufgaben");
+	await heidi.scrollIntoViewIfNeeded();
+	await expect(heidi.locator(".big")).toHaveText("8 Aufgaben");
 });
 
 test("the day count is the days to 1.1.2027", async ({ page }) => {
@@ -176,6 +195,17 @@ test.describe("step tabs", () => {
 		await expect(selectedTab(page)).toHaveText(/Bedarfsanalyse/);
 	});
 
+	test("step 3 shows the dashboard demo in its end state", async ({ page }) => {
+		await gotoHydrated(page);
+		await page.getByRole("tab", { name: /Verbrauchsanalyse/ }).click();
+		const demo = page.locator(".pic.on .vd");
+		await expect(demo).toHaveClass(/s-done/);
+		await expect(demo.locator(".k b").first()).toHaveText(/^551/);
+		await expect(demo.locator(".toast")).toContainText(
+			"Heizkostenabrechnung erstellt",
+		);
+	});
+
 	test("don't advance with reduced motion", async ({ page }) => {
 		await page.clock.install();
 		await gotoHydrated(page);
@@ -190,30 +220,7 @@ test("the step tabs advance by themselves while in view", async ({ page }) => {
 	await gotoHydrated(page);
 	await page.mouse.move(0, 0);
 	await page.locator(".tabs").scrollIntoViewIfNeeded();
-	await expect(page.locator(".pics .bar")).toBeVisible();
+	await expect(page.locator(".pics .bar i")).toBeVisible();
 	await page.clock.runFor(6_100);
 	await expect(selectedTab(page)).toHaveText(/Installation/);
-});
-
-test("signup stores the lead and sends the webhook with the page", async ({
-	page,
-}) => {
-	// 10 s behind, so the form's render time passes the timing check
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-	const email = testEmail("final");
-	const box = page.locator(".signup-box.final");
-	await box.locator('input[name="email"]').fill(email);
-	await box.locator("button[type=submit]").click();
-
-	await expect(box.locator(".status")).toHaveText(
-		"Danke! Wir melden uns innerhalb eines Werktags.",
-	);
-	await expect
-		.poll(() => webhookFor(page, email))
-		.toMatchObject({
-			event_type: "switchinquiry",
-			placement: "final",
-			page: PATH,
-		});
 });

@@ -1,17 +1,17 @@
 <!--
   The result ("Ihr persönlicher Zählercheck"): the preselected devices, the
-  preliminary cost estimate as two contracts, the totals, "So geht es
-  weiter" and the technical check points with who handles them.
+  preliminary cost estimate as two contracts, the further services with their
+  starting prices, the totals and the technical check points with who
+  handles them.
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { ROUTE_ENERGIEAUSWEIS } from "$lib/routes";
 	import { CAPSULES, DEVICE_PHOTOS, PHOTOS } from "../../photos";
-	import { checkOwner, DEVICES, PRICES } from "../data";
-	import { calc, eur, gateways, tech } from "../model";
+	import { checkOwner, DEVICES, EXTRAS, PRICES } from "../data";
+	import { calc, eur, extraPrice, gateways, tech } from "../model";
 	import { CHECK } from "../svg";
-	import NextSteps from "../ui/NextSteps.svelte";
 	import { getSelfService } from "../wizard.svelte";
 
 	const w = getSelfService();
@@ -57,7 +57,11 @@
 									: `Funk-${DEVICES[r.d].name}`) +
 								(r.sub ? ` · ${r.sub}` : "")}</span
 					>
-					<em class={["ss-chip", r.ck && "chk"]}>{r.tag}</em>
+					<span class="ss-chips"
+						><em class="ss-chip">{r.tag}</em>{#if r.ck}<em class="ss-chip chk"
+								>Angabe offen</em
+							>{/if}</span
+					>
 				</div>
 			</article>
 		{/each}
@@ -190,19 +194,25 @@
 </div>
 {#if c.extras.length}
 	<div class="ss-cost ss-cost-z">
-		<div class="ss-cost-r">
-			<span
-				>Weitere Leistungen: {c.extras.join(
-					", ",
-				)}{#if w.s.zusatz.includes("ea")}
-					· <a
-						class="ss-zl"
-						href={ROUTE_ENERGIEAUSWEIS}
-						target="_blank"
-						rel="noopener">Zum Energieausweis</a
-					>{/if}</span
-			><b class="o">auf Anfrage</b>
+		<div class="ss-cost-h">
+			<small>Zusätzlich gewählt</small><b>Weitere Leistungen</b>
 		</div>
+		{#each EXTRAS.filter((z) => w.s.zusatz.includes(z.v)) as z (z.v)}
+			<div class="ss-cost-r">
+				<span
+					>{z.v === "ea" ? `${z.title} · ` : z.title}{#if z.v === "ea"}<a
+							class="ss-zl"
+							href={ROUTE_ENERGIEAUSWEIS}
+							target="_blank"
+							rel="noopener">Mehr erfahren</a
+						>{/if}</span
+				><b>{extraPrice(z.v)}</b>
+			</div>
+		{/each}
+		<p class="ss-cost-n">
+			Einstiegspreise als Richtwert, netto. Den genauen Preis ergänzen wir im
+			Angebot.
+		</p>
 	</div>
 {/if}
 <div class="ss-tiles">
@@ -224,7 +234,6 @@
 	Funkzähler hängt die Machbarkeit unter anderem von Funkprotokoll,
 	Zugangsschlüsseln und Vertragslage ab.
 </p>
-<NextSteps cur={1} />
 {#if c.checks.length}
 	<h3 class="ss-res-h">Technische Prüfpunkte</h3>
 	<p class="ss-chk-l">

@@ -1,6 +1,7 @@
 import { json } from "@sveltejs/kit";
 import { z } from "zod";
 import { questionnaireSchema } from "$lib/fragebogen/schema";
+import { saveLeadDB } from "$lib/server/leads";
 import { sendOfferInquiryEvent } from "$lib/server/webhooks";
 import type { RequestHandler } from "./$types";
 
@@ -18,6 +19,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 		const data = parsed.data;
+
+		// KI-37: Next sent the inquiry to Make.com only, so a failed send lost
+		// it. The email is stored first; a database problem alone doesn't fail
+		// the request, since the inquiry still reaches Make.com.
+		try {
+			await saveLeadDB(data.email, "fragebogen");
+		} catch (error) {
+			console.error("[QUESTIONNAIRE] Saving lead failed:", error);
+		}
 
 		// Send all questionnaire data to Denis's Make.com workflow
 		await sendOfferInquiryEvent(data.email, {
@@ -50,6 +60,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		return json({ success: true });
 	} catch (error) {
+		// The visitor sees the error with the phone number (KI-37)
 		console.error("[QUESTIONNAIRE] Error sending webhook:", error);
 		return json(
 			{ error: "Serverfehler. Bitte erneut versuchen." },

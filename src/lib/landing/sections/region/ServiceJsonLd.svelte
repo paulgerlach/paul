@@ -1,5 +1,6 @@
-<!-- `Service` structured data of a region page. No phone number until KI-34 is resolved. -->
+<!-- `Service` structured data of a region page. -->
 <script lang="ts">
+	import { PHONE } from "$lib/company";
 	import { SITE_URL } from "$lib/seo/site";
 
 	let {
@@ -23,6 +24,7 @@
 				"@id": `${SITE_URL}/#organization`,
 				name: "Heidi Systems",
 				url: SITE_URL,
+				telephone: PHONE,
 			},
 			areaServed: { "@type": area.type, name: area.name },
 		}).replace(/</g, "\\u003c")}<` + "/script>",

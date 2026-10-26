@@ -1,7 +1,7 @@
 <!--
   "Mit Heidi oder klassisch ablesen?" as a real table (the design draws a
   div grid). ✓ and – carry screen-reader texts; the Heidi column is dark with
-  rounded head and foot.
+  rounded head and foot (the design's empty foot row, hidden from readers).
 -->
 <script lang="ts">
 	import Head from "../components/Head.svelte";
@@ -31,7 +31,7 @@
 	{/if}
 {/snippet}
 
-<section class="sec" aria-labelledby="vg-cmp-h">
+<section class="blk" aria-labelledby="vg-cmp-h">
 	<div class="wrap">
 		<Head
 			id="vg-cmp-h"
@@ -58,13 +58,16 @@
 						</tr>
 					{/each}
 				</tbody>
+				<tfoot aria-hidden="true">
+					<tr><td></td><td class="hi"></td><td></td></tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
 </section>
 
 <style>
-	.sec {
+	.blk {
 		padding-top: clamp(72px, 9vw, 128px);
 	}
 	.wrap {
@@ -82,17 +85,20 @@
 		border-spacing: 12px 0;
 		table-layout: fixed;
 	}
+	/* The design's 1.3fr : 1fr : 1fr */
 	thead td,
 	tbody th {
-		width: 39%;
+		width: calc(1.3 / 3.3 * 100%);
+	}
+	thead td {
+		border-bottom: 1px solid var(--hair);
 	}
 	thead th {
 		padding: 16px 12px;
 		text-align: center;
+		vertical-align: top;
 		font-size: 13px;
 		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
 		border-radius: 14px 14px 0 0;
 		background: var(--soft);
 		color: var(--muted);
@@ -132,13 +138,18 @@
 		border-bottom-color: rgba(255, 255, 255, 0.08);
 	}
 	/* The design's empty foot row: rounded bottoms */
-	tbody tr:last-child th {
-		border-bottom: 0;
+	tfoot td {
+		padding: 10px;
 	}
-	tbody tr:last-child td {
-		border-bottom: 0;
+	tfoot td:first-child {
+		padding: 14px 0;
+	}
+	tfoot td + td {
+		background: var(--soft);
 		border-radius: 0 0 14px 14px;
-		padding-bottom: 22px;
+	}
+	tfoot td.hi {
+		background: var(--ink);
 	}
 	.y {
 		width: 26px;
@@ -178,7 +189,7 @@
 	@media (max-width: 560px) {
 		thead td,
 		tbody th {
-			width: 36%;
+			width: calc(1.2 / 3.2 * 100%);
 		}
 		thead th {
 			padding: 14px 6px;

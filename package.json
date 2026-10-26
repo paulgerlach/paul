@@ -58,7 +58,6 @@
 		"postgres": "^3.4.9",
 		"svelte-exmarkdown": "^5.0.2",
 		"sveltekit-superforms": "^2.31.0",
-		"swiper": "11.2.10",
 		"zod": "^4.6.5"
 	}
 }

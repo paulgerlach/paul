@@ -1,9 +1,6 @@
 /* Ported verbatim from src/app/(base)/globals.css. The (service) stylesheet was
    a stale copy of this file and is not needed (KI-02). */
 @import "tailwindcss";
-@import "swiper/css";
-@import "swiper/css/navigation";
-@import "swiper/css/pagination";
 
 :root {
 	--background: #ffffff;
@@ -109,20 +106,6 @@ html {
 	overflow-wrap: break-word;
 }
 
-.swiper-pagination-bullet {
-	width: 30px;
-	min-width: 30px;
-	border-radius: 0;
-	height: 3px;
-	background-color: #ffffff;
-	opacity: 20%;
-	transition: 0.3s all;
-}
-
-.swiper-pagination-bullet-active {
-	opacity: 100%;
-}
-
 @media (max-width: 768px) {
 	.hero {
 		display: grid;
@@ -134,41 +117,6 @@ html {
 			"hero1"
 			"hero2";
 	}
-
-	.hero-1 {
-		grid-area: hero1;
-	}
-
-	.hero-2 {
-		grid-area: hero2;
-		display: none;
-	}
-
-	.hero-title {
-		grid-area: heroTitle;
-	}
-
-	.hero-3 {
-		grid-area: hero3;
-		margin-bottom: 120px;
-	}
-
-	.circleIcon {
-		width: 50px;
-		height: 50px;
-		border-radius: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: rgba(138, 214, 143, 0.1);
-	}
-}
-
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next,
-.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
-	transform: scale(1) !important;
 }
 
 .faq-answer-item {
@@ -275,33 +223,6 @@ html {
 .colored-to-black {
 	filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
 		brightness(87%) contrast(89%);
-}
-
-.chart-swiper .swiper-pagination {
-	width: fit-content;
-	display: flex;
-	align-items: center;
-	left: 50%;
-	transform: translateX(-50%) !important;
-	bottom: 38px !important;
-	background-color: #9a9a98;
-	border-radius: 40px;
-}
-
-.chart-swiper .swiper-pagination-bullet {
-	padding: 11px 17px;
-	width: fit-content;
-	height: auto;
-	display: block;
-	color: #ffffff;
-	margin: 0 !important;
-	background-color: transparent;
-}
-
-.chart-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
-	background-color: #5b5a57;
-	border-radius: 40px;
-	padding: 11px 17px;
 }
 
 .richTextBlock h1 {

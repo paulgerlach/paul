@@ -1,9 +1,10 @@
 <!--
   "Drei Schritte": WAI-ARIA tabs (vertical tablist, automatic activation) with
   the step texts on the left and a picture with its example chip on the
-  right. The server renders step 1.
+  right; step 3's picture is the dashboard demo (`StepsDemo`), which plays
+  each time the step shows. The server renders step 1.
 
-  Auto-advance through the shared `AutoTabs`: every 6 s while the block is in
+  Auto-advance through the shared `AutoTabs`: every 6 s (8.5 s on step 3) while the block is in
   view, the tab is visible and the pointer and focus are outside it; choosing a
   step stops it for good. The bar shows the running interval.
 -->
@@ -11,12 +12,12 @@
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { AutoTabs } from "$lib/landing/autoTabs.svelte";
 	import consultation from "$lib/assets/landing/vorgehen/consultation.webp?enhanced";
-	import dashboard from "$lib/assets/landing/vorgehen/dashboard.webp?enhanced";
 	import installer from "$lib/assets/landing/vorgehen/installer.webp?enhanced";
 	import Head from "../components/Head.svelte";
+	import StepsDemo from "./StepsDemo.svelte";
 	import { steps } from "../content";
 
-	const photos = [consultation, installer, dashboard];
+	const photos = [consultation, installer];
 	const count = steps.items.length;
 
 	const tabs = new AutoTabs({
@@ -26,7 +27,7 @@
 	});
 </script>
 
-<section class="sec" aria-labelledby="vg-steps-h">
+<section class="blk" aria-labelledby="vg-steps-h">
 	<div class="wrap">
 		<Head id="vg-steps-h" eyebrow={steps.eyebrow} title={steps.h2} center />
 		<div class="tabs rv" {@attach tabs.attach}>
@@ -72,32 +73,36 @@
 			<div
 				class="pics"
 				aria-hidden="true"
-				style:--interval="{steps.intervalMs}ms"
+				style:--interval="{tabs.intervalOf(tabs.active)}ms"
 			>
 				{#each steps.items as step, i (step.title)}
 					<figure class={["pic", i === tabs.active && "on"]}>
-						<Image
-							src={photos[i]}
-							alt=""
-							sizes="(max-width: 980px) 100vw, 720px"
-						/>
-						<figcaption class="chip">
-							<b>{step.chip.title}</b><small>{step.chip.sub}</small>
-						</figcaption>
+						{#if step.chip}
+							<Image
+								src={photos[i]}
+								alt=""
+								sizes="(max-width: 980px) 100vw, 720px"
+							/>
+							<figcaption class="chip">
+								<b>{step.chip.title}</b><small>{step.chip.sub}</small>
+							</figcaption>
+						{:else}
+							<StepsDemo active={i === tabs.active} />
+						{/if}
 					</figure>
 				{/each}
-				{#if tabs.running}
-					{#key tabs.active}
-						<span class="bar"><i></i></span>
-					{/key}
-				{/if}
+				<span class="bar">
+					{#if tabs.running}
+						{#key tabs.active}<i></i>{/key}
+					{/if}
+				</span>
 			</div>
 		</div>
 	</div>
 </section>
 
 <style>
-	.sec {
+	.blk {
 		padding-top: clamp(72px, 9vw, 128px);
 	}
 	.wrap {
@@ -157,6 +162,15 @@
 	.texts {
 		display: grid;
 		margin-top: 22px;
+		min-height: 120px;
+	}
+	/* The design's box is 120 px whatever the text (it's absolute there), so
+	   the column centres the same; below 980 px the text would run into the
+	   picture, so the box grows there. */
+	@media (min-width: 981px) {
+		.texts {
+			height: 120px;
+		}
 	}
 	.tx {
 		grid-area: 1 / 1;
@@ -229,9 +243,10 @@
 		display: block;
 		font-weight: 600;
 	}
+	/* The browser's own size of a <small> (the preflight sets 80 %). */
 	.chip small {
 		color: var(--muted);
-		font-size: inherit;
+		font-size: smaller;
 	}
 	.bar {
 		position: absolute;
@@ -256,6 +271,12 @@
 	@media (max-width: 980px) {
 		.tabs {
 			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+	/* The design's `.ar-tvw:has(.vd)`: taller for the dashboard demo. */
+	@media (max-width: 640px) {
+		.pics {
+			aspect-ratio: 4/5;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

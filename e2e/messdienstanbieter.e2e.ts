@@ -183,6 +183,7 @@ test.describe("signup", () => {
 					placement,
 					page: BERLIN,
 					city: "berlin",
+					source: "messdienstanbieter-berlin",
 				});
 			const source = await leadSource(email);
 			if (source !== undefined)
@@ -202,7 +203,7 @@ test.describe("signup", () => {
 		await expect(hero.locator(".status")).toContainText("Danke!");
 		await expect
 			.poll(() => webhookFor(page, email))
-			.toMatchObject({ page: HUB });
+			.toMatchObject({ page: HUB, source: "messdienstanbieter" });
 		expect(await webhookFor(page, email)).not.toHaveProperty("city");
 		const source = await leadSource(email);
 		if (source !== undefined) expect(source).toBe("messdienstanbieter");

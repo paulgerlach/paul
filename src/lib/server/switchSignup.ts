@@ -41,7 +41,7 @@ function blocked(form: SuperValidated<SwitchInquiry>, reason: string) {
 }
 
 export type SwitchSignupOptions = {
-	/** Stored with the lead, e.g. "messdienstwechsel". */
+	/** Stored with the lead and sent with the webhook, e.g. "messdienstwechsel". */
 	source: string;
 	/** Path of the page, sent with the webhook. */
 	page: string;
@@ -89,6 +89,7 @@ export async function handleSwitchSignup(
 	await sendWebhookEvent("switchinquiry", email, {
 		placement,
 		page,
+		source,
 		...extra,
 	});
 

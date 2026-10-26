@@ -1,10 +1,8 @@
 import { LAUNCHED } from "$lib/landing/launch";
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_VORGEHEN } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		// Drafts for the content owner (plan §4.4).
 		title:
@@ -19,10 +17,4 @@ export const load: PageServerLoad = async () => ({
 	landing: DEFAULT_CHROME,
 	// The day count to 1.1.2027 (plan 01 §1.4).
 	now: Date.now(),
-	finalForm: await emptySwitchForm("final"),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, { source: "vorgehen", page: ROUTE_VORGEHEN }),
-};

@@ -5,8 +5,8 @@ What is still open on this repo, and the decisions you need to understand it. Ev
 | File | What's in it |
 |---|---|
 | [cutover.md](cutover.md) | What blocks the Next.js → SvelteKit cutover (PR #440), the cutover steps, post-deploy checks, rollback and the after-cutover list. The site restructure (landing pages as the whole site) is done |
-| [go-live-gates.md](go-live-gates.md) | The go-live gate of every new landing page (§1–43): business, legal and content sign-offs and the open manual checks. All of them block the cutover |
-| [known-issues.md](known-issues.md) | The KI list: bugs found in the Next code and fixed instead of ported (the code cites the IDs). KI-34 is open |
+| [go-live-gates.md](go-live-gates.md) | The go-live gate of every new landing page (§1–45): business, legal and content sign-offs and the open manual checks. All of them block the cutover |
+| [known-issues.md](known-issues.md) | The KI list: bugs found in the Next code and fixed instead of ported (the code cites the IDs). None open |
 
 ## Where the old plans are
 
@@ -33,9 +33,9 @@ Site cutover (2026-10-21; the landing pages become the site):
 
 | Topic | Decision |
 |---|---|
-| Kept old pages | Only `/blog` (+ posts and previews), `/fragebogen` and `/preise` (deleted in the cutover, restored 2026-10-23). They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutzhinweise` were kept too until the legal pages' designs replaced them (2026-10-21, gate §1; the Datenschutzerklärung moved from `/datenschutz` back to `/datenschutzhinweise` on 2026-10-23) |
+| Kept old pages | Only `/blog` (+ posts and previews) and `/fragebogen`; `/preise` too from its restore (2026-10-23) until its landing design replaced it (2026-10-24, gate §3). They get the landing header and footer; their content keeps its Exo 2 / Tailwind styling, outside `.lp`. `/impressum` and `/datenschutzhinweise` were kept too until the legal pages' designs replaced them (2026-10-21, gate §1; the Datenschutzerklärung moved from `/datenschutz` back to `/datenschutzhinweise` on 2026-10-23) |
 | Home | `/` was a **307** to the Germany hub; since the new URLs (2026-10-23) the hub is `/` itself |
-| Dropped URLs | None since 2026-10-23: every old URL is a page (`/preise` restored, the Funkzähler page at `/geraete`, the Datenschutzerklärung at `/datenschutzhinweise`). Until then `/preise` → `/messdienst-wechseln#start` and `/geraete` → `/funkzaehler` 301ed. `/kontakt` did the same until its own design was built there (2026-10-21, gate §5). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
+| Dropped URLs | None since 2026-10-23: every old URL is a page (`/preise` restored, a landing page since 2026-10-24, the Funkzähler page at `/geraete`, the Datenschutzerklärung at `/datenschutzhinweise`). Until then `/preise` → `/messdienst-wechseln#start` and `/geraete` → `/funkzaehler` 301ed. `/kontakt` did the same until its own design was built there (2026-10-21, gate §7). No link may rely on a redirect (`$lib/landing/links.test.ts`) |
 | Go-live gates | Unchanged; `LAUNCHED` (`$lib/landing/launch.ts`) is the one switch for the gated pages' indexing |
 
 Landing pages:
@@ -43,8 +43,8 @@ Landing pages:
 - **Indexing (2026-10-17):** after the cutover every page, every city included, is indexed and in the sitemap. That's why every gate blocks the cutover; until then the new pages are `noindex` and out of the sitemap (cities: only `live: true` ones, Berlin so far).
 - **KPIs (confirmed by the business 2026-10-12):** 92 % of installations at the first appointment, 14 days' notice, a 1–2 h window.
 - **Landing footer (2026-10-12):** the landing design's own footer (`$lib/landing/footerLinks.ts`), on every page since the site cutover; an entry without `href` is plain text until its page exists.
-- **"Demo buchen" (2026-10-21):** every "Demo buchen", and every other link the designs point at the booking design, goes to `/demo` (`DEMO_HREF`, gate §3), which books through Google Calendar. The closing cards whose signup form said "Demo buchen" have their design's video button again and no form; pages whose form has its own label (the city pages, `/messdienst-wechseln`, `/fernablesung-umruesten` …) keep it.
-- **Shared sign-offs:** quotes, customer logos and the security block (`TrustSeals`) are the same on every page; they're settled once in the region pages' gate (§42).
+- **"Demo buchen" (2026-10-21):** every "Demo buchen", and every other link the designs point at the booking design, goes to `/demo` (`DEMO_HREF`, gate §5), which books through Google Calendar. The closing cards whose signup form said "Demo buchen" have their design's video button again and no form; pages whose form has its own label (the city pages, `/messdienst-wechseln`, `/fernablesung-umruesten` …) keep it.
+- **Shared sign-offs:** quotes, customer logos and the security block (`TrustSeals`) are the same on every page; they're settled once in the region pages' gate (§44).
 
 ## Building a new landing page
 

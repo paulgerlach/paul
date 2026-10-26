@@ -1,20 +1,27 @@
 <!--
-  The offer step: the finished offer's preview and "Angebot per E-Mail
-  erhalten"; once requested, the confirmation with the offer's number.
+  The offer step: "Angebot per E-Mail erhalten" above the finished offer's
+  documents (the billing in its own when chosen); once requested, the
+  confirmation with the offer's number.
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
 	import { DEMO_HREF } from "$lib/landing/cta";
 	import { OFFER_COMPANY } from "../data";
-	import { offerDates, propertyLines } from "../model";
+	import {
+		calc,
+		offerDates,
+		offerParts,
+		positions,
+		propertyLines,
+	} from "../model";
 	import { CHECK } from "../svg";
-	import NextSteps from "../ui/NextSteps.svelte";
 	import { getSelfService } from "../wizard.svelte";
 	import OfferDoc from "./OfferDoc.svelte";
 
 	const w = getSelfService();
 	const offer = $derived(w.s.ang);
 	const dates = $derived(offer ? offerDates(offer) : null);
+	const parts = $derived(offer ? offerParts(positions(calc(w.s)), offer) : []);
 	const mail = $derived(w.s.k.mail.trim());
 </script>
 
@@ -46,7 +53,6 @@
 				</div>
 			</dl>
 		</div>
-		<NextSteps cur={3} />
 		<div class="ss-ends">
 			<a class="pg-ghost" href={DEMO_HREF}>Termin vereinbaren</a>
 			<button type="button" class="ss-restart" onclick={() => w.restart()}
@@ -60,8 +66,7 @@
 				einschließlich {dates.valid}.</span
 			>
 		</div>
-		<OfferDoc {offer} />
-		<div class="ss-send1">
+		<div class="ss-send1 top">
 			<button
 				type="button"
 				class="bk-next"
@@ -82,7 +87,7 @@
 				>.
 			{/if}
 		</p>
-		<NextSteps cur={2} />
+		{#each parts as part (part.kind)}<OfferDoc {offer} {part} />{/each}
 		<div class="ss-ends">
 			<button type="button" class="ss-restart" onclick={() => w.restart()}
 				>Neuen Zählercheck starten</button

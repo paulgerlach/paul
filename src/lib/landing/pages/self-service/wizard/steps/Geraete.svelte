@@ -3,6 +3,7 @@
 	import { DEVICE_PHOTOS } from "../../photos";
 	import { DEVICES, ORDER } from "../data";
 	import { ICONS } from "../svg";
+	import Consultation from "../ui/Consultation.svelte";
 	import Note from "../ui/Note.svelte";
 	import Nudge from "../ui/Nudge.svelte";
 	import Options from "../ui/Options.svelte";
@@ -38,5 +39,5 @@
 	relevanten Angaben ab. Baugleiche Zähler erfassen Sie einmal als Gruppe.</Note
 >
 {#if w.s.devs.includes("unsicher")}
-	<div class="ss-cond"><Nudge /></div>
+	<div class="ss-cond"><Nudge /><Consultation /></div>
 {/if}

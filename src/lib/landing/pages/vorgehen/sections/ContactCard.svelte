@@ -1,34 +1,22 @@
 <!--
-  The design's contact card (.ar-ct): text left, the contact photo right. It's
-  the page's only form, so it carries the `start` anchor every "Angebot
-  einholen" leads to; the signup form takes the place of the
-  design's two buttons (plan README, Signup). `final` lets the floating CTA
-  hide while it's in view.
+  The design's contact card (.ar-ct): text with the two buttons left, the
+  facade photo right. `final` lets the floating CTA hide while it's in view.
 -->
 <script lang="ts">
-	import type { SuperValidated } from "sveltekit-superforms";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
-	import photo from "$lib/assets/landing/region/contact.webp?enhanced";
-	import type { SwitchInquiry } from "$lib/forms/switchInquiry";
-	import SignupForm from "$lib/landing/components/SignupForm.svelte";
+	import photo from "$lib/assets/landing/partnerschaften/facade.webp?enhanced";
+	import Buttons from "../components/Buttons.svelte";
 	import { contact } from "../content";
-
-	let { form }: { form: SuperValidated<SwitchInquiry> } = $props();
 </script>
 
-<section class="final" id="start" aria-labelledby="vg-contact-h">
+<section class="final" aria-labelledby="vg-contact-h">
 	<div class="wrap">
 		<div class="card rv">
 			<div class="txt">
 				<h2 id="vg-contact-h">{contact.h2}</h2>
 				<p>{contact.text}</p>
 				<small>{contact.caption}</small>
-				<SignupForm
-					{form}
-					placement="final"
-					inputId="email-bottom"
-					submitLabel={contact.submitLabel}
-				/>
+				<Buttons />
 			</div>
 			<figure>
 				<Image
@@ -45,7 +33,6 @@
 <style>
 	.final {
 		padding-block: clamp(72px, 9vw, 128px);
-		scroll-margin-top: 72px;
 	}
 	.wrap {
 		max-width: 1280px;
@@ -80,18 +67,6 @@
 		margin-top: 18px;
 		font-size: 14px;
 		font-weight: 500;
-	}
-	/* The shared form, left-aligned and white on the soft card. */
-	.txt :global(.signup-box.final) {
-		margin: 22px 0 0;
-		max-width: 480px;
-	}
-	.txt :global(.signup) {
-		background: #fff;
-	}
-	.txt :global(.final .status),
-	.txt :global(.final .error) {
-		text-align: left;
 	}
 	figure {
 		margin: 0;

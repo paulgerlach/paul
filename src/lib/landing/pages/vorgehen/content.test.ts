@@ -4,7 +4,8 @@ import * as routes from "$lib/routes";
 import * as content from "./content";
 import { ICON_NAMES } from "./icons";
 
-const { comparison, faq, features, KPI, quotes, stats, steps } = content;
+const { comparison, faq, features, journey, KPI, quotes, split, stats, steps } =
+	content;
 
 /** Every string in a value, deeply. */
 function strings(value: unknown): string[] {
@@ -27,12 +28,32 @@ describe("vorgehen content", () => {
 		}
 	});
 
-	it("has three steps with chips", () => {
+	it("has three steps, the first two with chips, and an interval each", () => {
 		expect(steps.items).toHaveLength(3);
-		for (const step of steps.items) {
-			expect(step.chip.title).toBeTruthy();
-			expect(step.chip.sub).toBeTruthy();
+		expect(steps.intervalMs).toHaveLength(3);
+		for (const step of steps.items.slice(0, 2)) {
+			expect(step.chip?.title).toBeTruthy();
+			expect(step.chip?.sub).toBeTruthy();
 		}
+		// Step 3 shows the dashboard demo instead of a photo.
+		expect(steps.items[2].chip).toBeUndefined();
+	});
+
+	it("has eleven stations in three phases, linked only to known routes", () => {
+		expect(journey.stations).toHaveLength(11);
+		expect(journey.phases.reduce((n, p) => n + p.count, 0)).toBe(11);
+		let i = 0;
+		for (const phase of journey.phases)
+			for (let k = 0; k < phase.count; k++)
+				expect(journey.stations[i++].phase).toBe(phase.name);
+		for (const s of journey.stations)
+			if (s.link?.href !== undefined)
+				expect(routeValues).toContain(s.link.href);
+	});
+
+	it("splits the work into three steps and eight tasks", () => {
+		expect(split.you.steps).toHaveLength(3);
+		expect(split.heidi.tasks).toHaveLength(8);
 	});
 
 	it("links the features only to known routes", () => {
@@ -65,6 +86,9 @@ describe("vorgehen content", () => {
 		expect(steps.items[1].text).toContain(KPI.firstVisit);
 		expect(steps.items[1].text).toContain(KPI.notice);
 		expect(steps.items[1].text).toContain(KPI.window);
+		expect(journey.stations[4].text).toContain(KPI.notice);
+		expect(journey.stations[4].text).toContain(KPI.window);
+		expect(journey.stations[5].text).toContain(KPI.firstVisit);
 		const answers = faq.items.map((i) => i.answer).join(" ");
 		for (const kpi of Object.values(KPI)) expect(answers).toContain(kpi);
 	});

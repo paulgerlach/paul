@@ -7,6 +7,7 @@
 		info,
 	} from "$lib/assets/icons";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
+	import { PHONE, PHONE_HREF } from "$lib/company";
 	import StepInfo from "$lib/components/Fragebogen/StepInfo.svelte";
 	import StepWrapper from "$lib/components/Fragebogen/StepWrapper.svelte";
 	import LazyLottie from "$lib/components/Lottie/LazyLottie.svelte";
@@ -186,6 +187,13 @@
 						</button>
 					{/if}
 				</div>
+				<!-- KI-37: Next showed nothing when sending failed -->
+				{#if q.status === "error"}
+					<p class="mt-4 text-sm text-red-500" role="alert">
+						Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder
+						rufen Sie uns an: <a class="underline" href={PHONE_HREF}>{PHONE}</a>
+					</p>
+				{/if}
 			</form>
 			<StepInfo activeStep={q.step} />
 		</div>

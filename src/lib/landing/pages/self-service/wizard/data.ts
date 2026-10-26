@@ -92,10 +92,15 @@ export const HOT_WATER: Option[] = [
 	["unbekannt", "Unbekannt"],
 ];
 
-/** "Weitere Leistungen": the offers on request. */
+/**
+ * "Weitere Leistungen": the offers on request, each with its starting price
+ * (`ZP`: net, a guide; `per` its unit).
+ */
 export const EXTRAS = [
 	{
 		v: "ea",
+		price: "ab 69,95 €",
+		per: "",
 		title: "Energieausweis",
 		icon: ICONS.energy,
 		small: "Verbrauchs- oder Bedarfsausweis",
@@ -103,6 +108,8 @@ export const EXTRAS = [
 	},
 	{
 		v: "ha",
+		price: "ab 800 €",
+		per: "pro Gebäude",
 		title: "Hydraulischer Abgleich",
 		icon: ICONS.balance,
 		small: "Heizung optimal einstellen",
@@ -110,6 +117,8 @@ export const EXTRAS = [
 	},
 	{
 		v: "blei",
+		price: "ab 55 €",
+		per: "pro Probe",
 		title: "Bleimessung",
 		icon: ICONS.lead,
 		small: "Trinkwasser auf Blei prüfen",
@@ -117,6 +126,8 @@ export const EXTRAS = [
 	},
 	{
 		v: "leg",
+		price: "ab 300 €",
+		per: "pro Gebäude",
 		title: "Legionellenprüfung",
 		icon: ICONS.legionella,
 		small: "Warmwasser auf Legionellen prüfen",
@@ -403,19 +414,21 @@ export function deviceStep(d: DevKey): StepText {
 /** The offer step's title and lead once the offer is requested. */
 export const SENT_LEAD = "Ihre Anfrage ist bei uns eingegangen.";
 
-/** "So geht es weiter": the four next steps. */
+/** "So geht es weiter" beside the last steps: the four next steps. */
 export const NEXT_STEPS = [
-	[
-		"Zählercheck ansehen",
-		"Ihre vorläufige Geräteliste und Kosten auf einen Blick.",
-	],
-	["Adresse ergänzen", "Liegenschafts- und Rechnungsadresse für das Angebot."],
-	["Angebot per E-Mail erhalten", "Wir senden Ihnen das Angebot als PDF zu."],
-	[
-		"Heidi meldet sich",
-		"Wir prüfen alles und stimmen die nächsten Schritte mit Ihnen ab.",
-	],
+	"Zählercheck ansehen",
+	"Adresse ergänzen",
+	"Angebot per E-Mail erhalten",
+	"Heidi meldet sich",
 ] as const;
+
+/** The step each of the last steps is at in "So geht es weiter" (`sideNext`). */
+export const NEXT_STEP_AT: Record<string, number> = {
+	kontakt: 0,
+	res: 1,
+	adr: 1,
+	ang: 2,
+};
 
 /** Who handles a check point and how (`chkInfo`). */
 const CHECK_OWNERS: [RegExp, string, string][] = [
@@ -556,7 +569,7 @@ export function features(self: boolean): Feature[] {
 			h: "Automatisierte Abrechnung und digitales Management",
 			p: self
 				? "Bestandsaufnahme, Gerätelieferung, Fernauslesung und Abrechnung kommen von uns. Die Montage übernehmen Sie oder Ihr Hausinstallateur, ganz ohne Vorkenntnisse. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher."
-				: "Bestandsaufnahme, Gerätelieferung, Installation, Fernauslesung und Abrechnung kommen von uns. Ein Ansprechpartner, ein Vertrag, ein Installationstermin. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher.",
+				: "Bestandsaufnahme, Gerätelieferung, Installation, Fernauslesung und Abrechnung kommen von uns. Ein Ansprechpartner, ein Installationstermin. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher.",
 			b: [
 				self
 					? "Alles aus einer Hand, von der Lieferung bis zum laufenden Service"

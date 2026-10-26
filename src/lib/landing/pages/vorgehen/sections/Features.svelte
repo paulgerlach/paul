@@ -5,7 +5,7 @@
 	import { features } from "../content";
 </script>
 
-<section class="sec" aria-labelledby="vg-features-h">
+<section class="blk" aria-labelledby="vg-features-h">
 	<div class="wrap">
 		<Head
 			id="vg-features-h"
@@ -34,7 +34,7 @@
 </section>
 
 <style>
-	.sec {
+	.blk {
 		padding-top: clamp(72px, 9vw, 128px);
 	}
 	.wrap {
@@ -82,10 +82,12 @@
 		width: 22px;
 		height: 22px;
 	}
-	h3 {
+	/* More specific than the landing heading reset (the design's <b>). */
+	.card h3 {
 		font-size: 17px;
 		font-weight: 500;
-		line-height: 1.4;
+		letter-spacing: normal;
+		line-height: 1.5;
 	}
 	p {
 		font-size: 15px;

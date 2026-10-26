@@ -11,8 +11,8 @@ export const ADDRESS = {
 	city: "10178 Berlin",
 };
 
-export const PHONE = "+49 30 52001352";
-export const PHONE_HREF = "tel:+493052001352";
+export const PHONE = "+49 30 80098852";
+export const PHONE_HREF = "tel:+493080098852";
 
 /** The platform's sign-in ("Anmelden" in the nav). */
 export const LOGIN_URL = "https://platform.heidisystems.com/";

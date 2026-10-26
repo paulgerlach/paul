@@ -11,6 +11,7 @@ import {
 	nextGroupId,
 	offerDates,
 	offerFileName,
+	offerParts,
 	offerSummary,
 	positions,
 	steps,
@@ -111,6 +112,20 @@ describe("validate", () => {
 		);
 	});
 
+	it("asks for the capsule's norm only for an installed meter, and no valve", () => {
+		const s = building();
+		s.groups.kwz[0] = { ...newGroup("g1"), n: "6", einbau: "up", inst: "ja" };
+		expect(validate("dev:kwz", s, none)?.message).toBe(
+			"Bitte ergänzen Sie: MID-Norm der Messkapsel (oder „Andere / unklar“).",
+		);
+		s.groups.kwz[0].inst = "nein";
+		expect(validate("dev:kwz", s, none)).toBeNull();
+		s.groups.kwz[0].einbau = "neu";
+		expect(validate("dev:kwz", s, none)?.message).toBe(
+			"Bitte ergänzen Sie: Absperrventil vorhanden?.",
+		);
+	});
+
 	it("prefixes the group when there are several", () => {
 		const s = building();
 		s.groups.hkv.push({ ...newGroup("g3"), n: "2" });
@@ -192,6 +207,19 @@ describe("calc", () => {
 	});
 });
 
+describe("further services", () => {
+	it("name their starting prices and become check points", () => {
+		const s = building();
+		s.zusatz = ["ea", "ha"];
+		const c = calc(s);
+		expect(c.extras).toEqual([
+			"Energieausweis (ab 69,95 €)",
+			"Hydraulischer Abgleich (ab 800 € pro Gebäude)",
+		]);
+		expect(c.checks).toContain("Energieausweis: Angebot erstellen");
+	});
+});
+
 describe("positions", () => {
 	it("lays out the offer as the Heidi template", () => {
 		const s = building();
@@ -212,6 +240,42 @@ describe("positions", () => {
 		]);
 		expect(p.sO).toBe(26 * 3 + 999);
 		expect(p.year).toBe(p.sS + p.sM);
+	});
+});
+
+describe("offerParts", () => {
+	const o = makeOffer(Date.UTC(2026, 9, 22), 0);
+
+	it("puts the billing into its own document", () => {
+		const s = building();
+		s.mont.wer = "heidi";
+		const p = positions(calc(s));
+		const [g, a] = offerParts(p, o);
+		expect([g.nr, g.of, g.title]).toEqual([
+			"2026-AN100000-G",
+			"1 von 2",
+			"Gerätemiete und Service",
+		]);
+		expect(g.p.svc.map((r) => r.t)).toEqual([
+			"Wartungs- und Funktionsdienst für Funkgeräte",
+		]);
+		expect(g.p.year).toBe(p.year - 6 * 27.5);
+		expect(g.p.first).toBe(g.p.year + p.sO);
+		expect([a.nr, a.of, a.title]).toEqual([
+			"2026-AN100000-A",
+			"2 von 2",
+			"Heizkostenabrechnung",
+		]);
+		expect(a.p).toMatchObject({ sS: 165, sM: 0, sO: 0, year: 165, first: 165 });
+	});
+
+	it("keeps one document without billing", () => {
+		const s = building();
+		s.leist = "b";
+		const parts = offerParts(positions(calc(s)), o);
+		expect(parts.map((x) => [x.kind, x.nr, x.of])).toEqual([
+			["g", "2026-AN100000", "1 von 1"],
+		]);
 	});
 });
 
@@ -250,6 +314,9 @@ describe("the offer", () => {
 		expect(offerFileName(s, o)).toBe(
 			"Heidi Systems - Angebot 100000, Hauptstr. 12.pdf",
 		);
+		expect(offerFileName(s, o, "Heizkostenabrechnung")).toBe(
+			"Heidi Systems - Angebot Heizkostenabrechnung 100000, Hauptstr. 12.pdf",
+		);
 	});
 
 	it("summarises it for Heidi", () => {
@@ -278,6 +345,9 @@ describe("the offer", () => {
 		expect(text).toContain(
 			"Geräte: 6 × Kaltwasserzähler, 20 × Heizkostenverteiler, 1 × Funk-Gateway",
 		);
+		expect(text).toContain(
+			"Angebote: Gerätemiete und Service + Heizkostenabrechnung (zwei getrennte Dokumente)",
+		);
 		expect(text).toContain("Fotos/Dateien: 2 (nicht übertragen");
 	});
 });
@@ -292,6 +362,10 @@ describe("liveRows", () => {
 			["Einheiten", "6"],
 			["Funk-Gateways", "1"],
 		]);
+		s.cur = steps(s).indexOf("mont");
+		expect(liveRows(s, 0).map(([label]) => label)).not.toContain(
+			"Laufend pro Jahr",
+		);
 	});
 });
 

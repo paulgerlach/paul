@@ -13,7 +13,6 @@ import {
 	OFFER_VALID_DAYS,
 	ORDER,
 	PRICES,
-	SERVICES,
 	TERMS_BY_DEVICE,
 	type DevKey,
 	type GroupDev,

@@ -12,3 +12,6 @@ bun.lockb
 /ongoing-tasks/
 /seo-baseline/
 /.claude/
+
+# Supabase CLI state (ignored by supabase/.gitignore)
+/supabase/.temp/

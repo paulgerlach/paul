@@ -8,6 +8,20 @@
 			"when": 1793028866987,
 			"tag": "0000_leads",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1793034591300,
+			"tag": "0001_self_service_results",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1793034592409,
+			"tag": "0002_self_service_bucket",
+			"breakpoints": true
 		}
 	]
 }

@@ -12,7 +12,6 @@ import {
 	offerDates,
 	offerFileName,
 	offerParts,
-	offerSummary,
 	positions,
 	steps,
 	validate,
@@ -317,38 +316,6 @@ describe("the offer", () => {
 		expect(offerFileName(s, o, "Heizkostenabrechnung")).toBe(
 			"Heidi Systems - Angebot Heizkostenabrechnung 100000, Hauptstr. 12.pdf",
 		);
-	});
-
-	it("summarises it for Heidi", () => {
-		const s = building();
-		s.k = {
-			vn: "Eva",
-			nn: "<b>",
-			firma: "",
-			mail: "eva@example.com",
-			tel: "",
-			ok: true,
-		};
-		s.adr.l = {
-			str: "Hauptstraße 1",
-			zus: "",
-			plz: "10115",
-			ort: "Berlin",
-			hin: "",
-		};
-		const text = offerSummary(s, makeOffer(Date.UTC(2026, 9, 22), 0), "Neu", 2);
-		expect(text).toContain("Neu · 2026-AN100000");
-		expect(text).toContain("*Eva &lt;b&gt;*");
-		expect(text).toContain(
-			"Liegenschaft: Hauptstraße 1, 10115 Berlin · 6 Einheiten",
-		);
-		expect(text).toContain(
-			"Geräte: 6 × Kaltwasserzähler, 20 × Heizkostenverteiler, 1 × Funk-Gateway",
-		);
-		expect(text).toContain(
-			"Angebote: Gerätemiete und Service + Heizkostenabrechnung (zwei getrennte Dokumente)",
-		);
-		expect(text).toContain("Fotos/Dateien: 2 (nicht übertragen");
 	});
 });
 

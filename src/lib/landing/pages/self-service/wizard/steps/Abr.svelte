@@ -1,9 +1,10 @@
 <!-- Step "Liegt eine Heizkostenabrechnung vor?" -->
 <script lang="ts">
+	import { BILL_OPTIONS } from "../data";
 	import { ICONS } from "../svg";
 	import Drop from "../ui/Drop.svelte";
 	import Note from "../ui/Note.svelte";
-	import Options from "../ui/Options.svelte";
+	import Options, { cards } from "../ui/Options.svelte";
 	import Text from "../ui/Text.svelte";
 	import { getSelfService } from "../wizard.svelte";
 
@@ -11,24 +12,11 @@
 </script>
 
 <Options
-	options={[
-		{
-			v: "ja",
-			label: "Ja, ich habe eine Heizkostenabrechnung",
-			icon: ICONS.doc,
-			small: "PDF oder Foto hochladen",
-		},
-		{
-			v: "nein",
-			label: "Nein, es liegt keine Heizkostenabrechnung vor",
-			icon: ICONS.none,
-		},
-		{
-			v: "unsicher",
-			label: "Nicht sicher oder gerade nicht zur Hand",
-			icon: ICONS.q,
-		},
-	]}
+	options={cards(BILL_OPTIONS, {
+		ja: { icon: ICONS.doc, small: "PDF oder Foto hochladen" },
+		nein: { icon: ICONS.none },
+		unsicher: { icon: ICONS.q },
+	})}
 	value={w.s.abr}
 	onpick={(v) => (w.s.abr = v)}
 />

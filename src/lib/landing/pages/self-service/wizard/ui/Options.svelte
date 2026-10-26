@@ -4,6 +4,7 @@
 -->
 <script lang="ts" module>
 	import type { ImageAsset } from "$lib/components/Basic/Image/types";
+	import type { Option } from "../data";
 
 	export type Card = {
 		v: string;
@@ -19,6 +20,12 @@
 		/** A starting price and its unit after the label (`.ss-zpr`). */
 		price?: readonly [string, string];
 	};
+
+	/** Cards from shared options (`data.ts`), with each value's extras. */
+	export const cards = (
+		options: readonly Option[],
+		extra: Record<string, Omit<Card, "v" | "label">> = {},
+	): Card[] => options.map(([v, label]) => ({ v, label, ...extra[v] }));
 </script>
 
 <script lang="ts">

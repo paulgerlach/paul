@@ -52,6 +52,8 @@ export const ROUTE_PARTNERSCHAFTEN = "/partner";
 export const ROUTE_KONTAKT = "/kontakt";
 export const ROUTE_DEMO_BUCHEN = "/demo";
 export const ROUTE_SELF_SERVICE = "/self-service";
+/** A Zählercheck's result for sales: `/self-service-result/<token>`. */
+export const ROUTE_SELF_SERVICE_RESULT = "/self-service-result";
 /** Zähler-Interoperabilität: under the Funkzähler page (the URL list has /funkzaehler/herstellerunabhaengig). */
 export const ROUTE_INTEROPERABILITAET = "/geraete/herstellerunabhaengig";
 export const cityRoute = (slug: string) => `${ROUTE_MESSDIENST}/${slug}`;

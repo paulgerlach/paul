@@ -1,9 +1,10 @@
 <!-- Step "Haben Sie eine Geräteliste?" -->
 <script lang="ts">
+	import { LIST_OPTIONS } from "../data";
 	import { ICONS } from "../svg";
 	import Drop from "../ui/Drop.svelte";
 	import Note from "../ui/Note.svelte";
-	import Options from "../ui/Options.svelte";
+	import Options, { cards } from "../ui/Options.svelte";
 	import Text from "../ui/Text.svelte";
 	import { getSelfService } from "../wizard.svelte";
 
@@ -11,27 +12,15 @@
 </script>
 
 <Options
-	options={[
-		{
-			v: "liste",
-			label: "Ja, ich habe eine Geräteliste",
+	options={cards(LIST_OPTIONS, {
+		liste: {
 			icon: ICONS.list,
 			small: "Zum Beispiel vom bisherigen Messdienst",
 		},
-		{
-			v: "rechnung",
-			label: "Ich habe eine Rechnung der Zähler",
-			icon: ICONS.receipt,
-			small: "Gerätemiet- oder Kaufrechnung",
-		},
-		{
-			v: "beides",
-			label: "Ich habe beides",
-			icon: ICONS.both,
-			small: "Geräteliste und Rechnung",
-		},
-		{ v: "nein", label: "Nein, habe ich nicht", icon: ICONS.nodoc },
-	]}
+		rechnung: { icon: ICONS.receipt, small: "Gerätemiet- oder Kaufrechnung" },
+		beides: { icon: ICONS.both, small: "Geräteliste und Rechnung" },
+		nein: { icon: ICONS.nodoc },
+	})}
 	value={w.s.liste}
 	onpick={(v) => (w.s.liste = v)}
 />

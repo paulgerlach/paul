@@ -5,12 +5,13 @@
 		HEATING,
 		HOT_WATER,
 		QUESTION_TIPS,
-		SERVICES,
+		BUY_OPTIONS,
+		SERVICE_OPTIONS,
 	} from "../data";
 	import { ICONS } from "../svg";
 	import MultiSelect from "../ui/MultiSelect.svelte";
 	import Note from "../ui/Note.svelte";
-	import Options from "../ui/Options.svelte";
+	import Options, { cards } from "../ui/Options.svelte";
 	import Question from "../ui/Question.svelte";
 	import Select from "../ui/Select.svelte";
 	import { getSelfService } from "../wizard.svelte";
@@ -56,17 +57,11 @@
 />
 <Options
 	class="leist"
-	options={[
-		{
-			v: "a",
-			label: SERVICES.a,
-			rec: true,
-			icon: ICONS.spark,
-			small: "Rundum aus einer Hand",
-		},
-		{ v: "c", label: SERVICES.c, icon: ICONS.keep },
-		{ v: "d", label: SERVICES.d, icon: ICONS.q },
-	]}
+	options={cards(SERVICE_OPTIONS, {
+		a: { rec: true, icon: ICONS.spark, small: "Rundum aus einer Hand" },
+		c: { icon: ICONS.keep },
+		d: { icon: ICONS.q },
+	})}
 	value={w.s.leist}
 	onpick={(v) => (w.s.leist = v)}
 />
@@ -77,26 +72,11 @@
 />
 <Options
 	class="grid3 kauf"
-	options={[
-		{
-			v: "miete",
-			label: "Mieten",
-			icon: ICONS.rent,
-			small: "Kosten auf die Mieter umlegbar",
-		},
-		{
-			v: "kauf",
-			label: "Kaufen",
-			icon: ICONS.cart,
-			small: "Nicht auf die Mieter umlegbar",
-		},
-		{
-			v: "offen",
-			label: "Noch offen",
-			icon: ICONS.q,
-			small: "Heidi berät Sie",
-		},
-	]}
+	options={cards(BUY_OPTIONS, {
+		miete: { icon: ICONS.rent, small: "Kosten auf die Mieter umlegbar" },
+		kauf: { icon: ICONS.cart, small: "Nicht auf die Mieter umlegbar" },
+		offen: { icon: ICONS.q, small: "Heidi berät Sie" },
+	})}
 	value={w.s.kauf}
 	onpick={(v) => (w.s.kauf = v)}
 />

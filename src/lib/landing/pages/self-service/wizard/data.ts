@@ -92,6 +92,167 @@ export const HOT_WATER: Option[] = [
 	["unbekannt", "Unbekannt"],
 ];
 
+/** An option's label ("" for no answer, the value itself if unknown). */
+export const optionLabel = (options: readonly Option[], v: string) =>
+	v ? (options.find((o) => o[0] === v)?.[1] ?? v) : "";
+
+// The answers' options, shared by the steps and the result sheet (`sheet.ts`).
+
+export const BILL_OPTIONS: Option[] = [
+	["ja", "Ja, ich habe eine Heizkostenabrechnung"],
+	["nein", "Nein, es liegt keine Heizkostenabrechnung vor"],
+	["unsicher", "Nicht sicher oder gerade nicht zur Hand"],
+];
+
+export const LIST_OPTIONS: Option[] = [
+	["liste", "Ja, ich habe eine Geräteliste"],
+	["rechnung", "Ich habe eine Rechnung der Zähler"],
+	["beides", "Ich habe beides"],
+	["nein", "Nein, habe ich nicht"],
+];
+
+export const STOCK_OPTIONS: Option[] = [
+	["funk", "Ja, es gibt Funkzähler"],
+	["ohne", "Ja, aber ohne Funk"],
+	["teils", "Teils mit Funk, teils ohne"],
+	["nein", "Nein, es müssen Zähler eingebaut werden"],
+	["unbekannt", "Das weiß ich nicht"],
+];
+
+export const PREF_OPTIONS: Option[] = [
+	["neu", "Alle benötigten Zähler erneuern"],
+	["behalten", "Bestehende Funkzähler möglichst weiterverwenden"],
+	["empfehlung", "Heidi soll die beste Lösung empfehlen"],
+];
+
+export const UNSURE_DEVICES = "Ich bin mir nicht ganz sicher";
+
+export const SERVICE_OPTIONS: Option[] = [
+	["a", SERVICES.a],
+	["c", SERVICES.c],
+	["d", SERVICES.d],
+];
+
+export const BUY_OPTIONS: Option[] = [
+	["miete", "Mieten"],
+	["kauf", "Kaufen"],
+	["offen", "Noch offen"],
+];
+
+export const OTHER_METER_OPTIONS: Option[] = [
+	["strom", "Stromzähler"],
+	["gas", "Gaszähler"],
+	["sonst", "Sonstiger Zähler"],
+];
+
+export const INSTALLED_OPTIONS: Option[] = [
+	["ja", "Ja, Zähler vorhanden"],
+	["nein", "Nein, neuer Einbau"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const RADIATOR_OPTIONS: Option[] = [
+	["platte", "Plattenheizkörper"],
+	["glieder", "Röhren-, Glieder- oder Rippenheizkörper"],
+];
+
+export const RADIO_OPTIONS: Option[] = [
+	["funk", "Funkfähig"],
+	["nicht", "Nicht funkfähig"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const RADIO_STANDARD_OPTIONS: Option[] = [
+	["wmbus", "wM-Bus"],
+	["lora", "LoRaWAN"],
+	["sonst", "Sonstiger"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const WATER_MOUNT_OPTIONS: Option[] = [
+	["up", "Unterputz"],
+	["ap", "Aufputz"],
+	["neu", "Kein Einbauplatz"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const HEAT_METER_OPTIONS: Option[] = [
+	["ap", "Aufputz-Wärmezähler"],
+	["up", "Unterputz-/Kapsel-Wärmezähler"],
+];
+
+export const SENSOR_SIZE_OPTIONS: Option[] = [
+	["5.0", "5,0 mm"],
+	["5.2", "5,2 mm"],
+	["6.0", "6,0 mm"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const MEASURED_OPTIONS: Option[] = [
+	["heizung", "Heizung"],
+	["ww", "Warmwasser"],
+	["kaelte", "Kälte"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const SENSOR_MOUNT_OPTIONS: Option[] = [
+	["direkt", "Direktfühler"],
+	["tauch", "Tauchhülse"],
+	["keine", "Nicht vorhanden"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const SHUTOFF_OPTIONS: Option[] = [
+	["ja", "Ja"],
+	["nein", "Nein"],
+];
+
+export const SMOKE_KIND_OPTIONS: Option[] = [
+	["neu", "Neu montieren"],
+	["ersetzen", "Vorhandene ersetzen"],
+	["beides", "Teils ersetzen, teils neu"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const SMOKE_MOUNT_OPTIONS: Option[] = [
+	["decke", "Normale Decke"],
+	["schraege", "Dachschräge"],
+	["hoch", "Hohe Decke (über 3 m)"],
+];
+
+export const SHUTOFF_CIRCUIT_OPTIONS: Option[] = [
+	["ja", "Ja"],
+	["teils", "Teilweise"],
+	["nein", "Nein"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const FITTING_OPTIONS: Option[] = [
+	["ja", "Ja"],
+	["teils", "Teilweise"],
+	["nein", "Nein"],
+	["pruefen", "Bitte prüfen"],
+];
+
+export const REACH_OPTIONS: Option[] = [
+	["gut", "Gut erreichbar"],
+	["wohnung", "Nur mit Wohnungszutritt"],
+	["schwer", "Schwer erreichbar"],
+	["unbekannt", "Unbekannt"],
+];
+
+export const PLUMBING_OPTIONS: Option[] = [
+	["eigen", "Eigener Sanitärbetrieb (empfohlen)"],
+	["heidi", "Heidi koordiniert (Aufwandspauschale)"],
+	["offen", "Noch offen"],
+];
+
+export const FITTER_OPTIONS: Option[] = [
+	["eigen", "Selbst oder eigener Hausinstallateur (bevorzugt)"],
+	["heidi", "Heidi montiert (Installationspauschale 999 €)"],
+	["offen", "Noch offen"],
+];
+
 /**
  * "Weitere Leistungen": the offers on request, each with its starting price
  * (`ZP`: net, a guide; `per` its unit).
@@ -399,7 +560,7 @@ export function deviceStep(d: DevKey): StepText {
 			lead,
 			info: "<h4>Weitere Zähler</h4><p>Strom-, Gas- oder andere Zähler binden wir auf Anfrage ein. Tragen Sie ein, was Sie haben, wir melden uns mit einem Angebot.</p>",
 		};
-	let info = `<h4>${name} richtig bestimmen</h4><p><b>Eine Gruppe ist ein technischer Zählertyp.</b> Bilden Sie getrennte Gruppen, wenn ${d === "hkv" ? "Heizkörperbauart oder Größe" : "Hersteller, Anschluss, Durchfluss oder Einbaulänge"} unterschiedlich sind.</p><p>Unbekannte Angaben dürfen offen bleiben. Ihr Ergebnis bekommt dann einen Prüfhinweis, statt ein ungeeignetes Modell vorzuschlagen.</p><p>Fotos bleiben in Ihrem Browser und werden nicht hochgeladen.</p>`;
+	let info = `<h4>${name} richtig bestimmen</h4><p><b>Eine Gruppe ist ein technischer Zählertyp.</b> Bilden Sie getrennte Gruppen, wenn ${d === "hkv" ? "Heizkörperbauart oder Größe" : "Hersteller, Anschluss, Durchfluss oder Einbaulänge"} unterschiedlich sind.</p><p>Unbekannte Angaben dürfen offen bleiben. Ihr Ergebnis bekommt dann einen Prüfhinweis, statt ein ungeeignetes Modell vorzuschlagen.</p>`;
 	if (d === "kwz" || d === "wwz")
 		info += `<div class="ss-sk"><div>${SKETCHES.up}<p><b>Unterputz</b><span>Nur eine runde Abdeckung mit Zählwerk schaut aus der Wand, die Leitung liegt dahinter.</span></p></div><div>${SKETCHES.ap}<p><b>Aufputz</b><span>Der ganze Zähler sitzt sichtbar in der Rohrleitung, mit Verschraubungen links und rechts.</span></p></div><div>${SKETCHES.neu}<p><b>Neuer Einbauplatz</b><span>Noch kein Zählerplatz vorhanden.</span></p></div></div><p style="margin-top:12px"><b>Foto-Tipp:</b> Bei Unterputzzählern die Abdeckung, die Beschriftung und, falls sichtbar, den Einbausatz fotografieren.</p>`;
 	if (d === "wmz")

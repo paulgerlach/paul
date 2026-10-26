@@ -12,9 +12,20 @@
 	import {
 		DEVICES,
 		fieldTip,
+		HEAT_METER_OPTIONS,
+		INSTALLED_OPTIONS,
+		MEASURED_OPTIONS,
 		MID_NORMS,
+		OTHER_METER_OPTIONS,
 		QUESTION_TIPS,
+		RADIATOR_OPTIONS,
+		RADIO_OPTIONS,
+		RADIO_STANDARD_OPTIONS,
+		SENSOR_MOUNT_OPTIONS,
+		SENSOR_SIZE_OPTIONS,
+		SHUTOFF_OPTIONS,
 		SITE_PHOTO_TIPS,
+		WATER_MOUNT_OPTIONS,
 		YES_NO_UNKNOWN,
 		type GroupDev,
 	} from "../data";
@@ -22,7 +33,7 @@
 	import { ICONS, RADIATORS, SKETCHES } from "../svg";
 	import Drop from "../ui/Drop.svelte";
 	import Note from "../ui/Note.svelte";
-	import Options from "../ui/Options.svelte";
+	import Options, { cards } from "../ui/Options.svelte";
 	import Question from "../ui/Question.svelte";
 	import Select from "../ui/Select.svelte";
 	import SizeSelect from "../ui/SizeSelect.svelte";
@@ -94,11 +105,7 @@
 					<Select
 						label="Welche Zählerart?"
 						bind:value={g.art}
-						options={[
-							["strom", "Stromzähler"],
-							["gas", "Gaszähler"],
-							["sonst", "Sonstiger Zähler"],
-						]}
+						options={OTHER_METER_OPTIONS}
 						tip={tip("art")}
 					/>
 					<Text
@@ -144,11 +151,7 @@
 					<Select
 						label="Aktuell installiert?"
 						bind:value={g.inst}
-						options={[
-							["ja", "Ja, Zähler vorhanden"],
-							["nein", "Nein, neuer Einbau"],
-							["unbekannt", "Unbekannt"],
-						]}
+						options={INSTALLED_OPTIONS}
 						tip={tip("inst")}
 					/>
 				</div>
@@ -161,20 +164,16 @@
 					/>
 					<Options
 						class="cards grid2 art"
-						options={[
-							{
-								v: "platte",
-								label: "Plattenheizkörper",
+						options={cards(RADIATOR_OPTIONS, {
+							platte: {
 								icon: RADIATORS.platte,
 								small: "Glatte oder profilierte Platten",
 							},
-							{
-								v: "glieder",
-								label: "Röhren-, Glieder- oder Rippenheizkörper",
+							glieder: {
 								icon: RADIATORS.glieder,
 								small: "Einzelne Glieder oder Röhren",
 							},
-						]}
+						})}
 						value={g.art}
 						onpick={(v) => (g.art = v)}
 					/>
@@ -192,11 +191,7 @@
 							<Select
 								label="Aktueller Zähler"
 								bind:value={g.funk}
-								options={[
-									["funk", "Funkfähig"],
-									["nicht", "Nicht funkfähig"],
-									["unbekannt", "Unbekannt"],
-								]}
+								options={RADIO_OPTIONS}
 								tip={tip("funk")}
 							/>
 							<Text
@@ -226,12 +221,7 @@
 									<Select
 										label="Funkstandard"
 										bind:value={g.std}
-										options={[
-											["wmbus", "wM-Bus"],
-											["lora", "LoRaWAN"],
-											["sonst", "Sonstiger"],
-											["unbekannt", "Unbekannt"],
-										]}
+										options={RADIO_STANDARD_OPTIONS}
 										tip={tip("std")}
 									/>
 									<Select
@@ -259,22 +249,12 @@
 					/>
 					<Options
 						class="cards grid2 einbau"
-						options={[
-							{
-								v: "up",
-								label: "Unterputz",
-								icon: SKETCHES.up,
-								small: "Runde Abdeckung in der Wand",
-							},
-							{
-								v: "ap",
-								label: "Aufputz",
-								icon: SKETCHES.ap,
-								small: "Zähler sichtbar im Rohr",
-							},
-							{ v: "neu", label: "Kein Einbauplatz", icon: SKETCHES.neu },
-							{ v: "unbekannt", label: "Unbekannt", icon: SKETCHES.unk },
-						]}
+						options={cards(WATER_MOUNT_OPTIONS, {
+							up: { icon: SKETCHES.up, small: "Runde Abdeckung in der Wand" },
+							ap: { icon: SKETCHES.ap, small: "Zähler sichtbar im Rohr" },
+							neu: { icon: SKETCHES.neu },
+							unbekannt: { icon: SKETCHES.unk },
+						})}
 						value={g.einbau}
 						onpick={(v) => (g.einbau = v)}
 					/>
@@ -351,20 +331,16 @@
 					/>
 					<Options
 						class="cards grid2 wtyp"
-						options={[
-							{
-								v: "ap",
-								label: "Aufputz-Wärmezähler",
+						options={cards(HEAT_METER_OPTIONS, {
+							ap: {
 								icon: SKETCHES.ap,
 								small: "Zähler sitzt sichtbar in der Rohrleitung",
 							},
-							{
-								v: "up",
-								label: "Unterputz-/Kapsel-Wärmezähler",
+							up: {
 								icon: SKETCHES.up,
 								small: "Messkapsel in einem Anschlussgehäuse",
 							},
-						]}
+						})}
 						value={g.wtyp}
 						onpick={(v) => (g.wtyp = v)}
 					/>
@@ -387,12 +363,7 @@
 								<Select
 									label="Temperaturfühlergröße*"
 									bind:value={g.fg}
-									options={[
-										["5.0", "5,0 mm"],
-										["5.2", "5,2 mm"],
-										["6.0", "6,0 mm"],
-										["unbekannt", "Unbekannt"],
-									]}
+									options={SENSOR_SIZE_OPTIONS}
 									tip={tip("fg")}
 								/>
 							</div>
@@ -401,23 +372,13 @@
 								<Select
 									label="Was wird gemessen?"
 									bind:value={g.was}
-									options={[
-										["heizung", "Heizung"],
-										["ww", "Warmwasser"],
-										["kaelte", "Kälte"],
-										["unbekannt", "Unbekannt"],
-									]}
+									options={MEASURED_OPTIONS}
 									tip={tip("was")}
 								/>
 								<Select
 									label="Temperaturfühler-Aufnahme"
 									bind:value={g.fuehler}
-									options={[
-										["direkt", "Direktfühler"],
-										["tauch", "Tauchhülse"],
-										["keine", "Nicht vorhanden"],
-										["unbekannt", "Unbekannt"],
-									]}
+									options={SENSOR_MOUNT_OPTIONS}
 									tip={tip("fuehler")}
 								/>
 							</div>
@@ -492,20 +453,16 @@
 					<p class="ss-sub">Absperrventil vorhanden?*</p>
 					<Options
 						class="grid2 absv"
-						options={[
-							{
-								v: "ja",
-								label: "Ja",
+						options={cards(SHUTOFF_OPTIONS, {
+							ja: {
 								icon: ICONS.keep,
 								small: "Vor und hinter dem Zähler absperrbar",
 							},
-							{
-								v: "nein",
-								label: "Nein",
+							nein: {
 								icon: ICONS.none,
 								small: "Leitung lässt sich nicht absperren",
 							},
-						]}
+						})}
 						value={g.absv}
 						onpick={(v) => (g.absv = v)}
 					/>

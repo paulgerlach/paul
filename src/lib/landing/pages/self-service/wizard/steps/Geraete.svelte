@@ -1,7 +1,7 @@
 <!-- Step "Welche Geräte benötigen Sie?" (several). -->
 <script lang="ts">
 	import { DEVICE_PHOTOS } from "../../photos";
-	import { DEVICES, ORDER } from "../data";
+	import { DEVICES, ORDER, UNSURE_DEVICES } from "../data";
 	import { ICONS } from "../svg";
 	import Consultation from "../ui/Consultation.svelte";
 	import Note from "../ui/Note.svelte";
@@ -19,7 +19,7 @@
 		})),
 		{
 			v: "unsicher",
-			label: "Ich bin mir nicht ganz sicher",
+			label: UNSURE_DEVICES,
 			icon: ICONS.q,
 			small: "Heidi hilft Ihnen bei der Auswahl",
 		},

@@ -3,7 +3,15 @@
   flashes it; the plumbing question shows only when it's needed.
 -->
 <script lang="ts">
-	import { fieldTip, MOUNT_TIPS } from "../data";
+	import {
+		fieldTip,
+		FITTER_OPTIONS,
+		FITTING_OPTIONS,
+		MOUNT_TIPS,
+		PLUMBING_OPTIONS,
+		REACH_OPTIONS,
+		SHUTOFF_CIRCUIT_OPTIONS,
+	} from "../data";
 	import Note from "../ui/Note.svelte";
 	import Select from "../ui/Select.svelte";
 	import Text from "../ui/Text.svelte";
@@ -23,12 +31,7 @@
 	<Select
 		label="Sind Wasser- und Heizkreise absperrbar?"
 		bind:value={m.abs}
-		options={[
-			["ja", "Ja"],
-			["teils", "Teilweise"],
-			["nein", "Nein"],
-			["unbekannt", "Unbekannt"],
-		]}
+		options={SHUTOFF_CIRCUIT_OPTIONS}
 		tip={MOUNT_TIPS.abs}
 		onchange={(v) => {
 			if (v !== "ja" && v !== "nein") return;
@@ -41,12 +44,7 @@
 		<Select
 			label="Sind passende Einbausätze vorhanden?"
 			bind:value={m.eat}
-			options={[
-				["ja", "Ja"],
-				["teils", "Teilweise"],
-				["nein", "Nein"],
-				["pruefen", "Bitte prüfen"],
-			]}
+			options={FITTING_OPTIONS}
 			tip={MOUNT_TIPS.eat}
 			flash={flash > 0}
 			onchange={changed}
@@ -57,12 +55,7 @@
 	<Select
 		label="Sind die Zähler erreichbar?"
 		bind:value={m.err}
-		options={[
-			["gut", "Gut erreichbar"],
-			["wohnung", "Nur mit Wohnungszutritt"],
-			["schwer", "Schwer erreichbar"],
-			["unbekannt", "Unbekannt"],
-		]}
+		options={REACH_OPTIONS}
 		tip={MOUNT_TIPS.err}
 		onchange={changed}
 	/>
@@ -71,11 +64,7 @@
 			<Select
 				label="Wer übernimmt Sanitärvorarbeiten?"
 				bind:value={m.san}
-				options={[
-					["eigen", "Eigener Sanitärbetrieb (empfohlen)"],
-					["heidi", "Heidi koordiniert (Aufwandspauschale)"],
-					["offen", "Noch offen"],
-				]}
+				options={PLUMBING_OPTIONS}
 				tip={MOUNT_TIPS.san}
 			/>
 		</div>
@@ -85,11 +74,7 @@
 	<Select
 		label="Wer soll die Geräte montieren?"
 		bind:value={m.wer}
-		options={[
-			["eigen", "Selbst oder eigener Hausinstallateur (bevorzugt)"],
-			["heidi", "Heidi montiert (Installationspauschale 999 €)"],
-			["offen", "Noch offen"],
-		]}
+		options={FITTER_OPTIONS}
 		tip={MOUNT_TIPS.wer}
 	/>
 </div>

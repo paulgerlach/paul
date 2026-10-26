@@ -51,12 +51,10 @@ type EventType =
 	// forwards it to whoever answers software vendors; nothing is stored here.
 	| "connectioninquiry"
 	// The Zählercheck on /self-service: the offer once made (stage
-	// "created") and when requested by email ("requested"). Payload: stage,
-	// offer_number, object_id, valid_until, first_name, last_name, company,
-	// phone, property, billing, units, once_net, yearly_net, files (count,
-	// the files stay in the browser), text (the design's Slack summary),
-	// page. Make.com forwards it to sales, who send the offer PDF; nothing
-	// is stored here.
+	// "created") and when requested by email ("requested"), after it's stored
+	// (`self_service_results`). Payload: stage, offer_number, first_name,
+	// last_name, result_url (the result page with every answer and file),
+	// page. Make.com forwards the link to sales, who send the offer PDF.
 	| "selfserviceoffer";
 
 interface WebhookPayload {

@@ -4,13 +4,21 @@
  * saved check to resume and the offer's sending. Per page via context, so
  * every visit starts empty and nothing leaks between requests on the server.
  *
- * Files never leave the browser: only their names and a local preview of
- * images (an object URL, revoked when the file goes). The answers are kept
- * in `localStorage` to resume; they reach the server only with the offer
- * (`/api/self-service`), which sends them to Make.com.
+ * Files stay in the browser until the offer is made (with a local preview of
+ * images, an object URL revoked when the file goes). The answers are kept in
+ * `localStorage` to resume; they reach the server only with the offer
+ * (`/api/self-service`), which stores them and answers with upload URLs for
+ * the files of the drop zones still shown; the browser PUTs each file there
+ * once. Sends run one after the other, so "requested" goes after "created"
+ * and its uploads, and updates the same stored offer (`ref`).
  */
 import { getContext, setContext } from "svelte";
-import { selfServiceStateSchema } from "$lib/forms/selfServiceOffer";
+import {
+	fileTypeAllowed,
+	MAX_FILE_BYTES,
+	selfServiceStateSchema,
+	type OfferResponse,
+} from "$lib/forms/selfServiceOffer";
 import { GROUP_DEVS, ORDER, type GroupDev } from "./data";
 import {
 	fresh,
@@ -23,8 +31,36 @@ import {
 	type State,
 	type StepId,
 } from "./model";
+import { sheet, sheetSlots } from "./sheet";
 
-export type Upload = { name: string; url?: string; pdf: boolean };
+/** A chosen file: `url` its preview, `path` once uploaded. */
+export type Upload = {
+	name: string;
+	url?: string;
+	pdf: boolean;
+	file: File;
+	type: string;
+	path?: string;
+};
+
+/** Types some systems leave out (`File.type` empty), by extension. */
+const EXT_TYPES: Record<string, string> = {
+	pdf: "application/pdf",
+	csv: "text/csv",
+	xls: "application/vnd.ms-excel",
+	xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	jpg: "image/jpeg",
+	jpeg: "image/jpeg",
+	png: "image/png",
+	heic: "image/heic",
+	heif: "image/heif",
+	webp: "image/webp",
+};
+const fileType = (f: File) =>
+	f.type || EXT_TYPES[f.name.split(".").pop()?.toLowerCase() ?? ""] || "";
+
+/** Parallel uploads at most. */
+const UPLOADS = 3;
 
 const KEY = "heidi_ss_v1";
 const ENDPOINT = "/api/self-service";
@@ -49,9 +85,6 @@ export class SelfService {
 
 	list = $derived(steps(this.s));
 	id: StepId = $derived(this.list[Math.min(this.s.cur, this.list.length - 1)]);
-	fileCount = $derived(
-		Object.values(this.files).reduce((a, f) => a + f.length, 0),
-	);
 
 	/** Called after a move (the component scrolls and focuses). */
 	onMove?: (scroll: boolean) => void;
@@ -59,6 +92,9 @@ export class SelfService {
 	onProblem?: (group: string) => void;
 
 	#t0 = 0;
+	/** The stored offer, from the first send's answer. */
+	#ref: OfferResponse["ref"];
+	#queue: Promise<unknown> = Promise.resolve();
 	#initial = JSON.stringify(fresh());
 	#dirty = false;
 
@@ -103,16 +139,26 @@ export class SelfService {
 		// plain array, and pushes onto it would bypass the `$state` proxy.
 		this.files[id] ??= [];
 		const have = this.files[id];
+		const skipped: string[] = [];
 		for (const f of Array.from(list)) {
 			if (have.length >= max) break;
-			const image = f.type.startsWith("image/");
+			const type = fileType(f);
+			if (!fileTypeAllowed(type) || !f.size || f.size > MAX_FILE_BYTES) {
+				skipped.push(f.name);
+				continue;
+			}
+			const image = type.startsWith("image/");
 			have.push({
 				name: f.name,
 				url: image ? URL.createObjectURL(f) : undefined,
 				pdf: !image,
+				file: f,
+				type,
 			});
 		}
-		this.error = "";
+		this.error = skipped.length
+			? `Nicht übernommen: ${skipped.join(", ")}. Möglich sind PDF, Fotos und Tabellen bis 20 MB.`
+			: "";
 	}
 
 	removeFile(id: string, i: number) {
@@ -205,6 +251,7 @@ export class SelfService {
 	restart() {
 		for (const id of Object.keys(this.files)) this.#dropFiles(id);
 		this.s = fresh();
+		this.#ref = undefined;
 		this.#clearSaved();
 		this.saved = null;
 		this.sendFailed = false;
@@ -237,19 +284,66 @@ export class SelfService {
 		}
 	}
 
-	async #send(stage: "created" | "requested") {
+	#send(stage: "created" | "requested") {
+		const run = this.#queue.then(() => this.#post(stage));
+		this.#queue = run.catch(() => {});
+		return run;
+	}
+
+	async #post(stage: "created" | "requested") {
+		const slots = sheetSlots(sheet(this.s));
+		const sent = Object.entries(this.files)
+			.filter(([id]) => slots.has(id))
+			.flatMap(([slot, list]) => list.map((u) => ({ slot, u })));
 		const res = await fetch(ENDPOINT, {
 			method: "POST",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({
 				stage,
 				state: $state.snapshot(this.s),
-				files: this.fileCount,
+				ref: this.#ref,
+				files: sent.map(({ slot, u }) => ({
+					slot,
+					// The end keeps the extension.
+					name: u.name.slice(-200),
+					type: u.type,
+					size: u.file.size,
+					path: u.path,
+				})),
 				website: this.website,
 				_t: this.#t0,
 			}),
 		});
+		const body = (await res.json().catch(() => ({}))) as Partial<OfferResponse>;
+		if (body.ref) this.#ref = body.ref;
+		if (body.uploads?.length)
+			await this.#upload(
+				body.uploads,
+				sent.map((x) => x.u),
+			);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	}
+
+	/** PUTs the files; one that fails is sent again with the next send. */
+	async #upload(list: NonNullable<OfferResponse["uploads"]>, sent: Upload[]) {
+		const todo = [...list];
+		const worker = async () => {
+			for (let job = todo.shift(); job; job = todo.shift()) {
+				const u = sent[job.i];
+				if (!u) continue;
+				try {
+					const res = await fetch(job.url, {
+						method: "PUT",
+						headers: { "content-type": u.type },
+						body: u.file,
+					});
+					if (res.ok) u.path = job.path;
+				} catch {
+					// Offline or blocked: retried with the next send.
+				}
+			}
+		};
+		await Promise.all(Array.from({ length: UPLOADS }, worker));
 	}
 
 	destroy() {

@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import { LAUNCHED } from "./launch.ts";
 
-// The offer goes to the local webhook sink from playwright.config.ts; the sink
-// answers 500 for emails at @sink-fails.example.
+// The offer is stored in the local Supabase stack (playwright.config.ts) and
+// its link goes to the local webhook sink, which answers 500 for emails at
+// @sink-fails.example.
 
 const PATH = "/self-service";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -15,10 +16,9 @@ type OfferEvent = {
 	email: string;
 	stage: string;
 	offer_number: string;
-	property: string;
-	units: number;
-	yearly_net: number;
-	text: string;
+	first_name: string;
+	last_name: string;
+	result_url: string;
 };
 
 async function eventsFor(page: Page, email: string) {
@@ -35,8 +35,17 @@ async function gotoCheck(page: Page) {
 	return page.locator("#check");
 }
 
-/** The short way: no bill, no list, 6 new cold water meters, 6 flats. */
-async function toOffer(page: Page, email: string) {
+const PDF = {
+	name: "abrechnung-2025.pdf",
+	mimeType: "application/pdf",
+	buffer: Buffer.from("%PDF-1.4\n%%EOF\n"),
+};
+
+/**
+ * The short way: no bill (or one PDF with `bill`), no list, 6 new cold water
+ * meters, 6 flats.
+ */
+async function toOffer(page: Page, email: string, bill = false) {
 	const check = await gotoCheck(page);
 	const title = check.locator("#ss-t");
 	const next = () => check.locator(".ss-go").click();
@@ -47,7 +56,11 @@ async function toOffer(page: Page, email: string) {
 	await expect(check.getByRole("alert")).toHaveText(
 		"Bitte wählen Sie eine Antwort.",
 	);
-	await card(/^Nein, es liegt keine/).click();
+	if (bill) {
+		await card(/^Ja, ich habe eine Heizkostenabrechnung/).click();
+		await check.locator('input[type="file"]').setInputFiles(PDF);
+		await check.getByLabel("Anmerkung (optional)").fill("Abrechnung 2025");
+	} else await card(/^Nein, es liegt keine/).click();
 	await expect(check.getByRole("alert")).toHaveText("");
 	await next();
 	await card(/^Nein, habe ich nicht/).click();
@@ -136,15 +149,68 @@ test("makes the offer and sends it on request", async ({ page }) => {
 
 	const events = await eventsFor(page, email);
 	expect(events.map((e) => e.stage)).toEqual(["created", "requested"]);
-	const requested = events[1];
+	const [created, requested] = events;
 	expect(requested).toMatchObject({
 		event_type: "selfserviceoffer",
-		property: "Hauptstraße 12, 10115 Berlin",
-		units: 6,
-		yearly_net: 396,
+		first_name: "Erika",
+		last_name: "Musterfrau",
 	});
 	expect(requested.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
-	expect(requested.text).toContain("Geräte: 6 × Kaltwasserzähler");
+	// One stored offer, one link: /self-service-result/<22 characters>.
+	expect(requested.result_url).toMatch(
+		/^http:\/\/localhost:4173\/self-service-result\/[A-Za-z0-9]{22}$/,
+	);
+	expect(created.result_url).toBe(requested.result_url);
+
+	const res = await page.goto(requested.result_url);
+	expect(res?.headers()["cache-control"]).toBe("private, no-store");
+	expect(res?.headers()["x-robots-tag"]).toBe("noindex, nofollow");
+	await expect(page.locator("h1")).toHaveText(
+		`Angebot ${requested.offer_number}`,
+	);
+	await expect(page.getByText(/^Per E-Mail angefordert/)).toBeVisible();
+	const row = (q: string) =>
+		page
+			.locator("dl > div")
+			.filter({ has: page.getByText(q, { exact: true }) });
+	await expect(row("Wie viele baugleiche Geräte?").locator("dd")).toHaveText(
+		"6",
+	);
+	await expect(row("Ort").first().locator("dd")).toHaveText("Berlin");
+	await expect(row("Pro Jahr (netto)").locator("dd")).toHaveText("396,00 €");
+});
+
+test("uploads the files and shows them on the result", async ({ page }) => {
+	const email = testEmail("files");
+	const check = await toOffer(page, email, true);
+	await check
+		.getByRole("button", { name: /Angebot per E-Mail erhalten/ })
+		.click();
+	await expect(check.locator(".ss-conf h3")).toHaveText(
+		"Ihr Angebot ist unterwegs.",
+	);
+	const [, requested] = await eventsFor(page, email);
+
+	await page.goto(requested.result_url);
+	const bill = page
+		.locator("dl > div")
+		.filter({ has: page.getByText("Abrechnung hochladen", { exact: true }) });
+	const link = bill.getByRole("link", { name: /abrechnung-2025\.pdf/ });
+	await expect(link).toBeVisible();
+	const file = await page.request.get((await link.getAttribute("href"))!);
+	expect(file.status()).toBe(200);
+	expect((await file.body()).toString()).toBe(PDF.buffer.toString());
+	await expect(
+		page
+			.locator("dl > div")
+			.filter({ has: page.getByText("Anmerkung", { exact: true }) })
+			.locator("dd"),
+	).toHaveText("Abrechnung 2025");
+});
+
+test("answers 404 for an unknown result", async ({ page }) => {
+	const res = await page.goto("/self-service-result/AAAAAAAAAAAAAAAAAAAAAA");
+	expect(res?.status()).toBe(404);
 });
 
 test("names the mailbox when sending fails", async ({ page }) => {

@@ -1,10 +1,15 @@
 <!-- Step "Rauchwarnmelder bestimmen": the rooms' minimum and the total. -->
 <script lang="ts">
-	import { fieldTip, QUESTION_TIPS } from "../data";
+	import {
+		fieldTip,
+		QUESTION_TIPS,
+		SMOKE_KIND_OPTIONS,
+		SMOKE_MOUNT_OPTIONS,
+	} from "../data";
 	import { num } from "../model";
 	import { ICONS } from "../svg";
 	import Note from "../ui/Note.svelte";
-	import Options from "../ui/Options.svelte";
+	import Options, { cards } from "../ui/Options.svelte";
 	import Question from "../ui/Question.svelte";
 	import Select from "../ui/Select.svelte";
 	import Text from "../ui/Text.svelte";
@@ -57,12 +62,7 @@
 	<Select
 		label="Ersetzen oder neu?"
 		bind:value={r.art}
-		options={[
-			["neu", "Neu montieren"],
-			["ersetzen", "Vorhandene ersetzen"],
-			["beides", "Teils ersetzen, teils neu"],
-			["unbekannt", "Unbekannt"],
-		]}
+		options={SMOKE_KIND_OPTIONS}
 		tip={tip("art")}
 	/>
 </div>
@@ -80,11 +80,11 @@
 />
 <Options
 	class="grid3"
-	options={[
-		{ v: "decke", label: "Normale Decke", icon: ICONS.meter },
-		{ v: "schraege", label: "Dachschräge", icon: ICONS.half },
-		{ v: "hoch", label: "Hohe Decke (über 3 m)", icon: ICONS.up },
-	]}
+	options={cards(SMOKE_MOUNT_OPTIONS, {
+		decke: { icon: ICONS.meter },
+		schraege: { icon: ICONS.half },
+		hoch: { icon: ICONS.up },
+	})}
 	value={r.mont}
 	onpick={(v) => {
 		r.mont = r.mont.includes(v)

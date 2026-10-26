@@ -1,10 +1,11 @@
 import { z } from "zod";
 import type { State } from "$lib/landing/pages/self-service/wizard/model";
+import type { Sheet } from "$lib/landing/pages/self-service/wizard/sheet";
 
 /**
  * The Zählercheck's state on /self-service: checked when the wizard resumes a
  * saved check from `localStorage` and again by `/api/self-service`, which
- * builds the offer's notification from it. Every field is a raw form value;
+ * stores it with the offer. Every field is a raw form value;
  * missing ones default to empty, so an older saved check still parses.
  */
 const text = (max = 200) => z.string().max(max).default("");
@@ -128,13 +129,68 @@ export const selfServiceStateSchema = z.object({
 	cur: z.number().int().min(0).max(100).default(0),
 }) satisfies z.ZodType<State, unknown>;
 
+/** The files the bucket `self-service` takes (its migration has the same). */
+export const FILE_TYPES = [
+	"application/pdf",
+	"image/*",
+	"text/csv",
+	"application/vnd.ms-excel",
+	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+];
+export const MAX_FILE_BYTES = 20 * 1024 * 1024;
+export const MAX_FILES = 100;
+
+export const fileTypeAllowed = (type: string) =>
+	FILE_TYPES.some((t) =>
+		t.endsWith("/*") ? type.startsWith(t.slice(0, -1)) : type === t,
+	);
+
+/** A file of the offer; `path` once the server signed its upload. */
+const offerFile = z.object({
+	/** The drop zone: `abr`, `liste`, a group (`g1`) or its meter (`g1z`). */
+	slot: z.string().regex(/^(abr|liste|g\d{1,4}z?)$/),
+	name: z.string().min(1).max(200),
+	type: z.string().max(120).refine(fileTypeAllowed),
+	size: z.number().int().min(1).max(MAX_FILE_BYTES),
+	path: z.string().max(200).optional(),
+});
+
+/** A result's random parts: 22 of [A-Za-z0-9] (131 bits). */
+export const SECRET = /^[A-Za-z0-9]{22}$/;
+
 /** What `/api/self-service` receives. */
 export const selfServiceOfferSchema = z.object({
 	/** `created`: the offer was made; `requested`: send it by email. */
 	stage: z.enum(["created", "requested"]),
 	state: selfServiceStateSchema,
-	/** Photos and documents chosen, which stay in the browser. */
-	files: z.number().int().min(0).max(500),
+	/** The stored offer to update (from the first answer), if any. */
+	ref: z.object({ id: z.uuid(), key: z.string().regex(SECRET) }).optional(),
+	/** The files still chosen; their content goes to the upload URLs. */
+	files: z.array(offerFile).max(MAX_FILES),
 	website: z.string().optional(),
 	_t: z.number().optional(),
 });
+
+export type OfferFile = z.infer<typeof offerFile>;
+
+/** What `/api/self-service` answers on success. */
+export type OfferResponse = {
+	success: true;
+	ref?: { id: string; key: string };
+	/** Upload URLs for the request's files at `i` that had no `path`. */
+	uploads?: { i: number; path: string; url: string }[];
+};
+
+/** A stored file (`path` in the bucket `self-service`). */
+export type StoredFile = Required<OfferFile>;
+
+/** `self_service_results.data`. */
+export type SelfServiceRecord = {
+	version: 1;
+	stage: "created" | "requested";
+	/** The questions as asked and the answers (`sheet.ts`). */
+	sheet: Sheet;
+	/** The raw state, for a later look at what the sheet doesn't show. */
+	state: State;
+	files: StoredFile[];
+};

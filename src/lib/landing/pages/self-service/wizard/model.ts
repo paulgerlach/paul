@@ -1,9 +1,9 @@
 /**
  * The Zählercheck's model, pure (the design's `#ss-js` without the DOM): the
  * state, the step list, each step's check, the device list and the cost
- * estimate (`calc`), the offer's positions and the text the server sends to
- * Make.com. Shared by the wizard in the browser and the endpoint, which
- * validates the state and builds the notification itself.
+ * estimate (`calc`) and the offer's positions. Shared by the wizard in the
+ * browser and the endpoint, which validates the state and stores it with
+ * its result sheet (`sheet.ts`).
  */
 import {
 	DEVICES,
@@ -965,59 +965,4 @@ export function scope(s: State): string[] {
 export function offerFileName(s: State, o: Offer, title = "") {
 	const st = (s.adr.l.str || "").replace(/[\\/:*?"<>|]+/g, "").trim();
 	return `Heidi Systems - Angebot ${title ? `${title} ` : ""}${o.id}${st ? `, ${st}` : ""}.pdf`;
-}
-
-const slackEscape = (v: unknown) =>
-	String(v ?? "").replace(
-		/[&<>]/g,
-		(c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] as string,
-	);
-
-/**
- * The notification about an offer (the design's Slack text): `head` names the
- * event, `files` counts the photos and documents left in the browser.
- */
-export function offerSummary(
-	s: State,
-	o: Offer,
-	head: string,
-	files: number,
-): string {
-	const c = calc(s);
-	const P = positions(c);
-	const k = s.k;
-	const L: string[] = [];
-	L.push(`${head} · ${o.nr}`);
-	L.push(
-		`*${slackEscape(`${k.vn} ${k.nn}`.trim())}*${k.firma ? ` · ${slackEscape(k.firma)}` : ""}`,
-	);
-	L.push(slackEscape(k.mail) + (k.tel ? ` · ${slackEscape(k.tel)}` : ""));
-	L.push(
-		`Liegenschaft: ${slackEscape(propertyLines(s).join(", "))}${c.units ? ` · ${c.units} Einheiten` : ""}`,
-	);
-	if (!s.adr.same)
-		L.push(`Rechnung an: ${slackEscape(billingLines(s).join(", "))}`);
-	const devices = [
-		...P.rental.map((r) => `${r.n} × ${r.t.replace("Funk ", "")}`),
-		...P.onRequest.map((r) => `${r.n} × ${r.sub}`),
-	];
-	if (devices.length) L.push(`Geräte: ${slackEscape(devices.join(", "))}`);
-	else if (!tech(s))
-		L.push("Geräte: aus Geräteliste/Rechnung, Dokumentenprüfung nötig");
-	L.push(
-		`Leistung: ${slackEscape(SERVICES[s.leist] || "offen")} · ${({ miete: "Mieten", kauf: "Kaufen", offen: "Kauf/Miete offen" } as Record<string, string>)[s.kauf] || ""} · Montage: ${({ eigen: "selbst", heidi: "durch Heidi", offen: "offen" } as Record<string, string>)[s.mont.wer] || "offen"}`,
-	);
-	L.push(
-		`Angebote: Gerätemiete und Service${c.withAbr ? " + Heizkostenabrechnung (zwei getrennte Dokumente)" : ""}`,
-	);
-	L.push(
-		`Einmalig: ${n2(P.sO)} € · Pro Jahr: ${n2(P.year)} € (netto)${P.buy ? " · Gerätekauf auf Anfrage" : ""}`,
-	);
-	if (P.extras.length)
-		L.push(`Zusätzlich angefragt: ${slackEscape(P.extras.join(", "))}`);
-	if (files)
-		L.push(`Fotos/Dateien: ${files} (nicht übertragen, beim Kunden anfordern)`);
-	if (c.checks.length)
-		L.push(`Prüfpunkte:\n• ${slackEscape(c.checks.slice(0, 8).join("\n• "))}`);
-	return L.join("\n");
 }

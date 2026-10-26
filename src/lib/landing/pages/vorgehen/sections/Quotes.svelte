@@ -8,7 +8,7 @@
 </script>
 
 <!-- Copy and roles need sign-off: see the go-live gate, plan §4.4. -->
-<section class="sec" aria-labelledby="vg-quotes-h">
+<section class="blk" aria-labelledby="vg-quotes-h">
 	<div class="wrap">
 		<Head id="vg-quotes-h" eyebrow={quotes.eyebrow} title={quotes.h2} center />
 		<ul>
@@ -28,7 +28,7 @@
 </section>
 
 <style>
-	.sec {
+	.blk {
 		padding-top: clamp(72px, 9vw, 128px);
 	}
 	.wrap {
@@ -90,8 +90,6 @@
 		display: block;
 		font-size: 12.5px;
 		color: var(--muted);
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
 		margin-top: 2px;
 	}
 	@media (max-width: 980px) {

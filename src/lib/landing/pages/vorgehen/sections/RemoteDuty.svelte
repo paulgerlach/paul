@@ -17,7 +17,7 @@
 	const days = $derived(daysUntilObligation(clock.today));
 </script>
 
-<section class="sec" aria-labelledby="vg-duty-h">
+<section class="blk" aria-labelledby="vg-duty-h">
 	<div class="wrap">
 		<Head
 			id="vg-duty-h"
@@ -50,7 +50,7 @@
 </section>
 
 <style>
-	.sec {
+	.blk {
 		padding-top: clamp(72px, 9vw, 128px);
 	}
 	.wrap {
@@ -68,11 +68,12 @@
 		overflow: hidden;
 		min-height: 420px;
 		background: var(--soft);
-		position: relative;
 	}
+	/* Inline in the flow, as in the design: the photo's ratio (and the line's
+	   descender) set the row's height. */
 	.photo :global(img) {
-		position: absolute;
-		inset: 0;
+		display: inline;
+		vertical-align: baseline;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -119,7 +120,7 @@
 		font-weight: 500;
 		letter-spacing: -0.02em;
 		font-variant-numeric: tabular-nums;
-		line-height: 1.1;
+		line-height: 1.5;
 	}
 	.count span {
 		color: var(--muted);

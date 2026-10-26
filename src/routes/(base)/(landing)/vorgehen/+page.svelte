@@ -9,9 +9,11 @@
 	import Features from "$lib/landing/pages/vorgehen/sections/Features.svelte";
 	import FloatingCta from "$lib/landing/pages/vorgehen/sections/FloatingCta.svelte";
 	import Hero from "$lib/landing/pages/vorgehen/sections/Hero.svelte";
+	import Journey from "$lib/landing/pages/vorgehen/sections/Journey.svelte";
 	import Quotes from "$lib/landing/pages/vorgehen/sections/Quotes.svelte";
 	import RemoteDuty from "$lib/landing/pages/vorgehen/sections/RemoteDuty.svelte";
 	import Stats from "$lib/landing/pages/vorgehen/sections/Stats.svelte";
+	import Split from "$lib/landing/pages/vorgehen/sections/Split.svelte";
 	import Steps from "$lib/landing/pages/vorgehen/sections/Steps.svelte";
 	import Trust from "$lib/landing/pages/vorgehen/sections/Trust.svelte";
 	import WideImage from "$lib/landing/pages/vorgehen/sections/WideImage.svelte";
@@ -41,11 +43,13 @@
 	<Stats />
 	<RemoteDuty />
 	<Steps />
+	<Journey />
+	<Split />
 	<Features />
 	<Comparison />
 	<Quotes />
 	<Faq />
-	<ContactCard form={data.finalForm} />
+	<ContactCard />
 	<Trust />
 </main>
 <FloatingCta />

@@ -60,7 +60,7 @@
 		font-size: clamp(28px, 3vw, 40px);
 		font-weight: 500;
 		letter-spacing: -0.02em;
-		line-height: 1.2;
+		line-height: 1.5;
 	}
 	.top :global(img) {
 		width: 96px;

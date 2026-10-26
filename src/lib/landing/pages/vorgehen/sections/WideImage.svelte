@@ -79,7 +79,6 @@
 		padding: 10px 14px;
 		font-size: 14px;
 		font-weight: 500;
-		max-width: calc(100% - 48px);
 	}
 	.dot {
 		width: 8px;
@@ -98,14 +97,6 @@
 	@media (max-width: 980px) {
 		.img {
 			aspect-ratio: 4/3;
-		}
-	}
-	@media (max-width: 560px) {
-		figcaption {
-			left: 14px;
-			bottom: 14px;
-			max-width: calc(100% - 28px);
-			font-size: 13px;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

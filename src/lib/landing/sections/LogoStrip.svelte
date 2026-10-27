@@ -15,7 +15,6 @@
 		strong,
 		placeholder = false,
 		logos = DEFAULT_LOGO_ORDER,
-		id,
 	}: {
 		text: string;
 		/** A bold end of the label (/plattform/dashboard's "Hausverwaltungen in ganz Deutschland"). */
@@ -23,12 +22,10 @@
 		/** Marks the claim as unconfirmed (go-live gate). */
 		placeholder?: boolean;
 		logos?: LogoKey[];
-		/** An anchor (`kunden` on /, the footer's "Kunden"). */
-		id?: string;
 	} = $props();
 </script>
 
-<section class="logos wrap" aria-label="Kunden" {id}>
+<section class="logos wrap" aria-label="Kunden">
 	<p data-placeholder={placeholder ? "" : undefined}>
 		{#if strong}{text} <b>{strong}</b>{:else}{text}{/if}
 	</p>

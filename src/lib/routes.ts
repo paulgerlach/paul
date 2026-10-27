@@ -32,6 +32,7 @@ export const ROUTE_WEG_VERWALTUNG = "/kunden/weg-verwaltung";
 export const ROUTE_WOHNUNGSUNTERNEHMEN = "/kunden/wohnungsunternehmen";
 export const ROUTE_ASSET_MANAGER = "/kunden/asset-manager";
 export const ROUTE_PRIVATE_VERMIETER = "/kunden/private-vermieter";
+export const ROUTE_KUNDENREFERENZEN = "/kunden/referenzen";
 export const ROUTE_NEUIGKEITEN = "/neuigkeiten";
 export const ROUTE_FRISTENRECHNER = "/fristenrechner";
 export const ROUTE_HKVO_LEITFADEN = "/heizkostenverordnung";

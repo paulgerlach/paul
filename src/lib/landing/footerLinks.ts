@@ -18,8 +18,8 @@ import {
 	ROUTE_INTEROPERABILITAET,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
+	ROUTE_KUNDENREFERENZEN,
 	ROUTE_KARRIERE,
-	ROUTE_HOME,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_MIETVERWALTUNG,
@@ -57,9 +57,7 @@ export type LandingFooterGroup = { title: string; links: LandingFooterLink[] };
 export const companyLinks: LandingFooterLink[] = [
 	{ text: "Über uns", href: ROUTE_UEBER_UNS },
 	{ text: "Karriere", href: ROUTE_KARRIERE },
-	// The logo strip; the "Kundenreferenzen" design (WcCFaQRPZKfbE5zFHQnnYd)
-	// isn't built.
-	{ text: "Kunden", href: `${ROUTE_HOME}#kunden` },
+	{ text: "Kunden", href: ROUTE_KUNDENREFERENZEN },
 	{ text: "Hilfe-Center", href: ROUTE_HILFE },
 	{ text: "Sicherheit", href: ROUTE_SICHERHEIT },
 	{ text: "Kontakt", href: ROUTE_KONTAKT },

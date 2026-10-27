@@ -47,6 +47,7 @@ export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_WOHNUNGSUNTERNEHMEN, 0.8),
 	page(r.ROUTE_PRIVATE_VERMIETER, 0.8),
 	page(r.ROUTE_ASSET_MANAGER, 0.8),
+	page(r.ROUTE_KUNDENREFERENZEN, 0.8),
 	// Resources
 	page(r.ROUTE_BLOG, 0.7, false, "weekly"),
 	page(r.ROUTE_NEUIGKEITEN, 0.7),

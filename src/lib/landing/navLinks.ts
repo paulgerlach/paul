@@ -16,6 +16,7 @@ import {
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
+	ROUTE_KUNDENREFERENZEN,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
@@ -308,10 +309,10 @@ export const landingNav: LandingNavGroup[] = [
 			{
 				title: "Unternehmen & Partner",
 				items: [
-					// WcCFaQRPZKfbE5zFHQnnYd
 					{
 						title: "Kundenreferenzen",
 						text: "Was Verwaltungen über Heidi sagen",
+						href: ROUTE_KUNDENREFERENZEN,
 					},
 					{
 						title: "Presse",

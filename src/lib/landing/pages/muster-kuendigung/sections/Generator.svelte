@@ -2,7 +2,9 @@
   "Ihre Kündigung. Live in der Vorschau." (.pg-sec.alt#vorlage, .kd-gen): the
   form in four fieldsets in the shared `GeneratorFrame` (the sticky preview
   with its three buttons). The fields are plain state (no `name`, no action):
-  nothing is stored or sent, the letter is derived from them (`letter.ts`),
+  nothing of them is stored or sent, the letter is derived from them
+  (`letter.ts`); a download or copy reports only which button to Make.com
+  (`/api/muster-kuendigung`),
   and the Word and PDF writers load on the first click. Without JS the
   preview shows the template with its placeholders and the buttons are
   hidden.
@@ -21,7 +23,7 @@
 		type Term,
 	} from "../content";
 	import GeneratorFrame from "../components/GeneratorFrame.svelte";
-	import type { FileKind } from "../components/types";
+	import type { FileKind, GeneratorAction } from "../components/types";
 	import { buildLetter, fileName, germanDay } from "../letter";
 
 	const clock = getDeadlineClock();
@@ -53,6 +55,15 @@
 					({ makePdf, PDF_TYPE }) =>
 						new Blob([makePdf(letter)], { type: PDF_TYPE }),
 				);
+
+	// keepalive: the request outlives the page if the visitor leaves.
+	const report = (action: GeneratorAction) =>
+		fetch("/api/muster-kuendigung", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ action }),
+			keepalive: true,
+		}).catch(() => {});
 </script>
 
 {#snippet list()}
@@ -96,6 +107,7 @@
 			texts={G}
 			fileName={(kind) => fileName(fields.mName, kind)}
 			{make}
+			onaction={report}
 		>
 			{#snippet form()}
 				<fieldset>

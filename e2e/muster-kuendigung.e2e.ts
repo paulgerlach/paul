@@ -2,9 +2,40 @@ import { readFile } from "node:fs/promises";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
-// No form on this page: its "Demo buchen" lead to /demo.
+// No form on this page: its "Demo buchen" lead to /demo. A download or copy
+// is reported (the button only) to the local webhook sink from
+// playwright.config.ts.
 
 const PATH = "/messdienst-wechseln/muster-kuendigung";
+const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
+const ACTION_API = "/api/muster-kuendigung";
+
+type ActionEvent = { event_type: string; action?: string; page?: string };
+
+async function actionEvents(page: Page, action: string) {
+	const events: ActionEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter(
+		(event) =>
+			event.event_type === "kuendigungaction" && event.action === action,
+	);
+}
+
+/** Waits until the sink holds one more event for `action` than `before`. */
+async function expectReported(page: Page, action: string, before: number) {
+	// Parallel runs report the same action, so count up from before.
+	await expect
+		.poll(async () => (await actionEvents(page, action)).length)
+		.toBeGreaterThan(before);
+	const [event] = await actionEvents(page, action);
+	expect(event).toEqual({
+		event_type: "kuendigungaction",
+		timestamp: expect.any(String),
+		action,
+		page: PATH,
+	});
+}
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>
@@ -159,13 +190,22 @@ test("the preview follows the form", async ({ page }) => {
 	);
 });
 
-test("downloads Word and PDF without sending anything", async ({ page }) => {
+test("downloads Word and PDF and reports only the button", async ({ page }) => {
 	await gotoHydrated(page);
+	const before = {
+		docx: (await actionEvents(page, "docx")).length,
+		pdf: (await actionEvents(page, "pdf")).length,
+	};
 	const requests: string[] = [];
+	const reports: (string | null)[] = [];
 	page.on("request", (request) => {
 		const url = new URL(request.url());
 		// The writers load as same-origin modules; everything else counts.
 		if (request.url().startsWith("blob:")) return;
+		if (url.pathname === ACTION_API) {
+			reports.push(request.postData());
+			return;
+		}
 		if (
 			request.resourceType() === "script" &&
 			url.origin === new URL(page.url()).origin
@@ -201,12 +241,17 @@ test("downloads Word and PDF without sending anything", async ({ page }) => {
 		"Download gestartet: Kuendigung-Alt-Messdienst-AG.pdf",
 	);
 	expect(requests).toEqual([]);
+	// Only the button, never the letter.
+	expect(reports).toEqual(['{"action":"docx"}', '{"action":"pdf"}']);
+	await expectReported(page, "docx", before.docx);
+	await expectReported(page, "pdf", before.pdf);
 });
 
 test("copies the letter", async ({ page, context, browserName }) => {
 	test.skip(browserName !== "chromium", "clipboard permissions");
 	await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 	await gotoHydrated(page);
+	const before = (await actionEvents(page, "copy")).length;
 	await fillForm(page);
 	const button = page.getByRole("button", { name: /Text kopieren|Kopiert/ });
 	await button.click();
@@ -218,6 +263,7 @@ test("copies the letter", async ({ page, context, browserName }) => {
 		),
 	).toBe(true);
 	expect(clipboard).toContain("Mit freundlichen Grüßen");
+	await expectReported(page, "copy", before);
 	// Back after 2 s
 	await expect(button).toHaveText("Text kopieren", { timeout: 4000 });
 });

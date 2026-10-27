@@ -7,6 +7,8 @@
   every field style (.kd-form) is a `:global` rule under `.form` here.
   Nothing is stored or sent: the page passes the letter derived from its
   fields and `make`, which loads its Word or PDF writer on the first click.
+  A page may pass `onaction`, called after a download starts or a copy
+  works (the Kündigung reports the button, never the letter).
   Without JS the buttons are hidden.
 -->
 <script lang="ts">
@@ -16,7 +18,7 @@
 	import { confettiFrom } from "$lib/landing/sections/sg/confetti";
 	import { plainText, type Paragraph } from "../letter";
 	import Preview from "./Preview.svelte";
-	import type { FileKind, GeneratorTexts } from "./types";
+	import type { FileKind, GeneratorAction, GeneratorTexts } from "./types";
 
 	let {
 		letter,
@@ -24,6 +26,7 @@
 		fileName,
 		make,
 		form,
+		onaction,
 	}: {
 		letter: Paragraph[];
 		texts: GeneratorTexts;
@@ -32,6 +35,8 @@
 		make: (kind: FileKind) => Promise<Blob>;
 		/** The fieldsets. */
 		form: Snippet;
+		/** After a download started or the copy worked. */
+		onaction?: (action: GeneratorAction) => void;
 	} = $props();
 
 	const text = $derived(plainText(letter));
@@ -72,6 +77,7 @@
 			}, 1500);
 			timers.push(timer);
 			say(texts.messages.started + name);
+			onaction?.(kind);
 			stopConfetti();
 			stopConfetti = confettiFrom(button);
 		} catch {
@@ -110,6 +116,7 @@
 			return;
 		}
 		copied = true;
+		onaction?.("copy");
 		clearTimeout(copyTimer);
 		copyTimer = setTimeout(() => (copied = false), 2000);
 	}

@@ -5,7 +5,7 @@
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
  * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
- * pressdownload
+ * pressdownload, kuendigungaction
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -59,7 +59,11 @@ type EventType =
 	| "selfserviceoffer"
 	// A Media Kit download on /presse. Payload: file (its name), page. No
 	// email, nothing personal.
-	| "pressdownload";
+	| "pressdownload"
+	// "Word herunterladen", "PDF" or "Text kopieren" on
+	// /messdienst-wechseln/muster-kuendigung. Payload: action ("docx" | "pdf"
+	// | "copy"), page. Never the letter or its fields.
+	| "kuendigungaction";
 
 interface WebhookPayload {
 	event_type: EventType;

@@ -80,7 +80,16 @@
 
 		<div class="f-news">
 			<div class="f-adr">
-				<a class="flogo" href={ROUTE_HOME}><HeidiLogo class="heidi-logo" /></a>
+				<span class="f-lw">
+					<a class="flogo" href={ROUTE_HOME} aria-describedby="f-tip"
+						><HeidiLogo class="heidi-logo" /></a
+					>
+					<span class="f-tip" id="f-tip" role="tooltip"
+						><b>Heidi = <u>Hei</u>zungen <u>di</u>gitalisieren</b><small
+							>Das Logo zeigt einen alten Röhrenheizkörper.</small
+						></span
+					>
+				</span>
 				<address>
 					{ADDRESS.company}<br />
 					{ADDRESS.street}<br />
@@ -281,6 +290,76 @@
 	}
 	.f-adr .flogo {
 		margin-bottom: 10px;
+	}
+	/* The design's logo tooltip: on hover and on keyboard focus of the logo. */
+	.f-lw {
+		position: relative;
+		display: inline-block;
+		cursor: help;
+	}
+	.f-lw .flogo {
+		transition: color 0.3s;
+	}
+	.f-lw:hover .flogo,
+	.f-lw .flogo:focus-visible {
+		color: var(--accent);
+	}
+	.f-tip {
+		position: absolute;
+		left: 0;
+		bottom: calc(100% + 12px);
+		width: max-content;
+		max-width: min(330px, calc(100vw - 32px));
+		background: #fff;
+		color: #1e322d;
+		border-radius: 12px;
+		padding: 12px 14px;
+		box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.45);
+		opacity: 0;
+		transform: translateY(6px);
+		pointer-events: none;
+		transition:
+			opacity 0.25s,
+			transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+		z-index: 5;
+	}
+	.f-tip::after {
+		content: "";
+		position: absolute;
+		left: 22px;
+		top: 100%;
+		border: 7px solid transparent;
+		border-top-color: #fff;
+	}
+	.f-tip b {
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.35;
+	}
+	.f-tip u {
+		text-decoration: none;
+		color: #2f7a3c;
+		background: #e6f5e7;
+		border-radius: 4px;
+		padding: 0 2px;
+	}
+	.f-tip small {
+		display: block;
+		font-size: 12.5px;
+		color: #5b6b66;
+		margin-top: 4px;
+		line-height: 1.4;
+	}
+	.f-lw:hover .f-tip,
+	.f-lw:has(.flogo:focus-visible) .f-tip {
+		opacity: 1;
+		transform: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.f-tip {
+			transition: none;
+		}
 	}
 	address {
 		font-style: normal;

@@ -3,7 +3,8 @@
   look. They're plain links with `download` (the files are in
   static/landing/presse/), so they work without JS; a click also marks the
   row and writes "Gespeichert: <file>" in the polite line below, as the
-  design does.
+  design does, and reports the file to Make.com (`/api/press-download`;
+  downloads without JS aren't reported).
 -->
 <script lang="ts">
 	import { SvelteSet } from "svelte/reactivity";
@@ -16,6 +17,13 @@
 	function onsave(file: string) {
 		saved.add(file);
 		message = `${kit.saved}${file}`;
+		// keepalive: the request outlives the page if the visitor leaves.
+		fetch("/api/press-download", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ file }),
+			keepalive: true,
+		}).catch(() => {});
 	}
 </script>
 

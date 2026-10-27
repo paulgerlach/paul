@@ -1,9 +1,22 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
-// No form on this page: its "Demo buchen" lead to /demo.
+// No form on this page: its "Demo buchen" lead to /demo. A download is
+// reported to the local webhook sink from playwright.config.ts.
 
 const PATH = "/presse";
+const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
+
+type DownloadEvent = { event_type: string; file?: string; page?: string };
+
+async function downloadEvents(page: Page, file: string) {
+	const events: DownloadEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter(
+		(event) => event.event_type === "pressdownload" && event.file === file,
+	);
+}
 const BOILERPLATE_START =
 	"Die Heidi Systems GmbH mit Sitz in Berlin ist ein digitaler Messdienst";
 
@@ -116,8 +129,10 @@ test("the CTAs lead to the booking page, the mail links to the press", async ({
 	await expect(talk).toHaveAttribute("href", "/demo");
 });
 
-test("a download saves its file and says so", async ({ page }) => {
+test("a download saves its file, says so and is reported", async ({ page }) => {
 	await gotoHydrated(page);
+	const file = "Heidi-Systems-Unternehmensprofil.txt";
+	const before = (await downloadEvents(page, file)).length;
 	const row = kit(page).getByRole("link", { name: /Unternehmensprofil/ });
 	const [download] = await Promise.all([
 		page.waitForEvent("download"),
@@ -130,6 +145,17 @@ test("a download saves its file and says so", async ({ page }) => {
 	await expect(kit(page).locator(".msg")).toHaveText(
 		"Gespeichert: Heidi-Systems-Unternehmensprofil.txt",
 	);
+	// Parallel runs report the same file, so count up from before.
+	await expect
+		.poll(async () => (await downloadEvents(page, file)).length)
+		.toBeGreaterThan(before);
+	const [event] = await downloadEvents(page, file);
+	expect(event).toEqual({
+		event_type: "pressdownload",
+		timestamp: expect.any(String),
+		file,
+		page: "/presse",
+	});
 });
 
 test("copies the boilerplate", async ({ page, context, browserName }) => {

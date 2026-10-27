@@ -4,7 +4,8 @@
  *
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
- * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer
+ * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
+ * pressdownload
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -55,7 +56,10 @@ type EventType =
 	// (`self_service_results`). Payload: stage, offer_number, first_name,
 	// last_name, result_url (the result page with every answer and file),
 	// page. Make.com forwards the link to sales, who send the offer PDF.
-	| "selfserviceoffer";
+	| "selfserviceoffer"
+	// A Media Kit download on /presse. Payload: file (its name), page. No
+	// email, nothing personal.
+	| "pressdownload";
 
 interface WebhookPayload {
 	event_type: EventType;

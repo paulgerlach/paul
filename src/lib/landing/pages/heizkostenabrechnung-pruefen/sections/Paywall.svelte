@@ -186,6 +186,7 @@
 		position: relative;
 		width: min(1080px, 100%);
 		max-height: calc(100vh - 32px);
+		max-height: calc(100dvh - 32px);
 		overflow: hidden;
 		background: #f6f7f6;
 		border-radius: 24px;
@@ -241,8 +242,17 @@
 		grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
 		gap: 18px;
 		padding: 20px;
+		/* A flex item doesn't shrink below its content without this, so the
+		   grid would be cut off by the box instead of scrolling. */
+		min-height: 0;
 		overflow: auto;
+		overscroll-behavior: contain;
 		transition: filter 0.5s;
+	}
+	/* Locked, the box is at least as tall as the card when the screen allows. */
+	.locked .box {
+		min-height: min(650px, calc(100vh - 32px));
+		min-height: min(650px, calc(100dvh - 32px));
 	}
 	.locked .pw-grid {
 		filter: blur(5px) saturate(0.9);
@@ -318,6 +328,10 @@
 		display: grid;
 		place-items: center;
 		padding: 16px;
+		/* The card scrolls when it's taller than the box; its auto margins
+		   centre it otherwise and fall to 0 then, so its top stays reachable. */
+		overflow-y: auto;
+		overscroll-behavior: contain;
 		background: rgba(246, 247, 246, 0.28);
 		backdrop-filter: blur(2px);
 		-webkit-backdrop-filter: blur(2px);
@@ -329,6 +343,7 @@
 	}
 	.card {
 		width: min(420px, 100%);
+		margin: auto;
 		background: rgba(255, 255, 255, 0.96);
 		border: 1px solid var(--hair);
 		border-radius: 20px;
@@ -470,6 +485,11 @@
 		}
 		.box {
 			max-height: calc(100vh - 16px);
+			max-height: calc(100dvh - 16px);
+		}
+		.locked .box {
+			min-height: min(650px, calc(100vh - 16px));
+			min-height: min(650px, calc(100dvh - 16px));
 		}
 		.pw {
 			padding: 8px;

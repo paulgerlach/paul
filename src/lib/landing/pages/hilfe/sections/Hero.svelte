@@ -1,4 +1,4 @@
-<!-- Light, centred hero: pill, H1, lead, the search and the popular questions. No `#start`: the header CTA goes to /demo. -->
+<!-- Light, centred hero (`#start`): pill, H1, lead, the search and the popular questions. -->
 <script lang="ts">
 	import Icon from "../components/Icon.svelte";
 	import { hero } from "../content";
@@ -6,10 +6,10 @@
 	import SearchBox from "./SearchBox.svelte";
 </script>
 
-<section class="hero" aria-labelledby="hc-h1">
+<section class="hero" id="start" aria-labelledby="hc-h1">
 	<div class="wrap">
 		<span class="pill rv"><Icon name="info" />{hero.pill}</span>
-		<h1 class="rv" id="hc-h1">{hero.h1.text} <em>{hero.h1.em}</em></h1>
+		<h1 data-hs class="rv" id="hc-h1">{hero.h1.text} <em>{hero.h1.em}</em></h1>
 		<p class="lead rv">{hero.lead}</p>
 		<SearchBox />
 		<Popular />
@@ -33,10 +33,19 @@
 		font-weight: 500;
 		box-shadow: 0 1px 2px rgba(30, 50, 45, 0.06);
 	}
+	/* #pillfx */
 	.pill :global(svg) {
 		width: 15px;
 		height: 15px;
 		color: var(--faint);
+		transform-origin: 50% 50%;
+		transition:
+			color 0.3s,
+			transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.pill:hover :global(svg) {
+		transform: scale(1.12);
+		color: var(--ok);
 	}
 	h1 {
 		font-size: clamp(38px, 4.8vw, 64px);
@@ -72,9 +81,9 @@
 			hyphens: auto;
 		}
 	}
-	@media (max-width: 640px) {
-		.hero {
-			padding: 44px 0 40px;
+	@media (prefers-reduced-motion: reduce) {
+		.pill:hover :global(svg) {
+			transform: none;
 		}
 	}
 </style>

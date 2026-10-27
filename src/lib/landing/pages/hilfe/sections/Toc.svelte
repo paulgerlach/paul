@@ -62,8 +62,6 @@
 	}
 	b {
 		font-size: 12px;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
 		color: var(--faint);
 		margin-bottom: 8px;
 	}

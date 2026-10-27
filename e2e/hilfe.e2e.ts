@@ -127,7 +127,7 @@ test.describe("search", () => {
 		await expect(questions(page)).toHaveCount(0);
 		await expect(
 			page.getByRole("link", { name: /Kontakt aufnehmen/ }),
-		).toHaveAttribute("href", "/messdienst-wechseln#start");
+		).toHaveAttribute("href", "/demo");
 		await expect(page).toHaveURL(/\?q=xyz$/);
 
 		await searchField(page).press("Escape");
@@ -167,12 +167,12 @@ test.describe("navigation", () => {
 		await gotoHydrated(page);
 		await page
 			.locator(".pops")
-			.getByRole("link", { name: "Was kostet die Installation?" })
+			.getByRole("link", { name: "Was kostet Heidi?" })
 			.click();
-		const card = page.locator("#q-installation-kosten");
+		const card = page.locator("#q-kosten");
 		await expect(card).toHaveAttribute("open", "");
 		await expect(card).toBeInViewport();
-		await expect(page).toHaveURL(/#q-installation-kosten$/);
+		await expect(page).toHaveURL(/#q-kosten$/);
 	});
 
 	test("a topic card opens its first question", async ({ page }) => {

@@ -15,6 +15,7 @@
  * The legal statements, the company claims and the expired deadline answer
  * need sign-off before go-live (plan §4.5).
  */
+import { DEMO_HREF } from "$lib/landing/cta";
 import { isExpired } from "$lib/landing/deadline/deadline";
 import {
 	ROUTE_DASHBOARD,
@@ -22,10 +23,8 @@ import {
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_SELBSTABRECHNUNG,
 	ROUTE_SICHERHEIT,
-	ROUTE_UEBER_UNS,
 	ROUTE_UPGRADE_NOW,
 	ROUTE_VERBRAUCHSINFORMATION,
-	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MUSTER_KUENDIGUNG,
 	ROUTE_PORTFOLIO_CHECKER,
 	ROUTE_SCHNITTSTELLEN,
@@ -66,7 +65,7 @@ export const hero = {
 export const popular = {
 	label: "Häufig gesucht:",
 	/** The links' text is the question itself. */
-	ids: ["laufender-vertrag", "installation-kosten", "uvi", "abrechnung-frist"],
+	ids: ["laufender-vertrag", "kosten", "uvi", "abrechnung-frist"],
 };
 
 export const results = {
@@ -120,10 +119,10 @@ export const topics: Topic[] = [
 		icon: "tool",
 		questions: [
 			{
-				id: "installation-kosten",
-				question: "Was kostet die Installation?",
+				id: "kosten",
+				question: "Was kostet Heidi?",
 				answer:
-					"Nichts. Die Installation der Funkzähler ist kostenlos. Abgerechnet wird pro tatsächlich installiertem Zähler plus Abrechnungspauschale.",
+					"Abgerechnet wird pro tatsächlich installiertem Zähler plus Abrechnungspauschale. Ab 1.000 Einheiten erstellen wir ein individuelles Angebot.",
 			},
 			{
 				id: "mieter-information",
@@ -313,15 +312,10 @@ export const feedback = {
 export const noResults = {
 	title: "Keine passende Antwort gefunden.",
 	text: "Schreiben Sie uns, Ihr Ansprechpartner hilft gern weiter.",
-	cta: { text: "Kontakt aufnehmen", href: `${ROUTE_MESSDIENSTWECHSEL}#start` },
+	cta: { text: "Kontakt aufnehmen", href: DEMO_HREF },
 };
 
 export const endCta = {
 	title: "Frage nicht dabei? Ihr Ansprechpartner hilft persönlich.",
-	cta: {
-		text: "Gespräch vereinbaren",
-		href: `${ROUTE_MESSDIENSTWECHSEL}#start`,
-	},
+	cta: { text: "Gespräch vereinbaren", href: DEMO_HREF },
 };
-
-export const trustMore = { text: "Mehr über Heidi", href: ROUTE_UEBER_UNS };

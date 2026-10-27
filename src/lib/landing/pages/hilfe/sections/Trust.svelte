@@ -1,6 +1,5 @@
 <script lang="ts">
-	import TrustCards from "$lib/landing/sections/TrustCards.svelte";
-	import { trustMore } from "../content";
+	import TrustSeals from "$lib/landing/sections/TrustSeals.svelte";
 </script>
 
-<TrustCards more={trustMore} />
+<TrustSeals />

@@ -10,6 +10,7 @@
 	import { setHelpSearch } from "$lib/landing/pages/hilfe/search.svelte";
 	import Articles from "$lib/landing/pages/hilfe/sections/Articles.svelte";
 	import EndCta from "$lib/landing/pages/hilfe/sections/EndCta.svelte";
+	import FloatingCta from "$lib/landing/pages/hilfe/sections/FloatingCta.svelte";
 	import Hero from "$lib/landing/pages/hilfe/sections/Hero.svelte";
 	import Topics from "$lib/landing/pages/hilfe/sections/Topics.svelte";
 	import Trust from "$lib/landing/pages/hilfe/sections/Trust.svelte";
@@ -63,6 +64,7 @@
 	<EndCta />
 	<Trust />
 </main>
+<FloatingCta />
 
 <style>
 	/* The design's page tokens (its `.dm` wrapper) */
@@ -78,5 +80,19 @@
 	.hc :global(.rv.rv-wait) {
 		opacity: 0;
 		transform: translateY(16px);
+	}
+	/* #hs-css's section H2s: of this page's only the trust block's has an id
+	   in the design (the topics' and the closing card's don't). */
+	@media (max-width: 1040px) and (min-width: 621px) {
+		.hc :global(section.trust h2[id]) {
+			font-size: clamp(36px, 5.6vw, 52px);
+			line-height: 1.06;
+		}
+	}
+	@media (max-width: 620px) {
+		.hc :global(section.trust h2[id]) {
+			font-size: clamp(30px, 8.4vw, 40px);
+			line-height: 1.08;
+		}
 	}
 </style>

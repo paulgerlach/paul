@@ -3,7 +3,8 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
 // The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// Webhooks go to the local sink from playwright.config.ts, also the counts of
+// "Unterlagen prüfen".
 
 const PATH = "/portfolio-check";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -18,6 +19,17 @@ async function webhookFor(page: Page, email: string) {
 		await page.request.get(WEBHOOK_EVENTS)
 	).json();
 	return events.find((event) => event.email === email);
+}
+
+type RunEvent = { event_type: string; mode?: string };
+
+async function runEvents(page: Page, mode: string) {
+	const events: RunEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter(
+		(event) => event.event_type === "portfoliocheckrun" && event.mode === mode,
+	);
 }
 
 async function hrefs(links: Locator) {
@@ -225,12 +237,18 @@ test("the CSV holds the example evaluation", async ({ page }) => {
 	);
 });
 
-test("own files are checked by name and size only, nothing is sent", async ({
+test("own files are checked by name and size only, only the counts are sent", async ({
 	page,
 }) => {
 	await gotoHydrated(page);
+	const before = (await runEvents(page, "own")).length;
 	const requests: string[] = [];
-	page.on("request", (request) => requests.push(request.url()));
+	const reports: (string | null)[] = [];
+	page.on("request", (request) => {
+		if (new URL(request.url()).pathname === "/api/portfolio-check-run")
+			reports.push(request.postData());
+		else requests.push(request.url());
+	});
 	await tool(page).locator("input[type=file]").setInputFiles(OWN);
 	await expect(files(page)).toHaveCount(2);
 	await expect(tool(page).getByText("2 Dokumente")).toBeVisible();
@@ -256,6 +274,23 @@ test("own files are checked by name and size only, nothing is sent", async ({
 		result(page).getByRole("link", { name: /Auswertung anfragen/ }),
 	).toHaveAttribute("href", "/demo");
 	expect(requests).toEqual([]);
+	// Only the counts, never a name.
+	expect(reports).toEqual(['{"mode":"own","files":2,"ready":1}']);
+	// Parallel runs report too, so count up from before.
+	await expect
+		.poll(async () => (await runEvents(page, "own")).length)
+		.toBeGreaterThan(before);
+	const sent = (await runEvents(page, "own")).filter((event) =>
+		JSON.stringify(event).includes('"files":2,"ready":1'),
+	);
+	expect(sent[0]).toEqual({
+		event_type: "portfoliocheckrun",
+		timestamp: expect.any(String),
+		mode: "own",
+		files: 2,
+		ready: 1,
+		page: PATH,
+	});
 
 	// × removes a file; the example replaces the own files.
 	await tool(page)

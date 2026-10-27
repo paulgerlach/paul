@@ -2,8 +2,11 @@
   The hero's tool (.pc-tool, `#checker`): the drop zone around a native file
   picker, "Mit Beispielunterlagen testen", the file list with four status
   dots per file, the action row and the privacy note. Only the files' names
-  and sizes are used (PortfolioCheck); nothing is read or sent. Without JS
-  the example button is hidden (plan README, open question 3).
+  and sizes are used (PortfolioCheck); nothing is read or sent, except that
+  "Unterlagen prüfen" reports the counts to Make.com
+  (`/api/portfolio-check-run`: own or example, how many, how many ready;
+  never a name). Without JS the example button is hidden (plan README, open
+  question 3).
 -->
 <script lang="ts">
 	import { CHECKER_ID, tool } from "../content";
@@ -34,6 +37,22 @@
 	function drop(e: DragEvent) {
 		leave(e);
 		if (e.dataTransfer?.files.length) check.add(e.dataTransfer.files);
+	}
+
+	function run() {
+		if (check.busy || !check.files.length) return;
+		// keepalive: the request outlives the page if the visitor leaves.
+		fetch("/api/portfolio-check-run", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				mode: check.mode,
+				files: check.files.length,
+				ready: check.files.filter((f) => f.ok).length,
+			}),
+			keepalive: true,
+		}).catch(() => {});
+		void check.run();
 	}
 
 	/** The last finished step, for screen readers (the dots are drawn). */
@@ -103,11 +122,8 @@
 	{#if check.files.length}
 		<div class="act">
 			<span>{documentCount(check.files.length)}</span>
-			<button
-				type="button"
-				class="bk"
-				disabled={check.busy}
-				onclick={() => check.run()}><Icon name="search" />{tool.run}</button
+			<button type="button" class="bk" disabled={check.busy} onclick={run}
+				><Icon name="search" />{tool.run}</button
 			>
 		</div>
 	{/if}

@@ -5,7 +5,8 @@
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
  * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
- * pressdownload, kuendigungaction, billcheckdetails, selfservicestart
+ * pressdownload, kuendigungaction, billcheckdetails, selfservicestart,
+ * portfoliocheckrun
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -72,7 +73,11 @@ type EventType =
 	// it moves on). Payload: step (the step left), bill ("ja" | "nein", the
 	// answer to "Liegt eine Heizkostenabrechnung vor?", left out when
 	// unanswered), page. Nothing personal.
-	| "selfservicestart";
+	| "selfservicestart"
+	// "Unterlagen prüfen" on /portfolio-check. Payload: mode ("own" |
+	// "example"), files (how many), ready (how many can be evaluated), page.
+	// Never a file's name or contents.
+	| "portfoliocheckrun";
 
 interface WebhookPayload {
 	event_type: EventType;

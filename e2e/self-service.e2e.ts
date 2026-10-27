@@ -3,7 +3,7 @@ import { LAUNCHED } from "./launch.ts";
 
 // The offer is stored in the local Supabase stack (playwright.config.ts) and
 // its link goes to the local webhook sink, which answers 500 for emails at
-// @sink-fails.example.
+// @sink-fails.example. The first "Weiter" of a visit is reported there too.
 
 const PATH = "/self-service";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -26,6 +26,15 @@ async function eventsFor(page: Page, email: string) {
 		await page.request.get(WEBHOOK_EVENTS)
 	).json();
 	return events.filter((event) => event.email === email);
+}
+
+type StartEvent = { event_type: string; step?: string; bill?: string };
+
+async function startEvents(page: Page) {
+	const events: StartEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter((event) => event.event_type === "selfservicestart");
 }
 
 /** 10 s behind, so the wizard's start passes the timing check. */
@@ -222,6 +231,44 @@ test("names the mailbox when sending fails", async ({ page }) => {
 		"vertrieb@heidisystems.com",
 	);
 	await expect(check.locator("#ss-t")).toHaveText("Ihr Angebot");
+});
+
+test("reports the first Weiter once", async ({ page }) => {
+	const check = await gotoCheck(page);
+	const starts: string[] = [];
+	page.on("request", (request) => {
+		if (new URL(request.url()).pathname === "/api/self-service-start")
+			starts.push(request.postData() ?? "");
+	});
+	// Blocked by the step's check: not a start yet.
+	await check.locator(".ss-go").click();
+	await expect(check.getByRole("alert")).toHaveText(
+		"Bitte wählen Sie eine Antwort.",
+	);
+	const before = (await startEvents(page)).length;
+	await check.getByRole("button", { name: /^Nein, es liegt keine/ }).click();
+	await check.locator(".ss-go").click();
+	await expect(check.locator("#ss-t")).toHaveText(
+		"Haben Sie eine Geräteliste?",
+	);
+	await check.getByRole("button", { name: /^Nein, habe ich nicht/ }).click();
+	await check.locator(".ss-go").click();
+	await expect(check.locator("#ss-t")).not.toHaveText(
+		"Haben Sie eine Geräteliste?",
+	);
+	expect(starts).toEqual(['{"step":"abr","bill":"nein"}']);
+	// Parallel runs report too, so count up from before.
+	await expect
+		.poll(async () => (await startEvents(page)).length)
+		.toBeGreaterThan(before);
+	const [event] = await startEvents(page);
+	expect(event).toEqual({
+		event_type: "selfservicestart",
+		timestamp: expect.any(String),
+		step: "abr",
+		bill: "nein",
+		page: "/self-service",
+	});
 });
 
 test("offers to resume a started check", async ({ page }) => {

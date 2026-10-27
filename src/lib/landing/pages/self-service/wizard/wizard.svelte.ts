@@ -64,6 +64,7 @@ const UPLOADS = 3;
 
 const KEY = "heidi_ss_v1";
 const ENDPOINT = "/api/self-service";
+const START_ENDPOINT = "/api/self-service-start";
 
 export class SelfService {
 	s = $state<State>(fresh());
@@ -97,6 +98,8 @@ export class SelfService {
 	#queue: Promise<unknown> = Promise.resolve();
 	#initial = JSON.stringify(fresh());
 	#dirty = false;
+	/** The first "Weiter" of this visit was reported. */
+	#started = false;
 
 	/** In the browser, on mount: the start time and a saved check. */
 	restore() {
@@ -225,8 +228,24 @@ export class SelfService {
 				return;
 			}
 		}
+		if (!this.#started) this.#reportStart();
 		this.s.cur = Math.min(this.s.cur + 1, this.list.length - 1);
 		this.#move();
+	}
+
+	/**
+	 * Heidi hears once per visit that a check started: the step left and the
+	 * first answer, nothing personal.
+	 */
+	#reportStart() {
+		this.#started = true;
+		// keepalive: the request outlives the page if the visitor leaves.
+		fetch(START_ENDPOINT, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ step: this.id, bill: this.s.abr }),
+			keepalive: true,
+		}).catch(() => {});
 	}
 
 	back() {

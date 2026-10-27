@@ -5,7 +5,7 @@
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
  * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
- * pressdownload, kuendigungaction, billcheckdetails
+ * pressdownload, kuendigungaction, billcheckdetails, selfservicestart
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -67,7 +67,12 @@ type EventType =
 	// "Gründe und Details ansehen" on /heizkostenabrechnung-pruefen (opens
 	// the paywall). Payload: points (how many the check found), page. Never
 	// the bill's values or the amount.
-	| "billcheckdetails";
+	| "billcheckdetails"
+	// The Zählercheck's first "Weiter" on /self-service (once per visit, when
+	// it moves on). Payload: step (the step left), bill ("ja" | "nein", the
+	// answer to "Liegt eine Heizkostenabrechnung vor?", left out when
+	// unanswered), page. Nothing personal.
+	| "selfservicestart";
 
 interface WebhookPayload {
 	event_type: EventType;

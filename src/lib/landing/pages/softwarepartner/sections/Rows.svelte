@@ -4,8 +4,8 @@
 	import Calendar from "$lib/landing/sections/uv/tiles/Calendar.svelte";
 	import Doc from "$lib/landing/sections/uv/tiles/Doc.svelte";
 	import Phone from "$lib/landing/sections/uv/tiles/Phone.svelte";
+	import PhoneList from "$lib/landing/sections/uv/tiles/PhoneList.svelte";
 	import { bill, calendar, doc, phone, rows } from "../content";
-	import TransferList from "./TransferList.svelte";
 </script>
 
 <Rows idPrefix="sp-row" {...rows}>
@@ -19,8 +19,8 @@
 				title={phone.title}
 				sub={phone.sub}
 			>
-				{#snippet screen()}<TransferList
-						transfers={phone.transfers}
+				{#snippet screen()}<PhoneList
+						items={phone.transfers}
 						badges={phone.badges}
 					/>{/snippet}
 			</Phone>{/if}

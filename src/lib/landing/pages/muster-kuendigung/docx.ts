@@ -1,11 +1,12 @@
 /**
- * The Word file of /messdienst-wechseln/muster-kuendigung: the design's three parts (its
+ * The Word file of /messdienst-wechseln/muster-kuendigung (and of
+ * /messdienst-wechseln's Vollmacht, in its `DocxLayout`): the design's three parts (its
  * `makeDocx()`, which builds them with JSZip) in a ZIP with stored entries
  * (JSZip's default, no compression) and their CRC-32. Pure; loaded on the
  * first click.
  */
 import { berlinDate } from "$lib/landing/deadline/deadline";
-import { lineText, type Paragraph } from "./letter";
+import { lineText, type Paragraph, type ParagraphKind } from "./letter";
 
 export const DOCX_TYPE =
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -25,37 +26,52 @@ export const escapeXml = (s: string) =>
 		.replace(/</g, "&lt;")
 		.replace(/>/g, "&gt;");
 
-/** A run in Arial 11 pt, bold if asked. */
-const run = (t: string, bold: boolean) =>
-	`<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>${bold ? "<w:b/>" : ""}<w:sz w:val="22"/></w:rPr><w:t xml:space="preserve">${escapeXml(t)}</w:t></w:r>`;
+/** A run in Arial at `size` half-points, bold if asked. */
+const run = (t: string, bold: boolean, size: number) =>
+	`<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>${bold ? "<w:b/>" : ""}<w:sz w:val="${size}"/></w:rPr><w:t xml:space="preserve">${escapeXml(t)}</w:t></w:r>`;
+
+/** How a design writes its document (sizes in half-points, spacing in twips). */
+export type DocxLayout = {
+	/** Space after a paragraph of each kind. */
+	after: (kind: ParagraphKind) => number;
+	/** The empty paragraph before the signature (room to sign). */
+	signatureSpace: number;
+	/** The subject's (`bt`) size; the body is 11 pt. */
+	titleSize: number;
+	/** The page's header and footer distance. */
+	headerFooter: number;
+};
+
+/** The letter's layout (/messdienst-wechseln/muster-kuendigung). */
+export const LETTER_DOCX: DocxLayout = {
+	after: (kind) =>
+		kind === "ab" || kind === "to" ? 480 : kind === "dt" ? 360 : 200,
+	signatureSpace: 600,
+	titleSize: 22,
+	headerFooter: 709,
+};
 
 /** `word/document.xml`, as the design writes it. */
-export function documentXml(letter: Paragraph[]) {
+export function documentXml(letter: Paragraph[], layout = LETTER_DOCX) {
 	const body = letter
 		.map((p) => {
-			const after =
-				p.kind === "ab" || p.kind === "to"
-					? "480"
-					: p.kind === "dt"
-						? "360"
-						: "200";
 			const jc = p.kind === "dt" ? '<w:jc w:val="right"/>' : "";
-			// Room for the handwritten signature.
 			const pre =
 				p.kind === "sg"
-					? '<w:p><w:pPr><w:spacing w:after="600"/></w:pPr></w:p>'
+					? `<w:p><w:pPr><w:spacing w:after="${layout.signatureSpace}"/></w:pPr></w:p>`
 					: "";
+			const title = p.kind === "bt";
 			const runs = p.lines
 				.map(
 					(line, i) =>
 						(i ? "<w:r><w:br/></w:r>" : "") +
-						run(lineText(line), p.kind === "bt"),
+						run(lineText(line), title, title ? layout.titleSize : 22),
 				)
 				.join("");
-			return `${pre}<w:p><w:pPr><w:spacing w:after="${after}" w:line="300" w:lineRule="auto"/>${jc}</w:pPr>${runs}</w:p>`;
+			return `${pre}<w:p><w:pPr><w:spacing w:after="${layout.after(p.kind)}" w:line="300" w:lineRule="auto"/>${jc}</w:pPr>${runs}</w:p>`;
 		})
 		.join("");
-	return `${XML_HEAD}<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1418" w:right="1418" w:bottom="1134" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+	return `${XML_HEAD}<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1418" w:right="1418" w:bottom="1134" w:left="1418" w:header="${layout.headerFooter}" w:footer="${layout.headerFooter}" w:gutter="0"/></w:sectPr></w:body></w:document>`;
 }
 
 const CRC_TABLE = (() => {
@@ -144,14 +160,21 @@ export function zipStore(
 	return out;
 }
 
-/** The .docx bytes of the letter. */
-export function makeDocx(letter: Paragraph[], ms: number) {
+/** The .docx bytes of the letter, dated `ms`. */
+export function makeDocx(
+	letter: Paragraph[],
+	ms: number,
+	layout = LETTER_DOCX,
+) {
 	const enc = new TextEncoder();
 	return zipStore(
 		[
 			{ name: "[Content_Types].xml", data: enc.encode(CONTENT_TYPES) },
 			{ name: "_rels/.rels", data: enc.encode(RELS) },
-			{ name: "word/document.xml", data: enc.encode(documentXml(letter)) },
+			{
+				name: "word/document.xml",
+				data: enc.encode(documentXml(letter, layout)),
+			},
 		],
 		ms,
 	);

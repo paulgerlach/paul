@@ -70,5 +70,15 @@
 		<circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="2.5" /><path
 			d="M10 3v2M10 15v2"
 		/>
+	{:else if name === "swap"}
+		<path d="M4 7h12M13 4l3 3-3 3M16 13H4M7 10l-3 3 3 3" />
+	{:else if name === "device"}
+		<rect x="5" y="2.5" width="10" height="15" rx="2" /><path
+			d="M7.5 5.5h5v3h-5zM8 12h4M8 14.5h4"
+		/>
+	{:else if name === "calendar"}
+		<rect x="3" y="4" width="14" height="13" rx="2" /><path
+			d="M3 8h14M7 2.5v3M13 2.5v3"
+		/>
 	{/if}
 </StrokeIcon>

@@ -1,24 +1,28 @@
 <!--
-  Row 4's phone screen (the design's .ip-ul in .uv-pv): the deliveries to
-  the vendor's software, three done and the current one. Static, as in the
-  design; the phone around it drops in on its own loop.
+  A list as a phone's screen (the design's .ip-ul in .uv-pv, in `Phone`'s
+  `screen`): done rows, the current one and open ones, each with its state's
+  badge (an open row has none). Static, as in the designs; the phone around it
+  drops in on its own loop. /partner/softwarepartner's transfers,
+  /messdienst-wechseln's notice periods.
 -->
 <script lang="ts">
-	import type { Transfer } from "../content";
+	import type { PhoneListItem } from "../types";
 
 	let {
-		transfers,
+		items,
 		badges,
-	}: { transfers: Transfer[]; badges: Record<Transfer["state"], string> } =
-		$props();
+	}: {
+		items: PhoneListItem[];
+		badges: Partial<Record<PhoneListItem["state"], string>>;
+	} = $props();
 </script>
 
 <div class="list">
-	{#each transfers as transfer (transfer.title)}
-		<div class={["item", transfer.state]}>
-			<span>{transfer.title}</span>
-			<small>{transfer.sub}</small>
-			<em>{badges[transfer.state]}</em>
+	{#each items as item (item.title)}
+		<div class={["item", item.state]}>
+			<span>{item.title}</span>
+			<small>{item.sub}</small>
+			{#if badges[item.state]}<em>{badges[item.state]}</em>{/if}
 		</div>
 	{/each}
 </div>

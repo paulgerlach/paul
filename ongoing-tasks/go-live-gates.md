@@ -48,9 +48,7 @@ The business checked every page and signed off its gate on 2026-10-23: every ite
 - [ ] §38 `/funktionen`: The expired answer (`faq.items[0].answerExpired`) written and signed off (its open question: from 1.1.2027 "Heidi rüstet Ihren Bestand rechtzeitig um" is past; a placeholder today)
 - [ ] §39 `/vorgehen`: The expired texts (`remoteDuty.h2Expired`, `remoteDuty.textExpired`) written and signed off (its open question: from 1.1.2027 the H2 "Bis 2027 muss jeder Zähler fernablesbar sein." and "Heidi rüstet Ihren Bestand rechtzeitig um" are past tense; placeholders today)
 - [ ] §41 `/hilfe`: The expired answer of `fernablesbar-frist` written and signed off
-- [ ] §46 `/messdienst-wechseln`: Approved testimonial photo, name and company
-- [ ] §46 `/messdienst-wechseln`: The real demo video
-- [ ] §46 `/messdienst-wechseln`: Permission to show the 12 customer logos (the "Über 200" claim was dropped by the design update of 2026-10-12)
+- [ ] §46 `/messdienst-wechseln`: **The redesign of 2026-10-27** (not in the 2026-10-23 sign-off): the page is now on the dark `uv` template with the Wechsel-Planer and the Vollmacht generator; see §46 for what needs sign-off. The old open items (testimonial photo, demo video, the 12 customer logos) went with the old design
 - [ ] §42 `/karriere`: Application routing live: the Make.com `jobapplication` route forwards to the hiring inbox; inbox and fallback address decided (`jobs@heidisystems.com` in `content.ts` is a placeholder; an applicant tracking system would replace the form); a test application received end to end
 - [ ] §43 /ueber-uns: the expired texts (`mission.leadExpired`, `mission.expired`) written
 
@@ -66,7 +64,7 @@ The business checked every page and signed off its gate on 2026-10-23: every ite
 - [ ] §26 `/neuigkeiten`: An owner for the page's news: who adds, dates and retires stories, and when "Neu" comes off the featured one (its open question 3: as the design until someone owns the news). The stories are static data in `content.ts`
 - [ ] §41 `/hilfe`: An owner named for the answers (they state law and prices; a wrong one is worse than none)
 - [ ] §42 `/karriere`: The Frontend Engineer position confirmed open, its texts approved by the hiring owner, and an owner named for keeping the job list current
-- [ ] The Make.com `switchinquiry` route live (§45, §46 and the other pages with the signup form) and able to tell each page's leads apart by `page`: `/messdienst-wechseln`, the city pages and `/` (`city`), `/fernablesung-umruesten`, `/plattform/dashboard`, `/plattform/auswertung`, `/portfolio-check`, `/energieausweis`, `/kunden/private-vermieter`; a lead from `/portfolio-check` asks for a portfolio evaluation and one from `/energieausweis` for an Energieausweis: route them to whoever handles those
+- [ ] The Make.com `switchinquiry` route live (§45 and the other pages with the signup form) and able to tell each page's leads apart by `page`: the city pages and `/` (`city`), `/fernablesung-umruesten`, `/plattform/dashboard`, `/plattform/auswertung`, `/portfolio-check`, `/energieausweis`, `/kunden/private-vermieter`; a lead from `/portfolio-check` asks for a portfolio evaluation and one from `/energieausweis` for an Energieausweis: route them to whoever handles those
 
 ### Manual QA (each page's open checks)
 
@@ -820,6 +818,11 @@ The pages go live with the cutover, all of them indexed: every city gets `live: 
 
 ## 46. `/messdienst-wechseln`
 
-Unchanged since the `/messdienst-wechseln` plan (`65470139`). It is already indexed and in the sitemap; these must be resolved before the cutover PR is merged:
+Rebuilt on 2026-10-27 from its new design (https://claude.ai/artifact/PSGCmHdZHDQWjWNLsDCmVT; the plan at `65470139` describes the old one). It is already indexed and in the sitemap; these must be resolved before the cutover PR is merged:
 
 - [x] Real KPI numbers instead of `XX` (92 %, 14 Tage, 1–2 h; confirmed by business 2026-10-12)
+- [ ] The product as described, signed off by product: the take-over of the existing meters "sofort", "egal wie lange der bisherige Vertrag noch läuft" (hero, statement, row 1, FAQ 1; align with `/geraete/herstellerunabhaengig`, §3), the termination by Heidi with the Vollmacht (row 2, FAQ 2–3), the reminder of every notice period in the portfolio (row 3), the swap to Heidi's radio meters at the contract's end (row 4, the planner)
+- [ ] The Wechsel-Planer, signed off by legal: the notice due on the last day of the month `notice` months before the contract's end, "Frist verpasst: Laufzeit verlängert sich meist um 12 Monate" (a missed notice moves both dates a year on), "Heidi übernimmt ab heute …" and FAQ 3
+- [ ] The Vollmacht, signed off by legal: the template's text (`vollmachtText` in `content.ts`), its four powers, "Vorlage ohne Gewähr, keine Rechtsberatung. Unterschrieben an Heidi zurücksenden, wir melden uns mit den nächsten Schritten." and where signed Vollmachten go (the page names no address or mailbox); Heidi's address is written out as the design does ("Monbijouplatz 4", `ADDRESS` has "Monbijoupl. 4")
+- [ ] No signup form any more: the design replaced it with "Demo buchen" (`/demo`); the page no longer sends `switchinquiry` leads with `source: "messdienstwechsel"`. Confirm
+- [ ] Example data (Lindenallee 12, Parkstraße 4, Gartenweg 3, Am Markt 7, "Messdienst A"), the quotes (§45), the photos (all the repo's), CTA targets, copy/SEO sign-off

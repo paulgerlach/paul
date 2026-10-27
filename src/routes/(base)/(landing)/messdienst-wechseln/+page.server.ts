@@ -1,9 +1,8 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
-import { ROUTE_MESSDIENSTWECHSEL } from "$lib/routes";
-import { emptySwitchForm, handleSwitchSignup } from "$lib/server/switchSignup";
-import type { Actions, PageServerLoad } from "./$types";
+import { faq } from "$lib/landing/pages/messdienstwechsel/content";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => ({
+export const load: PageServerLoad = () => ({
 	seo: {
 		title: "Messdienstleister wechseln | Heidi Systems",
 		description:
@@ -11,14 +10,8 @@ export const load: PageServerLoad = async () => ({
 		ogTitle: "Messdienstleister wechseln. So einfach wie nie.",
 	},
 	landing: DEFAULT_CHROME,
-	heroForm: await emptySwitchForm("hero"),
-	finalForm: await emptySwitchForm("final"),
+	faq: faq.items,
+	// The single time source of the page: the planner's today and the
+	// Vollmacht's date (SSR renders them, the client clock takes over on mount).
+	now: Date.now(),
 });
-
-export const actions: Actions = {
-	default: (event) =>
-		handleSwitchSignup(event, {
-			source: "messdienstwechsel",
-			page: ROUTE_MESSDIENSTWECHSEL,
-		}),
-};

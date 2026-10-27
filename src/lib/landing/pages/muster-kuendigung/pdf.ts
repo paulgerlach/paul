@@ -1,5 +1,6 @@
 /**
- * The PDF of /messdienst-wechseln/muster-kuendigung: the design's `makePdf()` (jsPDF, A4 in mm,
+ * The PDF of /messdienst-wechseln/muster-kuendigung (and of /messdienst-wechseln's
+ * Vollmacht, in its `PdfLayout`): the design's `makePdf()` (jsPDF, A4 in mm,
  * Helvetica 11 pt) written directly as a PDF 1.4 with the standard fonts
  * Helvetica and Helvetica-Bold (WinAnsiEncoding, not embedded, as jsPDF's),
  * uncompressed content streams and an exact xref table. Lines break as
@@ -8,11 +9,32 @@
  */
 import { letterText } from "./content";
 import { FIRST_CHAR, HELVETICA, HELVETICA_BOLD, winAnsi } from "./helvetica";
-import { lineText, type Paragraph } from "./letter";
+import { lineText, type Paragraph, type ParagraphKind } from "./letter";
 
 export const PDF_TYPE = "application/pdf";
 
-/** The design's layout, in mm. */
+/** How a design lays out its PDF (mm, pt). */
+export type PdfLayout = {
+	/** The document's title (its info dictionary). */
+	title: string;
+	/** The subject's (`bt`) size; the body is 11 pt. */
+	titleSize: number;
+	/** Space after a paragraph of each kind. */
+	after: (kind: ParagraphKind) => number;
+	/** Space before the signature (room to sign). */
+	signatureSpace: number;
+};
+
+/** The letter's layout (/messdienst-wechseln/muster-kuendigung). */
+export const LETTER_PDF: PdfLayout = {
+	title: letterText.subject,
+	titleSize: 11,
+	after: (kind) =>
+		kind === "ab" || kind === "to" ? 9 : kind === "dt" ? 6 : 3.5,
+	signatureSpace: 14,
+};
+
+/** The design's page, in mm. */
 const LAYOUT = {
 	top: 28,
 	x: 25,
@@ -46,10 +68,15 @@ export function textWidth(text: string, font: Font, size = LAYOUT.fontSize) {
  * Breaks `text` into lines no wider than `width` mm (jsPDF's
  * `splitTextToSize`): words by spaces, a word wider than a line by characters.
  */
-export function splitText(text: string, width: number, font: Font) {
+export function splitText(
+	text: string,
+	width: number,
+	font: Font,
+	size = LAYOUT.fontSize,
+) {
 	const lines: string[] = [];
 	let line = "";
-	const fits = (s: string) => textWidth(s, font) <= width;
+	const fits = (s: string) => textWidth(s, font, size) <= width;
 	for (const word of text.split(" ")) {
 		const next = line ? `${line} ${word}` : word;
 		if (fits(next)) {
@@ -89,34 +116,36 @@ export function pdfString(text: string) {
 const n = (v: number) => String(Math.round(v * 100) / 100);
 
 /** The content streams of the letter's pages (the design's loop). */
-export function pageContents(letter: Paragraph[]) {
+export function pageContents(letter: Paragraph[], layout = LETTER_PDF) {
 	const L = LAYOUT;
 	const pages: string[][] = [[]];
 	let y = L.top;
 	for (const p of letter) {
-		if (p.kind === "sg") y += 14;
+		if (p.kind === "sg") y += layout.signatureSpace;
 		const font: Font = p.kind === "bt" ? "bold" : "regular";
+		const size = p.kind === "bt" ? layout.titleSize : L.fontSize;
 		for (const line of p.lines) {
-			for (const part of splitText(lineText(line), L.width, font)) {
+			for (const part of splitText(lineText(line), L.width, font, size)) {
 				if (y > L.bottom) {
 					pages.push([]);
 					y = L.newPageTop;
 				}
-				const x = p.kind === "dt" ? L.x + L.width - textWidth(part, font) : L.x;
+				const x =
+					p.kind === "dt" ? L.x + L.width - textWidth(part, font, size) : L.x;
 				pages[pages.length - 1].push(
-					`BT /${font === "bold" ? "F2" : "F1"} ${L.fontSize} Tf ${n(x * K)} ${n(PAGE_H - y * K)} Td ${pdfString(part)} Tj ET`,
+					`BT /${font === "bold" ? "F2" : "F1"} ${size} Tf ${n(x * K)} ${n(PAGE_H - y * K)} Td ${pdfString(part)} Tj ET`,
 				);
 				y += L.lineHeight;
 			}
 		}
-		y += p.kind === "ab" || p.kind === "to" ? 9 : p.kind === "dt" ? 6 : 3.5;
+		y += layout.after(p.kind);
 	}
 	return pages.map((ops) => ["0 g", ...ops].join("\n"));
 }
 
 /** The PDF bytes of the letter. */
-export function makePdf(letter: Paragraph[]) {
-	const contents = pageContents(letter);
+export function makePdf(letter: Paragraph[], layout = LETTER_PDF) {
+	const contents = pageContents(letter, layout);
 	// 1 catalog, 2 pages, 3–4 fonts, 5 info, then a page and its content each.
 	const pageIds = contents.map((_, i) => 6 + i * 2);
 	const objects: string[] = [
@@ -124,7 +153,7 @@ export function makePdf(letter: Paragraph[]) {
 		`<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${contents.length} >>`,
 		"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
 		"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>",
-		`<< /Title ${pdfString(letterText.subject)} /Producer (Heidi Systems) >>`,
+		`<< /Title ${pdfString(layout.title)} /Producer (Heidi Systems) >>`,
 	];
 	for (const [i, content] of contents.entries()) {
 		objects.push(

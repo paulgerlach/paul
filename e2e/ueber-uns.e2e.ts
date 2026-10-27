@@ -58,10 +58,6 @@ test("the landing footer links here", async ({ page }) => {
 	await expect(
 		page.locator("footer").getByRole("link", { name: "Über uns" }),
 	).toHaveAttribute("href", PATH);
-	// …and so does the trust block there
-	await expect(
-		page.locator(".trust").getByRole("link", { name: /Mehr über Heidi/ }),
-	).toHaveAttribute("href", PATH);
 });
 
 test.describe("deadline card", () => {

@@ -18,6 +18,9 @@ export const ICON_NAMES = [
 	"tap",
 	"drop",
 	"smoke",
+	"swap",
+	"device",
+	"calendar",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

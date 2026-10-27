@@ -156,10 +156,13 @@ export const plainText = (letter: Paragraph[]) =>
  * characters, spaces as dashes; "Messdienst" when nothing is left.
  */
 export function fileName(provider: string, ext: "docx" | "pdf") {
-	const stem = provider
+	return `Kuendigung-${fileStem(provider) || T.fileFallback}.${ext}`;
+}
+
+/** `value` for a file name: no special characters, spaces as dashes; may be "". */
+export const fileStem = (value: string) =>
+	value
 		.trim()
 		.replace(/[^\wäöüÄÖÜß\- ]+/g, "")
 		.trim()
 		.replace(/\s+/g, "-");
-	return `Kuendigung-${stem || T.fileFallback}.${ext}`;
-}

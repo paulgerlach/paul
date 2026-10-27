@@ -1,20 +1,29 @@
 <!--
-  The letter as the design's preview sheet (.kd-pv): one paragraph per block,
+  A letter as the design's preview sheet (.kd-pv): one paragraph per block,
   lines by `<br>`, empty fields as highlighted placeholders. A labelled
   document, not a live region (the design's `aria-live` would read the whole
   letter on every keystroke; plan README, Key decisions).
 -->
 <script lang="ts">
-	import { generator } from "../content";
 	import type { Paragraph } from "../letter";
 
-	let { letter }: { letter: Paragraph[] } = $props();
+	let {
+		letter,
+		label,
+		signature,
+	}: {
+		letter: Paragraph[];
+		/** The sheet's accessible name. */
+		label: string;
+		/** The text under the signature line. */
+		signature: string;
+	} = $props();
 </script>
 
-<div class="pv" role="document" aria-label={generator.previewLabel}>
+<div class="pv" role="document" aria-label={label}>
 	{#each letter as p, i (i)}
 		<p class={p.kind}>
-			{#if p.kind === "sg"}<span class="sig-l">{generator.signature}</span>{/if}
+			{#if p.kind === "sg"}<span class="sig-l">{signature}</span>{/if}
 			{#each p.lines as line, j (j)}
 				{#if j}<br />{/if}{#each line as seg, k (k)}{#if seg.placeholder}<span
 							class="ph">{seg.text}</span

@@ -1,12 +1,12 @@
+import { readFile } from "node:fs/promises";
 import { readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { landingNav } from "../src/lib/landing/navLinks.ts";
 
-// The signup tests save leads, so they need a database with the `leads` table
-// (`bunx drizzle-kit push` on a fresh local DB). Webhooks go to the local sink
-// from playwright.config.ts. The action's per-IP limit (3 in 10 minutes,
-// shared by all landing pages) is raised on the e2e server (KITCHEN_SINK=1).
+// No signup form on this page: every "Demo buchen" leads to /demo. The
+// footer's newsletter sends its webhook to the local sink from
+// playwright.config.ts. The landing nav and footer are tested here.
 
 const PATH = "/messdienst-wechseln";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -14,15 +14,6 @@ const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 /** A fresh address per test, so parallel tests can find their own webhook. */
 const testEmail = (name: string) =>
 	`e2e-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@example.com`;
-
-/**
- * Opens the page with its clock 10 s behind, so the form's render time is old
- * enough for the server's "submitted too fast" check. Time flows normally.
- */
-async function gotoBackdated(page: Page) {
-	await page.clock.install({ time: Date.now() - 10_000 });
-	await page.goto(PATH);
-}
 
 async function webhookFor(page: Page, email: string) {
 	const events: { email: string }[] = await (
@@ -56,7 +47,7 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 		.textContent();
 	const faq = JSON.parse(jsonLd ?? "{}");
 	expect(faq["@type"]).toBe("FAQPage");
-	expect(faq.mainEntity).toHaveLength(8);
+	expect(faq.mainEntity).toHaveLength(5);
 });
 
 const NAV_ITEMS = landingNav.flatMap((g) => g.columns.flatMap((c) => c.items));
@@ -148,145 +139,7 @@ test.describe("footer newsletter", () => {
 	});
 });
 
-test.describe("signup", () => {
-	test("shows the validation error on the form that was used", async ({
-		page,
-	}) => {
-		await page.goto(PATH);
-		const final = page.locator(".signup-box.final");
-		// Skip the browser's own type="email" check to reach the form's.
-		await final
-			.locator("form")
-			.evaluate((form: HTMLFormElement) => (form.noValidate = true));
-		await final.locator('input[name="email"]').fill("not-an-email@");
-		await final.locator("button[type=submit]").click();
-
-		await expect(final.getByRole("alert")).toHaveText(
-			"Bitte eine gültige E-Mail-Adresse eingeben",
-		);
-		await expect(
-			page.locator(".signup-box.hero").getByRole("alert"),
-		).toHaveCount(0);
-	});
-
-	test("answers a filled honeypot with success but stores nothing", async ({
-		page,
-	}) => {
-		await gotoBackdated(page);
-		const email = testEmail("honeypot");
-		const hero = page.locator(".signup-box.hero");
-		// Hidden from people, so skip the visibility check, as a bot would
-		await hero.locator('input[name="website"]').fill("spam", { force: true });
-		await hero.locator('input[name="email"]').fill(email);
-		await hero.locator("button[type=submit]").click();
-
-		await expect(hero.locator(".status")).toContainText("Danke!");
-		expect(await webhookFor(page, email)).toBeUndefined();
-	});
-
-	for (const placement of ["hero", "final"] as const) {
-		test(`${placement} form stores the lead and sends the webhook`, async ({
-			page,
-		}) => {
-			await gotoBackdated(page);
-			const email = testEmail(placement);
-			const box = page.locator(`.signup-box.${placement}`);
-			await box.locator('input[name="email"]').fill(email);
-			await box.locator("button[type=submit]").click();
-
-			await expect(box.locator(".status")).toHaveText(
-				"Danke! Wir melden uns innerhalb eines Werktags.",
-			);
-			await expect(box.locator("button[type=submit]")).toHaveText(
-				"Wir melden uns",
-			);
-			await expect(box.locator('input[name="email"]')).toBeDisabled();
-
-			await expect
-				.poll(() => webhookFor(page, email))
-				.toMatchObject({
-					event_type: "switchinquiry",
-					placement,
-					page: PATH,
-					source: "messdienstwechsel",
-				});
-		});
-	}
-
-	test.describe("without JavaScript", () => {
-		test.use({ javaScriptEnabled: false });
-
-		test("posts the form and shows the message", async ({ page }) => {
-			await page.goto(PATH);
-			const email = testEmail("nojs");
-			const hero = page.locator(".signup-box.hero");
-			// The render time can't be backdated without JS, so wait out the
-			// server's "submitted too fast" check instead.
-			await page.waitForTimeout(3_100);
-			await hero.locator('input[name="email"]').fill(email);
-			await hero.locator("button[type=submit]").click();
-
-			// A full page load with the action's message rendered by the server
-			await expect(page.locator(".signup-box.hero .status")).toHaveText(
-				"Danke! Wir melden uns innerhalb eines Werktags.",
-			);
-			expect(await webhookFor(page, email)).toMatchObject({
-				event_type: "switchinquiry",
-				placement: "hero",
-			});
-		});
-	});
-});
-
 test.describe("interactions", () => {
-	test("Gantt shows the row's tooltip on keyboard focus", async ({ page }) => {
-		await page.goto(PATH);
-		const bar = page.getByRole("button", { name: "Installation, Woche 5–7" });
-		await bar.focus();
-		const tooltip = page.getByRole("tooltip");
-		await expect(tooltip).toContainText("Montage durch zertifizierte");
-		await expect(bar).toHaveAttribute("aria-describedby", "gtip");
-
-		await page.keyboard.press("Escape");
-		await expect(tooltip).toHaveCount(0);
-	});
-
-	test("budget tabs switch the series", async ({ page }) => {
-		await page.goto(PATH);
-		const tabs = page.getByRole("tablist", { name: "Kostenart" });
-		const heizung = tabs.getByRole("tab", { name: /Heizung/ });
-		const warmwasser = tabs.getByRole("tab", { name: /Warmwasser/ });
-		await expect(heizung).toHaveAttribute("aria-selected", "true");
-		await expect(heizung).toContainText("bisher 26.250 €");
-
-		await warmwasser.click();
-		await expect(warmwasser).toHaveAttribute("aria-selected", "true");
-		await expect(
-			page.getByRole("group", { name: "Monatliche Kosten Warmwasser" }),
-		).toBeVisible();
-		await expect(page.locator(".bring b")).toHaveText("73 %");
-
-		await page.keyboard.press("ArrowRight");
-		await expect(tabs.getByRole("tab", { name: /Kaltwasser/ })).toHaveAttribute(
-			"aria-selected",
-			"true",
-		);
-		await expect(tabs.getByRole("tab", { name: /Kaltwasser/ })).toBeFocused();
-	});
-
-	test("risk bar focus changes the tag text", async ({ page }) => {
-		await page.goto(PATH);
-		const tag = page.locator(".risk .tag");
-		await expect(tag).toContainText("28 % der Einheiten in Gartenweg 3");
-
-		await page
-			.getByRole("button", { name: "Hofstraße 21: 104 kWh pro m²" })
-			.focus();
-		await expect(tag).toContainText(
-			"Hofstraße 21 liegt 13 % unter dem Schnitt",
-		);
-	});
-
 	test("nav dropdown opens on keyboard focus and click, closes on Escape", async ({
 		page,
 	}) => {
@@ -351,16 +204,165 @@ test.describe("interactions", () => {
 		await page.keyboard.press("Escape");
 		await expect(menu).toBeHidden();
 	});
+});
 
-	test("reduced motion shows every old-way tile without animating", async ({
+const vollmachtPreview = (page: Page) =>
+	page.getByRole("document", { name: "Vorschau der Vollmacht" });
+
+test.describe("planner", () => {
+	test("shows the start plan and follows the inputs", async ({ page }) => {
+		await page.clock.setFixedTime(new Date("2026-10-27T10:00:00+01:00"));
+		await gotoHydrated(page);
+		const planner = page.locator("#planer");
+		const by = planner.locator(".k").first();
+		await expect(by.locator("b")).toHaveText("30.09.2028");
+		await expect(by.locator("em")).toHaveText("noch 704 Tage");
+		await expect(planner.locator(".k").nth(2).locator("b")).toHaveText(
+			"Dezember 2028",
+		);
+
+		await planner.getByLabel("Monat").selectOption({ label: "Juni" });
+		await planner.getByLabel("Jahr").selectOption("2027");
+		await planner.getByRole("radio", { name: "12 Monate" }).click();
+		// Due 30.06.2026: missed, so a year later.
+		await expect(by.locator("b")).toHaveText("30.06.2027");
+		await expect(by.locator("em")).toHaveText(
+			"Frist verpasst: Laufzeit verlängert sich meist um 12 Monate",
+		);
+		await expect(planner.locator(".msg")).toContainText(
+			"kündigt Heidi bis 30.06.2027, und zum Vertragsende im Juni 2028 tauschen",
+		);
+	});
+
+	test("the hero's second button leads to it", async ({ page }) => {
+		await page.goto(PATH);
+		await expect(
+			page.getByRole("link", { name: "Wechsel planen" }),
+		).toHaveAttribute("href", "#planer");
+		await expect(page.locator("#planer")).toHaveCount(1);
+	});
+});
+
+test.describe("Vollmacht", () => {
+	test("the preview follows the form", async ({ page }) => {
+		await gotoHydrated(page);
+		const sheet = vollmachtPreview(page);
+		await expect(sheet).toContainText(
+			"[Name der Verwaltung oder des Eigentümers]",
+		);
+		await page
+			.getByLabel("Hausverwaltung oder Eigentümer")
+			.fill("Muster Hausverwaltung GmbH");
+		await page.getByLabel("PLZ und Ort").fill("10115 Berlin");
+		await page
+			.getByLabel("Name des Messdienstleisters")
+			.fill("Alt-Messdienst AG");
+		await page
+			.getByLabel(/^Liegenschaften/)
+			.fill("Lindenallee 12, 10115 Berlin\nAhornweg 3, 10117 Berlin");
+		await expect(sheet).toContainText("Muster Hausverwaltung GmbH");
+		await expect(sheet).toContainText("für die folgenden Liegenschaften");
+		await expect(sheet).toContainText("• Ahornweg 3, 10117 Berlin");
+		await expect(sheet).toContainText(/Berlin, \d\d\.\d\d\.\d{4}/);
+
+		const power = "Fragen zu Miete, Kauf und Abbau";
+		await expect(sheet).toContainText(power);
+		await page.getByLabel(/Geräte abstimmen/).uncheck();
+		await expect(sheet).not.toContainText(power);
+		await expect(sheet).toContainText(
+			"Daten zum Stichtag anzufordern und entgegenzunehmen.",
+		);
+	});
+
+	test("downloads Word and PDF without sending anything", async ({ page }) => {
+		await gotoHydrated(page);
+		const requests: string[] = [];
+		page.on("request", (request) => {
+			// The writers load as same-origin modules and images load as the
+			// page scrolls; anything else (a send, another host) counts.
+			if (request.url().startsWith("blob:")) return;
+			const sameOrigin =
+				new URL(request.url()).origin === new URL(page.url()).origin;
+			if (sameOrigin && request.method() === "GET") return;
+			requests.push(`${request.method()} ${request.url()}`);
+		});
+		await page.getByLabel("Hausverwaltung oder Eigentümer").fill("Muster GmbH");
+		const section = page.locator("#vollmacht");
+		const status = section.getByRole("status");
+
+		const [docx] = await Promise.all([
+			page.waitForEvent("download"),
+			section.getByRole("button", { name: "Word herunterladen" }).click(),
+		]);
+		expect(docx.suggestedFilename()).toBe(
+			"Vollmacht-Messdienstwechsel-Muster-GmbH.docx",
+		);
+		const zip = await readFile((await docx.path())!);
+		expect(zip.subarray(0, 2).toString()).toBe("PK");
+		expect(zip.toString("utf8")).toContain(
+			"Vollmacht zum Wechsel des Messdienstes",
+		);
+		await expect(status).toHaveText(
+			"Download gestartet: Vollmacht-Messdienstwechsel-Muster-GmbH.docx",
+		);
+
+		const [pdf] = await Promise.all([
+			page.waitForEvent("download"),
+			section.getByRole("button", { name: "PDF", exact: true }).click(),
+		]);
+		const bytes = await readFile((await pdf.path())!);
+		expect(bytes.subarray(0, 8).toString()).toBe("%PDF-1.4");
+		expect(bytes.toString("latin1")).toContain("/F2 14 Tf");
+		expect(requests).toEqual([]);
+	});
+});
+
+test("the closing card, the rows and the cards lead to their pages", async ({
+	page,
+}) => {
+	await page.goto(PATH);
+	await expect(
+		page.getByRole("link", { name: "Zum Portfolio-Checker" }),
+	).toHaveAttribute("href", "/portfolio-check");
+	await expect(
+		page.getByRole("link", { name: "Zur Muster-Kündigung" }),
+	).toHaveAttribute("href", "/messdienst-wechseln/muster-kuendigung");
+	const demo = page
+		.locator("#content")
+		.getByRole("link", { name: /Demo buchen/ });
+	expect(await demo.count()).toBeGreaterThan(4);
+	expect(await hrefs(demo)).toEqual(["/demo"]);
+	await expect(page.locator("#content form[method]")).toHaveCount(0);
+});
+
+test("hydrates without console errors or warnings", async ({ page }) => {
+	const messages: string[] = [];
+	page.on("console", (message) => {
+		if (["error", "warning"].includes(message.type()))
+			messages.push(message.text());
+	});
+	page.on("pageerror", (error) => messages.push(error.message));
+	await gotoHydrated(page);
+	await page.mouse.wheel(0, 9000);
+	await page.waitForTimeout(800);
+	expect(messages).toEqual([]);
+});
+
+test.describe("without JS", () => {
+	test.use({ javaScriptEnabled: false });
+
+	test("the planner shows its start plan, the Vollmacht its template", async ({
 		page,
 	}) => {
-		await page.emulateMedia({ reducedMotion: "reduce" });
 		await page.goto(PATH);
-		const oldway = page.locator(".oldway");
-		await oldway.scrollIntoViewIfNeeded();
-		await expect(oldway).not.toHaveClass(/\banim\b/);
-		await expect(oldway.locator(".tile.in")).toHaveCount(12);
+		await expect(page.locator("#planer .in")).toBeHidden();
+		await expect(page.locator("#planer .k").first().locator("b")).toHaveText(
+			/\d\d\.09\.\d{4}/,
+		);
+		await expect(vollmachtPreview(page)).toContainText("[Vor- und Nachname]");
+		await expect(
+			page.getByRole("button", { name: "Word herunterladen" }),
+		).toBeHidden();
 	});
 });
 

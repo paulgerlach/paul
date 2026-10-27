@@ -106,6 +106,13 @@ export type PhoneTile = {
 	max?: number;
 };
 
+/** A row of a phone's list (`PhoneList`): done, the current one, or still open. */
+export type PhoneListItem = {
+	title: string;
+	sub: string;
+	state: "ok" | "cur" | "open";
+};
+
 /**
  * `base` shows on both sides, `cut` only "without", `ok` only "with" (an `ok`
  * row without `value` shows a tick, with one a green text value). `a` / `b` also show only on one side

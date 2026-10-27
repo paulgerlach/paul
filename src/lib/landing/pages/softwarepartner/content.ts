@@ -22,6 +22,7 @@ import type {
 	Figure,
 	Link,
 	ListEntry,
+	PhoneListItem,
 	Row,
 } from "$lib/landing/sections/uv/types";
 import {
@@ -197,13 +198,6 @@ export const doc = {
 	result: "Sicher übertragen",
 } satisfies DocTile;
 
-export type Transfer = {
-	title: string;
-	sub: string;
-	/** Delivered (✓), or being transferred (…). */
-	state: "ok" | "cur";
-};
-
 /** Row 4's phone: the notification, then the deliveries to the vendor's software. */
 export const phone = {
 	time: "9:41",
@@ -223,7 +217,7 @@ export const phone = {
 		},
 		{ title: "Stammdaten", sub: "Liegenschaften abgeglichen", state: "ok" },
 		{ title: "Verbräuche Oktober", sub: "Wird übertragen", state: "cur" },
-	] satisfies Transfer[] as Transfer[],
+	] satisfies PhoneListItem[] as PhoneListItem[],
 	badges: { ok: "✓", cur: "…" },
 };
 

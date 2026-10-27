@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { reveal } from "$lib/landing/attachments/reveal";
 	import CtaCard from "$lib/landing/pages/funktionen/sections/CtaCard.svelte";
-	import Dashboard from "$lib/landing/pages/funktionen/sections/Dashboard.svelte";
+	import DocuScan from "$lib/landing/pages/funktionen/sections/DocuScan.svelte";
 	import Faq from "$lib/landing/pages/funktionen/sections/Faq.svelte";
 	import FeatureGrid from "$lib/landing/pages/funktionen/sections/FeatureGrid.svelte";
-	import FiveSteps from "$lib/landing/pages/funktionen/sections/FiveSteps.svelte";
 	import FloatingCta from "$lib/landing/pages/funktionen/sections/FloatingCta.svelte";
 	import Hero from "$lib/landing/pages/funktionen/sections/Hero.svelte";
 	import Quote from "$lib/landing/pages/funktionen/sections/Quote.svelte";
+	import Roles from "$lib/landing/pages/funktionen/sections/Roles.svelte";
 	import Services from "$lib/landing/pages/funktionen/sections/Services.svelte";
 	import Trust from "$lib/landing/pages/funktionen/sections/Trust.svelte";
 	import TrustBadges from "$lib/landing/pages/funktionen/sections/TrustBadges.svelte";
@@ -19,9 +19,9 @@
 	<Hero />
 	<TrustBadges />
 	<Services />
-	<Dashboard />
+	<Roles />
 	<FeatureGrid />
-	<FiveSteps />
+	<DocuScan />
 	<Quote />
 	<Faq items={data.faq} />
 	<CtaCard />

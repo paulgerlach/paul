@@ -11,10 +11,13 @@ export const ICON_NAMES = [
 	"server",
 	"file",
 	"users",
-	"flame",
 	"signal",
 	"building",
 	"bell",
+	"calc",
+	"home",
+	"drop",
+	"link",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

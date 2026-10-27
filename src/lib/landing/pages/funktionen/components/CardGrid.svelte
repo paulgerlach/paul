@@ -1,6 +1,6 @@
 <!--
   Three-column cards with an icon tile (.fk-le, .fk-gr). A card with `href` is
-  a link (lift and green border on hover); one without stays a plain card.
+  a link (green border on hover); one without stays a plain card.
 -->
 <script lang="ts">
 	import type { IconName } from "../icons";
@@ -55,7 +55,6 @@
 			border-color 0.35s;
 	}
 	.card:hover {
-		transform: translateY(-4px);
 		box-shadow: 0 24px 40px -30px rgba(30, 50, 45, 0.4);
 	}
 	.link:hover {
@@ -89,11 +88,6 @@
 	@media (max-width: 720px) {
 		.grid {
 			grid-template-columns: minmax(0, 1fr);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.card:hover {
-			transform: none;
 		}
 	}
 </style>

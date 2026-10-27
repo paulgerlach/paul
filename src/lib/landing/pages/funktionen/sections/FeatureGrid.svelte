@@ -1,4 +1,4 @@
-<!-- "Alle Funktionen": six cards (.fk-gr), links once their pages exist (plan README, open question 1). -->
+<!-- "Alle Funktionen": nine cards (.fk-gr), links where their pages exist. -->
 <script lang="ts">
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
 	import CardGrid from "../components/CardGrid.svelte";

@@ -16,7 +16,7 @@ type Options = {
 
 /**
  * WAI-ARIA tabs that advance by themselves (/vorgehen's steps, /funktionen's
- * dashboard): every `intervalMs` (of the current tab) while the block is in view, the browser tab
+ * roles): every `intervalMs` (of the current tab) while the block is in view, the browser tab
  * is visible and the pointer and focus are outside the block; a pause restarts
  * the tab's full interval. Choosing a tab stops it for good. None on the server
  * and with reduced motion. Create it during component init (it owns an effect)

@@ -81,10 +81,12 @@ test("the footer's Schnittstellen link and internal links resolve", async ({
 	}
 });
 
-test("/funktionen's Immobilienmanagement card links here", async ({ page }) => {
+test("/funktionen's Schnittstellen card links here", async ({ page }) => {
 	await page.goto("/funktionen");
 	await expect(
-		page.locator("main a", { hasText: "Immobilienmanagement" }),
+		page.locator("section[aria-labelledby=fk-features-h] a", {
+			hasText: "Schnittstellen",
+		}),
 	).toHaveAttribute("href", PATH);
 });
 

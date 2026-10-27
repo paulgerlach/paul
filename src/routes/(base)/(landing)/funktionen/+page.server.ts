@@ -4,13 +4,12 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
 	seo: {
-		// Drafts for the content owner (plan §4.4). Indexed from the start: the
-		// page replaces a live URL (plan README, Indexing).
-		title:
-			"Funktionen: Funkzähler, Dashboard und Heizkostenabrechnung | Heidi Systems",
+		// From url-changes.csv (the business's URL list). Indexed from the
+		// start: the page replaces a live URL (plan README, Indexing).
+		title: "Funktionen: Funkablesung, Dashboard, Abrechnung | Heidi",
 		description:
-			"Fernablesbare Funkzähler, alle Verbräuche je Wohnung im Dashboard und die Heizkostenabrechnung nach HKVO. Von der Installation bis zur fertigen Abrechnung aus einer Hand.",
-		ogTitle: "Daten mit höchster Effizienz bearbeiten.",
+			"Funkablesung, Dashboard, DocuScan und Heizkostenabrechnung im Überblick. Alle Funktionen der Heidi Plattform für Verwaltungen.",
+		ogTitle: "Alle Funktionen. Eine Plattform.",
 	},
 	landing: DEFAULT_CHROME,
 	// The first answer has an expired variant (plan 01 §1.3).

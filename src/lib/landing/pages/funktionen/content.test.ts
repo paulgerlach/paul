@@ -4,7 +4,7 @@ import { DEADLINE } from "$lib/landing/deadline/deadline";
 import * as routes from "$lib/routes";
 import * as content from "./content";
 
-const { chart, dashboard, faq, faqItems, features, KPI, quote, steps } =
+const { docuscan, faq, faqItems, features, KPI, modules, quote, roles } =
 	content;
 
 /** Every string in a value, deeply. */
@@ -28,36 +28,40 @@ describe("funktionen content", () => {
 		}
 	});
 
-	it("has twelve months per series and a value at the current month", () => {
-		expect(chart.current).toBeGreaterThanOrEqual(0);
-		expect(chart.current).toBeLessThan(12);
-		for (const series of chart.series) {
-			expect(series.values).toHaveLength(12);
-			expect(series.values[chart.current]).toBeGreaterThan(0);
-		}
-	});
-
-	it("has three dashboard tabs with usage shares in range", () => {
-		expect(dashboard.tabs).toHaveLength(3);
-		for (const row of dashboard.usage.rows) {
-			expect(row.share).toBeGreaterThan(0);
-			expect(row.share).toBeLessThanOrEqual(100);
-		}
+	it("has six hero modules and four roles with links to known routes", () => {
+		expect(modules.items).toHaveLength(6);
+		expect(roles.tabs.map((t) => t.name)).toEqual([
+			"Verwaltung",
+			"Mieter",
+			"Eigentümer",
+			"Monteure",
+		]);
+		for (const tab of roles.tabs)
+			for (const item of tab.items)
+				if (item.href !== undefined) expect(routeValues).toContain(item.href);
 	});
 
 	it("links the features only to known routes", () => {
-		expect(features.items).toHaveLength(6);
+		expect(features.items).toHaveLength(9);
 		for (const f of features.items)
 			if (f.href !== undefined) expect(routeValues).toContain(f.href);
 	});
 
-	it("has five steps and a known quote", () => {
-		expect(steps.items).toHaveLength(5);
+	it("has four invoices with four fields each, one of them skipped", () => {
+		expect(docuscan.invoices).toHaveLength(4);
+		for (const invoice of docuscan.invoices) {
+			expect(invoice.fields).toHaveLength(4);
+			expect(invoice.fields.at(-1)?.value).toBe(invoice.sum);
+		}
+		expect(docuscan.invoices.filter((i) => i.skip)).toHaveLength(1);
+	});
+
+	it("has a known quote", () => {
 		expect(testimonials.map((t) => t.key)).toContain(quote.key);
 	});
 
 	it("swaps only the first FAQ answer at the deadline", () => {
-		expect(faq.items).toHaveLength(8);
+		expect(faq.items).toHaveLength(7);
 		const before = faqItems(DEADLINE - 1);
 		const after = faqItems(DEADLINE);
 		expect(before.map((i) => i.answer)).toEqual(faq.items.map((i) => i.answer));
@@ -68,6 +72,6 @@ describe("funktionen content", () => {
 	it("uses the confirmed KPIs", () => {
 		const install = faq.items[3].answer;
 		for (const kpi of Object.values(KPI)) expect(install).toContain(kpi);
-		expect(steps.items[1].text).toContain(KPI.notice);
+		expect(roles.tabs[1].items[2].text).toContain(KPI.notice);
 	});
 });

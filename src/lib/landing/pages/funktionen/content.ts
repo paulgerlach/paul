@@ -11,7 +11,16 @@ import { isExpired } from "$lib/landing/deadline/deadline";
 import type { Testimonial } from "$lib/landing/data/testimonials";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_SCHNITTSTELLEN, ROUTE_VORGEHEN } from "$lib/routes";
+import {
+	ROUTE_AUSWERTUNG,
+	ROUTE_DASHBOARD,
+	ROUTE_GERAETE,
+	ROUTE_INSTALLATIONSTOOL,
+	ROUTE_MIETERPORTAL,
+	ROUTE_SCHNITTSTELLEN,
+	ROUTE_VERBRAUCHSINFORMATION,
+	ROUTE_VORGEHEN,
+} from "$lib/routes";
 import type { IconName } from "./icons";
 
 const NB = " ";
@@ -26,60 +35,34 @@ export const KPI = {
 export const hero = {
 	eyebrow: "Funktionen",
 	eyebrowIcon: "spark" as IconName,
-	h1: { text: "Daten mit höchster ", accent: "Effizienz bearbeiten." },
-	lead: "Umstellung auf gesetzlich vorgeschriebene, fernablesbare Zähler und digitale Ablesung aller Verbräuche. Von der Installation bis zur fertigen Abrechnung.",
+	h1: { text: "Alle Funktionen. ", accent: "Eine Plattform." },
+	lead: "Funkablesung, Auswertung, Mieterinformation und Heizkostenabrechnung greifen bei Heidi ineinander. Was eine Funktion erfasst, nutzt die nächste weiter.",
 	primary: { text: "Demo buchen", href: DEMO_HREF },
 	secondary: { text: "So gehen wir vor", href: ROUTE_VORGEHEN },
 };
 
-export type SeriesKey = "hz" | "ww" | "kw";
-export type Series = {
-	key: SeriesKey;
-	label: string;
-	unit: string;
-	delta: string;
-	decimals: number;
-	/** January to December; the months still to come are 0. */
-	values: number[];
-};
-
-export const chart = {
-	title: `Lindenallee 12 · Whg.${NB}7`,
-	sub: "Verbrauch 2026",
+/** The hero's card (.fm): the modules light up one after the other (example data). */
+export const modules = {
+	label: "Beispiel: Heidi Funktionen arbeiten zusammen",
+	title: "Heidi Plattform",
+	sub: "Lindenallee 12 · heute",
 	tag: "Beispieldaten",
-	label: "Sparte",
-	/** Under the bars, every second month. */
-	axis: ["Jan", "Mär", "Mai", "Jul", "Sep", "Nov"],
-	/** The highlighted month (October), whose value the number shows. */
-	current: 9,
-	/** For the screen-reader sentence ("Januar bis Oktober 2026"). */
-	range: "Januar bis Oktober 2026",
-	series: [
+	items: [
 		{
-			key: "hz",
-			label: "Heizung",
-			unit: "kWh",
-			delta: `−8${NB}% zum Vorjahr`,
-			decimals: 0,
-			values: [171, 184, 162, 118, 61, 19, 12, 14, 74, 131, 0, 0],
+			icon: "signal",
+			title: "Funkablesung",
+			text: "12.480 Werte heute empfangen",
 		},
-		{
-			key: "ww",
-			label: "Warmwasser",
-			unit: "m³",
-			delta: `−4${NB}% zum Vorjahr`,
-			decimals: 1,
-			values: [2.4, 2.2, 2.3, 2.1, 2.0, 1.8, 1.7, 1.7, 2.0, 2.1, 0, 0],
-		},
-		{
-			key: "kw",
-			label: "Kaltwasser",
-			unit: "m³",
-			delta: `−2${NB}% zum Vorjahr`,
-			decimals: 1,
-			values: [3.6, 3.3, 3.5, 3.4, 3.6, 3.9, 4.1, 4.0, 3.5, 3.4, 0, 0],
-		},
-	] satisfies Series[] as Series[],
+		{ icon: "chart", title: "Auswertung", text: "3 neue Hinweise" },
+		{ icon: "bell", title: "Verbrauchsinfo", text: "An 248 Mieter versendet" },
+		{ icon: "file", title: "DocuScan", text: "14 Rechnungen erkannt" },
+		{ icon: "users", title: "Mieterportal", text: "Montagetermin bestätigt" },
+		{ icon: "calc", title: "Heizkostenabrechnung", text: "Bereit per Klick" },
+	] satisfies { icon: IconName; title: string; text: string }[],
+	/** The design's "#fk-js": one module every 650 ms after 300 ms, then 4.5 s hold. */
+	firstMs: 300,
+	stepMs: 650,
+	holdMs: 4500,
 };
 
 export const badges = {
@@ -114,8 +97,8 @@ export const services = {
 	items: [
 		{
 			icon: "file",
-			title: "Betriebskostenabrechnung",
-			text: "Automatisierte, präzise Erfassung aller relevanten Verbrauchsdaten. Die Werte stehen direkt für die Abrechnung bereit.",
+			title: "Heizkostenabrechnung",
+			text: "Auf Knopfdruck nach HKVO. DocuScan übernimmt die Rechnungsdaten, die Verbrauchswerte kommen direkt von den Funkzählern.",
 		},
 		{
 			icon: "tool",
@@ -130,127 +113,256 @@ export const services = {
 	] satisfies { icon: IconName; title: string; text: string }[],
 };
 
-export const dashboard = {
-	eyebrow: "Dashboard",
-	eyebrowIcon: "chart" as IconName,
+/** A role's entry; without `href` it's plain (no arrow), as in the design. */
+export type RoleItem = { title: string; text: string; href?: string };
+
+export const roles = {
+	eyebrow: "Für alle Beteiligten",
+	eyebrowIcon: "users" as IconName,
 	h2: {
-		text: "Alle Verbräuche einer Wohnung ",
-		muted: "als Übersicht.",
+		text: "Eine Plattform. ",
+		muted: "Vier Blickwinkel.",
 	} satisfies SplitHeading,
-	label: "Funktionen im Dashboard",
-	intervalMs: 6000,
-	tag: "Beispieldaten",
+	label: "Rolle",
+	/** The design's `#fk-js`: the next role every 6.5 s while in view. */
+	intervalMs: 6500,
 	tabs: [
 		{
-			title: "Ihr Verbrauch auf einen Blick",
-			text: "Heizung, Warm- und Kaltwasser übersichtlich je Wohnung und Liegenschaft.",
+			icon: "building",
+			name: "Verwaltung",
+			text: "Ihr Team behält den Überblick und erstellt die Abrechnung selbst, per Klick.",
+			items: [
+				{
+					title: "Dashboard",
+					text: "Verbräuche aller Liegenschaften",
+					href: ROUTE_DASHBOARD,
+				},
+				{
+					title: "Auswertung",
+					text: "Vergleich, Jahresverlauf, Hinweise",
+					href: ROUTE_AUSWERTUNG,
+				},
+				// The design links these two to the Heizkostenabrechnung page
+				// (H4cZtgYCsvL4h7HGxZaHBs), which doesn't exist yet.
+				{ title: "DocuScan", text: "Rechnungen automatisch erfasst" },
+				{ title: "Heizkostenabrechnung", text: "Nach HKVO, auf Knopfdruck" },
+				{
+					title: "Schnittstellen",
+					text: "Daten direkt in ERP und CRM",
+					href: ROUTE_SCHNITTSTELLEN,
+				},
+			],
 		},
 		{
-			title: "Datenbasierte Analyse",
-			text: "Trends früh erkennen und auffällige Verbräuche sehen, bevor sie teuer werden.",
+			icon: "users",
+			name: "Mieter",
+			text: "Ihre Mieter sind informiert, ohne dass Ihr Team Anfragen beantworten muss.",
+			items: [
+				{
+					title: "Verbrauchsinformation",
+					text: "Jeden Monat automatisch",
+					href: ROUTE_VERBRAUCHSINFORMATION,
+				},
+				{
+					title: "Mieterportal",
+					text: "Verbrauch jederzeit einsehen",
+					href: ROUTE_MIETERPORTAL,
+				},
+				{ title: "Montagetermin", text: `${KPI.notice} vorher informiert` },
+				{ title: "Kein Ablesetermin", text: "Ablesung per Funk" },
+			],
 		},
 		{
-			title: "Effiziente Betriebskostenabrechnung",
-			text: "Die Funkzähler liefern die Daten, die Abrechnung entsteht per Klick.",
+			icon: "home",
+			name: "Eigentümer",
+			text: "Eigentümer sehen, was in ihrer Liegenschaft passiert, ohne dass Sie Dateien verschicken.",
+			items: [
+				{
+					title: "Dashboard teilen",
+					text: "Mit einem Klick freigeben",
+					href: ROUTE_DASHBOARD,
+				},
+				{
+					title: "Berichte",
+					text: "Kennzahlen und Verlauf als PDF",
+					href: ROUTE_AUSWERTUNG,
+				},
+				{
+					title: "Auffälligkeiten",
+					text: "Früh erkannt statt teuer bezahlt",
+					href: ROUTE_AUSWERTUNG,
+				},
+			],
 		},
-	],
-	usage: {
-		title: `Whg.${NB}7 · September`,
-		rows: [
-			{ label: "Heizung", share: 72, value: `131${NB}kWh` },
-			{ label: "Warmwasser", share: 44, value: `2,1${NB}m³` },
-			{ label: "Kaltwasser", share: 58, value: `3,4${NB}m³` },
-		],
-	},
-	analysis: {
-		title: "Liegenschaften · Heizung",
-		rows: [
-			{ name: "Lindenallee 12", delta: `−6${NB}%` },
-			{ name: "Gartenweg 3", delta: `−3${NB}%` },
-			{
-				name: "Am Stadtpark 7",
-				delta: `+18${NB}%`,
-				up: true,
-				note: "Auffällig: Strang prüfen",
-			},
-			{ name: "Hofstraße 21", delta: `−9${NB}%` },
-		] as { name: string; delta: string; up?: boolean; note?: string }[],
-	},
-	billing: {
-		title: "Heizkostenabrechnung 2026",
-		steps: [
-			"Verbräuche aller Einheiten geprüft",
-			"Rechnungen per DocuScan übernommen",
-			"Kosten nach HKVO verteilt",
-			"An Ihre Software übergeben",
-		],
-		result: "Abrechnung erstellt",
-	},
+		{
+			icon: "tool",
+			name: "Monteure",
+			text: "Monteure und Partnerbetriebe arbeiten schneller und dokumentieren sauber.",
+			items: [
+				{
+					title: "Installationstool",
+					text: "Digitaler Zwilling jeder Liegenschaft",
+					href: ROUTE_INSTALLATIONSTOOL,
+				},
+				{
+					title: "Fotodokumentation",
+					text: "Zwei Fotos pro Zähler",
+					href: ROUTE_INSTALLATIONSTOOL,
+				},
+				{
+					title: "Übergabeprotokoll",
+					text: "Automatisch erstellt",
+					href: ROUTE_INSTALLATIONSTOOL,
+				},
+			],
+		},
+	] satisfies {
+		icon: IconName;
+		name: string;
+		text: string;
+		items: RoleItem[];
+	}[],
 };
 
 export const features = {
 	eyebrow: "Alle Funktionen",
 	eyebrowIcon: "list" as IconName,
 	h2: {
-		text: "Was die Plattform ",
-		muted: "für Sie erledigt.",
+		text: "Neun Funktionen, ",
+		muted: "die zusammenarbeiten.",
 	} satisfies SplitHeading,
-	/** No `href` yet: the design's product pages don't exist (README, open question 1). */
 	items: [
 		{
-			icon: "file",
-			title: "Betriebskostenabrechnung",
-			text: "Verbrauchsdaten automatisch für die Betriebskosten bereit.",
-		},
-		{
-			icon: "flame",
-			title: "Heizkostenabrechnung",
-			text: "Auf Knopfdruck nach HKVO, statt Monate zu warten.",
-		},
-		{
 			icon: "signal",
-			title: "Laufende Verbrauchsdaten",
+			title: "Funkablesung",
 			text: "Per Funk erfasst, ohne Ablesetermin in der Wohnung.",
+			href: ROUTE_GERAETE,
 		},
 		{
 			icon: "chart",
 			title: "Dashboard",
 			text: "Alle Liegenschaften und Einheiten in einer Ansicht.",
+			href: ROUTE_DASHBOARD,
 		},
 		{
-			icon: "building",
-			title: "Immobilienmanagement",
-			text: "Anbindung an Ihr ERP- oder CRM-System, nur eine Plattform pflegen.",
-			href: ROUTE_SCHNITTSTELLEN,
+			icon: "sparkles",
+			title: "Auswertung",
+			text: "Vergleich, Jahresverlauf und konkrete Hinweise.",
+			href: ROUTE_AUSWERTUNG,
+		},
+		{
+			icon: "drop",
+			title: "Leckage-Wächter",
+			text: "Meldet ungewöhnlichen Wasserverbrauch, auch nachts.",
+			href: ROUTE_DASHBOARD,
 		},
 		{
 			icon: "bell",
-			title: "Benachrichtigungen",
-			text: "Monatliche Verbrauchsinfo an Mieter, Hinweise zu Fristen und Auffälligkeiten.",
+			title: "Verbrauchsinformation",
+			text: "Monatlich und automatisch an Ihre Mieter.",
+			href: ROUTE_VERBRAUCHSINFORMATION,
+		},
+		{
+			icon: "users",
+			title: "Mieterportal",
+			text: "Mieter sehen ihren Verbrauch jederzeit.",
+			href: ROUTE_MIETERPORTAL,
+		},
+		// The design links these two to the Heizkostenabrechnung page
+		// (H4cZtgYCsvL4h7HGxZaHBs), which doesn't exist yet: plain cards.
+		{
+			icon: "file",
+			title: "DocuScan",
+			text: "Rechnungen automatisch erkannt und übernommen.",
+		},
+		{
+			icon: "calc",
+			title: "Heizkostenabrechnung",
+			text: "Nach HKVO, auf Knopfdruck.",
+		},
+		{
+			icon: "link",
+			title: "Schnittstellen",
+			text: "Anbindung an Ihr ERP- oder CRM-System.",
+			href: ROUTE_SCHNITTSTELLEN,
 		},
 	] as { icon: IconName; title: string; text: string; href?: string }[],
 };
 
-export const steps = {
-	eyebrow: "Installation der Funkgeräte",
-	eyebrowIcon: "tool" as IconName,
+/** One invoice of the DocuScan demo (example data); `skip`: not relevant for the heating costs. */
+export type Invoice = {
+	title: string;
+	supplier: string;
+	sum: string;
+	skip?: boolean;
+	fields: { label: string; value: string }[];
+};
+
+export const docuscan = {
+	eyebrow: "DocuScan",
+	eyebrowIcon: "file" as IconName,
 	h2: {
-		text: "Fünf Schritte. ",
-		muted: "Ein Ansprechpartner.",
+		text: "Rechnungen lesen. ",
+		muted: "Macht Heidi.",
 	} satisfies SplitHeading,
-	items: [
+	text: "DocuScan liest die Rechnungen, die für die Heizkostenabrechnung zählen, und übernimmt die Daten. Brennstoff, Zeitraum und Betrag landen dort, wo sie hingehören. Ohne Abtippen.",
+	// "Zur Heizkostenabrechnung" (→ H4cZtgYCsvL4h7HGxZaHBs) stays hidden until
+	// that page exists.
+	label: "Beispiel: DocuScan erkennt Rechnungen",
+	found: "Erkannt",
+	tag: "Beispieldaten",
+	ok: "In die Abrechnung übernommen",
+	skipped: "Nicht heizkostenrelevant, nicht übernommen",
+	stamp: "Nicht relevant",
+	/** "Rechnung 1 von 4" */
+	counter: (n: number, of: number) => `Rechnung ${n} von ${of}`,
+	invoices: [
 		{
-			title: "Bedarfsanalyse",
-			text: "Bestand prüfen, Geräte passend planen",
+			title: "Rechnung",
+			supplier: "Muster Energie GmbH",
+			sum: "48.210,00 €",
+			fields: [
+				{ label: "Lieferant", value: "Muster Energie GmbH" },
+				{ label: "Leistung", value: "Erdgas, 412.600 kWh" },
+				{ label: "Zeitraum", value: "01.01. – 31.12.2025" },
+				{ label: "Betrag", value: "48.210,00 €" },
+			],
 		},
 		{
-			title: "Installation",
-			text: `Mieter ${KPI.notice} vorher informiert`,
+			title: "Rechnung",
+			supplier: "Muster Stadtwerke",
+			sum: "2.946,00 €",
+			fields: [
+				{ label: "Lieferant", value: "Muster Stadtwerke" },
+				{ label: "Leistung", value: "Allgemeinstrom, 8.420 kWh" },
+				{ label: "Zeitraum", value: "01.01. – 31.12.2025" },
+				{ label: "Betrag", value: "2.946,00 €" },
+			],
 		},
-		{ title: "Ablesen", text: "Per Funk, ohne Termin" },
-		{ title: "Verbrauchsanalyse", text: "Im Dashboard je Einheit" },
-		{ title: "Wartung", text: "Für zuverlässige Daten" },
-	],
+		{
+			title: "Wartungsrechnung",
+			supplier: "Muster Heiztechnik GmbH",
+			sum: "1.180,00 €",
+			fields: [
+				{ label: "Lieferant", value: "Muster Heiztechnik GmbH" },
+				{ label: "Leistung", value: "Wartung der Heizungsanlage" },
+				{ label: "Datum", value: "14.03.2025" },
+				{ label: "Betrag", value: "1.180,00 €" },
+			],
+		},
+		{
+			title: "Rechnung",
+			supplier: "Muster Malerbetrieb GmbH",
+			sum: "3.480,00 €",
+			skip: true,
+			fields: [
+				{ label: "Lieferant", value: "Muster Malerbetrieb GmbH" },
+				{ label: "Leistung", value: "Malerarbeiten im Treppenhaus" },
+				{ label: "Datum", value: "22.05.2025" },
+				{ label: "Betrag", value: "3.480,00 €" },
+			],
+		},
+	] satisfies Invoice[] as Invoice[],
 };
 
 export const quote = {
@@ -298,11 +410,6 @@ export const faq = {
 			answer: `Abgerechnet wird pro tatsächlich installiertem Zähler plus eine Abrechnungspauschale. Ab 1.000${NB}Einheiten erhalten Sie ein individuelles Angebot.`,
 		},
 		{
-			question: "Erstellt Heidi auch die Betriebskostenabrechnung?",
-			answer:
-				"Heidi liefert alle Verbrauchsdaten und erstellt die Heizkostenabrechnung nach HKVO auf Knopfdruck. Die Daten übergeben wir direkt an Ihr ERP- oder CRM-System.",
-		},
-		{
 			question: "Welche Geräte bietet Heidi an?",
 			answer:
 				"Heizkostenverteiler, Wärmezähler sowie Warm- und Kaltwasserzähler mit Funk.",
@@ -324,7 +431,7 @@ export const closing = {
 	text: "Wir zeigen Ihnen Heidi live, am Beispiel Ihres Bestands.",
 	/** The video button (the design's .dcta-b) → the booking page. */
 	button: {
-		text: "Live Demo buchen",
+		text: "Demo buchen",
 		sub: "Mit Ihrem Ansprechpartner",
 		href: DEMO_HREF,
 	},

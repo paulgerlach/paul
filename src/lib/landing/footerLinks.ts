@@ -71,7 +71,7 @@ export const footerGroups: LandingFooterGroup[] = [
 			{ text: "Vorgehen", href: ROUTE_VORGEHEN },
 			{ text: "Funktionen", href: ROUTE_FUNKTIONEN },
 			{ text: "Funkzähler", href: ROUTE_GERAETE },
-			{ text: "Zähler-Interoperabilität", href: ROUTE_INTEROPERABILITAET },
+			{ text: "Herstellerunabhängig", href: ROUTE_INTEROPERABILITAET },
 			{ text: "Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
 			{ text: "Anbieterwechsel", href: ROUTE_MESSDIENSTWECHSEL },
 			{ text: "Jetzt noch umrüsten", href: ROUTE_UPGRADE_NOW },

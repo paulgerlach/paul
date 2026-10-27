@@ -73,13 +73,11 @@ test("the footer, the nav and /preise lead here and every internal link resolves
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto(PATH);
 	await expect(
-		page
-			.locator("footer")
-			.getByRole("link", { name: "Zähler-Interoperabilität" }),
+		page.locator("footer").getByRole("link", { name: "Herstellerunabhängig" }),
 	).toHaveAttribute("href", PATH);
 	await expect(
 		page.locator(".nv-links a[aria-current=page]", {
-			hasText: "Zähler-Interoperabilität",
+			hasText: "Herstellerunabhängig",
 		}),
 	).toHaveAttribute("href", PATH);
 	const links = new Set([

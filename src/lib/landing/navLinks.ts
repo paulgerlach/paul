@@ -88,7 +88,7 @@ export const landingNav: LandingNavGroup[] = [
 						href: ROUTE_GERAETE,
 					},
 					{
-						title: "Zähler-Interoperabilität",
+						title: "Herstellerunabhängig",
 						text: "Vorhandene Zähler jedes Herstellers auswerten und abrechnen",
 						href: ROUTE_INTEROPERABILITAET,
 					},

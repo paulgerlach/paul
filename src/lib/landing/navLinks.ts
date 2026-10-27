@@ -10,6 +10,7 @@ import {
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
 	ROUTE_HAUSVERWALTUNG,
+	ROUTE_HEIZKOSTENABRECHNUNG,
 	ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN,
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INTEROPERABILITAET,
@@ -97,10 +98,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Zählerbedarf selbst erfassen, Kostenvoranschlag sofort",
 						href: ROUTE_SELF_SERVICE,
 					},
-					// H4cZtgYCsvL4h7HGxZaHBs
 					{
 						title: "Heizkostenabrechnung",
 						text: "Auf Knopfdruck, Rechnungen per DocuScan",
+						href: ROUTE_HEIZKOSTENABRECHNUNG,
 					},
 					{
 						title: "Preise",

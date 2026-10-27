@@ -6,6 +6,7 @@
   server renders the first invoice done (the design's reduced-motion state);
   with motion the four invoices take turns while 35 % of the demo is in view
   (`loopInView`, one 5.7 s pass each, as the design's `#fk-js`).
+  "Zur Heizkostenabrechnung" leads to /heizkostenabrechnung.
 -->
 <script lang="ts">
 	import SectionHead from "$lib/landing/components/SectionHead.svelte";
@@ -113,6 +114,9 @@
 				{#snippet icon()}<IconPaths name={docuscan.eyebrowIcon} />{/snippet}
 			</SectionHead>
 			<p class="ds-p rv">{docuscan.text}</p>
+			<a class="ghost rv" href={docuscan.link.href}
+				>{docuscan.link.text} <span class="ar" aria-hidden="true">→</span></a
+			>
 		</div>
 
 		<!-- `rv` on a wrapper: the class list below changes while revealing. -->
@@ -215,6 +219,23 @@
 		line-height: 1.6;
 		margin: 16px 0 22px;
 		max-width: 44ch;
+	}
+	/* .pg-ghost: "Zur Heizkostenabrechnung" */
+	.ghost {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		border: 1px solid var(--hair);
+		background: #fff;
+		border-radius: 11px;
+		padding: 13px 18px;
+		font-size: 15.5px;
+		font-weight: 600;
+		color: var(--ink);
+		transition: border-color 0.2s;
+	}
+	.ghost:hover {
+		border-color: #c3cdc8;
 	}
 	.ds {
 		display: grid;

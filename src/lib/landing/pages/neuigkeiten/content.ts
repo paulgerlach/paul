@@ -15,7 +15,7 @@ import {
 	ROUTE_BLOG,
 	ROUTE_DASHBOARD,
 	ROUTE_FRISTENRECHNER,
-	ROUTE_FUNKTIONEN,
+	ROUTE_HEIZKOSTENABRECHNUNG,
 	ROUTE_GERAETE,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
@@ -99,8 +99,8 @@ const stories: Story[] = [
 		topic: "p",
 		title: "Heizkostenabrechnung auf Knopfdruck, Rechnungen per DocuScan",
 		photo: "consultation",
-		// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung".
-		more: { text: "Mehr erfahren", href: ROUTE_FUNKTIONEN },
+		// H4cZtgYCsvL4h7HGxZaHBs
+		more: { text: "Mehr erfahren", href: ROUTE_HEIZKOSTENABRECHNUNG },
 	},
 	{
 		topic: "p",
@@ -187,8 +187,8 @@ export const deadlines: {
 			icon: "calc",
 			title: "CO₂-Kosten aufteilen",
 			text: "Seit 2023 zwischen Vermieter und Mieter, CO2KostAufG",
-			// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung".
-			href: ROUTE_FUNKTIONEN,
+			// H4cZtgYCsvL4h7HGxZaHBs
+			href: ROUTE_HEIZKOSTENABRECHNUNG,
 		},
 		{
 			icon: "clock",

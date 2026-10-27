@@ -92,12 +92,12 @@ test("the nine function cards link their pages where they exist", async ({
 		["Verbrauchsinformation", "/plattform/verbrauchsinformation"],
 		["Mieterportal", "/plattform/mieterportal"],
 		["Schnittstellen", "/plattform/schnittstellen"],
+		["DocuScan", "/heizkostenabrechnung"],
+		["Heizkostenabrechnung", "/heizkostenabrechnung"],
 	])
 		await expect(
 			grid.locator("a", { has: page.locator("h3", { hasText: name }) }),
 		).toHaveAttribute("href", href);
-	// The Heizkostenabrechnung page doesn't exist yet.
-	await expect(grid.locator("a", { hasText: "DocuScan" })).toHaveCount(0);
 });
 
 test.describe("with reduced motion", () => {

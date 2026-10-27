@@ -10,7 +10,7 @@
 import { DEMO_HREF } from "$lib/landing/cta";
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type { SplitHeading } from "$lib/landing/types";
-import { ROUTE_FUNKTIONEN } from "$lib/routes";
+import { ROUTE_HEIZKOSTENABRECHNUNG } from "$lib/routes";
 import type { Answer, Share } from "./rules";
 
 const NB = " ";
@@ -502,8 +502,11 @@ export const managers = {
 	pill: "Für Verwaltungen und Vermieter",
 	h2: "Mit Heidi entstehen diese Fehler gar nicht erst.",
 	text: "Funkzähler, monatliche Verbrauchsinformation und eine Heizkostenabrechnung nach HKVO, per Klick. So entsteht die nächste Abrechnung ohne diese Fehler.",
-	// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung".
-	billing: { text: "Heizkostenabrechnung mit Heidi", href: ROUTE_FUNKTIONEN },
+	// H4cZtgYCsvL4h7HGxZaHBs
+	billing: {
+		text: "Heizkostenabrechnung mit Heidi",
+		href: ROUTE_HEIZKOSTENABRECHNUNG,
+	},
 	// 44SBXKXJaSp6bvGMnbpZj6 (the booking page): /demo.
 	demo: { text: "Demo buchen", href: DEMO_HREF },
 };

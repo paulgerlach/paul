@@ -15,6 +15,7 @@ import {
 	ROUTE_AUSWERTUNG,
 	ROUTE_DASHBOARD,
 	ROUTE_GERAETE,
+	ROUTE_HEIZKOSTENABRECHNUNG,
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_MIETERPORTAL,
 	ROUTE_SCHNITTSTELLEN,
@@ -142,10 +143,17 @@ export const roles = {
 					text: "Vergleich, Jahresverlauf, Hinweise",
 					href: ROUTE_AUSWERTUNG,
 				},
-				// The design links these two to the Heizkostenabrechnung page
-				// (H4cZtgYCsvL4h7HGxZaHBs), which doesn't exist yet.
-				{ title: "DocuScan", text: "Rechnungen automatisch erfasst" },
-				{ title: "Heizkostenabrechnung", text: "Nach HKVO, auf Knopfdruck" },
+				// The design links these two to the Heizkostenabrechnung page.
+				{
+					title: "DocuScan",
+					text: "Rechnungen automatisch erfasst",
+					href: ROUTE_HEIZKOSTENABRECHNUNG,
+				},
+				{
+					title: "Heizkostenabrechnung",
+					text: "Nach HKVO, auf Knopfdruck",
+					href: ROUTE_HEIZKOSTENABRECHNUNG,
+				},
 				{
 					title: "Schnittstellen",
 					text: "Daten direkt in ERP und CRM",
@@ -268,17 +276,18 @@ export const features = {
 			text: "Mieter sehen ihren Verbrauch jederzeit.",
 			href: ROUTE_MIETERPORTAL,
 		},
-		// The design links these two to the Heizkostenabrechnung page
-		// (H4cZtgYCsvL4h7HGxZaHBs), which doesn't exist yet: plain cards.
+		// The design links these two to the Heizkostenabrechnung page.
 		{
 			icon: "file",
 			title: "DocuScan",
 			text: "Rechnungen automatisch erkannt und übernommen.",
+			href: ROUTE_HEIZKOSTENABRECHNUNG,
 		},
 		{
 			icon: "calc",
 			title: "Heizkostenabrechnung",
 			text: "Nach HKVO, auf Knopfdruck.",
+			href: ROUTE_HEIZKOSTENABRECHNUNG,
 		},
 		{
 			icon: "link",
@@ -306,8 +315,7 @@ export const docuscan = {
 		muted: "Macht Heidi.",
 	} satisfies SplitHeading,
 	text: "DocuScan liest die Rechnungen, die für die Heizkostenabrechnung zählen, und übernimmt die Daten. Brennstoff, Zeitraum und Betrag landen dort, wo sie hingehören. Ohne Abtippen.",
-	// "Zur Heizkostenabrechnung" (→ H4cZtgYCsvL4h7HGxZaHBs) stays hidden until
-	// that page exists.
+	link: { text: "Zur Heizkostenabrechnung", href: ROUTE_HEIZKOSTENABRECHNUNG },
 	label: "Beispiel: DocuScan erkennt Rechnungen",
 	found: "Erkannt",
 	tag: "Beispieldaten",

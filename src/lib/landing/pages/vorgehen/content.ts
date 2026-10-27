@@ -15,6 +15,7 @@ import {
 	ROUTE_FRAGEBOGEN,
 	ROUTE_FUNKTIONEN,
 	ROUTE_GERAETE,
+	ROUTE_HEIZKOSTENABRECHNUNG,
 	ROUTE_HKVO_LEITFADEN,
 	ROUTE_INSTALLATIONSPARTNER,
 	ROUTE_INSTALLATIONSTOOL,
@@ -309,8 +310,11 @@ export const journey = {
 			name: "Heizkostenabrechnung",
 			h3: "Am Ende: auf Knopfdruck.",
 			text: "Die Heizkostenabrechnung nach HKVO entsteht für jede Einheit einzeln und auf Knopfdruck. DocuScan liest die abrechnungsrelevanten Rechnungen aus und übernimmt die Daten.",
-			// H4cZtgYCsvL4h7HGxZaHBs, as the landing footer's "Heizkostenabrechnung"
-			link: { text: "Zur Heizkostenabrechnung", href: ROUTE_FUNKTIONEN },
+			// H4cZtgYCsvL4h7HGxZaHBs
+			link: {
+				text: "Zur Heizkostenabrechnung",
+				href: ROUTE_HEIZKOSTENABRECHNUNG,
+			},
 		},
 	] satisfies Station[] as Station[],
 };

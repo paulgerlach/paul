@@ -83,7 +83,7 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	expect(await hrefs(news(page).locator("a.card"))).toEqual([
 		"/plattform/dashboard",
 		"/plattform/installationstool",
-		"/funktionen",
+		"/heizkostenabrechnung",
 		"/geraete",
 		"/plattform/mieterportal",
 		"/api",
@@ -100,7 +100,7 @@ test("stories and rows link only where a page exists", async ({ page }) => {
 	).toEqual([
 		"/fernablesung-umruesten",
 		"/plattform/verbrauchsinformation",
-		"/funktionen",
+		"/heizkostenabrechnung",
 		"/fristenrechner",
 	]);
 });

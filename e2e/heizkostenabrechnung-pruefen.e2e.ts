@@ -146,7 +146,7 @@ test("the footer and the other pages lead here, the internal links on", async ({
 	}
 });
 
-test("the CTAs lead to the card, the figures, /funktionen and the booking page", async ({
+test("the CTAs lead to the card, the figures, /heizkostenabrechnung and the booking page", async ({
 	page,
 }) => {
 	await gotoHydrated(page);
@@ -160,7 +160,7 @@ test("the CTAs lead to the card, the figures, /funktionen and the booking page",
 	await expect(page.locator("section#checker")).toHaveCount(1);
 	await expect(
 		page.getByRole("link", { name: /Heizkostenabrechnung mit Heidi/ }),
-	).toHaveAttribute("href", "/funktionen");
+	).toHaveAttribute("href", "/heizkostenabrechnung");
 	await expect(page.locator("section.final a.bk-next")).toHaveAttribute(
 		"href",
 		"#checker",

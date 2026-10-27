@@ -105,7 +105,7 @@ describe("/heizkostenabrechnung-pruefen content", () => {
 				`#${CHECKER_ID}`,
 				// The closing card's "Jetzt prüfen ↑"
 				`#${CHECKER_ID}`,
-				routes.ROUTE_FUNKTIONEN,
+				routes.ROUTE_HEIZKOSTENABRECHNUNG,
 				routes.ROUTE_DEMO_BUCHEN,
 			].sort(),
 		);

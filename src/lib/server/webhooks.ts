@@ -5,7 +5,7 @@
  * UNIFIED webhook: newsletter, newinquiry, contactform, switchinquiry,
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
  * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
- * pressdownload, kuendigungaction
+ * pressdownload, kuendigungaction, billcheckdetails
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -63,7 +63,11 @@ type EventType =
 	// "Word herunterladen", "PDF" or "Text kopieren" on
 	// /messdienst-wechseln/muster-kuendigung. Payload: action ("docx" | "pdf"
 	// | "copy"), page. Never the letter or its fields.
-	| "kuendigungaction";
+	| "kuendigungaction"
+	// "Gründe und Details ansehen" on /heizkostenabrechnung-pruefen (opens
+	// the paywall). Payload: points (how many the check found), page. Never
+	// the bill's values or the amount.
+	| "billcheckdetails";
 
 interface WebhookPayload {
 	event_type: EventType;

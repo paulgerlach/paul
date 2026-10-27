@@ -1,9 +1,21 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
-// No form on this page: its "Demo buchen" lead to /demo.
+// No form on this page: its "Demo buchen" lead to /demo. "Gründe und
+// Details ansehen" is reported (the number of points only) to the local
+// webhook sink from playwright.config.ts.
 
 const PATH = "/heizkostenabrechnung-pruefen";
+const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
+
+type DetailsEvent = { event_type: string; points?: number; page?: string };
+
+async function detailsEvents(page: Page) {
+	const events: DetailsEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter((event) => event.event_type === "billcheckdetails");
+}
 /** 19.10.2026, noon in Berlin: the example's dates are fixed by it. */
 const TODAY = new Date("2026-10-19T10:00:00Z");
 
@@ -243,7 +255,27 @@ test("own values: the share in %, then the amount, the payment not set up", asyn
 	await expect(figure(page)).toHaveText("150");
 	await expect(card(page).locator(".big i")).toHaveText("€");
 
-	await button(page, /Gründe und Details ansehen/).click();
+	const before = (await detailsEvents(page)).length;
+	const [report] = await Promise.all([
+		page.waitForRequest("**/api/bill-check-details"),
+		button(page, /Gründe und Details ansehen/).click(),
+	]);
+	// Only the count, never the values or the amount.
+	const body = report.postDataJSON() as { points: number };
+	expect(Object.keys(body)).toEqual(["points"]);
+	// Parallel runs report too, so count up from before.
+	await expect
+		.poll(async () => (await detailsEvents(page)).length)
+		.toBeGreaterThan(before);
+	const sent = (await detailsEvents(page)).filter(
+		(event) => event.points === body.points,
+	);
+	expect(sent[0]).toEqual({
+		event_type: "billcheckdetails",
+		timestamp: expect.any(String),
+		points: body.points,
+		page: PATH,
+	});
 	await expect(dialog(page)).toHaveAccessibleName(
 		"Heizkostenabrechnung geprüft",
 	);

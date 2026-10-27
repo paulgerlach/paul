@@ -2,7 +2,9 @@
   The result pane (#mc-res): the dark head with the sum counting up, the
   checked points (locked behind the paywall's teaser until unlocked; the
   example's show at once), the letter button, "Werte ändern" and "Neue
-  Abrechnung prüfen".
+  Abrechnung prüfen". "Gründe und Details ansehen" opens the paywall and
+  reports the number of points to Make.com (`/api/bill-check-details`;
+  never the values or the amount).
 -->
 <script lang="ts">
 	import { tick } from "svelte";
@@ -22,6 +24,17 @@
 		if (!head) return;
 		return tweenNumber(0, head.value, 900, (v) => (shown = v));
 	});
+
+	function openDetails(points: number) {
+		check.dialogOpen = true;
+		// keepalive: the request outlives the page if the visitor leaves.
+		fetch("/api/bill-check-details", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ points }),
+			keepalive: true,
+		}).catch(() => {});
+	}
 
 	async function makeLetter() {
 		check.makeLetter();
@@ -57,7 +70,7 @@
 			<button
 				type="button"
 				class="bk-next open"
-				onclick={() => (check.dialogOpen = true)}
+				onclick={() => openDetails(check.result!.points.length)}
 				>{t.open} <span class="ar">→</span></button
 			>
 		</div>

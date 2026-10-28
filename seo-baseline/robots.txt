@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /(service)/fragebogen
+
+Sitemap: https://heidisystems.com/sitemap.xml

@@ -1,0 +1,17 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Miscellaneous
+/static/
+
+# Docs and local agent settings (not app code)
+/ongoing-tasks/
+/seo-baseline/
+/.claude/
+
+# Supabase CLI state (ignored by supabase/.gitignore)
+/supabase/.temp/

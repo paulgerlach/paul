@@ -1,0 +1,368 @@
+/* Ported verbatim from src/app/(base)/globals.css. The (service) stylesheet was
+   a stale copy of this file and is not needed (KI-02). */
+@import "tailwindcss";
+
+:root {
+	--background: #ffffff;
+	--foreground: #171717;
+}
+
+@theme {
+	--gap-base: 10px;
+	--radius-base: 10px;
+	--radius-halfbase: 5px;
+	--color-dark_green: #1e322d;
+	--color-green: #8ad68f;
+	--color-card_bg: #f3f3f3;
+	--color-section-bg: #f7f7f6;
+	--color-card_dark_bg: #efefef;
+	--color-dark_text: #1e322d;
+	--color-link: #6083cc;
+	--color-card_light: #e5ebf5;
+	--color-border_base: #efedeb;
+	--color-base-bg: #f7f7f7;
+	--color-darkest-text: #292929;
+	--color-light-text: #545454;
+	--color-lighter-text: #4f4f4f;
+	--color-admin_dark_text: #333333;
+
+	--breakpoint-*: initial;
+	/* --breakpoint-max-*: initial; */
+	--breakpoint-small: 480px;
+	--breakpoint-medium: 768px;
+	--breakpoint-large: 992px;
+	--breakpoint-megalarge: 1200px;
+	--breakpoint-xl: 1640px;
+
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-exo_2-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
+}
+
+* {
+	font-family: "Exo 2", sans-serif;
+}
+
+html {
+	overflow-x: hidden;
+	scroll-behavior: smooth;
+}
+
+.burger {
+	position: relative;
+}
+
+/* Add these animation styles */
+
+@keyframes fromLeft {
+	from {
+		transform: translateX(-10px) scaleX(0.8);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateX(0) scaleX(1);
+		opacity: 1;
+	}
+}
+
+@keyframes fromRight {
+	from {
+		transform: translateX(10px) scaleX(0.8);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateX(0) scaleX(1);
+		opacity: 1;
+	}
+}
+
+.animate-from-left {
+	animation: fromLeft 0.3s ease-out forwards;
+	transform-origin: left bottom;
+}
+
+.animate-from-right {
+	animation: fromRight 0.3s ease-out forwards;
+	transform-origin: right bottom;
+}
+
+/* Optional: Add smooth transitions for message bubbles */
+.max-w-\[85\%\] {
+	transition: max-width 0.3s ease;
+}
+
+/* Ensure messages don't overflow */
+.break-words {
+	word-break: break-word;
+	overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+	.hero {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: repeat(3, max-content);
+		grid-template-areas:
+			"hero3"
+			"heroTitle"
+			"hero1"
+			"hero2";
+	}
+}
+
+.faq-answer-item {
+	border-bottom: 1px solid rgba(30, 50, 45, 0.2);
+	overflow: hidden;
+	transition: 0.3s all;
+}
+
+.faq-answer-item:first-child .faq-answer-header {
+	border-top: 1px solid rgba(30, 50, 45, 0.2);
+}
+
+/* Hide border-top of second FAQ column on mobile to prevent double line */
+@media (max-width: 640px) {
+	.faq-answers-container[data-tab="2"]
+		.faq-answer-item:first-child
+		.faq-answer-header {
+		border-top: none;
+	}
+}
+
+.faq-answer-header {
+	color: #1e322d;
+	padding: 16px 0;
+	font-size: 18px;
+	line-height: 21.6px;
+	font-weight: 400;
+	width: 100%;
+	text-align: left;
+	cursor: pointer;
+	outline: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	transition: 0.3s ease;
+	gap: 12px;
+}
+
+.faq-answer-content {
+	display: none;
+}
+
+.faq-answer-content p {
+	line-height: 24px;
+	color: #1e322d;
+	font-size: 16px;
+	padding: 16px 0;
+}
+
+.faq-answer-content a {
+	line-height: 24px;
+	color: #ffffff;
+	font-size: 16px;
+	text-decoration: underline;
+}
+
+.faq-icon {
+	transition: transform 0.3s ease;
+	width: 35px;
+	min-width: 35px;
+	background-color: transparent;
+	border: 1px solid rgba(30, 50, 45, 0.2);
+	height: 37px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+}
+
+.faq-icon img {
+	width: 10px;
+	height: 10px;
+	transition: 0.3s all ease;
+	filter: invert(14%) sepia(18%) saturate(894%) hue-rotate(114deg)
+		brightness(97%) contrast(89%);
+	opacity: 0.5;
+}
+
+.active .faq-icon img {
+	transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+	.faq-answer-header {
+		font-size: 18px;
+		line-height: 1.2;
+	}
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 1280px) {
+	.grid-cols-3 {
+		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+	}
+}
+
+@media (max-width: 768px) {
+	.grid-cols-2,
+	.grid-cols-3 {
+		grid-template-columns: 1fr !important;
+	}
+}
+
+.colored-to-black {
+	filter: invert(100%) sepia(18%) saturate(910%) hue-rotate(114deg)
+		brightness(87%) contrast(89%);
+}
+
+.richTextBlock h1 {
+	@apply text-6xl font-bold max-xl:text-5xl max-large:text-4xl max-medium:text-3xl max-small:text-2xl;
+}
+
+.richTextBlock h2 {
+	@apply text-5xl font-bold max-xl:text-4xl max-large:text-3xl max-medium:text-2xl max-small:text-xl;
+}
+
+.richTextBlock h3 {
+	@apply text-4xl font-bold max-xl:text-3xl max-large:text-2xl max-medium:text-xl max-small:text-lg;
+}
+
+.richTextBlock h4 {
+	@apply text-3xl font-bold max-xl:text-2xl max-large:text-xl max-medium:text-lg max-small:text-base;
+}
+
+.richTextBlock h5 {
+	@apply text-2xl font-bold max-xl:text-xl max-large:text-lg max-medium:text-base max-small:text-sm;
+}
+
+.richTextBlock h6 {
+	@apply text-xl font-bold max-xl:text-lg max-large:text-base max-medium:text-sm;
+}
+
+.richTextBlock p {
+	@apply text-lg max-xl:text-base max-medium:text-sm;
+}
+
+.richTextBlock ul,
+.richTextBlock ol {
+	@apply list-disc pl-6 text-lg max-large:text-base max-medium:text-sm;
+}
+
+.richTextBlock ol {
+	@apply list-decimal;
+}
+
+.richTextBlock ul li,
+.richTextBlock ol li {
+	@apply mb-2;
+}
+
+.richTextBlock a {
+	@apply underline;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+@layer utilities {
+	.scroll-item:first-child {
+		margin-left: calc((100vw - 1280px) / 2);
+	}
+
+	.scroll-item:last-child {
+		margin-right: calc((100vw - 1280px) / 2);
+	}
+
+	@media (max-width: 1536px) {
+		.scroll-item:first-child {
+			margin-left: calc((100vw - 1280px) / 2);
+		}
+
+		.scroll-item:last-child {
+			margin-right: calc((100vw - 1280px) / 2);
+		}
+	}
+
+	@media (max-width: 1280px) {
+		.scroll-item:first-child {
+			margin-left: calc((100vw - 1024px) / 2);
+		}
+
+		.scroll-item:last-child {
+			margin-right: calc((100vw - 1024px) / 2);
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.scroll-item:first-child {
+			margin-left: calc((100vw - 768px) / 2);
+		}
+
+		.scroll-item:last-child {
+			margin-right: calc((100vw - 768px) / 2);
+		}
+	}
+
+	@media (max-width: 768px) {
+		.scroll-item:first-child {
+			margin-left: 1rem;
+			/* Or px-4 */
+		}
+
+		.scroll-item:last-child {
+			margin-right: 1rem;
+		}
+	}
+}
+
+@media (max-width: 768px) {
+	.blogImage {
+		grid-template-areas:
+			"blog-date blog-date"
+			"blog-tags blog-copy-link";
+	}
+
+	.blogImage .blogImageTags {
+		grid-area: blog-tags;
+	}
+
+	.blogImage .blogImageCopyLink {
+		grid-area: blog-copy-link;
+	}
+
+	.blogImage .blogImageDate {
+		grid-area: blog-date;
+		text-align: center;
+	}
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+
+/* Replaces the CSS variable that next/font injected on <body>. The "Exo 2"
+   @font-face is declared in routes/+layout.svelte. */
+:root {
+	--font-exo_2-sans: "Exo 2", system-ui, arial;
+}

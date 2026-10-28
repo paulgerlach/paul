@@ -1,0 +1,43 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"rishtextblock": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Exercitation adipisicing ullamco cupidatat in culpa anim irure ullamco esse irure ex qui. Dolor sint consectetur pariatur occaecat id aliqua. Voluptate culpa Lorem labore exercitation commodo.",
+							"spans": [
+								{
+									"type": "em",
+									"start": 101,
+									"end": 113
+								},
+								{
+									"type": "hyperlink",
+									"start": 171,
+									"end": 184,
+									"data": {
+										"__TYPE__": "ExternalLink",
+										"url": "dsvdsvdsvsdv",
+										"target": "_blank"
+									}
+								},
+								{
+									"type": "strong",
+									"start": 63,
+									"end": 71
+								}
+							]
+						},
+						"direction": "ltr"
+					}
+				]
+			}
+		},
+		"items": []
+	}
+]

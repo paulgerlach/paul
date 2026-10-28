@@ -1,0 +1,20 @@
+import { LAUNCHED } from "$lib/landing/launch";
+import { DEFAULT_CHROME } from "$lib/landing/chrome";
+import { faq } from "$lib/landing/pages/schnittstellen/content";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = () => ({
+	seo: {
+		// Drafts for the content owner (plan §4.4).
+		title:
+			"Schnittstellen zu ERP und CRM: Verbrauchsdaten direkt in Ihrer Software | Heidi Systems",
+		description:
+			"Heidi ist in Ihr ERP- oder CRM-System integriert: Verbrauchsdaten und fertige Heizkostenabrechnungen landen direkt in Ihrer Software. Kein Abtippen, keine Dateien, kein Softwarewechsel.",
+		ogTitle: "Eine Plattform pflegen. Nicht zwei.",
+		// Until its go-live gate is done (plan §4.4). Then also add it to the sitemap.
+		noindex: !LAUNCHED,
+		keepCanonical: true,
+	},
+	landing: DEFAULT_CHROME,
+	faq: faq.items,
+});

@@ -15,7 +15,13 @@
 		"test:unit": "vitest",
 		"test": "bun run test:unit -- --run && bun run test:e2e",
 		"test:e2e": "playwright install && playwright test",
-		"slicemachine": "start-slicemachine"
+		"slicemachine": "start-slicemachine",
+		"db:start": "supabase start",
+		"db:stop": "supabase stop",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:baseline": "bun scripts/db-baseline.ts",
+		"db:reset": "supabase db reset && DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres bun scripts/db-baseline.ts && DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres drizzle-kit migrate"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -36,6 +42,7 @@
 		"prettier-plugin-svelte": "^4.1.0",
 		"prettier-plugin-tailwindcss": "^0.8.0",
 		"slice-machine-ui": "^2.21.6",
+		"supabase": "^2.122.0",
 		"svelte": "^5.56.7",
 		"svelte-check": "^4.6.0",
 		"tailwindcss": "^4.3.0",
@@ -48,6 +55,7 @@
 		"@ai-sdk/svelte": "^5.0.127",
 		"@fontsource-variable/exo-2": "^5.3.0",
 		"@fontsource-variable/geist": "^5.3.0",
+		"@fontsource-variable/geist-mono": "^5.3.0",
 		"@lucide/svelte": "^1.49.0",
 		"@prismicio/client": "^7.22.1",
 		"@prismicio/svelte": "^2.2.2",
@@ -55,11 +63,8 @@
 		"drizzle-orm": "^0.45.3",
 		"lottie-web": "^5.13.0",
 		"postgres": "^3.4.9",
-		"remark-gfm": "^4.0.1",
 		"svelte-exmarkdown": "^5.0.2",
-		"svelte-sonner": "^1.2.1",
 		"sveltekit-superforms": "^2.31.0",
-		"swiper": "11.2.10",
 		"zod": "^4.6.5"
 	}
 }

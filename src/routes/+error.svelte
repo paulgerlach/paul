@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/state";
+	import { ROUTE_HOME } from "$lib/routes";
 
 	const button =
 		"cursor-pointer rounded-halfbase border-none px-5 py-2.5 text-base text-white";
@@ -13,7 +14,7 @@
 		<p class="mb-7.5 text-[1.2em]">
 			Entschuldigung, die von Ihnen gesuchte Seite existiert nicht.
 		</p>
-		<a href="/" class="{button} bg-dark_green">Zur Startseite</a>
+		<a href={ROUTE_HOME} class="{button} bg-dark_green">Zur Startseite</a>
 	{:else}
 		<h1 class="mb-5 text-[3em]">Ein Fehler ist aufgetreten!</h1>
 		<p class="mb-7.5 text-[1.2em]">

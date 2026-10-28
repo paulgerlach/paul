@@ -2,7 +2,7 @@ import type { Attachment } from "svelte/attachments";
 import { prefersReducedMotion } from "../motion";
 
 /** Restarts the CSS animations under `el` by toggling `.play`. */
-function replay(el: HTMLElement) {
+export function replay(el: HTMLElement) {
 	el.classList.remove("play");
 	void el.offsetWidth; // force a reflow, so the animations start over
 	el.classList.add("play");

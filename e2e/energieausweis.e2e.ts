@@ -2,7 +2,8 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { GATED_ROBOTS, expectGated } from "./launch.ts";
 
 // The signup test saves a lead, so it needs a database with the `leads` table.
-// Webhooks go to the local sink from playwright.config.ts.
+// Webhooks go to the local sink from playwright.config.ts, also the offer of
+// "Jetzt bestellen".
 
 const PATH = "/energieausweis";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
@@ -15,6 +16,18 @@ async function webhookFor(page: Page, email: string) {
 		await page.request.get(WEBHOOK_EVENTS)
 	).json();
 	return events.find((event) => event.email === email);
+}
+
+type OrderEvent = { event_type: string; offer?: string };
+
+async function orderEvents(page: Page, offer: string) {
+	const events: OrderEvent[] = await (
+		await page.request.get(WEBHOOK_EVENTS)
+	).json();
+	return events.filter(
+		(event) =>
+			event.event_type === "energieausweisorder" && event.offer === offer,
+	);
 }
 
 async function hrefs(links: Locator) {
@@ -123,6 +136,44 @@ test("the CTAs lead to the check, the offers, the closing form and the dashboard
 	]);
 	for (const link of await order.all())
 		await expect(link).toHaveAttribute("target", "_blank");
+});
+
+test("Jetzt bestellen opens the order page and is reported", async ({
+	page,
+	context,
+}) => {
+	// The order page is external: answer it locally.
+	await context.route("https://heidi.energieausweis48.de/**", (route) =>
+		route.fulfill({ status: 200, contentType: "text/html", body: "" }),
+	);
+	await gotoHydrated(page);
+	const offer = "bedarfsausweis-video";
+	const before = (await orderEvents(page, offer)).length;
+	const [popup] = await Promise.all([
+		page.waitForEvent("popup"),
+		offerCards(page)
+			.nth(2)
+			.getByRole("link", { name: /Jetzt bestellen/ })
+			.click(),
+	]);
+	expect(popup.url()).toBe(
+		"https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=videoservice",
+	);
+	await popup.close();
+	// Parallel runs report the same offer, so count up from before.
+	await expect
+		.poll(async () => (await orderEvents(page, offer)).length)
+		.toBeGreaterThan(before);
+	const [event] = await orderEvents(page, offer);
+	expect(event).toEqual({
+		event_type: "energieausweisorder",
+		timestamp: expect.any(String),
+		offer,
+		title: "Bedarfsausweis Video",
+		tier: "Full Service",
+		price: "249,95 €",
+		page: PATH,
+	});
 });
 
 test("the scale moves between the two examples", async ({ page }) => {

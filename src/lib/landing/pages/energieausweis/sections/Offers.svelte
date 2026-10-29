@@ -4,7 +4,9 @@
   The filter dims the other type's cards and rings its own; the check's
   "Passende Angebote ansehen" sets it too (the page holds the value).
   Each card's "Jetzt bestellen" opens its order page at
-  heidi.energieausweis48.de in a new tab, as in the design.
+  heidi.energieausweis48.de in a new tab, as in the design, and reports
+  the offer to Make.com (`/api/energieausweis-order`; clicks without JS
+  aren't reported).
   Without JS the filter is hidden and all four show.
 -->
 <script lang="ts">
@@ -14,6 +16,16 @@
 	import { OFFERS_ID, type OfferFilter, offers } from "../content";
 
 	let { filter = $bindable() }: { filter: OfferFilter } = $props();
+
+	function onorder(offer: string) {
+		// keepalive: the request outlives the page if the visitor leaves.
+		fetch("/api/energieausweis-order", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ offer }),
+			keepalive: true,
+		}).catch(() => {});
+	}
 </script>
 
 <section class="pg-sec alt of" id={OFFERS_ID} aria-labelledby="ea-pr-h">
@@ -35,7 +47,7 @@
 			</div>
 		</div>
 		<div class="grid">
-			{#each offers.items as offer (offer.title)}
+			{#each offers.items as offer (offer.id)}
 				<article
 					class={[
 						"p rv",
@@ -66,6 +78,7 @@
 						href={offer.href}
 						target="_blank"
 						rel="noopener"
+						onclick={() => onorder(offer.id)}
 						>{offers.cta} <span class="ar" aria-hidden="true">→</span></a
 					>
 				</article>

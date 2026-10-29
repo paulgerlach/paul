@@ -155,6 +155,8 @@ export const check = {
 };
 
 export type Offer = {
+	/** Ours: names the offer in the `energieausweisorder` event. */
+	id: string;
 	type: AusweisType;
 	tier: string;
 	recommended?: boolean;
@@ -198,6 +200,7 @@ export const offers = {
 	cta: "Jetzt bestellen",
 	items: [
 		{
+			id: "verbrauchsausweis",
 			type: "v",
 			tier: "Self Service",
 			title: "Verbrauchsausweis",
@@ -206,6 +209,7 @@ export const offers = {
 			href: "https://heidi.energieausweis48.de/verbrauchsausweis?servicelevel=selfservice",
 		},
 		{
+			id: "bedarfsausweis",
 			type: "b",
 			tier: "Self Service",
 			title: "Bedarfsausweis",
@@ -217,6 +221,7 @@ export const offers = {
 			href: "https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=selfservice",
 		},
 		{
+			id: "bedarfsausweis-video",
 			type: "b",
 			tier: "Full Service",
 			recommended: true,
@@ -239,6 +244,7 @@ export const offers = {
 			href: "https://heidi.energieausweis48.de/bedarfsausweis?servicelevel=videoservice",
 		},
 		{
+			id: "bedarfsausweis-vor-ort",
 			type: "b",
 			tier: "Full Service",
 			title: "Bedarfsausweis vor Ort",

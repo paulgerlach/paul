@@ -6,7 +6,7 @@
  * jobapplication, helpfeedback, partnerinquiry, softwarepartnerinquiry,
  * successioninquiry, partnershipinquiry, connectioninquiry, selfserviceoffer,
  * pressdownload, kuendigungaction, billcheckdetails, selfservicestart,
- * portfoliocheckrun
+ * portfoliocheckrun, energieausweisorder
  */
 import { dev } from "$app/environment";
 import { env } from "$env/dynamic/private";
@@ -77,7 +77,11 @@ type EventType =
 	// "Unterlagen prüfen" on /portfolio-check. Payload: mode ("own" |
 	// "example"), files (how many), ready (how many can be evaluated), page.
 	// Never a file's name or contents.
-	| "portfoliocheckrun";
+	| "portfoliocheckrun"
+	// "Jetzt bestellen" on /energieausweis (opens the order page at
+	// heidi.energieausweis48.de). Payload: offer (its id), title, tier, price,
+	// page. Nothing personal.
+	| "energieausweisorder";
 
 interface WebhookPayload {
 	event_type: EventType;

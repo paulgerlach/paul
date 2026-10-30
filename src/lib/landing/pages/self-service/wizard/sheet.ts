@@ -67,6 +67,10 @@ export type SheetItem = { q: string; a: string; files?: string };
 export type SheetSection = { title: string; items: SheetItem[] };
 export type Sheet = SheetSection[];
 
+/** The answer to question `q`, "" if it wasn't asked. */
+export const sheetAnswer = (sheet: Sheet, q: string) =>
+	sheet.flatMap((x) => x.items).find((x) => x.q === q)?.a ?? "";
+
 const yesNo = (v: boolean) => (v ? "Ja" : "Nein");
 const many = (options: readonly Option[], vs: string[]) =>
 	vs.map((v) => optionLabel(options, v)).join(", ");

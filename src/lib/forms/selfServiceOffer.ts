@@ -193,4 +193,6 @@ export type SelfServiceRecord = {
 	/** The raw state, for a later look at what the sheet doesn't show. */
 	state: State;
 	files: StoredFile[];
+	/** Make.com has heard of the offer (it's told once). */
+	notified?: boolean;
 };

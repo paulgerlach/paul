@@ -8,7 +8,9 @@
  * signed upload URLs for the files that have none yet; the browser PUTs them
  * to the bucket `self-service`, and files no longer chosen are deleted. Then
  * Make.com (`selfserviceoffer`) gets the result page's link
- * (/self-service-result/<token>) for sales, who send the offer PDF.
+ * (/self-service-result/<token>) for sales, who send the offer PDF: once per
+ * offer, with the first send that gets through (`created`, or `requested`
+ * when that one failed); `data.notified` records it.
  *
  * Never log the name, email, phone, company or address. The log lines carry
  * the stage only.
@@ -27,6 +29,7 @@ import {
 import { validate } from "$lib/landing/pages/self-service/wizard/model";
 import {
 	sheet,
+	sheetAnswer,
 	sheetSlots,
 } from "$lib/landing/pages/self-service/wizard/sheet";
 import { ROUTE_SELF_SERVICE_RESULT } from "$lib/routes";
@@ -127,6 +130,8 @@ export async function handleSelfServiceOffer(
 	const db = getDb();
 	let res: OfferResponse;
 	let token: string;
+	let id: string;
+	let data: SelfServiceRecord;
 	try {
 		let row = ref
 			? (
@@ -143,7 +148,7 @@ export async function handleSelfServiceOffer(
 			return { status: "invalid" };
 		}
 
-		const id = row?.id ?? randomUUID();
+		id = row?.id ?? randomUUID();
 		const before = row?.data.files ?? [];
 		const known = new Map(before.map((f) => [f.path, f]));
 		const kept: StoredFile[] = [];
@@ -169,12 +174,13 @@ export async function handleSelfServiceOffer(
 				url: await signedUploadUrl(BUCKET, file.path),
 			})),
 		);
-		const data: SelfServiceRecord = {
+		data = {
 			version: 1,
 			stage,
 			sheet: asked,
 			state: s,
 			files: [...kept, ...fresh.map((x) => x.file)],
+			notified: row?.data.notified,
 		};
 		const now = new Date().toISOString();
 		let key: string | undefined;
@@ -211,12 +217,18 @@ export async function handleSelfServiceOffer(
 		return { status: "failed" };
 	}
 
+	if (data.notified) {
+		console.log(`[SELF-SERVICE] Saved (${stage})`);
+		return { status: "sent", body: res };
+	}
 	try {
 		await sendWebhookEventOrThrow("selfserviceoffer", s.k.mail.trim(), {
 			stage,
 			offer_number: s.ang.nr,
 			first_name: s.k.vn.trim(),
 			last_name: s.k.nn.trim(),
+			installer: sheetAnswer(asked, "Wer soll die Geräte montieren?"),
+			price_per_year: sheetAnswer(asked, "Pro Jahr (netto)"),
 			result_url: `${origin}${ROUTE_SELF_SERVICE_RESULT}/${token}`,
 			page,
 		});
@@ -224,6 +236,13 @@ export async function handleSelfServiceOffer(
 		console.error(`[SELF-SERVICE] Sending failed (${stage}):`, error);
 		return { status: "failed", body: res };
 	}
+	await db
+		.update(selfServiceResults)
+		.set({ data: { ...data, notified: true } })
+		.where(eq(selfServiceResults.id, id))
+		.catch((error) =>
+			console.error(`[SELF-SERVICE] Marking as sent failed (${stage}):`, error),
+		);
 	console.log(`[SELF-SERVICE] Sent (${stage})`);
 	return { status: "sent", body: res };
 }

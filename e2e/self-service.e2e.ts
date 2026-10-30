@@ -156,26 +156,28 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		"Ihr Angebot ist unterwegs.",
 	);
 
+	// Make.com hears of the offer once: the request sends nothing more.
 	const events = await eventsFor(page, email);
-	expect(events.map((e) => e.stage)).toEqual(["created", "requested"]);
-	const [created, requested] = events;
-	expect(requested).toMatchObject({
+	expect(events.map((e) => e.stage)).toEqual(["created"]);
+	const [created] = events;
+	expect(created).toMatchObject({
 		event_type: "selfserviceoffer",
 		first_name: "Erika",
 		last_name: "Musterfrau",
+		installer: "Selbst oder eigener Hausinstallateur (bevorzugt)",
+		price_per_year: "396,00 €",
 	});
-	expect(requested.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
+	expect(created.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
 	// One stored offer, one link: /self-service-result/<22 characters>.
-	expect(requested.result_url).toMatch(
+	expect(created.result_url).toMatch(
 		/^http:\/\/localhost:4173\/self-service-result\/[A-Za-z0-9]{22}$/,
 	);
-	expect(created.result_url).toBe(requested.result_url);
 
-	const res = await page.goto(requested.result_url);
+	const res = await page.goto(created.result_url);
 	expect(res?.headers()["cache-control"]).toBe("private, no-store");
 	expect(res?.headers()["x-robots-tag"]).toBe("noindex, nofollow");
 	await expect(page.locator("h1")).toHaveText(
-		`Angebot ${requested.offer_number}`,
+		`Angebot ${created.offer_number}`,
 	);
 	await expect(page.getByText(/^Per E-Mail angefordert/)).toBeVisible();
 	const row = (q: string) =>
@@ -198,9 +200,9 @@ test("uploads the files and shows them on the result", async ({ page }) => {
 	await expect(check.locator(".ss-conf h3")).toHaveText(
 		"Ihr Angebot ist unterwegs.",
 	);
-	const [, requested] = await eventsFor(page, email);
+	const [created] = await eventsFor(page, email);
 
-	await page.goto(requested.result_url);
+	await page.goto(created.result_url);
 	const bill = page
 		.locator("dl > div")
 		.filter({ has: page.getByText("Abrechnung hochladen", { exact: true }) });

@@ -283,7 +283,7 @@ export class SelfService {
 		if (this.s.ang.noted) return;
 		this.s.ang.noted = true;
 		void this.#send("created").catch(() => {
-			// Heidi hears of it again when the offer is requested.
+			// Heidi hears of it with the request instead.
 		});
 	}
 

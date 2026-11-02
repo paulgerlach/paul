@@ -166,6 +166,13 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		last_name: "Musterfrau",
 		installer: "Selbst oder eigener Hausinstallateur (bevorzugt)",
 		price_per_year: "396,00 €",
+		price_list: [
+			"Einzelabrechnung: 165,00 €",
+			"Wartungs- und Funktionsdienst für Funkgeräte: 30,00 €",
+			"Funk Kaltwasserzähler: 162,00 €",
+			"Funk-Gateway: 39,00 €",
+			"Inbetriebnahme Funksystem / OMS: 18,00 €",
+		].join("\n"),
 	});
 	expect(created.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
 	// One stored offer, one link: /self-service-result/<22 characters>.

@@ -35,6 +35,7 @@ import {
 	offerFileName,
 	offerParts,
 	positions,
+	priceList,
 	validate,
 	type Offer,
 	type State,
@@ -280,6 +281,7 @@ export async function handleSelfServiceOffer(
 			last_name: s.k.nn.trim(),
 			installer: sheetAnswer(asked, "Wer soll die Geräte montieren?"),
 			price_per_year: sheetAnswer(asked, "Pro Jahr (netto)"),
+			price_list: priceList(positions(calc(s))),
 			result_url: `${origin}${ROUTE_SELF_SERVICE_RESULT}/${token}`,
 			page,
 		});

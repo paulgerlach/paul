@@ -1,6 +1,7 @@
 /**
  * Supabase Storage over its REST API (no client library): signed upload URLs
- * for the browser, signed download URLs for the server's pages, and deletes.
+ * for the browser, signed download URLs for the server's pages, the server's
+ * own uploads and deletes.
  * `SUPABASE_URL` is the project's API URL, `SUPABASE_SECRET_KEY` its secret
  * key (`sb_secret_…`, or the legacy `service_role` key); both are server-only.
  * The buckets themselves are created by Drizzle migrations.
@@ -65,6 +66,20 @@ export async function signedUrls(
 	return new Map(
 		rows.map((r) => [r.path, r.signedURL ? `${base}${r.signedURL}` : null]),
 	);
+}
+
+/** Writes an object from the server, replacing one at the same path. */
+export async function putObject(
+	bucket: string,
+	path: string,
+	body: Uint8Array,
+	type: string,
+) {
+	await call(`/object/${bucket}/${encodePath(path)}`, {
+		method: "POST",
+		body: body as BodyInit,
+		headers: { "content-type": type, "x-upsert": "true" },
+	});
 }
 
 /** Deletes objects; missing ones are ignored. */

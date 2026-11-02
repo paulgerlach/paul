@@ -166,6 +166,13 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		last_name: "Musterfrau",
 		installer: "Selbst oder eigener Hausinstallateur (bevorzugt)",
 		price_per_year: "396,00 €",
+		price_list: [
+			"Einzelabrechnung: 165,00 €",
+			"Wartungs- und Funktionsdienst für Funkgeräte: 30,00 €",
+			"Funk Kaltwasserzähler: 162,00 €",
+			"Funk-Gateway: 39,00 €",
+			"Inbetriebnahme Funksystem / OMS: 18,00 €",
+		].join("\n"),
 	});
 	expect(created.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
 	// One stored offer, one link: /self-service-result/<22 characters>.
@@ -180,6 +187,14 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		`Angebot ${created.offer_number}`,
 	);
 	await expect(page.getByText(/^Per E-Mail angefordert/)).toBeVisible();
+	// The offer, stored as a PDF, is on the page.
+	const pdf = page.locator('iframe[title="Angebot Gerätemiete und Service"]');
+	await expect(pdf).toHaveCount(1);
+	const file = await page.request.get((await pdf.getAttribute("src")) ?? "");
+	expect(file.headers()["content-type"]).toBe("application/pdf");
+	const bytes = (await file.body()).toString("latin1");
+	expect(bytes.startsWith("%PDF-1.4")).toBe(true);
+	expect(bytes).toContain(created.offer_number);
 	const row = (q: string) =>
 		page
 			.locator("dl > div")

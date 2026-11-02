@@ -184,6 +184,15 @@ export type OfferResponse = {
 /** A stored file (`path` in the bucket `self-service`). */
 export type StoredFile = Required<OfferFile>;
 
+/** A document of the offer as a PDF (`path` in the bucket `self-service`). */
+export type StoredDocument = {
+	kind: "g" | "a";
+	title: string;
+	/** The file's name when downloaded. */
+	name: string;
+	path: string;
+};
+
 /** `self_service_results.data`. */
 export type SelfServiceRecord = {
 	version: 1;
@@ -193,6 +202,8 @@ export type SelfServiceRecord = {
 	/** The raw state, for a later look at what the sheet doesn't show. */
 	state: State;
 	files: StoredFile[];
+	/** The offer as sent: empty if making it failed, missing on older rows. */
+	documents?: StoredDocument[];
 	/** Make.com has heard of the offer (it's told once). */
 	notified?: boolean;
 };

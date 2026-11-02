@@ -13,6 +13,7 @@ import {
 	offerFileName,
 	offerParts,
 	positions,
+	priceList,
 	steps,
 	validate,
 	type State,
@@ -239,6 +240,29 @@ describe("positions", () => {
 		]);
 		expect(p.sO).toBe(26 * 3 + 999);
 		expect(p.year).toBe(p.sS + p.sM);
+	});
+});
+
+describe("priceList", () => {
+	it("lists every position with its total, one per line", () => {
+		const s = building();
+		s.mont.wer = "heidi";
+		const p = positions(calc(s));
+		const lines = priceList(p).split("\n");
+		expect(lines).toHaveLength(p.svc.length + p.rental.length + p.once.length);
+		expect(lines).toContain("Installationspauschale: 999,00 €");
+		expect(lines).toContain("Inbetriebnahme Funksystem / OMS: 78,00 €");
+	});
+
+	it("says a bought device's price and an on-request meter's are on request", () => {
+		const p = positions(calc(building()));
+		const lines = priceList({
+			...p,
+			rental: [{ ...p.rental[0], kauf: true, ep: 0 }],
+			onRequest: [{ ...calc(building()).rows[0], sub: "Gaszähler" }],
+		}).split("\n");
+		expect(lines).toContain(`${p.rental[0].t}: auf Anfrage`);
+		expect(lines.at(-1)).toBe("Gaszähler: auf Anfrage");
 	});
 });
 

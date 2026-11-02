@@ -44,6 +44,39 @@
 			</p>
 		</header>
 
+		<section class="mb-5 rounded-base bg-white p-5 shadow-sm medium:p-6">
+			<h2 class="mb-3 text-lg font-semibold text-dark_green">
+				Angebot als PDF
+			</h2>
+			{#each r.documents as doc (doc.kind)}
+				<div class="mt-4 first-of-type:mt-0">
+					<div class="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+						<h3 class="font-medium">{doc.title}</h3>
+						{#if doc.url}
+							<a
+								class="text-sm text-link hover:underline"
+								href="{doc.url}&download={encodeURIComponent(doc.name)}"
+								>PDF herunterladen</a
+							>
+						{/if}
+					</div>
+					{#if doc.url}
+						<iframe
+							src={doc.url}
+							title="Angebot {doc.title}"
+							class="h-[80vh] w-full rounded-halfbase border border-border_base"
+						></iframe>
+					{:else}
+						<p class="text-light-text">Das PDF ist nicht verfügbar.</p>
+					{/if}
+				</div>
+			{:else}
+				<p class="text-light-text">
+					Zu diesem Zählercheck wurde kein PDF gespeichert.
+				</p>
+			{/each}
+		</section>
+
 		{#each r.sheet as section, si (si)}
 			<section class="mb-5 rounded-base bg-white p-5 shadow-sm medium:p-6">
 				<h2 class="mb-3 text-lg font-semibold text-dark_green">
@@ -117,7 +150,8 @@
 			</section>
 		{/each}
 		<p class="mt-6 text-xs text-light-text">
-			Die Dateilinks gelten eine Stunde. Laden Sie die Seite neu für neue Links.
+			Die Links zu Angebot und Dateien gelten eine Stunde. Laden Sie die Seite
+			neu für neue Links.
 		</p>
 	</div>
 </main>

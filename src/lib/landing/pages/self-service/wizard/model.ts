@@ -887,6 +887,19 @@ export const totalPrice = (r: Position) =>
 export const amount = (x: number | string) =>
 	typeof x === "number" ? n2(x) : x;
 
+/**
+ * Every position with its total, one "label: price" per line (a position's
+ * quantity is in the total): Make.com's `price_list`.
+ */
+export function priceList(p: Positions) {
+	return [
+		...[...p.svc, ...p.rental, ...p.once].map(
+			(r) => `${r.t}: ${r.kauf ? "auf Anfrage" : eur(r.n * r.ep)}`,
+		),
+		...p.onRequest.map((r) => `${r.sub}: auf Anfrage`),
+	].join("\n");
+}
+
 /** A new offer: a six-digit id and its number (`angMeta`). */
 export function makeOffer(now: number, random: number): Offer {
 	const id = String(100000 + Math.floor(random * 900000));

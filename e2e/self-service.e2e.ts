@@ -180,6 +180,14 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		`Angebot ${created.offer_number}`,
 	);
 	await expect(page.getByText(/^Per E-Mail angefordert/)).toBeVisible();
+	// The offer, stored as a PDF, is on the page.
+	const pdf = page.locator('iframe[title="Angebot Gerätemiete und Service"]');
+	await expect(pdf).toHaveCount(1);
+	const file = await page.request.get((await pdf.getAttribute("src")) ?? "");
+	expect(file.headers()["content-type"]).toBe("application/pdf");
+	const bytes = (await file.body()).toString("latin1");
+	expect(bytes.startsWith("%PDF-1.4")).toBe(true);
+	expect(bytes).toContain(created.offer_number);
 	const row = (q: string) =>
 		page
 			.locator("dl > div")

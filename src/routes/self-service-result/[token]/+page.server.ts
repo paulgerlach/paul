@@ -29,10 +29,10 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 		.where(eq(selfServiceResults.token, params.token));
 	if (!row) error(404);
 
-	const { files, sheet, stage } = row.data;
+	const { files, sheet, stage, documents = [] } = row.data;
 	const urls = await signedUrls(
 		BUCKET,
-		files.map((f) => f.path),
+		[...files.map((f) => f.path), ...documents.map((d) => d.path)],
 		FILE_LINKS,
 	).catch((e) => {
 		console.error("[SELF-SERVICE-RESULT] Signing files failed:", e);
@@ -49,6 +49,12 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 			createdAt: row.created_at,
 			requestedAt: row.requested_at,
 			sheet,
+			documents: documents.map((d) => ({
+				kind: d.kind,
+				title: d.title,
+				name: d.name,
+				url: urls.get(d.path) ?? null,
+			})),
 			files: files.map((f) => ({
 				slot: f.slot,
 				name: f.name,

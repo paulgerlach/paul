@@ -7,53 +7,27 @@
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import HeidiLogo from "$lib/landing/components/icons/HeidiLogo.svelte";
 	import { FEATURE_PHOTOS, PHOTOS } from "../../photos";
-	import { features, OFFER_COMPANY, OFFER_TERMS } from "../data";
+	import { OFFER_COMPANY } from "../data";
 	import {
 		amount,
-		billingLines,
-		calc,
-		gross,
 		n2,
-		offerDates,
 		offerFileName,
-		propertyLines,
-		scope,
-		tech,
-		totalPrice,
-		unitPrice,
 		type Offer,
 		type OfferPart,
-		type Position,
 	} from "../model";
+	import { offerDoc, type OfferTable } from "../offerDoc";
 	import { getSelfService } from "../wizard.svelte";
 
 	let { offer, part }: { offer: Offer; part: OfferPart } = $props();
 	const w = getSelfService();
-	const c = $derived(calc(w.s));
-	const p = $derived(part.p);
+	const d = $derived(offerDoc(w.s, offer, part));
+	const p = $derived(d.p);
 	/** The billing's own document. */
-	const abr = $derived(part.kind === "a");
-	const dates = $derived(offerDates(offer));
-	const billing = $derived(billingLines(w.s));
-	const property = $derived(propertyLines(w.s));
-	const pages = $derived(abr ? 3 : 4);
-	const services: [string, boolean][] = [
-		["Servicedienstleistungen jährlich", false],
-		["Mengeneinheit", true],
-		["Stück", true],
-		["Einzelpreis in €", true],
-		["Gesamtpreis in €", true],
-	];
-	const servicesOnce: [string, boolean][] = [
-		["Servicedienstleistungen einmalig", false],
-		...services.slice(1),
-	];
-	const devices: [string, boolean][] = [
-		["Gerätetyp", false],
-		["Laufzeit", true],
-		...services.slice(1),
-	];
-	const row = (r: Position) => [r.t, r.me, r.n, n2(r.ep), n2(r.n * r.ep)];
+	const abr = $derived(d.abr);
+	const dates = $derived(d.dates);
+	const billing = $derived(d.billing);
+	const property = $derived(d.property);
+	const pages = $derived(d.pages);
 </script>
 
 {#snippet head(full: boolean)}
@@ -79,39 +53,31 @@
 	{/if}
 {/snippet}
 
-{#snippet table(
-	cols: [string, boolean][],
-	rows: (string | number)[][],
-	first: string,
-	labN: string,
-	totN: number | string,
-	labB: string,
-	totB: number | string,
-)}
+{#snippet table(x: OfferTable)}
 	<table class="dp-t">
 		<thead>
 			<tr>
-				{#each cols as [h, r] (h)}<th class={[r && "r"]}>{h}</th>{/each}
+				{#each x.cols as [h, r] (h)}<th class={[r && "r"]}>{h}</th>{/each}
 			</tr>
 		</thead>
 		<tbody>
-			{#if first}<tr><td colspan={cols.length}>{first}</td></tr>{/if}
-			{#each rows as cells, i (i)}
+			{#if x.first}<tr><td colspan={x.cols.length}>{x.first}</td></tr>{/if}
+			{#each x.rows as cells, i (i)}
 				<tr>
-					{#each cells as v, j (j)}<td class={[cols[j][1] && "r"]}>{v}</td
+					{#each cells as v, j (j)}<td class={[x.cols[j][1] && "r"]}>{v}</td
 						>{/each}
 				</tr>
 			{/each}
 		</tbody>
 		<tfoot>
 			<tr class="n"
-				><td colspan={cols.length - 1}>{labN}</td><td class="r"
-					>{amount(totN)}</td
+				><td colspan={x.cols.length - 1}>{x.labelNet}</td><td class="r"
+					>{amount(x.totalNet)}</td
 				></tr
 			>
 			<tr class="b"
-				><td colspan={cols.length - 1}>{labB}</td><td class="r"
-					>{amount(totB)}</td
+				><td colspan={x.cols.length - 1}>{x.labelGross}</td><td class="r"
+					>{amount(x.totalGross)}</td
 				></tr
 			>
 		</tfoot>
@@ -130,7 +96,7 @@
 {/snippet}
 
 {#snippet terms()}
-	{#each OFFER_TERMS as t (t)}<p class="dp-p dp-sm">{t}</p>{/each}
+	{#each d.terms as t (t)}<p class="dp-p dp-sm">{t}</p>{/each}
 {/snippet}
 
 <div class="dp-view">
@@ -151,13 +117,11 @@
 		<section class="dp-pg">
 			<div class="dp-in">
 				{@render head(true)}
-				<h2 class="dp-h">Angebot {part.title}</h2>
+				<h2 class="dp-h">{d.heading}</h2>
 				<p class="dp-p">
-					Sehr geehrte Damen und Herren, auf den folgenden Seiten finden Sie
-					unser Angebot für <b>{property.join(", ")}</b>. Ihr Lieferumfang im
-					Überblick:
+					{d.intro[0]}<b>{d.intro[1]}</b>{d.intro[2]}
 				</p>
-				{#each features(c.self) as f (f.h)}
+				{#each d.features as f (f.h)}
 					<div class="dp-f">
 						<div class="dp-fi">
 							<Image
@@ -183,58 +147,35 @@
 		<section class="dp-pg">
 			<div class="dp-in">
 				{@render head(true)}
-				<h2 class="dp-h dp-h2">Angebotsübersicht zu Ihrer Anfrage</h2>
+				<h2 class="dp-h dp-h2">{d.overview}</h2>
 				{#if !abr}
 					<div class="dp-box l">
-						<b>Einmalige Servicedienstleistungen</b><b>{n2(p.sO)} €</b><small
-							>zzgl. der gesetzlichen MwSt.</small
-						>
+						<b>{d.onceLabel}</b><b>{n2(p.sO)} €</b><small>{d.exVat}</small>
 					</div>
 				{/if}
 				<div class="dp-box d">
-					<b>Gesamtpreis pro Jahr</b><b>{n2(p.year)} €</b><small
-						>zzgl. der gesetzlichen MwSt.</small
-					>
+					<b>{d.yearLabel}</b><b>{n2(p.year)} €</b><small>{d.exVat}</small>
 				</div>
 				<div class="dp-sub">
-					<span
-						>{abr
-							? "Heizkostenabrechnung pro Jahr"
-							: "Geräteservice pro Jahr"}</span
-					><b>{n2(p.sS)} €</b><small>zzgl. der gesetzlichen MwSt.</small>
+					<span>{d.serviceLabel}</span><b>{n2(p.sS)} €</b><small
+						>{d.exVat}</small
+					>
 				</div>
 				{#if !abr}
 					<div class="dp-sub">
-						{#if p.buy}
-							<span>Gerätekauf (einmalig)</span><b>auf Anfrage</b>
-						{:else}
-							<span>Gerätemiete pro Jahr</span><b>{n2(p.sM)} €</b>
-						{/if}<small>zzgl. der gesetzlichen MwSt.</small>
+						<span>{d.deviceLabel}</span><b>{d.deviceValue}</b><small
+							>{d.exVat}</small
+						>
 					</div>
 				{/if}
-				<p class="dp-p dp-mu">
-					{abr
-						? "Die Gerätemiete bieten wir Ihnen in einem separaten Angebot an."
-						: "Die Heizkostenabrechnung bieten wir Ihnen in einem separaten Angebot an."}
-				</p>
-				{#if p.onRequest.length || p.extras.length}
-					<p class="dp-p dp-mu">
-						Zusätzlich angefragt: {[
-							...p.onRequest.map((r) => `${r.n} × ${r.sub}`),
-							...p.extras,
-						].join(", ")}. Richtwerte netto, den genauen Preis ergänzen wir im
-						Angebot.
-					</p>
+				<p class="dp-p dp-mu">{d.separate}</p>
+				{#if d.requested}
+					<p class="dp-p dp-mu">{d.requested}</p>
 				{/if}
 				<p class="dp-p">
-					Auf das erste Vertragsjahr entfällt ein Betrag von {n2(p.first)} €. Ab dem
-					zweiten Vertragsjahr wird jährlich ein Betrag von {n2(p.year)} € fällig.<br
-					/>Das Angebot ist gültig bis einschließlich {dates.valid}. Für
-					Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung und freuen
-					uns auf die Zusammenarbeit.<br />Alle Preise verstehen sich zzgl. der
-					gesetzlichen MwSt.
+					{#each d.closing as line, i (i)}{#if i}<br />{/if}{line}{/each}
 				</p>
-				<p class="dp-p dp-gr">Mit freundlichen Grüßen</p>
+				<p class="dp-p dp-gr">{d.greeting}</p>
 				<Image
 					class="dp-sig"
 					src={PHOTOS.signature}
@@ -250,42 +191,15 @@
 		<section class="dp-pg">
 			<div class="dp-in">
 				{@render head(false)}
-				<h2 class="dp-h3">Servicedienstleistungen</h2>
-				<p class="dp-k">Jährlich</p>
-				{@render table(
-					services,
-					p.svc.map(row),
-					`Leistungsumfang: ${scope(w.s).join(", ") || "nach Prüfung"}`,
-					"Gesamtpreis Servicedienstleistungen pro Jahr netto",
-					p.sS,
-					"Gesamtpreis Servicedienstleistungen pro Jahr inkl. 19% MwSt.",
-					gross(p.sS),
-				)}
+				<h2 class="dp-h3">{d.yearly.title}</h2>
+				<p class="dp-k">{d.yearly.kicker}</p>
+				{@render table(d.yearly)}
 				{#if abr}
 					{@render terms()}
 				{:else}
-					<h2 class="dp-h3">{p.buy ? "Gerätekauf" : "Gerätemiete"}</h2>
-					<p class="dp-k">
-						{p.buy ? "Einmalig, Preis auf Anfrage" : "Jährlich"}
-					</p>
-					{@render table(
-						devices,
-						p.rental.map((r) => [
-							r.t,
-							r.lz || "–",
-							r.me,
-							r.n,
-							unitPrice(r),
-							totalPrice(r),
-						]),
-						tech(w.s)
-							? ""
-							: "Gerätepositionen ergänzen wir nach Prüfung Ihrer Unterlagen.",
-						"Gesamtpreis Gerätemiete pro Jahr netto",
-						p.sM,
-						"Gesamtpreis Gerätemiete pro Jahr inkl. 19% MwSt.",
-						gross(p.sM),
-					)}
+					<h2 class="dp-h3">{d.rental.title}</h2>
+					<p class="dp-k">{d.rental.kicker}</p>
+					{@render table(d.rental)}
 				{/if}
 			</div>
 			{@render foot(3)}
@@ -294,38 +208,17 @@
 			<section class="dp-pg">
 				<div class="dp-in">
 					{@render head(false)}
-					<h2 class="dp-h3">Servicedienstleistungen</h2>
-					<p class="dp-k">Einmalig</p>
-					{@render table(
-						servicesOnce,
-						p.once.map(row),
-						p.once.length
-							? ""
-							: c.self && tech(w.s)
-								? "Montage durch Sie oder Ihren Hausinstallateur, keine Installationspauschale."
-								: "Keine einmaligen Leistungen.",
-						"Gesamtpreis einmalige Servicedienstleistungen netto",
-						p.sO,
-						"Gesamtpreis einmalige Servicedienstleistungen inkl. 19% MwSt.",
-						gross(p.sO),
-					)}
+					<h2 class="dp-h3">{d.once.title}</h2>
+					<p class="dp-k">{d.once.kicker}</p>
+					{@render table(d.once)}
 					{@render terms()}
-					{#if c.self && tech(w.s)}
-						<p class="dp-p dp-sm">
-							Die Montage übernehmen Sie oder Ihr Hausinstallateur. Eine
-							Installationspauschale fällt nicht an. Einbausätze, Rohr- und
-							Sanitärarbeiten sind nicht enthalten.
-						</p>
+					{#if d.selfMounted}
+						<p class="dp-p dp-sm">{d.selfMounted}</p>
 					{/if}
-					{#if c.checks.length}
-						<p class="dp-p dp-sm">
-							<b
-								>Grundlage dieses Angebots sind Ihre Angaben im Heidi
-								Self-Service. Vor der Lieferung prüfen wir:</b
-							>
-						</p>
+					{#if d.checks.length}
+						<p class="dp-p dp-sm"><b>{d.checksIntro}</b></p>
 						<ul class="dp-ul">
-							{#each c.checks.slice(0, 8) as x, i (i)}<li>{x}</li>{/each}
+							{#each d.checks as x, i (i)}<li>{x}</li>{/each}
 						</ul>
 					{/if}
 				</div>

@@ -10,7 +10,10 @@
  * Make.com (`selfserviceoffer`) gets the result page's link
  * (/self-service-result/<token>) for sales, who send the offer PDF: once per
  * offer, with the first send that gets through (`created`, or `requested`
- * when that one failed); `data.notified` records it.
+ * when that one failed); `data.notified` records it. Each send also stores the
+ * offer's documents as PDFs from the state it carries (same paths, so the
+ * latest replaces the last); if that fails the offer still goes through and
+ * the result page says the document is missing.
  *
  * Never log the name, email, phone, company or address. The log lines carry
  * the stage only.
@@ -24,9 +27,19 @@ import {
 	type OfferFile,
 	type OfferResponse,
 	type SelfServiceRecord,
+	type StoredDocument,
 	type StoredFile,
 } from "$lib/forms/selfServiceOffer";
-import { validate } from "$lib/landing/pages/self-service/wizard/model";
+import {
+	calc,
+	offerFileName,
+	offerParts,
+	positions,
+	validate,
+	type Offer,
+	type State,
+} from "$lib/landing/pages/self-service/wizard/model";
+import { offerPdf } from "$lib/landing/pages/self-service/wizard/offerPdf";
 import {
 	sheet,
 	sheetAnswer,
@@ -37,7 +50,7 @@ import { isGibberish, spamTrapReason } from "$lib/server/contact";
 import { getDb } from "$lib/server/db";
 import { selfServiceResults } from "$lib/server/db/schema";
 import { checkIPRateLimit } from "$lib/server/rateLimit";
-import { removeObjects, signedUploadUrl } from "$lib/server/storage";
+import { putObject, removeObjects, signedUploadUrl } from "$lib/server/storage";
 import { sendWebhookEventOrThrow } from "$lib/server/webhooks";
 
 export const BUCKET = "self-service";
@@ -77,6 +90,37 @@ function sameHash(a: string, b: string) {
 function filePath(id: string, name: string) {
 	const ext = /\.([A-Za-z0-9]{1,5})$/.exec(name)?.[1]?.toLowerCase();
 	return `${id}/${randomUUID()}${ext ? `.${ext}` : ""}`;
+}
+
+/** Makes and stores the offer's documents; an empty list if that fails. */
+async function storeDocuments(
+	id: string,
+	s: State,
+	offer: Offer,
+	stage: string,
+): Promise<StoredDocument[]> {
+	try {
+		return await Promise.all(
+			offerParts(positions(calc(s)), offer).map(async (part) => {
+				const path = `${id}/angebot-${part.kind}.pdf`;
+				await putObject(
+					BUCKET,
+					path,
+					offerPdf(s, offer, part),
+					"application/pdf",
+				);
+				return {
+					kind: part.kind,
+					title: part.title,
+					name: offerFileName(s, offer, part.title),
+					path,
+				};
+			}),
+		);
+	} catch (error) {
+		console.error(`[SELF-SERVICE] Storing the offer failed (${stage}):`, error);
+		return [];
+	}
 }
 
 const blocked = (reason: string): OfferResult => {
@@ -163,9 +207,15 @@ export async function handleSelfServiceOffer(
 				});
 		}
 		const keptPaths = new Set(kept.map((f) => f.path));
-		const gone = before
-			.filter((f) => !keptPaths.has(f.path))
-			.map((f) => f.path);
+		const documents = await storeDocuments(id, s, s.ang, stage);
+		const docPaths = new Set(documents.map((d) => d.path));
+		const gone = [
+			...before.filter((f) => !keptPaths.has(f.path)).map((f) => f.path),
+			// The billing's own document, when it's no longer chosen.
+			...(row?.data.documents ?? [])
+				.filter((d) => !docPaths.has(d.path))
+				.map((d) => d.path),
+		];
 
 		const uploads = await Promise.all(
 			fresh.map(async ({ i, file }) => ({
@@ -180,6 +230,7 @@ export async function handleSelfServiceOffer(
 			sheet: asked,
 			state: s,
 			files: [...kept, ...fresh.map((x) => x.file)],
+			documents,
 			notified: row?.data.notified,
 		};
 		const now = new Date().toISOString();

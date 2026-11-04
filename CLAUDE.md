@@ -83,7 +83,7 @@ Package manager is **bun**.
 - A test that scrolls a block in and then advances `page.clock` uses `scrollIn` (`e2e/inView.ts`): the page's `IntersectionObserver` callbacks come with the browser's rendering, not with the fake clock, so the clock must wait for them.
 - CI (`.github/workflows/web.yml`): `check`, `lint`, `build`, and fails on any `next`/`react`/`react-dom` import in `src`.
 - `bun scripts/extract-city.ts <design.html> <slug>|--germany` turns a saved city design into `cities/<slug>.ts`, `<slug>-map.ts` and its photos (strict; keeps the hand-written `seo`/`links`). The designs aren't in the repo; save one with the Artifact tool's `read` action.
-- Other scripts: `scripts/compare-endpoints.ts` (webhook payload parity with Next for the Fragebogen, newsletter and chat endpoints).
+- Other scripts: `scripts/compare-endpoints.ts` (webhook payload parity with Next for the Fragebogen, newsletter and chat endpoints); `scripts/backfill-offer-pdfs.ts` (makes the offer PDFs of stored Zählercheck results without any, through `storeDocuments`; a dry run unless `--apply`; `DATABASE_URL`, `SUPABASE_URL` and `SUPABASE_SECRET_KEY` must come from the shell, since the app's modules run through Vite, which would read `.env`).
 
 ## Layout
 

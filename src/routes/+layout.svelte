@@ -6,8 +6,18 @@
 	import { PrismicPreview } from "@prismicio/svelte/kit";
 	import { repositoryName } from "$lib/prismicio";
 	import Seo from "$lib/seo/Seo.svelte";
+	import { afterNavigate } from "$app/navigation";
+	import { env } from "$env/dynamic/public";
+	import { isNewPage, trackPageView } from "$lib/analytics/gtag";
 
 	let { children } = $props();
+
+	// Google Analytics: one page_view per page, after it has rendered (so
+	// document.title is the new page's); the first also loads gtag.js.
+	afterNavigate(({ from, to }) => {
+		if (to && isNewPage(from?.url, to.url))
+			trackPageView(env.PUBLIC_GA_MEASUREMENT_ID, to.url);
+	});
 
 	// Registered as "Exo 2" (not fontsource's "Exo 2 Variable") because the
 	// global CSS refers to that family name, as next/font registered it.

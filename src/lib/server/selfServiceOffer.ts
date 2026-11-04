@@ -94,7 +94,7 @@ function filePath(id: string, name: string) {
 }
 
 /** Makes and stores the offer's documents; an empty list if that fails. */
-async function storeDocuments(
+export async function storeDocuments(
 	id: string,
 	s: State,
 	offer: Offer,

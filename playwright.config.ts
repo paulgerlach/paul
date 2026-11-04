@@ -35,6 +35,8 @@ export default defineConfig({
 			env: {
 				KITCHEN_SINK: "1",
 				MAKE_WEBHOOK_UNIFIED: WEBHOOK_SINK,
+				// No Google Analytics: several specs check that nothing leaves the page.
+				PUBLIC_GA_MEASUREMENT_ID: "",
 			},
 		},
 	],

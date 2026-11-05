@@ -283,6 +283,8 @@ export async function handleSelfServiceOffer(
 			price_per_year: sheetAnswer(asked, "Pro Jahr (netto)"),
 			price_list: priceList(positions(calc(s))),
 			result_url: `${origin}${ROUTE_SELF_SERVICE_RESULT}/${token}`,
+			// The stored sheet (`data.sheet`): every question as asked with its answer.
+			answers: JSON.stringify(asked),
 			page,
 		});
 	} catch (error) {

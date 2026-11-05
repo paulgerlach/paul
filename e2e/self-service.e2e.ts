@@ -175,6 +175,18 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		].join("\n"),
 	});
 	expect(created.offer_number).toMatch(/^\d{4}-AN\d{6}$/);
+	// The questions and answers as stored, as a JSON string.
+	expect(typeof created.answers).toBe("string");
+	const answers = JSON.parse(created.answers) as {
+		title: string;
+		items: { q: string; a: string }[];
+	}[];
+	expect(answers.flatMap((s) => s.items)).toContainEqual(
+		expect.objectContaining({
+			q: "Wer soll die Geräte montieren?",
+			a: "Selbst oder eigener Hausinstallateur (bevorzugt)",
+		}),
+	);
 	// One stored offer, one link: /self-service-result/<22 characters>.
 	expect(created.result_url).toMatch(
 		/^http:\/\/localhost:4173\/self-service-result\/[A-Za-z0-9]{22}$/,

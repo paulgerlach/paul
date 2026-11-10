@@ -19,6 +19,12 @@ export type ChoiceField =
 
 export type CounterField = "messdienstleister_count" | "wohnungen_count";
 
+/**
+ * Where the wizard runs: `/fragebogen`, or `/demo`, where it comes before the
+ * booking page. Sent along so the lead and the Make.com event say which.
+ */
+export type QuestionnaireSource = "fragebogen" | "demo";
+
 /** How long a picked card stays visible before the next step shows. */
 const ADVANCE_DELAY = 300;
 
@@ -28,6 +34,7 @@ const ADVANCE_DELAY = 300;
  * context, so every visit starts fresh and SSR requests never share state.
  */
 export class Questionnaire {
+	readonly source: QuestionnaireSource;
 	data = $state<QuestionnaireInput>(structuredClone(questionnaireDefaults));
 	step = $state(0);
 	/** "Bestätigen" was pressed on step 0 or 1 without a selection. */
@@ -51,6 +58,10 @@ export class Questionnaire {
 		const result = questionnaireSchema.safeParse(this.data);
 		return result.success ? {} : firstErrors(result.error);
 	});
+
+	constructor(source: QuestionnaireSource = "fragebogen") {
+		this.source = source;
+	}
 
 	next() {
 		if (this.step < this.totalSteps - 1) this.step++;
@@ -101,7 +112,7 @@ export class Questionnaire {
 			const response = await fetch("/api/fragebogen", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(parsed.data),
+				body: JSON.stringify({ ...parsed.data, source: this.source }),
 			});
 			this.status = response.ok ? "done" : "error";
 		} catch {
@@ -122,5 +133,6 @@ function firstErrors(error: z.ZodError): QuestionnaireErrors {
 
 const KEY = Symbol("questionnaire");
 
-export const setQuestionnaire = () => setContext(KEY, new Questionnaire());
+export const setQuestionnaire = (source?: QuestionnaireSource) =>
+	setContext(KEY, new Questionnaire(source));
 export const getQuestionnaire = () => getContext<Questionnaire>(KEY);

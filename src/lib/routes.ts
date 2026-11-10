@@ -52,7 +52,10 @@ export const ROUTE_VERBAENDE = "/partner/verbaende";
 export const ROUTE_NACHFOLGE = "/partner/nachfolge";
 export const ROUTE_PARTNERSCHAFTEN = "/partner";
 export const ROUTE_KONTAKT = "/kontakt";
+/** "Demo buchen": the Fragebogen first, then the booking page. */
 export const ROUTE_DEMO_BUCHEN = "/demo";
+/** The booking page, opened after the questionnaire on /demo is sent. */
+export const ROUTE_DEMO_TERMIN = "/demo/termin";
 export const ROUTE_SELF_SERVICE = "/self-service";
 /** A Zählercheck's result for sales: `/self-service-result/<token>`. */
 export const ROUTE_SELF_SERVICE_RESULT = "/self-service-result";

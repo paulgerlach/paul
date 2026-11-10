@@ -13,7 +13,7 @@ import type { FaqItem } from "$lib/landing/faqJsonLd";
  * The Google Calendar booking page (the design's `GCAL`): "Freie Termine
  * ansehen" and every day of the card open it in a new tab.
  */
-export const CALENDAR_URL = "https://calendar.app.google/SoRA89i76t4W28tNA";
+export const CALENDAR_URL = "https://calendar.app.google/kJH9DTn2Ddqt2i327";
 
 export const hero = {
 	pill: "Demo buchen",

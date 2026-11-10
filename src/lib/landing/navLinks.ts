@@ -19,6 +19,7 @@ import {
 	ROUTE_KONTAKT,
 	ROUTE_KUNDENREFERENZEN,
 	ROUTE_HYDRAULISCHER_ABGLEICH,
+	ROUTE_BLEIMESSUNG,
 	ROUTE_LEGIONELLENPRUEFUNG,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_MESSDIENSTWECHSEL,
@@ -115,10 +116,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Pflicht nach § 60c GModG, mit Heizlastberechnung",
 						href: ROUTE_HYDRAULISCHER_ABGLEICH,
 					},
-					// CUfAbZdQaBvnSBFxgLLWGU
 					{
 						title: "Bleimessung",
 						text: "Blei im Trinkwasser messen lassen",
+						href: ROUTE_BLEIMESSUNG,
 					},
 					{
 						title: "Preise",

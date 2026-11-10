@@ -4,12 +4,12 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
 	seo: {
-		// Drafts for the content owner (go-live gate §2).
+		// Drafts for the content owner (go-live gate §3).
 		title: "Hydraulischer Abgleich nach § 60c GModG | Heidi",
 		description:
 			"Hydraulischer Abgleich nach § 60c GModG: Pflicht-Check, Anforderungen auf einen Blick und Ablauf. Heidi organisiert den Abgleich für Ihre Liegenschaften, mit raumweiser Heizlastberechnung und schriftlicher Bestätigung.",
 		ogTitle: "Jeder Heizkörper bekommt, was er braucht.",
-		// Until its go-live gate is done (§2).
+		// Until its go-live gate is done (§3).
 		noindex: !LAUNCHED,
 		keepCanonical: true,
 	},

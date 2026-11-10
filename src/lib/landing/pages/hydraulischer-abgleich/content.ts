@@ -3,7 +3,7 @@
  * (https://claude.ai/artifact/W6ADiuaHVAPgheeznXGZFi): the page, the
  * example heat map, the check's questions and results, the law, the steps
  * and the FAQ. The product, its price and the GModG statements need sign-off
- * before the cutover (go-live gate §2).
+ * before the cutover (go-live gate §3).
  */
 import type {
 	BundleItem,
@@ -18,6 +18,7 @@ import type {
 	StepsContent,
 } from "$lib/landing/sections/svc/types";
 import {
+	ROUTE_BLEIMESSUNG,
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_GERAETE,
 	ROUTE_HEIZKOSTENABRECHNUNG,
@@ -293,8 +294,8 @@ export const heidi = {
 		// TLDxdkxj1GgdgrHWaAzWvF
 		{ text: "Legionellenprüfung", href: ROUTE_LEGIONELLENPRUEFUNG },
 		{ text: "Hydraulischer Abgleich", current: true },
-		// No page yet: CUfAbZdQaBvnSBFxgLLWGU (Bleimessung)
-		{ text: "Bleimessung" },
+		// CUfAbZdQaBvnSBFxgLLWGU
+		{ text: "Bleimessung", href: ROUTE_BLEIMESSUNG },
 	] satisfies BundleItem[],
 } satisfies HeidiContent;
 

@@ -3,7 +3,7 @@
  * (https://claude.ai/artifact/TLDxdkxj1GgdgrHWaAzWvF): the page, the
  * example lab result, the check's questions and results, the duties, the
  * steps and the FAQ. The product, its price and the TrinkwV statements need
- * sign-off before the cutover (go-live gate §3).
+ * sign-off before the cutover (go-live gate §4).
  */
 import type { FaqItem } from "$lib/landing/faqJsonLd";
 import type {
@@ -15,6 +15,7 @@ import type {
 } from "$lib/landing/sections/svc/types";
 import type { SplitHeading } from "$lib/landing/types";
 import {
+	ROUTE_BLEIMESSUNG,
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_GERAETE,
 	ROUTE_HEIZKOSTENABRECHNUNG,
@@ -362,8 +363,8 @@ export const heidi = {
 		{ text: "Legionellenprüfung", current: true },
 		// W6ADiuaHVAPgheeznXGZFi
 		{ text: "Hydraulischer Abgleich", href: ROUTE_HYDRAULISCHER_ABGLEICH },
-		// No page yet: CUfAbZdQaBvnSBFxgLLWGU (Bleimessung)
-		{ text: "Bleimessung" },
+		// CUfAbZdQaBvnSBFxgLLWGU
+		{ text: "Bleimessung", href: ROUTE_BLEIMESSUNG },
 	] satisfies BundleItem[],
 } satisfies HeidiContent;
 

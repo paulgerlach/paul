@@ -87,7 +87,10 @@ test("the CTAs lead to the check, the steps, /kontakt and /self-service", async 
 		main.getByRole("link", { name: /^Im Self-Service anfragen/ }),
 	).toHaveAttribute("href", "/self-service");
 	const list = main.getByRole("list", { name: "Leistungen von Heidi" });
-	await expect(list.getByRole("link")).toHaveCount(3);
+	await expect(list.getByRole("link")).toHaveCount(4);
+	await expect(
+		list.getByRole("link", { name: "Hydraulischer Abgleich" }),
+	).toHaveAttribute("href", "/hydraulischer-abgleich");
 	await expect(list.locator('[aria-current="page"]')).toContainText(
 		"Legionellenprüfung",
 	);

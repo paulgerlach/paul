@@ -2,6 +2,7 @@
  * The Prüfpflicht-Check's logic (the design's `next()` in #lg-js), pure: the
  * step after an answer and the progress bar.
  */
+import type { CheckStep } from "$lib/landing/sections/svc/types";
 import type { ResultKey } from "./content";
 
 export type Step =
@@ -24,6 +25,6 @@ export function answer(index: number, value: string): Step {
 }
 
 /** The bar's width in percent: the questions done, full at a result. */
-export function progress(step: Step, total: number): number {
+export function progress(step: CheckStep, total: number): number {
 	return step.kind === "result" ? 100 : (step.index / total) * 100;
 }

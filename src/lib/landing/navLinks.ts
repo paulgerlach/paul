@@ -18,6 +18,7 @@ import {
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
 	ROUTE_KUNDENREFERENZEN,
+	ROUTE_HYDRAULISCHER_ABGLEICH,
 	ROUTE_LEGIONELLENPRUEFUNG,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_MESSDIENSTWECHSEL,
@@ -109,10 +110,10 @@ export const landingNav: LandingNavGroup[] = [
 						text: "Trinkwasser prüfen nach Trinkwasserverordnung",
 						href: ROUTE_LEGIONELLENPRUEFUNG,
 					},
-					// W6ADiuaHVAPgheeznXGZFi
 					{
 						title: "Hydraulischer Abgleich",
 						text: "Pflicht nach § 60c GModG, mit Heizlastberechnung",
+						href: ROUTE_HYDRAULISCHER_ABGLEICH,
 					},
 					// CUfAbZdQaBvnSBFxgLLWGU
 					{

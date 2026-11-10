@@ -43,6 +43,7 @@ export const ROUTE_ENERGIEAUSWEIS = "/energieausweis";
 export const ROUTE_PORTFOLIO_CHECKER = "/portfolio-check";
 export const ROUTE_HEIZKOSTENABRECHNUNG = "/heizkostenabrechnung";
 export const ROUTE_LEGIONELLENPRUEFUNG = "/legionellenpruefung";
+export const ROUTE_HYDRAULISCHER_ABGLEICH = "/hydraulischer-abgleich";
 export const ROUTE_HEIZKOSTENABRECHNUNG_PRUEFEN =
 	"/heizkostenabrechnung-pruefen";
 export const ROUTE_MESSDIENSTANBIETER_VERGLEICH = "/messdienst-vergleich";

@@ -3,14 +3,22 @@
  * (https://claude.ai/artifact/TLDxdkxj1GgdgrHWaAzWvF): the page, the
  * example lab result, the check's questions and results, the duties, the
  * steps and the FAQ. The product, its price and the TrinkwV statements need
- * sign-off before the cutover (go-live gate §2).
+ * sign-off before the cutover (go-live gate §3).
  */
 import type { FaqItem } from "$lib/landing/faqJsonLd";
+import type {
+	BundleItem,
+	CheckResult,
+	HeidiContent,
+	HeroContent,
+	UrgencyCard,
+} from "$lib/landing/sections/svc/types";
 import type { SplitHeading } from "$lib/landing/types";
 import {
 	ROUTE_ENERGIEAUSWEIS,
 	ROUTE_GERAETE,
 	ROUTE_HEIZKOSTENABRECHNUNG,
+	ROUTE_HYDRAULISCHER_ABGLEICH,
 	ROUTE_KONTAKT,
 	ROUTE_SELF_SERVICE,
 } from "$lib/routes";
@@ -28,7 +36,7 @@ export const hero = {
 	check: { text: "Bin ich prüfpflichtig?", href: `#${CHECK_ID}` },
 	steps: { text: "So läuft die Prüfung ab", href: `#${STEPS_ID}` },
 	ticks: ["Nach § 31 TrinkwV", "Zugelassene Untersuchungsstelle"],
-};
+} satisfies HeroContent;
 
 /** The two example results of the hero card. */
 export type SampleSet = "ok" | "tmw";
@@ -107,7 +115,7 @@ export const urgency = {
 			value: "100 KBE",
 			sub: "pro 100 ml, ab dann Anzeige beim Gesundheitsamt",
 		},
-	] as { label: string; value: string; sub: string; hot?: boolean }[],
+	] as UrgencyCard[],
 };
 
 export type QuestionKey =
@@ -121,12 +129,10 @@ export type Question = {
 
 export type ResultKey =
 	"must" | "maybe" | "small" | "dez" | "efh" | "self" | "nodu";
-export type Result = {
+export type Result = CheckResult & {
 	key: ResultKey;
 	/** The badge: "Pflicht" or "Keine Pflicht". */
 	kind: "must" | "free";
-	title: string;
-	text: string;
 };
 
 export const check = {
@@ -337,8 +343,6 @@ export const lab = {
 	alt: "Wasserproben in Röhrchen in einem Laborständer, gehalten von einer Hand im blauen Laborhandschuh",
 };
 
-export type BundleItem = { text: string; href?: string; current?: boolean };
-
 export const heidi = {
 	pill: "Mit Heidi",
 	h2: "Alles rund um Ihre Liegenschaft. Aus einer Hand.",
@@ -356,12 +360,12 @@ export const heidi = {
 		// Xk6APwMsadTT7axHzbuPA4
 		{ text: "Energieausweis", href: ROUTE_ENERGIEAUSWEIS },
 		{ text: "Legionellenprüfung", current: true },
-		// No page yet: W6ADiuaHVAPgheeznXGZFi (Hydraulischer Abgleich)
-		{ text: "Hydraulischer Abgleich" },
+		// W6ADiuaHVAPgheeznXGZFi
+		{ text: "Hydraulischer Abgleich", href: ROUTE_HYDRAULISCHER_ABGLEICH },
 		// No page yet: CUfAbZdQaBvnSBFxgLLWGU (Bleimessung)
 		{ text: "Bleimessung" },
 	] satisfies BundleItem[],
-};
+} satisfies HeidiContent;
 
 export const faq = {
 	title: "Häufige Fragen zur Legionellenprüfung",

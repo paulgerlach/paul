@@ -4,7 +4,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 const PATH = "/demo/termin";
 const DEMO = "/demo";
-const CALENDAR = "https://calendar.app.google/SoRA89i76t4W28tNA";
+const CALENDAR = "https://calendar.app.google/kJH9DTn2Ddqt2i327";
 
 async function hrefs(links: Locator) {
 	return (await links.evaluateAll((els) =>

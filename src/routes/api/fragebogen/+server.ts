@@ -7,7 +7,8 @@ import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const parsed = questionnaireSchema.safeParse(await request.json());
+		const body = await request.json();
+		const parsed = questionnaireSchema.safeParse(body);
 		if (!parsed.success) {
 			console.log(
 				"[QUESTIONNAIRE] Validation failed:",
@@ -19,12 +20,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 		const data = parsed.data;
+		// /demo's questionnaire (before the booking page); anything else is
+		// the Fragebogen, whose payload stays as Next sent it.
+		const fromDemo = body?.source === "demo";
 
 		// KI-37: Next sent the inquiry to Make.com only, so a failed send lost
 		// it. The email is stored first; a database problem alone doesn't fail
 		// the request, since the inquiry still reaches Make.com.
 		try {
-			await saveLeadDB(data.email, "fragebogen");
+			await saveLeadDB(data.email, fromDemo ? "demo" : "fragebogen");
 		} catch (error) {
 			console.error("[QUESTIONNAIRE] Saving lead failed:", error);
 		}
@@ -55,6 +59,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			central_water_supply: data.central_water_supply,
 			central_heating_system: data.central_heating_system,
 			energy_sources: data.energy_sources,
+			// Only from /demo; left out of the Fragebogen's request
+			source: fromDemo ? "demo" : undefined,
 		});
 		console.log(`[QUESTIONNAIRE] Sent offer inquiry event for ${data.email}`);
 

@@ -21,8 +21,8 @@ const page = (
 /**
  * Every page of the site, for the sitemap: each route under
  * src/routes/(base) once (sitePages.test.ts checks), except the city pages
- * (`LIVE_CITIES`), the blog posts (from Prismic) and /fragebogen (disallowed
- * in robots.txt).
+ * (`LIVE_CITIES`), the blog posts (from Prismic), /fragebogen (disallowed
+ * in robots.txt) and /demo/termin (noindex, behind /demo's questionnaire).
  */
 export const SITE_PAGES: SitePage[] = [
 	page(r.ROUTE_HOME, 1, false, "weekly"),

@@ -7,7 +7,12 @@ import { PHONE, PHONE_HREF } from "../src/lib/company.ts";
 
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
-const KEPT_PAGES = ["/blog", "/blog/weg-hausverwaltung-excel", "/fragebogen"];
+const KEPT_PAGES = [
+	"/blog",
+	"/blog/weg-hausverwaltung-excel",
+	"/fragebogen",
+	"/demo",
+];
 
 /** Console errors, warnings (hydration) and page errors from now on. */
 function collectProblems(page: Page) {
@@ -116,9 +121,9 @@ test.describe("kept pages", () => {
 	});
 });
 
-/** Answers the Fragebogen with the shortest path and sends it. */
-async function sendFragebogen(page: Page, email: string) {
-	await page.goto("/fragebogen", { waitUntil: "networkidle" });
+/** Answers the Fragebogen (or /demo's copy of it) with the shortest path and sends it. */
+async function sendFragebogen(page: Page, email: string, path = "/fragebogen") {
+	await page.goto(path, { waitUntil: "networkidle" });
 
 	// A picked card moves on after 300 ms, so wait for each next step.
 	await page.locator("label", { hasText: "Hausverwaltung" }).click();
@@ -151,7 +156,10 @@ test("the Fragebogen sends an inquiry", async ({ page }) => {
 	const events: { email: string; event?: string }[] = await (
 		await page.request.get(WEBHOOK_EVENTS)
 	).json();
-	expect(events.find((e) => e.email === email)).toBeTruthy();
+	const event = events.find((e) => e.email === email);
+	expect(event).toBeTruthy();
+	// Only /demo's copy of the wizard adds a source; this request is Next's.
+	expect(event).not.toHaveProperty("source");
 	expect(problems).toEqual([]);
 });
 
@@ -167,4 +175,34 @@ test("the Fragebogen shows an error when Make.com fails (KI-37)", async ({
 		page.getByRole("alert").getByRole("link", { name: PHONE }),
 	).toHaveAttribute("href", PHONE_HREF);
 	await expect(page.getByRole("button", { name: "Bestätigen" })).toBeEnabled();
+});
+
+test("/demo asks the Fragebogen's questions, then opens the booking page", async ({
+	page,
+}) => {
+	const problems = collectProblems(page);
+	const email = `demo-${Date.now()}@example.com`;
+	await sendFragebogen(page, email, "/demo");
+
+	await expect(page).toHaveURL(/\/demo\/termin$/);
+	await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+		"Sehen Sie Heidi mit Ihrem eigenen Bestand.",
+	);
+	const events: { email: string; event_type?: string; source?: string }[] =
+		await (await page.request.get(WEBHOOK_EVENTS)).json();
+	const event = events.find((e) => e.email === email);
+	expect(event?.event_type).toBe("newinquiry");
+	expect(event?.source).toBe("demo");
+	expect(problems).toEqual([]);
+});
+
+test("/demo stays on the questionnaire when Make.com fails", async ({
+	page,
+}) => {
+	await sendFragebogen(page, `demo-${Date.now()}@sink-fails.example`, "/demo");
+
+	await expect(page.getByRole("alert")).toContainText(
+		"Das hat leider nicht geklappt.",
+	);
+	await expect(page).toHaveURL(/\/demo$/);
 });

@@ -1,6 +1,5 @@
 import { DEFAULT_CHROME } from "$lib/landing/chrome";
 import { START_HREF } from "$lib/landing/cta";
-import { LAUNCHED } from "$lib/landing/launch";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = () => ({
@@ -10,9 +9,8 @@ export const load: PageServerLoad = () => ({
 		description:
 			"Kostenlose Demo per Video-Call oder Telefon: Live-Dashboard, Portfolio-Check Ihrer Messdienstverträge und alle Fragen zum Wechsel. Wunschtermin direkt im Kalender wählen.",
 		ogTitle: "Sehen Sie Heidi mit Ihrem eigenen Bestand.",
-		// Until its go-live gate is done (§2).
-		noindex: !LAUNCHED,
-		keepCanonical: true,
+		// Only reached through the questionnaire on /demo, never indexed.
+		noindex: true,
 	},
 	// The nav's "Demo buchen" leads to the booking card on the page itself.
 	landing: { ...DEFAULT_CHROME, demoHref: START_HREF },

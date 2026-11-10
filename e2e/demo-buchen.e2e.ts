@@ -1,9 +1,9 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { GATED_ROBOTS, expectGated } from "./launch.ts";
+// The booking page, opened after /demo's questionnaire (site.e2e.ts). No form
+// on it: the booking happens in Google Calendar, in a new tab.
 
-// No form on this page: the booking happens in Google Calendar, in a new tab.
-
-const PATH = "/demo";
+const PATH = "/demo/termin";
+const DEMO = "/demo";
 const CALENDAR = "https://calendar.app.google/SoRA89i76t4W28tNA";
 
 async function hrefs(links: Locator) {
@@ -29,20 +29,16 @@ test("renders with its own layout and SEO tags", async ({ page }) => {
 	await expect(page.locator("h1")).toHaveText(
 		"Sehen Sie Heidi mit Ihrem eigenen Bestand.",
 	);
-	// noindex until LAUNCHED (its go-live gate), with a self-canonical
+	// Only reached through the questionnaire: never indexed
 	await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
 		"content",
-		GATED_ROBOTS,
-	);
-	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-		"href",
-		/\/demo$/,
+		"noindex",
 	);
 });
 
-test("is in the sitemap once launched", async ({ request }) => {
+test("is not in the sitemap", async ({ request }) => {
 	const sitemap = await (await request.get("/sitemap.xml")).text();
-	expectGated(sitemap).toContain("/demo</loc>");
+	expect(sitemap).not.toContain("/demo/termin");
 });
 
 for (const width of [375, 320]) {
@@ -133,13 +129,13 @@ test("the quotes, the FAQ and the logos are the design's", async ({ page }) => {
 	await expect(page.locator("section.logos img")).toHaveCount(12);
 });
 
-test("other pages' Demo buchen lead here", async ({ page }) => {
+test("other pages' Demo buchen lead to the questionnaire", async ({ page }) => {
 	for (const path of ["/messdienst-wechseln", "/kontakt", "/blog"]) {
 		await page.goto(path);
 		await expect(
 			page.locator("nav.top").getByRole("link", { name: "Demo buchen" }),
 			path,
-		).toHaveAttribute("href", PATH);
+		).toHaveAttribute("href", DEMO);
 	}
 });
 

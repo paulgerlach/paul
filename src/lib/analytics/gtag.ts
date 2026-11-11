@@ -5,6 +5,15 @@
 // own history tracking would record the previous page's title. In GA, the
 // stream's "Page changes based on browser history events" (Enhanced
 // measurement › Page views › advanced) must be off, or page changes count twice.
+// Consent Mode v2: everything is denied before `config`; a choice stored in
+// this browser is applied right after, and the banner updates it
+// (`consent.svelte.ts`).
+import {
+	CONSENT_DEFAULTS,
+	CONSENT_KEY,
+	consentUpdate,
+	parseConsent,
+} from "./consent";
 
 declare global {
 	interface Window {
@@ -29,6 +38,14 @@ export function isNewPage(from: URL | null | undefined, to: URL): boolean {
 	return !from || from.pathname !== to.pathname || from.search !== to.search;
 }
 
+function storedConsent() {
+	try {
+		return parseConsent(localStorage.getItem(CONSENT_KEY), Date.now());
+	} catch {
+		return null;
+	}
+}
+
 function loadGtag(id: string): void {
 	window.dataLayer = window.dataLayer || [];
 	window.gtag = function gtag() {
@@ -36,12 +53,22 @@ function loadGtag(id: string): void {
 		// eslint-disable-next-line prefer-rest-params
 		window.dataLayer.push(arguments);
 	};
+	window.gtag?.("consent", "default", CONSENT_DEFAULTS);
+	const stored = storedConsent();
+	if (stored) window.gtag?.("consent", "update", consentUpdate(stored));
 	window.gtag?.("js", new Date());
 	window.gtag?.("config", id, { send_page_view: false });
 	const script = document.createElement("script");
 	script.async = true;
 	script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
 	document.head.append(script);
+}
+
+/** Sets up gtag (consent defaults, config, the script) for a tracked page,
+ *  before the page's components run, so their first events aren't lost. */
+export function initGtag(id: string | undefined, pathname: string): void {
+	if (!id || !ID.test(id) || !isTracked(pathname) || window.gtag) return;
+	loadGtag(id);
 }
 
 /** Loads gtag.js on the first tracked page and sends a page_view for `url`. */

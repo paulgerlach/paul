@@ -3,8 +3,18 @@
 	import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 	import geistLatinExt from "@fontsource-variable/geist/files/geist-latin-ext-wght-normal.woff2?url";
 	import ChatBot from "$lib/components/Common/ChatBot/ChatBot.svelte";
+	import { page } from "$app/state";
+	import { env } from "$env/dynamic/public";
+	import { isTracked } from "$lib/analytics/gtag";
+	import ConsentBanner from "$lib/landing/components/ConsentBanner.svelte";
 
 	let { children } = $props();
+
+	// The cookie banner wherever GA runs (not in dev or e2e, without an id,
+	// nor on Prismic previews).
+	const askConsent = $derived(
+		Boolean(env.PUBLIC_GA_MEASUREMENT_ID) && isTracked(page.url.pathname),
+	);
 
 	// Geist is the landing header's, footer's and pages' font, so it's
 	// registered here and not in the root layout. Same pattern as Exo 2 there.
@@ -28,3 +38,6 @@
 
 {@render children()}
 <ChatBot isExistingClient={false} />
+{#if askConsent}
+	<ConsentBanner />
+{/if}

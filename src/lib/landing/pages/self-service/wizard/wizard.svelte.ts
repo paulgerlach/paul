@@ -19,6 +19,7 @@ import {
 	selfServiceStateSchema,
 	type OfferResponse,
 } from "$lib/forms/selfServiceOffer";
+import { track, type SelfServicePath } from "$lib/analytics/events";
 import { GROUP_DEVS, ORDER, type GroupDev } from "./data";
 import {
 	fresh,
@@ -27,6 +28,7 @@ import {
 	nextGroupId,
 	num,
 	steps,
+	tech,
 	validate,
 	type State,
 	type StepId,
@@ -66,6 +68,10 @@ const KEY = "heidi_ss_v1";
 const ENDPOINT = "/api/self-service";
 const START_ENDPOINT = "/api/self-service-start";
 
+/** The GA path: with a list or invoice ("upload"), or by questions. */
+const pathOf = (s: State): SelfServicePath | "unknown" =>
+	!s.liste ? "unknown" : tech(s) ? "questions" : "upload";
+
 export class SelfService {
 	s = $state<State>(fresh());
 	files = $state<Record<string, Upload[]>>({});
@@ -100,6 +106,12 @@ export class SelfService {
 	#dirty = false;
 	/** The first "Weiter" of this visit was reported. */
 	#started = false;
+	/** GA heard `self_service_start` (once per visit and restart). */
+	#pathTracked = false;
+	/** GA heard `generate_lead` for the current offer. */
+	#leadTracked = false;
+	/** GA heard a `self_service_step` this visit. */
+	#stepTracked = false;
 
 	/** In the browser, on mount: the start time and a saved check. */
 	restore() {
@@ -210,6 +222,7 @@ export class SelfService {
 			}
 		}
 		if (this.id === "ang") this.#makeOffer();
+		this.trackStep();
 		this.onMove?.(scroll);
 	}
 
@@ -229,6 +242,13 @@ export class SelfService {
 			}
 		}
 		if (!this.#started) this.#reportStart();
+		if (this.id === "liste" && !this.#pathTracked) {
+			const path = pathOf(this.s);
+			if (path !== "unknown") {
+				this.#pathTracked = true;
+				track("self_service_start", { path });
+			}
+		}
 		this.s.cur = Math.min(this.s.cur + 1, this.list.length - 1);
 		this.#move();
 	}
@@ -246,6 +266,22 @@ export class SelfService {
 			body: JSON.stringify({ step: this.id, bill: this.s.abr }),
 			keepalive: true,
 		}).catch(() => {});
+	}
+
+	/** GA: the first step, once the check first comes into view (unless a
+	 *  move already reported a step). */
+	trackFirstView() {
+		if (!this.#stepTracked) this.trackStep();
+	}
+
+	/** GA: the step shown (on every move, and the first when it comes into view). */
+	trackStep() {
+		this.#stepTracked = true;
+		track("self_service_step", {
+			step_number: Math.min(this.s.cur, this.list.length - 1) + 1,
+			step_name: this.id,
+			path: pathOf(this.s),
+		});
 	}
 
 	back() {
@@ -271,6 +307,8 @@ export class SelfService {
 		for (const id of Object.keys(this.files)) this.#dropFiles(id);
 		this.s = fresh();
 		this.#ref = undefined;
+		this.#pathTracked = false;
+		this.#leadTracked = false;
 		this.#clearSaved();
 		this.saved = null;
 		this.sendFailed = false;
@@ -282,6 +320,11 @@ export class SelfService {
 		this.s.ang ??= makeOffer(Date.now(), Math.random());
 		if (this.s.ang.noted) return;
 		this.s.ang.noted = true;
+		const path = pathOf(this.s);
+		track("self_service_complete", {
+			path: path === "unknown" ? "questions" : path,
+			units: num(this.s.units),
+		});
 		void this.#send("created").catch(() => {
 			// Heidi hears of it with the request instead.
 		});
@@ -341,6 +384,11 @@ export class SelfService {
 				sent.map((x) => x.u),
 			);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		// The offer reached Heidi (`created`, or `requested` if that failed).
+		if (!this.#leadTracked) {
+			this.#leadTracked = true;
+			track("generate_lead", { form_name: "self_service" });
+		}
 	}
 
 	/** PUTs the files; one that fails is sent again with the next send. */

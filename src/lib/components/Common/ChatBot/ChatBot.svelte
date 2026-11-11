@@ -1,7 +1,8 @@
 <!--
   Chat launcher. Only the button is in the initial bundle; the panel, the AI SDK
   and the markdown renderer are imported on first open (KI-24). The chat state
-  lives here, so closing the panel keeps the conversation.
+  lives here, so closing the panel keeps the conversation. Hidden below 768 px
+  (phones): the launcher is never shown there, so nothing of the chat loads.
 -->
 <script lang="ts">
 	import { onDestroy } from "svelte";
@@ -28,7 +29,7 @@
 	onDestroy(() => widget?.chat.destroy());
 </script>
 
-<div class="fixed right-8 bottom-8 z-[999]">
+<div class="fixed right-8 bottom-8 z-[999] hidden medium:block">
 	{#if showChatBot && widget}
 		<widget.ChatPanel
 			chat={widget.chat}

@@ -1,5 +1,6 @@
 import { getContext, setContext } from "svelte";
 import { z } from "zod";
+import { track } from "$lib/analytics/events";
 import {
 	questionnaireDefaults,
 	questionnaireSchema,
@@ -24,6 +25,21 @@ export type CounterField = "messdienstleister_count" | "wohnungen_count";
  * booking page. Sent along so the lead and the Make.com event say which.
  */
 export type QuestionnaireSource = "fragebogen" | "demo";
+
+/** Stable step ids for GA (`demo_step`), after the two shared steps. */
+const OVER50_STEPS = [
+	"messdienstleister_count",
+	"zusammenarbeit_status",
+	"akuter_handlungsbedarf",
+	"verwaltung",
+	"kontakt",
+];
+const UNDER50_STEPS = [
+	"wohnungen_count",
+	"funkzaehler_status",
+	"standort_schwerpunkt",
+	"kontakt",
+];
 
 /** How long a picked card stays visible before the next step shows. */
 const ADVANCE_DELAY = 300;
@@ -52,6 +68,14 @@ export class Questionnaire {
 	lastStep = $derived(this.isUnder50 ? 5 : 6);
 	totalSteps = $derived(this.lastStep + 1);
 	isSubmitStep = $derived(this.step === this.lastStep);
+	/** The step's stable id (for GA). */
+	stepName = $derived.by(() => {
+		if (this.step === 0) return "customer_type";
+		if (this.step === 1) return "property_count";
+		if (this.isOver50) return OVER50_STEPS[this.step - 2];
+		if (this.isUnder50) return UNDER50_STEPS[this.step - 2];
+		return "none";
+	});
 
 	errors: QuestionnaireErrors = $derived.by(() => {
 		if (!this.#submitAttempted) return {};
@@ -115,6 +139,10 @@ export class Questionnaire {
 				body: JSON.stringify({ ...parsed.data, source: this.source }),
 			});
 			this.status = response.ok ? "done" : "error";
+			if (response.ok)
+				track("generate_lead", {
+					form_name: this.source === "demo" ? "demo" : "angebot",
+				});
 		} catch {
 			this.status = "error";
 		}

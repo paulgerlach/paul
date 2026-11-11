@@ -12,6 +12,7 @@
 <script lang="ts">
 	import Markup from "../wizard/ui/Markup.svelte";
 	import { onMount, tick, untrack } from "svelte";
+	import { inView } from "$lib/landing/attachments/inView";
 	import { prefersReducedMotion } from "$lib/landing/motion";
 	import {
 		deviceStep,
@@ -125,7 +126,15 @@
 
 <section class="pg-sec alt ss-check" id="check" aria-labelledby="ss-t">
 	<div class="wrap">
-		<div class="ss-wiz" bind:this={wiz}>
+		<div
+			class="ss-wiz"
+			bind:this={wiz}
+			{@attach inView({
+				threshold: 0.3,
+				once: true,
+				onEnter: () => w.trackFirstView(),
+			})}
+		>
 			{#if w.saved}
 				<div class="ss-resume">
 					<span>Sie haben bereits einen Zählercheck begonnen.</span>

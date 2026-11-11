@@ -8,6 +8,7 @@
 -->
 <script lang="ts">
 	import { onMount, tick, untrack } from "svelte";
+	import { track } from "$lib/analytics/events";
 	import { superForm, type SuperValidated } from "sveltekit-superforms";
 	import { zod4Client } from "sveltekit-superforms/adapters";
 	import avatar from "$lib/assets/landing/region/avatar-2.webp?enhanced";
@@ -40,6 +41,7 @@
 			// heading takes the focus once it's rendered, to be announced.
 			async onUpdated({ form: result }) {
 				if (result.message?.type !== "success") return;
+				track("generate_lead", { form_name: "kontakt" });
 				await tick();
 				doneHeading?.focus();
 			},

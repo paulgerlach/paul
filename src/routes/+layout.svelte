@@ -8,9 +8,13 @@
 	import Seo from "$lib/seo/Seo.svelte";
 	import { afterNavigate } from "$app/navigation";
 	import { env } from "$env/dynamic/public";
-	import { isNewPage, trackPageView } from "$lib/analytics/gtag";
+	import { initGtag, isNewPage, trackPageView } from "$lib/analytics/gtag";
+	import { browser } from "$app/environment";
 
 	let { children } = $props();
+
+	// gtag exists before any page component runs (their events would be lost).
+	if (browser) initGtag(env.PUBLIC_GA_MEASUREMENT_ID, page.url.pathname);
 
 	// Google Analytics: one page_view per page, after it has rendered (so
 	// document.title is the new page's); the first also loads gtag.js.

@@ -12,6 +12,39 @@ describe("Questionnaire", () => {
 		expect([q.isOver50, q.lastStep, q.totalSteps]).toEqual([true, 6, 7]);
 	});
 
+	it("names every step for GA", () => {
+		const q = new Questionnaire("demo");
+		expect(q.stepName).toBe("customer_type");
+		q.next();
+		expect(q.stepName).toBe("property_count");
+		q.data.property_count_category = "1-50 Immobilien";
+		const under: string[] = [];
+		while (!q.isSubmitStep) {
+			q.next();
+			under.push(q.stepName);
+		}
+		expect(under).toEqual([
+			"wohnungen_count",
+			"funkzaehler_status",
+			"standort_schwerpunkt",
+			"kontakt",
+		]);
+		q.step = 1;
+		q.data.property_count_category = "51-800 Immobilien";
+		const over: string[] = [];
+		while (!q.isSubmitStep) {
+			q.next();
+			over.push(q.stepName);
+		}
+		expect(over).toEqual([
+			"messdienstleister_count",
+			"zusammenarbeit_status",
+			"akuter_handlungsbedarf",
+			"verwaltung",
+			"kontakt",
+		]);
+	});
+
 	it("keeps the step within bounds", () => {
 		const q = new Questionnaire();
 		q.data.property_count_category = "1-50 Immobilien";

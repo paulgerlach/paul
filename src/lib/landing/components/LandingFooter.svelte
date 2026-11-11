@@ -4,6 +4,8 @@
   and newsletter, disclaimer with socials, and the legal line.
 -->
 <script lang="ts">
+	import { env } from "$env/dynamic/public";
+	import { consent } from "$lib/analytics/consent.svelte";
 	import { ADDRESS, LEGAL_LINKS, SOCIALS } from "$lib/company";
 	import { DEMO_HREF, focusSignup, START_HREF } from "$lib/landing/cta";
 	import {
@@ -193,6 +195,12 @@
 				{#each LEGAL_LINKS as item (item.text)}
 					<a href={item.href}>{item.text}</a>
 				{/each}
+				<!-- Reopens the cookie banner; only where GA runs (needs JS). -->
+				{#if env.PUBLIC_GA_MEASUREMENT_ID}
+					<button type="button" class="cookie" onclick={() => consent.reopen()}
+						>Cookie-Einstellungen</button
+					>
+				{/if}
 			</span>
 		</div>
 	</div>
@@ -429,8 +437,27 @@
 		color: #8fa29c;
 		font-size: 14px;
 	}
-	.legal-links a:hover {
+	.legal-links a:hover,
+	.legal-links .cookie:hover {
 		color: #fff;
+	}
+	/* `.legal-links .cookie`: beats the landing button reset's colour. */
+	.legal-links .cookie {
+		border: 0;
+		padding: 0;
+		background: none;
+		color: #8fa29c;
+		font-size: 14px;
+		cursor: pointer;
+	}
+	@media (scripting: none) {
+		.legal-links .cookie {
+			display: none;
+		}
+	}
+	.legal-links .cookie::before {
+		content: "·";
+		margin-inline: 6px;
 	}
 	.legal-links a + a::before {
 		content: "·";

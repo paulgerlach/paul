@@ -7,6 +7,7 @@
 	import { tick, untrack, type Snippet } from "svelte";
 	import { chevron } from "$lib/assets/icons";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
+	import { track } from "$lib/analytics/events";
 	import { PHONE, PHONE_HREF } from "$lib/company";
 	import StepInfo from "$lib/components/Fragebogen/StepInfo.svelte";
 	import StepWrapper from "$lib/components/Fragebogen/StepWrapper.svelte";
@@ -28,6 +29,15 @@
 
 	// The source is fixed per page; a new page visit gets a new instance.
 	const q = setQuestionnaire(untrack(() => source));
+
+	// GA: every step shown on /demo (also going back), as `demo_step`.
+	$effect(() => {
+		const step = q.step;
+		untrack(() => {
+			if (q.source !== "demo") return;
+			track("demo_step", { step_number: step + 1, step_name: q.stepName });
+		});
+	});
 
 	/** Focus order for invalid fields, as react-hook-form did on submit. */
 	const FOCUS_ORDER: QuestionnaireField[] = [

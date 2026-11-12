@@ -52,8 +52,8 @@
 	{:else}
 		<div class="ss-res-ok">
 			<span class="okb"><Markup html={CHECK} /></span><span
-				><b>Ihr Angebot ist fertig.</b> Angebotsnummer {offer.nr}, gültig bis
-				einschließlich {dates.valid}.</span
+				>Um den Vorgang abzuschließen, lassen Sie sich das Angebot bitte an Ihre
+				angegebene E-Mail-Adresse zusenden. Die Angebotsnummer lautet {offer.nr}.</span
 			>
 		</div>
 		<div class="ss-send1 top">

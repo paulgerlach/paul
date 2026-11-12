@@ -18,6 +18,9 @@ import {
 	ROUTE_INSTALLATIONSTOOL,
 	ROUTE_KONTAKT,
 	ROUTE_KUNDENREFERENZEN,
+	ROUTE_HYDRAULISCHER_ABGLEICH,
+	ROUTE_BLEIMESSUNG,
+	ROUTE_LEGIONELLENPRUEFUNG,
 	ROUTE_MESSDIENSTANBIETER_VERGLEICH,
 	ROUTE_MESSDIENSTWECHSEL,
 	ROUTE_MIETERPORTAL,
@@ -102,6 +105,21 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Heizkostenabrechnung",
 						text: "Auf Knopfdruck, Rechnungen per DocuScan",
 						href: ROUTE_HEIZKOSTENABRECHNUNG,
+					},
+					{
+						title: "Legionellenprüfung",
+						text: "Trinkwasser prüfen nach Trinkwasserverordnung",
+						href: ROUTE_LEGIONELLENPRUEFUNG,
+					},
+					{
+						title: "Hydraulischer Abgleich",
+						text: "Pflicht nach § 60c GModG, mit Heizlastberechnung",
+						href: ROUTE_HYDRAULISCHER_ABGLEICH,
+					},
+					{
+						title: "Bleimessung",
+						text: "Blei im Trinkwasser messen lassen",
+						href: ROUTE_BLEIMESSUNG,
 					},
 					{
 						title: "Preise",

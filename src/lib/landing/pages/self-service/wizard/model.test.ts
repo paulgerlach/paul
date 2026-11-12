@@ -5,6 +5,7 @@ import {
 	calc,
 	fresh,
 	gateways,
+	hintsFor,
 	liveRows,
 	makeOffer,
 	newGroup,
@@ -14,6 +15,7 @@ import {
 	offerParts,
 	positions,
 	priceList,
+	progress,
 	steps,
 	validate,
 	type State,
@@ -64,14 +66,28 @@ describe("steps", () => {
 		expect(steps(s)).toEqual([
 			"abr",
 			"liste",
+			"anz",
 			"heiz",
 			"einheiten",
+			"mont",
 			"zusatz",
 			"kontakt",
 			"res",
 			"adr",
 			"ang",
 		]);
+	});
+
+	it("shows four sections in the progress bar", () => {
+		const s = building();
+		s.cur = steps(s).indexOf("dev:kwz");
+		const p = progress(s);
+		expect(p.cur).toBe(1);
+		expect(p.sections.map((x) => x.state)).toEqual(["done", "cur", "", ""]);
+		// Geräte: geraete, heiz, einheiten done of five.
+		expect(p.sections[1].f).toBe(3 / 5);
+		s.cur = steps(s).indexOf("ang");
+		expect(progress(s).sections.every((x) => x.f === 1)).toBe(true);
 	});
 
 	it("has no step for “not sure”", () => {
@@ -97,7 +113,7 @@ describe("validate", () => {
 		s.groups.kwz[0].bl = "";
 		expect(validate("dev:kwz", s, none)).toEqual({
 			message:
-				"Bitte ergänzen Sie: Einbaulänge, Dauerdurchfluss Q3/Qn, Anschlussgewinde.",
+				"Bitte ergänzen Sie: Einbaulänge, Dauerdurchfluss Q3/Qn, Anschlussgewinde. Alternativ genügt ein Foto des Zählers.",
 			group: "g1",
 		});
 		Object.assign(s.groups.kwz[0], {
@@ -108,7 +124,7 @@ describe("validate", () => {
 		});
 		// "Unbekannt" counts as missing for these three.
 		expect(validate("dev:kwz", s, none)?.message).toBe(
-			"Bitte ergänzen Sie: Dauerdurchfluss Q3/Qn.",
+			"Bitte ergänzen Sie: Dauerdurchfluss Q3/Qn. Alternativ genügt ein Foto des Zählers.",
 		);
 	});
 
@@ -116,7 +132,7 @@ describe("validate", () => {
 		const s = building();
 		s.groups.kwz[0] = { ...newGroup("g1"), n: "6", einbau: "up", inst: "ja" };
 		expect(validate("dev:kwz", s, none)?.message).toBe(
-			"Bitte ergänzen Sie: MID-Norm der Messkapsel (oder „Andere / unklar“).",
+			"Bitte ergänzen Sie: MID-Norm der Messkapsel (oder „Andere / unklar“). Alternativ genügt ein Foto des Zählers.",
 		);
 		s.groups.kwz[0].inst = "nein";
 		expect(validate("dev:kwz", s, none)).toBeNull();
@@ -143,10 +159,19 @@ describe("validate", () => {
 			firma: "",
 			mail: "eva@",
 			tel: "",
+			rr: false,
 			ok: true,
 		};
 		expect(validate("kontakt", s, none)?.message).toMatch(/E-Mail/);
+		s.k.mail = "test@hv-muster.de";
+		expect(validate("kontakt", s, none)?.message).toMatch(/echte E-Mail/);
 		s.k.mail = "eva@example.com";
+		expect(validate("kontakt", s, none)?.message).toMatch(/echte E-Mail/);
+		s.k.mail = "eva@hv-muster.de";
+		expect(validate("kontakt", s, none)?.message).toBe(
+			"Bitte geben Sie eine Telefonnummer an.",
+		);
+		s.k.tel = "030 123456";
 		expect(validate("kontakt", s, none)).toBeNull();
 		s.adr.l = {
 			str: "Hauptstraße 1",
@@ -156,8 +181,68 @@ describe("validate", () => {
 			hin: "",
 		};
 		expect(validate("adr", s, none)?.message).toMatch(/fünfstellige PLZ/);
-		s.adr.l.plz = "10115";
+		s.adr.l.plz = "11111";
+		expect(validate("adr", s, none)?.message).toMatch(/echte Adresse/);
+		s.adr.l = { ...s.adr.l, plz: "10115", str: "Teststraße 3" };
+		expect(validate("adr", s, none)?.message).toMatch(/echte Adresse/);
+		s.adr.l.str = "Musterstraße 3";
+		expect(validate("adr", s, none)?.message).toMatch(/echte Adresse/);
+		s.adr.l.str = "Hauptstraße 1";
 		expect(validate("adr", s, none)).toBeNull();
+	});
+
+	it("asks for the heating and the hot water first", () => {
+		const s = building();
+		expect(validate("heiz", s, none)?.message).toBe(
+			"Bitte wählen Sie die Heizungsart.",
+		);
+		s.heiz = ["gas"];
+		expect(validate("heiz", s, none)?.message).toMatch(/Warmwasser/);
+		s.ww = "zentral";
+		expect(validate("heiz", s, none)).toBeNull();
+		s.kauf = "offen";
+		expect(validate("heiz", s, none)?.message).toMatch(/mieten oder kaufen/);
+		s.kauf = "beides";
+		expect(validate("heiz", s, none)).toBeNull();
+	});
+
+	it("takes a photo instead of the sizes, and asks for one when unknown", () => {
+		const s = building();
+		Object.assign(s.groups.kwz[0], { inst: "ja", bl: "", q3: "", gew: "" });
+		expect(validate("dev:kwz", s, none)?.message).toBe(
+			"Bitte ergänzen Sie: Einbaulänge, Dauerdurchfluss Q3/Qn, Anschlussgewinde. Alternativ genügt ein Foto des Zählers.",
+		);
+		const photo = (id: string) => (id === "g1z" ? 1 : 0);
+		expect(validate("dev:kwz", s, photo)).toBeNull();
+		expect(calc(s, photo).checks).toContain(
+			"Kaltwasserzähler · Gruppe 1: Einbaulänge, Q3, Gewinde aus Foto bestimmen",
+		);
+		s.groups.kwz[0].einbau = "unbekannt";
+		expect(validate("dev:kwz", s, none)).toMatchObject({
+			group: "g1",
+			drop: true,
+			message: expect.stringMatching(/^Bei unbekannter Einbauart/),
+		});
+		expect(validate("dev:kwz", s, photo)).toBeNull();
+	});
+
+	it("asks for the installation year when meters are kept", () => {
+		const s = building();
+		Object.assign(s, { bestand: "funk", pref: "behalten" });
+		expect(validate("bestand", s, none)?.message).toMatch(/eingebaut/);
+		s.ejahr = "2019";
+		expect(validate("bestand", s, none)).toBeNull();
+		expect(calc(s).checks[0]).toMatch(
+			/^Weiterverwendung gewünscht, Einbaujahr 2019: /,
+		);
+	});
+
+	it("asks for at least one count with a device list", () => {
+		const s = building();
+		s.liste = "liste";
+		expect(validate("anz", s, none)?.message).toMatch(/mindestens einen/);
+		s.anz.rwm = "4";
+		expect(validate("anz", s, none)).toBeNull();
 	});
 });
 
@@ -196,14 +281,69 @@ describe("calc", () => {
 		);
 	});
 
-	it("leaves the rental out when buying", () => {
+	it("prices the purchase instead of the rental when buying", () => {
 		const s = building();
 		s.kauf = "kauf";
 		const c = calc(s);
 		expect(c.rent).toBe(0);
 		expect(c.gwc).toBe(0);
+		// 6 × 79 water meters, 20 × 29 allocators, a 399 gateway.
+		expect(c.bought).toBe(474 + 580 + 399);
+		expect(c.once).toBe(26 * 3 + c.bought);
 		const p = positions(c);
-		expect(p.rental.every((r) => r.kauf && r.ep === 0)).toBe(true);
+		expect(p.rental.map((r) => [r.t, r.n, r.ep, r.lz])).toEqual([
+			["Funk Kaltwasserzähler", 6, 79, ""],
+			["Funk Heizkostenverteiler", 20, 29, ""],
+			["Funk-Gateway", 1, 399, ""],
+		]);
+		expect(p.sK).toBe(c.bought);
+		expect(p.year).toBe(p.sS);
+	});
+
+	it("leaves a large heat meter's purchase price on request", () => {
+		const s = building();
+		s.kauf = "kauf";
+		s.devs = ["wmz"];
+		s.groups.wmz = [
+			{ ...newGroup("g3"), n: "1", wtyp: "ap", qp: "6,0" },
+			{ ...newGroup("g4"), n: "2", wtyp: "up" },
+		];
+		const c = calc(s);
+		expect(c.checks).toContain(
+			"Kauf gewünscht: Kaufpreis für große Wärmemengenzähler ergänzt Heidi im Angebot",
+		);
+		expect(positions(c).rental.map((r) => [r.t, r.ep, r.ask])).toEqual([
+			["Funk Wärmemengenzähler", 0, true],
+			["Funk Wärmemengenzähler (Messkapsel)", 219, undefined],
+			["Funk-Gateway", 399, undefined],
+		]);
+	});
+
+	it("charges 499 € for fewer than 20 meters installed by Heidi", () => {
+		const s = building();
+		s.mont.wer = "heidi";
+		s.groups.hkv[0].n = "10";
+		expect(calc(s).inst).toBe(499);
+		s.liste = "liste";
+		expect(calc(s).inst).toBe(0);
+		s.anz.kwz = "25";
+		expect(calc(s).inst).toBe(999);
+	});
+
+	it("adds the consultations once", () => {
+		const s = building();
+		s.ber = true;
+		s.rber = true;
+		expect(calc(s).once).toBe(26 * 3 + 39);
+		s.devs.push("rwm");
+		s.rwm.n = "4";
+		const c = calc(s);
+		expect(c.rber).toBe(39);
+		expect(positions(c).once.map((r) => r.t)).toEqual([
+			"Inbetriebnahme Funksystem / OMS",
+			"Beratungstermin mit Zähleridentifikation",
+			"Beratung zur Rauchwarnmelderpflicht",
+		]);
 	});
 });
 
@@ -248,21 +388,26 @@ describe("priceList", () => {
 		const s = building();
 		s.mont.wer = "heidi";
 		const p = positions(calc(s));
-		const lines = priceList(p).split("\n");
+		const lines = priceList(s).split("\n");
 		expect(lines).toHaveLength(p.svc.length + p.rental.length + p.once.length);
 		expect(lines).toContain("Installationspauschale: 999,00 €");
 		expect(lines).toContain("Inbetriebnahme Funksystem / OMS: 78,00 €");
 	});
 
-	it("says a bought device's price and an on-request meter's are on request", () => {
-		const p = positions(calc(building()));
-		const lines = priceList({
-			...p,
-			rental: [{ ...p.rental[0], kauf: true, ep: 0 }],
-			onRequest: [{ ...calc(building()).rows[0], sub: "Gaszähler" }],
-		}).split("\n");
-		expect(lines).toContain(`${p.rental[0].t}: auf Anfrage`);
-		expect(lines.at(-1)).toBe("Gaszähler: auf Anfrage");
+	it("says an on-request meter's price is on request", () => {
+		const s = building();
+		s.devs.push("weitere");
+		s.groups.weitere = [{ ...newGroup("g3"), n: "2", art: "gas" }];
+		expect(priceList(s).split("\n").at(-1)).toBe("Gaszähler: auf Anfrage");
+	});
+
+	it("adds the purchase variant for both", () => {
+		const s = building();
+		s.kauf = "beides";
+		expect(priceList(s)).toContain(
+			"Kaufvariante: Gerätekauf einmalig 1.453,00 €",
+		);
+		expect(priceList(s)).toContain("Kauf Funk-Gateway: 399,00 €");
 	});
 });
 
@@ -273,7 +418,7 @@ describe("offerParts", () => {
 		const s = building();
 		s.mont.wer = "heidi";
 		const p = positions(calc(s));
-		const [g, a] = offerParts(p, o);
+		const [g, a] = offerParts(s, o);
 		expect([g.nr, g.of, g.title]).toEqual([
 			"2026-AN100000-G",
 			"1 von 2",
@@ -295,10 +440,24 @@ describe("offerParts", () => {
 	it("keeps one document without billing", () => {
 		const s = building();
 		s.leist = "b";
-		const parts = offerParts(positions(calc(s)), o);
+		const parts = offerParts(s, o);
 		expect(parts.map((x) => [x.kind, x.nr, x.of])).toEqual([
 			["g", "2026-AN100000", "1 von 1"],
 		]);
+	});
+
+	it("adds the purchase variant after the rental for both", () => {
+		const s = building();
+		s.kauf = "beides";
+		const parts = offerParts(s, o);
+		expect(parts.map((x) => [x.id, x.nr, x.of, x.title])).toEqual([
+			["g", "2026-AN100000-M", "1 von 3", "Gerätemiete und Service"],
+			["k", "2026-AN100000-K", "2 von 3", "Gerätekauf und Service"],
+			["a", "2026-AN100000-A", "3 von 3", "Heizkostenabrechnung"],
+		]);
+		const k = parts[1].p;
+		expect(k).toMatchObject({ buy: true, sM: 0, sK: 1453 });
+		expect(k.first).toBe(k.year + k.sO + k.sK);
 	});
 });
 
@@ -318,6 +477,7 @@ describe("the offer", () => {
 			firma: "HV Muster",
 			mail: "eva@example.com",
 			tel: "",
+			rr: false,
 			ok: true,
 		};
 		s.adr.l = {
@@ -347,16 +507,37 @@ describe("liveRows", () => {
 	it("counts a device once its step is reached", () => {
 		const s = building();
 		s.cur = steps(s).indexOf("dev:kwz");
-		expect(liveRows(s, 0)).toEqual([
+		expect(liveRows(s, none)).toEqual([
 			["Kaltwasserzähler", "6"],
 			["Heizkostenverteiler", "–"],
 			["Einheiten", "6"],
 			["Funk-Gateways", "1"],
+			["Miete oder Kauf", "Miete"],
 		]);
-		s.cur = steps(s).indexOf("mont");
-		expect(liveRows(s, 0).map(([label]) => label)).not.toContain(
-			"Laufend pro Jahr",
-		);
+		s.cur = steps(s).indexOf("zusatz");
+		s.ber = true;
+		expect(liveRows(s, none).slice(2)).toEqual([
+			["Beratungstermin", "39 €"],
+			["Einheiten", "6"],
+			["Funk-Gateways", "1"],
+			["Miete oder Kauf", "Miete"],
+			["Montage", "Selbst"],
+		]);
+	});
+});
+
+describe("hintsFor", () => {
+	it("recommends a heat meter for the hot water once, before the contact", () => {
+		const s = building();
+		s.devs = ["wwz", "hkv"];
+		expect(hintsFor("zusatz", s)).toEqual([]);
+		const [h] = hintsFor("kontakt", s);
+		expect(h).toMatchObject({ key: "recwmz", add: "Hinzufügen" });
+		s.ack[h.key] = true;
+		expect(hintsFor("kontakt", s)).toEqual([]);
+		s.ack = {};
+		s.devs.push("wmz");
+		expect(hintsFor("kontakt", s)).toEqual([]);
 	});
 });
 

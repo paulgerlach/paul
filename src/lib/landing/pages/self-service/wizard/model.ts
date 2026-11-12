@@ -3,21 +3,33 @@
  * state, the step list, each step's check, the device list and the cost
  * estimate (`calc`) and the offer's positions. Shared by the wizard in the
  * browser and the endpoint, which validates the state and stores it with
- * its result sheet (`sheet.ts`).
+ * its result sheet (`sheet.ts`). Where photos change the answer (a photo
+ * instead of the technical details), `files` counts a drop zone's files.
  */
+import { catLabel, specialSizes } from "./catalog";
 import {
+	BUY_PRICES,
+	BUY_SHORT,
+	CENTRAL_HEATING,
+	COUNT_LABELS,
 	DEVICES,
 	EXTRAS,
+	FITTER_SHORT,
 	GROUP_DEVS,
 	OFFER_DEVICE,
 	OFFER_VALID_DAYS,
 	ORDER,
 	PRICES,
+	SMALL_INSTALL,
 	TERMS_BY_DEVICE,
 	type DevKey,
 	type GroupDev,
 	type SizeKey,
 } from "./data";
+
+/** A drop zone's file count, by its id (`abr`, `liste`, `g1`, `g1z` …). */
+export type Files = (id: string) => number;
+export const noFiles: Files = () => 0;
 
 /** One group of identical devices. Every field is the raw form value. */
 export type Group = {
@@ -50,6 +62,12 @@ export type Group = {
 	qpx: string;
 	q3: string;
 	q3x: string;
+	/** A heat meter's capsule system, the sensor's free value. */
+	wks: string;
+	wksx: string;
+	fgx: string;
+	/** The count was edited (the units note shows only then). */
+	nt?: boolean;
 };
 
 export type Address = {
@@ -82,12 +100,22 @@ export type Offer = {
 };
 
 export type State = {
+	/** "Beratungstermin mit Zähleridentifikation" in the cart (39 €). */
+	ber: boolean;
+	/** "Beratung zur Rauchwarnmelderpflicht" in the cart (39 €). */
+	rber: boolean;
+	/** The hints already seen on "Weiter" (`warnFor`), by key. */
+	ack: Record<string, boolean>;
 	abr: string;
 	abrNote: string;
 	liste: string;
 	listeNote: string;
 	bestand: string;
 	pref: string;
+	/** When the existing meters were installed (a year, `alt`, `unb`). */
+	ejahr: string;
+	/** With a device list or bill: the count per device type. */
+	anz: Record<DevKey, string>;
 	devs: string[];
 	heiz: string[];
 	ww: string;
@@ -119,21 +147,39 @@ export type State = {
 		firma: string;
 		mail: string;
 		tel: string;
+		/** "Rückruf gewünscht". */
+		rr: boolean;
 		ok: boolean;
 	};
 	adr: { l: Address; same: boolean; r: BillingAddress };
+	/** "Anmerkungen zu Ihrer Anfrage" on the result. */
+	kom: string;
 	ang: Offer | null;
 	cur: number;
 };
 
+const emptyCounts = (): Record<DevKey, string> => ({
+	kwz: "",
+	wwz: "",
+	wmz: "",
+	hkv: "",
+	rwm: "",
+	weitere: "",
+});
+
 export function fresh(): State {
 	return {
+		ber: false,
+		rber: false,
+		ack: {},
 		abr: "",
 		abrNote: "",
 		liste: "",
 		listeNote: "",
 		bestand: "",
 		pref: "",
+		ejahr: "",
+		anz: emptyCounts(),
 		devs: [],
 		heiz: [],
 		ww: "",
@@ -144,12 +190,13 @@ export function fresh(): State {
 		rwm: { n: "", mont: [], sz: "", kz: "", fl: "", art: "", bem: "" },
 		mont: { abs: "", eat: "", err: "", wer: "eigen", san: "", bem: "" },
 		zusatz: [],
-		k: { vn: "", nn: "", firma: "", mail: "", tel: "", ok: false },
+		k: { vn: "", nn: "", firma: "", mail: "", tel: "", rr: false, ok: false },
 		adr: {
 			l: { str: "", zus: "", plz: "", ort: "", hin: "" },
 			same: true,
 			r: { firma: "", name: "", str: "", zus: "", plz: "", ort: "", ust: "" },
 		},
+		kom: "",
 		ang: null,
 		cur: 0,
 	};
@@ -186,6 +233,9 @@ export function newGroup(id: string): Group {
 		qpx: "",
 		q3: "",
 		q3x: "",
+		wks: "",
+		wksx: "",
+		fgx: "",
 	};
 }
 
@@ -207,8 +257,8 @@ export const tech = (s: State) => !(s.liste && s.liste !== "nein");
 /** Every meter is replaced. */
 export const swapAll = (s: State) => s.pref === "neu";
 
-/** A standard size's value: the free one for "andere", none if unknown. */
-export function sizeValue(g: Group, k: SizeKey): string {
+/** A standard size's value: the free one for "andere", none if unknown (`nv2`). */
+export function sizeValue(g: Group, k: SizeKey | "fg" | "wks"): string {
 	if (g[k] === "andere") return String(g[`${k}x`] ?? "").trim();
 	if (g[k] === "unbekannt") return "";
 	return String(g[k] ?? "").trim();
@@ -220,6 +270,7 @@ export type StepId =
 	| "liste"
 	| "bestand"
 	| "geraete"
+	| "anz"
 	| "heiz"
 	| "einheiten"
 	| DevStep
@@ -233,13 +284,61 @@ export type StepId =
 export function steps(s: State): StepId[] {
 	const list: StepId[] = ["abr", "liste"];
 	if (tech(s)) list.push("bestand", "geraete");
+	else list.push("anz");
 	list.push("heiz", "einheiten");
 	if (tech(s))
 		for (const d of s.devs)
 			if (d !== "unsicher") list.push(`dev:${d as DevKey}`);
-	if (tech(s)) list.push("mont");
-	list.push("zusatz", "kontakt", "res", "adr", "ang");
+	list.push("mont", "zusatz", "kontakt", "res", "adr", "ang");
 	return list;
+}
+
+/** The progress bar's four sections and their steps (`SECS`); device steps are "Geräte". */
+const SECTIONS: [string, StepId[]][] = [
+	["Bestand", ["abr", "liste", "bestand"]],
+	["Geräte", ["geraete", "anz", "heiz", "einheiten"]],
+	["Montage", ["mont", "zusatz"]],
+	["Angebot", ["kontakt", "res", "adr", "ang"]],
+];
+
+function sectionOf(id: StepId) {
+	if (id.startsWith("dev:")) return 1;
+	const k = SECTIONS.findIndex(([, ids]) => ids.includes(id));
+	return k < 0 ? 3 : k;
+}
+
+export type Section = {
+	label: string;
+	/** Its share done, 0–1 (the current one at least 0.12). */
+	f: number;
+	state: "done" | "cur" | "";
+};
+
+/** The progress bar (`hdr`): the sections, and the current one (0–3). */
+export function progress(s: State): { sections: Section[]; cur: number } {
+	const list = steps(s);
+	const cur = Math.min(s.cur, list.length - 1);
+	const id = list[cur];
+	const done = id === "ang";
+	const cs = sectionOf(id);
+	const tot = [0, 0, 0, 0];
+	const dn = [0, 0, 0, 0];
+	list.forEach((x, i) => {
+		if (x === "ang") return;
+		const k = sectionOf(x);
+		tot[k]++;
+		if (i < cur) dn[k]++;
+	});
+	const sections = SECTIONS.map(([label], k): Section => {
+		let f = done ? 1 : tot[k] ? dn[k] / tot[k] : k < cs ? 1 : 0;
+		if (!done && k === cs) f = Math.max(f, 0.12);
+		return {
+			label,
+			f,
+			state: done || k < cs ? "done" : k === cs ? "cur" : "",
+		};
+	});
+	return { sections, cur: cs };
 }
 
 /** Steps that can be skipped ("Überspringen"). */
@@ -265,6 +364,125 @@ export function extraPrice(v: string) {
 	return z ? z.price + (z.per ? ` ${z.per}` : "") : "auf Anfrage";
 }
 
+/** Water and heat meters chosen: the shutoff questions apply (`needAbs`). */
+export const needsShutoff = (s: State) =>
+	["kwz", "wwz", "wmz"].some((d) => s.devs.includes(d));
+
+/** "Wie viele Zähler sind es?": the meters counted, smoke alarms not (`anzN`). */
+export const countedMeters = (s: State) =>
+	ORDER.filter((d) => d !== "rwm").reduce((n, d) => n + num(s.anz[d]), 0);
+
+/** The counts as text, "6 × Kaltwasserzähler, …" (`anzTxt`). */
+export const countsText = (s: State) =>
+	ORDER.filter((d) => num(s.anz[d]) > 0)
+		.map((d) => `${num(s.anz[d])} × ${COUNT_LABELS[d]}`)
+		.join(", ");
+
+/** The installation flat rate for the device rows: 499 € under 20 meters (`instFee`). */
+export function installFee(rows: Row[]) {
+	const n = rows
+		.filter((r) => r.d !== "rwm" && !r.take)
+		.reduce((a, r) => a + r.n, 0);
+	return n < SMALL_INSTALL ? PRICES.instS : PRICES.inst;
+}
+
+/** The flat rate as the fitter question names it, e.g. "999 €". */
+export function fitterFee(s: State) {
+	if (tech(s)) return `${installFee(calc(s).rows)} €`;
+	const n = countedMeters(s);
+	return n
+		? `${n < SMALL_INSTALL ? PRICES.instS : PRICES.inst} €`
+		: "499 € unter 20 Zählern, sonst 999 €";
+}
+
+/** A device's purchase price; `null` for heat meters from qp 3,5 (`kaufP`). */
+export function buyPrice(d: DevKey, g?: Group): number | null {
+	if (d === "wmz") {
+		if (g?.wtyp === "up") return BUY_PRICES.wmzk;
+		return num(sizeValue(g ?? newGroup(""), "qp")) >= 3.5
+			? null
+			: BUY_PRICES.wmz;
+	}
+	return d in BUY_PRICES ? BUY_PRICES[d as keyof typeof BUY_PRICES] : null;
+}
+
+/** The smoke alarm consultation counts (it's booked on that step only). */
+export const smokeAdviceOn = (s: State) =>
+	s.rber && tech(s) && s.devs.includes("rwm");
+
+/** The meters' installation year is asked: existing ones are kept (`ejShow`). */
+export const askYear = (s: State) =>
+	s.pref === "behalten" && Boolean(s.bestand) && s.bestand !== "nein";
+
+export const thisYear = () => new Date().getFullYear();
+
+/** The years to choose from: this year back 15, older, unknown (`ejList`). */
+export function yearOptions(y = thisYear()): [string, string][] {
+	const list: [string, string][] = [];
+	for (let x = y; x >= y - 15; x--) list.push([String(x), String(x)]);
+	list.push(["alt", `Vor ${y - 15}`], ["unb", "Weiß ich nicht"]);
+	return list;
+}
+
+/** Installed five years ago or earlier: a swap is recommended (`ejOld`). */
+export const yearOld = (s: State, y = thisYear()) =>
+	s.ejahr === "alt" || (num(s.ejahr) > 0 && num(s.ejahr) <= y - 5);
+
+/** Central heating and central hot water: a heat meter for the water (`zentralWW`). */
+export const centralHotWater = (s: State) =>
+	s.heiz.some((x) => CENTRAL_HEATING.includes(x)) &&
+	(s.ww === "zentral" || s.ww === "teils");
+
+/** Hot water meters chosen though the water is heated in the flats. */
+export const decentralHotWaterMeters = (s: State) =>
+	s.ww === "dezentral" && s.devs.includes("wwz");
+
+/** An electricity meter among the further meters (`hasStrom`). */
+export const hasPowerMeter = (s: State) =>
+	s.devs.includes("weitere") && s.groups.weitere.some((g) => g.art === "strom");
+
+/** A photo stands in for the technical details (`fotoOk`). */
+export const photoGiven = (g: Group, files: Files) =>
+	g.inst !== "nein" && files(g.id) + files(`${g.id}z`) > 0;
+
+/** The technical details left open (`techMiss`), Heidi reads them from the photo. */
+export function openDetails(d: DevKey, g: Group): string[] {
+	const m: string[] = [];
+	const v = (k: SizeKey | "fg" | "wks") => sizeValue(g, k);
+	if (d === "wmz") {
+		if (g.wtyp === "ap") {
+			if (!v("bl")) m.push("Einbaulänge");
+			if (!v("dn") && !v("gew")) m.push("Nennweite oder Gewinde");
+		}
+		if (g.wtyp === "up" && !v("wks")) m.push("Kapselsystem");
+		if (g.wtyp && !v("qp")) m.push("Nenndurchfluss qp");
+		if (g.wtyp && !g.fg) m.push("Fühlergröße");
+	} else {
+		if (g.einbau === "ap") {
+			if (!v("bl")) m.push("Einbaulänge");
+			if (!v("q3")) m.push("Q3");
+			if (!v("gew")) m.push("Gewinde");
+		}
+		if (g.einbau === "up" && g.inst !== "nein" && !g.ksys)
+			m.push("MID-Norm der Messkapsel");
+	}
+	return m;
+}
+
+/** The note under the offer's prices: check quantities and sizes (`feeTxt`). */
+export function feeText(s: State): string {
+	if (!tech(s)) return "";
+	const a = "Bitte prüfen Sie Mengen, Maße und Zählertypen sorgfältig. ";
+	if (s.mont.wer === "heidi")
+		return `${a}Stimmen Zählertyp oder Anzahl vor Ort nicht mit Ihren Angaben überein, ist ein kostenpflichtiger Nachtermin erforderlich.`;
+	if (s.mont.wer === "eigen")
+		return `${a}Werden bei Selbstmontage falsche Mengen oder Maße bestellt, fällt einmalig eine Bearbeitungsgebühr in Höhe des Jahreswerts der falsch bestellten Zähler an.`;
+	return `${a}Bei Selbstmontage fällt für falsch bestellte Mengen oder Maße einmalig eine Bearbeitungsgebühr in Höhe des Jahreswerts der betroffenen Zähler an. Bei Montage durch Heidi ist bei abweichendem Zählertyp oder abweichender Anzahl ein kostenpflichtiger Nachtermin erforderlich.`;
+}
+
+/** The same state, bought (`withKauf`): the purchase variant of "Beides". */
+export const asBought = (s: State): State => ({ ...s, kauf: "kauf" });
+
 /** Smoke alarms: the given total or the minimum from the rooms. */
 export function smokeAlarms(s: State) {
 	const r = s.rwm;
@@ -283,6 +501,8 @@ export type Row = {
 	n: number;
 	/** Price per device and year. */
 	p: number;
+	/** Purchase price per device; `null` on request. */
+	kp?: number | null;
 	/** "Weitere Zähler": price on request. */
 	req?: boolean;
 	sub: string;
@@ -308,14 +528,37 @@ const MOUNTING: Record<string, string> = {
 	schraege: "Dachschräge",
 	hoch: "hohe Decke",
 };
+const RADIATORS: Record<string, string> = {
+	platte: "Plattenheizkörper",
+	glieder: "Röhren-, Glieder- oder Rippenheizkörper",
+	roehre: "Röhren-, Glieder- oder Rippenheizkörper",
+	bad: "Badheizkörper",
+	konv: "Konvektor",
+};
 
 /** The device list, the costs and the check points (`calc`). */
-export function calc(s: State) {
+export function calc(s: State, files: Files = noFiles) {
 	const rows: Row[] = [];
 	const checks: string[] = [];
 	let dev = 0;
 	let rent = 0;
 	let keep = 0;
+	if (tech(s) && askYear(s) && s.ejahr) {
+		const y = thisYear();
+		const year =
+			({ alt: `vor ${y - 15}`, unb: "unbekannt" } as Record<string, string>)[
+				s.ejahr
+			] ?? s.ejahr;
+		checks.push(
+			`Weiterverwendung gewünscht, Einbaujahr ${year}${
+				s.ejahr === "unb"
+					? ""
+					: yearOld(s, y)
+						? ": Austausch empfohlen (Eichfrist)"
+						: ": AES-Schlüssel vom bisherigen Messdienst anfordern"
+			}`,
+		);
+	}
 	if (tech(s)) {
 		for (const d of s.devs) {
 			if (d === "unsicher") {
@@ -353,6 +596,7 @@ export function calc(s: State) {
 				rent += n * price;
 				const min = num(r.sz) + num(r.kz) + num(r.fl);
 				rows.push({
+					kp: BUY_PRICES.rwm,
 					d,
 					key: "rwm",
 					n,
@@ -430,6 +674,7 @@ export function calc(s: State) {
 						checks.push(`${lab}: neuen Einbauplatz vorbereiten`);
 				}
 				if (dv === "wmz") {
+					const v = (k: SizeKey | "fg" | "wks") => sizeValue(g, k);
 					sub.push(
 						(
 							{ ap: "Aufputz", up: "Unterputz/Kapsel" } as Record<
@@ -438,11 +683,14 @@ export function calc(s: State) {
 							>
 						)[g.wtyp] || "Bauart offen",
 					);
-					if (sizeValue(g, "qp")) sub.push(`qp ${sizeValue(g, "qp")} m³/h`);
-					if (g.wtyp === "ap" && sizeValue(g, "bl"))
-						sub.push(`${sizeValue(g, "bl")} mm`);
-					if (g.fg && g.fg !== "unbekannt")
-						sub.push(`Fühler ${g.fg.replace(".", ",")} mm`);
+					if (v("qp")) sub.push(`qp ${v("qp")} m³/h`);
+					if (g.wtyp === "ap" && v("bl")) sub.push(`${v("bl")} mm`);
+					if (g.wtyp === "up" && v("wks")) sub.push(catLabel("wks", v("wks")));
+					if (g.wtyp === "ap" && v("dn")) sub.push(`DN ${v("dn")}`);
+					if (v("fg"))
+						sub.push(
+							`Fühler ${v("fg").replace(".", ",")}${/mm/.test(v("fg")) ? "" : " mm"}`,
+						);
 					if (g.fg === "unbekannt") {
 						ck = true;
 						checks.push(`${lab}: Temperaturfühlergröße bestimmen`);
@@ -450,15 +698,27 @@ export function calc(s: State) {
 					if (!g.fuehler || g.fuehler === "unbekannt")
 						checks.push(`${lab}: Fühleraufnahme vor Ort prüfen`);
 				}
-				if (dv === "hkv")
-					sub.push(
-						(
-							{
-								platte: "Plattenheizkörper",
-								glieder: "Röhren-, Glieder- oder Rippenheizkörper",
-							} as Record<string, string>
-						)[g.art] || "Bauart offen",
-					);
+				if (dv !== "hkv") {
+					const special = specialSizes(dv, g);
+					if (special.length) {
+						ck = true;
+						checks.push(`${lab}: Sondermaß prüfen (${special.join(", ")})`);
+					}
+					if (photoGiven(g, files)) {
+						const open = openDetails(dv, g);
+						if (open.length) {
+							ck = true;
+							checks.push(`${lab}: ${open.join(", ")} aus Foto bestimmen`);
+						}
+					}
+				}
+				if (dv === "hkv") {
+					if (g.art === "konv")
+						checks.push(
+							`${lab}: Konvektor, Messung mit Heizkostenverteiler prüfen`,
+						);
+					sub.push(RADIATORS[g.art] || "Bauart offen");
+				}
 				if (exFunk)
 					checks.push(
 						`${lab}: Funkprotokoll und Zugangsschlüssel für Übernahme prüfen`,
@@ -468,6 +728,7 @@ export function calc(s: State) {
 						`${lab}: kein Absperrventil, Ventil vor dem Tausch setzen`,
 					);
 				rows.push({
+					kp: buyPrice(dv, g),
 					d: dv,
 					key: g.id,
 					n,
@@ -490,8 +751,21 @@ export function calc(s: State) {
 	const gw = gateways(s);
 	const withAbr = s.leist === "a" || s.leist === "c";
 	const m = s.mont;
+	const counted = countedMeters(s);
+	if (!tech(s)) {
+		if (!m.wer || m.wer === "offen")
+			checks.push("Montage klären: selbst oder durch Heidi");
+		if (m.wer === "heidi" && !counted)
+			checks.push(
+				"Installationspauschale anhand der Geräteliste festlegen (499 € unter 20 Zählern, sonst 999 €)",
+			);
+		if (counted)
+			checks.push(
+				"Mögliche Zählerkombinationen aus den hochgeladenen Unterlagen ableiten",
+			);
+	}
 	if (tech(s)) {
-		if (m.abs === "nein" || m.abs === "unbekannt")
+		if (needsShutoff(s) && (m.abs === "nein" || m.abs === "unbekannt"))
 			checks.push("Absperrbarkeit der Leitungen prüfen");
 		if (m.eat === "nein" || m.eat === "pruefen" || m.eat === "teils")
 			checks.push("Einbausätze und Rohrpassstücke klären");
@@ -515,20 +789,38 @@ export function calc(s: State) {
 	let gwc = gw * PRICES.gw;
 	const ibn = dev * PRICES.ibn;
 	const self = m.wer === "eigen";
-	const inst = tech(s) && m.wer === "heidi" && dev ? PRICES.inst : 0;
+	const inst =
+		m.wer !== "heidi"
+			? 0
+			: tech(s)
+				? dev
+					? installFee(rows)
+					: 0
+				: counted
+					? counted < SMALL_INSTALL
+						? PRICES.instS
+						: PRICES.inst
+					: 0;
 	const buy = s.kauf === "kauf";
+	let bought = 0;
 	if (buy) {
 		rent = 0;
 		gwc = 0;
-		checks.push(
-			"Kauf gewünscht: Kaufpreise für Geräte und Gateway ergänzt Heidi im Angebot",
-		);
+		for (const r of rows)
+			if (!r.req && !r.take && r.kp != null) bought += r.n * r.kp;
+		bought += gw * BUY_PRICES.gw;
+		if (rows.some((r) => !r.req && !r.take && r.kp == null))
+			checks.push(
+				"Kauf gewünscht: Kaufpreis für große Wärmemengenzähler ergänzt Heidi im Angebot",
+			);
 	}
 	if (s.kauf === "offen") checks.push("Kauf oder Miete in der Beratung klären");
 	const chosen = EXTRAS.filter((z) => s.zusatz.includes(z.v));
 	for (const z of chosen) checks.push(`${z.title}: Angebot erstellen`);
 	// Each with its starting price, as the offer and the notification name them.
 	const extras = chosen.map((z) => `${z.title} (${extraPrice(z.v)})`);
+	const ber = s.ber ? PRICES.ber : 0;
+	const rber = smokeAdviceOn(s) ? PRICES.ber : 0;
 	return {
 		buy,
 		extras,
@@ -546,8 +838,12 @@ export function calc(s: State) {
 		self,
 		units,
 		checks,
+		/** The purchase, gateways included (once). */
+		bought,
+		ber,
+		rber,
 		yearly: rent + wart + abr + gwc,
-		once: inst + ibn,
+		once: inst + ibn + ber + rber + bought,
 	};
 }
 
@@ -571,23 +867,51 @@ export function unknownCount(s: State) {
 	return n;
 }
 
-export type Problem = { message: string; group?: string };
+/**
+ * A check's message; `group` the group to scroll to, `drop` its drop zone
+ * to mark (a photo is missing).
+ */
+export type Problem = { message: string; group?: string; drop?: boolean };
 
 const MAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const PLZ = /^\d{5}$/;
+const TEST_MAIL =
+	/^(test\d*|tester|testing|asdf\w*|qwer\w*|abc|abcd|xxx+|aaa+|foo|bar|dummy|demo|beispiel|example|noreply|no-reply)@/i;
+const TEST_DOMAIN =
+	/@([^@]+\.)?(test|example|beispiel|invalid|localhost|mailinator|trashmail|yopmail|guerrillamail|sharklasers|10minutemail|temp-?mail|tempmail|wegwerfmail|throwawaymail|maildrop|dispostable|fakeinbox|getnada|emailondeck|spam4)\.[a-z.]+$|@[^@]+\.(test|example|invalid|localhost|local)$|@(test|example|beispiel)\.(de|com|org|net)$/i;
+const TEST_WORD =
+	/^(test[\wäöüß.\- ]*|asdf[\wäöüß]*|qwer[\wäöüß]*|xxx+|abc|aaa+|dummy|beispiel[\wäöüß.\- ]*|muster ?(stra(ß|ss)e|str\.?|weg|stadt|ort|hausen|dorf)?|x|-|\.)$/i;
+
+/** A test or throwaway address (`testMail`). */
+export function testMail(m: string) {
+	const x = m.trim();
+	return TEST_MAIL.test(x) || TEST_DOMAIN.test(x);
+}
+
+function testText(v: string) {
+	const x = v
+		.trim()
+		.replace(/\s*\d+\s*[a-z]?$/i, "")
+		.trim();
+	return TEST_WORD.test(x) || /^(.)\1{2,}$/.test(x);
+}
+
+const testPlz = (z: string) =>
+	/^(\d)\1{4}$/.test(z.trim()) || /^00/.test(z.trim());
+
+/** A test address: "Teststraße 1", "Musterstadt", "11111" … (`testAdr`). */
+export const testAddress = (x: { str: string; plz: string; ort: string }) =>
+	testText(x.str) || testText(x.ort) || testPlz(x.plz);
 
 /**
  * A step's check before "Weiter" (`check`): the message, and the group to
  * scroll to. `files(id)` counts a drop zone's files.
  */
-export function validate(
-	id: StepId,
-	s: State,
-	files: (id: string) => number,
-): Problem | null {
-	const fail = (message: string, group?: string): Problem => ({
+export function validate(id: StepId, s: State, files: Files): Problem | null {
+	const fail = (message: string, group?: string, drop?: boolean): Problem => ({
 		message,
 		group,
+		drop,
 	});
 	switch (id) {
 		case "abr":
@@ -605,15 +929,27 @@ export function validate(
 				);
 			return null;
 		case "bestand":
-			return s.bestand ? null : fail("Bitte wählen Sie eine Antwort.");
+			if (!s.bestand) return fail("Bitte wählen Sie eine Antwort.");
+			if (askYear(s) && !s.ejahr)
+				return fail(
+					"Bitte geben Sie an, wann die vorhandenen Zähler eingebaut wurden.",
+				);
+			return null;
+		case "anz":
+			return countedMeters(s) || num(s.anz.rwm)
+				? null
+				: fail("Bitte geben Sie die Anzahl für mindestens einen Gerätetyp an.");
 		case "geraete":
 			return s.devs.length
 				? null
 				: fail("Bitte wählen Sie mindestens einen Gerätetyp.");
 		case "heiz":
+			if (!s.heiz.length) return fail("Bitte wählen Sie die Heizungsart.");
+			if (!s.ww)
+				return fail("Bitte wählen Sie, wie das Warmwasser bereitet wird.");
 			if (!s.leist)
 				return fail("Bitte wählen Sie den gewünschten Leistungsumfang.");
-			if (!s.kauf)
+			if (!["miete", "kauf", "beides"].includes(s.kauf))
 				return fail(
 					"Bitte wählen Sie, ob Sie die Geräte mieten oder kaufen möchten.",
 				);
@@ -628,6 +964,12 @@ export function validate(
 				return fail("Bitte geben Sie Vor- und Nachnamen an.");
 			if (!MAIL.test(k.mail.trim()))
 				return fail("Bitte geben Sie eine gültige E-Mail-Adresse an.");
+			if (testMail(k.mail))
+				return fail(
+					"Bitte geben Sie Ihre echte E-Mail-Adresse an. Test- und Wegwerfadressen können wir nicht verwenden.",
+				);
+			if (k.tel.replace(/\D/g, "").length < 6)
+				return fail("Bitte geben Sie eine Telefonnummer an.");
 			if (!k.ok) return fail("Bitte bestätigen Sie den Hinweis.");
 			return null;
 		}
@@ -638,6 +980,14 @@ export function validate(
 			if (!ok(a.l))
 				return fail(
 					"Bitte geben Sie die Liegenschaftsadresse vollständig an (Straße, fünfstellige PLZ und Ort).",
+				);
+			if (testAddress(a.l))
+				return fail(
+					"Bitte geben Sie die echte Adresse der Liegenschaft an. Testadressen können wir nicht verwenden.",
+				);
+			if (!a.same && testAddress(a.r))
+				return fail(
+					"Bitte geben Sie eine echte Rechnungsadresse an. Testadressen können wir nicht verwenden.",
 				);
 			if (!a.same && (!ok(a.r) || !(a.r.firma.trim() || a.r.name.trim())))
 				return fail(
@@ -652,17 +1002,21 @@ export function validate(
 	if (groups.some((g) => num(g.n) < 1))
 		return fail("Bitte geben Sie für jede Gruppe eine Stückzahl an.");
 	const pre = (i: number) => (groups.length > 1 ? `Gruppe ${i + 1}: ` : "");
+	if (d === "hkv")
+		for (const [i, g] of groups.entries())
+			if (!g.art)
+				return fail(`${pre(i)}Bitte wählen Sie die Heizkörperbauart.`, g.id);
 	for (const [i, g] of groups.entries()) {
-		if (d === "hkv" && !g.art)
-			return fail(`${pre(i)}Bitte wählen Sie die Heizkörperbauart.`, g.id);
 		const miss: string[] = [];
+		const photo = photoGiven(g, files);
+		const v = (k: SizeKey | "fg" | "wks") => sizeValue(g, k);
 		if (d === "kwz" || d === "wwz") {
-			if (g.einbau === "ap") {
-				if (!sizeValue(g, "bl")) miss.push("Einbaulänge");
-				if (!sizeValue(g, "q3")) miss.push("Dauerdurchfluss Q3/Qn");
-				if (!sizeValue(g, "gew")) miss.push("Anschlussgewinde");
+			if (g.einbau === "ap" && !photo) {
+				if (!v("bl")) miss.push("Einbaulänge");
+				if (!v("q3")) miss.push("Dauerdurchfluss Q3/Qn");
+				if (!v("gew")) miss.push("Anschlussgewinde");
 			}
-			if (g.einbau === "up" && g.inst !== "nein" && !g.ksys)
+			if (g.einbau === "up" && g.inst !== "nein" && !g.ksys && !photo)
 				miss.push("MID-Norm der Messkapsel (oder „Andere / unklar“)");
 			if (!g.absv && !capsuleMeter(d, g)) miss.push("Absperrventil vorhanden?");
 		}
@@ -671,27 +1025,50 @@ export function validate(
 				return fail(
 					`${pre(i)}Bitte wählen Sie, ob es ein Aufputz- oder ein Unterputz-/Kapsel-Wärmezähler ist.`,
 				);
-			if (g.wtyp === "ap") {
-				if (!sizeValue(g, "bl")) miss.push("Einbaulänge");
-				if (!sizeValue(g, "qp")) miss.push("Nenndurchfluss qp");
-				if (!sizeValue(g, "dn") && !sizeValue(g, "gew"))
-					miss.push("Nennweite DN oder Anschlussgewinde");
-				if (!g.fg) miss.push("Temperaturfühlergröße");
-			} else {
-				if (!sizeValue(g, "qp")) miss.push("Nenndurchfluss qp");
-				if (!g.fg) miss.push("Temperaturfühlergröße");
+			if (!photo) {
+				if (g.wtyp === "ap") {
+					if (!v("qp")) miss.push("Nenndurchfluss qp");
+					if (!v("dn")) miss.push("Nennweite DN");
+					if (!v("bl")) miss.push("Einbaulänge");
+					if (!g.fg) miss.push("Temperaturfühlergröße");
+				} else {
+					if (!v("wks")) miss.push("Kapselsystem");
+					if (!v("qp")) miss.push("Nenndurchfluss qp");
+					if (!g.fg) miss.push("Temperaturfühlergröße");
+				}
 			}
 			if (!g.absv && !capsuleMeter(d, g)) miss.push("Absperrventil vorhanden?");
 		}
 		if (miss.length)
-			return fail(`${pre(i)}Bitte ergänzen Sie: ${miss.join(", ")}.`, g.id);
+			return fail(
+				`${pre(i)}Bitte ergänzen Sie: ${miss.join(", ")}.${
+					g.inst !== "nein" && openDetails(d, g).length
+						? " Alternativ genügt ein Foto des Zählers."
+						: ""
+				}`,
+				g.id,
+			);
+		if (
+			(d === "kwz" || d === "wwz") &&
+			(g.einbau === "unbekannt" ||
+				(g.einbau === "up" && g.inst !== "nein" && g.ksys === "andere")) &&
+			!(files(g.id) + files(`${g.id}z`))
+		)
+			return fail(
+				pre(i) +
+					(g.einbau === "unbekannt"
+						? "Bei unbekannter Einbauart benötigen wir ein Foto. Bitte laden Sie ein Foto des Zählers bzw. der Einbaustelle hoch."
+						: "Bei unklarer Messkapsel benötigen wir ein Foto. Bitte laden Sie ein Foto der Messkapsel mit Aufschrift hoch."),
+				g.id,
+				true,
+			);
 	}
 	return null;
 }
 
 /** "Bisher erfasst": the summary beside the steps (`live`). */
-export function liveRows(s: State, listFiles: number): [string, string][] {
-	const c = calc(s);
+export function liveRows(s: State, files: Files = noFiles): [string, string][] {
+	const c = calc(s, files);
 	const list = steps(s);
 	const cur = s.cur;
 	const units = list.indexOf("einheiten");
@@ -708,10 +1085,70 @@ export function liveRows(s: State, listFiles: number): [string, string][] {
 					: s.groups[d].reduce((a, g) => a + num(g.n), 0);
 			rows.push([DEVICES[d].name, n ? String(n) : "–"]);
 		}
-	else rows.push(["Unterlagen", `${listFiles} Datei(en)`]);
+	else {
+		rows.push(["Unterlagen", `${files("liste")} Datei(en)`]);
+		const ai = list.indexOf("anz");
+		if (ai > -1 && cur > ai)
+			for (const d of ORDER) {
+				const n = num(s.anz[d]);
+				if (n) rows.push([COUNT_LABELS[d], String(n)]);
+			}
+	}
+	if (s.ber) rows.push(["Beratungstermin", "39 €"]);
+	if (smokeAdviceOn(s)) rows.push(["Beratung Rauchwarnmelder", "39 €"]);
 	if (c.units && cur >= units)
 		rows.push(["Einheiten", String(c.units)], ["Funk-Gateways", String(c.gw)]);
+	if (s.zusatz.length)
+		rows.push([
+			"Zusatzleistungen",
+			s.zusatz.map((v) => EXTRAS.find((z) => z.v === v)?.title ?? v).join(", "),
+		]);
+	const hi = list.indexOf("heiz");
+	if (hi > -1 && cur > hi && s.kauf)
+		rows.push(["Miete oder Kauf", BUY_SHORT[s.kauf] ?? "–"]);
+	const mi = list.indexOf("mont");
+	if (mi > -1 && cur > mi && s.mont.wer)
+		rows.push(["Montage", FITTER_SHORT[s.mont.wer] ?? "–"]);
 	return rows;
+}
+
+/** A recommendation on "Weiter" (`warnFor`), shown once per `key`. */
+export type Hint = {
+	key: string;
+	title: string;
+	items: { title: string; text: string }[];
+	add: string;
+	skip: string;
+};
+
+/**
+ * Before the contact step: hot water meters and heat cost allocators without
+ * a heat meter for the hot water.
+ */
+export function hintsFor(id: StepId, s: State): Hint[] {
+	if (id !== "kontakt" || !tech(s)) return [];
+	const rec: { v: string; title: string; text: string }[] = [];
+	if (
+		s.devs.includes("wwz") &&
+		s.devs.includes("hkv") &&
+		!s.devs.includes("wmz")
+	)
+		rec.push({
+			v: "wmz",
+			title: "Wärmemengenzähler für das Warmwasser",
+			text: "Sie haben Warmwasserzähler und Heizkostenverteiler gewählt. Für die Aufteilung der Kosten zwischen Heizung und Warmwasser empfehlen wir zusätzlich einen Wärmemengenzähler für das Warmwasser.",
+		});
+	const key = `rec${rec.map((r) => r.v).join()}`;
+	if (!rec.length || s.ack[key]) return [];
+	return [
+		{
+			key,
+			title: rec.length > 1 ? "Unsere Empfehlungen" : "Unsere Empfehlung",
+			items: rec,
+			add: rec.length > 1 ? "Beides hinzufügen" : "Hinzufügen",
+			skip: "Ohne fortfahren",
+		},
+	];
 }
 
 const de2 = new Intl.NumberFormat("de-DE", {
@@ -730,14 +1167,16 @@ export type Position = {
 	ep: number;
 	/** Rental term. */
 	lz?: string;
-	/** Bought: the price is on request. */
+	/** Bought. */
 	kauf?: boolean;
+	/** The price is on request (a large heat meter, bought). */
+	ask?: boolean;
 };
 
 /** The offer's positions in the Heidi offer's layout (`positions`). */
 export function positions(c: Calc) {
 	const svc: Position[] = [];
-	const rental: Position[] = [];
+	let rental: Position[] = [];
 	const once: Position[] = [];
 	const onRequest = c.rows.filter((r) => r.req);
 	if (c.withAbr && c.units)
@@ -754,40 +1193,83 @@ export function positions(c: Calc) {
 			n: c.dev,
 			ep: PRICES.wart,
 		});
-	const agg = new Map<string, { take: boolean; n: number; ep: number }>();
-	for (const r of c.rows) {
-		if (r.req) continue;
-		const k = r.d + (r.take ? ":take" : "");
-		const a = agg.get(k) ?? { take: Boolean(r.take), n: 0, ep: r.p };
-		a.n += r.n;
-		agg.set(k, a);
-	}
-	for (const d of ["wmz", "kwz", "wwz", "hkv", "rwm"])
-		for (const k of [d, `${d}:take`]) {
-			const a = agg.get(k);
-			if (!a) continue;
+	const kinds = ["wmz", "kwz", "wwz", "hkv", "rwm"];
+	if (!c.buy) {
+		const agg = new Map<string, { take: boolean; n: number; ep: number }>();
+		for (const r of c.rows) {
+			if (r.req) continue;
+			const k = r.d + (r.take ? ":take" : "");
+			const a = agg.get(k) ?? { take: Boolean(r.take), n: 0, ep: r.p };
+			a.n += r.n;
+			agg.set(k, a);
+		}
+		for (const d of kinds)
+			for (const k of [d, `${d}:take`]) {
+				const a = agg.get(k);
+				if (!a) continue;
+				rental.push({
+					t: (a.take ? "Übernahme vorhandener " : "") + OFFER_DEVICE[d],
+					lz: a.take ? "" : TERMS_BY_DEVICE[d],
+					me: "je Gerät",
+					n: a.n,
+					ep: a.ep,
+				});
+			}
+		if (c.gw)
 			rental.push({
-				t: (a.take ? "Übernahme vorhandener " : "") + OFFER_DEVICE[d],
-				lz: a.take ? "" : TERMS_BY_DEVICE[d],
+				t: "Funk-Gateway",
+				lz: TERMS_BY_DEVICE.gw,
 				me: "je Gerät",
-				n: a.n,
-				ep: a.ep,
+				n: c.gw,
+				ep: PRICES.gw,
 			});
+	} else {
+		// Bought: one position per kind and price; taken over ones at 0.
+		const agg = new Map<
+			string,
+			{ d: string; n: number; ep: number | null; take: boolean }
+		>();
+		for (const r of c.rows) {
+			if (r.req) continue;
+			const k = r.take ? `${r.d}|take` : `${r.d}|${r.kp}`;
+			const a = agg.get(k) ?? {
+				d: r.d,
+				n: 0,
+				ep: r.take ? 0 : (r.kp ?? null),
+				take: Boolean(r.take),
+			};
+			a.n += r.n;
+			agg.set(k, a);
 		}
-	if (c.gw)
-		rental.push({
-			t: "Funk-Gateway",
-			lz: TERMS_BY_DEVICE.gw,
-			me: "je Gerät",
-			n: c.gw,
-			ep: PRICES.gw,
-		});
-	if (c.buy)
-		for (const r of rental) {
-			r.kauf = true;
-			r.ep = 0;
-			r.lz = "";
-		}
+		rental = [];
+		for (const d of kinds)
+			for (const a of agg.values()) {
+				if (a.d !== d) continue;
+				rental.push({
+					t:
+						(a.take ? "Übernahme vorhandener " : "") +
+						OFFER_DEVICE[d] +
+						(!a.take && d === "wmz" && a.ep === BUY_PRICES.wmzk
+							? " (Messkapsel)"
+							: ""),
+					lz: "",
+					me: "je Gerät",
+					n: a.n,
+					ep: a.ep ?? 0,
+					kauf: true,
+					ask: a.ep == null || undefined,
+				});
+			}
+		if (c.gw)
+			rental.push({
+				t: "Funk-Gateway",
+				lz: "",
+				me: "je Gerät",
+				n: c.gw,
+				ep: BUY_PRICES.gw,
+				kauf: true,
+			});
+	}
 	if (c.dev)
 		once.push({
 			t: "Inbetriebnahme Funksystem / OMS",
@@ -802,9 +1284,23 @@ export function positions(c: Calc) {
 			n: 1,
 			ep: c.inst,
 		});
+	if (c.ber)
+		once.push({
+			t: "Beratungstermin mit Zähleridentifikation",
+			me: "einmalig",
+			n: 1,
+			ep: c.ber,
+		});
+	if (c.rber)
+		once.push({
+			t: "Beratung zur Rauchwarnmelderpflicht",
+			me: "einmalig",
+			n: 1,
+			ep: c.rber,
+		});
 	const sum = (a: Position[]) => a.reduce((s, x) => s + x.n * x.ep, 0);
 	const sS = sum(svc);
-	const sM = sum(rental);
+	const sR = sum(rental);
 	const sO = sum(once);
 	return {
 		buy: c.buy,
@@ -814,40 +1310,46 @@ export function positions(c: Calc) {
 		once,
 		onRequest,
 		sS,
-		sM,
+		/** The rent per year (0 when bought). */
+		sM: c.buy ? 0 : sR,
+		/** The purchase, once (0 when rented). */
+		sK: c.buy ? sR : 0,
 		sO,
-		year: sS + sM,
-		first: sS + sM + sO,
+		year: sS + (c.buy ? 0 : sR),
+		first: sS + sR + sO,
 	};
 }
 export type Positions = ReturnType<typeof positions>;
 
-/** One offer document: "g" Gerätemiete und Service, "a" Heizkostenabrechnung. */
+/**
+ * One offer document: "g" the devices and service (rented, or bought with
+ * `id` "k" when both are asked for), "a" the billing.
+ */
 export type OfferPart = {
 	kind: "g" | "a";
-	/** Its number: the offer's, with `-G` / `-A` when there are two. */
+	/** Unique per offer: "g", "k" (the purchase variant) or "a". */
+	id: "g" | "k" | "a";
+	/** Its number: the offer's, with `-G` / `-A` (`-M` / `-K` for both). */
 	nr: string;
 	/** "1 von 2". */
 	of: string;
-	/** "Gerätemiete und Service" / "Heizkostenabrechnung". */
+	/** "Gerätemiete und Service" / "Gerätekauf und Service" / "Heizkostenabrechnung". */
 	title: string;
 	p: Positions;
 };
 
-/**
- * The offer as separate documents (`splitP`, `docsHtml`): the billing goes
- * into its own when chosen.
- */
-export function offerParts(p: Positions, o: Offer): OfferPart[] {
+type Totals = "sS" | "sM" | "sK" | "sO" | "year" | "first";
+
+/** Splits the positions into the devices' and the billing's (`splitP`). */
+function split(p: Positions): ["g" | "a", Positions][] {
 	const sum = (a: Position[]) => a.reduce((s, x) => s + x.n * x.ep, 0);
 	const isAbr = (r: Position) => r.t === "Einzelabrechnung";
-	const total = (
-		x: Omit<Positions, "sS" | "sM" | "sO" | "year" | "first">,
-	): Positions => {
+	const total = (x: Omit<Positions, Totals>): Positions => {
 		const sS = sum(x.svc);
 		const sM = x.buy ? 0 : sum(x.rental);
+		const sK = x.buy ? sum(x.rental) : 0;
 		const sO = sum(x.once);
-		return { ...x, sS, sM, sO, year: sS + sM, first: sS + sM + sO };
+		return { ...x, sS, sM, sK, sO, year: sS + sM, first: sS + sM + sO + sK };
 	};
 	const g = total({
 		buy: p.buy,
@@ -865,39 +1367,76 @@ export function offerParts(p: Positions, o: Offer): OfferPart[] {
 		rental: [],
 		once: [],
 	});
-	const docs: [OfferPart["kind"], Positions][] = a.svc.length
+	return a.svc.length
 		? [
 				["g", g],
 				["a", a],
 			]
 		: [["g", g]];
-	return docs.map(([kind, x], i) => ({
+}
+
+/**
+ * The offer as separate documents (`splitP`, `docsHtml`): the billing goes
+ * into its own when chosen, and "Beides" adds the purchase variant after the
+ * rented one.
+ */
+export function offerParts(s: State, o: Offer): OfferPart[] {
+	const both = s.kauf === "beides";
+	const docs: ["g" | "a", Positions][] = split(positions(calc(s)));
+	if (both) docs.splice(1, 0, split(positions(calc(asBought(s))))[0]);
+	return docs.map(([kind, p], i) => ({
 		kind,
-		nr: o.nr + (docs.length > 1 ? (kind === "g" ? "-G" : "-A") : ""),
+		id: kind === "a" ? "a" : p.buy && both ? "k" : "g",
+		nr:
+			o.nr +
+			(docs.length > 1
+				? kind === "a"
+					? "-A"
+					: both
+						? p.buy
+							? "-K"
+							: "-M"
+						: "-G"
+				: ""),
 		of: `${i + 1} von ${docs.length}`,
-		title: kind === "g" ? "Gerätemiete und Service" : "Heizkostenabrechnung",
-		p: x,
+		title:
+			kind === "g"
+				? p.buy
+					? "Gerätekauf und Service"
+					: "Gerätemiete und Service"
+				: "Heizkostenabrechnung",
+		p,
 	}));
 }
 
-/** A position's unit price and total ("auf Anfrage" when bought). */
-export const unitPrice = (r: Position) => (r.kauf ? "auf Anfrage" : n2(r.ep));
+/** A position's unit price and total ("auf Anfrage" without a price). */
+export const unitPrice = (r: Position) => (r.ask ? "auf Anfrage" : n2(r.ep));
 export const totalPrice = (r: Position) =>
-	r.kauf ? "auf Anfrage" : n2(r.n * r.ep);
+	r.ask ? "auf Anfrage" : n2(r.n * r.ep);
 export const amount = (x: number | string) =>
 	typeof x === "number" ? n2(x) : x;
 
 /**
  * Every position with its total, one "label: price" per line (a position's
- * quantity is in the total): Make.com's `price_list`.
+ * quantity is in the total): Make.com's `price_list`. With "Beides", the
+ * purchase variant's devices follow.
  */
-export function priceList(p: Positions) {
-	return [
-		...[...p.svc, ...p.rental, ...p.once].map(
-			(r) => `${r.t}: ${r.kauf ? "auf Anfrage" : eur(r.n * r.ep)}`,
-		),
+export function priceList(s: State) {
+	const p = positions(calc(s));
+	const line = (r: Position) =>
+		`${r.t}: ${r.ask ? "auf Anfrage" : eur(r.n * r.ep)}`;
+	const lines = [
+		...[...p.svc, ...p.rental, ...p.once].map(line),
 		...p.onRequest.map((r) => `${r.sub}: auf Anfrage`),
-	].join("\n");
+	];
+	if (s.kauf === "beides") {
+		const k = positions(calc(asBought(s)));
+		lines.push(
+			`Kaufvariante: Gerätekauf einmalig ${eur(k.sK)}, pro Jahr ${eur(k.year)}`,
+			...k.rental.map((r) => `Kauf ${line(r)}`),
+		);
+	}
+	return lines.join("\n");
 }
 
 /** A new offer: a six-digit id and its number (`angMeta`). */

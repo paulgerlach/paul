@@ -20,7 +20,7 @@
 
 	let { offer, part }: { offer: Offer; part: OfferPart } = $props();
 	const w = getSelfService();
-	const d = $derived(offerDoc(w.s, offer, part));
+	const d = $derived(offerDoc(w.s, offer, part, w.count));
 	const p = $derived(d.p);
 	/** The billing's own document. */
 	const abr = $derived(d.abr);
@@ -171,6 +171,9 @@
 				<p class="dp-p dp-mu">{d.separate}</p>
 				{#if d.requested}
 					<p class="dp-p dp-mu">{d.requested}</p>
+				{/if}
+				{#if d.fee}
+					<p class="dp-p">{d.fee}</p>
 				{/if}
 				<p class="dp-p">
 					{#each d.closing as line, i (i)}{#if i}<br />{/if}{line}{/each}

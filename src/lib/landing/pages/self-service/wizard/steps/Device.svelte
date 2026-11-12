@@ -1,7 +1,10 @@
 <!--
   A device step ("<Gerät> bestimmen"): one card per group of identical
   devices with the questions for its kind, and "Weitere Bauart oder
-  Zählergruppe hinzufügen".
+  Zählergruppe hinzufügen". A photo of an existing meter stands in for its
+  technical details (`hasfoto` hides their asterisks); the size selects come
+  from the catalog (`Cascade`). Under the last group, a note when fewer
+  meters than units are given.
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
@@ -22,21 +25,28 @@
 		RADIO_OPTIONS,
 		RADIO_STANDARD_OPTIONS,
 		SENSOR_MOUNT_OPTIONS,
-		SENSOR_SIZE_OPTIONS,
 		SHUTOFF_OPTIONS,
 		SITE_PHOTO_TIPS,
 		WATER_MOUNT_OPTIONS,
 		YES_NO_UNKNOWN,
 		type GroupDev,
 	} from "../data";
-	import { capsuleMeter, swapAll, type Group } from "../model";
+	import { catalogOf } from "../catalog";
+	import {
+		capsuleMeter,
+		decentralHotWaterMeters,
+		num,
+		photoGiven,
+		swapAll,
+		type Group,
+	} from "../model";
 	import { ICONS, RADIATORS, SKETCHES } from "../svg";
+	import Cascade from "../ui/Cascade.svelte";
 	import Drop from "../ui/Drop.svelte";
 	import Note from "../ui/Note.svelte";
 	import Options, { cards } from "../ui/Options.svelte";
 	import Question from "../ui/Question.svelte";
 	import Select from "../ui/Select.svelte";
-	import SizeSelect from "../ui/SizeSelect.svelte";
 	import Text from "../ui/Text.svelte";
 	import { getSelfService } from "../wizard.svelte";
 
@@ -50,6 +60,17 @@
 
 	const photo = (g: Group) =>
 		(water && g.einbau === "up" && CAPSULES[d]) || DEVICE_PHOTOS[d];
+	const hasPhoto = (g: Group) => photoGiven(g, w.count);
+	const fileCount = (g: Group) => w.count(g.id) + w.count(`${g.id}z`);
+
+	/** Fewer meters than units, once a count was edited (`unote`). */
+	const units = $derived(num(w.s.units));
+	const total = $derived(groups.reduce((a, g) => a + num(g.n), 0));
+	const fewer = $derived(
+		["kwz", "wwz", "hkv"].includes(d) &&
+			Boolean(units && total && total < units) &&
+			groups.some((g) => g.nt),
+	);
 
 	async function add() {
 		w.addGroup(d);
@@ -77,9 +98,38 @@
 	);
 </script>
 
+{#if d === "wwz" && decentralHotWaterMeters(w.s)}
+	<Note tone="y" top={14}
+		><b>Warmwasserzähler bei dezentraler Warmwasserbereitung?</b> Sie haben angegeben,
+		dass das Warmwasser dezentral bereitet wird, zum Beispiel mit Durchlauferhitzern.
+		Dabei wird das Wasser direkt in der Wohnung mit Strom erwärmt, ein Warmwasserzähler
+		ist dann meist nicht nötig. Bitte prüfen Sie, ob Sie Warmwasserzähler wirklich
+		brauchen.</Note
+	>
+{/if}
+{#snippet photoNote(g: Group)}
+	{#if g.inst === "nein"}
+		<div class="ss-cond">
+			<Note warn
+				><b>Neuer Einbau:</b> Ist keine Einbaustrecke vorhanden oder lässt sich der
+				Zähler nicht direkt einbauen, muss die Einbaustrecke vorab durch ein zusätzliches
+				Gewerk hergestellt werden, zum Beispiel durch einen Sanitärbetrieb.</Note
+			>
+		</div>
+	{:else if fileCount(g)}
+		<div class="ss-cond">
+			<Note class="ss-fnote"
+				><span
+					><b>Foto vorhanden:</b> Die technischen Angaben sind jetzt freiwillig. Was
+					Sie offen lassen, bestimmt Heidi aus dem Foto.</span
+				></Note
+			>
+		</div>
+	{/if}
+{/snippet}
 <div bind:this={list}>
 	{#each groups as g, i (g.id)}
-		<div class="ss-grp" data-g={g.id}>
+		<div class={["ss-grp", hasPhoto(g) && "hasfoto"]} data-g={g.id}>
 			<div class="ss-grp-h">
 				<span class="l"
 					><Image
@@ -147,6 +197,7 @@
 						bind:value={g.n}
 						type="number"
 						tip={tip("n")}
+						oninput={() => (g.nt = true)}
 					/>
 					<Select
 						label="Aktuell installiert?"
@@ -155,6 +206,15 @@
 						tip={tip("inst")}
 					/>
 				</div>
+				{#if fewer && i === groups.length - 1}
+					<Note tone="y"
+						>Sie haben <b>{total} {name}</b> erfasst, die Liegenschaft hat aber
+						<b>{units} Einheiten</b>. {d === "hkv"
+							? "In der Regel hat jede Einheit mindestens einen Heizkörper mit Heizkostenverteiler."
+							: `In der Regel braucht jede Einheit mindestens einen ${name}.`}
+						Bitte prüfen Sie die Anzahl.</Note
+					>
+				{/if}
 
 				{#if d === "hkv"}
 					<Question
@@ -172,6 +232,15 @@
 							glieder: {
 								icon: RADIATORS.glieder,
 								small: "Einzelne Glieder oder Röhren",
+							},
+							bad: {
+								icon: RADIATORS.bad,
+								small: "Handtuchheizkörper mit Querrohren",
+							},
+							konv: {
+								icon: RADIATORS.konv,
+								small: "Lamellen in einem Gehäuse, oft unter dem Fenster",
+								rare: true,
 							},
 						})}
 						value={g.art}
@@ -242,6 +311,7 @@
 						kind="sub"
 						tip={QUESTION_TIPS.connections}
 					/>
+					{@render photoNote(g)}
 					<Question
 						text="Wie ist der Wasserzähler eingebaut?"
 						kind="lab"
@@ -262,7 +332,8 @@
 						{#if g.inst !== "nein"}
 							<div class="ss-cond">
 								<Question
-									text="MID-Norm der Messkapsel*"
+									text="MID-Norm der Messkapsel"
+									req
 									kind="sub"
 									hint="(Aufschrift auf dem Zähler oder Einbausatz)"
 								/>
@@ -285,34 +356,26 @@
 											bind:value={g.ksysx}
 											placeholder="z. B. Aufschrift am Zähler oder Einbausatz"
 										/>
+										<Note warn
+											><b>Foto erforderlich:</b> Bitte laden Sie unten ein Foto der
+											Messkapsel mit Aufschrift hoch.</Note
+										>
 									</div>
 								{/if}
 							</div>
 						{/if}
 					{:else if g.einbau === "ap"}
 						<div class="ss-cond">
-							<div class="ss-f3">
-								<SizeSelect k="bl" label="Einbaulänge*" {g} step={d} unknown />
-								<SizeSelect
-									k="q3"
-									label="Dauerdurchfluss Q3/Qn*"
-									{g}
-									step={d}
-									unknown
-								/>
-								<SizeSelect
-									k="gew"
-									label="Anschlussgewinde*"
-									{g}
-									step={d}
-									unknown
-								/>
-							</div>
-							<p class="ss-hint">
-								Erst alle drei Angaben zusammen bestimmen den Zähler eindeutig.
-							</p>
+							<Cascade {d} id={d as "kwz" | "wwz"} {g} />
 						</div>
-					{:else if g.einbau === "neu" || g.einbau === "unbekannt"}
+					{:else if g.einbau === "unbekannt"}
+						<div class="ss-cond">
+							<Note warn
+								><b>Foto erforderlich:</b> Bitte laden Sie unten ein Foto des Zählers
+								bzw. der Einbaustelle hoch. Daran bestimmt Heidi die Einbauart.</Note
+							>
+						</div>
+					{:else if g.einbau === "neu"}
 						<div class="ss-cond">
 							<Note warn
 								>Kein Problem. Laden Sie gern Fotos hoch. Heidi prüft, ob ein
@@ -324,6 +387,7 @@
 				{/if}
 
 				{#if d === "wmz"}
+					{@render photoNote(g)}
 					<Question
 						text="Bauart des Wärmemengenzählers*"
 						kind="sub"
@@ -339,34 +403,16 @@
 							up: {
 								icon: SKETCHES.up,
 								small: "Messkapsel in einem Anschlussgehäuse",
+								rare: true,
 							},
 						})}
 						value={g.wtyp}
 						onpick={(v) => (g.wtyp = v)}
 					/>
-					{#if g.wtyp === "ap"}
+					{@const cat = catalogOf(d, g)}
+					{#if cat}
 						<div class="ss-cond">
-							<div class="ss-f3">
-								<SizeSelect k="bl" label="Einbaulänge*" {g} step={d} />
-								<SizeSelect k="dn" label="Nennweite DN" {g} step={d} />
-								<SizeSelect k="gew" label="Anschlussgewinde" {g} step={d} />
-							</div>
-							<p class="ss-hint">
-								Bitte Nennweite DN <b>oder</b> Anschlussgewinde angeben.
-							</p>
-						</div>
-					{/if}
-					{#if g.wtyp}
-						<div class="ss-cond">
-							<div class="f2">
-								<SizeSelect k="qp" label="Nenndurchfluss qp*" {g} step={d} />
-								<Select
-									label="Temperaturfühlergröße*"
-									bind:value={g.fg}
-									options={SENSOR_SIZE_OPTIONS}
-									tip={tip("fg")}
-								/>
-							</div>
+							{#key cat}<Cascade {d} id={cat} {g} />{/key}
 							<Question text="Weitere Angaben (optional)" kind="sub" />
 							<div class="f2">
 								<Select
@@ -395,7 +441,7 @@
 						<Question
 							text="Fotos des Zählers"
 							kind="sub"
-							hint="(optional)"
+							hint={d === "hkv" ? "(optional)" : "(statt technischer Angaben)"}
 							tip={QUESTION_TIPS.meterPhotos}
 						/>
 						<Drop
@@ -404,6 +450,7 @@
 							hint={meterPhotoHint}
 							small
 							max={4}
+							need={w.needPhoto === g.id}
 						/>
 					</div>
 				{:else}
@@ -434,6 +481,7 @@
 										hint={sitePhotoHint}
 										small
 										max={4}
+										need={w.needPhoto === g.id}
 									/>
 								</div>
 							</div>
@@ -444,6 +492,7 @@
 								hint={sitePhotoHint}
 								small
 								max={4}
+								need={w.needPhoto === g.id}
 							/>
 						{/if}
 					</div>

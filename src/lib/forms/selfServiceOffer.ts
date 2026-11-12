@@ -42,16 +42,36 @@ const group = z.object({
 	qpx: text(),
 	q3: text(),
 	q3x: text(),
+	wks: text(),
+	wksx: text(),
+	fgx: text(),
+	nt: z.boolean().optional(),
 });
 const groups = z.array(group).max(30).default([]);
 
+const counts = z
+	.object({
+		kwz: text(10),
+		wwz: text(10),
+		wmz: text(10),
+		hkv: text(10),
+		rwm: text(10),
+		weitere: text(10),
+	})
+	.default({ kwz: "", wwz: "", wmz: "", hkv: "", rwm: "", weitere: "" });
+
 export const selfServiceStateSchema = z.object({
+	ber: z.boolean().default(false),
+	rber: z.boolean().default(false),
+	ack: z.record(z.string().max(80), z.boolean()).default({}),
 	abr: text(),
 	abrNote: note,
 	liste: text(),
 	listeNote: note,
 	bestand: text(),
 	pref: text(),
+	ejahr: text(10),
+	anz: counts,
 	devs: list,
 	heiz: list,
 	ww: text(),
@@ -95,6 +115,7 @@ export const selfServiceStateSchema = z.object({
 		firma: text(),
 		mail: text(254),
 		tel: text(60),
+		rr: z.boolean().default(false),
 		ok: z.boolean().default(false),
 	}),
 	adr: z.object({
@@ -116,6 +137,7 @@ export const selfServiceStateSchema = z.object({
 			ust: text(40),
 		}),
 	}),
+	kom: note,
 	ang: z
 		.object({
 			id: z.string().regex(/^\d{6}$/),
@@ -187,6 +209,8 @@ export type StoredFile = Required<OfferFile>;
 /** A document of the offer as a PDF (`path` in the bucket `self-service`). */
 export type StoredDocument = {
 	kind: "g" | "a";
+	/** "k": the purchase variant when both were asked for; missing on older rows. */
+	id?: "g" | "k" | "a";
 	title: string;
 	/** The file's name when downloaded. */
 	name: string;

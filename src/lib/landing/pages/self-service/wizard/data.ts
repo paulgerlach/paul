@@ -4,6 +4,11 @@
  * explanation, the tooltips, the check points' owners and the offer's texts.
  * The explanations (`info`) are trusted markup rendered with `{@html}`.
  */
+import lengthSketch from "$lib/assets/landing/self-service/tips/bl.svg";
+import tipFg from "$lib/assets/landing/self-service/tips/fg.svg";
+import tipGew from "$lib/assets/landing/self-service/tips/gew.svg";
+import tipQ3 from "$lib/assets/landing/self-service/tips/q3.svg";
+import tipQp from "$lib/assets/landing/self-service/tips/qp.svg";
 import { DEVICE_ICONS, ICONS, SKETCHES } from "./svg";
 
 export type DevKey = "kwz" | "wwz" | "wmz" | "hkv" | "rwm" | "weitere";
@@ -57,8 +62,48 @@ export const ORDER: DevKey[] = ["kwz", "wwz", "wmz", "hkv", "rwm", "weitere"];
 export const GROUP_DEVS: GroupDev[] = ["kwz", "wwz", "wmz", "hkv", "weitere"];
 
 /** Prices, net (€): maintenance per device and year, billing per unit and
- * year, installation flat rate, commissioning per device, gateway per year. */
-export const PRICES = { wart: 5, abr: 27.5, inst: 999, ibn: 3, gw: 39 };
+ * year, installation flat rate (`instS` under 20 meters), commissioning per
+ * device, gateway per year, a consultation (`ber`, once). */
+export const PRICES = {
+	wart: 5,
+	abr: 27.5,
+	inst: 999,
+	instS: 499,
+	ibn: 3,
+	gw: 39,
+	ber: 39,
+};
+
+/** Fewer meters than this (smoke alarms not counted) pay `PRICES.instS`. */
+export const SMALL_INSTALL = 20;
+
+/**
+ * Purchase prices, net (€, `KP`): per device, a heat meter as a capsule
+ * (`wmzk`), a gateway. Heat meters from qp 3,5 m³/h have no price ("auf
+ * Anfrage").
+ */
+export const BUY_PRICES = {
+	kwz: 79,
+	wwz: 79,
+	hkv: 29,
+	rwm: 29,
+	wmz: 249,
+	wmzk: 219,
+	gw: 399,
+};
+
+/** "Wie viele Zähler sind es?": the device types' labels (`ANZL`). */
+export const COUNT_LABELS: Record<DevKey, string> = {
+	kwz: "Kaltwasserzähler",
+	wwz: "Warmwasserzähler",
+	wmz: "Wärmemengenzähler",
+	hkv: "Heizkostenverteiler",
+	rwm: "Rauchwarnmelder",
+	weitere: "Weitere Zähler (z. B. Strom, Gas)",
+};
+
+/** Central heating systems (`HZC`): with central hot water, a heat meter for it. */
+export const CENTRAL_HEATING = ["gas", "wp", "fw", "oel", "pellet"];
 
 export const SERVICES: Record<string, string> = {
 	a: "Funkzähler, Fernauslesung und Heizkostenabrechnung",
@@ -136,8 +181,22 @@ export const SERVICE_OPTIONS: Option[] = [
 export const BUY_OPTIONS: Option[] = [
 	["miete", "Mieten"],
 	["kauf", "Kaufen"],
-	["offen", "Noch offen"],
+	["beides", "Beides"],
 ];
+
+/** Rent or buy as the summary beside the steps names it. */
+export const BUY_SHORT: Record<string, string> = {
+	miete: "Miete",
+	kauf: "Kauf",
+	beides: "Miete und Kauf",
+};
+
+/** Who installs, as the summary beside the steps names it. */
+export const FITTER_SHORT: Record<string, string> = {
+	eigen: "Selbst",
+	heidi: "Durch Heidi",
+	offen: "Noch offen",
+};
 
 export const OTHER_METER_OPTIONS: Option[] = [
 	["strom", "Stromzähler"],
@@ -154,6 +213,8 @@ export const INSTALLED_OPTIONS: Option[] = [
 export const RADIATOR_OPTIONS: Option[] = [
 	["platte", "Plattenheizkörper"],
 	["glieder", "Röhren-, Glieder- oder Rippenheizkörper"],
+	["bad", "Badheizkörper"],
+	["konv", "Konvektor"],
 ];
 
 export const RADIO_OPTIONS: Option[] = [
@@ -179,13 +240,6 @@ export const WATER_MOUNT_OPTIONS: Option[] = [
 export const HEAT_METER_OPTIONS: Option[] = [
 	["ap", "Aufputz-Wärmezähler"],
 	["up", "Unterputz-/Kapsel-Wärmezähler"],
-];
-
-export const SENSOR_SIZE_OPTIONS: Option[] = [
-	["5.0", "5,0 mm"],
-	["5.2", "5,2 mm"],
-	["6.0", "6,0 mm"],
-	["unbekannt", "Unbekannt"],
 ];
 
 export const MEASURED_OPTIONS: Option[] = [
@@ -247,11 +301,13 @@ export const PLUMBING_OPTIONS: Option[] = [
 	["offen", "Noch offen"],
 ];
 
-export const FITTER_OPTIONS: Option[] = [
+/** Who installs; Heidi's option names the flat rate (`fee`, e.g. "999 €"). */
+export const fitterOptions = (fee: string): Option[] => [
 	["eigen", "Selbst oder eigener Hausinstallateur (bevorzugt)"],
-	["heidi", "Heidi montiert (Installationspauschale 999 €)"],
+	["heidi", `Heidi montiert (Installationspauschale ${fee})`],
 	["offen", "Noch offen"],
 ];
+export const FITTER_OPTIONS = fitterOptions("999 €");
 
 /**
  * "Weitere Leistungen": the offers on request, each with its starting price
@@ -294,7 +350,29 @@ export const EXTRAS = [
 		small: "Warmwasser auf Legionellen prüfen",
 		text: "Für Großanlagen zur Trinkwassererwärmung in vermieteten Gebäuden ist eine regelmäßige Untersuchung auf Legionellen vorgeschrieben, in der Regel alle drei Jahre.",
 	},
+	{
+		v: "bk",
+		price: "25 €",
+		per: "pro Wohneinheit und Monat",
+		title: "Betriebskostenabrechnung",
+		icon: ICONS.bill,
+		// Shown as the Reltix logo.
+		small: "Mit unserem Partner Reltix",
+		text: "Unser Partner Reltix, eine vollwertige Hausverwaltung, kümmert sich um Ihre Betriebskostenabrechnung.",
+	},
+	{
+		v: "wech",
+		price: "149 €",
+		per: "einmalig pro Liegenschaft",
+		title: "Wechselservice",
+		icon: ICONS.switch,
+		small: "Wir übernehmen den Wechsel",
+		text: "Wir kümmern uns um den kompletten Wechsel zu Heidi: Kündigung beim bisherigen Anbieter per Vollmacht, Übernahme der Daten und Abstimmung der Termine.",
+	},
 ] as const;
+
+/** The further services behind "Weitere Service-Dienstleistungen dazubuchen" (`ZEX`). */
+export const MORE_EXTRAS: string[] = ["bk", "wech"];
 
 /** Standard sizes with a free value (`NG`); the key's free input placeholder. */
 export const SIZES = {
@@ -365,7 +443,6 @@ export const MID_NORMS = [
 	"DM1",
 	"HT2",
 	"IST",
-	"MB2",
 	"MB3",
 	"MET",
 	"MOC",
@@ -382,12 +459,12 @@ export const MOUNT_TIPS = {
 	eat: "Einbausätze und Zählerstrecken sind die Anschlussstücke, in die der Zähler eingesetzt wird. Passen sie zum neuen Gerät, reicht ein direkter Tausch. Diese Angabe ergibt sich aus der Absperrbarkeit: Ja dort bedeutet Ja hier, Nein dort bedeutet Nein hier.",
 	err: "Sitzen die Zähler im Keller oder Treppenhaus, braucht es keinen Wohnungstermin. Wichtig: Der Eigentümer oder die Verwaltung ist dafür zuständig, die Mieter über den Einbau zu informieren und sicherzustellen, dass der Einbau durchgeführt werden kann.",
 	san: "Müssen Leitungen angepasst oder Absperrventile ergänzt werden, braucht es einen Sanitärbetrieb. Heidi kann das koordinieren, oder Ihr eigener Betrieb übernimmt es.",
-	wer: "Selbst montieren ist bevorzugt: Es sind keine Vorkenntnisse erforderlich, jeder Hausinstallateur kann die Geräte bequem einbauen. Die Installationspauschale entfällt dann.",
+	wer: "Selbst montieren ist bevorzugt: Es sind keine Vorkenntnisse erforderlich, jeder Hausinstallateur kann die Installation vornehmen. Dazu erhalten Sie von uns eine genaue Montagebeschreibung. Die Installationspauschale entfällt dann.",
 };
 
 /** The fields' tooltips (`TIPF`), by `<step>.<field>` or `<field>`. */
 const FIELD_TIPS: Record<string, string> = {
-	fg: "Der Durchmesser der Temperaturfühler. Er steht meist auf dem Fühlerkabel, dem Typenschild oder im Datenblatt. Üblich sind 5,0 mm, 5,2 mm und 6,0 mm.",
+	fg: "Der Durchmesser der Temperaturfühler. Er steht meist auf dem Fühlerkabel, dem Typenschild oder im Datenblatt. Üblich sind 5,0 mm, 5,2 mm und 6,0 mm. Die Größe hängt oft vom Hersteller ab: Techem-Kapselzähler (M62×2) haben 5,2 mm, Allmess (M77×1,5) 6,0 mm, Minol (M60×1,5) 5,0 mm. Bei Kapselzählern ergänzen wir den Wert nach Wahl des Kapselsystems automatisch. Nicht sicher? Wählen Sie „Weiß ich nicht“, wir prüfen es vor Ort.",
 	"wmz.dn":
 		"Die Nennweite des Rohranschlusses, zum Beispiel DN 15 oder DN 20. Alternativ reicht das Anschlussgewinde.",
 	"wmz.gew":
@@ -401,7 +478,7 @@ const FIELD_TIPS: Record<string, string> = {
 	std: "Das Funkprotokoll, über das der Zähler sendet. Steht es nicht auf dem Gerät, wählen Sie „Unbekannt“.",
 	key: "Damit Heidi vorhandene Funkzähler auslesen kann, braucht es die digitalen Zugangsschlüssel. Diese stellt in der Regel der bisherige Messdienst bereit.",
 	q3: "Der Dauerdurchfluss Q3 (früher Qn) in m³/h steht auf dem Zählwerk, zum Beispiel „Q3 2,5“.",
-	bl: "Die Länge des Zählers von Dichtfläche zu Dichtfläche, ohne Verschraubungen, in Millimetern.",
+	bl: "Von Mitte der Verschraubung bis Mitte der Verschraubung, in Millimetern.",
 	dn: "Die Nennweite des Rohranschlusses, zum Beispiel DN 15 oder DN 20. Sie steht oft auf dem Zähler.",
 	gew: "Das Gewinde am Zähler, an dem die Verschraubung sitzt, zum Beispiel G ¾ oder G 1.",
 	was: "Wird Wärme für die Heizung, Wärme für das Warmwasser oder Kälte gemessen?",
@@ -430,6 +507,21 @@ const FIELD_TIPS: Record<string, string> = {
 	"adr.ust":
 		"Nur nötig, wenn die Rechnung an ein Unternehmen mit Umsatzsteuer-Identifikationsnummer geht.",
 };
+
+/** The fields' tooltip sketches (`TIPIMG`), by `<step>.<field>` or `<field>`. */
+const FIELD_TIP_IMAGES: Record<string, string> = {
+	fg: tipFg,
+	"kwz.q3": tipQ3,
+	"wwz.q3": tipQ3,
+	"kwz.gew": tipGew,
+	"wwz.gew": tipGew,
+	qp: tipQp,
+	bl: lengthSketch,
+};
+
+/** A field's tooltip sketch on a step (an SVG's URL). */
+export const fieldTipImage = (step: string, key: string): string | undefined =>
+	FIELD_TIP_IMAGES[`${step}.${key}`] ?? FIELD_TIP_IMAGES[key];
 
 /**
  * A field's tooltip on a step (the design's `autoTips`, which adds them only
@@ -489,7 +581,7 @@ export const STEPS = {
 	bestand: {
 		title: "Sind bereits Funkzähler vorhanden?",
 		lead: "Wir prüfen zuerst, ob Ihre bestehenden Geräte übernommen, direkt getauscht oder neu eingebaut werden.",
-		info: "<h4>Austauschen oder übernehmen?</h4><p>Wir prüfen drei Optionen: <b>Weiterverwendung</b> funkfähiger Geräte, <b>Austausch</b> vorhandener Zähler oder <b>Neuinstallation</b>.</p><p>Vorhandene Funkzähler sind nicht automatisch mit Heidi kompatibel. Funkprotokoll und Zugangsschlüssel prüft Heidi je Gerätegruppe.</p>",
+		info: "<h4>Austauschen oder übernehmen?</h4><p>Wir prüfen drei Optionen: <b>Weiterverwendung</b> funkfähiger Geräte, <b>Austausch</b> vorhandener Zähler oder <b>Neuinstallation</b>.</p><p>Vorhandene Funkzähler sind nicht automatisch mit Heidi kompatibel. Funkprotokoll und Zugangsschlüssel prüft Heidi je Gerätegruppe.</p><p><b>Welche Zähler können wir auslesen?</b> Grundsätzlich können wir alle funkfähigen Zähler auslesen, die nach dem 1.12.2022 eingebaut wurden. Dafür benötigen wir den AES-Schlüssel Ihres bisherigen Messdienstleisters.</p>",
 	},
 	geraete: {
 		title: "Welche Geräte benötigen Sie?",
@@ -510,10 +602,15 @@ export const STEPS = {
 		lead: "Zählen Sie alle Wohn- und Gewerbeeinheiten, die abgerechnet werden.",
 		info: "<h4>Wofür brauchen wir die Einheiten?</h4><p>Aus der Anzahl der Einheiten planen wir die <b>Funk-Gateways</b>, die die Zähler im Gebäude auslesen. Bei einer Heizkostenabrechnung durch Heidi berechnen sich daraus auch die <b>Abrechnungskosten</b>.</p><p>Bei mehreren Gebäuden geben Sie bitte die Summe an und ergänzen später einen Hinweis.</p>",
 	},
+	anz: {
+		title: "Wie viele Zähler sind es?",
+		lead: "Geben Sie nur die Anzahl je Gerätetyp an. Die genaue Konfiguration, also Zählertyp, Maße und Einbausituation, entnehmen wir Ihren hochgeladenen Unterlagen.",
+		info: "<h4>Warum nur die Anzahl?</h4><p>Ihre Geräteliste oder Rechnung enthält die technischen Details der Zähler. Mit der Anzahl erstellen wir Ihre Anfrage, die genaue Konfiguration übernehmen wir aus den Unterlagen.</p><p>Nicht sicher? Lassen Sie ein Feld leer, wir prüfen es anhand der Unterlagen.</p>",
+	},
 	mont: {
 		title: "Montage",
 		lead: "Nur noch ein paar Angaben zur Montage. Damit schätzen wir Einbausätze und Zusatzarbeiten besser ein.",
-		info: "<h4>Einbausatz oder direkter Wechsel?</h4><p>Je nach Zählertyp ist der Austausch in vorhandenen Anschlussstücken möglich, oder es sind neue Einbausätze, Rohrpassstücke oder Fühleraufnahmen nötig.</p><p>Die Zahl der Funk-Gateways hängt von Gebäudegröße, Bauweise und Lage der Zähler ab. Wir planen sie vorläufig und prüfen sie später.</p><p><b>Selbst montieren ist bevorzugt:</b> Dafür sind keine Vorkenntnisse erforderlich, jeder Hausinstallateur kann die Arbeiten bequem selbst vornehmen. Die Installationspauschale entfällt dann.</p>",
+		info: "<h4>Einbausatz oder direkter Wechsel?</h4><p>Je nach Zählertyp ist der Austausch in vorhandenen Anschlussstücken möglich, oder es sind neue Einbausätze, Rohrpassstücke oder Fühleraufnahmen nötig.</p><p>Die Zahl der Funk-Gateways hängt von Gebäudegröße, Bauweise und Lage der Zähler ab. Wir planen sie vorläufig und prüfen sie später.</p><p><b>Selbst montieren ist bevorzugt:</b> Dafür sind keine Vorkenntnisse erforderlich, jeder Hausinstallateur kann die Installation vornehmen. Dazu erhalten Sie von uns eine genaue Montagebeschreibung. Die Installationspauschale entfällt dann.</p>",
 	},
 	zusatz: {
 		title: "Weitere Leistungen",
@@ -543,6 +640,13 @@ export const STEPS = {
 	},
 } satisfies Record<string, StepText>;
 
+/** "Montage" on the way with a device list or bill: who installs only. */
+export const MONT_UPLOAD: StepText = {
+	title: "Montage",
+	lead: "Wer soll die Geräte aus Ihrer Geräteliste montieren?",
+	info: "<h4>Wer baut die Geräte ein?</h4><p>Welche Geräte Sie brauchen, bestimmen wir anhand Ihrer Unterlagen. Hier legen Sie nur fest, wer sie einbaut.</p><p><b>Selbst montieren ist bevorzugt:</b> Dafür sind keine Vorkenntnisse erforderlich, jeder Hausinstallateur kann die Installation vornehmen. Dazu erhalten Sie von uns eine genaue Montagebeschreibung. Die Installationspauschale entfällt dann.</p><p><b>Montage durch Heidi:</b> Die Installationspauschale beträgt 499 € bei weniger als 20 Zählern, sonst 999 €.</p>",
+};
+
 /** A device step's title, lead and explanation. */
 export function deviceStep(d: DevKey): StepText {
 	const name = DEVICES[d].name;
@@ -551,7 +655,7 @@ export function deviceStep(d: DevKey): StepText {
 		return {
 			title,
 			lead: "Wie viele Rauchwarnmelder werden gebraucht, und wo sollen sie hin?",
-			info: "<h4>Wie viele Melder braucht es?</h4><p>Vorgeschrieben sind Rauchwarnmelder in <b>Schlafzimmern, Kinderzimmern und Fluren</b>, die als Rettungsweg dienen. Wir rechnen aus Ihren Raumangaben eine Mindestzahl aus und markieren auffällige Abweichungen.</p><p>Bei Dachschrägen und hohen Decken gelten besondere Montageregeln. Das prüft Heidi.</p>",
+			info: "<h4>Wie viele Melder braucht es?</h4><p>Vorgeschrieben sind Rauchwarnmelder in <b>Schlafzimmern, Kinderzimmern und Fluren</b>, die als Rettungsweg dienen. Wir rechnen aus Ihren Raumangaben eine Mindestzahl aus und markieren auffällige Abweichungen.</p><p>Bei Dachschrägen und hohen Decken gelten besondere Montageregeln. Das prüft Heidi.</p><p>Die genauen Vorgaben stehen in der Landesbauordnung und unterscheiden sich je nach Bundesland. Wenn Sie unsicher sind, buchen Sie unten die Beratung dazu.</p>",
 		};
 	const lead = `Erfassen Sie die ${name} nach Bauart. Baugleiche Geräte fassen Sie als eine Gruppe zusammen.`;
 	if (d === "weitere")
@@ -560,7 +664,7 @@ export function deviceStep(d: DevKey): StepText {
 			lead,
 			info: "<h4>Weitere Zähler</h4><p>Strom-, Gas- oder andere Zähler binden wir auf Anfrage ein. Tragen Sie ein, was Sie haben, wir melden uns mit einem Angebot.</p>",
 		};
-	let info = `<h4>${name} richtig bestimmen</h4><p><b>Eine Gruppe ist ein technischer Zählertyp.</b> Bilden Sie getrennte Gruppen, wenn ${d === "hkv" ? "Heizkörperbauart oder Größe" : "Hersteller, Anschluss, Durchfluss oder Einbaulänge"} unterschiedlich sind.</p><p>Unbekannte Angaben dürfen offen bleiben. Ihr Ergebnis bekommt dann einen Prüfhinweis, statt ein ungeeignetes Modell vorzuschlagen.</p>`;
+	let info = `<h4>${name} richtig bestimmen</h4><p><b>Eine Gruppe ist ein technischer Zählertyp.</b> Bilden Sie getrennte Gruppen, wenn ${d === "hkv" ? "Heizkörperbauart oder Größe" : "Hersteller, Anschluss, Durchfluss oder Einbaulänge"} unterschiedlich sind.</p>${d === "kwz" || d === "wwz" ? `<h4>Einbaulänge messen</h4><p>Gemessen wird von Mitte der Verschraubung bis Mitte der Verschraubung, in Millimetern.</p><img class="ss-infimg" src="${lengthSketch}" alt="Skizze: Einbaulänge von Mitte bis Mitte der Verschraubung">` : ""}<p>Unbekannte Angaben dürfen offen bleiben. Ihr Ergebnis bekommt dann einen Prüfhinweis, statt ein ungeeignetes Modell vorzuschlagen.</p>`;
 	if (d === "kwz" || d === "wwz")
 		info += `<div class="ss-sk"><div>${SKETCHES.up}<p><b>Unterputz</b><span>Nur eine runde Abdeckung mit Zählwerk schaut aus der Wand, die Leitung liegt dahinter.</span></p></div><div>${SKETCHES.ap}<p><b>Aufputz</b><span>Der ganze Zähler sitzt sichtbar in der Rohrleitung, mit Verschraubungen links und rechts.</span></p></div><div>${SKETCHES.neu}<p><b>Neuer Einbauplatz</b><span>Noch kein Zählerplatz vorhanden.</span></p></div></div><p style="margin-top:12px"><b>Foto-Tipp:</b> Bei Unterputzzählern die Abdeckung, die Beschriftung und, falls sichtbar, den Einbausatz fotografieren.</p>`;
 	if (d === "wmz")
@@ -729,7 +833,7 @@ export function features(self: boolean): Feature[] {
 			img: "statement",
 			h: "Automatisierte Abrechnung und digitales Management",
 			p: self
-				? "Bestandsaufnahme, Gerätelieferung, Fernauslesung und Abrechnung kommen von uns. Die Montage übernehmen Sie oder Ihr Hausinstallateur, ganz ohne Vorkenntnisse. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher."
+				? "Bestandsaufnahme, Gerätelieferung, Fernauslesung und Abrechnung kommen von uns. Die Montage übernehmen Sie oder Ihr Hausinstallateur, ganz ohne Vorkenntnisse und mit einer genauen Montagebeschreibung von uns. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher."
 				: "Bestandsaufnahme, Gerätelieferung, Installation, Fernauslesung und Abrechnung kommen von uns. Ein Ansprechpartner, ein Installationstermin. Die Heiz- und Wasserkostenabrechnung läuft vollständig digital und rechtssicher.",
 			b: [
 				self

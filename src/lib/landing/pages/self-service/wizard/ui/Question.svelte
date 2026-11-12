@@ -15,6 +15,7 @@
 		tip,
 		img,
 		top,
+		req = false,
 	}: {
 		text: string;
 		hint?: string;
@@ -23,6 +24,8 @@
 		img?: ImageAsset;
 		/** The design's inline top margin, px. */
 		top?: number;
+		/** Mark it required (`.rq`, hidden once a photo stands in). */
+		req?: boolean;
 	} = $props();
 	const w = getSelfService();
 	const id = $props.id();
@@ -31,9 +34,9 @@
 
 {#snippet heading()}
 	<p class="ss-{kind}" style:margin-top={top ? `${top}px` : undefined}>
-		{#if tip && hint}{text}
-			<Tip {id} {open} /> <em>{hint}</em>{:else if tip}{text}
-			<Tip {id} {open} />{:else if hint}{text} <em>{hint}</em>{:else}{text}{/if}
+		{text}{#if req}<i class="rq">*</i>{/if}{#if tip}
+			<Tip {id} {open} />{/if}{#if hint}
+			<em>{hint}</em>{/if}
 	</p>
 {/snippet}
 

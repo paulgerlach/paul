@@ -22,7 +22,11 @@
 		nein: { icon: ICONS.nodoc },
 	})}
 	value={w.s.liste}
-	onpick={(v) => (w.s.liste = v)}
+	onpick={(v) => {
+		w.s.liste = v;
+		// The consultation is booked on the device step, which a list skips.
+		if (v !== "nein") w.s.ber = false;
+	}}
 />
 {#if w.s.liste && w.s.liste !== "nein"}
 	<div class="ss-cond">

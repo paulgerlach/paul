@@ -16,16 +16,19 @@
 	import { prefersReducedMotion } from "$lib/landing/motion";
 	import {
 		deviceStep,
+		MONT_UPLOAD,
 		NEXT_STEP_AT,
 		NEXT_STEPS,
 		SENT_LEAD,
 		STEPS,
 		type GroupDev,
 	} from "../wizard/data";
-	import { devOf, isOptional, liveRows } from "../wizard/model";
+	import { devOf, isOptional, liveRows, progress, tech } from "../wizard/model";
 	import { CHECK } from "../wizard/svg";
+	import Popup from "../wizard/ui/Popup.svelte";
 	import Abr from "../wizard/steps/Abr.svelte";
 	import Adr from "../wizard/steps/Adr.svelte";
+	import Anz from "../wizard/steps/Anz.svelte";
 	import Bestand from "../wizard/steps/Bestand.svelte";
 	import Device from "../wizard/steps/Device.svelte";
 	import Einheiten from "../wizard/steps/Einheiten.svelte";
@@ -47,8 +50,13 @@
 	const id = $derived(w.id);
 	const dev = $derived(devOf(id));
 	const text = $derived(
-		dev ? deviceStep(dev) : STEPS[id as keyof typeof STEPS],
+		dev
+			? deviceStep(dev)
+			: id === "mont" && !tech(w.s)
+				? MONT_UPLOAD
+				: STEPS[id as keyof typeof STEPS],
 	);
+	const prog = $derived(progress(w.s));
 	const sent = $derived(id === "ang" && Boolean(w.s.ang?.sent));
 	const title = $derived(sent ? `Vielen Dank, ${w.s.k.vn}.` : text.title);
 	const lead = $derived(
@@ -70,8 +78,68 @@
 	/** Where "So geht es weiter" stands, on the last steps only (`sideNext`). */
 	const nextAt = $derived(sent ? 3 : NEXT_STEP_AT[id]);
 	const live = $derived(
-		["res", "adr", "ang"].includes(id) ? [] : liveRows(w.s, w.count("liste")),
+		["res", "adr", "ang"].includes(id) ? [] : liveRows(w.s, w.count),
 	);
+	/** "Später weitermachen" was chosen: the page may go. */
+	let leaving = false;
+	/** The exit-intent pop-up showed once (`lvShown`). */
+	let leaveShown = false;
+
+	async function askLeave() {
+		leaveShown = true;
+		const v = await w.askLeave();
+		if (v === "stay") {
+			const top = wiz.getBoundingClientRect().top;
+			window.scrollTo({ top: window.scrollY + top - 80, behavior: motion() });
+		}
+		return v;
+	}
+
+	/** A link off the page while the offer isn't requested asks first. */
+	function leaveClick(e: MouseEvent) {
+		if (
+			!w.unfinished ||
+			e.defaultPrevented ||
+			e.button !== 0 ||
+			e.metaKey ||
+			e.ctrlKey ||
+			e.shiftKey ||
+			e.altKey ||
+			w.popup
+		)
+			return;
+		const a = (e.target as Element).closest?.<HTMLAnchorElement>("a[href]");
+		if (!a) return;
+		const href = a.getAttribute("href") ?? "";
+		if (
+			href.startsWith("#") ||
+			/^(mailto|tel):/i.test(href) ||
+			a.target === "_blank" ||
+			a.hasAttribute("download")
+		)
+			return;
+		e.preventDefault();
+		e.stopPropagation();
+		void askLeave().then((v) => {
+			if (v !== "leave") return;
+			leaving = true;
+			location.href = a.href;
+		});
+	}
+
+	/** The pointer leaves the window at the top (exit intent, once). */
+	function leaveIntent(e: MouseEvent) {
+		if (
+			leaveShown ||
+			!w.unfinished ||
+			e.relatedTarget ||
+			e.clientY > 8 ||
+			w.popup ||
+			!matchMedia("(hover: hover) and (pointer: fine)").matches
+		)
+			return;
+		void askLeave();
+	}
 
 	onMount(() => {
 		w.restore();
@@ -96,11 +164,16 @@
 			prefersReducedMotion() ? 0 : 350,
 		);
 	};
-	w.onProblem = async (group) => {
+	w.onProblem = async (group, drop) => {
 		await tick();
-		wiz
-			.querySelector(`[data-g="${group}"]`)
-			?.scrollIntoView({ behavior: motion(), block: "center" });
+		const card = wiz.querySelector<HTMLElement>(`[data-g="${group}"]`);
+		// The photo's drop zone that's shown, or the group.
+		const zone = drop
+			? [...(card?.querySelectorAll<HTMLElement>("[data-drop]") ?? [])].find(
+					(x) => x.offsetParent,
+				)
+			: undefined;
+		(zone ?? card)?.scrollIntoView({ behavior: motion(), block: "center" });
 	};
 
 	/** Any answer clears the step's error (the design's `hideErr`). */
@@ -119,8 +192,17 @@
 		const t = e.target as Element;
 		if (w.openTip && !t.closest?.(".ss-tipb, .ss-qm")) w.openTip = null;
 	}}
+	onclickcapture={leaveClick}
+	onmouseout={leaveIntent}
 	onkeydown={(e) => {
 		if (e.key === "Escape") w.openTip = null;
+	}}
+/>
+<svelte:window
+	onbeforeunload={(e) => {
+		if (leaving || !w.unfinished) return;
+		e.preventDefault();
+		e.returnValue = "";
 	}}
 />
 
@@ -135,6 +217,7 @@
 				onEnter: () => w.trackFirstView(),
 			})}
 		>
+			{#if w.popup}<Popup p={w.popup} />{/if}
 			{#if w.saved}
 				<div class="ss-resume">
 					<span>Sie haben bereits einen Zählercheck begonnen.</span>
@@ -149,15 +232,19 @@
 				</div>
 			{/if}
 			<div class="ss-top">
-				<div class="ss-prog" aria-hidden="true">
-					{#each w.list.slice(0, -1) as step, i (step)}
-						<i class={[i < w.s.cur && "done", i === w.s.cur && "cur"]}></i>
+				<div class="ss-prog pg4" aria-hidden="true">
+					{#each prog.sections as x (x.label)}
+						<div class={["pg-s", x.state]}>
+							<span class="pg-b" style:--f={x.f.toFixed(3)}></span><span
+								class="pg-l">{x.label}</span
+							>
+						</div>
 					{/each}
 				</div>
-				<span class="ss-stepn"
+				<span class="ss-stepn pg4n"
 					>{id === "ang"
 						? "Abgeschlossen"
-						: `Schritt ${w.s.cur + 1} von ${w.list.length - 1}`}</span
+						: `Abschnitt ${prog.cur + 1} von 4`}</span
 				>
 			</div>
 			<div class="ss-grid">
@@ -183,6 +270,7 @@
 							{:else if id === "liste"}<Liste />
 							{:else if id === "bestand"}<Bestand />
 							{:else if id === "geraete"}<Geraete />
+							{:else if id === "anz"}<Anz />
 							{:else if id === "heiz"}<Heiz />
 							{:else if id === "einheiten"}<Einheiten />
 							{:else if dev === "rwm"}<Rwm />
@@ -198,6 +286,8 @@
 						<p class="f-err" role="alert">{w.error}</p>
 						{#if id !== "ang"}
 							<div class="ss-act">
+								<!-- The error again, beside the sticky button on phones. -->
+								<p class="ss-act-err" aria-hidden="true">{w.error}</p>
 								<button
 									type="button"
 									class="bk-next ss-go"
@@ -339,29 +429,53 @@
 			flex: 1;
 			max-width: 620px;
 		}
-		.ss-prog i {
+		/* The four sections (#ss-new-css) */
+		.ss-prog.pg4 {
+			gap: 10px;
+			align-items: flex-start;
+		}
+		.ss-prog .pg-s {
 			flex: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+			min-width: 0;
+		}
+		.ss-prog .pg-b {
+			display: block;
 			height: 4px;
 			border-radius: 2px;
 			background: #e6eae8;
 			overflow: hidden;
 			position: relative;
 		}
-		.ss-prog i::after {
+		.ss-prog .pg-b::after {
 			content: "";
 			position: absolute;
 			inset: 0;
 			background: var(--accent-deep);
-			transform: scaleX(0);
+			transform: scaleX(var(--f, 0));
 			transform-origin: left;
 			transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 		}
-		.ss-prog i.done::after {
-			transform: none;
-		}
-		.ss-prog i.cur::after {
-			transform: scaleX(0.5);
+		.ss-prog .pg-s.cur .pg-b::after {
 			background: var(--accent);
+		}
+		.ss-prog .pg-l {
+			font-size: 12.5px;
+			line-height: 1.2;
+			color: #8a9792;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			transition: color 0.3s;
+		}
+		.ss-prog .pg-s.cur .pg-l {
+			color: var(--ink);
+			font-weight: 600;
+		}
+		.ss-prog .pg-s.done .pg-l {
+			color: var(--accent-deep);
 		}
 		.ss-stepn {
 			font-size: 13px;
@@ -2151,6 +2265,326 @@
 		}
 	}
 
+	/* #ss-new-css: pop-ups, notes, extras, the counts, remarks, the cart */
+	.ss-wiz :global {
+		.ss-pop {
+			position: fixed;
+			inset: 0;
+			z-index: 200;
+			display: grid;
+			place-items: center;
+			padding: 16px;
+			background: rgba(20, 34, 30, 0.42);
+			backdrop-filter: blur(3px);
+			-webkit-backdrop-filter: blur(3px);
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+		.ss-pop.on {
+			opacity: 1;
+		}
+		.ss-pop-b {
+			position: relative;
+			width: min(520px, 100%);
+			max-height: calc(100vh - 32px);
+			overflow: auto;
+			background: #fff;
+			border-radius: 22px;
+			padding: 28px 28px 24px;
+			box-shadow: 0 40px 80px -30px rgba(20, 34, 30, 0.5);
+			transform: translateY(10px);
+			transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+		}
+		.ss-pop.on .ss-pop-b {
+			transform: none;
+		}
+		.ss-pop-i {
+			display: grid;
+			place-items: center;
+			width: 34px;
+			height: 34px;
+			border-radius: 50%;
+			background: #e7f6e8;
+			color: #2f6b37;
+			font-weight: 700;
+			font-size: 16px;
+			font-family: Georgia, serif;
+		}
+		.ss-pop-b.warn .ss-pop-i {
+			background: #fcede8;
+			color: #a8452e;
+			font-family: inherit;
+		}
+		.ss-pop-b.note .ss-pop-i {
+			background: #e4f0fc;
+			color: #2463a6;
+			font-family: inherit;
+		}
+		.ss-pop h3 {
+			font-size: 21px;
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			margin: 14px 0 0;
+		}
+		.ss-pop-p {
+			margin-top: 10px;
+			font-size: 15.5px;
+			line-height: 1.55;
+			color: var(--muted);
+		}
+		.ss-pop-p p {
+			margin: 0 0 10px;
+		}
+		.ss-pop-p b {
+			color: var(--ink);
+		}
+		.ss-pop-p a {
+			color: var(--ink);
+			font-weight: 600;
+		}
+		.ss-rec-r {
+			border: 1px solid var(--hair);
+			border-radius: 14px;
+			padding: 12px 14px;
+			margin-top: 10px;
+		}
+		.ss-rec-r b {
+			display: block;
+			color: var(--ink);
+			font-size: 15px;
+		}
+		.ss-rec-r span {
+			display: block;
+			font-size: 14px;
+			margin-top: 3px;
+		}
+		.ss-pop-a {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 20px;
+		}
+		.ss-pop-a .bk-next {
+			width: auto;
+			margin: 0;
+			padding: 13px 18px;
+		}
+		.ss-pop-a .pg-ghost {
+			padding: 12px 16px;
+			cursor: pointer;
+			font: inherit;
+			font-weight: 600;
+		}
+		.ss-note.ss-bnote {
+			background: #e8f1fb;
+			color: #1f4e80;
+		}
+		.ss-note.ss-bnote b {
+			color: #173e66;
+		}
+		.ss-note.ss-ynote {
+			background: #fdf3cf;
+			color: #6b5100;
+		}
+		.ss-note.ss-ynote b {
+			color: #5a4400;
+		}
+		.ss-note.ss-ynote [data-addwp],
+		.ss-note.ss-ynote [data-addwmz] {
+			display: inline-block;
+			margin-top: 6px;
+			border: 0;
+			background: none;
+			padding: 0;
+			font: inherit;
+			font-weight: 600;
+			color: #5a4400;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			cursor: pointer;
+		}
+		.ss-note.ss-ynote [data-addwp]:focus-visible,
+		.ss-note.ss-ynote [data-addwmz]:focus-visible {
+			outline: 2px solid #5a4400;
+			outline-offset: 2px;
+			border-radius: 3px;
+		}
+		.ss-infimg {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: 10px;
+			margin: 8px 0 4px;
+		}
+		.ss-rare {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			z-index: 1;
+			background: #fff;
+			border: 1px solid #d9e0dd;
+			border-radius: 999px;
+			padding: 2px 10px;
+			font-size: 12px;
+			font-weight: 600;
+			line-height: 1.5;
+			color: #5e6b66;
+			transition: right 0.2s;
+		}
+		.ss-opt.on .ss-rare {
+			right: 48px;
+		}
+		.ss-xmore {
+			margin-top: 22px;
+		}
+		.ss-xmore .ss-xch {
+			transition: transform 0.25s ease;
+		}
+		.ss-xmore[aria-expanded="true"] .ss-xch {
+			transform: rotate(45deg);
+		}
+		.ss-xbox {
+			margin-top: 16px;
+			animation: ssx 0.3s ease;
+		}
+		.ss-xbox[hidden] {
+			display: none;
+		}
+		.ss-rlx {
+			display: block;
+			height: 18px;
+			width: auto;
+			margin: 4px 0 6px;
+		}
+		.ss-anz {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 14px 18px;
+			margin-top: 6px;
+		}
+		.ss-tiles.ss-tk {
+			margin-top: 12px;
+		}
+		.ss-kom {
+			margin-top: 28px;
+			padding-top: 22px;
+			border-top: 1px solid var(--hair);
+		}
+		.ss-kom .ss-sub {
+			margin-top: 0;
+		}
+		.cb.cb-rr {
+			margin-bottom: 10px;
+		}
+		.ss-act-err {
+			display: none;
+		}
+		.ss-grp .rq {
+			font-style: normal;
+		}
+		.ss-grp.hasfoto .rq {
+			display: none;
+		}
+		.ss-fnote {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 4px 10px;
+		}
+		button.ss-ber {
+			width: 100%;
+			text-align: left;
+			font: inherit;
+			cursor: pointer;
+			border: 1px solid var(--hair);
+		}
+		.ss-ber.on {
+			border-color: var(--accent);
+			box-shadow: 0 0 0 3px rgba(138, 214, 143, 0.22);
+		}
+		.ss-ber .go {
+			white-space: nowrap;
+		}
+		.ss-ber.on .go {
+			color: #2f6b37;
+			font-weight: 600;
+		}
+		.ss-af {
+			color: #2f6b37 !important;
+			font-weight: 500;
+		}
+		.ss-drop.need {
+			border-color: #d9622b;
+			background: #fdf5f1;
+		}
+	}
+	@keyframes -global-ssx {
+		from {
+			opacity: 0;
+			transform: translateY(-4px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@media (max-width: 600px) {
+		.ss-wiz :global {
+			.ss-anz {
+				grid-template-columns: 1fr;
+			}
+			/* The design's own .ss-act keeps its 26 px top margin and gap. */
+			.ss-act {
+				position: sticky;
+				bottom: 0;
+				z-index: 6;
+				margin: 26px -18px 0;
+				padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+				background: rgba(255, 255, 255, 0.94);
+				-webkit-backdrop-filter: blur(10px);
+				backdrop-filter: blur(10px);
+				border-top: 1px solid var(--hair);
+			}
+			.ss-act .ss-go {
+				flex: 1;
+				justify-content: center;
+			}
+			.ss-act-err {
+				display: block;
+				flex-basis: 100%;
+				margin: 0;
+				color: var(--orange);
+				font-size: 13px;
+				font-weight: 500;
+				line-height: 1.4;
+			}
+			.ss-act-err:empty {
+				display: none;
+			}
+			.ss-stepn.pg4n {
+				display: none;
+			}
+		}
+	}
+	@media (max-width: 1040px) {
+		.ss-wiz :global .ss-aside {
+			order: 0 !important;
+			margin-top: 8px;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ss-wiz :global {
+			.ss-xbox {
+				animation: none;
+			}
+			.ss-xmore .ss-xch,
+			.ss-prog .pg-b::after,
+			.ss-pop,
+			.ss-pop-b {
+				transition: none;
+			}
+		}
+	}
 	@media (max-width: 1040px) {
 		.ss-wiz :global {
 			.ss-grid {

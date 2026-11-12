@@ -1,21 +1,32 @@
 <!--
   The result ("Ihr persönlicher Zählercheck"): the preselected devices, the
   preliminary cost estimate as two contracts, the further services with their
-  starting prices, the totals and the technical check points with who
-  handles them.
+  starting prices, the totals (with "Beides" for rent and for purchase), the
+  technical check points with who handles them, and the visitor's remarks.
 -->
 <script lang="ts">
 	import Markup from "../ui/Markup.svelte";
 	import Image from "$lib/components/Basic/Image/Image.svelte";
 	import { ROUTE_ENERGIEAUSWEIS } from "$lib/routes";
 	import { CAPSULES, DEVICE_PHOTOS, PHOTOS } from "../../photos";
-	import { checkOwner, DEVICES, EXTRAS, PRICES } from "../data";
-	import { calc, eur, extraPrice, gateways, tech } from "../model";
+	import { BUY_PRICES, checkOwner, DEVICES, EXTRAS, PRICES } from "../data";
+	import {
+		asBought,
+		calc,
+		eur,
+		extraPrice,
+		gateways,
+		smokeAdviceOn,
+		tech,
+	} from "../model";
 	import { CHECK } from "../svg";
+	import Text from "../ui/Text.svelte";
 	import { getSelfService } from "../wizard.svelte";
 
 	const w = getSelfService();
-	const c = $derived(calc(w.s));
+	const c = $derived(calc(w.s, w.count));
+	const both = $derived(w.s.kauf === "beides");
+	const bought = $derived(both ? calc(asBought(w.s), w.count) : null);
 	const byDevices = $derived(tech(w.s));
 	const many = (d: string) =>
 		d !== "rwm" && (w.s.groups[d as keyof typeof w.s.groups]?.length ?? 0) > 1;
@@ -130,7 +141,7 @@
 					>{c.buy
 						? "Gerätekauf (einmalig)"
 						: `Gerätemiete pro Jahr${c.keep ? ` (ohne ${c.keep} übernehmbare Geräte)` : ""}`}</span
-				><b class={[c.buy && "o"]}>{c.buy ? "auf Anfrage" : eur(c.rent)}</b>
+				><b>{c.buy ? eur(c.bought - c.gw * BUY_PRICES.gw) : eur(c.rent)}</b>
 			</div>
 			<div class="ss-cost-r">
 				<span>Wartung ({c.dev} × {eur(PRICES.wart)} pro Jahr)</span><b
@@ -142,14 +153,27 @@
 			<div class="ss-cost-r">
 				<span
 					>Funk-Gateway ({c.gw}{c.buy
-						? " × Kauf"
+						? ` × ${eur(BUY_PRICES.gw)} Kauf, einmalig`
 						: ` × ${eur(PRICES.gw)} pro Jahr`})</span
-				><b class={[c.buy && "o"]}>{c.buy ? "auf Anfrage" : eur(c.gwc)}</b>
+				><b>{c.buy ? eur(c.gw * BUY_PRICES.gw) : eur(c.gwc)}</b>
 			</div>
 		{/if}
 		{#if c.rows.some((r) => r.req)}
 			<div class="ss-cost-r">
 				<span>Weitere Zähler</span><b class="o">auf Anfrage</b>
+			</div>
+		{/if}
+		{#if !byDevices}
+			<div class="ss-cost-r">
+				<span>Installationspauschale</span><b class="o"
+					>{w.s.mont.wer === "heidi"
+						? c.inst
+							? eur(c.inst)
+							: "499 € bzw. 999 €, nach Geräteliste"
+						: w.s.mont.wer === "eigen"
+							? "entfällt, Selbstmontage"
+							: "Montage noch offen"}</b
+				>
 			</div>
 		{/if}
 		{#if byDevices && c.dev}
@@ -165,6 +189,20 @@
 			<div class="ss-cost-r">
 				<span>Inbetriebnahme ({c.dev} × {eur(PRICES.ibn)} einmalig)</span><b
 					>{eur(c.ibn)}</b
+				>
+			</div>
+		{/if}
+		{#if w.s.ber}
+			<div class="ss-cost-r">
+				<span>Beratungstermin mit Zähleridentifikation (einmalig)</span><b
+					>{eur(PRICES.ber)}</b
+				>
+			</div>
+		{/if}
+		{#if smokeAdviceOn(w.s)}
+			<div class="ss-cost-r">
+				<span>Beratung zur Rauchwarnmelderpflicht (einmalig)</span><b
+					>{eur(PRICES.ber)}</b
 				>
 			</div>
 		{/if}
@@ -217,16 +255,33 @@
 {/if}
 <div class="ss-tiles">
 	<div class="ss-tile ink">
-		<small>Laufende Kosten</small><b>{eur(c.yearly)}</b><span
-			>pro Jahr, netto zzgl. MwSt.</span
-		>
+		<small>{both ? "Miete · laufende Kosten" : "Laufende Kosten"}</small><b
+			>{eur(c.yearly)}</b
+		><span>pro Jahr, netto zzgl. MwSt.</span>
 	</div>
 	<div class="ss-tile">
-		<small>Einmalkosten</small><b>{byDevices ? eur(c.once) : "Offen"}</b><span
-			>netto zzgl. MwSt.</span
-		>
+		<small>{both ? "Miete · einmalig" : "Einmalkosten"}</small><b
+			>{byDevices ? eur(c.once) : "Offen"}</b
+		><span>netto zzgl. MwSt.</span>
 	</div>
 </div>
+{#if bought}
+	<div class="ss-tiles ss-tk">
+		<div class="ss-tile">
+			<small>Kauf · laufende Kosten</small><b>{eur(bought.yearly)}</b><span
+				>pro Jahr, netto zzgl. MwSt.</span
+			>
+		</div>
+		<div class="ss-tile">
+			<small>Kauf · einmalig</small><b
+				>{byDevices ? eur(bought.once) : "Offen"}</b
+			><span
+				>{byDevices ? `inkl. Gerätekauf ${eur(bought.bought)}, ` : ""}netto
+				zzgl. MwSt.</span
+			>
+		</div>
+	</div>
+{/if}
 <p class="ss-fine">
 	Vorläufige Preise, netto zzgl. MwSt. Gerätemiete, Gateway, Wartung und
 	Abrechnung jährlich, Inbetriebnahme und Installation einmalig. Einbausätze,
@@ -252,3 +307,12 @@
 		{/each}
 	</ul>
 {/if}
+<div class="ss-kom">
+	<Text
+		area
+		label="Anmerkungen zu Ihrer Anfrage"
+		bind:value={w.s.kom}
+		placeholder="Alles, was für Ihr Angebot noch wichtig ist: z. B. Zugang zu Keller oder Zählerschacht, geplante Sanierung, bereits getauschte Zähler, besondere Wünsche"
+	/>
+	<p class="ss-hint">Optional. Ihre Hinweise gehen direkt an unser Team.</p>
+</div>

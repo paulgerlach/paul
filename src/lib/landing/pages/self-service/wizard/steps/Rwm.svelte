@@ -1,4 +1,7 @@
-<!-- Step "Rauchwarnmelder bestimmen": the rooms' minimum and the total. -->
+<!--
+  Step "Rauchwarnmelder bestimmen": the rooms' minimum and the total, a note
+  when the total is below the units, and the consultation as a cart item.
+-->
 <script lang="ts">
 	import {
 		fieldTip,
@@ -8,6 +11,7 @@
 	} from "../data";
 	import { num } from "../model";
 	import { ICONS } from "../svg";
+	import Consultation from "../ui/Consultation.svelte";
 	import Note from "../ui/Note.svelte";
 	import Options, { cards } from "../ui/Options.svelte";
 	import Question from "../ui/Question.svelte";
@@ -20,6 +24,7 @@
 	const min = $derived(num(r.sz) + num(r.kz) + num(r.fl));
 	const n = $derived(num(r.n));
 	const off = $derived(Boolean(min && n && (n < min || n > min * 2.5)));
+	const units = $derived(num(w.s.units));
 	const tip = (k: string) => fieldTip("rwm", k);
 </script>
 
@@ -67,10 +72,17 @@
 	/>
 </div>
 {#if off}
-	<Note warn
+	<Note tone="y"
 		>{n < min
 			? "Die Gesamtzahl liegt unter der Mindestzahl aus den Räumen. Bitte prüfen Sie die Angaben, wir markieren das zur Kontrolle."
 			: "Die Gesamtzahl ist deutlich höher als die Mindestzahl. Wir markieren das zur Kontrolle."}</Note
+	>
+{/if}
+{#if units && n && n < units}
+	<Note tone="y"
+		>Sie haben <b>{n} Rauchwarnmelder</b> angegeben, die Liegenschaft hat aber
+		<b>{units} Einheiten</b>. In der Regel braucht jede Einheit mindestens einen
+		Rauchwarnmelder. Bitte prüfen Sie die Anzahl.</Note
 	>
 {/if}
 <Question
@@ -98,4 +110,10 @@
 	bind:value={r.bem}
 	placeholder="Falls etwas unklar ist, hier erläutern"
 	tip={tip("bem")}
+/>
+<Consultation
+	smoke
+	top={18}
+	on={w.s.rber}
+	ontoggle={() => (w.s.rber = !w.s.rber)}
 />

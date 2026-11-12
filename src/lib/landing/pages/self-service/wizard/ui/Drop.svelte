@@ -15,6 +15,7 @@
 		small = false,
 		accept = "image/*",
 		max,
+		need = false,
 	}: {
 		id: string;
 		label: string;
@@ -22,6 +23,8 @@
 		small?: boolean;
 		accept?: string;
 		max: number;
+		/** A check asks for a photo here (`.need`). */
+		need?: boolean;
 	} = $props();
 	const w = getSelfService();
 	let over = $state(false);
@@ -35,7 +38,8 @@
 
 <div>
 	<label
-		class={["ss-drop", small && "sm", over && "over"]}
+		class={["ss-drop", small && "sm", over && "over", need && "need"]}
+		data-drop={id}
 		ondragenter={(e) => drag(e, true)}
 		ondragover={(e) => drag(e, true)}
 		ondragleave={(e) => drag(e, false)}

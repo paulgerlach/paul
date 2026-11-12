@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="160" viewBox="0 0 280 160" font-family="Geist, Inter, Arial, sans-serif">
+  <rect width="280" height="160" rx="10" fill="#F4F6F5"/>
+  <!-- Zählerkörper -->
+  <rect x="58" y="62" width="124" height="26" rx="4" fill="#fff" stroke="#1E322D" stroke-width="1.5"/>
+  <rect x="92" y="36" width="56" height="28" rx="6" fill="#fff" stroke="#1E322D" stroke-width="1.5"/>
+  <circle cx="120" cy="50" r="9" fill="#F4F6F5" stroke="#1E322D" stroke-width="1.2"/>
+  <path d="M120 50l5-4" stroke="#1E322D" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M108 75h24" stroke="#1E322D" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M126 71l6 4-6 4" fill="none" stroke="#1E322D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Gewinde links -->
+  <rect x="30" y="64" width="28" height="22" fill="#fff" stroke="#1E322D" stroke-width="1.5"/>
+  <path d="M35 64v22M40 64v22M45 64v22M50 64v22M55 64v22" stroke="#8E9C96" stroke-width="1"/>
+  <!-- Gewinde rechts hervorgehoben -->
+  <rect x="182" y="64" width="28" height="22" fill="#E3F3E4" stroke="#2F7A3C" stroke-width="2"/>
+  <path d="M187 64v22M192 64v22M197 64v22M202 64v22M207 64v22" stroke="#2F7A3C" stroke-width="1"/>
+  <!-- Überwurfmutter (abgezogen) -->
+  <rect x="228" y="58" width="22" height="34" rx="3" fill="#B7C4BE" stroke="#1E322D" stroke-width="1.5"/>
+  <path d="M234 58v34M239 58v34M244 58v34" stroke="#8E9C96" stroke-width="1"/>
+  <text x="239" y="48" text-anchor="middle" font-size="8.5" fill="#4A5A55">Verschraubung</text>
+  <!-- Pfeil + Beschriftung -->
+  <path d="M196 90v24" stroke="#2F7A3C" stroke-width="2"/>
+  <path d="M196 90l-4.5 7h9z" fill="#2F7A3C"/>
+  <rect x="98" y="116" width="172" height="24" rx="12" fill="#2F7A3C"/>
+  <text x="184" y="132" text-anchor="middle" font-size="10.5" font-weight="600" fill="#fff">Anschlussgewinde, z. B. G ¾</text>
+  <text x="14" y="124" font-size="9" fill="#4A5A55">Außengewinde</text>
+  <text x="14" y="136" font-size="9" fill="#4A5A55">am Zähler</text>
+</svg>

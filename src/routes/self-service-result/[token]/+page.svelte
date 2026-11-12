@@ -48,7 +48,7 @@
 			<h2 class="mb-3 text-lg font-semibold text-dark_green">
 				Angebot als PDF
 			</h2>
-			{#each r.documents as doc (doc.kind)}
+			{#each r.documents as doc (doc.id)}
 				<div class="mt-4 first-of-type:mt-0">
 					<div class="mb-2 flex flex-wrap items-baseline justify-between gap-2">
 						<h3 class="font-medium">{doc.title}</h3>

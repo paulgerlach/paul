@@ -39,5 +39,6 @@
 	relevanten Angaben ab. Baugleiche Zähler erfassen Sie einmal als Gruppe.</Note
 >
 {#if w.s.devs.includes("unsicher")}
-	<div class="ss-cond"><Nudge /><Consultation /></div>
+	<div class="ss-cond"><Nudge /></div>
 {/if}
+<Consultation on={w.s.ber} ontoggle={() => (w.s.ber = !w.s.ber)} />

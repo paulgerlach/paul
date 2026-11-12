@@ -34,9 +34,9 @@
 		autocomplete="email"
 	/>
 	<Text
-		label="Telefon (optional)"
+		label="Telefon*"
 		bind:value={k.tel}
-		placeholder="Für technische Rückfragen"
+		placeholder="Für Rückfragen zu Ihrem Angebot"
 		type="tel"
 		autocomplete="tel"
 	/>
@@ -51,6 +51,12 @@
 		/></label
 	>
 </div>
+<label class="cb cb-rr">
+	<input type="checkbox" bind:checked={k.rr} /><i><Markup html={CHECK} /></i
+	><span
+		><b>Rückruf gewünscht:</b> Bitte rufen Sie mich an, um das Angebot zu besprechen.</span
+	>
+</label>
 <label class="cb">
 	<input type="checkbox" bind:checked={k.ok} /><i><Markup html={CHECK} /></i
 	><span

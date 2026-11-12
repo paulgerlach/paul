@@ -19,7 +19,15 @@ import {
 	type Font,
 } from "$lib/landing/pages/muster-kuendigung/pdf";
 import { OFFER_COMPANY } from "./data";
-import { amount, n2, type Offer, type OfferPart, type State } from "./model";
+import {
+	amount,
+	n2,
+	noFiles,
+	type Files,
+	type Offer,
+	type OfferPart,
+	type State,
+} from "./model";
 import { offerDoc, type OfferTable } from "./offerDoc";
 
 const PAGE_W = 595.28; // A4, pt
@@ -374,8 +382,8 @@ function footer(c: Canvas, n: number, of: number) {
 	);
 }
 
-function draw(s: State, offer: Offer, part: OfferPart) {
-	const d = offerDoc(s, offer, part);
+function draw(s: State, offer: Offer, part: OfferPart, files: Files) {
+	const d = offerDoc(s, offer, part, files);
 	const c = new Canvas();
 	const size = 1.45 * U;
 	const firstHead = () => {
@@ -440,9 +448,15 @@ function draw(s: State, offer: Offer, part: OfferPart) {
 		c.y += 2.4 * U;
 		c.para(d.requested, size, { color: MUTED });
 	}
+	// The note on quantities and sizes: tighter around it, so the greeting
+	// stays on this page.
+	if (d.fee) {
+		c.y += 1.2 * U;
+		c.para(d.fee, size);
+	}
 	c.y += 2.4 * U;
 	for (const line of d.closing) c.para(line, size);
-	c.y += 5 * U;
+	c.y += (d.fee ? 1 : 5) * U;
 	const sign = IMAGES.signature;
 	const signW = 11 * U;
 	const signH = (signW * sign.h) / sign.w;
@@ -487,8 +501,13 @@ function draw(s: State, offer: Offer, part: OfferPart) {
 const jpegBytes = (src: string) => atob(src.slice(src.indexOf(",") + 1));
 
 /** The PDF bytes of one offer document. */
-export function offerPdf(s: State, offer: Offer, part: OfferPart) {
-	const c = draw(s, offer, part);
+export function offerPdf(
+	s: State,
+	offer: Offer,
+	part: OfferPart,
+	files: Files = noFiles,
+) {
+	const c = draw(s, offer, part, files);
 	const images = [...c.used];
 	// 1 catalog, 2 pages, 3–4 fonts, 5 info, the images, then a page and its
 	// content each.

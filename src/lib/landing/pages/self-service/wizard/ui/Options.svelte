@@ -19,6 +19,10 @@
 		rec?: boolean;
 		/** A starting price and its unit after the label (`.ss-zpr`). */
 		price?: readonly [string, string];
+		/** The "Selten" badge (`.ss-rare`). */
+		rare?: boolean;
+		/** In place of `small`: a logo (its URL and name). */
+		logo?: readonly [string, string];
 	};
 
 	/** Cards from shared options (`data.ts`), with each value's extras. */
@@ -74,10 +78,15 @@
 						>{o.price[1] ? `${o.price[0]} ` : o.price[0]}{#if o.price[1]}<i
 								>{o.price[1]}</i
 							>{/if}</span
-					>{/if}{#if o.small || o.more}<small
-						>{#if o.more}<span class="ss-zs">{o.small}</span><span class="ss-zx"
-								>{o.more}</span
-							>{:else}{o.small}{/if}</small
+					>{/if}{#if o.rare}<span class="ss-rare">Selten</span
+					>{/if}{#if o.small || o.more || o.logo}<small
+						>{#if o.logo}<img
+								class="ss-rlx"
+								src={o.logo[0]}
+								alt={o.logo[1]}
+							/>{:else if o.more}<span class="ss-zs">{o.small}</span
+							>{/if}{#if o.more}<span class="ss-zx">{o.more}</span
+							>{:else if !o.logo}{o.small}{/if}</small
 					>{/if}</span
 			>
 			<span class="ck"><Markup html={ICONS.keep} /></span>

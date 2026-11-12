@@ -12,12 +12,18 @@
 	let {
 		label,
 		tip,
+		tipImg,
+		req = false,
 		class: cls = "",
 		flash = false,
 		children,
 	}: {
 		label: string;
 		tip?: string;
+		/** The tooltip's sketch (an SVG's URL). */
+		tipImg?: string;
+		/** Mark it required (`.rq`, hidden once a photo stands in). */
+		req?: boolean;
 		class?: string;
 		/** Flash the control once (a value set by another answer). */
 		flash?: boolean;
@@ -32,6 +38,11 @@
 	for="{id}-f"
 	class={["fd", tip && "tip l", open && "open", flash && "flash", cls]}
 	><span
-		>{#if tip}{label} <Tip {id} {open} />{:else}{label}{/if}</span
-	>{@render children(`${id}-f`)}{#if tip}<TipBox {id} text={tip} />{/if}</label
+		>{label}{#if req}<i class="rq">*</i>{/if}{#if tip}
+			<Tip {id} {open} />{/if}</span
+	>{@render children(`${id}-f`)}{#if tip}<TipBox
+			{id}
+			text={tip}
+			svg={tipImg}
+		/>{/if}</label
 >

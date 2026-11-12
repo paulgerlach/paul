@@ -12,6 +12,7 @@
 		class: cls = "",
 		autocomplete,
 		inputmode,
+		oninput,
 	}: {
 		label: string;
 		value: string;
@@ -22,21 +23,30 @@
 		class?: string;
 		autocomplete?: HTMLInputElement["autocomplete"];
 		inputmode?: "numeric" | "text" | "email" | "tel";
+		/** After an edit. */
+		oninput?: () => void;
 	} = $props();
 </script>
 
 <Field {label} {tip} class={cls}>
 	{#snippet children(id)}
 		{#if area}
-			<textarea {id} bind:value rows="2" placeholder={placeholder ?? ""}
-			></textarea>
+			<textarea
+				{id}
+				bind:value
+				rows="2"
+				placeholder={placeholder ?? ""}
+				oninput={() => oninput?.()}></textarea>
 		{:else if type === "number"}
 			<!-- Not `bind:value`, which would store a number: the state keeps the
 		     raw text, as every other field. -->
 			<input
 				{id}
 				{value}
-				oninput={(e) => (value = e.currentTarget.value)}
+				oninput={(e) => {
+					value = e.currentTarget.value;
+					oninput?.();
+				}}
 				{placeholder}
 				type="number"
 				min="0"
@@ -52,6 +62,7 @@
 				{autocomplete}
 				{inputmode}
 				aria-label={label ? undefined : placeholder}
+				oninput={() => oninput?.()}
 			/>
 		{/if}
 	{/snippet}

@@ -31,12 +31,12 @@ import {
 	type StoredFile,
 } from "$lib/forms/selfServiceOffer";
 import {
-	calc,
+	noFiles,
 	offerFileName,
 	offerParts,
-	positions,
 	priceList,
 	validate,
+	type Files,
 	type Offer,
 	type State,
 } from "$lib/landing/pages/self-service/wizard/model";
@@ -99,19 +99,21 @@ export async function storeDocuments(
 	s: State,
 	offer: Offer,
 	stage: string,
+	files: Files = noFiles,
 ): Promise<StoredDocument[]> {
 	try {
 		return await Promise.all(
-			offerParts(positions(calc(s)), offer).map(async (part) => {
-				const path = `${id}/angebot-${part.kind}.pdf`;
+			offerParts(s, offer).map(async (part) => {
+				const path = `${id}/angebot-${part.id}.pdf`;
 				await putObject(
 					BUCKET,
 					path,
-					offerPdf(s, offer, part),
+					offerPdf(s, offer, part, files),
 					"application/pdf",
 				);
 				return {
 					kind: part.kind,
+					id: part.id,
 					title: part.title,
 					name: offerFileName(s, offer, part.title),
 					path,
@@ -165,12 +167,15 @@ export async function handleSelfServiceOffer(
 	if (!checkIPRateLimit(`self-service:${ip}`, limit, 600).allowed)
 		return blocked(`rate limit exceeded for IP: ${ip}`);
 
-	const asked = sheet(s);
 	// Only files of drop zones the visitor still sees.
-	const slots = sheetSlots(asked);
+	const slots = sheetSlots(sheet(s));
 	const chosen = files
 		.map((f, i) => ({ f, i }))
 		.filter(({ f }) => slots.has(f.slot));
+	// The photos change some check points (a photo instead of the details).
+	const count: Files = (slot) =>
+		chosen.filter(({ f }) => f.slot === slot).length;
+	const asked = sheet(s, count);
 
 	const db = getDb();
 	let res: OfferResponse;
@@ -208,7 +213,7 @@ export async function handleSelfServiceOffer(
 				});
 		}
 		const keptPaths = new Set(kept.map((f) => f.path));
-		const documents = await storeDocuments(id, s, s.ang, stage);
+		const documents = await storeDocuments(id, s, s.ang, stage, count);
 		const docPaths = new Set(documents.map((d) => d.path));
 		const gone = [
 			...before.filter((f) => !keptPaths.has(f.path)).map((f) => f.path),
@@ -281,7 +286,7 @@ export async function handleSelfServiceOffer(
 			last_name: s.k.nn.trim(),
 			installer: sheetAnswer(asked, "Wer soll die Geräte montieren?"),
 			price_per_year: sheetAnswer(asked, "Pro Jahr (netto)"),
-			price_list: priceList(positions(calc(s))),
+			price_list: priceList(s),
 			result_url: `${origin}${ROUTE_SELF_SERVICE_RESULT}/${token}`,
 			// The stored sheet (`data.sheet`): every question as asked with its answer.
 			answers: JSON.stringify(asked),

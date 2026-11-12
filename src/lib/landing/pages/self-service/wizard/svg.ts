@@ -41,6 +41,9 @@ export const ICONS = {
 	lead: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5s6 6.4 6 10.5a6 6 0 0 1-12 0c0-4.1 6-10.5 6-10.5z"/><path d="M9.5 14.5h5"/></svg>',
 	legionella:
 		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6.5L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 9.5V3"/><path d="M7.5 15h9"/></svg>',
+	bill: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
+	switch:
+		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>',
 } as const;
 
 export type IconName = keyof typeof ICONS;
@@ -70,4 +73,6 @@ export const RADIATORS = {
 		'<svg viewBox="0 0 96 60"><rect x="14" y="12" width="68" height="36" rx="3" fill="#fff" stroke="#1E322D" stroke-width="2"/><path d="M14 22h68M14 30h68M14 38h68" stroke="#C9D3CE" stroke-width="1.5"/></svg>',
 	glieder:
 		'<svg viewBox="0 0 96 60"><g fill="#fff" stroke="#1E322D" stroke-width="2"><rect x="16" y="10" width="9" height="40" rx="4"/><rect x="28" y="10" width="9" height="40" rx="4"/><rect x="40" y="10" width="9" height="40" rx="4"/><rect x="52" y="10" width="9" height="40" rx="4"/><rect x="64" y="10" width="9" height="40" rx="4"/></g></svg>',
+	bad: '<svg viewBox="0 0 96 60"><g fill="none" stroke="#1E322D" stroke-width="2" stroke-linecap="round"><path d="M34 8v46M62 8v46"/><path d="M34 14h28M34 20h28M34 26h28M34 34h28M34 40h28M34 46h28" stroke-width="2.4"/></g></svg>',
+	konv: '<svg viewBox="0 0 96 60"><path d="M8 50h80" stroke="#C9D3CE" stroke-width="2" stroke-linecap="round"/><rect x="12" y="26" width="72" height="19" rx="3" fill="#fff" stroke="#1E322D" stroke-width="2"/><path d="M18 29.5h60" stroke="#1E322D" stroke-width="1.4"/><path d="M22 26l2.5 3.5M30 26l2.5 3.5M38 26l2.5 3.5M46 26l2.5 3.5M54 26l2.5 3.5M62 26l2.5 3.5M70 26l2.5 3.5" stroke="#1E322D" stroke-width="1.2"/><rect x="18" y="33.5" width="60" height="8" rx="1.5" fill="#F4F6F5" stroke="#8E9C96" stroke-width="1"/><path d="M22 34.5v6M25 34.5v6M28 34.5v6M31 34.5v6M34 34.5v6M37 34.5v6M40 34.5v6M43 34.5v6M46 34.5v6M49 34.5v6M52 34.5v6M55 34.5v6M58 34.5v6M61 34.5v6M64 34.5v6M67 34.5v6M70 34.5v6M73 34.5v6" stroke="#8E9C96" stroke-width="0.9"/><path d="M18 37.5h60" stroke="#1E322D" stroke-width="1.6"/><path d="M34 21c-2-3 2-4 0-8M48 21c-2-3 2-4 0-8M62 21c-2-3 2-4 0-8" fill="none" stroke="#8AD68F" stroke-width="1.8" stroke-linecap="round"/></svg>',
 } as const;

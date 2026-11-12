@@ -3,12 +3,13 @@ import { LAUNCHED } from "./launch.ts";
 
 // The offer is stored in the local Supabase stack (playwright.config.ts) and
 // its link goes to the local webhook sink, which answers 500 for emails at
-// @sink-fails.example. The first "Weiter" of a visit is reported there too.
+// @sink-fails.de (the check turns away test domains such as example.com).
+// The first "Weiter" of a visit is reported there too.
 
 const PATH = "/self-service";
 const WEBHOOK_EVENTS = "http://127.0.0.1:4199/events";
 
-const testEmail = (name: string, domain = "example.com") =>
+const testEmail = (name: string, domain = "heidi-e2e.de") =>
 	`e2e-ss-${name}-${Date.now()}-${Math.round(Math.random() * 1e6)}@${domain}`;
 
 type OfferEvent = {
@@ -39,6 +40,8 @@ async function startEvents(page: Page) {
 
 /** 10 s behind, so the wizard's start passes the timing check. */
 async function gotoCheck(page: Page) {
+	// A started check asks before the page goes (`beforeunload`).
+	page.on("dialog", (dialog) => void dialog.accept());
 	await page.clock.install({ time: Date.now() - 10_000 });
 	await page.goto(PATH, { waitUntil: "networkidle" });
 	return page.locator("#check");
@@ -79,6 +82,12 @@ async function toOffer(page: Page, email: string, bill = false) {
 	await card(/^Kaltwasserzähler/).click();
 	await next();
 	await expect(title).toHaveText("Heizung und gewünschte Leistungen");
+	await check.getByRole("button", { name: /^Heizungsart/ }).click();
+	await check.getByRole("option", { name: "Fernwärme" }).click();
+	await page.keyboard.press("Escape");
+	await check
+		.getByLabel("Wie erfolgt die Warmwasserbereitung?")
+		.selectOption("dezentral");
 	await card(/^Funkzähler, Fernauslesung und Heizkostenabrechnung/).click();
 	await card(/^Mieten/).click();
 	await next();
@@ -94,6 +103,9 @@ async function toOffer(page: Page, email: string, bill = false) {
 	await expect(check.getByRole("alert")).toHaveText(
 		"Bitte ergänzen Sie: Absperrventil vorhanden?.",
 	);
+	await expect(check.locator(".ss-act-err")).toHaveText(
+		"Bitte ergänzen Sie: Absperrventil vorhanden?.",
+	);
 	await card(/^Ja\s*Vor und hinter/).click();
 	await next();
 	await expect(title).toHaveText("Montage");
@@ -104,7 +116,12 @@ async function toOffer(page: Page, email: string, bill = false) {
 	await check.getByLabel("Vorname*").fill("Erika");
 	await check.getByLabel("Nachname*").fill("Musterfrau");
 	await check.getByLabel("E-Mail-Adresse*").fill(email);
-	await check.locator(".cb input").check({ force: true });
+	await check.locator(".cb:not(.cb-rr) input").check({ force: true });
+	await next();
+	await expect(check.getByRole("alert")).toHaveText(
+		"Bitte geben Sie eine Telefonnummer an.",
+	);
+	await check.getByLabel("Telefon*").fill("030 1234567");
 	await next();
 	await expect(title).toHaveText("Ihr persönlicher Zählercheck");
 	// 6 × 27 rent, 6 × 5 service, 6 × 27,50 billing, 1 × 39 gateway.
@@ -153,7 +170,7 @@ test("makes the offer and sends it on request", async ({ page }) => {
 		.click();
 	await expect(check.locator("#ss-t")).toHaveText("Vielen Dank, Erika.");
 	await expect(check.locator(".ss-conf h3")).toHaveText(
-		"Ihr Angebot ist unterwegs.",
+		"Vielen Dank für Ihre Anfrage.",
 	);
 
 	// Make.com hears of the offer once: the request sends nothing more.
@@ -225,7 +242,7 @@ test("uploads the files and shows them on the result", async ({ page }) => {
 		.getByRole("button", { name: /Angebot per E-Mail erhalten/ })
 		.click();
 	await expect(check.locator(".ss-conf h3")).toHaveText(
-		"Ihr Angebot ist unterwegs.",
+		"Vielen Dank für Ihre Anfrage.",
 	);
 	const [created] = await eventsFor(page, email);
 
@@ -252,7 +269,7 @@ test("answers 404 for an unknown result", async ({ page }) => {
 });
 
 test("names the mailbox when sending fails", async ({ page }) => {
-	const check = await toOffer(page, testEmail("fail", "sink-fails.example"));
+	const check = await toOffer(page, testEmail("fail", "sink-fails.de"));
 	await check
 		.getByRole("button", { name: /Angebot per E-Mail erhalten/ })
 		.click();

@@ -32,6 +32,7 @@ function building(): State {
 		firma: "",
 		mail: "eva@example.com",
 		tel: "",
+		rr: false,
 		ok: true,
 	};
 	s.adr.l = {
@@ -62,6 +63,7 @@ describe("sheet", () => {
 			"Montage",
 			"Weitere Leistungen",
 			"Ihre Kontaktdaten",
+			"Ihr persönlicher Zählercheck",
 			"Liegenschaftsadresse",
 			"Rechnungsadresse",
 			"Ihr Angebot",

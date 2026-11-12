@@ -50,7 +50,7 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 			requestedAt: row.requested_at,
 			sheet,
 			documents: documents.map((d) => ({
-				kind: d.kind,
+				id: d.id ?? d.kind,
 				title: d.title,
 				name: d.name,
 				url: urls.get(d.path) ?? null,

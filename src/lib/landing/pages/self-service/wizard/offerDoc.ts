@@ -7,14 +7,17 @@ import { features, OFFER_TERMS } from "./data";
 import {
 	billingLines,
 	calc,
+	feeText,
 	gross,
 	n2,
+	noFiles,
 	offerDates,
 	propertyLines,
 	scope,
 	tech,
 	totalPrice,
 	unitPrice,
+	type Files,
 	type Offer,
 	type OfferPart,
 	type Position,
@@ -47,8 +50,13 @@ const SERVICES: OfferColumn[] = [
 ];
 const row = (r: Position) => [r.t, r.me, r.n, n2(r.ep), n2(r.n * r.ep)];
 
-export function offerDoc(s: State, offer: Offer, part: OfferPart) {
-	const c = calc(s);
+export function offerDoc(
+	s: State,
+	offer: Offer,
+	part: OfferPart,
+	files: Files = noFiles,
+) {
+	const c = calc(s, files);
 	const p = part.p;
 	const abr = part.kind === "a";
 	const dates = offerDates(offer);
@@ -68,7 +76,7 @@ export function offerDoc(s: State, offer: Offer, part: OfferPart) {
 	};
 	const rental: OfferTable = {
 		title: p.buy ? "Gerätekauf" : "Gerätemiete",
-		kicker: p.buy ? "Einmalig, Preis auf Anfrage" : "Jährlich",
+		kicker: p.buy ? "Einmalig" : "Jährlich",
 		cols: [["Gerätetyp", false], ["Laufzeit", true], ...SERVICES.slice(1)],
 		rows: p.rental.map((r) => [
 			r.t,
@@ -81,10 +89,14 @@ export function offerDoc(s: State, offer: Offer, part: OfferPart) {
 		first: tech(s)
 			? ""
 			: "Gerätepositionen ergänzen wir nach Prüfung Ihrer Unterlagen.",
-		labelNet: "Gesamtpreis Gerätemiete pro Jahr netto",
-		totalNet: p.sM,
-		labelGross: "Gesamtpreis Gerätemiete pro Jahr inkl. 19% MwSt.",
-		totalGross: gross(p.sM),
+		labelNet: p.buy
+			? "Kaufpreis Geräte netto"
+			: "Gesamtpreis Gerätemiete pro Jahr netto",
+		totalNet: p.buy ? p.sK : p.sM,
+		labelGross: p.buy
+			? "Kaufpreis Geräte inkl. 19% MwSt."
+			: "Gesamtpreis Gerätemiete pro Jahr inkl. 19% MwSt.",
+		totalGross: gross(p.buy ? p.sK : p.sM),
 	};
 	const once: OfferTable = {
 		title: "Servicedienstleistungen",
@@ -124,10 +136,12 @@ export function offerDoc(s: State, offer: Offer, part: OfferPart) {
 			? "Heizkostenabrechnung pro Jahr"
 			: "Geräteservice pro Jahr",
 		deviceLabel: p.buy ? "Gerätekauf (einmalig)" : "Gerätemiete pro Jahr",
-		deviceValue: p.buy ? "auf Anfrage" : `${n2(p.sM)} €`,
+		deviceValue: `${n2(p.buy ? p.sK : p.sM)} €`,
 		separate: abr
-			? "Die Gerätemiete bieten wir Ihnen in einem separaten Angebot an."
+			? `${s.kauf === "kauf" ? "Den Gerätekauf" : s.kauf === "beides" ? "Gerätemiete und Gerätekauf" : "Die Gerätemiete"} bieten wir Ihnen in ${s.kauf === "beides" ? "separaten Angeboten" : "einem separaten Angebot"} an.`
 			: "Die Heizkostenabrechnung bieten wir Ihnen in einem separaten Angebot an.",
+		/** Check quantities and sizes (`feeTxt`), on the devices' document. */
+		fee: abr ? "" : feeText(s),
 		requested:
 			p.onRequest.length || p.extras.length
 				? `Zusätzlich angefragt: ${[
@@ -148,7 +162,7 @@ export function offerDoc(s: State, offer: Offer, part: OfferPart) {
 		once,
 		terms: OFFER_TERMS,
 		selfMounted: selfMounted
-			? "Die Montage übernehmen Sie oder Ihr Hausinstallateur. Eine Installationspauschale fällt nicht an. Einbausätze, Rohr- und Sanitärarbeiten sind nicht enthalten."
+			? "Die Montage übernehmen Sie oder Ihr Hausinstallateur, mit einer genauen Montagebeschreibung von uns. Eine Installationspauschale fällt nicht an. Einbausätze, Rohr- und Sanitärarbeiten sind nicht enthalten."
 			: "",
 		checksIntro:
 			"Grundlage dieses Angebots sind Ihre Angaben im Heidi Self-Service. Vor der Lieferung prüfen wir:",

@@ -8,6 +8,8 @@
 		value = $bindable(),
 		options,
 		tip,
+		tipImg,
+		req = false,
 		class: cls = "",
 		flash = false,
 		onchange,
@@ -16,13 +18,15 @@
 		value: string;
 		options: readonly Option[];
 		tip?: string;
+		tipImg?: string;
+		req?: boolean;
 		class?: string;
 		flash?: boolean;
 		onchange?: (value: string) => void;
 	} = $props();
 </script>
 
-<Field {label} {tip} {flash} class={cls}>
+<Field {label} {tip} {tipImg} {req} {flash} class={cls}>
 	{#snippet children(id)}
 		<select {id} bind:value onchange={() => onchange?.(value)}>
 			<option value="">Bitte wählen</option>

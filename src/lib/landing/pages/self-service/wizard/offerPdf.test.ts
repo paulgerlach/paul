@@ -1,14 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import {
-	calc,
-	fresh,
-	makeOffer,
-	newGroup,
-	offerParts,
-	positions,
-	type State,
-} from "./model";
+import { fresh, makeOffer, newGroup, offerParts, type State } from "./model";
 import { offerPdf } from "./offerPdf";
 
 function building(rows = 1): State {
@@ -37,6 +29,7 @@ function building(rows = 1): State {
 		firma: "Łódź (Haus) GmbH",
 		mail: "eva@example.com",
 		tel: "",
+		rr: false,
 		ok: true,
 	};
 	s.adr.l = { ...s.adr.l, str: "Hauptstraße 1", plz: "10115", ort: "Berlin" };
@@ -49,7 +42,7 @@ function parts(s: State) {
 	const offer = makeOffer(Date.UTC(2026, 10, 2), 0.5);
 	return {
 		offer,
-		list: offerParts(positions(calc(s)), offer),
+		list: offerParts(s, offer),
 	};
 }
 

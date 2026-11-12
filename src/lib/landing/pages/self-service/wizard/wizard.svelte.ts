@@ -21,8 +21,10 @@ import {
 } from "$lib/forms/selfServiceOffer";
 import { track, type SelfServicePath } from "$lib/analytics/events";
 import { GROUP_DEVS, ORDER, type GroupDev } from "./data";
+import { clearFiles, filesKeepable, loadFiles, saveFiles } from "./fileStore";
 import {
 	fresh,
+	hintsFor,
 	makeOffer,
 	newGroup,
 	nextGroupId,
@@ -30,6 +32,7 @@ import {
 	steps,
 	tech,
 	validate,
+	type Group,
 	type State,
 	type StepId,
 } from "./model";
@@ -61,6 +64,24 @@ const EXT_TYPES: Record<string, string> = {
 const fileType = (f: File) =>
 	f.type || EXT_TYPES[f.name.split(".").pop()?.toLowerCase() ?? ""] || "";
 
+/** A file's identity across the drop zones (the design's `sig`). */
+const fileSig = (f: File) => `${f.name}|${f.size}|${f.lastModified}`;
+
+/**
+ * A pop-up (the design's `pop`): its buttons as [value, label], the first
+ * the main one; `esc` the value of Escape and a click beside it.
+ */
+export type Popup = {
+	kind?: "warn" | "note";
+	title: string;
+	/** Paragraphs (trusted markup). */
+	paras?: string[];
+	/** Recommendations, each a title and a line. */
+	items?: { title: string; text: string }[];
+	buttons: [value: string, label: string][];
+	esc?: string;
+};
+
 /** Parallel uploads at most. */
 const UPLOADS = 3;
 
@@ -89,14 +110,21 @@ export class SelfService {
 	sendFailed = $state(false);
 	/** The honeypot field of the contact step (bots fill it). */
 	website = $state("");
+	/** The open pop-up. */
+	popup = $state<Popup | null>(null);
+	/** The drop zone a check marks as missing a photo (a group's id). */
+	needPhoto = $state<string | null>(null);
+	/** Files can be kept in this browser (IndexedDB). */
+	filesKept = $state(false);
 
 	list = $derived(steps(this.s));
 	id: StepId = $derived(this.list[Math.min(this.s.cur, this.list.length - 1)]);
 
 	/** Called after a move (the component scrolls and focuses). */
 	onMove?: (scroll: boolean) => void;
-	/** Called when a check points at a group (the component scrolls to it). */
-	onProblem?: (group: string) => void;
+	/** Called when a check points at a group (the component scrolls to it,
+	 *  or to its drop zone with `drop`). */
+	onProblem?: (group: string, drop?: boolean) => void;
 
 	#t0 = 0;
 	/** The stored offer, from the first send's answer. */
@@ -112,6 +140,10 @@ export class SelfService {
 	#leadTracked = false;
 	/** GA heard a `self_service_step` this visit. */
 	#stepTracked = false;
+	#answer?: (v: string) => void;
+	/** "Weiter" waits for a pop-up. */
+	#busy = false;
+	#saveTimer?: ReturnType<typeof setTimeout>;
 
 	/** In the browser, on mount: the start time and a saved check. */
 	restore() {
@@ -126,6 +158,76 @@ export class SelfService {
 		const parsed = selfServiceStateSchema.safeParse(old);
 		if (parsed.success && parsed.data.cur > 0 && parsed.data.abr)
 			this.saved = parsed.data;
+		void filesKeepable().then((ok) => (this.filesKept = ok));
+	}
+
+	/** Opens a pop-up; resolves with the button's value. */
+	ask(p: Popup): Promise<string> {
+		this.#answer?.(p.esc ?? p.buttons[p.buttons.length - 1][0]);
+		this.popup = p;
+		return new Promise((resolve) => (this.#answer = resolve));
+	}
+
+	/** Closes the pop-up with a value (`""`: Escape or a click beside it). */
+	answer(v: string) {
+		const p = this.popup;
+		if (!p) return;
+		this.popup = null;
+		const resolve = this.#answer;
+		this.#answer = undefined;
+		resolve?.(v || p.esc || p.buttons[p.buttons.length - 1][0]);
+	}
+
+	/** The check started and no offer was requested yet (`lvOpen`). */
+	get unfinished() {
+		return this.s.cur > 0 && !this.s.ang?.sent;
+	}
+
+	/** "Ihr Angebot ist noch nicht fertig" (`lvPop`): "stay" or "leave". */
+	askLeave() {
+		const n = Math.max(1, this.list.length - 1 - this.s.cur);
+		return this.ask({
+			kind: "note",
+			title: "Ihr Angebot ist noch nicht fertig",
+			paras: [
+				`Sie haben den Zählercheck begonnen, aber noch kein Angebot angefordert. ${
+					n === 1
+						? "Es fehlt nur noch <b>1 Schritt</b>"
+						: `Es fehlen noch <b>${n} Schritte</b>`
+				} bis zu Ihrem Angebot.`,
+				this.filesKept
+					? "Ihre Angaben und Fotos bleiben in diesem Browser gespeichert."
+					: "Ihre Angaben bleiben in diesem Browser gespeichert, Fotos müssten Sie erneut hochladen.",
+			],
+			buttons: [
+				["stay", "Angebot fertigstellen"],
+				["leave", "Später weitermachen"],
+			],
+			esc: "stay",
+		});
+	}
+
+	/** Keeps the chosen files for "Fortsetzen" (debounced, `fSave`). */
+	#keepFiles() {
+		clearTimeout(this.#saveTimer);
+		this.#saveTimer = setTimeout(() => {
+			const out: Record<string, File[]> = {};
+			for (const [id, list] of Object.entries(this.files))
+				if (list.length) out[id] = list.map((u) => u.file);
+			void saveFiles(out);
+		}, 250);
+	}
+
+	#entry(f: File): Upload {
+		const type = fileType(f);
+		const image = type.startsWith("image/");
+		return {
+			name: f.name,
+			url: image ? URL.createObjectURL(f) : undefined,
+			pdf: !image,
+			file: f,
+			type,
+		};
 	}
 
 	/** Keeps the answers for "Fortsetzen" (once something was answered). */
@@ -155,30 +257,47 @@ export class SelfService {
 		this.files[id] ??= [];
 		const have = this.files[id];
 		const skipped: string[] = [];
+		const dup: string[] = [];
+		// Every file chosen so far, in any drop zone (a plain list: local only).
+		const all = Object.values(this.files).flatMap((l) =>
+			l.map((u) => fileSig(u.file)),
+		);
 		for (const f of Array.from(list)) {
-			if (have.length >= max) break;
+			if (all.includes(fileSig(f))) {
+				dup.push(f.name);
+				continue;
+			}
+			if (have.length >= max) continue;
 			const type = fileType(f);
 			if (!fileTypeAllowed(type) || !f.size || f.size > MAX_FILE_BYTES) {
 				skipped.push(f.name);
 				continue;
 			}
-			const image = type.startsWith("image/");
-			have.push({
-				name: f.name,
-				url: image ? URL.createObjectURL(f) : undefined,
-				pdf: !image,
-				file: f,
-				type,
-			});
+			have.push(this.#entry(f));
+			all.push(fileSig(f));
 		}
-		this.error = skipped.length
-			? `Nicht übernommen: ${skipped.join(", ")}. Möglich sind PDF, Fotos und Tabellen bis 20 MB.`
-			: "";
+		if (
+			this.needPhoto &&
+			this.count(this.needPhoto) + this.count(`${this.needPhoto}z`)
+		)
+			this.needPhoto = null;
+		this.error = [
+			skipped.length
+				? `Nicht übernommen: ${skipped.join(", ")}. Möglich sind PDF, Fotos und Tabellen bis 20 MB.`
+				: "",
+			dup.length
+				? `${dup.length > 1 ? "Diese Dateien haben" : "Diese Datei haben"} Sie bereits hochgeladen: ${dup.join(", ")}`
+				: "",
+		]
+			.filter(Boolean)
+			.join(" ");
+		this.#keepFiles();
 	}
 
 	removeFile(id: string, i: number) {
 		const [gone] = this.files[id]?.splice(i, 1) ?? [];
 		if (gone?.url) URL.revokeObjectURL(gone.url);
+		this.#keepFiles();
 	}
 
 	#dropFiles(id: string) {
@@ -201,10 +320,45 @@ export class SelfService {
 		this.s.groups[d].push(newGroup(nextGroupId(this.s)));
 	}
 
+	/**
+	 * Adds a device type (`addDev`): with `init`, a new group with those
+	 * answers; else a first group if it has none. Returns the new group.
+	 */
+	addDevice(d: GroupDev, init?: Partial<Group>): Group | undefined {
+		if (!this.s.devs.includes(d)) {
+			const order: string[] = [...ORDER, "unsicher"];
+			this.s.devs = order.filter((k) => k === d || this.s.devs.includes(k));
+		}
+		const groups = this.s.groups[d];
+		if (init) {
+			groups.push({ ...newGroup(nextGroupId(this.s)), ...init });
+			return groups[groups.length - 1];
+		}
+		if (!groups.length) groups.push(newGroup(nextGroupId(this.s)));
+	}
+
+	/**
+	 * "Wärmemengenzähler hinzufügen" for the hot water (or the heating with
+	 * a heat pump); the first group measures it unless it says otherwise.
+	 */
+	addHeatMeter(was: "ww" | "heizung") {
+		if (!this.s.devs.includes("wmz")) this.addDevice("wmz", { was, n: "1" });
+		for (const [i, g] of this.s.groups.wmz.entries())
+			if (i === 0 && !g.was) g.was = was;
+	}
+
+	/** "Stromzähler hinzufügen" for a heat pump, in place of an empty first group. */
+	addPowerMeter() {
+		this.addDevice("weitere", { art: "strom", n: "1", bem: "Wärmepumpe" });
+		const w = this.s.groups.weitere;
+		if (w.length > 1 && !w[0].art) w.splice(0, 1);
+	}
+
 	removeGroup(d: GroupDev, id: string) {
 		this.s.groups[d] = this.s.groups[d].filter((g) => g.id !== id);
 		this.#dropFiles(id);
 		this.#dropFiles(`${id}z`);
+		this.#keepFiles();
 	}
 
 	#move(scroll = true) {
@@ -226,7 +380,8 @@ export class SelfService {
 		this.onMove?.(scroll);
 	}
 
-	next(skip = false) {
+	async next(skip = false) {
+		if (this.#busy) return;
 		if (!skip) {
 			if (this.id === "dev:rwm") {
 				// No total: the minimum from the rooms.
@@ -237,10 +392,12 @@ export class SelfService {
 			const problem = validate(this.id, this.s, this.count);
 			if (problem) {
 				this.error = problem.message;
-				if (problem.group) this.onProblem?.(problem.group);
+				this.needPhoto = problem.drop && problem.group ? problem.group : null;
+				if (problem.group) this.onProblem?.(problem.group, problem.drop);
 				return;
 			}
 		}
+		this.needPhoto = null;
 		if (!this.#started) this.#reportStart();
 		if (this.id === "liste" && !this.#pathTracked) {
 			const path = pathOf(this.s);
@@ -249,7 +406,38 @@ export class SelfService {
 				track("self_service_start", { path });
 			}
 		}
-		this.s.cur = Math.min(this.s.cur + 1, this.list.length - 1);
+		const id = this.id;
+		// The hints on "Weiter" (`runWarn`), each shown once.
+		this.#busy = true;
+		let jump: StepId | null = null;
+		try {
+			for (const h of hintsFor(id, this.s)) {
+				const v = await this.ask({
+					title: h.title,
+					items: h.items,
+					buttons: [
+						["add", h.add],
+						["ok", h.skip],
+					],
+				});
+				this.s.ack[h.key] = true;
+				if (v === "add") {
+					this.addHeatMeter(
+						this.s.heiz.includes("wp") && !this.s.devs.includes("wwz")
+							? "heizung"
+							: "ww",
+					);
+					jump = "dev:wmz";
+				}
+			}
+		} finally {
+			this.#busy = false;
+		}
+		const list = steps(this.s);
+		this.s.cur =
+			jump && list.includes(jump)
+				? list.indexOf(jump)
+				: Math.min(list.indexOf(id) + 1, list.length - 1);
 		this.#move();
 	}
 
@@ -296,15 +484,23 @@ export class SelfService {
 		this.s.cur = Math.min(this.s.cur, steps(this.s).length - 2);
 		this.saved = null;
 		this.#move();
+		void loadFiles().then((kept) => {
+			if (!kept) return;
+			for (const [id, list] of Object.entries(kept))
+				if (Array.isArray(list) && !this.files[id]?.length)
+					this.files[id] = list.map((f) => this.#entry(f));
+		});
 	}
 
 	discardSaved() {
 		this.#clearSaved();
+		void clearFiles();
 		this.saved = null;
 	}
 
 	restart() {
 		for (const id of Object.keys(this.files)) this.#dropFiles(id);
+		void clearFiles();
 		this.s = fresh();
 		this.#ref = undefined;
 		this.#pathTracked = false;
@@ -414,6 +610,8 @@ export class SelfService {
 	}
 
 	destroy() {
+		clearTimeout(this.#saveTimer);
+		this.#answer?.("");
 		for (const id of Object.keys(this.files)) this.#dropFiles(id);
 	}
 }

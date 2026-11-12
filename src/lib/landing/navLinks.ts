@@ -72,9 +72,10 @@ export type LandingNavGroup = {
 export const landingNav: LandingNavGroup[] = [
 	{
 		title: "Produkt",
-		layout: "list",
+		layout: "res",
 		columns: [
 			{
+				title: "Messdienst & Plattform",
 				items: [
 					{
 						title: "Vorgehen",
@@ -97,15 +98,25 @@ export const landingNav: LandingNavGroup[] = [
 						href: ROUTE_INTEROPERABILITAET,
 					},
 					{
+						title: "Heizkostenabrechnung",
+						text: "Auf Knopfdruck, Rechnungen per DocuScan",
+						href: ROUTE_HEIZKOSTENABRECHNUNG,
+					},
+					{
 						title: "Self-Service",
 						text: "Zählerbedarf selbst erfassen, Kostenvoranschlag sofort",
 						href: ROUTE_SELF_SERVICE,
 					},
 					{
-						title: "Heizkostenabrechnung",
-						text: "Auf Knopfdruck, Rechnungen per DocuScan",
-						href: ROUTE_HEIZKOSTENABRECHNUNG,
+						title: "Sicherheit & Datenschutz",
+						text: "Alle Daten auf Servern in Deutschland",
+						href: ROUTE_SICHERHEIT,
 					},
+				],
+			},
+			{
+				title: "Gebäudeservices & Preise",
+				items: [
 					{
 						title: "Legionellenprüfung",
 						text: "Trinkwasser prüfen nach Trinkwasserverordnung",
@@ -125,11 +136,6 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Preise",
 						text: "Nach installierten Zählern plus Abrechnungspauschale",
 						href: ROUTE_PREISE,
-					},
-					{
-						title: "Sicherheit & Datenschutz",
-						text: "Alle Daten auf Servern in Deutschland",
-						href: ROUTE_SICHERHEIT,
 					},
 				],
 			},
@@ -302,11 +308,6 @@ export const landingNav: LandingNavGroup[] = [
 						title: "Fristenrechner",
 						text: "Kündigungs- und Eichfristen berechnen",
 						href: ROUTE_FRISTENRECHNER,
-					},
-					{
-						title: "Portfolio-Checker",
-						text: "Bestand automatisch auf Vertragsenden prüfen",
-						href: ROUTE_PORTFOLIO_CHECKER,
 					},
 					{
 						title: "Einsparrechner",

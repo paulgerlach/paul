@@ -7,8 +7,9 @@
 	import { env } from "$env/dynamic/public";
 	import { isTracked } from "$lib/analytics/gtag";
 	import ConsentBanner from "$lib/landing/components/ConsentBanner.svelte";
+	import WebinarBanner from "$lib/landing/components/WebinarBanner.svelte";
 
-	let { children } = $props();
+	let { children, data } = $props();
 
 	// The cookie banner wherever GA runs (not in dev or e2e, without an id,
 	// nor on Prismic previews).
@@ -36,6 +37,9 @@
 	{@html fontFaces}
 </svelte:head>
 
+{#if data.webinar}
+	<WebinarBanner />
+{/if}
 {@render children()}
 <ChatBot isExistingClient={false} />
 {#if askConsent}

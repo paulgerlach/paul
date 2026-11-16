@@ -49,10 +49,11 @@ test("renders with its own layout, SEO tags and FAQ data", async ({ page }) => {
 		"href",
 		/\/fernablesung-umruesten$/,
 	);
-	// The banner's "Mehr erfahren" goes to the calculator here
-	await expect(
-		page.locator(".banner").getByRole("link", { name: "Mehr erfahren" }),
-	).toHaveAttribute("href", "#risiko");
+	// The banner's "Mehr erfahren" goes to the calculator here. The banner is
+	// hidden for now (LandingHeader); restore this check with it.
+	// await expect(
+	// 	page.locator(".banner").getByRole("link", { name: "Mehr erfahren" }),
+	// ).toHaveAttribute("href", "#risiko");
 
 	const jsonLd = await page
 		.locator('script[type="application/ld+json"]')

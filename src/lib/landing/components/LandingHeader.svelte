@@ -16,7 +16,10 @@
 	import HeidiLogo from "./icons/HeidiLogo.svelte";
 
 	let {
+		// Unused while the banner below is hidden.
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		bannerText,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		bannerHref = "#faq",
 		demoHref = DEMO_HREF,
 	}: {
@@ -96,9 +99,12 @@
 	{/each}
 {/snippet}
 
+<!-- Hidden while the webinar banner runs (WebinarBanner, (base) layout).
+     To bring it back, restore this block and the .banner styles below.
 <div class="banner">
 	{bannerText}<a href={bannerHref}>Mehr erfahren</a>
 </div>
+-->
 
 <nav class="top" aria-label="Hauptnavigation">
 	<div class="wrap bar">
@@ -191,6 +197,7 @@
 </nav>
 
 <style>
+	/* Hidden with the banner above.
 	.banner {
 		background: var(--ink);
 		color: #dde7e3;
@@ -203,6 +210,7 @@
 		text-decoration: underline;
 		margin-left: 6px;
 	}
+	*/
 
 	nav.top {
 		position: sticky;

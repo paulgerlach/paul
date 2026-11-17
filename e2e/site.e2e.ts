@@ -160,6 +160,7 @@ test("the Fragebogen sends an inquiry", async ({ page }) => {
 	expect(event).toBeTruthy();
 	// Only /demo's copy of the wizard adds a source; this request is Next's.
 	expect(event).not.toHaveProperty("source");
+	expect(event).toHaveProperty("page", "/fragebogen");
 	expect(problems).toEqual([]);
 });
 
@@ -188,11 +189,16 @@ test("/demo asks the Fragebogen's questions, then opens the booking page", async
 	await expect(page.getByRole("heading", { level: 1 })).toHaveText(
 		"Sehen Sie Heidi mit Ihrem eigenen Bestand.",
 	);
-	const events: { email: string; event_type?: string; source?: string }[] =
-		await (await page.request.get(WEBHOOK_EVENTS)).json();
+	const events: {
+		email: string;
+		event_type?: string;
+		source?: string;
+		page?: string;
+	}[] = await (await page.request.get(WEBHOOK_EVENTS)).json();
 	const event = events.find((e) => e.email === email);
 	expect(event?.event_type).toBe("newinquiry");
 	expect(event?.source).toBe("demo");
+	expect(event?.page).toBe("/demo");
 	expect(problems).toEqual([]);
 });
 

@@ -1,6 +1,7 @@
 import { json } from "@sveltejs/kit";
 import { z } from "zod";
 import { questionnaireSchema } from "$lib/fragebogen/schema";
+import { ROUTE_DEMO_BUCHEN, ROUTE_FRAGEBOGEN } from "$lib/routes";
 import { saveLeadDB } from "$lib/server/leads";
 import { sendOfferInquiryEvent } from "$lib/server/webhooks";
 import type { RequestHandler } from "./$types";
@@ -61,6 +62,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			energy_sources: data.energy_sources,
 			// Only from /demo; left out of the Fragebogen's request
 			source: fromDemo ? "demo" : undefined,
+			// The page the questionnaire was sent from
+			page: fromDemo ? ROUTE_DEMO_BUCHEN : ROUTE_FRAGEBOGEN,
 		});
 		console.log(`[QUESTIONNAIRE] Sent offer inquiry event for ${data.email}`);
 
